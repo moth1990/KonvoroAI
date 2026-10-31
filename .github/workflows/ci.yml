@@ -37,6 +37,10 @@ jobs:
         run: uv run python -m konboro.licenses
       - name: Unit tests
         run: uv run pytest -m "not integration"
+      - name: OpenAPI spec is current (run `make gen-client` and commit)
+        run: |
+          uv run python -m konboro.api.openapi ../frontend/src/api/openapi.json
+          git diff --exit-code -- ../frontend/src/api/openapi.json
       - name: Start local services
         working-directory: .
         run: docker compose up -d --wait
@@ -66,6 +70,10 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - name: Lint and format
         run: pnpm lint
+      - name: Generated client matches the OpenAPI spec (run `make gen-client` and commit)
+        run: |
+          pnpm run gen:client
+          git diff --exit-code -- src/api/schema.ts
       - name: Types
         run: pnpm typecheck
       - name: Licenses (no GPL or AGPL)

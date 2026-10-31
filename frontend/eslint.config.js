@@ -4,7 +4,7 @@ import globals from "globals";
 import tseslint from "typescript-eslint";
 
 export default tseslint.config(
-  { ignores: ["dist", "playwright-report", "test-results", "e2e/fidelity/out"] },
+  { ignores: ["dist", "playwright-report", "test-results", "e2e/fidelity/out", "src/api/schema.ts"] },
   js.configs.recommended,
   ...tseslint.configs.strict,
   {

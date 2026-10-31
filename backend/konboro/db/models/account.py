@@ -4,7 +4,7 @@ from datetime import date
 from decimal import Decimal
 from typing import Any
 
-from sqlalchemy import CheckConstraint, ForeignKey, Index, SmallInteger, UniqueConstraint
+from sqlalchemy import CheckConstraint, ForeignKey, Index, SmallInteger, UniqueConstraint, text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from ..base import Base, Created, Rate, TenantScoped, Timestamps, one_of, pk, tenant_fk, tenant_unique
@@ -104,16 +104,35 @@ class QuotaUsage(Base, TenantScoped, Timestamps):
     extra: Mapped[int] = mapped_column(server_default="0")
 
 
+QUOTA_CLOSING_KINDS = ("confirm", "release")
+
+
 class QuotaEvent(Base, TenantScoped, Created):
-    """Every quota change with its reason: answers "why was this counted?" (01 §4.5)."""
+    """Every quota change with its reason: answers "why was this counted?" (01 §4.5).
+
+    A `reserve` event is a reservation. Its `confirm` or `release` points back at it through
+    `reservation_id`, and the partial unique index allows only one of them, so a reservation
+    can never be closed twice (e.g. a confirm racing the 24 h expiry).
+    """
 
     __tablename__ = "quota_events"
     __table_args__ = (
         tenant_unique(),
         tenant_fk("drawing_id", "drawings"),
         tenant_fk("created_by", "users"),
+        tenant_fk("reservation_id", "quota_events"),
         one_of("counter", QUOTA_COUNTERS),
         one_of("kind", ("reserve", "confirm", "release", "manual_add")),
+        CheckConstraint(
+            "(reservation_id IS NOT NULL) = (kind IN ('confirm', 'release'))", name="closing_has_reservation"
+        ),
+        Index(
+            "uq_quota_events_one_closing",
+            "tenant_id",
+            "reservation_id",
+            unique=True,
+            postgresql_where=text("kind IN ('confirm', 'release')"),
+        ),
     )
 
     id: Mapped[str] = pk()
@@ -124,6 +143,7 @@ class QuotaEvent(Base, TenantScoped, Created):
     amount: Mapped[int] = mapped_column(server_default="1")
     reason: Mapped[str | None]
     created_by: Mapped[str | None]
+    reservation_id: Mapped[str | None]
 
 
 class LlmCall(Base, TenantScoped, Created):
@@ -145,6 +165,8 @@ class LlmCall(Base, TenantScoped, Created):
 
 
 __all__ = [
+    "QUOTA_CLOSING_KINDS",
+    "QUOTA_COUNTERS",
     "LlmCall",
     "QuotaEvent",
     "QuotaUsage",

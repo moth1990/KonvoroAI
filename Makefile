@@ -4,7 +4,7 @@
 BACKEND := cd backend &&
 FRONTEND := cd frontend &&
 
-.PHONY: help install up down migrate seed dev lint licenses test-unit test-int e2e eval gen-client check
+.PHONY: help install up down migrate seed dev lint licenses test-unit test-int e2e eval gen-client check-client check
 
 help:
 	@grep -E '^[a-z-]+:.*?## ' $(MAKEFILE_LIST) | awk -F':.*?## ' '{printf "  %-12s %s\n", $$1, $$2}'
@@ -27,8 +27,10 @@ migrate: ## Create the app DB role, then apply migrations (docs/db-schema.md)
 seed: migrate ## Demo data: tenant "לוחות דמו", price list from the prototype. Safe to rerun
 	$(BACKEND) uv run python -m konboro.db.seed
 
-dev: ## Run the web app (the API and worker join in S03 and S05)
-	$(FRONTEND) pnpm dev
+dev: ## Run the API (port 8000) and the web app (port 5180). The worker joins in S05
+	@trap 'kill 0' EXIT; \
+	(cd backend && uv run uvicorn --factory konboro.api.app:create_app --reload --port $${KONBORO_API_PORT:-8000}) & \
+	cd frontend && pnpm dev
 
 lint: ## Lint, format check and types, backend and frontend
 	$(BACKEND) uv run ruff check .
@@ -54,7 +56,11 @@ e2e: ## Playwright, desktop and mobile projects
 eval: ## Golden-set evaluation (arrives in S06)
 	@echo "eval: not built yet, see docs/sessions/S06-golden-eval.md"
 
-gen-client: ## Regenerate the TS API client from OpenAPI (arrives in S03)
-	@echo "gen-client: not built yet, see docs/sessions/S03-api-auth-flags.md"
+gen-client: ## Regenerate the TS API client from FastAPI's OpenAPI (frontend/src/api/schema.ts)
+	$(BACKEND) uv run python -m konboro.api.openapi ../frontend/src/api/openapi.json
+	$(FRONTEND) pnpm run gen:client
 
-check: lint licenses test-unit test-int e2e ## Everything CI runs
+check-client: gen-client ## Fail if the committed API client is stale (run `make gen-client` and commit)
+	git diff --exit-code -- frontend/src/api/openapi.json frontend/src/api/schema.ts
+
+check: lint licenses check-client test-unit test-int e2e ## Everything CI runs

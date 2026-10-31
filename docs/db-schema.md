@@ -64,6 +64,14 @@ The full data model for Konboro v1.0. This document was listed as missing in [00
 **Tenant context:**
 - `konboro.db.session.tenant_session(tenant_id)` opens a transaction and runs `SET LOCAL app.tenant_id = :tenant_id`.
 - Code without a tenant (health check, global reads) uses `global_session()`, which can read global tables only.
+- **In the API, nobody calls `tenant_session` by hand.** Every route depends on `require(permission)` (`konboro/api/deps.py`). That runs `current_actor`, which:
+  - verifies the bearer token;
+  - opens `tenant_session(claims.tenant_id)`, which commits when the route function returns, before the response;
+  - loads the user in that tenant, so a token whose user is not in its tenant gets a 401;
+  - checks the permission against the DB role. Every permission maps to `owner` in v1.0 (00 §14.1).
+
+  A route audit test fails for any route outside `PUBLIC_ROUTES` that skips it.
+- **Dev login** (until Cognito, S29) never reads `users` across tenants. A setting maps each dev email to its tenant, the same job Cognito's `custom:tenant_id` attribute does. The login then looks the user up inside that tenant's session.
 
 **Tests:**
 - The cross-tenant suite tries `SELECT`, `UPDATE`, `DELETE` and `INSERT` across tenants on **every** tenant table.
@@ -159,6 +167,8 @@ Flags resolve in the order tenant → plan → global → default (13 §2).
 - `month`, `drawing_id null`.
 - `kind`: `reserve`, `confirm`, `release` or `manual_add`.
 - `amount`, `reason`, `created_by`.
+- `reservation_id null → quota_events`: a `reserve` event *is* the reservation. Its `confirm` or `release` points back at it. A check makes `reservation_id` required on exactly those two kinds, and the partial unique index `uq_quota_events_one_closing` allows only one closing event per reservation. So a confirm racing the expiry can never decrement `reserved` twice.
+- A reservation with no closing event after 24 hours is released with reason `expired`. This runs lazily at the start of every reserve and quota read, so there is no scheduler yet (01 §4.5).
 
 This table answers the customer's question "why was this counted?".
 

@@ -2,3 +2,5 @@ dist
 playwright-report
 test-results
 pnpm-lock.yaml
+src/api/openapi.json
+src/api/schema.ts
