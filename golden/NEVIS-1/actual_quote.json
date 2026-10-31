@@ -1,0 +1,229 @@
+{
+  "quote_number": 10288,
+  "date": "2026-10-13",
+  "note": "ההצעה האמיתית שנשלחה על השרטוט. פרטי הקשר של הלקוח הושמטו",
+  "currency": "ILS",
+  "lines": [
+    {
+      "description": "מפסק משולב פחת עד 4X100A",
+      "qty": 1,
+      "unit_price": 3200.0,
+      "maps_to": [
+        "Q0"
+      ]
+    },
+    {
+      "description": "מא\"ז 3X6A",
+      "qty": 1,
+      "unit_price": 185.0,
+      "maps_to": [
+        "FNV"
+      ]
+    },
+    {
+      "description": "ממסר חוסר מתח",
+      "qty": 1,
+      "unit_price": 340.0,
+      "maps_to": [
+        "NVR"
+      ]
+    },
+    {
+      "description": "מנורה קוטר 22",
+      "qty": 9,
+      "unit_price": 45.0,
+      "maps_to": [
+        "L1",
+        "L2",
+        "L3",
+        "HNV",
+        "HT1",
+        "HT2",
+        "HT3",
+        "HT4",
+        "HT5"
+      ]
+    },
+    {
+      "description": "מא\"ז 3X16A",
+      "qty": 3,
+      "unit_price": 185.0,
+      "maps_to": [
+        "F1",
+        "F2",
+        "F12"
+      ]
+    },
+    {
+      "description": "מא\"ז N+16",
+      "qty": 2,
+      "unit_price": 130.0,
+      "maps_to": [
+        "F3",
+        "F5"
+      ]
+    },
+    {
+      "description": "מא\"ז N+10",
+      "qty": 1,
+      "unit_price": 130.0,
+      "maps_to": [
+        "F4"
+      ]
+    },
+    {
+      "description": "מגע עזר",
+      "qty": 5,
+      "unit_price": 70.0,
+      "maps_to": [
+        "aux:F1",
+        "aux:F2",
+        "aux:F3",
+        "aux:F4",
+        "aux:F7"
+      ]
+    },
+    {
+      "description": "מא\"ז 3X10A",
+      "qty": 2,
+      "unit_price": 185.0,
+      "maps_to": [
+        "F6",
+        "F7"
+      ]
+    },
+    {
+      "description": "מא\"ז 1X10A",
+      "qty": 1,
+      "unit_price": 42.0,
+      "maps_to": [
+        "F8"
+      ]
+    },
+    {
+      "description": "מא\"ז 2X10A",
+      "qty": 1,
+      "unit_price": 140.0,
+      "maps_to": [
+        "F9"
+      ]
+    },
+    {
+      "description": "מא\"ז 1X16A",
+      "qty": 1,
+      "unit_price": 42.0,
+      "maps_to": [
+        "F10"
+      ]
+    },
+    {
+      "description": "מא\"ז 1X6A",
+      "qty": 2,
+      "unit_price": 42.0,
+      "maps_to": [
+        "FP1"
+      ],
+      "error": "נספר פעמיים. בלוח יש מא\"ז 1X6A אחד"
+    },
+    {
+      "description": "בורר 0-1-2",
+      "qty": 5,
+      "unit_price": 130.0,
+      "maps_to": [
+        "SW1",
+        "SW2",
+        "SW3",
+        "SW4",
+        "SW5"
+      ]
+    },
+    {
+      "description": "בקר טמפרטורה RELAY OUTPUT & RELAY OUTPUT כולל גשש PT100",
+      "qty": 1,
+      "unit_price": 650.0,
+      "maps_to": [
+        "TH1"
+      ]
+    },
+    {
+      "description": "ארון 1000/800/300 כולל פסי צבירה אפס ארקה פנילים ודלתות",
+      "qty": 1,
+      "unit_price": 4200.0,
+      "maps_to": [
+        "enclosure"
+      ]
+    }
+  ],
+  "total_before_vat": 11603.0,
+  "vat_rate": 0.18,
+  "vat": 2088.54,
+  "total": 13691.54,
+  "comparison_with_labels": {
+    "lines_matching_drawing": 13,
+    "in_drawing_not_in_quote": [
+      {
+        "what": "מא\"ז 2X16A",
+        "designators": [
+          "F11"
+        ],
+        "note": "מעגל SAVE (רזרבה)"
+      },
+      {
+        "what": "מגען",
+        "designators": [
+          "C1",
+          "C2",
+          "C3",
+          "C4",
+          "C5"
+        ]
+      },
+      {
+        "what": "ממסר",
+        "designators": [
+          "R1",
+          "R3",
+          "R5",
+          "R6",
+          "R7",
+          "RNV"
+        ]
+      }
+    ],
+    "quantity_differences": [
+      {
+        "what": "מא\"ז 1X6A",
+        "drawing": 1,
+        "quote": 2,
+        "designators": [
+          "FP1"
+        ],
+        "note": "FP1 מצויר בעמוד 7 ובעמוד 8. אחד או שניים?"
+      }
+    ],
+    "resolved_by_quote": [
+      {
+        "what": "FNV",
+        "resolution": "3 קטבים, כמו הטקסט 3X6A. S204M בשרטוט היא כנראה טעות"
+      }
+    ],
+    "in_quote_not_in_drawing": [
+      {
+        "what": "גשש PT100",
+        "note": "כלול בשורת בקר הטמפרטורה"
+      },
+      {
+        "what": "פסי צבירה, פס אפס, פס הארקה, פנלים ודלתות",
+        "note": "כלולים בשורת הארון"
+      }
+    ],
+    "pricing_observations": [
+      "שמות כלליים בלי יצרן ובלי מק\"ט",
+      "מחיר מא\"ז תלוי במספר הקטבים ולא בזרם: 1P = 42, 1P+N = 130, 2P = 140, 3P = 185 (6A, 10A ו-16A באותו מחיר)",
+      "16 שורות בהצעה, 11 מחירים שונים",
+      "אין שורת עבודה ואין שורות מהדקים ושילוט. כנראה כלולים במחירים",
+      "מפסק ראשי מתומחר כטווח: 'עד 4X100A'"
+    ]
+  },
+  "verdict": "ההצעה שגויה. אושר מול המפעל: 12 רכיבים הושמטו, ו-FP1 נספר פעמיים"
+}

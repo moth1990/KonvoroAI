@@ -1,0 +1,1195 @@
+<title>מסך בדיקה קונבורו</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Hebrew:wght@400;500;600&display=swap">
+<style>
+/* Layout: estimator's bench. Quote rows on the right (RTL start), the drawing as blueprint paper on the left, chat under the rows. Phone: one pane at a time with tabs, details in a bottom sheet. */
+:root{
+  --bg:#EEF1F5; --surface:#FFFFFF; --surface-2:#F6F8FB; --line:#DCE1E9; --line-strong:#C2C9D4;
+  --fg:#141821; --fg-2:#4A5263; --fg-3:#737C8D;
+  --accent:#3346C8; --accent-bg:#E7EAFB; --on-accent:#FFFFFF;
+  --ok:#1C7343; --ok-bg:#E1F2E7; --warn:#8F5D00; --warn-bg:#FBEFD5; --bad:#B42318; --bad-bg:#FCE6E3;
+  --paper:#F8FAFD; --grid:#E4E9F1; --ink:#1E2944;
+  --scrim:rgba(12,16,26,.45);
+  --font-ui:"IBM Plex Sans Hebrew","Noto Sans Hebrew",Arial,sans-serif;
+  --font-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0E1117; --surface:#161A22; --surface-2:#1B202A; --line:#2A303C; --line-strong:#3A4250;
+  --fg:#E7EAF0; --fg-2:#AAB2C1; --fg-3:#7E8798;
+  --accent:#8E9CFF; --accent-bg:#232A55; --on-accent:#0E1117;
+  --ok:#5CC98B; --ok-bg:#15301F; --warn:#F0B44B; --warn-bg:#3A2B0F; --bad:#FF7B6F; --bad-bg:#3E1714;
+  --paper:#121722; --grid:#1D2433; --ink:#C9D3EA; --scrim:rgba(0,0,0,.6);
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0E1117; --surface:#161A22; --surface-2:#1B202A; --line:#2A303C; --line-strong:#3A4250;
+  --fg:#E7EAF0; --fg-2:#AAB2C1; --fg-3:#7E8798;
+  --accent:#8E9CFF; --accent-bg:#232A55; --on-accent:#0E1117;
+  --ok:#5CC98B; --ok-bg:#15301F; --warn:#F0B44B; --warn-bg:#3A2B0F; --bad:#FF7B6F; --bad-bg:#3E1714;
+  --paper:#121722; --grid:#1D2433; --ink:#C9D3EA; --scrim:rgba(0,0,0,.6);
+  color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--font-ui);font-size:14px;line-height:1.5;direction:rtl;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+button,input,select{font:inherit;color:inherit}
+.app{max-width:1440px;margin:0 auto;padding-block:14px 28px;display:flex;flex-direction:column;gap:12px}
+.mono{font-family:var(--font-mono);direction:ltr;unicode-bidi:isolate}
+.num{font-variant-numeric:tabular-nums;text-align:end;white-space:nowrap}
+
+/* header */
+.top{display:flex;flex-wrap:wrap;align-items:center;gap:10px 20px}
+.id{display:flex;align-items:center;gap:10px;min-width:0;flex:1 1 320px}
+.mark{width:30px;height:30px;flex:none}
+.mark rect{fill:var(--accent)} .mark path{stroke:var(--on-accent);stroke-width:2;fill:none;stroke-linecap:round}
+.brand{font-weight:600;font-size:16px;letter-spacing:.01em}
+.proj{color:var(--fg-2);font-size:13px}
+.vpill{font-size:12px;padding:2px 10px;border-radius:999px;background:var(--surface);border:1px solid var(--line);color:var(--fg-2);white-space:nowrap}
+.vpill.sent{background:var(--accent-bg);color:var(--accent);border-color:transparent}
+.tot{display:flex;gap:18px;align-items:baseline;flex-wrap:wrap}
+.tot div{display:flex;flex-direction:column}
+.tot small{color:var(--fg-3);font-size:12px}
+.tot b{font-size:17px;font-weight:600;font-variant-numeric:tabular-nums}
+
+.btn{border:1px solid var(--line-strong);background:var(--surface);border-radius:8px;padding:6px 12px;min-height:36px;cursor:pointer;line-height:1.3;white-space:nowrap}
+.btn:hover{background:var(--surface-2)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent);font-weight:500}
+.btn.primary:hover{filter:brightness(1.07)}
+.btn.danger{color:var(--bad)}
+.btn.ghost{border-color:transparent;background:transparent}
+.btn.sm{min-height:32px;padding:4px 10px;font-size:13px}
+.btn[aria-pressed="true"]{background:var(--accent-bg);border-color:var(--accent);color:var(--accent)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* bar */
+.bar{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center}
+.seg{display:inline-flex;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:3px;gap:2px}
+.seg button{border:0;background:transparent;border-radius:7px;padding:5px 12px;cursor:pointer;color:var(--fg-2)}
+.seg button[aria-selected="true"]{background:var(--accent-bg);color:var(--accent);font-weight:500}
+.filters{display:flex;flex-wrap:wrap;gap:6px}
+.fchip{display:inline-flex;align-items:center;gap:6px;border:1px solid transparent;border-radius:999px;padding:3px 11px;cursor:pointer;font-size:13px;font-variant-numeric:tabular-nums}
+.fchip.ok{background:var(--ok-bg);color:var(--ok)} .fchip.warn{background:var(--warn-bg);color:var(--warn)} .fchip.bad{background:var(--bad-bg);color:var(--bad)}
+.fchip.all{background:var(--surface);border-color:var(--line);color:var(--fg-2)}
+.fchip[aria-pressed="true"]{border-color:currentColor;box-shadow:0 0 0 1px currentColor inset}
+.prog{margin-inline-start:auto;display:flex;align-items:center;gap:10px;color:var(--fg-2);font-size:13px}
+.pbar{width:120px;height:6px;border-radius:999px;background:var(--line);overflow:hidden}
+.pbar i{display:block;height:100%;background:var(--ok);border-radius:999px;transition:width .25s}
+
+.viewtabs{display:none}
+
+/* work grid */
+.work{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.08fr);grid-template-areas:"rows draw" "chat draw";gap:12px;align-items:start}
+.pane{background:var(--surface);border:1px solid var(--line);border-radius:12px;min-width:0}
+.rows{grid-area:rows;overflow:hidden}
+.draw{grid-area:draw;position:sticky;top:12px;overflow:hidden}
+.chat{grid-area:chat}
+
+/* rows */
+.rhead,.row{display:grid;grid-template-columns:24px minmax(0,1fr) 52px 92px 100px;gap:10px;padding:9px 14px;align-items:start}
+.rhead{font-size:12px;color:var(--fg-3);background:var(--surface-2);border-bottom:1px solid var(--line)}
+.row{border-top:1px solid var(--line);cursor:pointer;position:relative}
+.rhead+.row,.ghead+.row{border-top:0}
+.row:hover{background:var(--surface-2)}
+.row.sel{background:var(--accent-bg);box-shadow:inset -3px 0 0 var(--accent)}
+.row.del{opacity:.5}
+.si{width:20px;height:20px;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;margin-top:1px}
+.si.ok{stroke:var(--ok)} .si.warn{stroke:var(--warn)} .si.bad{stroke:var(--bad)} .si.info{stroke:var(--fg-3)}
+.desc{font-weight:500;overflow-wrap:anywhere}
+.sub{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center;font-size:12px;color:var(--fg-3);margin-top:1px}
+.tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}
+.tag{font-size:12px;line-height:1.4;padding:1px 8px;border-radius:6px;background:var(--surface-2);color:var(--fg-2);border:1px solid var(--line)}
+.tag.warn{background:var(--warn-bg);color:var(--warn);border-color:transparent}
+.tag.bad{background:var(--bad-bg);color:var(--bad);border-color:transparent}
+.tag.ok{background:var(--ok-bg);color:var(--ok);border-color:transparent}
+.mmeta{display:none}
+.ghead{display:flex;justify-content:space-between;gap:8px;padding:8px 14px;font-size:12px;color:var(--fg-3);background:var(--surface-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line);letter-spacing:.02em}
+.subtot{display:flex;justify-content:space-between;padding:12px 14px;border-top:1px solid var(--line);font-weight:500}
+.empty{padding:28px 16px;text-align:center;color:var(--fg-2)}
+.lockbar{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--accent-bg);color:var(--accent);font-size:13px}
+
+/* detail */
+.detail{padding:14px 16px 16px;background:var(--surface-2);border-top:1px dashed var(--line-strong);display:grid;gap:14px}
+.dsec h4{margin:0 0 6px;font-size:12px;font-weight:500;color:var(--fg-3);letter-spacing:.02em}
+.attrs{display:grid;gap:4px}
+.attr{display:grid;grid-template-columns:86px minmax(0,1fr);gap:8px;align-items:center;font-size:13px}
+.attr .k{color:var(--fg-2)}
+.attr .v{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px}
+.attr .src{color:var(--fg-3);font-size:12px}
+.attr .src.warn{color:var(--warn)}
+select.inl{border:1px solid var(--line-strong);background:var(--surface);border-radius:6px;padding:2px 6px;min-height:30px}
+.alts{display:flex;flex-wrap:wrap;gap:6px}
+.alt{display:flex;flex-direction:column;align-items:flex-start;gap:0;text-align:start;border:1px solid var(--line-strong);background:var(--surface);border-radius:8px;padding:6px 10px;cursor:pointer;min-width:0}
+.alt:hover{border-color:var(--accent)}
+.alt b{font-weight:500;font-size:13px}
+.alt span{font-size:12px;color:var(--fg-3)}
+.alt kbd{font-family:var(--font-mono);font-size:11px;color:var(--fg-3);border:1px solid var(--line);border-radius:4px;padding:0 4px;margin-inline-start:6px}
+.issue{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;padding:8px 10px;border-radius:8px;font-size:13px}
+.issue.error{background:var(--bad-bg);color:var(--bad)} .issue.warning{background:var(--warn-bg);color:var(--warn)}
+.issue .itext{flex:1 1 220px}
+.price{font-size:13px;color:var(--fg-2);display:flex;flex-wrap:wrap;gap:2px 12px}
+.price b{color:var(--fg);font-weight:500}
+.acts{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.qty{display:inline-flex;align-items:center;border:1px solid var(--line-strong);border-radius:8px;overflow:hidden;background:var(--surface)}
+.qty button{border:0;background:transparent;width:34px;min-height:34px;cursor:pointer;font-size:16px}
+.qty span{min-width:36px;text-align:center;font-variant-numeric:tabular-nums}
+.note{font-size:13px;color:var(--fg-2)}
+
+/* drawing */
+.dtool{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;padding:8px 10px;border-bottom:1px solid var(--line)}
+.dpage{font-size:12px;color:var(--fg-3)}
+.dbtns{display:flex;flex-wrap:wrap;gap:6px}
+.canvas{background-color:var(--paper);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px;position:relative}
+.canvas.pan{cursor:grab;touch-action:none} .canvas.drawing{cursor:crosshair;touch-action:none}
+#svg{display:block;width:100%;height:auto;user-select:none;-webkit-user-select:none}
+.w{stroke:var(--ink);stroke-width:1.4;fill:none;stroke-linecap:round}
+.bus{stroke:var(--ink);stroke-linecap:round}
+.sym{fill:var(--paper);stroke:var(--ink);stroke-width:1.6}
+.lbl{font-family:var(--font-mono);font-size:13px;fill:var(--ink)}
+.clbl{font-family:var(--font-ui);font-size:12px;fill:var(--fg-3)}
+.tb{font-family:var(--font-mono);font-size:11px;fill:var(--fg-3)}
+.ov{stroke-width:2;cursor:pointer;fill-opacity:.35}
+.ov.l0{stroke:var(--ok);fill:var(--ok-bg)} .ov.l1{stroke:var(--warn);fill:var(--warn-bg)} .ov.l2{stroke:var(--bad);fill:var(--bad-bg);stroke-dasharray:6 4}
+.ov.man{stroke:var(--accent);fill:var(--accent-bg)}
+.ov.sel{stroke:var(--accent);stroke-width:3.5;fill-opacity:.15;stroke-dasharray:none}
+.ov.dim{opacity:.25}
+.drawtmp{fill:var(--accent-bg);fill-opacity:.5;stroke:var(--accent);stroke-width:2;stroke-dasharray:6 4}
+.dhint{padding:8px 12px;font-size:12px;color:var(--fg-3);border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:4px 14px}
+.lg{display:inline-flex;align-items:center;gap:5px}
+.lg i{width:12px;height:12px;border-radius:3px;border:2px solid}
+.lg .a{border-color:var(--ok);background:var(--ok-bg)} .lg .b{border-color:var(--warn);background:var(--warn-bg)} .lg .c{border-color:var(--bad);border-style:dashed;background:var(--bad-bg)}
+
+/* pages */
+.pnav{display:flex;align-items:center;gap:6px;min-width:0}
+.pstrip{display:flex;gap:8px;overflow-x:auto;padding:8px 10px;border-bottom:1px solid var(--line);scrollbar-width:thin}
+.pth{flex:none;width:108px;border:1px solid var(--line);border-radius:8px;background:var(--surface);padding:4px;cursor:pointer;text-align:start;display:grid;gap:2px;position:relative}
+.pth:hover{border-color:var(--line-strong)}
+.pth[aria-current="true"]{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+.pth svg{display:block;width:100%;height:54px;background:var(--paper);border-radius:4px}
+.pth svg *{vector-effect:non-scaling-stroke}
+.pth .pl{font-size:11px;color:var(--fg-2);display:flex;justify-content:space-between;gap:4px}
+.pth .pl b{font-weight:500;color:var(--fg)}
+.pth .pk{font-size:11px;color:var(--fg-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pth.skip{opacity:.6}
+.pbadge{position:absolute;top:7px;left:7px;font-size:10px;line-height:1.5;border-radius:999px;padding:0 6px;font-variant-numeric:tabular-nums}
+.pbadge.l1{background:var(--warn-bg);color:var(--warn)} .pbadge.l2{background:var(--bad-bg);color:var(--bad)}
+.region{fill:none;stroke:var(--line-strong);stroke-width:1.2;stroke-dasharray:5 5}
+.region.act{stroke:var(--accent);stroke-dasharray:none}
+.regdim{fill:var(--paper);opacity:.62;cursor:pointer}
+.regt{font-family:var(--font-ui);font-size:13px;font-weight:500;fill:var(--fg-2);cursor:default}
+.regt[data-act]{cursor:pointer;fill:var(--accent)}
+.ctxt{font-family:var(--font-ui);font-size:15px;fill:var(--ink)}
+.ctxh{font-family:var(--font-ui);font-size:21px;font-weight:600;fill:var(--ink)}
+.ctxs{font-family:var(--font-ui);font-size:13px;fill:var(--fg-3)}
+.trow{stroke:var(--grid);stroke-width:1}
+
+/* tenant pricing */
+input.inl{border:1px solid var(--line-strong);background:var(--surface);border-radius:6px;padding:2px 8px;min-height:32px}
+.pentry{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;font-size:13px}
+.bulk{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:13px;color:var(--fg-2);margin-top:8px;padding-top:8px;border-top:1px dashed var(--line)}
+#pwarn{margin-top:4px} #pwarn.warn{color:var(--warn)}
+.newbar{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--accent-bg);color:var(--fg);font-size:13px;border-bottom:1px solid var(--line)}
+.seg.demo button{font-size:12px;padding:3px 10px}
+.wq{display:grid;gap:6px}
+.wq h4{margin:0;font-size:14px;font-weight:600}
+.wrow{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;font-size:13px}
+.wrow label{display:inline-flex;gap:4px;align-items:center;cursor:pointer}
+
+/* page meta */
+.pmeta{display:grid;gap:6px;padding:8px 10px;border-bottom:1px solid var(--line)}
+.pm{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;font-size:12px;color:var(--fg-3)}
+.pm label{color:var(--fg-2)}
+.pwarn{background:var(--warn-bg);color:var(--warn);border-radius:8px;padding:8px 10px;font-size:13px;display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center}
+.pwarn.info{background:var(--accent-bg);color:var(--accent)}
+.qbadge{position:absolute;top:7px;right:7px;font-size:10px;line-height:1.5;border-radius:999px;padding:0 6px;background:var(--warn-bg);color:var(--warn)}
+.scan{filter:blur(.5px) contrast(.85)}
+
+/* chat */
+.chathead{display:flex;justify-content:space-between;align-items:center;padding:8px 14px;border-bottom:1px solid var(--line);font-size:13px;color:var(--fg-2)}
+.chatlog{max-height:260px;overflow:auto;padding:10px 14px;display:flex;flex-direction:column;gap:8px}
+.msg{max-width:92%;padding:8px 12px;border-radius:12px;font-size:13px;overflow-wrap:anywhere}
+.msg.u{align-self:flex-start;background:var(--accent-bg);color:var(--fg)}
+.msg.b{align-self:flex-end;background:var(--surface-2);border:1px solid var(--line)}
+.prop{margin-top:8px;border:1px solid var(--line-strong);border-radius:10px;background:var(--surface);padding:10px;display:grid;gap:8px}
+.prop ul{margin:0;padding-inline-start:18px;display:grid;gap:2px}
+.prop .ptot{display:flex;justify-content:space-between;font-size:13px}
+.prop .pst{font-size:12px;color:var(--fg-3)}
+.sugg{display:flex;flex-wrap:wrap;gap:6px;padding:0 14px 8px}
+.sugg button{border:1px solid var(--line);background:var(--surface-2);border-radius:999px;padding:3px 10px;font-size:12px;cursor:pointer;color:var(--fg-2)}
+.chatform{display:flex;gap:8px;padding:10px 14px 12px;border-top:1px solid var(--line)}
+.chatform input{flex:1;min-width:0;border:1px solid var(--line-strong);border-radius:8px;padding:6px 10px;min-height:38px;background:var(--surface)}
+
+/* overlays */
+.scrim{position:fixed;inset:0;background:var(--scrim);z-index:40}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:41;background:var(--surface);border-radius:16px 16px 0 0;max-height:84vh;overflow:auto;
+  padding:14px max(16px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));display:grid;gap:12px}
+.sheet .grab{width:40px;height:4px;border-radius:999px;background:var(--line-strong);margin:0 auto}
+.shead{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.shead h3{margin:0;font-size:16px;font-weight:600;text-wrap:balance}
+.sheet .detail{background:transparent;border:0;padding:0}
+@media (min-width:861px){
+  .sheet.modal{left:50%;right:auto;top:50%;bottom:auto;transform:translate(-50%,-50%);width:min(560px,92vw);border-radius:14px;max-height:80vh;padding:18px 20px}
+  .sheet.modal .grab{display:none}
+}
+.plist{display:grid;gap:4px;max-height:46vh;overflow:auto}
+.pitem{display:flex;justify-content:space-between;gap:10px;align-items:center;text-align:start;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:8px 10px;cursor:pointer}
+.pitem:hover{border-color:var(--accent)}
+.pitem .mono{font-size:12px;color:var(--fg-3)}
+.warnbox{background:var(--warn-bg);color:var(--warn);border-radius:8px;padding:10px 12px;font-size:13px}
+.kv{display:flex;justify-content:space-between;font-size:14px}
+.kv b{font-variant-numeric:tabular-nums}
+
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:50;background:var(--fg);color:var(--bg);border-radius:10px;padding:8px 8px 8px 14px;display:flex;gap:12px;align-items:center;font-size:13px;max-width:calc(100vw - 32px)}
+.toast[hidden]{display:none}
+.toast button{border:0;background:transparent;color:var(--bg);text-decoration:underline;cursor:pointer;padding:4px 8px;font-weight:500}
+
+.foot{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:12px;color:var(--fg-3)}
+.foot kbd{font-family:var(--font-mono);font-size:11px;border:1px solid var(--line-strong);border-radius:4px;padding:0 4px;background:var(--surface)}
+
+/* phone */
+@media (max-width:860px){
+  .viewtabs{display:flex;position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:3px;gap:2px}
+  body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:19;background:var(--bg)}
+  .viewtabs button{flex:1;border:0;background:transparent;border-radius:7px;padding:7px 0;cursor:pointer;color:var(--fg-2)}
+  .viewtabs button[aria-selected="true"]{background:var(--accent-bg);color:var(--accent);font-weight:500}
+  .work{grid-template-columns:minmax(0,1fr);grid-template-areas:"rows" "draw" "chat"}
+  .draw{position:static}
+  .canvas{overflow-x:auto}
+  #svg{min-width:760px}
+  .work[data-view="rows"] .draw,.work[data-view="rows"] .chat,
+  .work[data-view="draw"] .rows,.work[data-view="draw"] .chat,
+  .work[data-view="chat"] .rows,.work[data-view="chat"] .draw{display:none}
+  .rhead{display:none}
+  .row{grid-template-columns:22px minmax(0,1fr) auto;padding:11px 12px}
+  .row .c-qty,.row .c-unit{display:none}
+  .mmeta{display:block;font-size:12px;color:var(--fg-3);font-variant-numeric:tabular-nums;margin-top:2px}
+  .prog{margin-inline-start:0;width:100%}
+  .pbar{flex:1}
+  .chatlog{max-height:none;min-height:240px}
+  .foot .kb{display:none}
+  .tot{gap:14px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="app" id="app">
+  <header class="top">
+    <div class="id">
+      <svg class="mark" viewBox="0 0 30 30" aria-hidden="true"><rect width="30" height="30" rx="7"/><path d="M8 9h14M8 15h14M8 21h14M12 9v12M18 9v12"/></svg>
+      <div>
+        <div class="brand">קונבורו</div>
+        <div class="proj" id="proj">בניין מגורים, רחוב הרצל 12 · הצעה 2291 · נתוני דוגמה</div>
+      </div>
+      <span class="vpill" id="vpill">טיוטה · גרסה 1</span>
+      <div class="seg demo" id="demoSeg" role="group" aria-label="מצב הדגמה"></div>
+    </div>
+    <div class="tot" id="tot"></div>
+    <button class="btn primary" id="sendBtn" type="button">אשר ושלח</button>
+  </header>
+
+  <div class="bar">
+    <div class="seg" role="tablist" aria-label="לוחות" id="panelTabs"></div>
+    <div class="filters" id="filters"></div>
+    <div class="prog" id="prog"></div>
+  </div>
+
+  <div class="viewtabs" role="tablist" aria-label="תצוגה" id="viewtabs">
+    <button type="button" role="tab" data-view="rows">שורות</button>
+    <button type="button" role="tab" data-view="draw">שרטוט</button>
+    <button type="button" role="tab" data-view="chat">צ׳אט</button>
+  </div>
+
+  <main class="work" id="work" data-view="rows">
+    <section class="pane rows" id="rowsPane" aria-label="שורות ההצעה"></section>
+
+    <section class="pane draw" id="drawPane" aria-label="שרטוט">
+      <div class="dtool">
+        <div class="pnav"><button class="btn sm" type="button" id="pgPrev" aria-label="העמוד הקודם">→</button><span class="dpage" id="dpage"></span><button class="btn sm" type="button" id="pgNext" aria-label="העמוד הבא">←</button></div>
+        <div class="dbtns">
+          <button class="btn sm" type="button" id="zOut" aria-label="הקטנה">−</button>
+          <button class="btn sm" type="button" id="zIn" aria-label="הגדלה">+</button>
+          <button class="btn sm" type="button" id="zFit">התאם</button>
+          <button class="btn sm" type="button" id="drawBtn" aria-pressed="false">סמן רכיב שפוספס</button>
+        </div>
+      </div>
+      <div class="pstrip" id="pstrip" aria-label="עמודי השרטוט"></div>
+      <div class="pmeta" id="pmeta"></div>
+      <div class="canvas" id="canvas"><svg id="svg" role="img" aria-label="שרטוט חד-קווי של הלוח, עם הרכיבים שזוהו" direction="ltr"></svg></div>
+      <div class="dhint" id="dhint"></div>
+    </section>
+
+    <section class="pane chat" id="chatPane" aria-label="צ׳אט">
+      <div class="chathead"><span>צ׳אט על ההצעה</span><span style="font-size:12px;color:var(--fg-3)">כל שינוי מוצג לאישור</span></div>
+      <div class="chatlog" id="chatlog" aria-live="polite"></div>
+      <div class="sugg" id="sugg"></div>
+      <form class="chatform" id="chatForm" autocomplete="off">
+        <input id="chatIn" type="text" placeholder="תחליף את כל המא״זים לשניידר" aria-label="הודעה לצ׳אט">
+        <button class="btn primary" type="submit">שלח</button>
+      </form>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <span class="kb">מקלדת: <kbd>↓</kbd> <kbd>↑</kbd> מעבר בין שורות · <kbd>Enter</kbd> אישור · <kbd>1</kbd>–<kbd>3</kbd> חלופה · <kbd>Delete</kbd> מחיקה · <kbd>PgUp</kbd> <kbd>PgDn</kbd> עמודים · <kbd>/</kbd> צ׳אט ·<kbd>Esc</kbd> סגירה</span>
+    <span>הבודק עוזר לתפוס טעויות בפענוח ובהצעה. הוא אינו אישור הנדסי של התכנון.</span>
+    <span>מק״טים, מחירים ושרטוטים בעמוד הם נתוני דוגמה.</span>
+  </footer>
+</div>
+<div id="layer"></div>
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script>
+document.documentElement.lang='he';document.documentElement.dir='rtl';
+
+/* ---------- reference data (sample) ---------- */
+const BR={Schneider:'שניידר',ABB:'ABB',Hager:'האגר','—':'כללי'};
+const CAT=[
+ {sku:'SE-C60-1C10-6',fam:'mcb',brand:'Schneider',poles:1,curve:'C',a:10,bc:6,mod:1,cost:18.50},
+ {sku:'SE-C60-1C16-6',fam:'mcb',brand:'Schneider',poles:1,curve:'C',a:16,bc:6,mod:1,cost:19.20},
+ {sku:'SE-C60-1C16-10',fam:'mcb',brand:'Schneider',poles:1,curve:'C',a:16,bc:10,mod:1,cost:27.90},
+ {sku:'SE-C60-1C20-6',fam:'mcb',brand:'Schneider',poles:1,curve:'C',a:20,bc:6,mod:1,cost:19.60},
+ {sku:'SE-C60-1C25-6',fam:'mcb',brand:'Schneider',poles:1,curve:'C',a:25,bc:6,mod:1,cost:21.00},
+ {sku:'SE-C60-1C50-6',fam:'mcb',brand:'Schneider',poles:1,curve:'C',a:50,bc:6,mod:1,cost:34.00},
+ {sku:'SE-C60-3C16-6',fam:'mcb',brand:'Schneider',poles:3,curve:'C',a:16,bc:6,mod:3,cost:68.00},
+ {sku:'SE-C60-3C16-10',fam:'mcb',brand:'Schneider',poles:3,curve:'C',a:16,bc:10,mod:3,cost:92.00},
+ {sku:'SE-C60-3C25-6',fam:'mcb',brand:'Schneider',poles:3,curve:'C',a:25,bc:6,mod:3,cost:72.50},
+ {sku:'SE-C60-3C25-10',fam:'mcb',brand:'Schneider',poles:3,curve:'C',a:25,bc:10,mod:3,cost:97.00},
+ {sku:'SE-C60-3C40-6',fam:'mcb',brand:'Schneider',poles:3,curve:'C',a:40,bc:6,mod:3,cost:96.00},
+ {sku:'ABB-S201-C10',fam:'mcb',brand:'ABB',poles:1,curve:'C',a:10,bc:6,mod:1,cost:17.90},
+ {sku:'ABB-S201-C16',fam:'mcb',brand:'ABB',poles:1,curve:'C',a:16,bc:6,mod:1,cost:18.40},
+ {sku:'ABB-S201-C20',fam:'mcb',brand:'ABB',poles:1,curve:'C',a:20,bc:6,mod:1,cost:18.90},
+ {sku:'ABB-S203-C16',fam:'mcb',brand:'ABB',poles:3,curve:'C',a:16,bc:6,mod:3,cost:66.00},
+ {sku:'HG-MCN-1C16',fam:'mcb',brand:'Hager',poles:1,curve:'C',a:16,bc:6,mod:1,cost:20.10},
+ {sku:'HG-MCN-1C20',fam:'mcb',brand:'Hager',poles:1,curve:'C',a:20,bc:6,mod:1,cost:20.40},
+ {sku:'HG-MCN-3C25',fam:'mcb',brand:'Hager',poles:3,curve:'C',a:25,bc:6,mod:3,cost:75.50},
+ {sku:'SE-ID-4P40-30A',fam:'rcd',brand:'Schneider',poles:4,a:40,ma:30,type:'A',mod:4,cost:214.00},
+ {sku:'SE-ID-2P25-30A',fam:'rcd',brand:'Schneider',poles:2,a:25,ma:30,type:'A',mod:2,cost:148.00},
+ {sku:'ABB-F204-40-30A',fam:'rcd',brand:'ABB',poles:4,a:40,ma:30,type:'A',mod:4,cost:205.00},
+ {sku:'HG-SB-3P63',fam:'switch',brand:'Hager',poles:3,a:63,mod:3,cost:165.00},
+ {sku:'SE-ISW-3P63',fam:'switch',brand:'Schneider',poles:3,a:63,mod:3,cost:172.00},
+ {sku:'SE-ENC-36',fam:'enclosure',brand:'Schneider',mods:36,cost:610},
+ {sku:'SE-ENC-54',fam:'enclosure',brand:'Schneider',mods:54,cost:820},
+ {sku:'SE-ENC-72',fam:'enclosure',brand:'Schneider',mods:72,cost:1040},
+ {sku:'GEN-TB-4',fam:'terminal',brand:'—',cost:3.20},
+ {sku:'GEN-LBL',fam:'label',brand:'—',cost:1.50},
+ {sku:'LABOR-H',fam:'labor',brand:'—',cost:140}
+];
+const MARKUP={mcb:.28,rcd:.25,switch:.22,enclosure:.15,terminal:.40,label:.50,labor:.35};
+const RULE_NAME={mcb:'מא״זים',rcd:'מפסקי פחת',switch:'מנתקים',enclosure:'ארונות',terminal:'מהדקים',label:'שילוט',labor:'עבודה'};
+const PREF={mcb:'Schneider',rcd:'Schneider',switch:'Hager'};
+const FAMNAME={mcb:'מא״זים',rcd:'מפסקי פחת',switch:'מנתקים'};
+const item=sku=>CAT.find(c=>c.sku===sku);
+
+/* tenant price list: built from use (spec 10) */
+const LISTDISC={Schneider:.32,ABB:.30,Hager:.28};
+CAT.forEach(c=>{const d=LISTDISC[c.brand];c.list=d!=null?Math.round(c.cost/(1-d)*100)/100:null});
+const PREF0={...PREF};
+const T={mode:'existing',prices:{},disc:{},margin:null,quoteNo:2291,quoteIdx:null,suppliers:['ספק א׳','ספק ב׳'],lastSupplier:''};
+function seedExisting(){T.mode='existing';T.prices={};CAT.forEach(c=>T.prices[c.sku]={cost:c.cost,supplier:'ספק א׳',date:'1.9.2026',src:'price_list'});T.disc={};T.margin=null;T.quoteNo=2291;T.quoteIdx=null}
+function seedNew(m){T.mode='new';T.prices={};T.disc={};T.margin=m;T.quoteNo=1;T.quoteIdx=1}
+seedExisting();
+function priceOf(sku){
+  const it=item(sku);if(!it)return {cost:null,status:'missing'};
+  const p=T.prices[sku];if(p)return {...p,status:'ok'};
+  const d=T.disc[it.brand];if(d!=null&&it.list)return {cost:Math.round(it.list*(1-d)*100)/100,status:'disc',src:'brand_discount',pct:d};
+  return {cost:null,status:'missing'};
+}
+const markupOf=it=>T.margin!=null?T.margin:MARKUP[it.fam];
+const upItem=c=>{const p=priceOf(c.sku);return p.cost==null?null:Math.round(p.cost*(1+markupOf(c))*100)/100};
+
+/* ---------- drawing pages (sample) ---------- */
+const PANELS={p1:{name:'לוח ראשי'},p2:{name:'לוח קומה 2'}};
+function c16(cx,y){return {x:cx-15,y,w:30,h:48,k:'mcb1'}}
+const KIND={single_line:'חד-קווי',legend:'מקרא',notes:'הערות כלליות',bom:'כתב כמויות',cover:'שער'};
+const ROUTE={process:'מפוענח',context:'הקשר',skip:'דולג'};
+const ROUTE_OF={single_line:'process',legend:'context',notes:'context',bom:'context',cover:'skip'};
+function rtl(x,y,t,cls='ctxt'){return `<text class="${cls}" x="${x}" y="${y}" direction="rtl" text-anchor="start">${esc(t)}</text>`}
+function mid(x,y,t,cls='ctxt'){return `<text class="${cls}" x="${x}" y="${y}" text-anchor="middle" direction="rtl">${esc(t)}</text>`}
+const PAGES=[
+ {id:'pg1',conf:0.98,no:1,kind:'cover',route:'skip',sheet:'E-100',W:960,H:430,hint:'דולג בסיווג: עמוד שער. לא מפוענח.',
+  ctx:()=>`<rect class="w" x="24" y="24" width="912" height="382"/>`+mid(480,170,'תוכניות לוחות חשמל','ctxh')+mid(480,208,'בניין מגורים, רחוב הרצל 12')+mid(480,244,'כהן הנדסת חשמל · גיליונות E-100 עד E-105 · גרסה C · 14.9.2026','ctxs')},
+ {id:'pg2',conf:0.95,no:2,kind:'legend',route:'context',sheet:'E-101',W:960,H:430,hint:'עמוד הקשר: המקרא נשלח לזיהוי הסימנים כדוגמאות לשרטוט הזה. לא נספרים ממנו רכיבים.',
+  ctx:()=>{let g=rtl(920,56,'מקרא סימנים','ctxh');
+   [['mcb1','מא״ז חד-קוטבי'],['mcb3','מא״ז תלת-קוטבי'],['rcd','מפסק פחת'],['switch','מנתק עומס'],['spd','מגן מתח יתר (סימון של המתכנן)']]
+    .forEach((it,i)=>{const y=100+i*62;g+=symSVG({x:it[0]==='mcb3'?866:870,y,w:it[0]==='mcb3'?40:30,h:44,k:it[0]})+rtl(830,y+28,it[1])});return g}},
+ {id:'pg3',conf:0.93,no:3,kind:'notes',route:'context',sheet:'E-102',W:960,H:430,hint:'עמוד הקשר: ההערות משמשות להשלמת תכונות חסרות ולבחירת מותג. לא נספרים ממנו רכיבים.',
+  ctx:()=>{let g=rtl(920,56,'הערות כלליות','ctxh');
+   ['1. כל הציוד יותקן לפי ת״י 61439.','2. מפסקי הפחת מסוג A, ברגישות 30mA, אלא אם צוין אחרת.','3. תוצרת שניידר או ש״ע, אלא אם צוין אחרת ליד הרכיב.','4. שלט חרוט לכל מעגל ולכל לוח.','5. רזרבה של 20% מקום פנוי בכל לוח.']
+    .forEach((t,i)=>g+=rtl(920,112+i*42,t));return g}},
+ {id:'pg4',conf:0.97,no:4,kind:'single_line',route:'process',sheet:'E-103',panels:['p1'],W:960,H:430,tb:'E-103 · לוח ראשי · גיליון 1 מתוך 2',
+  wires:[[480,8,480,52],[480,108,480,140],[200,140,200,172],[200,228,200,252],
+   ...[112,166,234,288].flatMap(x=>[[x,252,x,272],[x,320,x,372]]),...[380,440,500].flatMap(x=>[[x,140,x,172],[x,220,x,300]])],
+  buses:[[60,140,580,140,5],[96,252,304,252,3]],
+  syms:[{x:458,y:52,w:44,h:56,k:'switch'},{x:178,y:172,w:44,h:56,k:'rcd'},...[112,166,234,288].map(x=>c16(x,272)),...[380,440,500].map(x=>c16(x,172))],
+  labels:[[514,86,'3X63A','start'],[230,204,'4X40A 30mA A','start'],...[112,166,234,288].map(x=>[x,340,'C16']),...[380,440,500].map(x=>[x,238,'C10']),[524,204,'6kA','start']],
+  hlabels:[[530,30,'הזנה'],[680,145,'המשך בגיליון E-104']],
+  clabels:[...[112,166,234,288].map((x,i)=>[x,392,'תאורה '+(i+1)]),...[380,440,500].map((x,i)=>[x,318,'שקע '+(i+1)])]},
+ {id:'pg5',conf:.91,scanned:true,quality:'low',no:5,kind:'single_line',route:'process',sheet:'E-104',panels:['p1','p2'],W:960,H:430,tb:'E-104 · לוח ראשי (המשך) ולוח קומה 2',
+  boxes:{p1:[16,16,440,398],p2:[472,16,472,398]},
+  wires:[[120,140,120,172],[120,226,120,300],[240,140,240,172],[240,226,240,300],[360,140,360,172],[360,220,360,300],
+   [700,56,700,76],[700,126,700,150],[560,150,560,176],[560,228,560,252],
+   ...[530,580,630,680,730,790].flatMap(x=>[[x,252,x,272],[x,320,x,372]]),[880,150,880,176],[880,224,880,300]],
+  buses:[[40,140,430,140,5],[490,150,930,150,5],[510,252,820,252,3]],
+  syms:[{x:100,y:172,w:40,h:54,k:'mcb3'},{x:220,y:172,w:40,h:54,k:'mcb3'},c16(360,172),
+   {x:680,y:76,w:40,h:50,k:'mcb3'},{x:538,y:176,w:44,h:52,k:'rcd'},...[530,580,630,680,730,790].map(x=>c16(x,272)),{x:865,y:176,w:30,h:48,k:'mcb1'}],
+  labels:[[120,246,'3X C16 6kA'],[120,264,'×2'],[240,246,'C25 3P 6kA'],[240,264,'ABB'],[360,238,'C20'],
+   [728,104,'C40 3P 6kA','start'],[588,206,'2X25A 30mA A','start'],...[530,580,630,680,730].map(x=>[x,340,'C16']),[790,340,'C'],[506,300,'6kA','end'],[880,242,'C50']],
+  hlabels:[[130,124,'המשך מגיליון E-103']],
+  clabels:[[120,318,'מזגנים'],[240,318,'משאבה'],[360,318,'דוד חשמל'],...[530,580,630,680,730].map((x,i)=>[x,392,'חדר '+(i+1)]),[790,392,'מטבח'],[880,318,'תנור']]},
+ {id:'pg6',conf:0.94,no:6,kind:'bom',route:'context',sheet:'E-105',W:960,H:430,hint:'עמוד הקשר: כתב הכמויות של המתכנן משמש את הבודק להשוואה מול ההצעה. לא נספרים ממנו רכיבים.',
+  ctx:()=>{let g=rtl(920,50,'כתב כמויות','ctxh');
+   const rows=[['לוח ראשי','מנתק עומס 3X63A','1'],['לוח ראשי','מפסק פחת 4X40A 30mA','1'],['לוח ראשי','מא״ז C16','4'],['לוח ראשי','מא״ז C10','3'],['לוח ראשי','מא״ז 3X16A','3'],['לוח ראשי','מא״ז 3X25A','1'],['לוח ראשי','מא״ז C20','1'],
+     ['לוח קומה 2','מא״ז 3X40A','1'],['לוח קומה 2','מפסק פחת 2X25A 30mA','1'],['לוח קומה 2','מא״ז C16','6'],['לוח קומה 2','מא״ז C20','1']];
+   g+=rtl(920,86,'פריט','ctxs')+rtl(420,86,'לוח','ctxs')+mid(140,86,'כמות','ctxs')+`<line class="trow" x1="60" x2="930" y1="95" y2="95"/>`;
+   rows.forEach((r,i)=>{const y=118+i*27;g+=rtl(920,y,r[1])+rtl(420,y,r[0])+mid(140,y,r[2])+`<line class="trow" x1="60" x2="930" y1="${y+9}" y2="${y+9}"/>`});return g}},
+ {id:'pg7',conf:.58,no:7,kind:'notes',route:'context',sheet:'E-106',W:960,H:430,hint:'עמוד הקשר: ההערות משמשות להשלמת תכונות חסרות ולבחירת מותג. לא נספרים ממנו רכיבים.',
+  ctx:()=>{let g='';
+   [[230,70,230,96],[230,146,230,180],...[140,230,320].flatMap(x=>[[x,180,x,206],[x,254,x,320]])].forEach(l=>g+=`<line class="w" x1="${l[0]}" y1="${l[1]}" x2="${l[2]}" y2="${l[3]}"/>`);
+   g+=`<line class="bus" x1="80" y1="180" x2="380" y2="180" stroke-width="5"/>`;
+   [{x:210,y:96,w:40,h:50,k:'mcb3'},...[140,230,320].map(x=>c16(x,206))].forEach(s=>g+=symSVG(s));
+   [[258,126,'C25 3P 6kA','start'],[140,272,'C10 6kA'],[230,272,'C10 6kA'],[320,272,'C16 6kA']].forEach(l=>g+=`<text class="lbl" x="${l[0]}" y="${l[1]}" text-anchor="${l[3]||'middle'}">${esc(l[2])}</text>`);
+   g+=mid(140,340,'תאורת חירום','clbl')+mid(230,340,'שלטי יציאה','clbl')+mid(320,340,'משאבת ניקוז','clbl')+mid(230,52,'הזנה מגנרטור','clbl');
+   g+=rtl(920,56,'לוח חירום','ctxh')+rtl(920,104,'הזנה מגנרטור דרך מחליף ידני.')+rtl(920,140,'המעגלים בלוח זה ממשיכים לעבוד בהפסקת חשמל.')+rtl(920,176,'מיקום הלוח בתיאום עם יועץ הבטיחות.');
+   g+=`<text class="tb" x="944" y="418" text-anchor="end">E-106 · לוח חירום</text>`;return g},
+  pending:{panel:'p3',name:'לוח חירום',
+   rows:[
+    {id:'p3-main',panel:'p3',type:'component',fam:'mcb',isMain:true,attrs:{poles:3,curve:'C',a:25,bc:6},src:{a:['drawing','C25'],curve:['drawing','C25'],poles:['drawing','3P'],bc:['drawing','6kA']},qty:1,sku:'SE-C60-3C25-6',conf:.94},
+    {id:'p3-c10',panel:'p3',type:'component',fam:'mcb',attrs:{poles:1,curve:'C',a:10,bc:6},src:{a:['drawing','C10'],curve:['drawing','C10'],poles:['graphic','סימן חד-קוטבי'],bc:['drawing','6kA']},qty:2,sku:'SE-C60-1C10-6',conf:.93},
+    {id:'p3-c16',panel:'p3',type:'component',fam:'mcb',attrs:{poles:1,curve:'C',a:16,bc:6},src:{a:['drawing','C16'],curve:['drawing','C16'],poles:['graphic','סימן חד-קוטבי'],bc:['drawing','6kA']},qty:1,sku:'SE-C60-1C16-6',conf:.92}],
+   inst:[{id:'i3-main',page:'pg7',row:'p3-main',x:210,y:96,w:40,h:50},{id:'i3-c10-1',page:'pg7',row:'p3-c10',x:125,y:206,w:30,h:48},
+    {id:'i3-c10-2',page:'pg7',row:'p3-c10',x:215,y:206,w:30,h:48},{id:'i3-c16',page:'pg7',row:'p3-c16',x:305,y:206,w:30,h:48}]}}
+];
+function bb(s){return {x:s.x,y:s.y,w:s.w,h:s.h}}
+const P4=PAGES[3].syms,P5=PAGES[4].syms;
+let INST=[
+ {id:'i-main',page:'pg4',row:'p1-main',...bb(P4[0])},
+ {id:'i-rcd',page:'pg4',row:'p1-rcd',...bb(P4[1])},
+ ...[2,3,4,5].map((n,i)=>({id:'i-c16-'+(i+1),page:'pg4',row:'p1-c16',...bb(P4[n])})),
+ ...[6,7,8].map((n,i)=>({id:'i-c10-'+(i+1),page:'pg4',row:'p1-c10',...bb(P4[n])})),
+ {id:'i-3p16',page:'pg5',row:'p1-3p16',...bb(P5[0])},
+ {id:'i-3p25',page:'pg5',row:'p1-3p25',...bb(P5[1])},
+ {id:'i-miss',page:'pg5',row:'p1-miss',...bb(P5[2])},
+ {id:'i2-main',page:'pg5',row:'p2-main',...bb(P5[3])},
+ {id:'i2-rcd',page:'pg5',row:'p2-rcd',...bb(P5[4])},
+ ...[5,6,7,8,9].map((n,i)=>({id:'i2-c16-'+(i+1),page:'pg5',row:'p2-c16',...bb(P5[n])})),
+ {id:'i2-noa',page:'pg5',row:'p2-noa',...bb(P5[10])},
+ {id:'i2-c50',page:'pg5',row:'p2-c50',...bb(P5[11])}
+];
+
+/* ---------- quote rows (sample pipeline output) ---------- */
+let ROWS=[
+ {id:'p1-main',panel:'p1',type:'component',fam:'switch',isMain:true,attrs:{poles:3,a:63},src:{a:['drawing','3X63A'],poles:['drawing','3X63A']},qty:1,sku:'HG-SB-3P63',conf:.97},
+ {id:'p1-rcd',panel:'p1',type:'component',fam:'rcd',attrs:{poles:4,a:40,ma:30,type:'A'},src:{a:['cad','4X40A'],poles:['cad','4X'],ma:['cad','30mA'],type:['cad','A']},qty:1,sku:'SE-ID-4P40-30A',conf:.96},
+ {id:'p1-c16',panel:'p1',type:'component',fam:'mcb',attrs:{poles:1,curve:'C',a:16,bc:6},src:{a:['drawing','C16'],curve:['drawing','C16'],poles:['graphic','סימן חד-קוטבי'],bc:['default','']},qty:4,sku:'SE-C60-1C16-6',conf:.92},
+ {id:'p1-c10',panel:'p1',type:'component',fam:'mcb',attrs:{poles:1,curve:'C',a:10,bc:6},src:{a:['drawing','C10'],curve:['drawing','C10'],poles:['graphic','סימן חד-קוטבי'],bc:['shared','6kA']},qty:3,sku:'SE-C60-1C10-6',conf:.93},
+ {id:'p1-3p16',panel:'p1',type:'component',fam:'mcb',attrs:{poles:3,curve:'C',a:16,bc:6},src:{a:['drawing','3X C16'],curve:['drawing','C16'],poles:['drawing','3X'],bc:['drawing','6kA']},qty:2,mult:'×2',sku:'SE-C60-3C16-6',conf:.92,bomQty:3},
+ {id:'p1-3p25',panel:'p1',type:'component',fam:'mcb',attrs:{poles:3,curve:'C',a:25,bc:6},src:{a:['drawing','C25'],curve:['drawing','C25'],poles:['drawing','3P'],bc:['drawing','6kA']},qty:1,brandHint:'ABB',subst:{req:'ABB',got:'Schneider'},sku:'SE-C60-3C25-6',conf:.91},
+ {id:'p1-miss',panel:'p1',type:'missing',fam:'mcb',attrs:{poles:1,curve:'C',a:20,bc:6},near:'C20',qty:1,sku:null,conf:.35},
+ {id:'p2-main',panel:'p2',type:'component',fam:'mcb',isMain:true,attrs:{poles:3,curve:'C',a:40,bc:6},src:{a:['drawing','C40'],curve:['drawing','C40'],poles:['drawing','3P'],bc:['drawing','6kA']},qty:1,sku:'SE-C60-3C40-6',conf:.96},
+ {id:'p2-rcd',panel:'p2',type:'component',fam:'rcd',attrs:{poles:2,a:25,ma:30,type:'A'},src:{a:['drawing','2X25A'],poles:['drawing','2X'],ma:['drawing','30mA'],type:['drawing','A']},qty:1,sku:'SE-ID-2P25-30A',conf:.95},
+ {id:'p2-c16',panel:'p2',type:'component',fam:'mcb',attrs:{poles:1,curve:'C',a:16,bc:6},src:{a:['drawing','C16'],curve:['drawing','C16'],poles:['graphic','סימן חד-קוטבי'],bc:['shared','6kA']},qty:5,sku:'SE-C60-1C16-6',conf:.94},
+ {id:'p2-noa',panel:'p2',type:'component',fam:'mcb',attrs:{poles:1,curve:'C',a:null,bc:6},src:{a:['none',''],curve:['drawing','C'],poles:['graphic','סימן חד-קוטבי'],bc:['shared','6kA']},qty:1,sku:null,noMatch:'לא כתוב זרם ליד הרכיב',conf:.62},
+ {id:'p2-c50',panel:'p2',type:'component',fam:'mcb',attrs:{poles:1,curve:'C',a:50,bc:6},src:{a:['ocr','C50',.71],curve:['ocr','C50',.71],poles:['graphic','סימן חד-קוטבי'],bc:['drawing','6kA']},qty:1,sku:'SE-C60-1C50-6',conf:.71,bomA:20}
+];
+
+/* ---------- state ---------- */
+const S={panel:'p1',page:'pg4',filter:'all',sel:null,view:'rows',zoom:1,center:null,draw:false,sent:false,version:1,sheet:false,modal:null,
+  dismissed:new Set(),delDerived:new Set(),undo:[],chat:[],kbd:false};
+const mq=matchMedia('(max-width: 860px)');
+const isPhone=()=>mq.matches;
+
+/* ---------- helpers ---------- */
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const r2=n=>Math.round(n*100)/100;
+const ILS=new Intl.NumberFormat('he-IL',{style:'currency',currency:'ILS',minimumFractionDigits:2,maximumFractionDigits:2});
+const fmt=n=>n==null?'—':ILS.format(n);
+const pct=n=>(Math.round(n*1000)/10).toLocaleString('he-IL')+'%';
+function descOf(it){
+  if(!it) return '';
+  switch(it.fam){
+    case 'mcb':return `מא״ז ${it.poles}P ${it.a}A עקומה ${it.curve} ${it.bc}kA`;
+    case 'rcd':return `מפסק פחת ${it.poles}P ${it.a}A ${it.ma}mA סוג ${it.type}`;
+    case 'switch':return `מנתק עומס ${it.poles}P ${it.a}A`;
+    case 'enclosure':return `ארון ${it.mods} מודולים`;
+    case 'terminal':return 'מהדק 4 ממ״ר';
+    case 'label':return 'שלט חריטה';
+    case 'labor':return 'עבודה: הרכבה וחיווט';
+  }
+}
+function descAttrs(fam,at){
+  if(fam==='mcb') return `מא״ז ${at.poles}P ${at.a?at.a+'A ':''}עקומה ${at.curve}${at.bc?' '+at.bc+'kA':''}`;
+  if(fam==='rcd') return `מפסק פחת ${at.poles}P ${at.a}A ${at.ma}mA`;
+  return `מנתק ${at.poles}P ${at.a}A`;
+}
+function candidates(fam,at){
+  return CAT.filter(c=>c.fam===fam&&c.poles===at.poles&&c.a===at.a&&
+    (fam!=='mcb'||(c.curve===at.curve&&c.bc>=(at.bc||0)))&&
+    (fam!=='rcd'||(c.ma===at.ma&&c.type===at.type)));
+}
+function rank(fam,at,brand){
+  const pref=PREF[fam];
+  return candidates(fam,at).sort((x,y)=>{
+    const s=c=>(c.brand===brand?100:0)+(c.brand===pref?10:0)-((c.bc||0)-(at.bc||0))-c.cost/1000;
+    return s(y)-s(x);
+  });
+}
+function rematch(r){
+  const req=r.brandUser||r.brandHint;
+  const brand=req||PREF[r.fam];
+  if(r.attrs.a==null){r.sku=null;r.subst=null;r.noMatch='לא כתוב זרם ליד הרכיב';return}
+  const list=rank(r.fam,r.attrs,brand);
+  if(!list.length){r.sku=null;r.subst=null;r.noMatch=`אין בקטלוג ${descAttrs(r.fam,r.attrs)}`;return}
+  const it=list[0];r.sku=it.sku;r.noMatch=null;
+  r.subst=(req&&it.brand!==req)?{req,got:it.brand}:null;
+  if(r.fam==='mcb'&&it.bc!==r.attrs.bc){r.src.bc=['upgrade',r.attrs.bc+'kA'];r.attrs.bc=it.bc}
+}
+const unitPrice=r=>{const it=item(r.sku);return it?upItem(it):null};
+const sig=r=>[r.fam,r.attrs.poles,r.attrs.a,r.attrs.curve,r.attrs.bc,r.attrs.ma].join('|');
+
+/* validator: static issues + one live rule */
+function issuesOf(r){
+  const out=[...(r.issues||[])];
+  if(r.bomQty!=null&&r.qty!==r.bomQty)out.push({rule:'BOM_QTY_DIFF',sev:'warning',page:'pg6',msg:`בכתב הכמויות של המתכנן: ${r.bomQty} יחידות. בהצעה: ${r.qty}`});
+  if(r.bomA!=null&&r.attrs.a!==r.bomA)out.push({rule:'BOM_ATTR_DIFF',sev:'warning',page:'pg6',msg:`בכתב הכמויות של המתכנן: ${r.bomA}A. בשרטוט נקרא ${r.attrs.a}A`});
+  if(r.fam==='mcb'&&!r.isMain&&r.type!=='missing'&&r.attrs.a){
+    const main=ROWS.find(x=>x.panel===r.panel&&x.isMain&&!x.deleted);
+    if(main&&main.attrs.a&&r.attrs.a>main.attrs.a)
+      out.push({rule:'PANEL_OUTGOING_GT_MAIN',sev:'error',msg:`מא״ז ${r.attrs.a}A גבוה מהמפסק הראשי של הלוח (${main.attrs.a}A)`});
+  }
+  return out.filter(i=>!S.dismissed.has(r.id+'|'+i.rule));
+}
+const ATTRWORD={a:'זרם',poles:'קטבים',curve:'עקומה',bc:'כושר ניתוק',ma:'רגישות',type:'סוג'};
+function attrVal(k,v){if(v==null)return '—';return k==='a'?v+'A':k==='poles'?v+'P':k==='bc'?v+'kA':k==='ma'?v+'mA':k==='curve'?v:k==='type'?v:v}
+
+function statusOf(r){
+  if(r.type==='derived'){if(r.missingEnc)return {lvl:2,tags:[['bad','לא נמצא ארון מתאים']]};const p=priceOf(r.sku);return p.status==='missing'?{lvl:2,tags:[['bad','אין מחיר']]}:p.status==='disc'?{lvl:1,tags:[['warn','מחיר: הנחה ממחירון יצרן']]}:{lvl:0,tags:[]}}
+  if(r.type==='missing') return {lvl:2,tags:[['bad',`לא זוהה. ליד ״${r.near}״`]]};
+  const tags=[];let lvl=0;const up=l=>{lvl=Math.max(lvl,l)};
+  if(!r.sku){tags.push(['bad',r.noMatch||'אין מוצר מתאים']);up(2)}
+  let pt=null;if(r.sku){const p=priceOf(r.sku);if(p.status==='missing')pt=['bad','אין מחיר',2];else if(p.status==='disc')pt=['warn','מחיר: הנחה ממחירון יצרן',1]}
+  if(r.confirmed&&r.sku) return pt?{lvl:pt[2],tags:[['ok','אושר'],[pt[0],pt[1]]]}:{lvl:0,tags:[['ok','אושר']]};
+  if(pt){tags.push([pt[0],pt[1]]);up(pt[2])}
+  for(const k in (r.src||{})){
+    const s=r.src[k];
+    if(s[0]==='default'){tags.push(['warn',`${attrVal(k,r.attrs[k])}: ברירת מחדל`]);up(1)}
+    if(s[0]==='upgrade'){tags.push(['warn',`${attrVal(k,r.attrs[k])} במקום ${s[1]}`]);up(1)}
+  }
+  if(r.subst){tags.push(['warn',`בשרטוט: ${BR[r.subst.req]} · נבחר: ${BR[r.subst.got]}`]);up(1)}
+  if(r.conf<.85&&!r.userEdited&&r.sku){tags.push(['warn',`ביטחון קריאה ${r.conf.toFixed(2)}`]);up(1)}
+  for(const i of issuesOf(r)){tags.push([i.sev==='error'?'bad':'warn',i.msg]);up(i.sev==='error'?2:1)}
+  if(r.type==='manual') tags.unshift(['ok','נוסף ידנית']);
+  return {lvl,tags};
+}
+
+/* derived items, recomputed from the components */
+function derivedRows(panel){
+  const comps=ROWS.filter(r=>r.panel===panel&&!r.deleted&&r.type!=='missing'&&r.sku);
+  let mods=0,outs=0,hrs=2;
+  comps.forEach(r=>{const it=item(r.sku);mods+=(it.mod||0)*r.qty;if(r.fam==='mcb'&&!r.isMain)outs+=r.qty;hrs+=r.qty*({mcb:.15,rcd:.3,switch:.5}[r.fam]||.2)});
+  const need=Math.ceil(mods*1.2);
+  const enc=CAT.filter(c=>c.fam==='enclosure'&&c.mods>=need).sort((a,b)=>a.mods-b.mods)[0];
+  const out=[];
+  out.push(enc?{id:panel+'-enc',sku:enc.sku,qty:1,explain:`${mods} מודולים ברכיבים + 20% רזרבה = ${need}. נבחר הארון הקטן ביותר שמתאים`}
+             :{id:panel+'-enc',sku:null,qty:1,missingEnc:true,explain:`אין בקטלוג ארון ל-${need} מודולים`});
+  out.push({id:panel+'-term',sku:'GEN-TB-4',qty:outs*2,explain:`2 מהדקים לכל יציאה (${outs} יציאות)`});
+  out.push({id:panel+'-lbl',sku:'GEN-LBL',qty:outs+1,explain:'שלט לכל יציאה ושלט ללוח'});
+  out.push({id:panel+'-labor',sku:'LABOR-H',qty:Math.round(hrs*10)/10,explain:`${(Math.round(hrs*10)/10).toLocaleString('he-IL')} שעות לפי סוגי הרכיבים וכמויותיהם`});
+  return out.map(d=>({...d,panel,type:'derived',deleted:S.delDerived.has(d.id)}));
+}
+function lineOf(r){const u=unitPrice(r);const p=r.sku?priceOf(r.sku):{cost:null};return {u,total:u==null?null:r2(u*r.qty),cost:p.cost!=null?r2(p.cost*r.qty):0}}
+function panelLines(panel){
+  const comps=ROWS.filter(r=>r.panel===panel&&!r.deleted);
+  return {comps,der:derivedRows(panel).filter(d=>!d.deleted)};
+}
+function totals(panels){
+  let price=0,cost=0;
+  panels.forEach(p=>{const {comps,der}=panelLines(p);[...comps,...der].forEach(r=>{const l=lineOf(r);if(l.total!=null){price+=l.total;cost+=l.cost}})});
+  return {price:r2(price),cost:r2(cost),margin:price?(price-cost)/price:0};
+}
+
+/* ---------- undo + toast ---------- */
+function snap(){return JSON.stringify({ROWS,INST,d:[...S.dismissed],dd:[...S.delDerived],pg:PAGES.map(pageState),tp:T.prices,td:T.disc})}
+function push(label){S.undo.push({label,s:snap()});if(S.undo.length>30)S.undo.shift()}
+function undo(){
+  const u=S.undo.pop();if(!u)return;
+  const o=JSON.parse(u.s);ROWS=o.ROWS;INST=o.INST;S.dismissed=new Set(o.d);S.delDerived=new Set(o.dd);T.prices=o.tp;T.disc=o.td;S.processing=null;o.pg.forEach(st=>Object.assign(PAGES.find(p=>p.id===st.id),st));if(!availablePanels().includes(S.panel)){S.panel=availablePanels()[0];S.sel=null}
+  toast('השינוי בוטל');render();
+}
+let tTimer;
+function toast(msg,canUndo){
+  const t=$('toast');t.innerHTML=`<span>${esc(msg)}</span>${canUndo?'<button type="button" data-act="undo">בטל</button>':''}`;
+  t.hidden=false;clearTimeout(tTimer);tTimer=setTimeout(()=>{t.hidden=true},5000);
+}
+
+/* ---------- rows pane ---------- */
+const ICON=['<svg class="si ok" viewBox="0 0 20 20" role="img" aria-label="בטוח"><circle cx="10" cy="10" r="8"/><path d="M6.2 10.4l2.6 2.5 5-5.3"/></svg>',
+ '<svg class="si warn" viewBox="0 0 20 20" role="img" aria-label="לבדיקה"><path d="M10 2.6 18.3 17H1.7z"/><path d="M10 7.8v4.2M10 14.4v.2"/></svg>',
+ '<svg class="si bad" viewBox="0 0 20 20" role="img" aria-label="לא זוהה או שגוי"><circle cx="10" cy="10" r="8"/><path d="M7.2 7.2l5.6 5.6M12.8 7.2l-5.6 5.6"/></svg>'];
+const ICON_BOX='<svg class="si info" viewBox="0 0 20 20" role="img" aria-label="פריט נלווה"><path d="M3 6.5 10 3l7 3.5v7L10 17l-7-3.5z"/><path d="M3 6.5 10 10l7-3.5M10 10v7"/></svg>';
+function passes(lvl){const f=S.filter;return f==='all'||(f==='nop'&&lvl===2)||(f==='review'&&lvl>=1)||(f==='red'&&lvl===2)||(f==='yellow'&&lvl===1)||(f==='green'&&lvl===0)}
+function visibleRows(){
+  const {comps,der}=panelLines(S.panel);
+  const order=[...comps.filter(r=>r.type!=='missing'),...comps.filter(r=>r.type==='missing')];
+  const ok=r=>S.filter==='nop'?needsPrice(r):passes(statusOf(r).lvl);
+  return {comps:order.filter(ok),der:der.filter(ok),allDer:derivedRows(S.panel)};
+}
+function rowTitle(r){
+  if(r.type==='missing') return `רכיב שלא זוהה (נראה כמו ${descAttrs('mcb',r.attrs)})`;
+  if(!r.sku) return descAttrs(r.fam,r.attrs);
+  return descOf(item(r.sku));
+}
+function rowHTML(r){
+  const st=statusOf(r);const l=lineOf(r);const it=item(r.sku);
+  const sel=S.sel===r.id;
+  const icon=r.type==='derived'&&st.lvl===0?ICON_BOX:ICON[st.lvl];
+  const sub=[it?`<span class="mono">${esc(it.sku)}</span>`:'',it?`<span>${esc(BR[it.brand])}</span>`:'',r.mult?`<span>${esc(r.mult)} בשרטוט</span>`:'',pagesTxt(r.id)].join('');
+  const tags=st.tags.length?`<div class="tags">${st.tags.map(t=>`<span class="tag ${t[0]}">${esc(t[1])}</span>`).join('')}</div>`:'';
+  const qtyTxt=r.fam==='labor'||r.id.endsWith('-labor')?String(r.qty)+' ש׳':r.qty;
+  return `<div class="row${sel?' sel':''}" data-row="${r.id}" role="button" tabindex="0" aria-expanded="${sel}">
+    <div>${icon}</div>
+    <div style="min-width:0"><div class="desc">${esc(rowTitle(r))}</div><div class="sub">${sub}</div>
+      <div class="mmeta">${esc(qtyTxt)} × ${fmt(l.u)}</div>${tags}</div>
+    <div class="num c-qty">${esc(qtyTxt)}</div><div class="num c-unit">${fmt(l.u)}</div><div class="num"><b style="font-weight:500">${fmt(l.total)}</b></div>
+  </div>${sel&&!isPhone()?detailHTML(r):''}`;
+}
+function renderRows(){
+  const {comps,der,allDer}=visibleRows();
+  const removed=allDer.filter(d=>d.deleted);
+  let h='';
+  if(S.sent) h+=`<div class="lockbar"><span>ההצעה נשלחה ללקוח ונעולה. שינוי ייצור גרסה חדשה.</span><span class="acts"><button class="btn sm" type="button" data-act="newver">פתח גרסה ${S.version+1}</button>${T.mode==='new'?'<button class="btn sm primary" type="button" data-act="nextquote">הצעה הבאה לאותו מפעל</button>':''}</span></div>`;
+  const cov=coverage();
+  if(T.mode==='new'&&!S.sent&&cov<1) h+=T.quoteIdx===1
+    ?`<div class="newbar"><span>זו ההצעה הראשונה של המפעל. המחירים שתקלידו יישמרו במחירון שלכם וישמשו בכל ההצעות הבאות.</span><button class="btn sm" type="button" data-act="filter" data-f="nop">הצג רק שורות בלי מחיר</button></div>`
+    :`<div class="newbar"><span>המחירון שלכם נבנה מההצעות, ומכסה ${Math.round(cov*100)}% מהשורות בהצעה הזו.</span><button class="btn sm" type="button" data-act="reupload">העלה מחירון ספק</button></div>`;
+  h+=`<div class="rhead"><span></span><span>פריט</span><span class="num">כמות</span><span class="num">מחיר יחידה</span><span class="num">סכום</span></div>`;
+  h+=comps.length?comps.map(rowHTML).join(''):`<div class="empty">אין שורות שמתאימות לסינון. <button class="btn sm" type="button" data-act="fall">הצג הכל</button></div>`;
+  if(der.length||removed.length){
+    h+=`<div class="ghead"><span>פריטים נלווים ועבודה</span><span>מחושבים מהרכיבים</span></div>`+der.map(rowHTML).join('');
+    if(removed.length&&!S.sent) h+=`<div class="ghead" style="border-bottom:0"><span>${removed.length} פריטים נלווים הוסרו</span><button class="btn sm ghost" type="button" data-act="restoreall">החזר</button></div>`;
+  }
+  const t=totals([S.panel]);
+  h+=`<div class="subtot"><span>סה״כ ${esc(PANELS[S.panel].name)} לפני מע״מ</span><span class="num">${fmt(t.price)}</span></div>`;
+  $('rowsPane').innerHTML=h;
+}
+
+/* ---------- detail ---------- */
+const SRCTXT={drawing:e=>`נקרא מהשרטוט: ״${e}״`,cad:e=>`מאפיין בלוק CAD: ״${e}״`,graphic:e=>`סימון גרפי: ${e}`,shared:e=>`תווית משותפת לקבוצה: ״${e}״`,
+  ocr:(e,c)=>`נקרא ב-OCR: ״${e}״ (ביטחון ${c})`,default:()=>'לא כתוב בשרטוט. ברירת מחדל של המפעל',upgrade:e=>`אין בקטלוג ${e}. נבחר ערך גבוה יותר`,user:()=>'נקבע ידנית',none:()=>'לא נמצא בשרטוט'};
+function altsOf(r){
+  if(!r.sku||r.type!=='component'&&r.type!=='manual')return [];
+  const cur=item(r.sku);
+  return rank(r.fam,r.attrs,PREF[r.fam]).filter(c=>c.sku!==r.sku).sort((a,b)=>((a.bc||0)===(cur.bc||0)?0:1)-((b.bc||0)===(cur.bc||0)?0:1)).slice(0,3)
+    .map(c=>{const d=[];if(c.brand!==cur.brand)d.push(`${BR[c.brand]} במקום ${BR[cur.brand]}`);if(c.bc&&c.bc!==cur.bc)d.push(`${c.bc}kA במקום ${cur.bc}kA`);
+      const nu=upItem(c),cu=unitPrice(r);const du=nu==null||cu==null?null:nu-cu;return {c,diff:d.join(' · ')||'אותן תכונות',du}});
+}
+function sel(k,r,opts){
+  return `<select class="inl" data-act="setattr" data-k="${k}" data-id="${r.id}" aria-label="${ATTRWORD[k]}"${S.sent?' disabled':''}>${r.attrs[k]==null?'<option value="">בחרו</option>':''}${opts.map(o=>`<option value="${o}"${o===r.attrs[k]?' selected':''}>${attrVal(k,o)}</option>`).join('')}</select>`;
+}
+function detailHTML(r){
+  const lock=S.sent;
+  if(r.type==='derived'){
+    const it=item(r.sku);const l=lineOf(r);
+    return `<div class="detail"><div class="dsec"><h4>איך חושב</h4><div class="note">${esc(r.explain)}</div></div>
+     ${priceSec(r,lock)}
+     ${lock?'':`<div class="acts"><button class="btn sm danger" type="button" data-act="delete" data-id="${r.id}">הסר מההצעה</button></div>`}</div>`;
+  }
+  if(r.type==='missing'){
+    const sugg=rank('mcb',r.attrs,PREF.mcb).slice(0,3);
+    return `<div class="detail"><div class="dsec"><h4>מה נמצא</h4><div class="note">בשרטוט כתוב ״${esc(r.near)}״ ליד סימן שהזיהוי לא סימן. אם יש כאן רכיב, בחרו מוצר. אם לא, מחקו את השורה.</div></div>
+      ${lock?'':`<div class="dsec"><h4>מוצרים מתאימים ל-${esc(r.near)}</h4><div class="alts">${sugg.map((c,i)=>`<button class="alt" type="button" data-act="resolve" data-id="${r.id}" data-sku="${c.sku}"><b>${esc(descOf(c))}<kbd>${i+1}</kbd></b><span>${esc(BR[c.brand])} · ${fmt(upItem(c))}</span></button>`).join('')}</div></div>
+      <div class="acts"><button class="btn sm" type="button" data-act="picker" data-id="${r.id}">מוצר אחר…</button><button class="btn sm danger" type="button" data-act="delete" data-id="${r.id}">אין כאן רכיב</button>${isPhone()?`<button class="btn sm ghost" type="button" data-act="showdraw" data-id="${r.id}">הצג בשרטוט</button>`:''}</div>`}</div>`;
+  }
+  const it=item(r.sku);const l=lineOf(r);const iss=issuesOf(r);
+  const keys=r.fam==='mcb'?['a','poles','curve','bc']:r.fam==='rcd'?['a','poles','ma','type']:['a','poles'];
+  const attrs=keys.map(k=>{
+    const s=(r.src||{})[k]||['user',''];const t=(SRCTXT[s[0]]||SRCTXT.user)(s[1],s[2]);
+    let v=`<b style="font-weight:500">${attrVal(k,r.attrs[k])}</b>`;
+    if(r.fam==='mcb'&&k==='a') v=sel('a',r,[6,10,13,16,20,25,32,40,50,63]);
+    if(r.fam==='mcb'&&k==='bc') v=sel('bc',r,[6,10]);
+    const warn=s[0]==='default'||s[0]==='none'||s[0]==='ocr'||s[0]==='upgrade';
+    return `<div class="attr"><span class="k">${ATTRWORD[k]}</span><span class="v">${v}<span class="src${warn?' warn':''}">${esc(t)}</span></span></div>`;
+  }).join('');
+  const alts=altsOf(r);
+  const why=!it?esc(r.noMatch||'אין מוצר מתאים'):r.subst?`ליד הרכיב כתוב ${BR[r.subst.req]}, אבל אין ב-${BR[r.subst.req]} מוצר עם התכונות האלה בקטלוג. נבחר ${BR[r.subst.got]}, המותג המועדף של המפעל.`
+    :r.brandUser?`המותג נבחר ידנית: ${BR[r.brandUser]}.`:r.type==='manual'?'נוסף ידנית מהשרטוט.':`התאמה לפי תכונות. ${BR[it.brand]} הוא המותג המועדף של המפעל ל${FAMNAME[r.fam]||'משפחה הזו'}.`;
+  return `<div class="detail">
+    <div class="dsec"><h4>מה נקרא מהשרטוט</h4><div class="attrs">${attrs}</div></div>
+    <div class="dsec"><h4>התאמה לקטלוג</h4><div class="note">${why}</div></div>
+    ${iss.length?`<div class="dsec"><h4>ממצאי הבודק</h4>${iss.map(i=>`<div class="issue ${i.sev}"><span class="itext">${esc(i.msg)}</span>${i.page?`<button class="btn sm" type="button" data-act="page" data-pg="${i.page}" data-show="1">פתח את כתב הכמויות</button>`:''}${lock?'':`<select class="inl" aria-label="סיבת דחייה" id="dr-${r.id}-${i.rule}"><option>מכוון, לא טעות</option><option>הבודק טעה</option><option>אחר</option></select><button class="btn sm" type="button" data-act="dismiss" data-id="${r.id}" data-rule="${i.rule}">דחה</button>`}</div>`).join('')}</div>`:''}
+    ${alts.length&&!lock?`<div class="dsec"><h4>חלופות (מתעדכן בכל השורות הזהות)</h4><div class="alts">${alts.map((a,i)=>`<button class="alt" type="button" data-act="alt" data-id="${r.id}" data-sku="${a.c.sku}"><b>${esc(BR[a.c.brand])} <span class="mono">${esc(a.c.sku)}</span><kbd>${i+1}</kbd></b><span>${esc(a.diff)} · ${a.du==null?'אין מחיר':(a.du>=0?'+':'−')+fmt(Math.abs(r2(a.du)))+' ליחידה'}</span></button>`).join('')}</div></div>`:''}
+    ${priceSec(r,lock)}
+    ${lock?'<div class="note">ההצעה נעולה. פתחו גרסה חדשה כדי לשנות.</div>':`<div class="acts">
+      <div class="qty" aria-label="כמות"><button type="button" data-act="qty" data-d="-1" data-id="${r.id}" aria-label="הפחת">−</button><span>${r.qty}</span><button type="button" data-act="qty" data-d="1" data-id="${r.id}" aria-label="הוסף">+</button></div>
+      ${r.sku?`<button class="btn sm primary" type="button" data-act="confirm" data-id="${r.id}">${iss.some(i=>i.sev==='error')?'אשר למרות הממצא':'אשר שורה'}</button>`:''}
+      <button class="btn sm danger" type="button" data-act="delete" data-id="${r.id}">מחק</button>
+      ${isPhone()?`<button class="btn sm ghost" type="button" data-act="showdraw" data-id="${r.id}">הצג בשרטוט</button>`:''}</div>`}
+  </div>`;
+}
+
+/* ---------- header, filters ---------- */
+function renderTop(){
+  const t=totals(availablePanels());
+  const cov=coverage();
+  $('tot').innerHTML=`<div><small>סה״כ לפני מע״מ</small><b>${fmt(t.price)}</b></div><div><small>רווח</small><b>${pct(t.margin)}</b></div>${cov<1?`<div><small>כיסוי מחירון</small><b>${Math.round(cov*100)}%</b></div>`:''}`;
+  $('proj').textContent=`בניין מגורים, רחוב הרצל 12 · הצעה ${T.quoteNo} · נתוני דוגמה`;
+  $('demoSeg').innerHTML=`<button type="button" data-act="mode" data-m="existing" aria-selected="${T.mode==='existing'}">מפעל עם מחירון</button><button type="button" data-act="mode" data-m="new" aria-selected="${T.mode==='new'}">מפעל חדש</button>`;
+  $('vpill').textContent=(S.sent?'נשלחה':'טיוטה')+' · גרסה '+S.version;$('vpill').classList.toggle('sent',S.sent);
+  $('sendBtn').disabled=S.sent;
+  $('panelTabs').innerHTML=availablePanels().map(k=>[k,PANELS[k]]).map(([k,p])=>{
+    const bad=ROWS.filter(r=>r.panel===k&&!r.deleted&&statusOf(r).lvl>0).length;
+    return `<button type="button" role="tab" aria-selected="${S.panel===k}" data-act="panel" data-p="${k}">${esc(p.name)}${bad?` <span style="font-size:12px;color:var(--fg-3)">(${bad})</span>`:''}</button>`}).join('');
+  const {comps,der}=panelLines(S.panel);const all=[...comps,...der];
+  const c=[0,0,0];all.forEach(r=>c[statusOf(r).lvl]++);const np=all.filter(needsPrice).length;
+  const f=(k,cls,txt)=>`<button type="button" class="fchip ${cls}" data-act="filter" data-f="${k}" aria-pressed="${S.filter===k}">${txt}</button>`;
+  $('filters').innerHTML=f('all','all',`הכל ${all.length}`)+f('review','all','רק לבדיקה')+f('green','ok',`${c[0]} בטוח`)+f('yellow','warn',`${c[1]} לבדיקה`)+f('red','bad',`${c[2]} לא זוהה או שגוי`)+(np?f('nop','bad',`${np} בלי מחיר`):'');
+  const tot=all.length;$('prog').innerHTML=`<span>${c[0]} מתוך ${tot} שורות מוכנות</span><span class="pbar" aria-hidden="true"><i style="width:${tot?c[0]/tot*100:0}%"></i></span>`;
+  document.querySelectorAll('#viewtabs button').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.view===S.view)));
+  $('work').dataset.view=S.view;
+}
+
+/* ---------- drawing ---------- */
+const curPage=()=>PAGES.find(p=>p.id===S.page);
+const HINT={cover:'דולג בסיווג: עמוד שער. לא מפוענח.',legend:'עמוד הקשר: המקרא נשלח לזיהוי הסימנים כדוגמאות לשרטוט הזה. לא נספרים ממנו רכיבים.',notes:'עמוד הקשר: ההערות משמשות להשלמת תכונות חסרות ולבחירת מותג. לא נספרים ממנו רכיבים.',bom:'עמוד הקשר: כתב הכמויות של המתכנן משמש את הבודק להשוואה מול ההצעה. לא נספרים ממנו רכיבים.'};
+function symSVG(s){
+  const {x,y,w,h,k}=s,cx=x+w/2;
+  if(k==='spd') return `<rect class="sym" x="${x}" y="${y}" width="${w}" height="${h}" rx="3"/><polyline class="w" points="${cx},${y+6} ${cx-6},${y+h*.45} ${cx+6},${y+h*.55} ${cx},${y+h-6}"/>`;
+  let g=`<rect class="sym" x="${x}" y="${y}" width="${w}" height="${h}" rx="3"/><line class="w" x1="${x+w*.3}" y1="${y+h*.76}" x2="${x+w*.72}" y2="${y+h*.26}"/>`;
+  if(k==='mcb1'||k==='mcb3') g+=`<line class="w" x1="${x+w*.62}" y1="${y+h*.2}" x2="${x+w*.82}" y2="${y+h*.2}"/>`;
+  if(k==='mcb3') for(let i=0;i<3;i++) g+=`<line class="w" x1="${cx-5}" y1="${y-6-i*5}" x2="${cx+5}" y2="${y-11-i*5}"/>`;
+  if(k==='rcd') g+=`<ellipse class="w" cx="${cx}" cy="${y+h-9}" rx="${w*.28}" ry="4"/>`;
+  if(k==='switch') g+=`<circle class="w" cx="${x+w*.72}" cy="${y+h*.26}" r="2.5"/>`;
+  return g;
+}
+function staticSVG(pg){
+  if(pg.ctx) return pg.scanned?`<g class="scan">${pg.ctx()}</g>`:pg.ctx();
+  let g='';
+  pg.buses.forEach(b=>g+=`<line class="bus" x1="${b[0]}" y1="${b[1]}" x2="${b[2]}" y2="${b[3]}" stroke-width="${b[4]}"/>`);
+  pg.wires.forEach(l=>g+=`<line class="w" x1="${l[0]}" y1="${l[1]}" x2="${l[2]}" y2="${l[3]}"/>`);
+  pg.syms.forEach(s=>g+=symSVG(s));
+  pg.labels.forEach(l=>g+=`<text class="lbl" x="${l[0]}" y="${l[1]}" text-anchor="${l[3]||'middle'}">${esc(l[2])}</text>`);
+  (pg.hlabels||[]).forEach(l=>g+=mid(l[0],l[1],l[2],'clbl'));
+  pg.clabels.forEach(l=>g+=mid(l[0],l[1],l[2],'clbl'));
+  g+=`<text class="tb" x="${pg.W-16}" y="${pg.H-12}" text-anchor="end">${esc(pg.tb)}</text>`;
+  return pg.scanned?`<g class="scan">${g}</g>`:g;
+}
+function vb(){
+  const P=curPage(),z=S.zoom,w=P.W/z,h=P.H/z;
+  const c=S.center||[P.W/2,P.H/2];
+  const x=Math.min(Math.max(c[0]-w/2,0),P.W-w),y=Math.min(Math.max(c[1]-h/2,0),P.H-h);
+  return [x,y,w,h];
+}
+function rowPages(id){return [...new Set(INST.filter(i=>i.row===id).map(i=>PAGES.find(p=>p.id===i.page).no))].sort((a,b)=>a-b)}
+function pagesTxt(id){const ps=rowPages(id);return ps.length?`<span>עמ׳ ${ps.join(', ')}</span>`:''}
+function pageCounts(pgId){
+  const c=[0,0,0];
+  ROWS.forEach(r=>{if(r.deleted||!INST.some(i=>i.row===r.id&&i.page===pgId))return;c[statusOf(r).lvl]++});
+  return c;
+}
+let stripShown=null;
+function renderStrip(){
+  $('pstrip').innerHTML=PAGES.map(pg=>{
+    const c=pageCounts(pg.id);
+    const badge=c[2]?`<span class="pbadge l2" title="שורות אדומות">${c[2]}</span>`:c[1]?`<span class="pbadge l1" title="שורות לבדיקה">${c[1]}</span>`:'';
+    const what=(pg.panels||[]).map(p=>PANELS[p].name).join(' + ')||KIND[pg.kind];
+    const q=S.processing===pg.id?'מפענח…':pg.quality==='low'?'איכות נמוכה':(pg.conf<.85&&!pg.userClass)?'סיווג לא ודאי':'';
+    return `<button type="button" class="pth ${pg.route}" data-act="page" data-pg="${pg.id}" aria-current="${pg.id===S.page}" aria-label="עמוד ${pg.no}: ${esc(what)}${q?', '+q:''}">${badge}${q?`<span class="qbadge">${q}</span>`:''}<svg viewBox="0 0 ${pg.W} ${pg.H}" aria-hidden="true" direction="ltr">${staticSVG(pg)}</svg><span class="pl"><b>עמ׳ ${pg.no}</b><span>${ROUTE[pg.route]}</span></span><span class="pk">${esc(what)}</span></button>`;
+  }).join('');
+  if(stripShown!==S.page){stripShown=S.page;const cur=$('pstrip').querySelector('[aria-current="true"]');if(cur&&$('pstrip').offsetParent){const s=$('pstrip');s.scrollLeft+=cur.getBoundingClientRect().left-s.getBoundingClientRect().left-s.clientWidth/2+cur.clientWidth/2}}
+}
+function renderSvg(){
+  const pg=curPage();const svg=$('svg');
+  let g=staticSVG(pg);
+  if(pg.boxes&&pg.route==='process') for(const k in pg.boxes){
+    const b=pg.boxes[k],on=k===S.panel;
+    if(!on) g+=`<rect class="regdim" data-act="panel" data-p="${k}" x="${b[0]}" y="${b[1]}" width="${b[2]}" height="${b[3]}"/>`;
+    g+=`<rect class="region${on?' act':''}" x="${b[0]}" y="${b[1]}" width="${b[2]}" height="${b[3]}" rx="8"/>`;
+    g+=`<text class="regt" x="${b[0]+b[2]/2}" y="${b[1]+26}" text-anchor="middle" direction="rtl"${on?'':` data-act="panel" data-p="${k}"`}>${esc(PANELS[k].name+(k==='p1'&&pg.id==='pg5'?' (המשך)':''))}${on?'':' · לחצו למעבר'}</text>`;
+  }
+  INST.filter(i=>i.page===S.page).forEach(i=>{
+    const r=ROWS.find(x=>x.id===i.row);if(!r||r.deleted)return;
+    const st=statusOf(r);const isSel=S.sel===r.id;const dim=r.panel!==S.panel||!passes(st.lvl);
+    g+=`<rect class="ov l${st.lvl}${r.type==='manual'?' man':''}${isSel?' sel':''}${dim?' dim':''}" data-inst="${i.id}" data-rowid="${r.id}" x="${i.x-6}" y="${i.y-6}" width="${i.w+12}" height="${i.h+12}" rx="6"><title>${esc(rowTitle(r))}</title></rect>`;
+  });
+  if(S.processing===pg.id) g+=`<rect x="0" y="0" width="${pg.W}" height="${pg.H}" fill="var(--paper)" opacity=".75"/>`+mid(pg.W/2,pg.H/2,'מפענח את העמוד…','ctxh');
+  g+='<rect id="tmp" class="drawtmp" x="0" y="0" width="0" height="0" visibility="hidden"/>';
+  svg.innerHTML=g;svg.setAttribute('viewBox',vb().join(' '));
+  $('dpage').textContent=`עמוד ${pg.no} מתוך ${PAGES.length} · ${pg.sheet} · ${KIND[pg.kind]}`+(S.zoom>1?` · זום ×${S.zoom}`:'');
+  const idx=PAGES.indexOf(pg);$('pgPrev').disabled=idx===0;$('pgNext').disabled=idx===PAGES.length-1;
+  $('canvas').classList.toggle('pan',S.zoom>1&&!S.draw);$('canvas').classList.toggle('drawing',S.draw);
+  $('drawBtn').setAttribute('aria-pressed',String(S.draw));$('drawBtn').disabled=S.sent||pg.route!=='process'||S.processing===pg.id;
+  $('dhint').innerHTML=S.draw?'<span>גררו מלבן סביב הרכיב שפוספס, ואז בחרו מוצר. Esc לביטול.</span>'
+    :pg.route!=='process'?`<span>${esc(HINT[pg.kind])}</span>`
+    :`<span class="lg"><i class="a"></i>בטוח</span><span class="lg"><i class="b"></i>לבדיקה</span><span class="lg"><i class="c"></i>לא זוהה או שגוי</span><span>לחיצה על רכיב פותחת את השורה שלו${S.zoom>1?' · גררו להזזה':''}</span>`;
+  renderStrip();renderPmeta();
+}
+function centerOn(rowId){
+  const ins=INST.filter(i=>i.row===rowId);if(!ins.length)return;
+  let i=ins.find(x=>x.page===S.page);
+  if(!i){i=ins[0];S.page=i.page;}
+  S.center=[i.x+i.w/2,i.y+i.h/2];
+}
+function stepPage(d){const i=PAGES.findIndex(p=>p.id===S.page);const n=PAGES[i+d];if(n)act('page',{dataset:{pg:n.id}})}
+$('pgPrev').addEventListener('click',()=>stepPage(-1));
+$('pgNext').addEventListener('click',()=>stepPage(1));
+
+
+const pageState=p=>({id:p.id,kind:p.kind,route:p.route,panels:p.panels||null,panelsBak:p.panelsBak||null,conf:p.conf,userClass:!!p.userClass});
+function availablePanels(){return Object.keys(PANELS).filter(k=>PAGES.some(p=>p.route==='process'&&(p.panels||[]).includes(k)))}
+function renderPmeta(){
+  const pg=curPage();
+  const opts=Object.keys(KIND).map(k=>`<option value="${k}"${k===pg.kind?' selected':''}>${KIND[k]}</option>`).join('');
+  let warn='';
+  if(S.processing===pg.id) warn=`<div class="pwarn info">מפענח את העמוד. השורות שיימצאו ייכנסו להצעה.</div>`;
+  else if(pg.conf<.85&&!pg.userClass) warn=`<div class="pwarn">הסיווג לא ודאי (ביטחון ${pg.conf.toFixed(2)}). אם יש בעמוד תוכנית חד-קווית, שנו את הסיווג ל״חד-קווי״ והעמוד יפוענח.</div>`;
+  if(pg.quality==='low') warn+=`<div class="pwarn">העמוד סרוק ברזולוציה נמוכה, והטקסט נקרא ב-OCR. לכן יש בו יותר שורות לבדיקה. אם יש לכם את ה-PDF המקורי של המתכנן, עדיף להעלות אותו. <button class="btn sm" type="button" data-act="reupload">העלה קובץ מקורי</button></div>`;
+  $('pmeta').innerHTML=`<div class="pm"><label for="pkind">סיווג העמוד</label><select id="pkind" class="inl"${S.sent||S.processing?' disabled':''}>${opts}</select><span>${ROUTE[pg.route]}</span><span>· ${pg.userClass?'נקבע ידנית':'ביטחון '+pg.conf.toFixed(2)}</span><span>· ${pg.scanned?'סרוק':'וקטורי'}</span></div>${warn}`;
+}
+function reclass(pgId,kind){
+  const pg=PAGES.find(p=>p.id===pgId);if(!pg||pg.kind===kind)return;
+  push('סיווג');
+  const wasProc=pg.route==='process',nowProc=ROUTE_OF[kind]==='process';
+  pg.kind=kind;pg.route=ROUTE_OF[kind];pg.userClass=true;
+  if(wasProc&&!nowProc){
+    const ids=new Set(INST.filter(i=>i.page===pgId).map(i=>i.row));let n=0;
+    ROWS.forEach(r=>{if(ids.has(r.id)&&!r.deleted&&INST.filter(i=>i.row===r.id).every(i=>i.page===pgId)){r.deleted=true;r.delByPage=pgId;n++}});
+    pg.panelsBak=pg.panels;pg.panels=null;
+    if(!availablePanels().includes(S.panel)){S.panel=availablePanels()[0]}S.sel=null;S.draw=false;
+    toast(`הסיווג עודכן. ${n} שורות של העמוד הוסרו מההצעה`,true);
+  }else if(!wasProc&&nowProc){
+    if(pg.panelsBak){pg.panels=pg.panelsBak;pg.panelsBak=null;let n=0;ROWS.forEach(r=>{if(r.delByPage===pgId){r.deleted=false;delete r.delByPage;n++}});toast(`הסיווג עודכן. ${n} שורות חזרו להצעה`,true)}
+    else{S.processing=pgId;render();setTimeout(()=>finishProcessing(pgId),1400);return}
+  }else toast('הסיווג עודכן ונשמר כדוגמה לשיפור הסיווג',true);
+  render();
+}
+function finishProcessing(pgId){
+  const pg=PAGES.find(p=>p.id===pgId);S.processing=null;
+  if(pg.route!=='process'){render();return}
+  if(pg.pending){
+    const pd=pg.pending;PANELS[pd.panel]={name:pd.name};pg.panels=[pd.panel];
+    pd.rows.forEach(r=>{if(!ROWS.some(x=>x.id===r.id))ROWS.push(JSON.parse(JSON.stringify(r)))});
+    pd.inst.forEach(i=>{if(!INST.some(x=>x.id===i.id))INST.push({...i})});
+    S.panel=pd.panel;S.sel=null;
+    toast(`העמוד פוענח: נמצאו ${pd.rows.length} שורות ב${pd.name}`,true);
+  }else toast('הפענוח לא מצא רכיבים בעמוד. אם יש בו רכיבים, סמנו אותם ידנית בשרטוט');
+  render();
+}
+/* ---------- tenant pricing helpers ---------- */
+function allLines(){return availablePanels().flatMap(p=>{const {comps,der}=panelLines(p);return [...comps,...der]})}
+function needsPrice(r){return !!r.sku&&!r.deleted&&priceOf(r.sku).status==='missing'}
+function coverage(){const ls=allLines().filter(r=>r.sku);return ls.length?ls.filter(r=>priceOf(r.sku).status!=='missing').length/ls.length:1}
+function nextNoPrice(fromId){
+  const order=[S.panel,...availablePanels().filter(p=>p!==S.panel)];
+  for(const pn of order){
+    const {comps,der}=panelLines(pn);const list=[...comps.filter(r=>r.type!=='missing'),...der];
+    let cand=list;if(pn===S.panel){const i=list.findIndex(r=>r.id===fromId);cand=[...list.slice(i+1),...list.slice(0,i+1)]}
+    const f=cand.find(needsPrice);if(f){if(pn!==S.panel){S.panel=pn;if(!(curPage().panels||[]).includes(pn)){S.page=PAGES.find(pg=>(pg.panels||[]).includes(pn)).id;S.zoom=1;S.center=null}}return f.id}
+  }
+  return null;
+}
+function focusPrice(){setTimeout(()=>{const x=$('pc');if(x)x.focus()},0)}
+function priceSec(r,lock){
+  const it=item(r.sku);if(!it)return '';
+  const p=priceOf(r.sku),l=lineOf(r),mk=markupOf(it),rule=T.margin!=null?'ברירת מחדל של המפעל':RULE_NAME[it.fam];
+  const unitWord=it.fam==='labor'?'לשעה':'ליחידה';
+  if(p.status==='missing'||S.editPrice===it.sku){
+    if(lock)return `<div class="dsec"><h4>מחיר</h4><div class="note">אין מחיר עלות.</div></div>`;
+    const cur=S.editPrice===it.sku&&p.cost!=null?p.cost:'';
+    const bulk=it.list&&p.status==='missing'?`<div class="bulk"><span>או לכל המוצרים של ${BR[it.brand]} בלי מחיר: מחירון יצרן פחות</span><input id="bd" class="inl" type="number" min="0" max="89" step="1" inputmode="numeric" style="width:70px" aria-label="אחוז הנחה ממחירון יצרן">%<button class="btn sm" type="button" data-act="bulkdisc" data-brand="${it.brand}">החל</button></div>`:'';
+    return `<div class="dsec"><h4>${p.status==='missing'?'מחיר עלות (אין במחירון)':'שינוי מחיר עלות'}</h4>
+      <div class="pentry"><label for="pc">עלות ${unitWord} ₪</label><input id="pc" class="inl" type="number" min="0" step="0.01" inputmode="decimal" data-sku="${it.sku}" value="${cur}" style="width:110px">
+      <label for="ps">ספק</label><input id="ps" class="inl" list="supl" value="${esc(T.lastSupplier)}" style="width:130px" autocomplete="off"><datalist id="supl">${T.suppliers.map(x=>`<option value="${esc(x)}"></option>`).join('')}</datalist>
+      <button class="btn sm primary" type="button" data-act="saveprice" data-sku="${it.sku}">שמור</button></div>
+      <div class="note" id="pwarn" aria-live="polite">${it.list?`מחירון יצרן: ${fmt(it.list)}. `:''}Enter שומר ועובר לשורה הבאה בלי מחיר.</div>${bulk}</div>`;
+  }
+  const srcTxt=p.status==='disc'?`מחירון יצרן ${fmt(it.list)} פחות ${pct(p.pct)}`:p.src==='manual'?`הוזן ידנית בהצעה ${p.quote}${p.supplier?', '+p.supplier:''}`:`מחירון ${p.supplier}, ${p.date}`;
+  return `<div class="dsec"><h4>מחיר</h4><div class="price"><span>עלות ${unitWord} <b>${fmt(p.cost)}</b> (${esc(srcTxt)})</span><span>תוספת ${pct(mk)} (חוק: ${rule})</span><span>מחיר <b>${fmt(l.u)}</b></span>${lock?'':`<button class="btn sm ghost" type="button" data-act="editprice" data-sku="${it.sku}">שנה עלות</button>`}</div></div>`;
+}
+let INIT=null;
+function resetQuote(){
+  const o=JSON.parse(INIT);ROWS=o.ROWS;INST=o.INST;o.pg.forEach(st=>Object.assign(PAGES.find(p=>p.id===st.id),st));
+  Object.assign(S,{panel:'p1',page:'pg4',filter:'all',sel:null,zoom:1,center:null,draw:false,sent:false,version:1,sheet:false,modal:null,processing:null,editPrice:null});
+  S.dismissed=new Set();S.delDerived=new Set();S.undo=[];PROPS={};
+}
+function applyPrefs(){ROWS.forEach(r=>{if(r.type==='component'&&r.sku&&!r.brandHint&&!r.brandUser&&PREF[r.fam])rematch(r)})}
+
+/* ---------- chat ---------- */
+const SUGG=['תחליף את כל המא״זים לשניידר','תחליף את כל המא״זים ל-ABB','תראה רק שורות לבדיקה','למה השורה הזו לא ירוקה?','כמה מא״זים יש בלוח?'];
+function renderChat(){
+  $('chatlog').innerHTML=S.chat.map(m=>{
+    let p='';
+    if(m.prop){const pr=m.prop;
+      p=`<div class="prop"><b style="font-weight:500">${esc(pr.title)}</b>
+        ${pr.changes.length?`<ul>${pr.changes.map(c=>`<li>${esc(c.text)}</li>`).join('')}</ul>`:''}
+        ${pr.skipped.length?`<div class="warnbox">${pr.skipped.map(esc).join('<br>')}</div>`:''}
+        ${pr.changes.length?`<div class="ptot"><span>הפרש בסה״כ ההצעה</span><b class="num">${pr.delta>=0?'+':'−'}${fmt(Math.abs(pr.delta))}</b></div>`:''}
+        ${pr.status==='pending'&&pr.changes.length?`<div class="acts"><button class="btn sm primary" type="button" data-act="papply" data-pid="${pr.id}">אשר שינוי</button><button class="btn sm" type="button" data-act="pcancel" data-pid="${pr.id}">בטל</button></div>`
+          :`<div class="pst">${pr.status==='applied'?'השינוי הוחל':pr.status==='cancelled'?'בוטל':''}</div>`}</div>`;}
+    return `<div class="msg ${m.who}">${esc(m.text)}${p}</div>`}).join('');
+  const log=$('chatlog');log.scrollTop=log.scrollHeight;
+}
+function renderSugg(){$('sugg').innerHTML=SUGG.map(s=>`<button type="button" data-act="sugg" data-t="${esc(s)}">${esc(s)}</button>`).join('')}
+let PROPS={};let pid=0;
+function chatAsk(text){
+  S.chat.push({who:'u',text});
+  const t=text.replace(/["״'׳]/g,'');
+  const P=PANELS[S.panel];
+  let reply;
+  if(S.sent&&/תחליף|החלף|שנה/.test(t)){reply={text:'ההצעה נשלחה ונעולה. פתחו גרסה חדשה כדי לשנות אותה.'}}
+  else if(/תחליף|החלף|במקום|תעשה הכל/.test(t)&&/שניידר|ABB|האגר|הגר/i.test(t)){
+    const brand=/שניידר/.test(t)?'Schneider':/ABB/i.test(t)?'ABB':'Hager';
+    const fam=/פחת/.test(t)?'rcd':'mcb';
+    const rows=ROWS.filter(r=>r.panel===S.panel&&!r.deleted&&r.type!=='missing'&&r.fam===fam&&r.sku);
+    const changes=[],skipped=[];let same=0,delta=0;
+    rows.forEach(r=>{const cur=item(r.sku);if(cur.brand===brand){same++;return}
+      const alt=rank(fam,{...r.attrs},brand).filter(c=>c.brand===brand).sort((a,b)=>Math.abs((a.bc||0)-(cur.bc||0))-Math.abs((b.bc||0)-(cur.bc||0)))[0];
+      if(!alt){skipped.push(`${descOf(cur)}: אין ב-${BR[brand]} בקטלוג. נשאר ${BR[cur.brand]}.`);return}
+      const nu=upItem(alt),cu=unitPrice(r);if(nu!=null&&cu!=null)delta+=r2((nu-cu)*r.qty);
+      changes.push({rowId:r.id,sku:alt.sku,text:`${descOf(cur)} ×${r.qty}: ${BR[cur.brand]} ← ${BR[brand]} (${alt.sku})`});
+    });
+    const id='pr'+(++pid);
+    PROPS[id]={id,brand,changes,skipped,delta:r2(delta),status:'pending',title:`החלפת ${FAMNAME[fam]} ב${P.name} ל${BR[brand]}`};
+    reply={text:`ב${P.name} יש ${rows.length} שורות ${FAMNAME[fam]}. ${changes.length} יתחלפו${same?`, ${same} כבר של ${BR[brand]}`:''}${skipped.length?`, ${skipped.length} בלי מקבילה`:''}. השינוי לא יוחל עד שתאשרו.`,prop:PROPS[id]};
+  }
+  else if(/למה/.test(t)){
+    const r=ROWS.find(x=>x.id===S.sel)||derivedRows(S.panel).find(x=>x.id===S.sel);
+    if(!r) reply={text:'בחרו שורה בטבלה או רכיב בשרטוט, ושאלו שוב.'};
+    else{const st=statusOf(r);
+      reply={text:st.lvl===0?`השורה ״${rowTitle(r)}״ ירוקה: כל התכונות נקראו מהשרטוט, נמצאה התאמה בקטלוג ואין ממצאים.`
+        :`השורה ״${rowTitle(r)}״ ${st.lvl===2?'אדומה':'צהובה'} בגלל: ${st.tags.map(x=>x[1]).join('; ')}. הפרטים המלאים מוצגים בשורה.`};}
+  }
+  else if(/אדומ|לא זוהה/.test(t)){S.filter='red';reply={text:'מציג רק שורות אדומות.'}}
+  else if(/לבדיקה|צהוב/.test(t)){S.filter='review';reply={text:'מציג רק שורות לבדיקה (צהובות ואדומות).'}}
+  else if(/הכל|כל השורות/.test(t)){S.filter='all';reply={text:'מציג את כל השורות.'}}
+  else if(/כמה/.test(t)){
+    const fam=/פחת/.test(t)?'rcd':'mcb';const rs=ROWS.filter(r=>r.panel===S.panel&&!r.deleted&&r.fam===fam);
+    reply={text:`ב${P.name} יש ${rs.reduce((s,r)=>s+r.qty,0)} ${FAMNAME[fam]} ב-${rs.length} שורות.`};
+  }
+  else reply={text:'באב הטיפוס הצ׳אט מבין רק כמה פקודות לדוגמה: החלפת מותג, סינון שורות, ״כמה״ ו״למה״.'};
+  S.chat.push({who:'b',...reply});
+  render();
+}
+
+/* ---------- overlays: sheet + modals ---------- */
+function renderLayer(){
+  const L=$('layer');let h='';
+  if(isPhone()&&S.sheet&&S.sel){
+    const r=ROWS.find(x=>x.id===S.sel)||derivedRows(S.panel).find(x=>x.id===S.sel);
+    if(r){const st=statusOf(r);
+      h+=`<div class="scrim" data-act="closesheet"></div><div class="sheet" role="dialog" aria-modal="true" aria-label="פרטי שורה"><div class="grab"></div>
+        <div class="shead"><div><h3>${esc(rowTitle(r))}</h3><div class="tags">${st.tags.map(t=>`<span class="tag ${t[0]}">${esc(t[1])}</span>`).join('')}</div></div><button class="btn sm ghost" type="button" data-act="closesheet" aria-label="סגירה">✕</button></div>
+        ${detailHTML(r)}</div>`;}
+  }
+  if(S.modal){
+    const m=S.modal;
+    if(m.type==='picker'){
+      h+=`<div class="scrim" data-act="closemodal"></div><div class="sheet modal" role="dialog" aria-modal="true" aria-label="בחירת מוצר"><div class="grab"></div>
+        <div class="shead"><h3>${m.rowId?'בחירת מוצר לשורה':'הוספת רכיב שפוספס'}</h3><button class="btn sm ghost" type="button" data-act="closemodal" aria-label="סגירה">✕</button></div>
+        <input id="pq" type="search" placeholder="16A, פחת, ABB…" aria-label="חיפוש בקטלוג" style="border:1px solid var(--line-strong);border-radius:8px;padding:6px 10px;min-height:38px;background:var(--surface)">
+        <div class="plist" id="plist"></div></div>`;
+    }
+    if(m.type==='welcome'){
+      const br=(n)=>['Schneider','ABB','Hager'].map(b=>`<label><input type="radio" name="${n}" value="${b}">${BR[b]}</label>`).join('')+`<label><input type="radio" name="${n}" value="skip" checked>דלג</label>`;
+      h+=`<div class="scrim" data-act="closemodal"></div><div class="sheet modal" role="dialog" aria-modal="true" aria-label="מפעל חדש"><div class="grab"></div>
+        <div class="shead"><h3>ברוכים הבאים לקונבורו</h3><button class="btn sm ghost" type="button" data-act="closemodal" aria-label="סגירה">✕</button></div>
+        <div class="note">שתי שאלות, ואפשר להעלות שרטוט. אין צורך להכין מחירון: המחירים שתקלידו בהצעות יישמרו ויבנו אותו.</div>
+        <div class="wq"><h4>1. כמה אחוזים אתם מוסיפים על מחיר העלות?</h4><div class="wrow"><input id="wm" class="inl" type="number" min="0" max="299" step="1" value="25" style="width:80px" aria-label="אחוז תוספת">%<span id="wex" class="note"></span></div></div>
+        <div class="wq"><h4>2. עם אילו מותגים אתם עובדים בדרך כלל?</h4><div class="wrow"><span style="min-width:84px">מא״זים</span>${br('wmcb')}</div><div class="wrow"><span style="min-width:84px">מפסקי פחת</span>${br('wrcd')}</div></div>
+        <div class="acts"><button class="btn primary" type="button" data-act="welcomego">התחל עם השרטוט לדוגמה</button></div></div>`;
+    }
+    if(m.type==='send'){
+      const t=totals(availablePanels());
+      const all=availablePanels().flatMap(p=>{const {comps,der}=panelLines(p);return [...comps,...der]});
+      const red=all.filter(r=>statusOf(r).lvl===2).length,unp=all.filter(r=>lineOf(r).total==null).length,yel=all.filter(r=>statusOf(r).lvl===1).length;
+      h+=`<div class="scrim" data-act="closemodal"></div><div class="sheet modal" role="dialog" aria-modal="true" aria-label="שליחת ההצעה"><div class="grab"></div>
+        <div class="shead"><h3>שליחת הצעה ${T.quoteNo} ללקוח</h3><button class="btn sm ghost" type="button" data-act="closemodal" aria-label="סגירה">✕</button></div>
+        <div class="kv"><span>סה״כ לפני מע״מ</span><b>${fmt(t.price)}</b></div><div class="kv"><span>רווח</span><b>${pct(t.margin)}</b></div>
+        ${red||yel?`<div class="warnbox">${red?`יש ${red} שורות אדומות${unp?` (${unp} בלי מחיר, לא נכללות בסכום)`:''}. `:''}${yel?`${yel} שורות עדיין צהובות.`:''}</div>`:'<div class="note">כל השורות מוכנות.</div>'}
+        <div class="note">אחרי השליחה ההצעה ננעלת. שינוי ייצור גרסה חדשה. המסמך ללקוח לא כולל עלויות ורווח.</div>
+        <div class="acts"><button class="btn primary" type="button" data-act="dosend">${red?'שלח בכל זאת':'שלח ללקוח'}</button><button class="btn" type="button" data-act="closemodal">חזור לבדיקה</button></div></div>`;
+    }
+  }
+  L.innerHTML=h;
+  if(S.modal&&S.modal.type==='welcome'){const w=$('wm'),ex=()=>{const v=parseFloat(w.value)||0;$('wex').textContent=`עלות ₪100 ← מחיר ללקוח ${fmt(100*(1+v/100))}`};w.addEventListener('input',ex);ex()}
+  if(S.modal&&S.modal.type==='picker'){renderPicker('');const q=$('pq');q.addEventListener('input',()=>renderPicker(q.value));if(!isPhone())q.focus()}
+}
+function renderPicker(q){
+  const qq=q.trim().toLowerCase();
+  const list=CAT.filter(c=>['mcb','rcd','switch'].includes(c.fam)).filter(c=>!qq||(descOf(c)+' '+c.sku+' '+BR[c.brand]+' '+c.brand).toLowerCase().includes(qq)).slice(0,40);
+  $('plist').innerHTML=list.length?list.map(c=>`<button class="pitem" type="button" data-act="pick" data-sku="${c.sku}"><span><span>${esc(descOf(c))}</span><br><span class="mono">${esc(c.sku)}</span> · ${esc(BR[c.brand])}</span><span class="num">${fmt(upItem(c))}</span></button>`).join('')
+    :'<div class="empty">לא נמצא מוצר. נסו מילה אחרת.</div>';
+}
+
+/* ---------- render ---------- */
+function render(){
+  renderTop();renderRows();renderSvg();renderChat();renderLayer();
+  if(S.kbd&&S.sel&&!isPhone()){const el=document.querySelector(`[data-row="${S.sel}"]`);if(el){el.focus({preventScroll:true});el.scrollIntoView({block:'nearest'})}}
+}
+
+/* ---------- actions ---------- */
+function findRow(id){return ROWS.find(r=>r.id===id)||derivedRows(S.panel).find(r=>r.id===id)}
+function select(id,opts={}){
+  S.sel=S.sel===id&&!opts.keep?null:id;
+  if(S.sel)centerOn(S.sel);
+  if(isPhone()&&S.sel)S.sheet=true;
+  render();
+}
+function nextReview(fromId){
+  const {comps,der}=visibleRows();const list=[...comps,...der];
+  const i=list.findIndex(r=>r.id===fromId);
+  const after=[...list.slice(i+1),...list.slice(0,i)].find(r=>statusOf(r).lvl>0&&!r.deleted);
+  return after?after.id:null;
+}
+function act(a,el){
+  const id=el.dataset.id;
+  if(S.sent&&['confirm','delete','alt','qty','dismiss','resolve','picker','pick','restoreall','papply','saveprice','bulkdisc','editprice'].includes(a)){toast('ההצעה נעולה. פתחו גרסה חדשה כדי לשנות.');return}
+  switch(a){
+    case 'undo':undo();break;
+    case 'panel':{const p=el.dataset.p;if(S.panel===p)break;S.panel=p;S.sel=null;S.draw=false;
+      if(!(curPage().panels||[]).includes(p)){S.page=PAGES.find(pg=>(pg.panels||[]).includes(p)).id;S.zoom=1;S.center=null}
+      render();break}
+    case 'page':{const pg=PAGES.find(p=>p.id===el.dataset.pg);if(!pg)break;S.page=pg.id;S.zoom=1;S.center=null;S.draw=false;
+      if(pg.panels&&!pg.panels.includes(S.panel)){S.panel=pg.panels[0];S.sel=null}
+      if(el.dataset.show&&isPhone()){S.view='draw';S.sheet=false}
+      render();break}
+    case 'filter':S.filter=S.filter===el.dataset.f&&el.dataset.f!=='all'?'all':el.dataset.f;render();break;
+    case 'fall':S.filter='all';render();break;
+    case 'confirm':{const r=findRow(id);push('אושר');r.confirmed=true;issuesOf(r).forEach(i=>S.dismissed.add(r.id+'|'+i.rule));
+      const n=nextReview(id);S.sel=n;if(n)centerOn(n);if(isPhone()&&!n)S.sheet=false;toast('השורה אושרה',true);render();break}
+    case 'delete':{const r=findRow(id);push('נמחק');if(r.type==='derived')S.delDerived.add(id);else r.deleted=true;
+      const n=nextReview(id);S.sel=n;if(isPhone()&&!n)S.sheet=false;toast(r.type==='derived'?'הפריט הוסר. חישוב מחדש לא יחזיר אותו':'השורה נמחקה',true);render();break}
+    case 'restoreall':push('הוחזרו');S.delDerived.clear();toast('הפריטים הנלווים הוחזרו',true);render();break;
+    case 'qty':{const r=findRow(id);push('כמות');r.qty=Math.max(1,r.qty+Number(el.dataset.d));render();break}
+    case 'alt':{const r=findRow(id),c=item(el.dataset.sku);push('הוחלף');const s=sig(r);let n=0;
+      ROWS.filter(x=>!x.deleted&&x.type!=='missing'&&x.sku&&sig(x)===s).forEach(x=>{x.sku=c.sku;x.brandUser=c.brand;x.subst=null;if(c.bc&&c.bc!==x.attrs.bc){x.attrs.bc=c.bc;x.src.bc=['user','']}x.confirmed=true;n++});
+      toast(n>1?`הוחלף ב-${n} שורות זהות`:'המוצר הוחלף',true);render();break}
+    case 'dismiss':{const r=findRow(id);push('ממצא נדחה');S.dismissed.add(id+'|'+el.dataset.rule);toast('הממצא נדחה. הסיבה נשמרה לשיפור הבודק',true);render();break}
+    case 'resolve':{const r=findRow(id),c=item(el.dataset.sku);push('זוהה');Object.assign(r,{type:'component',sku:c.sku,attrs:{poles:c.poles,curve:c.curve,a:c.a,bc:c.bc},
+      src:{a:['drawing',r.near],curve:['drawing',r.near],poles:['user',''],bc:['user','']},confirmed:true,userEdited:true,brandUser:c.brand});
+      toast('הרכיב נוסף. הסימון נשמר כדוגמה לזיהוי',true);render();break}
+    case 'picker':S.modal={type:'picker',rowId:id};renderLayer();break;
+    case 'pick':{const c=item(el.dataset.sku),m=S.modal;push('נוסף');
+      if(m.rowId){const r=findRow(m.rowId);Object.assign(r,{type:'component',fam:c.fam,sku:c.sku,attrs:{poles:c.poles,curve:c.curve,a:c.a,bc:c.bc,ma:c.ma,type:c.type},src:{a:['user',''],poles:['user','']},confirmed:true,userEdited:true,brandUser:c.brand})}
+      else{const nid='m'+Date.now();const pg=curPage();let pn=S.panel;if(pg.boxes){const cx=m.bbox.x+m.bbox.w/2;for(const k in pg.boxes){const b=pg.boxes[k];if(cx>=b[0]&&cx<=b[0]+b[2])pn=k}}S.panel=pn;
+        ROWS.push({id:nid,panel:pn,type:'manual',fam:c.fam,attrs:{poles:c.poles,curve:c.curve,a:c.a,bc:c.bc,ma:c.ma,type:c.type},src:{a:['user',''],poles:['user','']},qty:1,sku:c.sku,conf:1,userEdited:true,brandUser:c.brand});
+        INST.push({id:'i'+nid,page:S.page,row:nid,...m.bbox});S.sel=nid}
+      S.modal=null;S.draw=false;toast(m.rowId?'המוצר נבחר':'הרכיב נוסף להצעה ונשמר כדוגמה לזיהוי',true);render();break}
+    case 'closemodal':S.modal=null;render();break;
+    case 'closesheet':S.sheet=false;render();break;
+    case 'showdraw':S.view='draw';S.sheet=false;S.zoom=2.25;centerOn(id);render();break;
+    case 'send':S.modal={type:'send'};renderLayer();break;
+    case 'dosend':S.sent=true;S.modal=null;S.draw=false;toast(`הצעה ${T.quoteNo} גרסה ${S.version} נשלחה ונעולה`);render();break;
+    case 'newver':S.sent=false;S.version++;toast(`גרסה ${S.version} נפתחה. הגרסה הקודמת נשמרה כפי שנשלחה`);render();break;
+    case 'sugg':$('chatIn').value='';chatAsk(el.dataset.t);break;
+    case 'papply':{const pr=PROPS[el.dataset.pid];if(pr.status!=='pending')break;push('הצעת צ׳אט');
+      pr.changes.forEach(c=>{const r=ROWS.find(x=>x.id===c.rowId);const it=item(c.sku);r.sku=c.sku;r.brandUser=pr.brand;r.subst=null;if(it.bc!==r.attrs.bc){r.attrs.bc=it.bc;r.src.bc=['user','']}});
+      pr.status='applied';toast(`הוחלף ב-${pr.changes.length} שורות`,true);render();break}
+    case 'reupload':toast('באב הטיפוס אין העלאה. במוצר, הקובץ המקורי יחליף את העמוד הזה והוא יפוענח מחדש');break;
+    case 'saveprice':{const sku=el.dataset.sku,v=parseFloat(($('pc')||{}).value);if(!(v>0)){toast('הקלידו מחיר עלות');break}
+      const sup=(($('ps')||{}).value||'').trim();push('מחיר');
+      T.prices[sku]={cost:Math.round(v*100)/100,supplier:sup||null,date:'30.10.2026',src:'manual',quote:T.quoteNo};
+      if(sup){T.lastSupplier=sup;if(!T.suppliers.includes(sup))T.suppliers.push(sup)}
+      S.editPrice=null;const n=allLines().filter(r=>r.sku===sku).length;
+      const nx=nextNoPrice(S.sel);S.sel=nx;if(nx)centerOn(nx);if(isPhone()&&!nx)S.sheet=false;
+      toast(n>1?`המחיר נשמר במחירון ועודכן ב-${n} שורות`:'המחיר נשמר במחירון',true);render();focusPrice();break}
+    case 'bulkdisc':{const b=el.dataset.brand,v=parseFloat(($('bd')||{}).value);if(!(v>=0&&v<90)){toast('הקלידו אחוז הנחה בין 0 ל-89');break}
+      push('הנחה');T.disc[b]=v/100;const n=allLines().filter(r=>r.sku&&item(r.sku).brand===b&&!T.prices[r.sku]).length;
+      const nx=nextNoPrice(S.sel);S.sel=nx;if(isPhone()&&!nx)S.sheet=false;
+      toast(`${n} שורות של ${BR[b]} קיבלו מחיר לפי מחירון יצרן פחות ${v}%`,true);render();focusPrice();break}
+    case 'editprice':S.editPrice=el.dataset.sku;render();focusPrice();break;
+    case 'mode':if(el.dataset.m==='new'){S.modal={type:'welcome'};renderLayer()}else{resetQuote();seedExisting();Object.assign(PREF,PREF0);toast('מצב הדגמה: מפעל עם מחירון מלא');render()}break;
+    case 'welcomego':{const m=parseFloat(($('wm')||{}).value);if(!(m>=0&&m<300)){toast('הקלידו אחוז תוספת');break}
+      const mc=(document.querySelector('input[name="wmcb"]:checked')||{}).value,rc=(document.querySelector('input[name="wrcd"]:checked')||{}).value;
+      resetQuote();seedNew(m/100);Object.assign(PREF,PREF0);if(mc&&mc!=='skip')PREF.mcb=mc;if(rc&&rc!=='skip')PREF.rcd=rc;applyPrefs();
+      S.modal=null;S.filter='all';toast('המפעל נוצר. המחירון ריק, והוא ייבנה מההצעות');render();break}
+    case 'nextquote':{const was=T.quoteNo;resetQuote();T.quoteIdx++;T.quoteNo++;applyPrefs();
+      toast(`הצעה ${T.quoteNo}: המחירון שנבנה בהצעה ${was} מכסה ${Math.round(coverage()*100)}% מהשורות. בדמו זה אותו שרטוט`);render();break}
+    case 'pcancel':PROPS[el.dataset.pid].status='cancelled';render();break;
+  }
+}
+document.addEventListener('click',e=>{
+  const a=e.target.closest('[data-act]');
+  if(a){if(moved&&a.closest('svg'))return;e.preventDefault();act(a.dataset.act,a);return}
+  const v=e.target.closest('#viewtabs [data-view]');if(v){S.view=v.dataset.view;render();return}
+  const row=e.target.closest('[data-row]');if(row){S.kbd=false;select(row.dataset.row);return}
+});
+document.addEventListener('input',e=>{
+  if(e.target.id!=='pc')return;const it=item(e.target.dataset.sku),v=parseFloat(e.target.value),w=$('pwarn');if(!w||!it)return;
+  const old=T.prices[it.sku];let msg='',bad=false;
+  if(v>0&&it.list&&(v>it.list||v<it.list*0.3)){msg=`המחיר רחוק ממחירון היצרן (${fmt(it.list)}). לבדוק?`;bad=true}
+  else if(v>0&&old&&Math.abs(v-old.cost)/old.cost>0.5){msg=`המחיר הקודם היה ${fmt(old.cost)}. לעדכן?`;bad=true}
+  else msg=(it.list?`מחירון יצרן: ${fmt(it.list)}. `:'')+'Enter שומר ועובר לשורה הבאה בלי מחיר.';
+  w.textContent=msg;w.classList.toggle('warn',bad);
+});
+document.addEventListener('change',e=>{
+  if(e.target.id==='pkind'){reclass(S.page,e.target.value);return}
+  const s=e.target.closest('select[data-act="setattr"]');if(!s||!s.value)return;
+  const r=findRow(s.dataset.id);push('שונה');const k=s.dataset.k;r.attrs[k]=Number(s.value);r.src[k]=['user',''];r.userEdited=true;r.confirmed=false;
+  rematch(r);toast(r.sku?`עודכן: ${descOf(item(r.sku))}`:'אין מוצר מתאים בקטלוג',true);render();
+});
+$('sendBtn').addEventListener('click',()=>act('send',$('sendBtn')));
+$('chatForm').addEventListener('submit',e=>{e.preventDefault();const v=$('chatIn').value.trim();if(!v)return;$('chatIn').value='';chatAsk(v)});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&(e.target.id==='pc'||e.target.id==='ps')){e.preventDefault();const x=$('pc');if(x)act('saveprice',{dataset:{sku:x.dataset.sku}});return}
+  if(e.key==='Enter'&&e.target.id==='bd'){e.preventDefault();const b=document.querySelector('[data-act="bulkdisc"]');if(b)act('bulkdisc',b);return}
+  if(e.target.closest('input,select,textarea')){if(e.key==='Escape')e.target.blur();return}
+  if(e.key==='Escape'){if(S.modal){S.modal=null}else if(S.draw){S.draw=false}else if(S.sheet){S.sheet=false}else S.sel=null;render();return}
+  if(e.key==='/'||e.code==='Slash'){e.preventDefault();if(isPhone())S.view='chat',render();$('chatIn').focus();return}
+  if(S.modal)return;
+  const {comps,der}=visibleRows();const list=[...comps,...der].map(r=>r.id);
+  if(e.key==='ArrowDown'||e.key==='ArrowUp'){
+    e.preventDefault();S.kbd=true;let i=list.indexOf(S.sel);
+    i=e.key==='ArrowDown'?Math.min(list.length-1,i+1):Math.max(0,i<0?0:i-1);
+    if(list[i]){S.sel=list[i];centerOn(S.sel);render()}return}
+  if(e.key==='PageDown'||e.key==='PageUp'){e.preventDefault();stepPage(e.key==='PageDown'?1:-1);return}
+  const r=S.sel&&findRow(S.sel);if(!r)return;
+  if(e.key==='Enter'&&e.target.closest('[data-row]')){e.preventDefault();S.kbd=true;if(r.sku&&r.type!=='derived')act('confirm',{dataset:{id:r.id}});return}
+  if(e.key==='Delete'||e.key==='Backspace'){e.preventDefault();S.kbd=true;act('delete',{dataset:{id:r.id}});return}
+  if(['1','2','3'].includes(e.key)){
+    const k=Number(e.key)-1;S.kbd=true;
+    if(r.type==='missing'){const c=rank('mcb',r.attrs,PREF.mcb)[k];if(c)act('resolve',{dataset:{id:r.id,sku:c.sku}})}
+    else{const a=altsOf(r)[k];if(a)act('alt',{dataset:{id:r.id,sku:a.c.sku}})}
+  }
+});
+document.addEventListener('keydown',e=>{if(e.key===' '&&e.target.matches('[data-row]')){e.preventDefault();select(e.target.dataset.row)}});
+
+/* zoom, pan, draw */
+const ZS=[1,1.5,2.25,3];
+$('zIn').addEventListener('click',()=>{S.zoom=ZS[Math.min(ZS.length-1,ZS.indexOf(S.zoom)+1)];if(S.sel)centerOn(S.sel);renderSvg()});
+$('zOut').addEventListener('click',()=>{S.zoom=ZS[Math.max(0,ZS.indexOf(S.zoom)-1)];renderSvg()});
+$('zFit').addEventListener('click',()=>{S.zoom=1;S.center=null;renderSvg()});
+$('drawBtn').addEventListener('click',()=>{S.draw=!S.draw;renderSvg()});
+const svg=$('svg');let drag=null,moved=false;
+function pt(e){const p=svg.createSVGPoint();p.x=e.clientX;p.y=e.clientY;return p.matrixTransform(svg.getScreenCTM().inverse())}
+svg.addEventListener('pointerdown',e=>{
+  moved=false;
+  if(S.draw){const p=pt(e);drag={mode:'draw',x0:p.x,y0:p.y};svg.setPointerCapture(e.pointerId);e.preventDefault();return}
+  if(S.zoom>1){const [x,y,w,h]=vb();drag={mode:'pan',cx:e.clientX,cy:e.clientY,c:[x+w/2,y+h/2],k:w/svg.clientWidth};svg.setPointerCapture(e.pointerId)}
+});
+svg.addEventListener('pointermove',e=>{
+  if(!drag)return;
+  if(drag.mode==='draw'){const p=pt(e),t=$('tmp');const x=Math.min(p.x,drag.x0),y=Math.min(p.y,drag.y0),w=Math.abs(p.x-drag.x0),h=Math.abs(p.y-drag.y0);
+    t.setAttribute('x',x);t.setAttribute('y',y);t.setAttribute('width',w);t.setAttribute('height',h);t.setAttribute('visibility','visible');drag.box={x,y,w,h};moved=true}
+  else{const dx=(e.clientX-drag.cx)*drag.k,dy=(e.clientY-drag.cy)*drag.k;if(Math.abs(dx)+Math.abs(dy)>3)moved=true;S.center=[drag.c[0]-dx,drag.c[1]-dy];svg.setAttribute('viewBox',vb().join(' '))}
+});
+svg.addEventListener('pointerup',e=>{
+  if(!drag)return;const d=drag;drag=null;
+  if(d.mode==='draw'){
+    if(d.box&&d.box.w>10&&d.box.h>10){S.modal={type:'picker',bbox:{x:d.box.x+6,y:d.box.y+6,w:Math.max(8,d.box.w-12),h:Math.max(8,d.box.h-12)}};renderLayer()}
+    else{$('tmp').setAttribute('visibility','hidden');toast('גררו מלבן סביב הרכיב')}
+  }
+});
+svg.addEventListener('click',e=>{
+  if(moved||S.draw)return;
+  const o=e.target.closest('[data-rowid]');if(!o)return;
+  const id=o.dataset.rowid;S.kbd=false;
+  const rr=ROWS.find(x=>x.id===id);if(rr&&rr.panel!==S.panel)S.panel=rr.panel;
+  if(isPhone()){S.sel=id;S.sheet=true;render()}else{S.sel=id;render();const el=document.querySelector(`[data-row="${id}"]`);if(el)el.scrollIntoView({block:'nearest',behavior:'smooth'})}
+});
+mq.addEventListener('change',()=>{S.sheet=false;render()});
+
+/* boot */
+S.chat.push({who:'b',text:'אפשר לשאול על השורות או לבקש שינוי. כל שינוי מוצג כהצעה, ולא מוחל עד שתאשרו. באב הטיפוס הצ׳אט מבין כמה פקודות לדוגמה.'});
+INIT=JSON.stringify({ROWS,INST,pg:PAGES.map(pageState)});
+renderSugg();render();
+</script>

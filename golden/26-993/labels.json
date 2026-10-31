@@ -1,0 +1,500 @@
+{
+  "drawing": "26/993",
+  "file": "26-993.pdf",
+  "input_kind": "factory_drawing",
+  "labelled_by": "פענוח ראשוני, הושווה להצעה 10271 ואושר מול המפעל",
+  "title_block": {
+    "panel": "MAIN ELECTRICAL BOARD",
+    "drawing_number": "26/993",
+    "date": "2026-10-02",
+    "producer": "S.S Electrical and control panels (אותו מפעל כמו NEVIS-1)",
+    "people": "שמות המתכנן, השרטט והמאשר לא נשמרים"
+  },
+  "file_facts": {
+    "pages": 5,
+    "page_rotation": 90,
+    "page_size": "Letter",
+    "extractable_text_chars": 12,
+    "extractable_text": "ABB ×3 בלבד, מתוך ציורי המכשירים",
+    "geometry_source": "vector",
+    "text_source": "ocr",
+    "note": "שכבת טקסט חלקית ומטעה: 12 תווים, וכל שאר הטקסט קווים"
+  },
+  "pages": [
+    {
+      "no": 1,
+      "kind": "technical_data",
+      "route": "context",
+      "extract": {
+        "enclosure_mm": [
+          800,
+          1000,
+          300
+        ],
+        "ip": "IP55",
+        "ik": "IK10",
+        "color": "RAL-7035",
+        "rated_current_a": 100,
+        "icc_ka": 10,
+        "control_voltage": "230V-AC",
+        "form": "2B",
+        "ambient_c": 35,
+        "installation": "wall-mounted, outdoor",
+        "standard": "SI 61439-2"
+      }
+    },
+    {
+      "no": 2,
+      "kind": "panel_front_view",
+      "route": "context",
+      "front_view_designators": [
+        "QRF",
+        "RF",
+        "QPM",
+        "FC1",
+        "FB1",
+        "F7-F10",
+        "FC2",
+        "FB2",
+        "F13",
+        "F14",
+        "F17",
+        "F18",
+        "Q1",
+        "FPB",
+        "PB",
+        "QG1",
+        "QLG1",
+        "SE",
+        "QG2",
+        "QLG2",
+        "WO",
+        "L1",
+        "L2",
+        "L3",
+        "LG1",
+        "LG2",
+        "LG3",
+        "PM",
+        "EMS"
+      ]
+    },
+    {
+      "no": 3,
+      "kind": "single_line_diagram",
+      "route": "process",
+      "note": "הזנות, מחליף, מדידה, מגן ברק"
+    },
+    {
+      "no": 4,
+      "kind": "single_line_diagram",
+      "route": "process",
+      "note": "יציאות"
+    },
+    {
+      "no": 5,
+      "kind": "control_diagram",
+      "route": "process",
+      "note": "חירום וגילוי אש"
+    }
+  ],
+  "bom": [
+    {
+      "product": "מפסק בתיבה יצוקה ABB XT1C 4P ‏125A",
+      "family": "circuit_breaker",
+      "qty": 2,
+      "designators": [
+        "QG1",
+        "QG2"
+      ],
+      "attributes": {
+        "poles": 4,
+        "current_a": 125,
+        "model_token": "XT1C",
+        "load_current_a": 100
+      },
+      "note": "INC=100A. הזנה מ-QEN1 ומ-QEN2",
+      "pages": [
+        3
+      ]
+    },
+    {
+      "product": "סליל הפסקה",
+      "family": "shunt_trip",
+      "qty": 2,
+      "designators": [
+        "TC-G1",
+        "TC-G2"
+      ],
+      "note": "על QG1 ו-QG2. מופעל מבקר גילוי האש",
+      "pages": [
+        3,
+        5
+      ]
+    },
+    {
+      "product": "מחליף SOCOMEC 4P ‏125A",
+      "family": "changeover_switch",
+      "qty": 1,
+      "designators": [
+        "SG"
+      ],
+      "attributes": {
+        "poles": 4,
+        "current_a": 125,
+        "brand": "SOCOMEC"
+      },
+      "note": "בחזית מסומן SE ובתוכנית SG",
+      "to_verify": true,
+      "pages": [
+        3
+      ]
+    },
+    {
+      "product": "מפסק בתיבה יצוקה ABB XT1 3P ‏80A",
+      "family": "circuit_breaker",
+      "qty": 1,
+      "designators": [
+        "Q1"
+      ],
+      "attributes": {
+        "poles": 3,
+        "current_a": 80,
+        "model_token": "XT1",
+        "load_current_a": 64
+      },
+      "note": "INC=64A. הזנה ללוח משאבות, 5X25 N2XY",
+      "pages": [
+        4
+      ]
+    },
+    {
+      "product": "מא\"ז ABB S203M 3P ‏40A",
+      "family": "circuit_breaker",
+      "qty": 1,
+      "designators": [
+        "FC2"
+      ],
+      "attributes": {
+        "poles": 3,
+        "current_a": 40,
+        "model_token": "S203M"
+      },
+      "note": "INC=32A",
+      "pages": [
+        4
+      ]
+    },
+    {
+      "product": "מא\"ז ABB S203M 3P ‏25A",
+      "family": "circuit_breaker",
+      "qty": 2,
+      "designators": [
+        "F13",
+        "F14"
+      ],
+      "attributes": {
+        "poles": 3,
+        "current_a": 25,
+        "model_token": "S203M"
+      },
+      "note": "INC=20A. קופסאות בתי תקע",
+      "pages": [
+        4
+      ]
+    },
+    {
+      "product": "מא\"ז ABB S203M 3P ‏16A",
+      "family": "circuit_breaker",
+      "qty": 1,
+      "designators": [
+        "FC1"
+      ],
+      "attributes": {
+        "poles": 3,
+        "current_a": 16,
+        "model_token": "S203M"
+      },
+      "note": "**INC=20A, גבוה מזרם המא\"ז.** כנראה טעות העתקה בשרטוט",
+      "to_verify": true,
+      "pages": [
+        4
+      ]
+    },
+    {
+      "product": "מא\"ז ABB S201M 1P ‏16A",
+      "family": "circuit_breaker",
+      "qty": 2,
+      "designators": [
+        "F17",
+        "F18"
+      ],
+      "attributes": {
+        "poles": 1,
+        "current_a": 16,
+        "model_token": "S201M"
+      },
+      "note": "שמור",
+      "pages": [
+        4
+      ]
+    },
+    {
+      "product": "מא\"ז ABB S201M 1P ‏10A",
+      "family": "circuit_breaker",
+      "qty": 4,
+      "designators": [
+        "F7",
+        "F8",
+        "F9",
+        "F10"
+      ],
+      "attributes": {
+        "poles": 1,
+        "current_a": 10,
+        "model_token": "S201M"
+      },
+      "note": "תאורה, תאורת חירום, תאורת חוץ, שמור",
+      "pages": [
+        4
+      ]
+    },
+    {
+      "product": "מפסק פחת 4P ‏40A ‏30mA סוג A",
+      "family": "rcd",
+      "qty": 2,
+      "designators": [
+        "FB1",
+        "FB2"
+      ],
+      "attributes": {
+        "poles": 4,
+        "current_a": 40,
+        "residual_ma": 30,
+        "rcd_type": "A"
+      },
+      "pages": [
+        4
+      ]
+    },
+    {
+      "product": "מגן מנוע ABB MS116 ‏4–6.3A",
+      "family": "circuit_breaker",
+      "qty": 4,
+      "designators": [
+        "QLG1",
+        "QLG2",
+        "QPM",
+        "QRF"
+      ],
+      "attributes": {
+        "model_token": "MS116",
+        "range_a": "4-6.3"
+      },
+      "note": "הגנת נורות, מונה ופיקוד. ב-QRF הדגם לא כתוב, ובחזית זהה",
+      "pages": [
+        3,
+        5
+      ]
+    },
+    {
+      "product": "נורת סימון ירוקה",
+      "family": "indicator_lamp",
+      "qty": 6,
+      "designators": [
+        "L1",
+        "L2",
+        "L3",
+        "LG1",
+        "LG2",
+        "LG3"
+      ],
+      "attributes": {
+        "color": "green"
+      },
+      "note": "נוכחות פאזות בשתי ההזנות",
+      "pages": [
+        2,
+        3
+      ]
+    },
+    {
+      "product": "משנה זרם 125/5A",
+      "family": "current_transformer",
+      "qty": 3,
+      "designators": [
+        "MS1",
+        "MS2",
+        "MS3"
+      ],
+      "attributes": {
+        "ratio": "125/5"
+      },
+      "pages": [
+        3
+      ]
+    },
+    {
+      "product": "מהדק בדיקה למשנה זרם (K/L)",
+      "family": "terminal",
+      "qty": 6,
+      "designators": [],
+      "note": "חומר עזר אצל המפעל. לא שורה נפרדת בהצעה",
+      "pages": [
+        3
+      ],
+      "billable": false
+    },
+    {
+      "product": "מונה SATEC 135E",
+      "family": "energy_meter",
+      "qty": 1,
+      "designators": [
+        "PM"
+      ],
+      "attributes": {
+        "model_token": "SATEC 135E"
+      },
+      "pages": [
+        3
+      ]
+    },
+    {
+      "product": "מגן ברק 50kA",
+      "family": "surge_protector",
+      "qty": 1,
+      "designators": [
+        "PB"
+      ],
+      "attributes": {
+        "imax_ka": 50,
+        "poles": 4
+      },
+      "note": "קטבים לא כתובים. 4 לפי הסימון ולפי רוחב המכשיר בחזית",
+      "to_verify": true,
+      "pages": [
+        3
+      ]
+    },
+    {
+      "product": "בסיס נתיך HRC תלת-קוטבי",
+      "family": "fuse",
+      "qty": 1,
+      "designators": [
+        "FPB"
+      ],
+      "attributes": {
+        "poles": 3
+      },
+      "note": "בחזית מצוירים 2 נתיכים, ובתוכנית 3X50A",
+      "to_verify": true,
+      "pages": [
+        3
+      ]
+    },
+    {
+      "product": "נתיך HRC ‏50A",
+      "family": "fuse",
+      "qty": 3,
+      "designators": [
+        "FPB"
+      ],
+      "attributes": {
+        "current_a": 50
+      },
+      "pages": [
+        3
+      ]
+    },
+    {
+      "product": "לחצן חירום על הדלת",
+      "family": "push_button",
+      "qty": 1,
+      "designators": [
+        "EMS"
+      ],
+      "pages": [
+        2,
+        5
+      ]
+    },
+    {
+      "product": "בקר התראה ממערכת גילוי אש GIC-1",
+      "family": "relay",
+      "qty": 1,
+      "designators": [
+        "RF"
+      ],
+      "attributes": {
+        "model_token": "GIC-1"
+      },
+      "note": "בחזית RF. בתוכנית בלי תג",
+      "to_verify": true,
+      "pages": [
+        5
+      ]
+    },
+    {
+      "product": "בלוק חלוקה 4P",
+      "family": "busbar_block",
+      "qty": 1,
+      "designators": [
+        "WO"
+      ],
+      "note": "מהחזית. בתוכנית הוא פס הצבירה WO",
+      "to_verify": true,
+      "pages": [
+        2
+      ]
+    },
+    {
+      "product": "ארון פח IP55 ‏800×1000×300, RAL7035, עם דלת וחלון",
+      "family": "enclosure",
+      "qty": 1,
+      "designators": [],
+      "attributes": {
+        "ip": "IP55",
+        "ik": "IK10",
+        "dims_mm": [
+          800,
+          1000,
+          300
+        ]
+      },
+      "note": "מעמוד הנתונים: התקנה על קיר, בחוץ, Form 2B, ‏35°C",
+      "pages": [
+        1,
+        2
+      ]
+    }
+  ],
+  "outside_scope": [
+    {
+      "item": "לחצן חירום מרוחק",
+      "supply_scope": "prepare_only",
+      "note": "\"Preparation for a Remote Emergency Push Button\". רק מהדקים EM1/EM2"
+    }
+  ],
+  "findings": [
+    "INC הוא זרם העומס: בכל המא\"זים בערך 0.8 מהזרם הנקוב, פרט ל-FC1 (16A עם INC=20A)",
+    "תג שונה בין החזית לתוכנית: SE מול SG",
+    "מכשיר בלי תג בתוכנית שיש לו תג בחזית: GIC-1 ↔ RF",
+    "שכבת טקסט חלקית: 12 תווים בלבד",
+    "הכנה ללחצן חירום מרוחק: היקף אספקה באנגלית"
+  ],
+  "to_verify": [
+    "מגן ברק: 4 קטבים?",
+    "FC1: INC=20A על מא\"ז 16A"
+  ],
+  "summary": {
+    "products": 22,
+    "units": 47
+  },
+  "resolved_by_quote": {
+    "RF": "ממסר מבודד ערוץ אחד (שורה 14). RF הוא GIC-1",
+    "SE/SG": "מנתק 4X125A אחד (שורה 17). אותו מכשיר",
+    "WO": "כלול בארון: 'כולל פסי צבירה' (שורה 15)",
+    "FPB": "מנתק נתיך גליל + נתיכים בשורה אחת (שורה 5). לא בסיס HRC"
+  },
+  "verified_with_factory": true
+}

@@ -1,0 +1,269 @@
+{
+  "drawing": "26/952 NURSERY",
+  "file": "NURSERY-1.pdf",
+  "input_kind": "factory_drawing",
+  "labelled_by": "פענוח ותמחור ראשוני. מחירים רק ממוצרים זהים בהצעות קודמות של המפעל",
+  "title_block": {
+    "panel": "NURSERY",
+    "project": "joyech ethiopia",
+    "drawing_number": "26/952",
+    "date": "2026-10-05",
+    "producer": "ס.ס לוחות חשמל ובקרה",
+    "customer": "אותו לקוח כמו NEVIS-1 (לא נשמר)",
+    "people": "לא נשמרים"
+  },
+  "file_facts": {
+    "pages": 9,
+    "page_rotation": 270,
+    "text_source": "ocr",
+    "note": "עמודים 2–3 זהים לעמודי התבנית של NEVIS-1"
+  },
+  "pages": [
+    {
+      "no": 1,
+      "kind": "technical_data",
+      "extract": {
+        "enclosure_mm_hwd": [
+          1200,
+          800,
+          300
+        ],
+        "ip": "IP55",
+        "ik": "IK10",
+        "color": "RAL-7035",
+        "rated_current_a": 160,
+        "icc_ka": 10,
+        "control_voltage": "230V-AC",
+        "form": "1",
+        "installation": "floor-standing, outdoor",
+        "cable_entry": "top"
+      }
+    },
+    {
+      "no": 2,
+      "kind": "factory_template",
+      "route": "skip"
+    },
+    {
+      "no": 3,
+      "kind": "factory_template",
+      "route": "skip"
+    },
+    {
+      "no": 4,
+      "kind": "panel_front_view",
+      "route": "context"
+    },
+    {
+      "no": 5,
+      "kind": "single_line_diagram"
+    },
+    {
+      "no": 6,
+      "kind": "single_line_diagram"
+    },
+    {
+      "no": 7,
+      "kind": "single_line_diagram"
+    },
+    {
+      "no": 8,
+      "kind": "single_line_diagram",
+      "note": "כולל פיקוד המגענים"
+    },
+    {
+      "no": 9,
+      "kind": "single_line_diagram"
+    }
+  ],
+  "rows": [
+    {
+      "product": "מפסק בתיבה יצוקה ABB XT1C 4P ‏160A משולב פחת",
+      "qty": 1,
+      "designators": [
+        "Q0"
+      ],
+      "unit_price": null,
+      "price_source": null,
+      "note": "INC=125A. בהצעות קודמות יש רק \"משולב פחת עד 4X100A\" (3,200 ₪), מוצר אחר",
+      "family": "circuit_breaker",
+      "total": null
+    },
+    {
+      "product": "מפסק בתיבה יצוקה ABB XT1C 3P ‏80A",
+      "qty": 1,
+      "designators": [
+        "Q01"
+      ],
+      "unit_price": 750,
+      "price_source": "הצעה 10271 (26/993): \"מפסק 3X80A\"",
+      "note": "INC=63A. מאווררי סחרור",
+      "family": "circuit_breaker",
+      "total": 750
+    },
+    {
+      "product": "מא\"ז ABB S203M 3P ‏6A",
+      "qty": 1,
+      "designators": [
+        "FNV"
+      ],
+      "unit_price": 185,
+      "price_source": "הצעה 10288 (NEVIS-1): \"מא\"ז 3X6A\"",
+      "note": "בשרטוט S204M (דגם 4 קטבים) מול 3X6A. כמו ב-NEVIS-1, שם ההצעה אישרה 3P",
+      "family": "circuit_breaker",
+      "total": 185
+    },
+    {
+      "product": "ממסר חוסר מתח",
+      "qty": 1,
+      "designators": [
+        "NVR"
+      ],
+      "unit_price": 340,
+      "price_source": "הצעה 10288 (NEVIS-1)",
+      "family": "voltage_relay",
+      "total": 340
+    },
+    {
+      "product": "ממסר עזר",
+      "qty": 1,
+      "designators": [
+        "RNV"
+      ],
+      "unit_price": null,
+      "price_source": null,
+      "note": "מפעיל את המגענים C1–C4. אין מחיר בהצעות קודמות",
+      "family": "relay",
+      "total": null
+    },
+    {
+      "product": "נורת סימון 22 מ\"מ",
+      "qty": 4,
+      "designators": [
+        "L1",
+        "L2",
+        "L3",
+        "HNV"
+      ],
+      "unit_price": 45,
+      "price_source": "הצעה 10288 (NEVIS-1), הצעה 10271 (26/993)",
+      "note": "3 ירוקות, אחת אדומה",
+      "family": "indicator_lamp",
+      "total": 180
+    },
+    {
+      "product": "מא\"ז ABB SN201M 1P+N ‏10A",
+      "qty": 17,
+      "designators": [
+        "F1–F17"
+      ],
+      "unit_price": 130,
+      "price_source": "הצעה 10288 (NEVIS-1): \"מא\"ז N+10\"",
+      "note": "BOM 1–17",
+      "family": "circuit_breaker",
+      "total": 2210
+    },
+    {
+      "product": "מא\"ז ABB S203M 3P ‏20A",
+      "qty": 4,
+      "designators": [
+        "F18",
+        "F19",
+        "F20",
+        "F21"
+      ],
+      "unit_price": null,
+      "price_source": null,
+      "note": "שקעי שירות. אין 3X20A בהצעות קודמות (3X16A ‏185 ₪, 3X25A ‏195 ₪)",
+      "family": "circuit_breaker",
+      "total": null
+    },
+    {
+      "product": "מא\"ז ABB S203M 3P ‏16A",
+      "qty": 5,
+      "designators": [
+        "F22",
+        "F23",
+        "F24",
+        "F25",
+        "F30"
+      ],
+      "unit_price": 185,
+      "price_source": "הצעה 10288 (NEVIS-1), הצעה 10271 (26/993)",
+      "note": "מנועי מסכים, ושמור",
+      "family": "circuit_breaker",
+      "total": 925
+    },
+    {
+      "product": "מגען 3P, ‏16A לפחות",
+      "qty": 4,
+      "designators": [
+        "C1",
+        "C2",
+        "C3",
+        "C4"
+      ],
+      "unit_price": null,
+      "price_source": null,
+      "note": "הזרם לא כתוב, הוסק מהמא\"ז. אין מגענים בהצעות קודמות",
+      "family": "contactor",
+      "total": null
+    },
+    {
+      "product": "מא\"ז ABB S201M 1P ‏6A",
+      "qty": 1,
+      "designators": [
+        "FP1"
+      ],
+      "unit_price": 42,
+      "price_source": "הצעה 10288 (NEVIS-1): \"מא\"ז 1X6A\"",
+      "note": "פיקוד",
+      "family": "circuit_breaker",
+      "total": 42
+    },
+    {
+      "product": "מא\"ז ABB S201M 1P ‏16A",
+      "qty": 1,
+      "designators": [
+        "F31"
+      ],
+      "unit_price": 42,
+      "price_source": "הצעה 10288 (NEVIS-1), הצעה 10271 (26/993)",
+      "note": "שמור",
+      "family": "circuit_breaker",
+      "total": 42
+    },
+    {
+      "product": "ארון פח IP55 ‏1200×800×300, RAL7035, עמידה על הרצפה",
+      "qty": 1,
+      "designators": [],
+      "unit_price": null,
+      "price_source": null,
+      "note": "מעמוד הנתונים. בהצעות קודמות רק ארון 1000/800/300 (4,200 ₪). לפי המפעל המחיר כולל פסי צבירה, אפס, הארקה ודלתות",
+      "family": "enclosure",
+      "total": null
+    }
+  ],
+  "front_view_only": {
+    "designators": [
+      "F26",
+      "F27",
+      "F28",
+      "F29"
+    ],
+    "what": "4 מא\"זים 3P בחזית הלוח, שלא מופיעים באף עמוד של התוכנית",
+    "rule": "FRONT_VIEW_DESIGNATOR_MISSING",
+    "counted": false,
+    "resolution": "שאריות בחזית. לא צריכים להופיע. אושר"
+  },
+  "summary": {
+    "products": 13,
+    "units": 42,
+    "priced_products": 8,
+    "priced_units": 31,
+    "subtotal_priced": 4674,
+    "unpriced_products": 5
+  },
+  "compared_with_quote": "10285",
+  "verified_with_factory": true
+}

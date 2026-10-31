@@ -1,0 +1,2008 @@
+{
+  "drawing": "6199-2-50",
+  "file": "6199-2-50.pdf",
+  "input_kind": "designer_plan",
+  "labelled_by": "ניתוח ראשוני מתוך התמונות. אושר בסקירה של בעל המוצר",
+  "verified_with_factory": false,
+  "title_block": {
+    "project": "חצרים",
+    "drawing_name": "תכנית לוחות חשמל",
+    "drawing_number": "6199-2-50",
+    "revision": 6,
+    "date": "2026-02-12",
+    "status": "for_execution",
+    "designer": "משרד תכנון חשמל (שם בטבלת הכותרת)"
+  },
+  "file_facts": {
+    "pages": 1,
+    "page_size_pt": [
+      3969,
+      1701
+    ],
+    "page_size_mm": [
+      1400,
+      600
+    ],
+    "creator": "AutoCAD LT 2026",
+    "extractable_text_chars": 0,
+    "vector_drawing_ops": 9046,
+    "geometry_source": "vector",
+    "text_source": "ocr",
+    "note": "כל הטקסט הומר לקווים. אין שכבת טקסט. עמוד בגודל A0 בערך"
+  },
+  "pages": [
+    {
+      "no": 1,
+      "kind": "single_line_diagram",
+      "route": "process",
+      "regions": [
+        {
+          "kind": "panel",
+          "name": "לוח ראשי בגומחת בטון ליד היציאה מהמתחם"
+        },
+        {
+          "kind": "notes_block",
+          "panel_ref": "לוח ראשי"
+        },
+        {
+          "kind": "panel",
+          "name": "לוח סככה"
+        },
+        {
+          "kind": "notes_block",
+          "panel_ref": "לוח סככה"
+        },
+        {
+          "kind": "panel",
+          "name": "לוח ביתן שומר"
+        },
+        {
+          "kind": "notes_block",
+          "panel_ref": "לוח ביתן שומר"
+        },
+        {
+          "kind": "feed_diagram",
+          "panels": [
+            "פילר הזנה למתחם",
+            "לוח חשמל ראשי מתחם רכב",
+            "לוח מבנה משרדים",
+            "לוח סככת רכב",
+            "לוח ביתן שומר"
+          ]
+        },
+        {
+          "kind": "title_block"
+        }
+      ]
+    }
+  ],
+  "panels": [
+    {
+      "name": "לוח ראשי",
+      "bus": "L1,L2,L3 800A+N+E",
+      "ik_ka": 20,
+      "components": [
+        {
+          "item": "מפסק בתיבה יצוקה אלקטרוני LSI, 630A, כיול 500A",
+          "family": "circuit_breaker",
+          "qty": 1,
+          "attributes": {
+            "current_a": 630,
+            "setting_a": 500,
+            "trip_unit": "LSI",
+            "poles": 3
+          },
+          "note": "מפסק ראשי",
+          "poles_source": "graphic"
+        },
+        {
+          "item": "סליל הפסקה TC על המפסק הראשי",
+          "family": "shunt_trip",
+          "qty": 1,
+          "note": "אביזר של המפסק הראשי"
+        },
+        {
+          "item": "לחצן חירום על הלוח",
+          "family": "push_button",
+          "qty": 1
+        },
+        {
+          "item": "מא\"ז 6A לפיקוד סליל ההפסקה",
+          "family": "circuit_breaker",
+          "qty": 1,
+          "attributes": {
+            "current_a": 6,
+            "poles": 3
+          },
+          "poles_source": "graphic"
+        },
+        {
+          "item": "מחליף ידני רשת/גנרטור 4x630A",
+          "family": "changeover_switch",
+          "qty": 1,
+          "attributes": {
+            "poles": 4,
+            "current_a": 630
+          },
+          "note": "הגנרטור עצמו 'הכנה בלבד'"
+        },
+        {
+          "item": "משנה זרם 800/5A",
+          "family": "current_transformer",
+          "qty": 3,
+          "attributes": {
+            "ratio": "800/5"
+          },
+          "note": "סמל אחד, 3 למונה תלת-פאזי (הסקה)",
+          "to_verify": true
+        },
+        {
+          "item": "מונה SATEC 135E",
+          "family": "energy_meter",
+          "qty": 1,
+          "attributes": {
+            "model": "SATEC 135E"
+          }
+        },
+        {
+          "item": "מגן מנוע PKZM 1-2.4A להגנת המונה",
+          "family": "circuit_breaker",
+          "qty": 1,
+          "attributes": {
+            "model": "PKZM",
+            "range_a": "1-2.4"
+          }
+        },
+        {
+          "item": "בסיס נתיך HRC תלת-קוטבי",
+          "family": "fuse",
+          "qty": 1,
+          "attributes": {
+            "poles": 3
+          }
+        },
+        {
+          "item": "נתיך HRC 100A",
+          "family": "fuse",
+          "qty": 3,
+          "attributes": {
+            "current_a": 100
+          },
+          "note": "בשרטוט: 3x100A"
+        },
+        {
+          "item": "מגן ברק 4P 100kA B+C",
+          "family": "surge_protector",
+          "qty": 1,
+          "attributes": {
+            "poles": 4,
+            "imax_ka": 100,
+            "class": "B+C"
+          }
+        },
+        {
+          "item": "מפסק אלקטרוני LSI 160A/160A, הזנה לבתי התקע",
+          "family": "circuit_breaker",
+          "qty": 1,
+          "attributes": {
+            "current_a": 160,
+            "setting_a": 160,
+            "trip_unit": "LSI",
+            "poles": 3
+          },
+          "poles_source": "graphic"
+        },
+        {
+          "item": "מא\"ז 16A לבתי תקע",
+          "family": "circuit_breaker",
+          "qty": 1,
+          "attributes": {
+            "current_a": 16,
+            "poles": 3
+          },
+          "poles_source": "graphic"
+        },
+        {
+          "item": "מפסק פחת 4x63A/30mA",
+          "family": "rcd",
+          "qty": 1,
+          "attributes": {
+            "poles": 4,
+            "current_a": 63,
+            "residual_ma": 30
+          }
+        },
+        {
+          "item": "מא\"ז 32A לבית תקע",
+          "family": "circuit_breaker",
+          "qty": 1,
+          "attributes": {
+            "current_a": 32,
+            "poles": 3
+          },
+          "poles_source": "graphic"
+        },
+        {
+          "item": "מפסק פחת 4x40A/30mA",
+          "family": "rcd",
+          "qty": 1,
+          "attributes": {
+            "poles": 4,
+            "current_a": 40,
+            "residual_ma": 30
+          }
+        },
+        {
+          "item": "בית תקע CEE 5x16A",
+          "family": "socket_outlet",
+          "qty": 1,
+          "note": "על הלוח, בקופסת שירות IP54"
+        },
+        {
+          "item": "בית תקע CEE 1x16A",
+          "family": "socket_outlet",
+          "qty": 1
+        },
+        {
+          "item": "בית תקע ת\"י",
+          "family": "socket_outlet",
+          "qty": 1
+        },
+        {
+          "item": "בית תקע CEE 5x32A",
+          "family": "socket_outlet",
+          "qty": 1
+        },
+        {
+          "item": "קופסת שירות חיצונית IP54 לבתי התקע",
+          "family": "enclosure_accessory",
+          "qty": 1,
+          "to_verify": true
+        },
+        {
+          "item": "מפסק אלקטרוני LSI 100A, הזנה לתאורה ושירותים",
+          "family": "circuit_breaker",
+          "qty": 1,
+          "attributes": {
+            "current_a": 100,
+            "trip_unit": "LSI",
+            "poles": 3
+          },
+          "poles_source": "graphic"
+        },
+        {
+          "item": "מא\"ז 6A לפיקוד מגענים",
+          "family": "circuit_breaker",
+          "qty": 2,
+          "attributes": {
+            "current_a": 6,
+            "poles": 1
+          },
+          "circuits": "C1, C2",
+          "poles_source": "graphic"
+        },
+        {
+          "item": "בורר ידני/0/אוטומטי",
+          "family": "selector_switch",
+          "qty": 2,
+          "circuits": "C1, C2"
+        },
+        {
+          "item": "שעון 2 תוכניות",
+          "family": "time_switch",
+          "qty": 1
+        },
+        {
+          "item": "מגען T1/T2, תאורה",
+          "family": "contactor",
+          "qty": 2,
+          "note": "זרם וקטבים לא כתובים. הוסק מהמא\"ז שמעליו (3P 16A)",
+          "circuits": "1, 2",
+          "attributes": {
+            "poles": 3,
+            "current_ac3_min_a": 16
+          },
+          "inferred": true
+        },
+        {
+          "item": "מא\"ז 16A, תאורה",
+          "family": "circuit_breaker",
+          "qty": 2,
+          "attributes": {
+            "current_a": 16,
+            "poles": 3
+          },
+          "circuits": "1, 2",
+          "poles_source": "cable_5_cores"
+        },
+        {
+          "item": "מא\"ז 20A, הזנה למחסום יציאה",
+          "family": "circuit_breaker",
+          "qty": 1,
+          "attributes": {
+            "current_a": 20,
+            "poles": 1
+          },
+          "circuits": "4",
+          "poles_source": "cable_3_cores"
+        },
+        {
+          "item": "מא\"ז 10A, שמור",
+          "family": "circuit_breaker",
+          "qty": 4,
+          "attributes": {
+            "current_a": 10,
+            "poles": 1
+          },
+          "circuits": "6-9",
+          "poles_source": "cable_3_cores",
+          "note": "(x4) = טווח של 4"
+        },
+        {
+          "item": "מא\"ז 16A, שמור",
+          "family": "circuit_breaker",
+          "qty": 6,
+          "attributes": {
+            "current_a": 16,
+            "poles": 1
+          },
+          "circuits": "10-15",
+          "poles_source": "cable_3_cores",
+          "note": "(x6) = טווח של 6"
+        },
+        {
+          "item": "מא\"ז 16A, הזנה לשרשרת שעון",
+          "family": "circuit_breaker",
+          "qty": 1,
+          "attributes": {
+            "current_a": 16,
+            "poles": 3
+          },
+          "circuits": "20",
+          "poles_source": "graphic"
+        },
+        {
+          "item": "מא\"ז 10A, פיקוד שעון",
+          "family": "circuit_breaker",
+          "qty": 1,
+          "attributes": {
+            "current_a": 10,
+            "poles": 1
+          },
+          "poles_source": "graphic"
+        },
+        {
+          "item": "שעון פיקוד",
+          "family": "time_switch",
+          "qty": 1,
+          "circuits": "20"
+        },
+        {
+          "item": "בורר ידני/0/אוטומטי",
+          "family": "selector_switch",
+          "qty": 1,
+          "circuits": "20"
+        },
+        {
+          "item": "מגען C",
+          "family": "contactor",
+          "qty": 1,
+          "circuits": "20",
+          "attributes": {
+            "poles": 3,
+            "current_ac3_min_a": 16
+          },
+          "inferred": true,
+          "note": "זרם וקטבים לא כתובים. הוסק מהמא\"ז שמעליו (3P 16A)"
+        },
+        {
+          "item": "מא\"ז 25A",
+          "family": "circuit_breaker",
+          "qty": 3,
+          "attributes": {
+            "current_a": 25,
+            "poles": 3
+          },
+          "circuits": "21-23",
+          "poles_source": "cable_5_cores+graphic",
+          "note": "(x3) = טווח של 3"
+        },
+        {
+          "item": "מפסק בתיבה יצוקה 63A, תיבות בתי תקע",
+          "family": "circuit_breaker",
+          "qty": 1,
+          "attributes": {
+            "current_a": 63,
+            "poles": 3
+          },
+          "circuits": "25",
+          "poles_source": "graphic"
+        },
+        {
+          "item": "מפסק בתיבה יצוקה 80A, שמור למתקן ביוב",
+          "family": "circuit_breaker",
+          "qty": 2,
+          "attributes": {
+            "current_a": 80,
+            "poles": 3
+          },
+          "circuits": "26-27",
+          "note": "(x2) = טווח של 2",
+          "poles_source": "graphic"
+        },
+        {
+          "item": "מפסק אלקטרוני LSI 100A, כיול 80A, הזנה למשרדים",
+          "family": "circuit_breaker",
+          "qty": 1,
+          "attributes": {
+            "current_a": 100,
+            "setting_a": 80,
+            "trip_unit": "LSI",
+            "poles": 3
+          },
+          "circuits": "28",
+          "poles_source": "graphic"
+        },
+        {
+          "item": "מפסק אלקטרוני LSI 160A, הזנה לסככת משאיות",
+          "family": "circuit_breaker",
+          "qty": 1,
+          "attributes": {
+            "current_a": 160,
+            "trip_unit": "LSI",
+            "poles": 3
+          },
+          "circuits": "29",
+          "poles_source": "graphic"
+        },
+        {
+          "item": "מפסק בתיבה יצוקה 25A, הזנה למבנה שומר",
+          "family": "circuit_breaker",
+          "qty": 1,
+          "attributes": {
+            "current_a": 25,
+            "poles": 3
+          },
+          "circuits": "30",
+          "poles_source": "graphic"
+        },
+        {
+          "item": "ארון פוליאסטר משוריין גודל 2, 1250×1115×320, IP65",
+          "family": "enclosure",
+          "qty": 1,
+          "note": "ממסגרת ההערות. Form 2B, ‏61439-2, ‏40°C, מקום שמור 30%"
+        }
+      ],
+      "outside_panel": [
+        {
+          "item": "מפסק אלקטרוני LSI 630A, תוספת בפילר חשמל קיים",
+          "family": "circuit_breaker",
+          "qty": 1,
+          "attributes": {
+            "current_a": 630,
+            "trip_unit": "LSI"
+          },
+          "supply_scope": "other_location",
+          "note": "מסגרת מקווקוות. הזנה למתחם הרכב",
+          "to_verify": true
+        },
+        {
+          "item": "גנרטור חירום",
+          "family": "generator",
+          "qty": 0,
+          "supply_scope": "prepare_only",
+          "note": "בשרטוט: \"הכנה בלבד\""
+        }
+      ],
+      "component_rows": 42,
+      "devices_total": 61,
+      "bom": [
+        {
+          "product": "מפסק בתיבה יצוקה אלקטרוני LSI 3P ‏630A, מכויל ל-500A",
+          "qty": 1,
+          "circuits": [],
+          "uses": [],
+          "verify": false,
+          "notes": [
+            "מפסק ראשי"
+          ]
+        },
+        {
+          "product": "סליל הפסקה TC",
+          "qty": 1,
+          "circuits": [],
+          "uses": [],
+          "verify": false,
+          "notes": [
+            "אביזר של המפסק הראשי"
+          ]
+        },
+        {
+          "product": "לחצן חירום",
+          "qty": 1,
+          "circuits": [],
+          "uses": [],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "מא\"ז 3P ‏6A",
+          "qty": 1,
+          "circuits": [],
+          "uses": [
+            "לפיקוד סליל ההפסקה"
+          ],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "מחליף ידני רשת/גנרטור 4x630A",
+          "qty": 1,
+          "circuits": [],
+          "uses": [],
+          "verify": false,
+          "notes": [
+            "הגנרטור עצמו 'הכנה בלבד'"
+          ]
+        },
+        {
+          "product": "משנה זרם 800/5A",
+          "qty": 3,
+          "circuits": [],
+          "uses": [],
+          "verify": true,
+          "notes": [
+            "סמל אחד, 3 למונה תלת-פאזי (הסקה)"
+          ]
+        },
+        {
+          "product": "מונה SATEC 135E",
+          "qty": 1,
+          "circuits": [],
+          "uses": [],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "מגן מנוע PKZM 1-2.4A",
+          "qty": 1,
+          "circuits": [],
+          "uses": [
+            "להגנת המונה"
+          ],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "בסיס נתיך HRC תלת-קוטבי",
+          "qty": 1,
+          "circuits": [],
+          "uses": [],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "נתיך HRC 100A",
+          "qty": 3,
+          "circuits": [],
+          "uses": [],
+          "verify": false,
+          "notes": [
+            "בשרטוט: 3x100A"
+          ]
+        },
+        {
+          "product": "מגן ברק 4P 100kA B+C",
+          "qty": 1,
+          "circuits": [],
+          "uses": [],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "מפסק בתיבה יצוקה אלקטרוני LSI 3P ‏160A",
+          "qty": 2,
+          "circuits": [
+            "29"
+          ],
+          "uses": [
+            "הזנה לבתי התקע",
+            "הזנה לסככת משאיות"
+          ],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "מא\"ז 3P ‏16A",
+          "qty": 4,
+          "circuits": [
+            "1, 2",
+            "20"
+          ],
+          "uses": [
+            "לבתי תקע",
+            "תאורה",
+            "הזנה לשרשרת שעון"
+          ],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "מפסק פחת 4x63A/30mA",
+          "qty": 1,
+          "circuits": [],
+          "uses": [],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "מא\"ז 3P ‏32A",
+          "qty": 1,
+          "circuits": [],
+          "uses": [],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "מפסק פחת 4x40A/30mA",
+          "qty": 1,
+          "circuits": [],
+          "uses": [],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "בית תקע CEE 5x16A",
+          "qty": 1,
+          "circuits": [],
+          "uses": [],
+          "verify": false,
+          "notes": [
+            "על הלוח, בקופסת שירות IP54"
+          ]
+        },
+        {
+          "product": "בית תקע CEE 1x16A",
+          "qty": 1,
+          "circuits": [],
+          "uses": [],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "בית תקע ת\"י",
+          "qty": 1,
+          "circuits": [],
+          "uses": [],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "בית תקע CEE 5x32A",
+          "qty": 1,
+          "circuits": [],
+          "uses": [],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "קופסת שירות חיצונית IP54 לבתי התקע",
+          "qty": 1,
+          "circuits": [],
+          "uses": [],
+          "verify": true,
+          "notes": []
+        },
+        {
+          "product": "מפסק בתיבה יצוקה אלקטרוני LSI 3P ‏100A",
+          "qty": 1,
+          "circuits": [],
+          "uses": [
+            "הזנה לתאורה ושירותים"
+          ],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "מא\"ז 1P ‏6A",
+          "qty": 2,
+          "circuits": [
+            "C1, C2"
+          ],
+          "uses": [
+            "לפיקוד מגענים"
+          ],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "בורר ידני/0/אוטומטי",
+          "qty": 3,
+          "circuits": [
+            "C1, C2",
+            "20"
+          ],
+          "uses": [],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "שעון 2 תוכניות",
+          "qty": 1,
+          "circuits": [],
+          "uses": [],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "מגען 3P, ‏16A לפחות (הוסק)",
+          "qty": 3,
+          "circuits": [
+            "1, 2",
+            "20"
+          ],
+          "uses": [
+            "תאורה"
+          ],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "מא\"ז 1P ‏20A",
+          "qty": 1,
+          "circuits": [
+            "4"
+          ],
+          "uses": [
+            "הזנה למחסום יציאה"
+          ],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "מא\"ז 1P ‏10A",
+          "qty": 5,
+          "circuits": [
+            "6-9"
+          ],
+          "uses": [
+            "שמור",
+            "פיקוד שעון"
+          ],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "מא\"ז 1P ‏16A",
+          "qty": 6,
+          "circuits": [
+            "10-15"
+          ],
+          "uses": [
+            "שמור"
+          ],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "שעון פיקוד",
+          "qty": 1,
+          "circuits": [
+            "20"
+          ],
+          "uses": [],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "מא\"ז 3P ‏25A",
+          "qty": 3,
+          "circuits": [
+            "21-23"
+          ],
+          "uses": [],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "מפסק בתיבה יצוקה 3P ‏63A",
+          "qty": 1,
+          "circuits": [
+            "25"
+          ],
+          "uses": [
+            "תיבות בתי תקע"
+          ],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "מפסק בתיבה יצוקה 3P ‏80A",
+          "qty": 2,
+          "circuits": [
+            "26-27"
+          ],
+          "uses": [
+            "שמור למתקן ביוב"
+          ],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "מפסק בתיבה יצוקה אלקטרוני LSI 3P ‏100A, מכויל ל-80A",
+          "qty": 1,
+          "circuits": [
+            "28"
+          ],
+          "uses": [
+            "הזנה למשרדים"
+          ],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "מפסק בתיבה יצוקה 3P ‏25A",
+          "qty": 1,
+          "circuits": [
+            "30"
+          ],
+          "uses": [
+            "הזנה למבנה שומר"
+          ],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "ארון פוליאסטר משוריין גודל 2, 1250×1115×320, IP65",
+          "qty": 1,
+          "circuits": [],
+          "uses": [],
+          "verify": false,
+          "notes": [
+            "ממסגרת ההערות. Form 2B, ‏61439-2, ‏40°C, מקום שמור 30%"
+          ]
+        }
+      ],
+      "bom_rows": 36
+    },
+    {
+      "name": "לוח סככה",
+      "bus": "L1,L2,L3 400A+N+E",
+      "ik_ka": 15,
+      "components": [
+        {
+          "item": "מפסק בתיבה יצוקה אלקטרוני LSI 250A, כיול 160A",
+          "family": "circuit_breaker",
+          "qty": 1,
+          "attributes": {
+            "current_a": 250,
+            "setting_a": 160,
+            "trip_unit": "LSI",
+            "poles": 3
+          },
+          "note": "מפסק ראשי",
+          "poles_source": "graphic"
+        },
+        {
+          "item": "סליל הפסקה TC",
+          "family": "shunt_trip",
+          "qty": 1
+        },
+        {
+          "item": "לחצן חירום על הלוח",
+          "family": "push_button",
+          "qty": 1
+        },
+        {
+          "item": "מא\"ז 6A לפיקוד סליל ההפסקה",
+          "family": "circuit_breaker",
+          "qty": 1,
+          "attributes": {
+            "current_a": 6,
+            "poles": 3
+          },
+          "poles_source": "graphic"
+        },
+        {
+          "item": "משנה זרם 400/5A",
+          "family": "current_transformer",
+          "qty": 3,
+          "attributes": {
+            "ratio": "400/5"
+          },
+          "note": "סמל אחד, 3 למונה תלת-פאזי (הסקה)",
+          "to_verify": true
+        },
+        {
+          "item": "מונה SATEC 135E",
+          "family": "energy_meter",
+          "qty": 1
+        },
+        {
+          "item": "מגן מנוע PKZM 1-2.4A להגנת המונה",
+          "family": "circuit_breaker",
+          "qty": 1
+        },
+        {
+          "item": "בסיס נתיך HRC תלת-קוטבי",
+          "family": "fuse",
+          "qty": 1,
+          "attributes": {
+            "poles": 3
+          }
+        },
+        {
+          "item": "נתיך HRC 100A",
+          "family": "fuse",
+          "qty": 3,
+          "attributes": {
+            "current_a": 100
+          },
+          "note": "בשרטוט: 3x100A"
+        },
+        {
+          "item": "מגן ברק 4P 100kA B+C",
+          "family": "surge_protector",
+          "qty": 1
+        },
+        {
+          "item": "מפסק אלקטרוני LSI 160A/160A, הזנה לבתי התקע",
+          "family": "circuit_breaker",
+          "qty": 1,
+          "attributes": {
+            "current_a": 160,
+            "setting_a": 160,
+            "poles": 3
+          },
+          "poles_source": "graphic"
+        },
+        {
+          "item": "מא\"ז 63A לבית תקע",
+          "family": "circuit_breaker",
+          "qty": 1,
+          "attributes": {
+            "current_a": 63,
+            "poles": 3
+          },
+          "poles_source": "graphic"
+        },
+        {
+          "item": "מפסק פחת 4x63A/30mA",
+          "family": "rcd",
+          "qty": 2,
+          "attributes": {
+            "poles": 4,
+            "current_a": 63,
+            "residual_ma": 30
+          }
+        },
+        {
+          "item": "מא\"ז 16A לבתי תקע",
+          "family": "circuit_breaker",
+          "qty": 1,
+          "attributes": {
+            "current_a": 16,
+            "poles": 3
+          },
+          "poles_source": "graphic"
+        },
+        {
+          "item": "בית תקע 5x63A",
+          "family": "socket_outlet",
+          "qty": 1
+        },
+        {
+          "item": "בית תקע CEE 5x16A",
+          "family": "socket_outlet",
+          "qty": 1
+        },
+        {
+          "item": "בית תקע CEE 1x16A",
+          "family": "socket_outlet",
+          "qty": 1
+        },
+        {
+          "item": "בית תקע ת\"י",
+          "family": "socket_outlet",
+          "qty": 1
+        },
+        {
+          "item": "מא\"ז 6A לפיקוד מגענים",
+          "family": "circuit_breaker",
+          "qty": 2,
+          "attributes": {
+            "current_a": 6,
+            "poles": 1
+          },
+          "poles_source": "graphic"
+        },
+        {
+          "item": "בורר ידני/0/אוטומטי",
+          "family": "selector_switch",
+          "qty": 3,
+          "circuits": "C1, C2, C"
+        },
+        {
+          "item": "שעון 2 תוכניות",
+          "family": "time_switch",
+          "qty": 1
+        },
+        {
+          "item": "מגען T1/T2, תאורה",
+          "family": "contactor",
+          "qty": 2,
+          "circuits": "31, 32",
+          "attributes": {
+            "poles": 3,
+            "current_ac3_min_a": 16
+          },
+          "inferred": true,
+          "note": "זרם וקטבים לא כתובים. הוסק מהמא\"ז שמעליו (3P 16A)"
+        },
+        {
+          "item": "מא\"ז 16A, תאורה",
+          "family": "circuit_breaker",
+          "qty": 2,
+          "attributes": {
+            "current_a": 16,
+            "poles": 3
+          },
+          "circuits": "31, 32",
+          "poles_source": "cable_5_cores"
+        },
+        {
+          "item": "מא\"ז 16A, מפוחי סככה",
+          "family": "circuit_breaker",
+          "qty": 1,
+          "attributes": {
+            "current_a": 16,
+            "poles": 3
+          },
+          "circuits": "34",
+          "poles_source": "graphic"
+        },
+        {
+          "item": "מא\"ז 10A, פיקוד שעון",
+          "family": "circuit_breaker",
+          "qty": 1,
+          "attributes": {
+            "current_a": 10,
+            "poles": 1
+          },
+          "poles_source": "graphic"
+        },
+        {
+          "item": "שעון פיקוד",
+          "family": "time_switch",
+          "qty": 1,
+          "circuits": "34"
+        },
+        {
+          "item": "מגען C, מפוחי סככה",
+          "family": "contactor",
+          "qty": 1,
+          "circuits": "34",
+          "attributes": {
+            "poles": 3,
+            "current_ac3_min_a": 16
+          },
+          "inferred": true,
+          "note": "זרם וקטבים לא כתובים. הוסק מהמא\"ז שמעליו (3P 16A)"
+        },
+        {
+          "item": "מא\"ז 16A, שערים חשמליים",
+          "family": "circuit_breaker",
+          "qty": 5,
+          "attributes": {
+            "current_a": 16,
+            "poles": 3
+          },
+          "circuits": "36-40",
+          "poles_source": "cable_5_cores"
+        },
+        {
+          "item": "מא\"ז 63A, תיבות בתי תקע",
+          "family": "circuit_breaker",
+          "qty": 6,
+          "attributes": {
+            "current_a": 63,
+            "poles": 3
+          },
+          "circuits": "44-49",
+          "poles_source": "cable_5_cores"
+        },
+        {
+          "item": "מא\"ז 80A, שמור",
+          "family": "circuit_breaker",
+          "qty": 1,
+          "attributes": {
+            "current_a": 80,
+            "poles": 3
+          },
+          "circuits": "50",
+          "poles_source": "cable_5_cores"
+        },
+        {
+          "item": "מא\"ז 16A עם נעילה, רכזת גילוי אש",
+          "family": "circuit_breaker",
+          "qty": 1,
+          "attributes": {
+            "current_a": 16,
+            "lockable": true,
+            "poles": 1
+          },
+          "circuits": "51",
+          "poles_source": "graphic"
+        },
+        {
+          "item": "אביזר נעילה למא\"ז",
+          "family": "accessory",
+          "qty": 1,
+          "circuits": "51"
+        },
+        {
+          "item": "מא\"ז 16A, הזנה למגבה הידראולי",
+          "family": "circuit_breaker",
+          "qty": 1,
+          "attributes": {
+            "current_a": 16,
+            "poles": 3
+          },
+          "circuits": "67-70",
+          "note": "טווח של 4 בלי ריבוי",
+          "to_verify": true,
+          "poles_source": "graphic"
+        },
+        {
+          "item": "מא\"ז 32A לפני מפסק פחת",
+          "family": "circuit_breaker",
+          "qty": 2,
+          "attributes": {
+            "current_a": 32,
+            "poles": 3
+          },
+          "poles_source": "graphic"
+        },
+        {
+          "item": "מפסק פחת 4x40A/30mA",
+          "family": "rcd",
+          "qty": 2,
+          "attributes": {
+            "poles": 4,
+            "current_a": 40,
+            "residual_ma": 30
+          }
+        },
+        {
+          "item": "מא\"ז 6A",
+          "family": "circuit_breaker",
+          "qty": 12,
+          "attributes": {
+            "current_a": 6,
+            "poles": 1
+          },
+          "circuits": "53-58, 60-65",
+          "poles_source": "cable_3_cores",
+          "note": "(x6) פעמיים"
+        },
+        {
+          "item": "מא\"ז 6A לפיקוד ממסר צעד",
+          "family": "circuit_breaker",
+          "qty": 1,
+          "attributes": {
+            "current_a": 6,
+            "poles": 1
+          },
+          "circuits": "80-83",
+          "poles_source": "graphic"
+        },
+        {
+          "item": "ממסר צעד",
+          "family": "impulse_relay",
+          "qty": 1,
+          "circuits": "80-83"
+        },
+        {
+          "item": "מגען C, תאורת סככה",
+          "family": "contactor",
+          "qty": 1,
+          "circuits": "80-83",
+          "attributes": {
+            "poles": 1,
+            "current_ac3_min_a": 20
+          },
+          "inferred": true,
+          "note": "זרם וקטבים לא כתובים. הוסק מהמא\"ז שמעליו (1P 20A)"
+        },
+        {
+          "item": "מא\"ז 20A, תאורת סככה",
+          "family": "circuit_breaker",
+          "qty": 1,
+          "attributes": {
+            "current_a": 20,
+            "poles": 1
+          },
+          "circuits": "80-83",
+          "note": "(x4) על הכבל: מא\"ז אחד ל-4 יציאות",
+          "to_verify": true,
+          "poles_source": "graphic"
+        },
+        {
+          "item": "מא\"ז 16A, שמור",
+          "family": "circuit_breaker",
+          "qty": 1,
+          "attributes": {
+            "current_a": 16,
+            "poles": 1
+          },
+          "circuits": "86",
+          "poles_source": "graphic"
+        },
+        {
+          "item": "ממסר צעד",
+          "family": "impulse_relay",
+          "qty": 1,
+          "circuits": "86"
+        },
+        {
+          "item": "מא\"ז 16A, מאווררים",
+          "family": "circuit_breaker",
+          "qty": 4,
+          "attributes": {
+            "current_a": 16,
+            "poles": 1
+          },
+          "circuits": "88-91",
+          "poles_source": "cable_3_cores"
+        },
+        {
+          "item": "ממסר צעד",
+          "family": "impulse_relay",
+          "qty": 4,
+          "circuits": "88-91",
+          "note": "ריבוי בירושה מהמא\"ז",
+          "to_verify": true
+        },
+        {
+          "item": "לחצן בלוח לממסר צעד",
+          "family": "push_button",
+          "qty": 6,
+          "circuits": "80-83, 86, 88-91",
+          "note": "לחצן לכל ממסר",
+          "to_verify": true
+        },
+        {
+          "item": "מא\"ז 10A, תאורת חירום",
+          "family": "circuit_breaker",
+          "qty": 4,
+          "attributes": {
+            "current_a": 10,
+            "poles": 1
+          },
+          "circuits": "92-95",
+          "poles_source": "cable_3_cores"
+        },
+        {
+          "item": "מא\"ז 10A, תאורה",
+          "family": "circuit_breaker",
+          "qty": 5,
+          "attributes": {
+            "current_a": 10,
+            "poles": 1
+          },
+          "circuits": "99-103",
+          "poles_source": "cable_3_cores"
+        },
+        {
+          "item": "ארון פח כולל דלת ופנלים, 2.1×1.2×0.5 מ'",
+          "family": "enclosure",
+          "qty": 1,
+          "note": "Form 2B, ‏61439-2, ‏35°C, IK10, כל המא\"זים 10kA לפי IEC60898, מקום שמור 30%, חישוב חום ע\"י יצרן הלוח"
+        }
+      ],
+      "component_rows": 48,
+      "devices_total": 98,
+      "bom": [
+        {
+          "product": "מפסק בתיבה יצוקה אלקטרוני LSI 3P ‏250A, מכויל ל-160A",
+          "qty": 1,
+          "circuits": [],
+          "uses": [],
+          "verify": false,
+          "notes": [
+            "מפסק ראשי"
+          ]
+        },
+        {
+          "product": "סליל הפסקה TC",
+          "qty": 1,
+          "circuits": [],
+          "uses": [],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "לחצן חירום",
+          "qty": 1,
+          "circuits": [],
+          "uses": [],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "מא\"ז 3P ‏6A",
+          "qty": 1,
+          "circuits": [],
+          "uses": [
+            "לפיקוד סליל ההפסקה"
+          ],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "משנה זרם 400/5A",
+          "qty": 3,
+          "circuits": [],
+          "uses": [],
+          "verify": true,
+          "notes": [
+            "סמל אחד, 3 למונה תלת-פאזי (הסקה)"
+          ]
+        },
+        {
+          "product": "מונה SATEC 135E",
+          "qty": 1,
+          "circuits": [],
+          "uses": [],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "מגן מנוע PKZM 1-2.4A",
+          "qty": 1,
+          "circuits": [],
+          "uses": [
+            "להגנת המונה"
+          ],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "בסיס נתיך HRC תלת-קוטבי",
+          "qty": 1,
+          "circuits": [],
+          "uses": [],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "נתיך HRC 100A",
+          "qty": 3,
+          "circuits": [],
+          "uses": [],
+          "verify": false,
+          "notes": [
+            "בשרטוט: 3x100A"
+          ]
+        },
+        {
+          "product": "מגן ברק 4P 100kA B+C",
+          "qty": 1,
+          "circuits": [],
+          "uses": [],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "מפסק בתיבה יצוקה אלקטרוני LSI 3P ‏160A",
+          "qty": 1,
+          "circuits": [],
+          "uses": [
+            "הזנה לבתי התקע"
+          ],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "מא\"ז 3P ‏63A",
+          "qty": 7,
+          "circuits": [
+            "44-49"
+          ],
+          "uses": [
+            "תיבות בתי תקע"
+          ],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "מפסק פחת 4x63A/30mA",
+          "qty": 2,
+          "circuits": [],
+          "uses": [],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "מא\"ז 3P ‏16A",
+          "qty": 10,
+          "circuits": [
+            "31, 32",
+            "34",
+            "36-40",
+            "67-70"
+          ],
+          "uses": [
+            "לבתי תקע",
+            "תאורה",
+            "מפוחי סככה",
+            "שערים חשמליים",
+            "הזנה למגבה הידראולי"
+          ],
+          "verify": true,
+          "notes": []
+        },
+        {
+          "product": "בית תקע 5x63A",
+          "qty": 1,
+          "circuits": [],
+          "uses": [],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "בית תקע CEE 5x16A",
+          "qty": 1,
+          "circuits": [],
+          "uses": [],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "בית תקע CEE 1x16A",
+          "qty": 1,
+          "circuits": [],
+          "uses": [],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "בית תקע ת\"י",
+          "qty": 1,
+          "circuits": [],
+          "uses": [],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "מא\"ז 1P ‏6A",
+          "qty": 15,
+          "circuits": [
+            "53-58, 60-65",
+            "80-83"
+          ],
+          "uses": [
+            "לפיקוד מגענים",
+            "לפיקוד ממסר צעד"
+          ],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "בורר ידני/0/אוטומטי",
+          "qty": 3,
+          "circuits": [
+            "C1, C2, C"
+          ],
+          "uses": [],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "שעון 2 תוכניות",
+          "qty": 1,
+          "circuits": [],
+          "uses": [],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "מגען 3P, ‏16A לפחות (הוסק)",
+          "qty": 3,
+          "circuits": [
+            "31, 32",
+            "34"
+          ],
+          "uses": [
+            "תאורה",
+            "מפוחי סככה"
+          ],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "מא\"ז 1P ‏10A",
+          "qty": 10,
+          "circuits": [
+            "92-95",
+            "99-103"
+          ],
+          "uses": [
+            "פיקוד שעון",
+            "תאורת חירום",
+            "תאורה"
+          ],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "שעון פיקוד",
+          "qty": 1,
+          "circuits": [
+            "34"
+          ],
+          "uses": [],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "מא\"ז 3P ‏80A",
+          "qty": 1,
+          "circuits": [
+            "50"
+          ],
+          "uses": [
+            "שמור"
+          ],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "מא\"ז 1P ‏16A",
+          "qty": 6,
+          "circuits": [
+            "51",
+            "86",
+            "88-91"
+          ],
+          "uses": [
+            "רכזת גילוי אש",
+            "שמור",
+            "מאווררים"
+          ],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "אביזר נעילה למא\"ז",
+          "qty": 1,
+          "circuits": [
+            "51"
+          ],
+          "uses": [],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "מא\"ז 3P ‏32A",
+          "qty": 2,
+          "circuits": [],
+          "uses": [
+            "לפני מפסק פחת"
+          ],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "מפסק פחת 4x40A/30mA",
+          "qty": 2,
+          "circuits": [],
+          "uses": [],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "ממסר צעד",
+          "qty": 6,
+          "circuits": [
+            "80-83",
+            "86",
+            "88-91"
+          ],
+          "uses": [],
+          "verify": true,
+          "notes": []
+        },
+        {
+          "product": "מגען 1P, ‏20A לפחות (הוסק)",
+          "qty": 1,
+          "circuits": [
+            "80-83"
+          ],
+          "uses": [
+            "תאורת סככה"
+          ],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "מא\"ז 1P ‏20A",
+          "qty": 1,
+          "circuits": [
+            "80-83"
+          ],
+          "uses": [
+            "תאורת סככה"
+          ],
+          "verify": true,
+          "notes": []
+        },
+        {
+          "product": "לחצן",
+          "qty": 6,
+          "circuits": [
+            "80-83, 86, 88-91"
+          ],
+          "uses": [],
+          "verify": true,
+          "notes": [
+            "לחצן לכל ממסר"
+          ]
+        },
+        {
+          "product": "ארון פח כולל דלת ופנלים, 2.1×1.2×0.5 מ'",
+          "qty": 1,
+          "circuits": [],
+          "uses": [],
+          "verify": false,
+          "notes": [
+            "Form 2B, ‏61439-2, ‏35°C, IK10, כל המא\"זים 10kA לפי IEC60898, מקום שמור 30%, חישוב חום ע\"י יצרן הלוח"
+          ]
+        }
+      ],
+      "bom_rows": 34
+    },
+    {
+      "name": "לוח ביתן שומר",
+      "bus_in_a": 63,
+      "ik_ka": 10,
+      "components": [
+        {
+          "item": "מא\"ז 25A, ראשי",
+          "family": "circuit_breaker",
+          "qty": 1,
+          "attributes": {
+            "current_a": 25,
+            "poles": 3
+          },
+          "poles_source": "graphic"
+        },
+        {
+          "item": "סליל הפסקה TC",
+          "family": "shunt_trip",
+          "qty": 1
+        },
+        {
+          "item": "לחצן חירום על הלוח",
+          "family": "push_button",
+          "qty": 1
+        },
+        {
+          "item": "מא\"ז 6A לפיקוד ולנורות",
+          "family": "circuit_breaker",
+          "qty": 1,
+          "attributes": {
+            "current_a": 6,
+            "poles": 3
+          },
+          "poles_source": "graphic"
+        },
+        {
+          "item": "נורת סימון פאזה",
+          "family": "indicator_lamp",
+          "qty": 3
+        },
+        {
+          "item": "מפסק פחת 4x40A/30mA",
+          "family": "rcd",
+          "qty": 1,
+          "attributes": {
+            "poles": 4,
+            "current_a": 40,
+            "residual_ma": 30
+          }
+        },
+        {
+          "item": "מא\"ז 10A",
+          "family": "circuit_breaker",
+          "qty": 1,
+          "attributes": {
+            "current_a": 10,
+            "poles": 3
+          },
+          "circuits": "1",
+          "poles_source": "graphic"
+        },
+        {
+          "item": "מא\"ז 16A",
+          "family": "circuit_breaker",
+          "qty": 1,
+          "attributes": {
+            "current_a": 16,
+            "poles": 1
+          },
+          "circuits": "2",
+          "poles_source": "graphic"
+        },
+        {
+          "item": "מא\"ז 20A",
+          "family": "circuit_breaker",
+          "qty": 1,
+          "attributes": {
+            "current_a": 20,
+            "poles": 1
+          },
+          "circuits": "3",
+          "poles_source": "cable_3_cores"
+        },
+        {
+          "item": "מא\"ז 16A, תאורה",
+          "family": "circuit_breaker",
+          "qty": 1,
+          "attributes": {
+            "current_a": 16,
+            "poles": 1
+          },
+          "circuits": "4",
+          "poles_source": "cable_3_cores"
+        },
+        {
+          "item": "מא\"ז 16A, תאורה",
+          "family": "circuit_breaker",
+          "qty": 1,
+          "attributes": {
+            "current_a": 16,
+            "poles": 1
+          },
+          "circuits": "5",
+          "poles_source": "graphic"
+        },
+        {
+          "item": "מא\"ז 10A, פיקוד שעון",
+          "family": "circuit_breaker",
+          "qty": 1,
+          "attributes": {
+            "current_a": 10,
+            "poles": 1
+          },
+          "poles_source": "graphic"
+        },
+        {
+          "item": "שעון פיקוד",
+          "family": "time_switch",
+          "qty": 1,
+          "circuits": "5"
+        },
+        {
+          "item": "בורר ידני/0/אוטומטי",
+          "family": "selector_switch",
+          "qty": 1,
+          "circuits": "5"
+        },
+        {
+          "item": "נורת סימון",
+          "family": "indicator_lamp",
+          "qty": 1,
+          "circuits": "5"
+        },
+        {
+          "item": "מגען C",
+          "family": "contactor",
+          "qty": 1,
+          "circuits": "5",
+          "attributes": {
+            "poles": 1,
+            "current_ac3_min_a": 16
+          },
+          "inferred": true,
+          "note": "זרם וקטבים לא כתובים. הוסק מהמא\"ז שמעליו (1P 16A)"
+        },
+        {
+          "item": "מא\"ז 16A, בתי תקע",
+          "family": "circuit_breaker",
+          "qty": 6,
+          "attributes": {
+            "current_a": 16,
+            "poles": 1
+          },
+          "circuits": "7-12",
+          "note": "(x6) = טווח של 6",
+          "poles_source": "graphic"
+        },
+        {
+          "item": "בתי תקע במעגלים 7-12",
+          "family": "socket_outlet",
+          "qty": 0,
+          "supply_scope": "by_others",
+          "note": "סמל שקע בקצה היציאה. כנראה בשטח, לא על הלוח",
+          "to_verify": true
+        },
+        {
+          "item": "ארון פוליקרבונט 850°C, ‏24 מודולים, עה\"ט, כולל דלת",
+          "family": "enclosure",
+          "qty": 1,
+          "note": "כל המא\"זים 10kA לפי IEC60898, מקום שמור 30%"
+        }
+      ],
+      "component_rows": 19,
+      "devices_total": 25,
+      "bom": [
+        {
+          "product": "מא\"ז 3P ‏25A",
+          "qty": 1,
+          "circuits": [],
+          "uses": [
+            "ראשי"
+          ],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "סליל הפסקה TC",
+          "qty": 1,
+          "circuits": [],
+          "uses": [],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "לחצן חירום",
+          "qty": 1,
+          "circuits": [],
+          "uses": [],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "מא\"ז 3P ‏6A",
+          "qty": 1,
+          "circuits": [],
+          "uses": [
+            "לפיקוד ולנורות"
+          ],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "נורת סימון",
+          "qty": 4,
+          "circuits": [
+            "5"
+          ],
+          "uses": [],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "מפסק פחת 4x40A/30mA",
+          "qty": 1,
+          "circuits": [],
+          "uses": [],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "מא\"ז 3P ‏10A",
+          "qty": 1,
+          "circuits": [
+            "1"
+          ],
+          "uses": [],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "מא\"ז 1P ‏16A",
+          "qty": 9,
+          "circuits": [
+            "2",
+            "4",
+            "5",
+            "7-12"
+          ],
+          "uses": [
+            "תאורה",
+            "בתי תקע"
+          ],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "מא\"ז 1P ‏20A",
+          "qty": 1,
+          "circuits": [
+            "3"
+          ],
+          "uses": [],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "מא\"ז 1P ‏10A",
+          "qty": 1,
+          "circuits": [],
+          "uses": [
+            "פיקוד שעון"
+          ],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "שעון פיקוד",
+          "qty": 1,
+          "circuits": [
+            "5"
+          ],
+          "uses": [],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "בורר ידני/0/אוטומטי",
+          "qty": 1,
+          "circuits": [
+            "5"
+          ],
+          "uses": [],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "מגען 1P, ‏16A לפחות (הוסק)",
+          "qty": 1,
+          "circuits": [
+            "5"
+          ],
+          "uses": [],
+          "verify": false,
+          "notes": []
+        },
+        {
+          "product": "ארון פוליקרבונט 850°C, ‏24 מודולים, עה\"ט, כולל דלת",
+          "qty": 1,
+          "circuits": [],
+          "uses": [],
+          "verify": false,
+          "notes": [
+            "כל המא\"זים 10kA לפי IEC60898, מקום שמור 30%"
+          ]
+        }
+      ],
+      "bom_rows": 14
+    }
+  ],
+  "referenced_not_drawn": [
+    "לוח מבנה משרדים (מוזן ממעגל 28 בלוח הראשי, כבל 5x25 N2XY, ‏135 מ')"
+  ],
+  "not_components": [
+    "כבלים (N2XY, NA2XY) עם אורכים: נתוני הקשר לקטבים, לא שורות בהצעה"
+  ],
+  "to_verify": [
+    "מה המשמעות של הצבע האדום (רכיבים ומספרי מעגלים)?",
+    "מעגלים 67-70: מא\"ז אחד שמזין 4 יציאות, או 4 מא\"זים?",
+    "מעגלים 88-91: הריבוי (x4) חל גם על ממסרי הצעד?",
+    "מעגלים 80-83: מא\"ז 20A אחד ומגען אחד ל-4 יציאות? כמה קטבים?",
+    "לוח ביתן שומר, מעגלים 7-12: בתי התקע על הלוח או בשטח?",
+    "משני זרם: 3 לכל מונה?",
+    "המפסק בפילר הקיים: בתכולת ההצעה של המפעל?",
+    "לוח מבנה משרדים: בשרטוט אחר, או חסר?",
+    "מה זה 'ח\"ק' (מעגלים 53-58)?",
+    "קטבים של מא\"זי הפיקוד 6A ושל המעגלים בלי כבל כתוב",
+    "מספר הלחצנים לממסרי הצעד"
+  ],
+  "reviewed_by_owner": {
+    "date": "2026-10-30",
+    "result": "approved",
+    "note": "בעל המוצר עבר על הרשימה המאוחדת ואישר. ההנחות ברשימת to_verify התקבלו"
+  }
+}

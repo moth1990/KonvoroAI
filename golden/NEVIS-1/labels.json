@@ -1,0 +1,548 @@
+{
+  "drawing": "NEVIS-1",
+  "file": "NEVIS-1.pdf",
+  "input_kind": "factory_drawing",
+  "labelled_by": "ניתוח ראשוני מתוך התמונות. דורש אימות של אומדן לפני שהסט מוקפא",
+  "title_block": {
+    "project": "NEVIS",
+    "panel": "KARWANI",
+    "customer": "pro fit agro",
+    "drawing_number": "26/952-5",
+    "date": "2026-10-05",
+    "producer": "ס.ס לוחות חשמל ובקרה"
+  },
+  "file_facts": {
+    "pages": 9,
+    "page_rotation": 270,
+    "extractable_text_chars": 4,
+    "geometry_source": "vector",
+    "text_source": "ocr",
+    "note": "כל הטקסט הומר לקווים. אין שכבת טקסט"
+  },
+  "pages": [
+    {
+      "no": 1,
+      "kind": "technical_data",
+      "route": "context",
+      "extract": {
+        "enclosure_mm": [
+          1000,
+          800,
+          300
+        ],
+        "ip": "IP55",
+        "color": "RAL-7035",
+        "rated_current_a": 80,
+        "icc_ka": 10,
+        "control_voltage": "230V-AC",
+        "standard": "61439-2"
+      }
+    },
+    {
+      "no": 2,
+      "kind": "factory_template",
+      "route": "skip",
+      "note": "מוליכים, מהדקים, מומנטים, שלטים"
+    },
+    {
+      "no": 3,
+      "kind": "factory_template",
+      "route": "skip",
+      "note": "צבעי בידוד מוליכים ומהדקים"
+    },
+    {
+      "no": 4,
+      "kind": "panel_front_view",
+      "route": "context",
+      "front_view_designators": [
+        "Q0",
+        "FNV",
+        "NVR",
+        "RNV",
+        "FP1",
+        "R1",
+        "R2",
+        "R3",
+        "R4",
+        "R5",
+        "R6",
+        "R7",
+        "C1",
+        "C2",
+        "C3",
+        "C4",
+        "C5",
+        "F1",
+        "F2",
+        "F3",
+        "F4",
+        "F5",
+        "F6",
+        "F7",
+        "F8",
+        "F9",
+        "F10",
+        "F11",
+        "F12",
+        "L1",
+        "L2",
+        "L3",
+        "HNV",
+        "TH1",
+        "HT1",
+        "HT2",
+        "HT3",
+        "HT4",
+        "HT5",
+        "SW1",
+        "SW2",
+        "SW3",
+        "SW4",
+        "SW5"
+      ],
+      "note": "R1-R7 כתוב כטווח בחזית"
+    },
+    {
+      "no": 5,
+      "kind": "single_line",
+      "route": "process"
+    },
+    {
+      "no": 6,
+      "kind": "single_line",
+      "route": "process"
+    },
+    {
+      "no": 7,
+      "kind": "control_diagram",
+      "route": "process"
+    },
+    {
+      "no": 8,
+      "kind": "control_diagram",
+      "route": "process"
+    },
+    {
+      "no": 9,
+      "kind": "control_diagram",
+      "route": "process"
+    }
+  ],
+  "components": [
+    {
+      "designators": [
+        "Q0"
+      ],
+      "family": "circuit_breaker",
+      "attrs": {
+        "poles": 4,
+        "current_a": 80
+      },
+      "model_tokens": [
+        "ABB-XT1C"
+      ],
+      "qty": 1,
+      "pages": [
+        5,
+        4
+      ],
+      "bundle": [
+        "מודול פחת (\"משולב פחת\")"
+      ],
+      "load_current_a": 63
+    },
+    {
+      "designators": [
+        "FNV"
+      ],
+      "family": "circuit_breaker",
+      "attrs": {
+        "poles": 3,
+        "current_a": 6
+      },
+      "model_tokens": [
+        "S204M"
+      ],
+      "qty": 1,
+      "pages": [
+        5,
+        4
+      ],
+      "load_current_a": 4,
+      "expected_flag": "DATA_MODEL_TEXT_CONFLICT: 3X6A מול S204M (4 קטבים). ההצעה האמיתית מאשרת 3 קטבים",
+      "resolved": {
+        "poles": 3,
+        "by": "actual_quote_10288"
+      }
+    },
+    {
+      "designators": [
+        "F1",
+        "F2",
+        "F12"
+      ],
+      "family": "circuit_breaker",
+      "attrs": {
+        "poles": 3,
+        "current_a": 16
+      },
+      "model_tokens": [
+        "S203M"
+      ],
+      "qty": 3,
+      "pages": [
+        5,
+        6,
+        4
+      ]
+    },
+    {
+      "designators": [
+        "F6",
+        "F7"
+      ],
+      "family": "circuit_breaker",
+      "attrs": {
+        "poles": 3,
+        "current_a": 10
+      },
+      "model_tokens": [
+        "S203M"
+      ],
+      "qty": 2,
+      "pages": [
+        6,
+        4
+      ]
+    },
+    {
+      "designators": [
+        "F11"
+      ],
+      "family": "circuit_breaker",
+      "attrs": {
+        "poles": 2,
+        "current_a": 16
+      },
+      "model_tokens": [
+        "S202M"
+      ],
+      "qty": 1,
+      "pages": [
+        6,
+        4
+      ]
+    },
+    {
+      "designators": [
+        "F9"
+      ],
+      "family": "circuit_breaker",
+      "attrs": {
+        "poles": 2,
+        "current_a": 10
+      },
+      "model_tokens": [
+        "S202M"
+      ],
+      "qty": 1,
+      "pages": [
+        6,
+        4
+      ]
+    },
+    {
+      "designators": [
+        "F10"
+      ],
+      "family": "circuit_breaker",
+      "attrs": {
+        "poles": 1,
+        "current_a": 16
+      },
+      "model_tokens": [
+        "S201M"
+      ],
+      "qty": 1,
+      "pages": [
+        6,
+        4
+      ]
+    },
+    {
+      "designators": [
+        "F8"
+      ],
+      "family": "circuit_breaker",
+      "attrs": {
+        "poles": 1,
+        "current_a": 10
+      },
+      "model_tokens": [
+        "S201M"
+      ],
+      "qty": 1,
+      "pages": [
+        6,
+        4
+      ]
+    },
+    {
+      "designators": [
+        "FP1"
+      ],
+      "family": "circuit_breaker",
+      "attrs": {
+        "poles": 1,
+        "current_a": 6
+      },
+      "model_tokens": [
+        "S201M"
+      ],
+      "qty": 1,
+      "pages": [
+        7,
+        8,
+        4
+      ],
+      "note": "מצויר בעמוד 7 ובעמוד 8. מכשיר אחד. ההצעה האמיתית ספרה 2, וזו טעות (אושר מול המפעל)"
+    },
+    {
+      "designators": [
+        "F3",
+        "F5"
+      ],
+      "family": "circuit_breaker",
+      "attrs": {
+        "poles": 1,
+        "neutral": true,
+        "current_a": 16
+      },
+      "model_tokens": [
+        "SN201M"
+      ],
+      "qty": 2,
+      "pages": [
+        5,
+        4
+      ]
+    },
+    {
+      "designators": [
+        "F4"
+      ],
+      "family": "circuit_breaker",
+      "attrs": {
+        "poles": 1,
+        "neutral": true,
+        "current_a": 10
+      },
+      "model_tokens": [
+        "SN201M"
+      ],
+      "qty": 1,
+      "pages": [
+        5,
+        4
+      ]
+    },
+    {
+      "family": "aux_contact",
+      "attrs": {
+        "type": "NC",
+        "contacts": "21/22"
+      },
+      "parent_designators": [
+        "F1",
+        "F2",
+        "F3",
+        "F4",
+        "F7"
+      ],
+      "qty": 5,
+      "pages": [
+        5,
+        6,
+        7
+      ],
+      "note": "מצוירים שוב בעמוד 7 במעגל נורות התקלה, בלי תג. לא לספור פעמיים"
+    },
+    {
+      "designators": [
+        "C1",
+        "C2",
+        "C5"
+      ],
+      "family": "contactor",
+      "attrs": {
+        "poles": 3,
+        "current_a": null
+      },
+      "qty": 3,
+      "pages": [
+        5,
+        6,
+        8,
+        9,
+        4
+      ],
+      "expected_flag": "DATA_INFERRED_ATTRIBUTE: אין זרם כתוב. להסיק לפי F1, F2, F7",
+      "note": "מגעי כוח בעמודים 5-6, סליל בעמודים 8-9"
+    },
+    {
+      "designators": [
+        "C3",
+        "C4"
+      ],
+      "family": "contactor",
+      "attrs": {
+        "poles": 2,
+        "current_a": null
+      },
+      "qty": 2,
+      "pages": [
+        5,
+        9,
+        4
+      ],
+      "expected_flag": "DATA_INFERRED_ATTRIBUTE: אין זרם כתוב. להסיק לפי F3, F4"
+    },
+    {
+      "designators": [
+        "R1",
+        "R3",
+        "R5",
+        "R6",
+        "R7"
+      ],
+      "family": "relay",
+      "attrs": {
+        "coil_voltage": null
+      },
+      "qty": 5,
+      "pages": [
+        8,
+        9,
+        4
+      ],
+      "expected_flag": "FRONT_VIEW_DESIGNATOR_MISSING: R2, R4 בחזית ולא בפיקוד"
+    },
+    {
+      "designators": [
+        "RNV"
+      ],
+      "family": "relay",
+      "qty": 1,
+      "pages": [
+        5,
+        8,
+        4
+      ]
+    },
+    {
+      "designators": [
+        "NVR"
+      ],
+      "family": "voltage_relay",
+      "qty": 1,
+      "pages": [
+        5,
+        4
+      ]
+    },
+    {
+      "designators": [
+        "TH1"
+      ],
+      "family": "temperature_controller",
+      "model_tokens": [
+        "DELTA",
+        "DTB4848RR"
+      ],
+      "qty": 1,
+      "pages": [
+        8,
+        4
+      ]
+    },
+    {
+      "designators": [
+        "L1",
+        "L2",
+        "L3"
+      ],
+      "family": "indicator_lamp",
+      "attrs": {
+        "color": "green"
+      },
+      "qty": 3,
+      "pages": [
+        5,
+        4
+      ],
+      "note": "L1-L3 הם כאן נורות, לא פאזות"
+    },
+    {
+      "designators": [
+        "HNV",
+        "HT1",
+        "HT2",
+        "HT3",
+        "HT4",
+        "HT5"
+      ],
+      "family": "indicator_lamp",
+      "attrs": {
+        "color": "red"
+      },
+      "qty": 6,
+      "pages": [
+        5,
+        7,
+        4
+      ]
+    },
+    {
+      "designators": [
+        "SW1",
+        "SW2",
+        "SW3",
+        "SW4",
+        "SW5"
+      ],
+      "family": "selector_switch",
+      "attrs": {
+        "positions": "1-0-2"
+      },
+      "qty": 5,
+      "pages": [
+        8,
+        9,
+        4
+      ]
+    }
+  ],
+  "derived_expected": [
+    {
+      "item": "ארון",
+      "spec": "1000x800x300 IP55 RAL-7035",
+      "source_page": 1
+    },
+    {
+      "item": "פסי צבירה, פס אפס, מהדקים, שילוט",
+      "note": "לפי כללי הפריטים הנלווים. מהדקי כוח 1-12 ו-N3-N5, ומהדקי 24VDC לחמשת הבקרים החיצוניים"
+    }
+  ],
+  "to_verify_with_factory": [
+    "המשמעות של INC= (כנראה זרם העומס של המעגל)",
+    "R2 ו-R4: קיימים בלוח או טעות בחזית",
+    "Q0: אילו מק\"טים מרכיבים את \"משולב פחת\"",
+    "יצרן הארון כפי שנכתב בעמוד 1"
+  ],
+  "actual_quote": "actual_quote.json",
+  "verified_with_factory": [
+    "FNV: 3 קטבים",
+    "FP1: מכשיר אחד. ההצעה האמיתית ספרה אותו פעמיים",
+    "F11, מגענים C1-C5 וממסרים R1, R3, R5, R6, R7, RNV: קיימים בלוח והושמטו מההצעה"
+  ]
+}

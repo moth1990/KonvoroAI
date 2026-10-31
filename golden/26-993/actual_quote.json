@@ -1,0 +1,262 @@
+{
+  "quote_number": "10271",
+  "date": "2026-10-04",
+  "drawing": "26/993",
+  "currency": "ILS",
+  "customer": "לא נשמר",
+  "lines": [
+    {
+      "line": 1,
+      "text": "הגנת מנוע 4-6.3A",
+      "qty": 4,
+      "unit_price": 260,
+      "total": 1040,
+      "drawing_designators": [
+        "QLG1",
+        "QLG2",
+        "QPM",
+        "QRF"
+      ]
+    },
+    {
+      "line": 2,
+      "text": "מנורת קוטר 22",
+      "qty": 6,
+      "unit_price": 45,
+      "total": 270,
+      "drawing_designators": [
+        "L1",
+        "L2",
+        "L3",
+        "LG1",
+        "LG2",
+        "LG3"
+      ]
+    },
+    {
+      "line": 3,
+      "text": "רב מודד SATEC",
+      "qty": 1,
+      "unit_price": 1800,
+      "total": 1800,
+      "drawing_designators": [
+        "PM"
+      ]
+    },
+    {
+      "line": 4,
+      "text": "מגן מתח יתר",
+      "qty": 1,
+      "unit_price": 855,
+      "total": 855,
+      "drawing_designators": [
+        "PB"
+      ]
+    },
+    {
+      "line": 5,
+      "text": "מנתק נתיך גליל+נתיכים",
+      "qty": 1,
+      "unit_price": 275,
+      "total": 275,
+      "drawing_designators": [
+        "FPB"
+      ]
+    },
+    {
+      "line": 6,
+      "text": "מפסק 3X80A",
+      "qty": 1,
+      "unit_price": 750,
+      "total": 750,
+      "drawing_designators": [
+        "Q1"
+      ]
+    },
+    {
+      "line": 7,
+      "text": "מא\"ז 3X16A",
+      "qty": 1,
+      "unit_price": 185,
+      "total": 185,
+      "drawing_designators": [
+        "FC1"
+      ]
+    },
+    {
+      "line": 8,
+      "text": "מא\"ז 3X40A",
+      "qty": 1,
+      "unit_price": 195,
+      "total": 195,
+      "drawing_designators": [
+        "FC2"
+      ]
+    },
+    {
+      "line": 9,
+      "text": "פחת 4X40A",
+      "qty": 2,
+      "unit_price": 300,
+      "total": 600,
+      "drawing_designators": [
+        "FB1",
+        "FB2"
+      ]
+    },
+    {
+      "line": 10,
+      "text": "מא\"ז 1X10A",
+      "qty": 4,
+      "unit_price": 42,
+      "total": 168,
+      "drawing_designators": [
+        "F7",
+        "F8",
+        "F9",
+        "F10"
+      ]
+    },
+    {
+      "line": 11,
+      "text": "מא\"ז 3X25A",
+      "qty": 2,
+      "unit_price": 195,
+      "total": 390,
+      "drawing_designators": [
+        "F13",
+        "F14"
+      ]
+    },
+    {
+      "line": 12,
+      "text": "מא\"ז 1X16A",
+      "qty": 2,
+      "unit_price": 42,
+      "total": 84,
+      "drawing_designators": [
+        "F17",
+        "F18"
+      ]
+    },
+    {
+      "line": 13,
+      "text": "לחצן חירום לדלת",
+      "qty": 1,
+      "unit_price": 160,
+      "total": 160,
+      "drawing_designators": [
+        "EMS"
+      ]
+    },
+    {
+      "line": 14,
+      "text": "ממסר מבודד 1 ערוץ",
+      "qty": 1,
+      "unit_price": 130,
+      "total": 130,
+      "drawing_designators": [
+        "RF"
+      ]
+    },
+    {
+      "line": 15,
+      "text": "ארון 1000/800/300 כולל פסי צבירה אפס ארקה פנילים ודלתות",
+      "qty": 1,
+      "unit_price": 4200,
+      "total": 4200,
+      "drawing_designators": [
+        "ארון",
+        "WO"
+      ]
+    },
+    {
+      "line": 16,
+      "text": "מפסק 4X125A",
+      "qty": 1,
+      "unit_price": 1250,
+      "total": 1250,
+      "drawing_designators": [
+        "QG1",
+        "QG2"
+      ]
+    },
+    {
+      "line": 17,
+      "text": "מנתק 4X125A",
+      "qty": 1,
+      "unit_price": 1670,
+      "total": 1670,
+      "drawing_designators": [
+        "SG"
+      ]
+    }
+  ],
+  "subtotal": 14022.0,
+  "vat_pct": 18,
+  "total_incl_vat": 16545.96,
+  "comparison": {
+    "matched_lines": 15,
+    "differences": [
+      {
+        "type": "quantity_mismatch",
+        "item": "מפסק בתיבה יצוקה 4P 125A",
+        "drawing": 2,
+        "quote": 1,
+        "designators": [
+          "QG1",
+          "QG2"
+        ],
+        "value_at_risk": 1250,
+        "price_source": "שורה 16 בהצעה",
+        "confirmed_by_factory": true
+      },
+      {
+        "type": "missing",
+        "item": "סליל הפסקה",
+        "drawing": 2,
+        "designators": [
+          "TC-G1",
+          "TC-G2"
+        ],
+        "value_at_risk": null,
+        "price_source": "אין שורה דומה בהצעה",
+        "confirmed_by_factory": true
+      },
+      {
+        "type": "missing",
+        "item": "משנה זרם 125/5A",
+        "drawing": 3,
+        "designators": [
+          "MS1",
+          "MS2",
+          "MS3"
+        ],
+        "value_at_risk": null,
+        "price_source": "אין שורה דומה בהצעה",
+        "confirmed_by_factory": true
+      },
+      {
+        "type": "not_a_difference",
+        "item": "מהדק בדיקה למשנה זרם",
+        "drawing": 6,
+        "designators": [],
+        "value_at_risk": null,
+        "price_source": "אין שורה דומה. ייתכן שנחשב חומר עזר",
+        "resolution": "חומר עזר אצל המפעל. לא שורה נפרדת"
+      }
+    ],
+    "bundles_in_quote": [
+      {
+        "line": 5,
+        "covers": "בסיס נתיך + נתיכים, בשורה אחת"
+      },
+      {
+        "line": 15,
+        "covers": "ארון + פסי צבירה (כולל WO) + פסי אפס והארקה + פנלים + דלתות"
+      }
+    ],
+    "value_at_risk_priced": 1250,
+    "status": "אושר: 3 השמטות (מפסק 4X125A שני, 2 סלילי הפסקה, 3 משני זרם). מהדקי הבדיקה הם חומר עזר"
+  }
+}

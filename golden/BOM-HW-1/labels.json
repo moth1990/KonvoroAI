@@ -1,0 +1,286 @@
+{
+  "drawing": "BOM-HW-1",
+  "file": "BOM-HW-1.jpg",
+  "input_kind": "bom_only",
+  "source": "טופס הצעת מחיר של מפעל לוחות, ממולא בכתב יד וצולם בטלפון. עמודת המחירים לא בתמונה",
+  "labelled_by": "תמלול ראשוני מהתמונה. אושר בסקירה של בעל המוצר",
+  "header": {
+    "panel": "לוח חשמל קומה י\"א",
+    "project": "פלבס",
+    "customer": "לא נשמר"
+  },
+  "file_facts": {
+    "image_px": [
+      843,
+      1428
+    ],
+    "kind": "photo",
+    "rotation": 0,
+    "cropped": "השוליים השמאליים חתוכים (עמודת המחיר). אין שורות נוספות"
+  },
+  "rows": [
+    {
+      "row": 1,
+      "raw": "מפסק 3X250",
+      "qty": 1,
+      "family": "circuit_breaker",
+      "product": "מפסק 3P ‏250A",
+      "attributes": {
+        "poles": 3,
+        "current_a": 250
+      },
+      "transcription_confidence": 0.95,
+      "note": "סוג המפסק לא כתוב. ב-250A כמעט בוודאות מפסק בתיבה יצוקה"
+    },
+    {
+      "row": 3,
+      "raw": "מגן מתח יתר 40KA",
+      "qty": 1,
+      "family": "surge_protector",
+      "product": "מגן ברק 40kA",
+      "attributes": {
+        "imax_ka": 40
+      },
+      "transcription_confidence": 0.85,
+      "note": "קטבים וסוג (B/C) לא כתובים"
+    },
+    {
+      "row": 4,
+      "raw": "סליל הפסקה",
+      "qty": 5,
+      "family": "shunt_trip",
+      "product": "סליל הפסקה",
+      "attributes": {},
+      "transcription_confidence": 0.95,
+      "note": "5 סלילים, ורק 3 שורות 'מפסק'. ייתכן שחלקם על מא\"זים"
+    },
+    {
+      "row": 5,
+      "raw": "משנה זרם 250/5",
+      "qty": 3,
+      "family": "current_transformer",
+      "product": "משנה זרם 250/5A",
+      "attributes": {
+        "ratio": "250/5"
+      },
+      "transcription_confidence": 0.95,
+      "note": "3 משני זרם למונה תלת-פאזי. תואם"
+    },
+    {
+      "row": 6,
+      "raw": "מא\"ז 3X6",
+      "qty": 1,
+      "family": "circuit_breaker",
+      "product": "מא\"ז 3P ‏6A",
+      "attributes": {
+        "poles": 3,
+        "current_a": 6
+      },
+      "transcription_confidence": 0.95
+    },
+    {
+      "row": 7,
+      "raw": "מא\"ז 1X6",
+      "qty": 1,
+      "family": "circuit_breaker",
+      "product": "מא\"ז 1P ‏6A",
+      "attributes": {
+        "poles": 1,
+        "current_a": 6
+      },
+      "transcription_confidence": 0.95
+    },
+    {
+      "row": 8,
+      "raw": "רב מודד SATEC PRO335 כולל התראות לצורך הפעלת ממסר",
+      "qty": 1,
+      "family": "energy_meter",
+      "product": "רב מודד SATEC עם יציאת ממסר להתראות",
+      "attributes": {
+        "brand_hint": "SATEC",
+        "relay_output": true
+      },
+      "transcription_confidence": 0.6,
+      "note": "הדגם לא חובה. המערכת מציעה דגמים מתאימים בשורה"
+    },
+    {
+      "row": 9,
+      "raw": "לחצן חירום",
+      "qty": 1,
+      "family": "push_button",
+      "product": "לחצן חירום",
+      "attributes": {},
+      "transcription_confidence": 0.95
+    },
+    {
+      "row": 10,
+      "raw": "מפסק 3X125",
+      "qty": 1,
+      "family": "circuit_breaker",
+      "product": "מפסק 3P ‏125A",
+      "attributes": {
+        "poles": 3,
+        "current_a": 125
+      },
+      "transcription_confidence": 0.95,
+      "note": "סוג לא כתוב. ב-125A כנראה מפסק בתיבה יצוקה"
+    },
+    {
+      "row": 11,
+      "raw": "מא\"ז 16+N",
+      "qty": 1,
+      "family": "circuit_breaker",
+      "product": "מא\"ז 1P+N ‏16A",
+      "attributes": {
+        "poles": 1,
+        "neutral": true,
+        "current_a": 16
+      },
+      "transcription_confidence": 0.9
+    },
+    {
+      "row": 12,
+      "raw": "מא\"ז 2X20",
+      "qty": 1,
+      "family": "circuit_breaker",
+      "product": "מא\"ז 2P ‏20A",
+      "attributes": {
+        "poles": 2,
+        "current_a": 20
+      },
+      "transcription_confidence": 0.95
+    },
+    {
+      "row": 13,
+      "raw": "מא\"ז 2X10",
+      "qty": 1,
+      "family": "circuit_breaker",
+      "product": "מא\"ז 2P ‏10A",
+      "attributes": {
+        "poles": 2,
+        "current_a": 10
+      },
+      "transcription_confidence": 0.95
+    },
+    {
+      "row": 14,
+      "raw": "מא\"ז 3X32",
+      "qty": 5,
+      "family": "circuit_breaker",
+      "product": "מא\"ז 3P ‏32A",
+      "attributes": {
+        "poles": 3,
+        "current_a": 32
+      },
+      "transcription_confidence": 0.95
+    },
+    {
+      "row": 15,
+      "raw": "מא\"ז 3X40",
+      "qty": 5,
+      "family": "circuit_breaker",
+      "product": "מא\"ז 3P ‏40A",
+      "attributes": {
+        "poles": 3,
+        "current_a": 40
+      },
+      "transcription_confidence": 0.95,
+      "note": "כולל שורה 2 (\"מפסק 3X40\"), שהיא בפועל מא\"ז. טעות בטופס",
+      "merged_rows": [
+        2,
+        15
+      ]
+    },
+    {
+      "row": 16,
+      "raw": "פחת 4X40",
+      "qty": 6,
+      "family": "rcd",
+      "product": "מפסק פחת 4P ‏40A ‏30mA",
+      "attributes": {
+        "poles": 4,
+        "current_a": 40,
+        "residual_ma": 30
+      },
+      "transcription_confidence": 0.95,
+      "note": "30mA: ברירת מחדל של המערכת",
+      "attribute_sources": {
+        "residual_ma": "system_default"
+      }
+    },
+    {
+      "row": 17,
+      "raw": "מגען 3X50",
+      "qty": 1,
+      "family": "contactor",
+      "product": "מגען 3P ‏50A",
+      "attributes": {
+        "poles": 3,
+        "current_a": 50
+      },
+      "transcription_confidence": 0.95
+    },
+    {
+      "row": 18,
+      "raw": "מגען 2X25",
+      "qty": 1,
+      "family": "contactor",
+      "product": "מגען 2P ‏25A",
+      "attributes": {
+        "poles": 2,
+        "current_a": 25
+      },
+      "transcription_confidence": 0.95
+    },
+    {
+      "row": 19,
+      "raw": "שעון שבת",
+      "qty": 1,
+      "family": "time_switch",
+      "product": "שעון שבת",
+      "attributes": {},
+      "transcription_confidence": 0.95,
+      "note": "מספר ערוצים לא כתוב"
+    },
+    {
+      "row": 20,
+      "raw": "מא\"ז 1X16",
+      "qty": 54,
+      "family": "circuit_breaker",
+      "product": "מא\"ז 1P ‏16A",
+      "attributes": {
+        "poles": 1,
+        "current_a": 16
+      },
+      "transcription_confidence": 0.9
+    }
+  ],
+  "summary": {
+    "rows": 19,
+    "units": 91
+  },
+  "not_in_list": [
+    "ארון",
+    "פסי צבירה",
+    "מהדקים וחומרי עזר"
+  ],
+  "corrections": [
+    {
+      "row": 2,
+      "raw": "מפסק 3X40",
+      "resolution": "מא\"ז 3P 40A. מאוחד עם שורה 15",
+      "source": "בעל המוצר"
+    }
+  ],
+  "reviewed_by_owner": {
+    "date": "2026-10-30",
+    "result": "approved",
+    "answers": {
+      "more_rows": "אין",
+      "model": "לא חובה. המערכת מציעה דגמים",
+      "row_2": "מא\"ז, לא מפסק. טעות בטופס",
+      "rcd_residual": "30mA כברירת מחדל",
+      "floor": "י\"א"
+    }
+  }
+}

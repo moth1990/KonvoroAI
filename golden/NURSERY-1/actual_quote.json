@@ -1,0 +1,184 @@
+{
+  "quote_number": "10285",
+  "date": "2026-10-13",
+  "drawing": "26/952 NURSERY",
+  "currency": "ILS",
+  "customer": "לא נשמר",
+  "lines": [
+    {
+      "line": 1,
+      "text": "מנורה קוטר 22",
+      "qty": 4,
+      "unit_price": 45,
+      "total": 180,
+      "drawing_designators": [
+        "L1",
+        "L2",
+        "L3",
+        "HNV"
+      ]
+    },
+    {
+      "line": 2,
+      "text": "ממסר חוסר מתח",
+      "qty": 1,
+      "unit_price": 340,
+      "total": 340,
+      "drawing_designators": [
+        "NVR"
+      ]
+    },
+    {
+      "line": 3,
+      "text": "מא\"ז N+10",
+      "qty": 17,
+      "unit_price": 130,
+      "total": 2210,
+      "drawing_designators": [
+        "F1–F17"
+      ]
+    },
+    {
+      "line": 4,
+      "text": "מא\"ז 3X20A",
+      "qty": 4,
+      "unit_price": 185,
+      "total": 740,
+      "drawing_designators": [
+        "F18",
+        "F19",
+        "F20",
+        "F21"
+      ]
+    },
+    {
+      "line": 5,
+      "text": "מא\"ז 3X16A",
+      "qty": 5,
+      "unit_price": 185,
+      "total": 925,
+      "drawing_designators": [
+        "F22",
+        "F23",
+        "F24",
+        "F25",
+        "F30"
+      ]
+    },
+    {
+      "line": 6,
+      "text": "מגען 3X25A",
+      "qty": 4,
+      "unit_price": 220,
+      "total": 880,
+      "drawing_designators": [
+        "C1",
+        "C2",
+        "C3",
+        "C4"
+      ]
+    },
+    {
+      "line": 7,
+      "text": "מא\"ז 1X6A",
+      "qty": 1,
+      "unit_price": 42,
+      "total": 42,
+      "drawing_designators": [
+        "FP1"
+      ]
+    },
+    {
+      "line": 8,
+      "text": "מפסק 3X80A",
+      "qty": 1,
+      "unit_price": 750,
+      "total": 750,
+      "drawing_designators": [
+        "Q01"
+      ]
+    },
+    {
+      "line": 9,
+      "text": "מא\"ז 1X16A",
+      "qty": 1,
+      "unit_price": 42,
+      "total": 42,
+      "drawing_designators": [
+        "F31"
+      ]
+    },
+    {
+      "line": 10,
+      "text": "מבנה לוח במידות 1200/800/300 כולל פסי צבירה אפס ארקה פנילים ודלתות",
+      "qty": 1,
+      "unit_price": 3800,
+      "total": 3800,
+      "drawing_designators": [
+        "ארון"
+      ]
+    },
+    {
+      "line": 11,
+      "text": "מפסק משולב פחת 4X160A",
+      "qty": 1,
+      "unit_price": 4200,
+      "total": 4200,
+      "drawing_designators": [
+        "Q0"
+      ]
+    }
+  ],
+  "subtotal": 14109.0,
+  "vat_pct": 18,
+  "total_incl_vat": 16648.62,
+  "comparison": {
+    "matched_lines": 11,
+    "differences": [
+      {
+        "type": "missing",
+        "item": "מא\"ז 3X6A",
+        "designators": [
+          "FNV"
+        ],
+        "drawing": 1,
+        "quote": 0,
+        "value_at_risk": 185,
+        "price_source": "הצעה 10288, אותו מוצר",
+        "confirmed_by_factory": true
+      },
+      {
+        "type": "missing",
+        "item": "ממסר עזר",
+        "designators": [
+          "RNV"
+        ],
+        "drawing": 1,
+        "quote": 0,
+        "value_at_risk": null,
+        "price_source": "אין מחיר באף הצעה",
+        "confirmed_by_factory": true
+      }
+    ],
+    "consistent": "F26–F29 לא בהצעה, כמו בפענוח (בחזית בלבד)",
+    "attribute_choice": {
+      "item": "מגען",
+      "inferred": "3P, ‏16A לפחות",
+      "factory": "3X25A",
+      "note": "המפעל בחר מידה גדולה יותר ממה שכלל ההסקה נותן"
+    },
+    "status": "אושר: FNV ו-RNV הושמטו מההצעה בטעות. F26–F29 שאריות בחזית"
+  },
+  "pricing_check": {
+    "draft_priced_lines": 8,
+    "exact_unit_price_matches": 7,
+    "not_in_quote": 1,
+    "mismatches": 0,
+    "filled_by_this_quote": {
+      "מפסק משולב פחת 4X160A": 4200,
+      "מא\"ז 3X20A": 185,
+      "מגען 3X25A": 220,
+      "ארון 1200/800/300 כולל פסי צבירה": 3800
+    }
+  }
+}
