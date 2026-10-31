@@ -4,7 +4,7 @@
 BACKEND := cd backend &&
 FRONTEND := cd frontend &&
 
-.PHONY: help install up down dev lint licenses test-unit test-int e2e eval gen-client check
+.PHONY: help install up down migrate seed dev lint licenses test-unit test-int e2e eval gen-client check
 
 help:
 	@grep -E '^[a-z-]+:.*?## ' $(MAKEFILE_LIST) | awk -F':.*?## ' '{printf "  %-12s %s\n", $$1, $$2}'
@@ -19,6 +19,13 @@ up: ## Start Postgres + pgvector, S3 (S3Mock) and SQS (ElasticMQ), and wait unti
 
 down: ## Stop the local services (data volumes are kept)
 	docker compose down
+
+migrate: ## Create the app DB role, then apply migrations (docs/db-schema.md)
+	$(BACKEND) uv run python -m konboro.db.bootstrap
+	$(BACKEND) uv run alembic upgrade head
+
+seed: migrate ## Demo data: tenant "לוחות דמו", price list from the prototype. Safe to rerun
+	$(BACKEND) uv run python -m konboro.db.seed
 
 dev: ## Run the web app (the API and worker join in S03 and S05)
 	$(FRONTEND) pnpm dev

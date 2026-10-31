@@ -3,6 +3,7 @@
 Konboro turns electrical-panel drawings into price quotes that are ready for review, for panel-building factories. It is a 7-stage pipeline where the coordinator is code and LLMs only handle ambiguous cases. Next to it are a split review screen, a chat command layer, and onboarding that happens through use.
 
 - Product summary and decisions: [README.md](README.md). Conversation history: [HANDOFF.md](HANDOFF.md).
+- Data model, tables and isolation: [docs/db-schema.md](docs/db-schema.md).
 - Architecture, stage contracts and glossary: [specs/00-architecture.md](specs/00-architecture.md).
 - How we build, test and ship: [docs/dev-strategy.md](docs/dev-strategy.md).
 - What to build next: [docs/roadmap.md](docs/roadmap.md). Bug log: [docs/bugs.md](docs/bugs.md).
@@ -54,7 +55,11 @@ Mock data in the prototype (lines 393–580) suggests field names for the API: `
 4. **Current and poles never get a default.** Changing an electrical value requires user approval (05 §4.4).
 5. **Money is `Decimal` in code, `numeric` in the database, and a string in JSON. Never float.** Pricing is code only (07).
 6. **Prices, costs and customer details are never sent to any model.** In chat, amounts reach the model only as references such as `$T1` (08). A test enforces this.
-7. **Tenant isolation:** every tenant table has `tenant_id` and a Postgres RLS policy. Every endpoint checks permission against the single `owner` role (00 §8, §14.1). Cross-tenant tests are mandatory.
+7. **Tenant isolation** ([docs/db-schema.md §2](docs/db-schema.md#2-two-layers-and-tenant-isolation)):
+   - Every tenant table has `tenant_id`, forced RLS, and composite foreign keys `(tenant_id, id)`.
+   - The app connects only as `konboro_app`, never as the owner, and runs tenant queries inside `tenant_session(tenant_id)`.
+   - Every endpoint checks permission against the single `owner` role (00 §8, §14.1).
+   - A new tenant table needs a row in `tests/integration/factory.py`; the RLS suite fails until it has one.
 8. **Every new feature sits behind a flag**, evaluated on the server (13).
 9. **No AGPL or GPL dependencies.** That rules out PyMuPDF and Ultralytics YOLO (12 §8). LGPL is allowed (psycopg). `make licenses` and CI check this.
 10. **RTL from day one.** Use `dir="rtl"`, logical CSS properties, and wrap numbers and designators in `dir="ltr"` (the prototype's `.mono` and `.des` classes).
@@ -67,7 +72,7 @@ Mock data in the prototype (lines 393–580) suggests field names for the API: `
 ## Repository layout
 
 ```
-backend/        Python 3.12 (uv): konboro/ (api, db, contracts, pipeline, domain, services), konboro_llm/, tests/{unit,integration}
+backend/        Python 3.12 (uv): konboro/ (api, db, contracts, pipeline, domain, services), konboro_llm/, alembic/, tests/{unit,integration}
 frontend/       React + TS + Vite + MUI, RTL. src/theme/tokens.ts mirrors the prototype tokens. e2e/ = Playwright
 eval/           golden-set evaluation harness (S06)
 infra/          local service config (ElasticMQ queues)
@@ -75,13 +80,15 @@ golden/ specs/ prototype/   reference material; do not modify without the user
 docs/           strategy, roadmap, session files, bug log
 ```
 
-`alembic/` arrives in S02. Tests marked `integration` need `make up`.
+Schema changes are Alembic migrations in `backend/alembic/versions/`. Update `docs/db-schema.md` in the same PR. Tests marked `integration` need `make up`; they create their own `konboro_test` database.
 
 ## Commands
 
 | Command | What it does |
 | --- | --- |
 | `make install` | uv sync, pnpm install, and the Playwright Chromium |
+| `make migrate` | Create the `konboro_app` role, then `alembic upgrade head` |
+| `make seed` | Migrate, then load the demo tenant (made-up names, the prototype's price list). Safe to rerun |
 | `make up` / `make down` | Start or stop local services: Postgres + pgvector (host port 5433), S3Mock as S3 (9000), ElasticMQ as SQS (9324) |
 | `make dev` | Vite dev server on port 5180. The API and worker join in S03 and S05 |
 | `make test-unit` | pytest unit tests + Vitest |
@@ -137,8 +144,6 @@ Each phase ends with a **gate session** that fixes the open bug list and checks 
 
 Resolve each one with the user when its session arrives, then fix the spec in the same PR.
 
-- 09 §10, the event table, lacks the `price_changed` and `supplier_selected` events that §7.14–7.15 use. Due in S23.
-- 01 §6.3: `classified_by` has no `template` value, but §5.7 uses it. Due in S08.
 - 01 §7, the routing table, lacks `technical_data` and `factory_template`. Due in S08.
 - 02 §2.6 says duplicates are removed after stage 4, but 03 §3.5 moved that into stage 3. Due in S12.
 - 00 §14 and README §7 order the phases differently. The roadmap follows README §7.

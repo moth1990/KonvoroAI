@@ -28,3 +28,6 @@ def s3():  # type: ignore[no-untyped-def]
 @pytest.fixture
 def sqs():  # type: ignore[no-untyped-def]
     return boto3.client("sqs", endpoint_url=SQS_ENDPOINT, **_AWS)
+
+
+from .db import migrated_db  # noqa: E402, F401  (session fixture: a fresh, migrated konboro_test database)
