@@ -6,7 +6,7 @@
 | **Branch** | `s03-api-auth-flags` |
 | **Depends on** | S02 |
 | **Status** | in review |
-| **PR** | |
+| **PR** | [#4](https://github.com/moth1990/KonvoroAI/pull/4) |
 
 ## Goal
 
@@ -69,7 +69,7 @@ The frontend gets a generated, typed client for it.
 
 ## Acceptance criteria
 
-- [ ] All of the above tests are green in CI.
+- [x] All of the above tests are green in CI ([PR #4](https://github.com/moth1990/KonvoroAI/pull/4): backend and frontend jobs).
 - [x] `docs/db-schema.md` and CLAUDE.md mention the actor and permission rule.
 
 ## Out of scope
