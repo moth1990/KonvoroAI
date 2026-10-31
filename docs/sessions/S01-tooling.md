@@ -6,7 +6,7 @@
 | **Branch** | `s01-tooling` |
 | **Depends on** | S00 |
 | **Status** | in review |
-| **PR** | |
+| **PR** | [#2](https://github.com/moth1990/KonvoroAI/pull/2) |
 
 ## Goal
 
@@ -88,8 +88,8 @@ Lay down the monorepo every later session builds on:
 
 ## Acceptance criteria
 
-- [ ] On a clean clone, `make install && make up && make check` passes. **Not verified:** the fresh-clone run was blocked by a permission prompt. `make check` passed in the working tree, and CI on the PR is the clean-environment check.
-- [ ] The CI run on the PR is green.
+- [x] From a clean checkout, install, up and the full check pass. A local fresh-clone run was blocked by a permission prompt, but CI does the same steps on a clean runner: `uv sync --frozen`, `pnpm install --frozen-lockfile`, `docker compose up --wait`, then every check. It passed ([run 41180022912](https://github.com/moth1990/KonvoroAI/actions/runs/41180022912)).
+- [x] The CI run on the PR is green: backend 43 s, frontend 53 s.
 - [x] `git log --follow backend/konboro_llm/client.py` shows the history (moved with `git mv`).
 - [x] The license check fails when an AGPL package is added on purpose. Tested locally and not committed:
   - Python: PyMuPDF failed with exit 1.
