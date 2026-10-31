@@ -14,6 +14,8 @@ export type Schemas = components["schemas"];
 export type Me = Schemas["MeOut"];
 export type Quota = Schemas["QuotaOut"];
 export type TenantSettings = Schemas["SettingsOut"];
+export type QuoteListItem = Schemas["QuoteListItem"];
+export type HomeSummary = Schemas["HomeSummaryOut"];
 
 const FALLBACK_MESSAGE = "משהו השתבש אצלנו. נסו שוב בעוד רגע";
 const LOGIN_PATH = "/auth/login";
@@ -30,9 +32,10 @@ export class ApiError extends Error {
   }
 }
 
-/** The prototype shows login whenever the user is not signed in (konboro-app.html `vLogin`). */
+/** The prototype shows login whenever the user is not signed in (konboro-app.html `vLogin`). The app's router
+ * replaces this with a navigation that keeps the page to return to (`AuthBridge`). */
 let onUnauthorized: () => void = () => {
-  window.location.hash = "login";
+  window.location.assign("/login");
 };
 
 export function setUnauthorizedHandler(handler: () => void): void {
@@ -91,4 +94,17 @@ export async function logout(client = api): Promise<void> {
 
 export async function fetchMe(client = api): Promise<Me> {
   return unwrap(await client.GET("/me"));
+}
+
+/** Always succeeds (202), whether or not the email is registered, so nothing is revealed. */
+export async function requestPasswordReset(email: string, client = api): Promise<void> {
+  unwrap(await client.POST("/auth/password-reset", { body: { email } }));
+}
+
+export async function fetchQuotes(limit: number, client = api): Promise<QuoteListItem[]> {
+  return unwrap(await client.GET("/quotes", { params: { query: { limit } } })).items;
+}
+
+export async function fetchHomeSummary(client = api): Promise<HomeSummary> {
+  return unwrap(await client.GET("/home/summary"));
 }

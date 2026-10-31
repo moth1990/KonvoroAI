@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 
 import { describe, expect, it } from "vitest";
 
-import { colorKeys, fonts, radii, rootCss, tokens } from "./tokens";
+import { colorKeys, fonts, MOBILE_MAX_PX, radii, rootCss, tokens } from "./tokens";
 
 // The prototype is the visual reference. These tests fail if tokens.ts drifts from it.
 const prototype = readFileSync(fileURLToPath(new URL("../../../prototype/konboro-app.html", import.meta.url)), "utf8");
@@ -68,5 +68,19 @@ describe("rootCss", () => {
     expect(css).toContain(":root{--bg:#F2F4F7");
     expect(css).toContain('@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0E131A');
     expect(css).toContain(':root[data-theme="dark"]{--bg:#0E131A');
+  });
+});
+
+describe("mobile breakpoint", () => {
+  const css = ["app.css", "base.css"].map((f) => readFileSync(fileURLToPath(new URL(f, import.meta.url)), "utf8"));
+  const widths = css.flatMap((c) => [...c.matchAll(/@media \(max-width:\s*(\d+)px\)/g)].map((m) => Number(m[1])));
+
+  it("the phone layout starts at the spec's width, never the prototype's 820px", () => {
+    expect(widths).toContain(MOBILE_MAX_PX);
+    expect(widths).not.toContain(820);
+  });
+
+  it("the other breakpoints are the prototype's", () => {
+    expect(new Set(widths)).toEqual(new Set([MOBILE_MAX_PX, 1000, 620]));
   });
 });

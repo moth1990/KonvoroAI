@@ -4,7 +4,7 @@
 BACKEND := cd backend &&
 FRONTEND := cd frontend &&
 
-.PHONY: help install up down migrate seed dev lint licenses test-unit test-int e2e eval gen-client check-client check
+.PHONY: help install up down migrate seed dev lint licenses test-unit test-int e2e fidelity screenshots check-screenshots eval gen-client check-client check
 
 help:
 	@grep -E '^[a-z-]+:.*?## ' $(MAKEFILE_LIST) | awk -F':.*?## ' '{printf "  %-12s %s\n", $$1, $$2}'
@@ -50,8 +50,17 @@ test-unit: ## Backend unit tests and frontend Vitest
 test-int: ## Backend integration tests against the local services (needs `make up`)
 	$(BACKEND) uv run pytest -m integration
 
-e2e: ## Playwright, desktop and mobile projects
+e2e: ## Playwright, desktop and mobile, against a fresh konboro_e2e DB and the API on 8001 (needs `make up`)
 	$(FRONTEND) pnpm e2e
+
+fidelity: ## Prototype vs app screenshots into frontend/e2e/fidelity/report.html (needs `make up`)
+	$(FRONTEND) pnpm exec playwright test -c e2e/fidelity/fidelity.config.ts
+
+screenshots: ## Rewrite the screenshot baselines in Playwright's Linux image, after an accepted change (needs `make up`, Docker)
+	frontend/e2e/visual/update.sh
+
+check-screenshots: ## Compare the screens against the baselines, in the same image (needs `make up`, Docker)
+	SCREENSHOTS_CHECK=1 frontend/e2e/visual/update.sh
 
 eval: ## Golden-set evaluation (arrives in S06)
 	@echo "eval: not built yet, see docs/sessions/S06-golden-eval.md"
@@ -63,4 +72,4 @@ gen-client: ## Regenerate the TS API client from FastAPI's OpenAPI (frontend/src
 check-client: gen-client ## Fail if the committed API client is stale (run `make gen-client` and commit)
 	git diff --exit-code -- frontend/src/api/openapi.json frontend/src/api/schema.ts
 
-check: lint licenses check-client test-unit test-int e2e ## Everything CI runs
+check: lint licenses check-client test-unit test-int e2e check-screenshots ## Everything CI runs

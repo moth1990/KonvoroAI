@@ -1,7 +1,7 @@
 import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
 import { useState, type ReactNode } from "react";
 
-import { ApiError, fetchMe } from "./client";
+import { ApiError, fetchHomeSummary, fetchMe, fetchQuotes } from "./client";
 import { getToken } from "./token";
 
 /** Client errors (4xx) won't fix themselves on a retry; network and server errors get one more try. */
@@ -24,4 +24,14 @@ export function QueryProvider({ children }: { children: ReactNode }) {
 /** The signed-in user, tenant, plan, evaluated flags and quota. Disabled until there is a token. */
 export function useMe() {
   return useQuery({ queryKey: ["me"], queryFn: () => fetchMe(), enabled: getToken() !== null });
+}
+
+/** Recent quotes for the home screen, newest first. */
+export function useQuotes(limit = 10) {
+  return useQuery({ queryKey: ["quotes", limit], queryFn: () => fetchQuotes(limit), enabled: getToken() !== null });
+}
+
+/** The "waiting for you" counts, and the approval-queue badge. */
+export function useHomeSummary() {
+  return useQuery({ queryKey: ["home-summary"], queryFn: () => fetchHomeSummary(), enabled: getToken() !== null });
 }

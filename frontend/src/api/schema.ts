@@ -78,6 +78,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/home/summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Home Summary */
+        get: operations["home_summary_home_summary_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/me": {
         parameters: {
             query?: never;
@@ -115,6 +132,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/quotes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Quotes
+         * @description The tenant's quotes, most recently changed first.
+         */
+        get: operations["list_quotes_quotes_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/settings": {
         parameters: {
             query?: never;
@@ -137,6 +174,23 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** AuditOmissionsItem */
+        AuditOmissionsItem: {
+            /**
+             * Amount At Risk
+             * @description Sum of the priced omissions; null when none is priced
+             */
+            amount_at_risk: string | null;
+            /** Audit Id */
+            audit_id: string;
+            /** Count */
+            count: number;
+            /**
+             * Quote Number
+             * @description The audited quote's number, from its header (11 §5)
+             */
+            quote_number: string | null;
+        };
         /** ErrorBody */
         ErrorBody: {
             /** Code */
@@ -161,6 +215,21 @@ export interface components {
              */
             status: "ok";
         };
+        /**
+         * HomeSummaryOut
+         * @description The home screen's "waiting for you" card (prototype `vHome`).
+         */
+        HomeSummaryOut: {
+            /** Audit Omissions */
+            audit_omissions: components["schemas"]["AuditOmissionsItem"][];
+            /** Missing Prices */
+            missing_prices: components["schemas"]["MissingPricesItem"][];
+            /**
+             * Queue Pending
+             * @description Approval-queue items waiting for a decision
+             */
+            queue_pending: number;
+        };
         /** LoginIn */
         LoginIn: {
             /** Email */
@@ -181,6 +250,15 @@ export interface components {
             quota: components["schemas"]["QuotaOut"];
             tenant: components["schemas"]["TenantOut"];
             user: components["schemas"]["UserOut"];
+        };
+        /** MissingPricesItem */
+        MissingPricesItem: {
+            /** Count */
+            count: number;
+            /** Quote Id */
+            quote_id: string;
+            /** Quote Name */
+            quote_name: string;
         };
         /** PasswordResetIn */
         PasswordResetIn: {
@@ -247,6 +325,38 @@ export interface components {
          * @enum {string}
          */
         QuotaState: "ok" | "quota_near" | "quota_reached";
+        /** QuoteList */
+        QuoteList: {
+            /** Items */
+            items: components["schemas"]["QuoteListItem"][];
+        };
+        /** QuoteListItem */
+        QuoteListItem: {
+            /** Id */
+            id: string;
+            /**
+             * Missing Prices
+             * @description Live lines of the current version that have no unit price
+             */
+            missing_prices: number;
+            /** Name */
+            name: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            /**
+             * Version
+             * @description The quote's current version number
+             */
+            version: number;
+            /**
+             * Version Status
+             * @enum {string}
+             */
+            version_status: "draft" | "sent";
+        };
         /** SettingsOut */
         SettingsOut: {
             /** Attribute Defaults */
@@ -464,6 +574,35 @@ export interface operations {
             };
         };
     };
+    home_summary_home_summary_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HomeSummaryOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     me_me_get: {
         parameters: {
             query?: never;
@@ -509,6 +648,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["QuotaOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    list_quotes_quotes_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QuoteList"];
                 };
             };
             /** @description Error */

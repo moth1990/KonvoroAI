@@ -25,6 +25,8 @@ export function buildTheme(mode: ColorMode): Theme {
     typography: {
       fontFamily: fonts.body,
       fontSize: type.base,
+      // CssBaseline styles <body> with body1; MUI's default (1rem) would override the prototype's 14px / 1.5.
+      body1: { fontSize: `${type.base}px`, lineHeight: type.lineHeight },
       h1: { fontFamily: fonts.display, fontSize: type.h1, fontWeight: 600 },
       h2: { fontFamily: fonts.display, fontSize: type.h2, fontWeight: 600 },
       h3: { fontFamily: fonts.display, fontSize: type.h3, fontWeight: 600 },

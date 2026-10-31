@@ -108,11 +108,11 @@ The prototype is the visual contract, but its DOM is different from the React ap
 
 1. **Port the tokens before any screen.** The prototype's `:root` and dark-theme variables (lines 9–32) become `src/theme/tokens.ts` and the MUI theme. That covers palette, radii, shadow and the fonts (Rubik for headings, IBM Plex Sans Hebrew for body text, IBM Plex Mono for numbers and designators). MUI components are restyled to match the prototype, not the other way around.
 2. **The fidelity script** (`frontend/e2e/fidelity/capture.ts`):
-   - Serves `prototype/` statically, sets `localStorage['konboro:authed']='1'`, and opens each hash route at desktop and mobile sizes, in light and dark.
-   - Opens the matching app route with the matching seeded data.
-   - Writes `frontend/e2e/fidelity/report.html` with the two screenshots side by side for each screen.
+   - Serves `prototype/` statically (as UTF-8: the file declares no charset), sets `localStorage['konboro:authed']='1'` and its flags, and opens each hash route at desktop and mobile sizes, in light and dark. The prototype has no viewport meta, so its phone shots use a plain 375px window rather than mobile emulation.
+   - Opens the matching app route as the E2E tenant in the same state.
+   - Writes `frontend/e2e/fidelity/report.html`, self-contained, with the two screenshots side by side for each screen and the deliberate differences listed above them. Run it with `make fidelity`.
 3. **Review:** the session that builds a screen ends with the user reviewing that report. Deviations are either fixed or logged as P2/P3 bugs with a reason.
-4. **Regression:** once a screen is accepted, its app screenshots become `toHaveScreenshot` baselines.
+4. **Regression:** once a screen is accepted, its app screenshots become `toHaveScreenshot` baselines (`frontend/e2e/visual.spec.ts`). They are rendered and checked only inside Playwright's pinned Linux image (`frontend/e2e/visual/`), locally and in CI, so fonts and rasterization never differ: `make screenshots` writes them, `make check-screenshots` compares. Text that changes with the clock is masked.
 
 ## 6. Golden evaluation
 

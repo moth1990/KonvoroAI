@@ -3,7 +3,7 @@
 Money and rates are strings in JSON, never numbers (CLAUDE.md non-negotiable 5).
 """
 
-from datetime import date
+from datetime import date, datetime
 from decimal import Decimal, InvalidOperation
 from typing import Annotated, Any, Literal
 
@@ -103,6 +103,43 @@ class MeOut(BaseModel):
     plan: PlanOut
     flags: dict[str, bool] = Field(description="Every flag, evaluated on the server (13 §3.1)")
     quota: QuotaOut
+
+
+# --- quotes and home ----------------------------------------------------------------------------
+
+
+class QuoteListItem(BaseModel):
+    id: str
+    name: str
+    version: int = Field(description="The quote's current version number")
+    version_status: Literal["draft", "sent"]
+    missing_prices: int = Field(description="Live lines of the current version that have no unit price")
+    updated_at: datetime
+
+
+class QuoteList(BaseModel):
+    items: list[QuoteListItem]
+
+
+class MissingPricesItem(BaseModel):
+    quote_id: str
+    quote_name: str
+    count: int
+
+
+class AuditOmissionsItem(BaseModel):
+    audit_id: str
+    quote_number: str | None = Field(description="The audited quote's number, from its header (11 §5)")
+    count: int
+    amount_at_risk: DecimalStr | None = Field(description="Sum of the priced omissions; null when none is priced")
+
+
+class HomeSummaryOut(BaseModel):
+    """The home screen's "waiting for you" card (prototype `vHome`)."""
+
+    queue_pending: int = Field(description="Approval-queue items waiting for a decision")
+    missing_prices: list[MissingPricesItem]
+    audit_omissions: list[AuditOmissionsItem]
 
 
 # --- settings -----------------------------------------------------------------------------------

@@ -9,11 +9,11 @@ from konboro.services import auth, flags
 from konboro.settings import Settings, get_settings
 
 from . import errors
-from .routes import account, health
+from .routes import account, health, home
 from .routes import auth as auth_routes
 from .routes import settings as settings_routes
 
-ROUTERS = (health.router, auth_routes.router, account.router, settings_routes.router)
+ROUTERS = (health.router, auth_routes.router, account.router, settings_routes.router, home.router)
 
 
 def create_app(

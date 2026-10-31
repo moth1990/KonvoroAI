@@ -8,12 +8,12 @@ from sqlalchemy import Engine, create_engine, select, text
 from sqlalchemy.exc import IntegrityError
 
 from konboro.db import models as m
+from konboro.db.admin import database_dsn
 from konboro.db.ids import new_id
 from konboro.db.session import tenant_session
 from konboro.domain.quota import QuotaState
 from konboro.services import quota
 
-from .db import database_dsn
 from .factory import GLOBAL_PLAN
 
 NOW = datetime(2026, 10, 15, 9, 0, tzinfo=UTC)
