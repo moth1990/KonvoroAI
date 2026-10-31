@@ -27,7 +27,7 @@ Phase 1 starts from a tagged, stable `phase-0`.
 
 ### Verify
 - [x] On a fresh clone: `make up && make seed && make check`.
-- [ ] Full Playwright suite on `desktop` and `mobile`, in light and dark.
+- [x] Full Playwright suite on `desktop` and `mobile`, in light and dark.
 - [x] Fidelity report for login, shell, home and new-quote. Compare it with the accepted baselines.
 - [x] `make eval` in replay. Record the numbers. (No live run: the stubs make no model calls, so S08 records the first cassettes.)
 - [x] Security spot checks:
@@ -35,7 +35,7 @@ Phase 1 starts from a tagged, stable `phase-0`.
   - the route-actor audit;
   - no secrets in the repo: a new `make secrets` target (pinned gitleaks Docker image, full history), also in `make check` and CI;
   - the license gate.
-- [ ] Manual smoke as a user: log in, upload each golden PDF, cancel one, and check the quota meter.
+- [x] Manual smoke as a user: log in, upload each golden PDF, cancel one, and check the quota meter.
 
 ### Fix
 - [ ] All open P0 and P1 bugs. P2 bugs that fit in the session.
@@ -75,6 +75,12 @@ Phase 1 starts from a tagged, stable `phase-0`.
   - Duplicate claims (user): fix here. `_claim` drops a copy of a message whose stage is still `running`; a redelivery after a worker crash still runs.
     - As built (Claude): the test is the queue's receive count, not a time window. The crashed worker's own message comes back with a count of 2 or more, while a copy (an SQS duplicate, or a re-send) arrives with a count of 1. A window equal to the visibility timeout would have dropped the real redelivery, which arrives right at that boundary.
   - Phase order (user): README §7 wins. 00 §14 is rewritten to match, and the item leaves CLAUDE.md's inconsistency list.
+- **Manual smoke** (`make dev` in the browser pane, demo tenant; the new `dev-backend` entry in `.claude/launch.json` runs the API and the worker):
+  - Logged in as `demo@konboro.local`. Quota at the start: 14 of 50.
+  - 26-993, 6199-2-50, NEVIS-1 and NURSERY-1 each ran all 7 stages to the done step, with real thumbnails. The meter went 15, 16, 17, 18.
+  - BOM-HW-1.jpg was cancelled during stage 1: "הפענוח בוטל. המקום במכסה שוחרר", back to picking with the file kept, the meter stayed at 18.
+  - DB: the four finished drawings have `reserve,confirm`, the cancelled one `reserve,release`; `quota_usage` 18 used, 0 reserved. No server errors.
+  - The built-in browser has no file chooser, so each file was handed to `#file-in` from a script; everything after that went through the UI.
 - **Eval / metrics:** replay, commit `022f73e` on a fresh clone, no change against the baseline:
   - Stage 1: page kind 0% (0/24), route 58.3% (14/24), missed process pages 0 of 14, `input_kind` 20% (1/5), panel count 80% (4/5).
   - Stage 4: component recall 0% (0/147), unit recall 0% (0/411).
