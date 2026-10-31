@@ -29,6 +29,11 @@ The prototype is a single file with no framework. The main pieces:
 
 To view it, serve the folder (`python -m http.server -d prototype`) and set `localStorage['konboro:authed']='1'`.
 
+**Porting a screen:** the prototype's CSS moves to `frontend/src/theme/app.css` with the same class names, and the
+React screens render those classes; MUI is for behaviour, not looks. The app routes are paths (`/home`, `/review/:quoteId`…),
+not hashes. The phone layout starts at **860px** everywhere (09 §5.2; the prototype uses 820px), kept in `MOBILE_MAX_PX`.
+Built so far: login, shell, classic and chat home (S04).
+
 | Screen | Route | Function | Lines |
 | --- | --- | --- | --- |
 | Design tokens (light and dark) | — | `:root` | 9–32 |
@@ -94,12 +99,15 @@ Schema changes are Alembic migrations in `backend/alembic/versions/`. Update `do
 | `make dev` | API on port 8000 (uvicorn, reload) and the Vite dev server on port 5180. The worker joins in S05. Dev login: `demo@konboro.local` with `KONBORO_DEV_PASSWORD` from `.env` |
 | `make test-unit` | pytest unit tests + Vitest |
 | `make test-int` | pytest integration tests against the compose services |
-| `make e2e` | Playwright, desktop and mobile projects |
+| `make e2e` | Playwright, desktop and mobile projects. Needs `make up`: it starts its own API on 8001 over a fresh `konboro_e2e` database with fixed E2E tenants (`konboro/devtools/e2e.py`, `frontend/e2e/fixtures.ts`) and Vite on 5181 |
+| `make fidelity` | Prototype vs app screenshots into `frontend/e2e/fidelity/report.html`, for the user's review |
+| `make check-screenshots` | Compare the accepted screens with their baselines, in Playwright's Linux Docker image (the same check runs in CI) |
+| `make screenshots` | Rewrite those baselines, only after the user accepts a visual change |
 | `make eval` | Golden-set evaluation. Replay by default; `EVAL_MODE=live` uses real Claude |
 | `make gen-client` | Regenerate the TS API client from FastAPI's OpenAPI (`frontend/src/api/openapi.json` → `schema.ts`). Run it after any API change and commit both files |
 | `make check-client` | Fail if the committed client is stale. CI runs the same check |
 | `make licenses` | Fail on GPL or AGPL dependencies, Python and npm |
-| `make check` | Everything CI runs: lint, types, licenses, client freshness, unit, integration, e2e |
+| `make check` | Everything CI runs: lint, types, licenses, client freshness, unit, integration, e2e, screenshots |
 
 Tooling: uv for Python 3.12 (`backend/.python-version`), pnpm with Node 22 (`.nvmrc`; run `nvm use` first). Ports can be changed in `.env` (see `.env.example`).
 
@@ -150,5 +158,4 @@ Resolve each one with the user when its session arrives, then fix the spec in th
 - 02 §2.6 says duplicates are removed after stage 4, but 03 §3.5 moved that into stage 3. Due in S12.
 - 00 §14 and README §7 order the phases differently. The roadmap follows README §7.
 - Flag keys differ between the two references. The prototype uses `chat_builder`, `voice` and `unresolved`; spec 13 uses `chat_quote_builder`, `voice_input` and `unresolved_overlay`. **The spec's keys win** everywhere in code.
-- The mobile breakpoint is 860px in 09 §5.2 and 820px in the prototype. Ask in S04.
 - `golden/NEVIS-1/labels.json` uses page kind `single_line` where the other files use `single_line_diagram`. The eval normalizer maps it; the file stays as is.

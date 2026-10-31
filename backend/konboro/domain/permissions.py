@@ -8,6 +8,7 @@ from enum import StrEnum
 class Permission(StrEnum):
     ACCOUNT_READ = "account.read"
     QUOTA_READ = "quota.read"
+    QUOTES_READ = "quotes.read"
     SETTINGS_READ = "settings.read"
     SETTINGS_WRITE = "settings.write"
 

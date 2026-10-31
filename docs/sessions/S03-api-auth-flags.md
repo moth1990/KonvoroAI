@@ -5,7 +5,7 @@
 | **Track** | P |
 | **Branch** | `s03-api-auth-flags` |
 | **Depends on** | S02 |
-| **Status** | in review |
+| **Status** | done |
 | **PR** | [#4](https://github.com/moth1990/KonvoroAI/pull/4) |
 
 ## Goal

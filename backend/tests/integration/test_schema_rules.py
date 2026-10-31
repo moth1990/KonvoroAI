@@ -9,10 +9,10 @@ from sqlalchemy import Engine, select, text, update
 from sqlalchemy.exc import DBAPIError, IntegrityError
 
 from konboro.db import models as m
+from konboro.db.admin import database_dsn, migrating, recreate_database
 from konboro.db.ids import new_id
 from konboro.db.session import tenant_session
 
-from .db import alembic, database_dsn, recreate_database
 from .factory import build_tenant_graph
 
 
@@ -149,7 +149,7 @@ def test_cannot_reference_another_tenants_row(migrated_db: dict[str, Engine]) ->
 def test_migration_downgrades_and_upgrades_cleanly() -> None:
     name = "konboro_migration_test"
     recreate_database(name)
-    cfg = alembic(database_dsn(name))
-    command.upgrade(cfg, "head")
-    command.downgrade(cfg, "base")
-    command.upgrade(cfg, "head")
+    with migrating(database_dsn(name)) as cfg:
+        command.upgrade(cfg, "head")
+        command.downgrade(cfg, "base")
+        command.upgrade(cfg, "head")

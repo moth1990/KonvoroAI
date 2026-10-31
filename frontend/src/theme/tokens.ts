@@ -91,6 +91,12 @@ export const fonts = {
 /** Radii in px: --r-sm, --r, --r-lg. */
 export const radii = { sm: 6, md: 10, lg: 14 } as const;
 
+/**
+ * Phone layout at this width and below: 09 §5.2's 860px, not the prototype's 820px (S04 decision).
+ * CSS media queries can't read variables, so app.css repeats the number; tokens.test.ts keeps them equal.
+ */
+export const MOBILE_MAX_PX = 860;
+
 /** Base type from the prototype body rule: 14px / 1.5. Headings h1 22, h2 17, h3 14, all 600. */
 export const type = { base: 14, lineHeight: 1.5, h1: 22, h2: 17, h3: 14 } as const;
 

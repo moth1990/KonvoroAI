@@ -1,6 +1,54 @@
 {
   "components": {
     "schemas": {
+      "AuditOmissionsItem": {
+        "properties": {
+          "amount_at_risk": {
+            "anyOf": [
+              {
+                "examples": [
+                  "0.15"
+                ],
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Sum of the priced omissions; null when none is priced",
+            "title": "Amount At Risk"
+          },
+          "audit_id": {
+            "title": "Audit Id",
+            "type": "string"
+          },
+          "count": {
+            "title": "Count",
+            "type": "integer"
+          },
+          "quote_number": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The audited quote's number, from its header (11 §5)",
+            "title": "Quote Number"
+          }
+        },
+        "required": [
+          "audit_id",
+          "quote_number",
+          "count",
+          "amount_at_risk"
+        ],
+        "title": "AuditOmissionsItem",
+        "type": "object"
+      },
       "ErrorBody": {
         "properties": {
           "code": {
@@ -58,6 +106,37 @@
         "title": "HealthOut",
         "type": "object"
       },
+      "HomeSummaryOut": {
+        "description": "The home screen's \"waiting for you\" card (prototype `vHome`).",
+        "properties": {
+          "audit_omissions": {
+            "items": {
+              "$ref": "#/components/schemas/AuditOmissionsItem"
+            },
+            "title": "Audit Omissions",
+            "type": "array"
+          },
+          "missing_prices": {
+            "items": {
+              "$ref": "#/components/schemas/MissingPricesItem"
+            },
+            "title": "Missing Prices",
+            "type": "array"
+          },
+          "queue_pending": {
+            "description": "Approval-queue items waiting for a decision",
+            "title": "Queue Pending",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "queue_pending",
+          "missing_prices",
+          "audit_omissions"
+        ],
+        "title": "HomeSummaryOut",
+        "type": "object"
+      },
       "LoginIn": {
         "additionalProperties": false,
         "properties": {
@@ -113,6 +192,29 @@
           "quota"
         ],
         "title": "MeOut",
+        "type": "object"
+      },
+      "MissingPricesItem": {
+        "properties": {
+          "count": {
+            "title": "Count",
+            "type": "integer"
+          },
+          "quote_id": {
+            "title": "Quote Id",
+            "type": "string"
+          },
+          "quote_name": {
+            "title": "Quote Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "quote_id",
+          "quote_name",
+          "count"
+        ],
+        "title": "MissingPricesItem",
         "type": "object"
       },
       "PasswordResetIn": {
@@ -274,6 +376,67 @@
         ],
         "title": "QuotaState",
         "type": "string"
+      },
+      "QuoteList": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/QuoteListItem"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "QuoteList",
+        "type": "object"
+      },
+      "QuoteListItem": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "missing_prices": {
+            "description": "Live lines of the current version that have no unit price",
+            "title": "Missing Prices",
+            "type": "integer"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "version": {
+            "description": "The quote's current version number",
+            "title": "Version",
+            "type": "integer"
+          },
+          "version_status": {
+            "enum": [
+              "draft",
+              "sent"
+            ],
+            "title": "Version Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "version",
+          "version_status",
+          "missing_prices",
+          "updated_at"
+        ],
+        "title": "QuoteListItem",
+        "type": "object"
       },
       "SettingsOut": {
         "properties": {
@@ -727,6 +890,42 @@
         ]
       }
     },
+    "/home/summary": {
+      "get": {
+        "operationId": "home_summary_home_summary_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HomeSummaryOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Home Summary",
+        "tags": [
+          "home"
+        ]
+      }
+    },
     "/me": {
       "get": {
         "operationId": "me_me_get",
@@ -797,6 +996,57 @@
         "summary": "Get Quota",
         "tags": [
           "account"
+        ]
+      }
+    },
+    "/quotes": {
+      "get": {
+        "description": "The tenant's quotes, most recently changed first.",
+        "operationId": "list_quotes_quotes_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 10,
+              "maximum": 50,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuoteList"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Quotes",
+        "tags": [
+          "home"
         ]
       }
     },

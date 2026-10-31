@@ -15,4 +15,5 @@ htmlcov/
 frontend/playwright-report/
 frontend/test-results/
 frontend/e2e/fidelity/out/
+.pnpm-store/
 eval/reports/
