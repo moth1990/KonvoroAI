@@ -27,9 +27,10 @@ migrate: ## Create the app DB role, then apply migrations (docs/db-schema.md)
 seed: migrate ## Demo data: tenant "לוחות דמו", price list from the prototype. Safe to rerun
 	$(BACKEND) uv run python -m konboro.db.seed
 
-dev: ## Run the API (port 8000) and the web app (port 5180). The worker joins in S05
+dev: ## Run the API (port 8000), the pipeline worker and the web app (port 5180). Needs `make up`
 	@trap 'kill 0' EXIT; \
 	(cd backend && uv run uvicorn --factory konboro.api.app:create_app --reload --port $${KONBORO_API_PORT:-8000}) & \
+	(cd backend && uv run python -m konboro.pipeline.worker) & \
 	cd frontend && pnpm dev
 
 lint: ## Lint, format check and types, backend and frontend

@@ -112,7 +112,8 @@ class QuotaEvent(Base, TenantScoped, Created):
 
     A `reserve` event is a reservation. Its `confirm` or `release` points back at it through
     `reservation_id`, and the partial unique index allows only one of them, so a reservation
-    can never be closed twice (e.g. a confirm racing the 24 h expiry).
+    can never be closed twice (e.g. a confirm racing the 24 h expiry). A confirmed reservation
+    can get one `refund` afterwards, when a later stage fails or the user cancels (S05).
     """
 
     __tablename__ = "quota_events"
@@ -122,9 +123,10 @@ class QuotaEvent(Base, TenantScoped, Created):
         tenant_fk("created_by", "users"),
         tenant_fk("reservation_id", "quota_events"),
         one_of("counter", QUOTA_COUNTERS),
-        one_of("kind", ("reserve", "confirm", "release", "manual_add")),
+        one_of("kind", ("reserve", "confirm", "release", "refund", "manual_add")),
         CheckConstraint(
-            "(reservation_id IS NOT NULL) = (kind IN ('confirm', 'release'))", name="closing_has_reservation"
+            "(reservation_id IS NOT NULL) = (kind IN ('confirm', 'release', 'refund'))",
+            name="closing_has_reservation",
         ),
         Index(
             "uq_quota_events_one_closing",
@@ -132,6 +134,14 @@ class QuotaEvent(Base, TenantScoped, Created):
             "reservation_id",
             unique=True,
             postgresql_where=text("kind IN ('confirm', 'release')"),
+        ),
+        # A confirmed upload given back after a later failure or a cancel (S05): at most once per reservation.
+        Index(
+            "uq_quota_events_one_refund",
+            "tenant_id",
+            "reservation_id",
+            unique=True,
+            postgresql_where=text("kind = 'refund'"),
         ),
     )
 

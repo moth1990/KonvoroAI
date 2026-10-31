@@ -59,7 +59,8 @@ jobs:
         working-directory: frontend
     steps:
       - uses: actions/checkout@v4
-      # E2E runs against the real API (backend/konboro/devtools/e2e.py), so this job needs Python and Postgres too.
+      # E2E runs against the real API and pipeline worker (backend/konboro/devtools/e2e.py), so this job needs Python
+      # and the compose services too.
       - uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
@@ -89,9 +90,9 @@ jobs:
         run: pnpm test
       - name: Install Playwright browser
         run: pnpm exec playwright install --with-deps chromium
-      - name: Start Postgres
+      - name: Start Postgres, S3 and SQS
         working-directory: .
-        run: docker compose up -d --wait postgres
+        run: docker compose up -d --wait
       - name: E2E (desktop and mobile; Playwright starts the E2E API and the web app)
         run: pnpm e2e
       - name: Screenshots match the accepted baselines (Playwright's Linux image, like `make check-screenshots`)

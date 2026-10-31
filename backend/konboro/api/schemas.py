@@ -4,31 +4,12 @@ Money and rates are strings in JSON, never numbers (CLAUDE.md non-negotiable 5).
 """
 
 from datetime import date, datetime
-from decimal import Decimal, InvalidOperation
 from typing import Annotated, Any, Literal
 
-from pydantic import BaseModel, BeforeValidator, ConfigDict, Field, PlainSerializer, WithJsonSchema, model_validator
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
+from konboro.contracts.common import DecimalStr
 from konboro.domain.quota import QuotaState
-
-
-def _decimal_from_string(value: Any) -> Decimal:
-    if isinstance(value, Decimal):
-        return value
-    if not isinstance(value, str):
-        raise ValueError('a decimal must be sent as a string, e.g. "0.15"')
-    try:
-        return Decimal(value)
-    except InvalidOperation as e:
-        raise ValueError("not a decimal") from e
-
-
-DecimalStr = Annotated[
-    Decimal,
-    BeforeValidator(_decimal_from_string),
-    PlainSerializer(lambda d: format(d, "f"), return_type=str),
-    WithJsonSchema({"type": "string", "pattern": r"^-?\d+(\.\d+)?$", "examples": ["0.15"]}),
-]
 
 Email = Annotated[str, Field(min_length=3, max_length=254, pattern=r"^[^@\s]+@[^@\s]+\.[^@\s]+$")]
 
@@ -140,6 +121,87 @@ class HomeSummaryOut(BaseModel):
     queue_pending: int = Field(description="Approval-queue items waiting for a decision")
     missing_prices: list[MissingPricesItem]
     audit_omissions: list[AuditOmissionsItem]
+
+
+# --- drawings (01 §4, §4.6) ----------------------------------------------------------------------------
+
+
+class UploadedFileOut(BaseModel):
+    """One file of an upload. A rejected upload lists every file, each with its own error (01 §4.3)."""
+
+    name: str
+    size_bytes: int
+    detected_format: str | None
+    page_count: int | None
+    error: str | None = Field(None, description="01 §8 code, e.g. cad_not_supported")
+    message: str | None = Field(None, description="Hebrew, ready to show next to the file")
+
+
+class UploadOut(BaseModel):
+    drawing_id: str
+    status: str
+    files: list[UploadedFileOut]
+    counted_as: Literal["new_drawing", "revision"] = Field(
+        description="new_drawing: counts once stage 1 succeeds; revision: never counts (S05)"
+    )
+
+
+class StageOut(BaseModel):
+    stage: int
+    name: str = Field(description="Hebrew, as on the new-quote screen")
+    status: Literal["queued", "running", "done", "failed", "skipped"]
+    summary: str | None = Field(None, description="A short Hebrew summary once the stage is done")
+
+
+class ProgressFileOut(BaseModel):
+    name: str
+    page_count: int | None
+
+
+class ProgressPageOut(BaseModel):
+    page_id: str
+    page_no: int
+    file_name: str
+    route: Literal["process", "context", "skip"] | None
+    page_kind: str | None
+    thumbnail_url: str | None = Field(None, description="Short-lived; load it, don't store it")
+
+
+class ProgressSummaryOut(BaseModel):
+    """The done step's grid (01 §4.6 "סיום"). Products, prices and findings stay 0 until stages 4–7 are real."""
+
+    input_kind: str | None
+    panels: list[str]
+    page_count: int
+    pages_by_route: dict[str, int]
+    products: int
+    priced: int
+    findings: int
+
+
+class ProgressOut(BaseModel):
+    drawing_id: str
+    name: str = Field(description="The project's name, or else the first file's")
+    status: Literal["uploaded", "processing", "awaiting_confirmation", "ready", "failed", "cancelled"]
+    current_stage: int | None
+    progress: float = Field(ge=0, le=1)
+    counted_as: Literal["new_drawing", "revision"]
+    counted: bool = Field(description="Whether this upload is counted in the quota right now")
+    files: list[ProgressFileOut]
+    stages: list[StageOut]
+    quote_id: str | None
+    error: str | None = Field(None, description="Hebrew, when the pipeline failed")
+    summary: ProgressSummaryOut | None = None
+    pages: list[ProgressPageOut] = []
+
+
+class RevisableOut(BaseModel):
+    """A finished drawing a new version can follow (01 §4.6 item 1)."""
+
+    drawing_id: str
+    name: str
+    version: int
+    updated_at: datetime
 
 
 # --- settings -----------------------------------------------------------------------------------

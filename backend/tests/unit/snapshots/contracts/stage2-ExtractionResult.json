@@ -1,0 +1,828 @@
+{
+  "$defs": {
+    "CadBlock": {
+      "additionalProperties": false,
+      "properties": {
+        "attribute_span_ids": {
+          "default": [],
+          "items": {
+            "pattern": "^ts_[0-9A-Za-z_]+$",
+            "type": "string"
+          },
+          "title": "Attribute Span Ids",
+          "type": "array"
+        },
+        "attributes": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "default": {},
+          "title": "Attributes",
+          "type": "object"
+        },
+        "bbox": {
+          "maxItems": 4,
+          "minItems": 4,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Bbox",
+          "type": "array"
+        },
+        "block_id": {
+          "pattern": "^blk_[0-9A-Za-z_]+$",
+          "title": "Block Id",
+          "type": "string"
+        },
+        "block_name": {
+          "title": "Block Name",
+          "type": "string"
+        },
+        "insert_point": {
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Insert Point",
+          "type": "array"
+        },
+        "layer": {
+          "title": "Layer",
+          "type": "string"
+        },
+        "mapped_symbol_class": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mapped Symbol Class"
+        },
+        "mapping_confidence": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mapping Confidence"
+        },
+        "mapping_source": {
+          "anyOf": [
+            {
+              "enum": [
+                "designer",
+                "tenant",
+                "global"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mapping Source"
+        },
+        "rotation": {
+          "default": 0,
+          "title": "Rotation",
+          "type": "number"
+        },
+        "scale": {
+          "default": [
+            1.0,
+            1.0
+          ],
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Scale",
+          "type": "array"
+        }
+      },
+      "required": [
+        "block_id",
+        "block_name",
+        "bbox",
+        "insert_point",
+        "layer"
+      ],
+      "title": "CadBlock",
+      "type": "object"
+    },
+    "ExtractionStats": {
+      "additionalProperties": false,
+      "properties": {
+        "blank_tile_count": {
+          "default": 0,
+          "title": "Blank Tile Count",
+          "type": "integer"
+        },
+        "corrected_span_count": {
+          "default": 0,
+          "title": "Corrected Span Count",
+          "type": "integer"
+        },
+        "low_confidence_span_count": {
+          "default": 0,
+          "title": "Low Confidence Span Count",
+          "type": "integer"
+        },
+        "mapped_block_ratio": {
+          "default": 0,
+          "title": "Mapped Block Ratio",
+          "type": "number"
+        },
+        "ocr_span_count": {
+          "default": 0,
+          "title": "Ocr Span Count",
+          "type": "integer"
+        },
+        "span_count": {
+          "default": 0,
+          "title": "Span Count",
+          "type": "integer"
+        },
+        "tile_count": {
+          "default": 0,
+          "title": "Tile Count",
+          "type": "integer"
+        }
+      },
+      "title": "ExtractionStats",
+      "type": "object"
+    },
+    "Layer": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "visible": {
+          "title": "Visible",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name",
+        "visible"
+      ],
+      "title": "Layer",
+      "type": "object"
+    },
+    "PageExtraction": {
+      "additionalProperties": false,
+      "properties": {
+        "cad_blocks": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/CadBlock"
+          },
+          "title": "Cad Blocks",
+          "type": "array"
+        },
+        "drawing_id": {
+          "pattern": "^drw_[0-9A-Za-z_]+$",
+          "title": "Drawing Id",
+          "type": "string"
+        },
+        "issues": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/StageIssue"
+          },
+          "title": "Issues",
+          "type": "array"
+        },
+        "page_id": {
+          "pattern": "^pg_[0-9A-Za-z_]+$",
+          "title": "Page Id",
+          "type": "string"
+        },
+        "pre_detections": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/PreDetection"
+          },
+          "title": "Pre Detections",
+          "type": "array"
+        },
+        "render": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Render"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "stats": {
+          "$ref": "#/$defs/ExtractionStats",
+          "default": {
+            "blank_tile_count": 0,
+            "corrected_span_count": 0,
+            "low_confidence_span_count": 0,
+            "mapped_block_ratio": 0.0,
+            "ocr_span_count": 0,
+            "span_count": 0,
+            "tile_count": 0
+          }
+        },
+        "text_spans": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/TextSpan"
+          },
+          "title": "Text Spans",
+          "type": "array"
+        },
+        "tiles": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Tile"
+          },
+          "title": "Tiles",
+          "type": "array"
+        },
+        "trace_id": {
+          "pattern": "^trc_[0-9A-Za-z_]+$",
+          "title": "Trace Id",
+          "type": "string"
+        },
+        "vector": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Vector"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "wire_graph": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/WireGraph"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "page_id",
+        "drawing_id",
+        "render",
+        "trace_id"
+      ],
+      "title": "PageExtraction",
+      "type": "object"
+    },
+    "PreDetection": {
+      "additionalProperties": false,
+      "properties": {
+        "bbox": {
+          "maxItems": 4,
+          "minItems": 4,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Bbox",
+          "type": "array"
+        },
+        "block_id": {
+          "anyOf": [
+            {
+              "pattern": "^blk_[0-9A-Za-z_]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Block Id"
+        },
+        "confidence": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "pre_det_id": {
+          "title": "Pre Det Id",
+          "type": "string"
+        },
+        "symbol_class": {
+          "title": "Symbol Class",
+          "type": "string"
+        }
+      },
+      "required": [
+        "pre_det_id",
+        "block_id",
+        "symbol_class",
+        "bbox",
+        "confidence"
+      ],
+      "title": "PreDetection",
+      "type": "object"
+    },
+    "Render": {
+      "additionalProperties": false,
+      "properties": {
+        "dpi": {
+          "title": "Dpi",
+          "type": "integer"
+        },
+        "height_px": {
+          "title": "Height Px",
+          "type": "integer"
+        },
+        "image_uri": {
+          "title": "Image Uri",
+          "type": "string"
+        },
+        "px_per_pt": {
+          "title": "Px Per Pt",
+          "type": "number"
+        },
+        "width_px": {
+          "title": "Width Px",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "dpi",
+        "px_per_pt",
+        "width_px",
+        "height_px",
+        "image_uri"
+      ],
+      "title": "Render",
+      "type": "object"
+    },
+    "StageIssue": {
+      "additionalProperties": false,
+      "description": "A warning or error a stage reports about its input (01 §6.5). `message` is Hebrew, ready to show.",
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "page_id": {
+          "anyOf": [
+            {
+              "pattern": "^pg_[0-9A-Za-z_]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Id"
+        },
+        "severity": {
+          "enum": [
+            "info",
+            "warning",
+            "error"
+          ],
+          "title": "Severity",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "severity",
+        "message"
+      ],
+      "title": "StageIssue",
+      "type": "object"
+    },
+    "TextSpan": {
+      "additionalProperties": false,
+      "properties": {
+        "bbox": {
+          "maxItems": 4,
+          "minItems": 4,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Bbox",
+          "type": "array"
+        },
+        "block_id": {
+          "anyOf": [
+            {
+              "pattern": "^blk_[0-9A-Za-z_]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Block Id"
+        },
+        "confidence": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "corrections": {
+          "default": [],
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "title": "Corrections",
+          "type": "array"
+        },
+        "font_size_pt": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Font Size Pt"
+        },
+        "layer": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Layer"
+        },
+        "merged_from": {
+          "default": [],
+          "items": {
+            "pattern": "^ts_[0-9A-Za-z_]+$",
+            "type": "string"
+          },
+          "title": "Merged From",
+          "type": "array"
+        },
+        "raw_text": {
+          "description": "Exactly as extracted",
+          "title": "Raw Text",
+          "type": "string"
+        },
+        "rotation": {
+          "default": 0,
+          "enum": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "title": "Rotation",
+          "type": "integer"
+        },
+        "source": {
+          "enum": [
+            "pdf_text",
+            "ocr",
+            "cad_text",
+            "cad_attrib"
+          ],
+          "title": "Source",
+          "type": "string"
+        },
+        "span_id": {
+          "pattern": "^ts_[0-9A-Za-z_]+$",
+          "title": "Span Id",
+          "type": "string"
+        },
+        "tags": {
+          "additionalProperties": true,
+          "default": {},
+          "description": "current_a, poles, curve, breaking_capacity_ka, residual_ma",
+          "title": "Tags",
+          "type": "object"
+        },
+        "text": {
+          "description": "After normalization",
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "span_id",
+        "text",
+        "raw_text",
+        "bbox",
+        "source",
+        "confidence"
+      ],
+      "title": "TextSpan",
+      "type": "object"
+    },
+    "Tile": {
+      "additionalProperties": false,
+      "properties": {
+        "bbox_pt": {
+          "maxItems": 4,
+          "minItems": 4,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Bbox Pt",
+          "type": "array"
+        },
+        "bbox_px": {
+          "maxItems": 4,
+          "minItems": 4,
+          "prefixItems": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "title": "Bbox Px",
+          "type": "array"
+        },
+        "col": {
+          "title": "Col",
+          "type": "integer"
+        },
+        "image_uri": {
+          "title": "Image Uri",
+          "type": "string"
+        },
+        "is_blank": {
+          "default": false,
+          "title": "Is Blank",
+          "type": "boolean"
+        },
+        "padding_px": {
+          "default": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "description": "top, right, bottom, left",
+          "maxItems": 4,
+          "minItems": 4,
+          "prefixItems": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "title": "Padding Px",
+          "type": "array"
+        },
+        "panel_ids": {
+          "default": [],
+          "items": {
+            "pattern": "^pnl_[0-9A-Za-z_]+$",
+            "type": "string"
+          },
+          "title": "Panel Ids",
+          "type": "array"
+        },
+        "pre_detection_ids": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Pre Detection Ids",
+          "type": "array"
+        },
+        "row": {
+          "title": "Row",
+          "type": "integer"
+        },
+        "span_ids": {
+          "default": [],
+          "items": {
+            "pattern": "^ts_[0-9A-Za-z_]+$",
+            "type": "string"
+          },
+          "title": "Span Ids",
+          "type": "array"
+        },
+        "tile_id": {
+          "pattern": "^tl_[0-9A-Za-z_]+$",
+          "title": "Tile Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tile_id",
+        "row",
+        "col",
+        "bbox_pt",
+        "bbox_px",
+        "image_uri"
+      ],
+      "title": "Tile",
+      "type": "object"
+    },
+    "Vector": {
+      "additionalProperties": false,
+      "properties": {
+        "layers": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Layer"
+          },
+          "title": "Layers",
+          "type": "array"
+        },
+        "path_count": {
+          "title": "Path Count",
+          "type": "integer"
+        },
+        "paths_uri": {
+          "title": "Paths Uri",
+          "type": "string"
+        }
+      },
+      "required": [
+        "paths_uri",
+        "path_count"
+      ],
+      "title": "Vector",
+      "type": "object"
+    },
+    "WireGraph": {
+      "additionalProperties": false,
+      "properties": {
+        "block_links": {
+          "default": 0,
+          "title": "Block Links",
+          "type": "integer"
+        },
+        "edge_count": {
+          "default": 0,
+          "title": "Edge Count",
+          "type": "integer"
+        },
+        "node_count": {
+          "default": 0,
+          "title": "Node Count",
+          "type": "integer"
+        },
+        "status": {
+          "enum": [
+            "built",
+            "partial",
+            "unavailable"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "uri": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Uri"
+        }
+      },
+      "required": [
+        "uri",
+        "status"
+      ],
+      "title": "WireGraph",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Stage 2's output for the drawing: one entry per `process` page.",
+  "properties": {
+    "drawing_id": {
+      "pattern": "^drw_[0-9A-Za-z_]+$",
+      "title": "Drawing Id",
+      "type": "string"
+    },
+    "pages": {
+      "items": {
+        "$ref": "#/$defs/PageExtraction"
+      },
+      "title": "Pages",
+      "type": "array"
+    },
+    "trace_id": {
+      "pattern": "^trc_[0-9A-Za-z_]+$",
+      "title": "Trace Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "drawing_id",
+    "pages",
+    "trace_id"
+  ],
+  "title": "ExtractionResult",
+  "type": "object"
+}

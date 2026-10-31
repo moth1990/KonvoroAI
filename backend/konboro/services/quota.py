@@ -8,6 +8,7 @@ condition on the locked row for every waiting transaction.
 
 from dataclasses import dataclass
 from datetime import UTC, date, datetime, timedelta
+from typing import Literal
 
 from sqlalchemy import ColumnElement, and_, exists, func, select, text, update
 from sqlalchemy.dialects.postgresql import insert
@@ -95,6 +96,7 @@ def reserve(
     purpose: Purpose = "quote",
     *,
     created_by: str | None = None,
+    drawing_id: str | None = None,
     now: datetime | None = None,
 ) -> str:
     """Hold one slot when the user starts a new quote. Returns the reservation id (a `qev_` id)."""
@@ -125,6 +127,7 @@ def reserve(
             kind="reserve",
             reason=purpose,
             created_by=created_by,
+            drawing_id=drawing_id,
         )
     )
     session.flush()
@@ -223,6 +226,69 @@ def release(
     return _close(
         session, tenant_id, reservation, "release", reason=reason, drawing_id=drawing_id, created_by=created_by
     )
+
+
+def refund(
+    session: Session,
+    tenant_id: str,
+    reservation_id: str,
+    reason: str,
+    *,
+    drawing_id: str | None = None,
+    created_by: str | None = None,
+) -> bool:
+    """Give back a confirmed upload: a later stage failed, or the user cancelled (01 §4.5: a technical failure is
+    not counted; S05 decision). Takes the slot out of `used` in the reservation's month. Idempotent: False when
+    the reservation was never confirmed or was already refunded."""
+    reservation = _reservation(session, tenant_id, reservation_id)
+    confirmed = session.scalar(
+        select(QuotaEvent.id).where(
+            QuotaEvent.tenant_id == tenant_id, QuotaEvent.reservation_id == reservation_id, QuotaEvent.kind == "confirm"
+        )
+    )
+    if confirmed is None:
+        return False
+    refunded = session.execute(
+        insert(QuotaEvent)
+        .values(
+            id=new_id("qev"),
+            tenant_id=tenant_id,
+            month=reservation.month,
+            counter=reservation.counter,
+            kind="refund",
+            amount=reservation.amount,
+            reason=reason,
+            drawing_id=drawing_id,
+            created_by=created_by,
+            reservation_id=reservation.id,
+        )
+        .on_conflict_do_nothing(index_elements=["tenant_id", "reservation_id"], index_where=text("kind = 'refund'"))
+        .returning(QuotaEvent.id)
+    ).first()
+    if refunded is None:
+        return False
+    session.execute(
+        update(QuotaUsage)
+        .where(
+            QuotaUsage.tenant_id == tenant_id,
+            QuotaUsage.month == reservation.month,
+            QuotaUsage.counter == reservation.counter,
+        )
+        .values(used=QuotaUsage.used - reservation.amount)
+    )
+    return True
+
+
+def give_back(
+    session: Session, tenant_id: str, reservation_id: str, reason: str, *, drawing_id: str | None = None
+) -> Literal["released", "refunded", "none"]:
+    """The upload stopped (failure or cancel): release the reservation if stage 1 hasn't counted it yet,
+    refund it if it has. Safe to call more than once."""
+    if release(session, tenant_id, reservation_id, reason, drawing_id=drawing_id):
+        return "released"
+    if refund(session, tenant_id, reservation_id, reason, drawing_id=drawing_id):
+        return "refunded"
+    return "none"
 
 
 def _is_open() -> ColumnElement[bool]:

@@ -1,0 +1,451 @@
+{
+  "$defs": {
+    "Alternative": {
+      "additionalProperties": false,
+      "properties": {
+        "diff": {
+          "title": "Diff",
+          "type": "string"
+        },
+        "has_cost_price": {
+          "title": "Has Cost Price",
+          "type": "boolean"
+        },
+        "manufacturer": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Manufacturer"
+        },
+        "sku": {
+          "title": "Sku",
+          "type": "string"
+        }
+      },
+      "required": [
+        "sku",
+        "manufacturer",
+        "diff",
+        "has_cost_price"
+      ],
+      "title": "Alternative",
+      "type": "object"
+    },
+    "BrandDecision": {
+      "additionalProperties": false,
+      "properties": {
+        "brand": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Brand"
+        },
+        "source": {
+          "title": "Source",
+          "type": "string"
+        }
+      },
+      "required": [
+        "brand",
+        "source"
+      ],
+      "title": "BrandDecision",
+      "type": "object"
+    },
+    "CatalogItemSnapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "attributes": {
+          "additionalProperties": true,
+          "default": {},
+          "title": "Attributes",
+          "type": "object"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "manufacturer": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Manufacturer"
+        },
+        "series": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Series"
+        },
+        "sku": {
+          "title": "Sku",
+          "type": "string"
+        }
+      },
+      "required": [
+        "sku",
+        "manufacturer",
+        "description"
+      ],
+      "title": "CatalogItemSnapshot",
+      "type": "object"
+    },
+    "ComponentMatch": {
+      "additionalProperties": false,
+      "properties": {
+        "alternatives": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Alternative"
+          },
+          "title": "Alternatives",
+          "type": "array"
+        },
+        "attributes_used": {
+          "additionalProperties": {
+            "$ref": "#/$defs/UsedAttribute"
+          },
+          "default": {},
+          "title": "Attributes Used",
+          "type": "object"
+        },
+        "brand_decision": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/BrandDecision"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "catalog_item": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CatalogItemSnapshot"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "chosen_sku": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Chosen Sku"
+        },
+        "component_id": {
+          "pattern": "^cmp_[0-9A-Za-z_]+$",
+          "title": "Component Id",
+          "type": "string"
+        },
+        "confidence": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "defaulted_attributes": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Defaulted Attributes",
+          "type": "array"
+        },
+        "has_cost_price": {
+          "default": false,
+          "title": "Has Cost Price",
+          "type": "boolean"
+        },
+        "llm_decision": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Llm Decision"
+        },
+        "match_confidence": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Match Confidence",
+          "type": "number"
+        },
+        "method": {
+          "anyOf": [
+            {
+              "enum": [
+                "explicit_sku",
+                "explicit_series",
+                "memory",
+                "rules_unique",
+                "rules_ranked",
+                "llm",
+                "user"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Method"
+        },
+        "missing_attributes": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Missing Attributes",
+          "type": "array"
+        },
+        "reason": {
+          "default": "",
+          "title": "Reason",
+          "type": "string"
+        },
+        "relaxations": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Relaxations",
+          "type": "array"
+        },
+        "signature": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signature"
+        },
+        "status": {
+          "enum": [
+            "matched",
+            "ambiguous",
+            "unmatched",
+            "conflict"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "substitution": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Substitution"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "warnings": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Warnings",
+          "type": "array"
+        }
+      },
+      "required": [
+        "component_id",
+        "status",
+        "chosen_sku",
+        "catalog_item",
+        "method",
+        "match_confidence",
+        "confidence"
+      ],
+      "title": "ComponentMatch",
+      "type": "object"
+    },
+    "StageIssue": {
+      "additionalProperties": false,
+      "description": "A warning or error a stage reports about its input (01 §6.5). `message` is Hebrew, ready to show.",
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "page_id": {
+          "anyOf": [
+            {
+              "pattern": "^pg_[0-9A-Za-z_]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Id"
+        },
+        "severity": {
+          "enum": [
+            "info",
+            "warning",
+            "error"
+          ],
+          "title": "Severity",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "severity",
+        "message"
+      ],
+      "title": "StageIssue",
+      "type": "object"
+    },
+    "Substitution": {
+      "additionalProperties": false,
+      "properties": {
+        "chosen_brand": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Chosen Brand"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        },
+        "requested_brand": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Requested Brand"
+        }
+      },
+      "required": [
+        "requested_brand",
+        "chosen_brand",
+        "reason"
+      ],
+      "title": "Substitution",
+      "type": "object"
+    },
+    "UsedAttribute": {
+      "additionalProperties": false,
+      "properties": {
+        "source": {
+          "enum": [
+            "drawing",
+            "cad_attrib",
+            "graphic",
+            "shared_label",
+            "bom",
+            "notes",
+            "circuit",
+            "tenant_default",
+            "system_default",
+            "user"
+          ],
+          "title": "Source",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value"
+        }
+      },
+      "required": [
+        "value",
+        "source"
+      ],
+      "title": "UsedAttribute",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Stage 5's output for the drawing: one match per component.",
+  "properties": {
+    "drawing_id": {
+      "pattern": "^drw_[0-9A-Za-z_]+$",
+      "title": "Drawing Id",
+      "type": "string"
+    },
+    "issues": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/StageIssue"
+      },
+      "title": "Issues",
+      "type": "array"
+    },
+    "matches": {
+      "items": {
+        "$ref": "#/$defs/ComponentMatch"
+      },
+      "title": "Matches",
+      "type": "array"
+    },
+    "trace_id": {
+      "pattern": "^trc_[0-9A-Za-z_]+$",
+      "title": "Trace Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "drawing_id",
+    "matches",
+    "trace_id"
+  ],
+  "title": "MatchingResult",
+  "type": "object"
+}

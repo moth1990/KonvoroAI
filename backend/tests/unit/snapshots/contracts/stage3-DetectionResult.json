@@ -1,0 +1,524 @@
+{
+  "$defs": {
+    "ClassCandidate": {
+      "additionalProperties": false,
+      "properties": {
+        "score": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Score",
+          "type": "number"
+        },
+        "symbol_class": {
+          "title": "Symbol Class",
+          "type": "string"
+        }
+      },
+      "required": [
+        "symbol_class",
+        "score"
+      ],
+      "title": "ClassCandidate",
+      "type": "object"
+    },
+    "Detection": {
+      "additionalProperties": false,
+      "properties": {
+        "bbox": {
+          "maxItems": 4,
+          "minItems": 4,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Bbox",
+          "type": "array"
+        },
+        "billable": {
+          "title": "Billable",
+          "type": "boolean"
+        },
+        "block_id": {
+          "anyOf": [
+            {
+              "pattern": "^blk_[0-9A-Za-z_]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Block Id"
+        },
+        "class_candidates": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ClassCandidate"
+          },
+          "title": "Class Candidates",
+          "type": "array"
+        },
+        "class_score": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Class Score",
+          "type": "number"
+        },
+        "confidence": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "crop_uri": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Crop Uri"
+        },
+        "designator": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Designator"
+        },
+        "designator_span_id": {
+          "anyOf": [
+            {
+              "pattern": "^ts_[0-9A-Za-z_]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Designator Span Id"
+        },
+        "det_id": {
+          "pattern": "^det_[0-9A-Za-z_]+$",
+          "title": "Det Id",
+          "type": "string"
+        },
+        "detector_score": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Detector Score"
+        },
+        "family": {
+          "title": "Family",
+          "type": "string"
+        },
+        "linked_designator": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Linked Designator"
+        },
+        "llm_decision": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Llm Decision"
+        },
+        "method": {
+          "enum": [
+            "cad_block",
+            "detector_knn",
+            "detector_llm",
+            "orphan_recovery"
+          ],
+          "title": "Method",
+          "type": "string"
+        },
+        "orientation": {
+          "default": 0,
+          "enum": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "title": "Orientation",
+          "type": "integer"
+        },
+        "owner_tile_id": {
+          "pattern": "^tl_[0-9A-Za-z_]+$",
+          "title": "Owner Tile Id",
+          "type": "string"
+        },
+        "page_id": {
+          "pattern": "^pg_[0-9A-Za-z_]+$",
+          "title": "Page Id",
+          "type": "string"
+        },
+        "panel_id": {
+          "anyOf": [
+            {
+              "pattern": "^pnl_[0-9A-Za-z_]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Panel Id"
+        },
+        "role": {
+          "default": "device",
+          "enum": [
+            "device",
+            "power_contact",
+            "coil",
+            "relay_contact",
+            "aux_contact",
+            "front_view"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "seen_in_tile_ids": {
+          "default": [],
+          "items": {
+            "pattern": "^tl_[0-9A-Za-z_]+$",
+            "type": "string"
+          },
+          "title": "Seen In Tile Ids",
+          "type": "array"
+        },
+        "status": {
+          "enum": [
+            "accepted",
+            "uncertain",
+            "unknown"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "symbol_class": {
+          "title": "Symbol Class",
+          "type": "string"
+        }
+      },
+      "required": [
+        "det_id",
+        "page_id",
+        "bbox",
+        "family",
+        "symbol_class",
+        "billable",
+        "method",
+        "detector_score",
+        "class_score",
+        "confidence",
+        "status",
+        "owner_tile_id"
+      ],
+      "title": "Detection",
+      "type": "object"
+    },
+    "DetectionStats": {
+      "additionalProperties": false,
+      "properties": {
+        "by_method": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "default": {},
+          "title": "By Method",
+          "type": "object"
+        },
+        "by_status": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "default": {},
+          "title": "By Status",
+          "type": "object"
+        },
+        "detection_count": {
+          "default": 0,
+          "title": "Detection Count",
+          "type": "integer"
+        },
+        "duplicates_removed": {
+          "default": 0,
+          "title": "Duplicates Removed",
+          "type": "integer"
+        },
+        "llm_calls": {
+          "default": 0,
+          "title": "Llm Calls",
+          "type": "integer"
+        },
+        "orphan_text_count": {
+          "default": 0,
+          "title": "Orphan Text Count",
+          "type": "integer"
+        }
+      },
+      "title": "DetectionStats",
+      "type": "object"
+    },
+    "OrphanText": {
+      "additionalProperties": false,
+      "properties": {
+        "bbox": {
+          "maxItems": 4,
+          "minItems": 4,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Bbox",
+          "type": "array"
+        },
+        "recovery_attempted": {
+          "title": "Recovery Attempted",
+          "type": "boolean"
+        },
+        "span_id": {
+          "pattern": "^ts_[0-9A-Za-z_]+$",
+          "title": "Span Id",
+          "type": "string"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "span_id",
+        "text",
+        "bbox",
+        "recovery_attempted"
+      ],
+      "title": "OrphanText",
+      "type": "object"
+    },
+    "PageDetections": {
+      "additionalProperties": false,
+      "properties": {
+        "detections": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Detection"
+          },
+          "title": "Detections",
+          "type": "array"
+        },
+        "detector_model": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Detector Model"
+        },
+        "drawing_id": {
+          "pattern": "^drw_[0-9A-Za-z_]+$",
+          "title": "Drawing Id",
+          "type": "string"
+        },
+        "embedding_model": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Embedding Model"
+        },
+        "issues": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/StageIssue"
+          },
+          "title": "Issues",
+          "type": "array"
+        },
+        "library_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Library Version"
+        },
+        "orphan_texts": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/OrphanText"
+          },
+          "title": "Orphan Texts",
+          "type": "array"
+        },
+        "page_id": {
+          "pattern": "^pg_[0-9A-Za-z_]+$",
+          "title": "Page Id",
+          "type": "string"
+        },
+        "stats": {
+          "$ref": "#/$defs/DetectionStats",
+          "default": {
+            "by_method": {},
+            "by_status": {},
+            "detection_count": 0,
+            "duplicates_removed": 0,
+            "llm_calls": 0,
+            "orphan_text_count": 0
+          }
+        },
+        "trace_id": {
+          "pattern": "^trc_[0-9A-Za-z_]+$",
+          "title": "Trace Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "page_id",
+        "drawing_id",
+        "trace_id"
+      ],
+      "title": "PageDetections",
+      "type": "object"
+    },
+    "StageIssue": {
+      "additionalProperties": false,
+      "description": "A warning or error a stage reports about its input (01 §6.5). `message` is Hebrew, ready to show.",
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "page_id": {
+          "anyOf": [
+            {
+              "pattern": "^pg_[0-9A-Za-z_]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Id"
+        },
+        "severity": {
+          "enum": [
+            "info",
+            "warning",
+            "error"
+          ],
+          "title": "Severity",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "severity",
+        "message"
+      ],
+      "title": "StageIssue",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Stage 3's output for the drawing: one entry per `process` page.",
+  "properties": {
+    "drawing_id": {
+      "pattern": "^drw_[0-9A-Za-z_]+$",
+      "title": "Drawing Id",
+      "type": "string"
+    },
+    "pages": {
+      "items": {
+        "$ref": "#/$defs/PageDetections"
+      },
+      "title": "Pages",
+      "type": "array"
+    },
+    "trace_id": {
+      "pattern": "^trc_[0-9A-Za-z_]+$",
+      "title": "Trace Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "drawing_id",
+    "pages",
+    "trace_id"
+  ],
+  "title": "DetectionResult",
+  "type": "object"
+}

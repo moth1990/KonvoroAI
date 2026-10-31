@@ -4,6 +4,7 @@ import { useMe } from "./api/QueryProvider";
 import { AuthBridge, RequireAuth } from "./auth/auth";
 import { HomeScreen } from "./screens/Home";
 import { LoginScreen } from "./screens/Login";
+import { NewQuoteScreen } from "./screens/newQuote/NewQuote";
 import { Placeholder } from "./screens/Placeholder";
 
 /** `/build` exists only when `chat_quote_builder` is on: off, it behaves like any unknown path (13 §3.2). */
@@ -22,7 +23,7 @@ export default function App() {
         <Route path="/login" element={<LoginScreen />} />
         <Route element={<RequireAuth />}>
           <Route path="/home" element={<HomeScreen />} />
-          <Route path="/new" element={<Placeholder screen="new" />} />
+          <Route path="/new" element={<NewQuoteScreen />} />
           <Route path="/review/:quoteId?" element={<Placeholder screen="review" />} />
           <Route path="/audit" element={<Placeholder screen="audit" />} />
           <Route path="/prices" element={<Placeholder screen="prices" />} />

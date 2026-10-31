@@ -21,6 +21,8 @@ MESSAGES: dict[str, str] = {
     "method_not_allowed": "הפעולה הזו לא נתמכת",
     "validation_error": "חלק מהפרטים לא תקינים",
     "quota_reached": "הגעתם למכסת ההצעות של החודש",
+    "upload_rejected": "חלק מהקבצים לא תקינים, ולכן ההעלאה לא בוצעה. הפרטים ליד כל קובץ",
+    "drawing_finished": "הפענוח כבר הסתיים",
     "internal_error": "משהו השתבש אצלנו. נסו שוב בעוד רגע",
 }
 

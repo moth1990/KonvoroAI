@@ -1,0 +1,753 @@
+{
+  "$defs": {
+    "ContextArtifact": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "title": "Artifact Id",
+          "type": "string"
+        },
+        "content": {
+          "title": "Content",
+          "type": "string"
+        },
+        "format": {
+          "enum": [
+            "markdown",
+            "json",
+            "text"
+          ],
+          "title": "Format",
+          "type": "string"
+        },
+        "kind": {
+          "description": "legend, general_notes, bom_table, technical_data, feed_diagram, …",
+          "title": "Kind",
+          "type": "string"
+        },
+        "page_id": {
+          "anyOf": [
+            {
+              "pattern": "^pg_[0-9A-Za-z_]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Page Id"
+        }
+      },
+      "required": [
+        "artifact_id",
+        "page_id",
+        "kind",
+        "format",
+        "content"
+      ],
+      "title": "ContextArtifact",
+      "type": "object"
+    },
+    "Page": {
+      "additionalProperties": false,
+      "properties": {
+        "classified_by": {
+          "enum": [
+            "model",
+            "user",
+            "reused",
+            "template"
+          ],
+          "title": "Classified By",
+          "type": "string"
+        },
+        "context_artifact_ids": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Context Artifact Ids",
+          "type": "array"
+        },
+        "file_id": {
+          "pattern": "^fil_[0-9A-Za-z_]+$",
+          "title": "File Id",
+          "type": "string"
+        },
+        "geometry_source": {
+          "anyOf": [
+            {
+              "enum": [
+                "vector",
+                "raster",
+                "mixed"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Geometry Source"
+        },
+        "model": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model"
+        },
+        "page_id": {
+          "pattern": "^pg_[0-9A-Za-z_]+$",
+          "title": "Page Id",
+          "type": "string"
+        },
+        "page_kind": {
+          "enum": [
+            "single_line_diagram",
+            "control_diagram",
+            "panel_front_view",
+            "legend",
+            "bom_table",
+            "general_notes",
+            "technical_data",
+            "terminal_diagram",
+            "title_cover",
+            "factory_template",
+            "other"
+          ],
+          "title": "Page Kind",
+          "type": "string"
+        },
+        "page_kind_confidence": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Page Kind Confidence",
+          "type": "number"
+        },
+        "page_no": {
+          "minimum": 1,
+          "title": "Page No",
+          "type": "integer"
+        },
+        "panels": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/PagePanel"
+          },
+          "title": "Panels",
+          "type": "array"
+        },
+        "quality": {
+          "enum": [
+            "ok",
+            "low_resolution",
+            "blurry",
+            "cropped"
+          ],
+          "title": "Quality",
+          "type": "string"
+        },
+        "regions": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Region"
+          },
+          "title": "Regions",
+          "type": "array"
+        },
+        "reused_from": {
+          "anyOf": [
+            {
+              "pattern": "^pg_[0-9A-Za-z_]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reused From"
+        },
+        "rotation_applied": {
+          "default": 0,
+          "enum": [
+            0,
+            90,
+            180,
+            270
+          ],
+          "title": "Rotation Applied",
+          "type": "integer"
+        },
+        "route": {
+          "enum": [
+            "process",
+            "context",
+            "skip"
+          ],
+          "title": "Route",
+          "type": "string"
+        },
+        "sha256": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Sha256"
+        },
+        "size_pt": {
+          "description": "Width and height in points, after rotation",
+          "maxItems": 2,
+          "minItems": 2,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Size Pt",
+          "type": "array"
+        },
+        "text_source": {
+          "anyOf": [
+            {
+              "enum": [
+                "pdf_text",
+                "ocr",
+                "mixed"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Text Source"
+        },
+        "title_block": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TitleBlock"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "page_id",
+        "file_id",
+        "page_no",
+        "sha256",
+        "size_pt",
+        "geometry_source",
+        "text_source",
+        "quality",
+        "page_kind",
+        "page_kind_confidence",
+        "route",
+        "classified_by"
+      ],
+      "title": "Page",
+      "type": "object"
+    },
+    "PagePanel": {
+      "additionalProperties": false,
+      "properties": {
+        "bbox": {
+          "maxItems": 4,
+          "minItems": 4,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Bbox",
+          "type": "array"
+        },
+        "confidence": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "panel_id": {
+          "pattern": "^pnl_[0-9A-Za-z_]+$",
+          "title": "Panel Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "panel_id",
+        "name",
+        "bbox",
+        "confidence"
+      ],
+      "title": "PagePanel",
+      "type": "object"
+    },
+    "Panel": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "page_ids": {
+          "items": {
+            "pattern": "^pg_[0-9A-Za-z_]+$",
+            "type": "string"
+          },
+          "title": "Page Ids",
+          "type": "array"
+        },
+        "panel_id": {
+          "pattern": "^pnl_[0-9A-Za-z_]+$",
+          "title": "Panel Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "panel_id",
+        "name",
+        "page_ids"
+      ],
+      "title": "Panel",
+      "type": "object"
+    },
+    "QuotaOutcome": {
+      "additionalProperties": false,
+      "description": "How this drawing counted against the monthly quota (01 §4.5).",
+      "properties": {
+        "counted": {
+          "title": "Counted",
+          "type": "boolean"
+        },
+        "quota_event_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Quota Event Id"
+        },
+        "reason": {
+          "enum": [
+            "new_drawing",
+            "revision",
+            "reuse",
+            "audit"
+          ],
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "counted",
+        "reason"
+      ],
+      "title": "QuotaOutcome",
+      "type": "object"
+    },
+    "Region": {
+      "additionalProperties": false,
+      "description": "An area of a page that is not a panel (01 §5.4).",
+      "properties": {
+        "bbox": {
+          "maxItems": 4,
+          "minItems": 4,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Bbox",
+          "type": "array"
+        },
+        "panel_ref": {
+          "anyOf": [
+            {
+              "pattern": "^pnl_[0-9A-Za-z_]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Panel Ref"
+        },
+        "region_kind": {
+          "enum": [
+            "panel",
+            "notes_block",
+            "feed_diagram",
+            "title_block",
+            "legend"
+          ],
+          "title": "Region Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "region_kind",
+        "bbox"
+      ],
+      "title": "Region",
+      "type": "object"
+    },
+    "SourceFile": {
+      "additionalProperties": false,
+      "properties": {
+        "detected_format": {
+          "enum": [
+            "pdf",
+            "png",
+            "jpg",
+            "webp",
+            "heic",
+            "xlsx",
+            "csv",
+            "zip"
+          ],
+          "title": "Detected Format",
+          "type": "string"
+        },
+        "file_id": {
+          "pattern": "^fil_[0-9A-Za-z_]+$",
+          "title": "File Id",
+          "type": "string"
+        },
+        "original_name": {
+          "title": "Original Name",
+          "type": "string"
+        },
+        "page_count": {
+          "minimum": 0,
+          "title": "Page Count",
+          "type": "integer"
+        },
+        "sha256": {
+          "title": "Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file_id",
+        "original_name",
+        "detected_format",
+        "sha256",
+        "page_count"
+      ],
+      "title": "SourceFile",
+      "type": "object"
+    },
+    "StageIssue": {
+      "additionalProperties": false,
+      "description": "A warning or error a stage reports about its input (01 §6.5). `message` is Hebrew, ready to show.",
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "page_id": {
+          "anyOf": [
+            {
+              "pattern": "^pg_[0-9A-Za-z_]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Id"
+        },
+        "severity": {
+          "enum": [
+            "info",
+            "warning",
+            "error"
+          ],
+          "title": "Severity",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "severity",
+        "message"
+      ],
+      "title": "StageIssue",
+      "type": "object"
+    },
+    "TitleBlock": {
+      "additionalProperties": false,
+      "properties": {
+        "date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date"
+        },
+        "designer": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Designer"
+        },
+        "drawing_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Drawing Number"
+        },
+        "project_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Project Name"
+        },
+        "revision": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Revision"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "for_info",
+                "for_bidding",
+                "for_execution"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status"
+        }
+      },
+      "title": "TitleBlock",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "context_artifacts": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/ContextArtifact"
+      },
+      "title": "Context Artifacts",
+      "type": "array"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "drawing_id": {
+      "pattern": "^drw_[0-9A-Za-z_]+$",
+      "title": "Drawing Id",
+      "type": "string"
+    },
+    "input_kind": {
+      "anyOf": [
+        {
+          "enum": [
+            "factory_drawing",
+            "designer_plan",
+            "bom_only",
+            "mixed"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "A hint, set after classification (01 §4.4)",
+      "title": "Input Kind"
+    },
+    "issues": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/StageIssue"
+      },
+      "title": "Issues",
+      "type": "array"
+    },
+    "needs_confirmation": {
+      "default": false,
+      "title": "Needs Confirmation",
+      "type": "boolean"
+    },
+    "pages": {
+      "items": {
+        "$ref": "#/$defs/Page"
+      },
+      "title": "Pages",
+      "type": "array"
+    },
+    "panels": {
+      "items": {
+        "$ref": "#/$defs/Panel"
+      },
+      "title": "Panels",
+      "type": "array"
+    },
+    "project_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Project Id"
+    },
+    "quota": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/QuotaOutcome"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "revision_of": {
+      "anyOf": [
+        {
+          "pattern": "^drw_[0-9A-Za-z_]+$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Revision Of"
+    },
+    "source_files": {
+      "items": {
+        "$ref": "#/$defs/SourceFile"
+      },
+      "title": "Source Files",
+      "type": "array"
+    },
+    "status": {
+      "enum": [
+        "ready",
+        "awaiting_confirmation",
+        "failed"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "tenant_id": {
+      "title": "Tenant Id",
+      "type": "string"
+    },
+    "trace_id": {
+      "pattern": "^trc_[0-9A-Za-z_]+$",
+      "title": "Trace Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "drawing_id",
+    "tenant_id",
+    "project_id",
+    "status",
+    "created_at",
+    "source_files",
+    "pages",
+    "panels",
+    "trace_id"
+  ],
+  "title": "IntakeResult",
+  "type": "object"
+}

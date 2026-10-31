@@ -61,6 +61,86 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/drawings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Upload
+         * @description Checks run in the order of 01 §4.3: quota, size, format, pages. One failing file rejects the upload.
+         */
+        post: operations["upload_drawings_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/drawings/revisable": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Revisable
+         * @description Finished drawings a new version can follow, newest first (the "new version" picker).
+         */
+        get: operations["list_revisable_drawings_revisable_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/drawings/{drawing_id}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Cancel
+         * @description Stops the pipeline at the next stage boundary and gives the quota back; the files stay (01 §4.6).
+         */
+        post: operations["cancel_drawings__drawing_id__cancel_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/drawings/{drawing_id}/progress": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Progress
+         * @description Polled every second by the new-quote screen (S05 decision).
+         */
+        get: operations["get_progress_drawings__drawing_id__progress_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health": {
         parameters: {
             query?: never;
@@ -191,6 +271,20 @@ export interface components {
              */
             quote_number: string | null;
         };
+        /** Body_upload_drawings_post */
+        Body_upload_drawings_post: {
+            /** Customer */
+            customer?: string | null;
+            /**
+             * Files
+             * @description The drawing: PDF, images, XLSX, CSV or ZIP
+             */
+            files: string[];
+            /** Project */
+            project?: string | null;
+            /** Revision Of */
+            revision_of?: string | null;
+        };
         /** ErrorBody */
         ErrorBody: {
             /** Code */
@@ -287,6 +381,99 @@ export interface components {
             /** Name He */
             name_he: string;
         };
+        /** ProgressFileOut */
+        ProgressFileOut: {
+            /** Name */
+            name: string;
+            /** Page Count */
+            page_count: number | null;
+        };
+        /** ProgressOut */
+        ProgressOut: {
+            /**
+             * Counted
+             * @description Whether this upload is counted in the quota right now
+             */
+            counted: boolean;
+            /**
+             * Counted As
+             * @enum {string}
+             */
+            counted_as: "new_drawing" | "revision";
+            /** Current Stage */
+            current_stage: number | null;
+            /** Drawing Id */
+            drawing_id: string;
+            /**
+             * Error
+             * @description Hebrew, when the pipeline failed
+             */
+            error?: string | null;
+            /** Files */
+            files: components["schemas"]["ProgressFileOut"][];
+            /**
+             * Name
+             * @description The project's name, or else the first file's
+             */
+            name: string;
+            /**
+             * Pages
+             * @default []
+             */
+            pages: components["schemas"]["ProgressPageOut"][];
+            /** Progress */
+            progress: number;
+            /** Quote Id */
+            quote_id: string | null;
+            /** Stages */
+            stages: components["schemas"]["StageOut"][];
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "uploaded" | "processing" | "awaiting_confirmation" | "ready" | "failed" | "cancelled";
+            summary?: components["schemas"]["ProgressSummaryOut"] | null;
+        };
+        /** ProgressPageOut */
+        ProgressPageOut: {
+            /** File Name */
+            file_name: string;
+            /** Page Id */
+            page_id: string;
+            /** Page Kind */
+            page_kind: string | null;
+            /** Page No */
+            page_no: number;
+            /** Route */
+            route: ("process" | "context" | "skip") | null;
+            /**
+             * Thumbnail Url
+             * @description Short-lived; load it, don't store it
+             */
+            thumbnail_url?: string | null;
+        };
+        /**
+         * ProgressSummaryOut
+         * @description The done step's grid (01 §4.6 "סיום"). Products, prices and findings stay 0 until stages 4–7 are real.
+         */
+        ProgressSummaryOut: {
+            /** Findings */
+            findings: number;
+            /** Input Kind */
+            input_kind: string | null;
+            /** Page Count */
+            page_count: number;
+            /** Pages By Route */
+            pages_by_route: {
+                [key: string]: number;
+            };
+            /** Panels */
+            panels: string[];
+            /** Priced */
+            priced: number;
+            /** Products */
+            products: number;
+        };
         /** QuotaCounterOut */
         QuotaCounterOut: {
             /**
@@ -357,6 +544,23 @@ export interface components {
              */
             version_status: "draft" | "sent";
         };
+        /**
+         * RevisableOut
+         * @description A finished drawing a new version can follow (01 §4.6 item 1).
+         */
+        RevisableOut: {
+            /** Drawing Id */
+            drawing_id: string;
+            /** Name */
+            name: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            /** Version */
+            version: number;
+        };
         /** SettingsOut */
         SettingsOut: {
             /** Attribute Defaults */
@@ -414,6 +618,26 @@ export interface components {
             /** Stale Days */
             stale_days?: number | null;
         };
+        /** StageOut */
+        StageOut: {
+            /**
+             * Name
+             * @description Hebrew, as on the new-quote screen
+             */
+            name: string;
+            /** Stage */
+            stage: number;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "queued" | "running" | "done" | "failed" | "skipped";
+            /**
+             * Summary
+             * @description A short Hebrew summary once the stage is done
+             */
+            summary?: string | null;
+        };
         /** TenantOut */
         TenantOut: {
             /** Currency */
@@ -440,6 +664,45 @@ export interface components {
              * @constant
              */
             token_type: "bearer";
+        };
+        /** UploadOut */
+        UploadOut: {
+            /**
+             * Counted As
+             * @description new_drawing: counts once stage 1 succeeds; revision: never counts (S05)
+             * @enum {string}
+             */
+            counted_as: "new_drawing" | "revision";
+            /** Drawing Id */
+            drawing_id: string;
+            /** Files */
+            files: components["schemas"]["UploadedFileOut"][];
+            /** Status */
+            status: string;
+        };
+        /**
+         * UploadedFileOut
+         * @description One file of an upload. A rejected upload lists every file, each with its own error (01 §4.3).
+         */
+        UploadedFileOut: {
+            /** Detected Format */
+            detected_format: string | null;
+            /**
+             * Error
+             * @description 01 §8 code, e.g. cad_not_supported
+             */
+            error?: string | null;
+            /**
+             * Message
+             * @description Hebrew, ready to show next to the file
+             */
+            message?: string | null;
+            /** Name */
+            name: string;
+            /** Page Count */
+            page_count: number | null;
+            /** Size Bytes */
+            size_bytes: number;
         };
         /** UserOut */
         UserOut: {
@@ -541,6 +804,130 @@ export interface operations {
                 };
                 content: {
                     "application/json": unknown;
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    upload_drawings_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_upload_drawings_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UploadOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    list_revisable_drawings_revisable_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RevisableOut"][];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    cancel_drawings__drawing_id__cancel_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                drawing_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProgressOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_progress_drawings__drawing_id__progress_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                drawing_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProgressOut"];
                 };
             };
             /** @description Error */

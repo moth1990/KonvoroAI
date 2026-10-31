@@ -165,10 +165,11 @@ Flags resolve in the order tenant → plan → global → default (13 §2).
 
 **`quota_events`** (`qev_`):
 - `month`, `drawing_id null`.
-- `kind`: `reserve`, `confirm`, `release` or `manual_add`.
+- `kind`: `reserve`, `confirm`, `release`, `refund` or `manual_add`.
 - `amount`, `reason`, `created_by`.
 - `reservation_id null → quota_events`: a `reserve` event *is* the reservation. Its `confirm` or `release` points back at it. A check makes `reservation_id` required on exactly those two kinds, and the partial unique index `uq_quota_events_one_closing` allows only one closing event per reservation. So a confirm racing the expiry can never decrement `reserved` twice.
 - A reservation with no closing event after 24 hours is released with reason `expired`. This runs lazily at the start of every reserve and quota read, so there is no scheduler yet (01 §4.5).
+- When an upload counts (S05 decision, 01 §4.5): the reservation is made with the upload and confirmed when stage 1 succeeds. A later system failure, or a cancel, adds a `refund` that points at the same reservation and takes the slot back out of `used`. The partial unique index `uq_quota_events_one_refund` allows one refund per reservation (migration 0003). Before stage 1 succeeds, a failure or cancel is a `release`. A rejected upload rolls back with its reservation, so it leaves no event at all. A new version of a drawing reserves nothing until S08 can check that it really is one.
 
 This table answers the customer's question "why was this counted?".
 
@@ -193,11 +194,13 @@ This table answers the customer's question "why was this counted?".
 | `input_kind null` | `factory_drawing`, `designer_plan`, `bom_only`, `mixed`. Set by stage 1 |
 | `current_stage smallint null`, `progress real` | What the "run" screen shows |
 | `needs_confirmation bool` | |
-| `quota jsonb` | `{counted, reason, quota_event_id}` |
-| `issues jsonb` | Stage-level issues `{code, severity, page_id, message}` |
+| `quota jsonb` | `{counted, reason, reservation_id, quota_event_id}`. `reason` is `new_drawing` or `revision`; `quota_event_id` is the `confirm` |
+| `issues jsonb` | Stage-level issues `{code, severity, page_id, message}`. A run that ends in the DLQ adds `pipeline_failed` |
 | `trace_id`, `created_by → users` | |
 
-**`drawing_files`** (`fil_`): `original_name`, `detected_format`, `sha256`, `size_bytes`, `page_count`, `storage_key`. An index on `(tenant_id, sha256)` supports reuse (01 §5.1).
+**`drawing_files`** (`fil_`): `original_name`, `detected_format`, `sha256`, `size_bytes`, `page_count`, `storage_key`. An index on `(tenant_id, sha256)` supports reuse (01 §5.1). A file inside a ZIP is its own row, named `archive.zip/inner.pdf`.
+
+**S3 keys** (`konboro.services.storage`): everything sits under `tenants/{tenant_id}/`, and every read checks the key is under the caller's tenant. Under it, `drawings/{drawing_id}/` holds `files/{file_id}.{ext}` (never the uploaded name), `pages/{page_id}/thumb.png`, and `stages/s{n}.json` (each stage's contract).
 
 **`pages`** (`pg_`, 01 §6.3):
 
@@ -220,7 +223,8 @@ This table answers the customer's question "why was this counted?".
 - `status`: `queued`, `running`, `done`, `failed` or `skipped`.
 - `attempts`, `started_at`, `finished_at`.
 - `output_key`: the contract JSON in S3 (00 §5).
-- `error jsonb`.
+- `error jsonb`: `{type, message, attempt}` of the last failure.
+- All seven rows are created with the upload, as `queued`. A cancel marks the unfinished ones `skipped`.
 
 **`components`** (`cmp_`, 04 §6.3) is the stage 4 output, kept in the DB because quote lines and audits point at it.
 - `drawing_id`, `panel_id`, `family`.

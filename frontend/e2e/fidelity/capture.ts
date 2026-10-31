@@ -10,7 +10,7 @@ import { fileURLToPath } from "node:url";
 
 import { test, type Page } from "@playwright/test";
 
-import { signIn, TENANTS } from "../fixtures";
+import { signIn, SLOW_PROJECT, TENANTS } from "../fixtures";
 import { prototypePort } from "./fidelity.config";
 
 const OUT = fileURLToPath(new URL("./out/", import.meta.url));
@@ -20,10 +20,49 @@ const PROTOTYPE = `http://127.0.0.1:${prototypePort}/konboro-app.html`;
 interface Screen {
   id: string;
   title: string;
-  prototype: { hash: string; authed: boolean; flags?: Record<string, boolean> };
-  app: { path: string; tenant?: string };
+  /** `setup` runs after the page opens: clicks that bring the screen into the state to compare. */
+  prototype: { hash: string; authed: boolean; flags?: Record<string, boolean>; setup?: (page: Page) => Promise<void> };
+  app: { path: string; tenant?: string; setup?: (page: Page) => Promise<void> };
   notes: string[];
 }
+
+const NURSERY = fileURLToPath(new URL("../../../golden/NURSERY-1/NURSERY-1.pdf", import.meta.url));
+const PROJECT = "גן ילדים, לוח ראשי";
+
+/** The prototype's new-quote screen with NURSERY-1 and a DWG picked (its built-in sample files). */
+async function prototypePick(page: Page) {
+  await page.locator("#up-proj").fill(PROJECT);
+  await page.locator("#samples summary").click();
+  await page.locator('[data-act="sample"][data-i="0"]').click();
+  await page.locator('[data-act="sample"][data-i="1"]').click();
+  if (await page.locator("#samples[open]").count()) await page.locator("#samples summary").click();
+}
+
+async function appPick(page: Page) {
+  await page.getByLabel("פרויקט / שם הלוח").fill(PROJECT);
+  await page.locator("#file-in").setInputFiles([
+    { name: "NURSERY-1.pdf", mimeType: "application/pdf", buffer: readFileSync(NURSERY) },
+    { name: "MAIN_BOARD.dwg", mimeType: "application/octet-stream", buffer: Buffer.from("AC1027") },
+  ]);
+}
+
+async function prototypeStart(page: Page) {
+  await page.locator("#up-proj").fill(PROJECT);
+  await page.locator("#samples summary").click();
+  await page.locator('[data-act="sample"][data-i="0"]').click();
+  await page.locator('[data-act="start"]').click();
+}
+
+async function appStart(page: Page, project: string) {
+  await page.getByLabel("פרויקט / שם הלוח").fill(project);
+  await page.locator("#file-in").setInputFiles(NURSERY);
+  await page.getByTestId("start").click();
+}
+
+const NEW_QUOTE_NOTES = [
+  'Left out on purpose: the "קבצים לדוגמה" sample files (01 §4.6 item 5: demo only).',
+  "Page counts appear once the server has checked the file; the browser checks only type and size.",
+];
 
 const SCREENS: Screen[] = [
   {
@@ -60,7 +99,66 @@ const SCREENS: Screen[] = [
       "The suggestion about the NURSERY demo quote is left out; the weekday is today's, in the tenant's timezone.",
     ],
   },
+  {
+    id: "new-pick",
+    title: "New quote: pick (NURSERY-1 and a DWG)",
+    prototype: { hash: "#new", authed: true, setup: prototypePick },
+    app: { path: "/new", tenant: TENANTS.uploadDesktop, setup: appPick },
+    notes: NEW_QUOTE_NOTES,
+  },
+  {
+    id: "new-run",
+    title: "New quote: run (mid-pipeline)",
+    prototype: {
+      hash: "#new",
+      authed: true,
+      setup: async (page) => {
+        await prototypeStart(page);
+        await page.waitForTimeout(1500); // the prototype advances a stage every 650 ms
+      },
+    },
+    app: {
+      path: "/new",
+      tenant: TENANTS.uploadMobile,
+      setup: async (page) => {
+        await appStart(page, SLOW_PROJECT);
+        await page.locator('[data-testid="stage-2"][data-state="run"]').waitFor({ timeout: 20_000 });
+      },
+    },
+    notes: [
+      "Stage summaries under finished stages: the app has one for stage 1 so far; the other stages are stubs (S08+).",
+    ],
+  },
+  {
+    id: "new-done",
+    title: "New quote: done",
+    prototype: {
+      hash: "#new",
+      authed: true,
+      setup: async (page) => {
+        await prototypeStart(page);
+        await page.locator('[data-act="toreview"]').waitFor({ timeout: 15_000 });
+      },
+    },
+    app: {
+      path: "/new",
+      tenant: TENANTS.uploadMobile,
+      setup: async (page) => {
+        await appStart(page, PROJECT);
+        await page.getByTestId("done").waitFor({ timeout: 30_000 });
+        await page.waitForFunction(() => [...document.images].every((img) => img.complete));
+      },
+    },
+    notes: [
+      "The result tile reads 0 products until stages 4–7 are real; every page is routed to processing by the stage-1 stub.",
+      "Page kinds are read-only until page classification (S08).",
+      "Thumbnails are the real pages, rendered by the stage-1 stub (S05 decision).",
+    ],
+  },
 ];
+
+// `FIDELITY_ONLY=new-pick,new-run` captures just those screens.
+const ONLY = process.env.FIDELITY_ONLY?.split(",").filter(Boolean);
 
 const VIEWPORTS = [
   { id: "desktop", width: 1440, height: 900 },
@@ -86,7 +184,7 @@ const shots: { screen: Screen; viewport: string; scheme: string; file: string }[
 
 test.beforeAll(() => mkdirSync(OUT, { recursive: true }));
 
-for (const screen of SCREENS) {
+for (const screen of SCREENS.filter((s) => !ONLY || ONLY.includes(s.id))) {
   for (const viewport of VIEWPORTS) {
     for (const scheme of SCHEMES) {
       const name = `${screen.id}-${viewport.id}-${scheme}`;
@@ -114,6 +212,7 @@ for (const screen of SCREENS) {
           [authed, flags ? JSON.stringify(flags) : ""] as const,
         );
         await p.goto(`${PROTOTYPE}${hash}`);
+        await screen.prototype.setup?.(p);
         await shoot(p, `${name}-prototype.png`);
         await proto.close();
 
@@ -121,6 +220,7 @@ for (const screen of SCREENS) {
         const a = await app.newPage();
         if (screen.app.tenant) await signIn(a, app.request, screen.app.tenant);
         await a.goto(screen.app.path);
+        await screen.app.setup?.(a);
         await shoot(a, `${name}-app.png`);
         await app.close();
 
@@ -131,21 +231,23 @@ for (const screen of SCREENS) {
 }
 
 test.afterAll(() => {
-  const sections = SCREENS.map((screen) => {
-    const rows = shots
-      .filter((s) => s.screen.id === screen.id)
-      .map(
-        (s) => `
+  const sections = SCREENS.filter((s) => shots.some((shot) => shot.screen.id === s.id))
+    .map((screen) => {
+      const rows = shots
+        .filter((s) => s.screen.id === screen.id)
+        .map(
+          (s) => `
       <h3>${s.viewport} · ${s.scheme}</h3>
       <div class="pair ${s.viewport}">
         <figure><figcaption>Prototype</figcaption><img src="${inline(`${s.file}-prototype.png`)}" alt="prototype ${s.file}"></figure>
         <figure><figcaption>App</figcaption><img src="${inline(`${s.file}-app.png`)}" alt="app ${s.file}"></figure>
       </div>`,
-      )
-      .join("");
-    const notes = screen.notes.map((n) => `<li>${n}</li>`).join("");
-    return `<section><h2>${screen.title}</h2><ul class="notes">${notes}</ul>${rows}</section>`;
-  }).join("");
+        )
+        .join("");
+      const notes = screen.notes.map((n) => `<li>${n}</li>`).join("");
+      return `<section><h2>${screen.title}</h2><ul class="notes">${notes}</ul>${rows}</section>`;
+    })
+    .join("");
   writeFileSync(
     REPORT,
     `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Konboro fidelity report</title>
@@ -159,7 +261,7 @@ test.afterAll(() => {
   img{width:100%;display:block;border:1px solid #e3e6eb}
   .notes{color:#4a5566}
 </style></head><body>
-<h1>Prototype fidelity: login, shell, home</h1>
+<h1>Prototype fidelity</h1>
 <p>Generated ${new Date().toISOString()} by <code>make fidelity</code>. Left: prototype/konboro-app.html. Right: the app on the E2E API.
 Phone layout starts at 860px in the app (09 §5.2), 820px in the prototype.</p>
 ${sections}

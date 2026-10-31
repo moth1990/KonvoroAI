@@ -5,8 +5,8 @@
 | **Track** | R |
 | **Branch** | `s04-app-shell` |
 | **Depends on** | S03 |
-| **Status** | in review |
-| **PR** | |
+| **Status** | done |
+| **PR** | [#5](https://github.com/moth1990/KonvoroAI/pull/5) |
 
 ## Goal
 
@@ -107,7 +107,7 @@ A user can log in and land on a home screen that looks like the prototype, in bo
 
 - [x] The user has reviewed the fidelity report for login, shell and home. Every deviation is fixed or logged.
 - [x] Keyboard only: every control can be reached, with a visible focus ring.
-- [ ] E2E green on both projects, locally and in CI.
+- [x] E2E green on both projects, locally and in CI ([PR #5](https://github.com/moth1990/KonvoroAI/pull/5): backend and frontend jobs, including the screenshot check).
 
 ## Out of scope
 

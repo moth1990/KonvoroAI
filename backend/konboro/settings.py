@@ -28,6 +28,19 @@ class Settings(BaseSettings):
 
     flag_cache_seconds: float = 30.0
 
+    # S3 and SQS (12 §3). Locally the endpoints point at S3Mock and ElasticMQ (docker-compose.yml), which accept
+    # any credentials; in AWS the endpoints are unset and the IAM role signs requests.
+    aws_region: str = "eu-central-1"
+    s3_endpoint: str | None = None
+    sqs_endpoint: str | None = None
+    # Tests and E2E give their queues a prefix, so a running `make dev` worker never takes their messages.
+    sqs_queue_prefix: str = ""
+    s3_bucket: str = "konboro-files"
+    s3_sse: Literal["AES256", "aws:kms"] = "AES256"  # aws:kms with the tenant key in AWS (S29)
+    # How long the worker waits on an empty queue, and how long a failed stage waits before its retry.
+    worker_poll_seconds: int = 2
+    stage_retry_seconds: int = 5
+
     @model_validator(mode="after")
     def _safe(self) -> "Settings":
         if self.env == "production" and self.dev_login_enabled:

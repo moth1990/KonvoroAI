@@ -1,19 +1,21 @@
 """The API that Playwright runs against: `python -m konboro.devtools.e2e` (started by playwright.config.ts).
 
 It recreates the `konboro_e2e` database, migrates it, loads plans, flags and fixed E2E tenants, and serves
-the API on port 8001 (KONBORO_E2E_API_PORT) for the web app on port 5181 (KONBORO_E2E_WEB_PORT).
+the API on port 8001 (KONBORO_E2E_API_PORT) for the web app on port 5181 (KONBORO_E2E_WEB_PORT), with a pipeline
+worker in a thread on its own `e2e-` queues.
 
 Flags are read-only through the API (S03 decision), so each state a test needs is its own tenant with its own
 dev login. frontend/e2e/fixtures.ts lists the same emails.
 """
 
 import os
+import time
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from decimal import Decimal
 from zoneinfo import ZoneInfo
 
-from pydantic import SecretStr
+from pydantic import BaseModel, SecretStr
 from sqlalchemy import Engine, create_engine, select, text
 from sqlalchemy.orm import Session
 
@@ -24,6 +26,7 @@ from konboro.db.models import (
     AuditDifference,
     Drawing,
     KnowledgeCandidate,
+    Project,
     QuotaUsage,
     Quote,
     QuoteLine,
@@ -35,6 +38,8 @@ from konboro.db.models import (
 )
 from konboro.db.seed import FLAGS, seed_global
 from konboro.db.session import app_engine
+from konboro.pipeline.context import StageContext
+from konboro.pipeline.stages import Stage
 from konboro.settings import Settings
 
 DATABASE = "konboro_e2e"
@@ -63,7 +68,27 @@ TENANTS = (
     E2eTenant(2, "classic@e2e.konboro.local", home_chat=False, used=12, sample_data=True),
     E2eTenant(3, "near@e2e.konboro.local", home_chat=False, used=43, sample_data=False),  # 86%: quota_near
     E2eTenant(4, "full@e2e.konboro.local", home_chat=False, used=50, sample_data=False),  # quota_reached
+    # Uploads change the quota, and the desktop and mobile projects run at the same time: one tenant each.
+    E2eTenant(5, "upload-desktop@e2e.konboro.local", home_chat=False, used=12, sample_data=False),
+    E2eTenant(6, "upload-mobile@e2e.konboro.local", home_chat=False, used=12, sample_data=False),
 )
+
+# A project with this name runs slowly, so a test can cancel it mid-run; every other upload runs at full speed.
+SLOW_PROJECT = "E2E איטי"
+SLOW_STAGE_S = 1.5
+
+
+def slowed(stages: dict[int, Stage]) -> dict[int, Stage]:
+    def wrap(stage: Stage) -> Stage:
+        def run(ctx: StageContext) -> BaseModel:
+            project = ctx.session.get(Project, ctx.drawing.project_id) if ctx.drawing.project_id else None
+            if project is not None and project.name == SLOW_PROJECT:
+                time.sleep(SLOW_STAGE_S)
+            return stage(ctx)
+
+        return run
+
+    return {n: wrap(stage) for n, stage in stages.items()}
 
 
 def dev_users() -> str:
@@ -160,6 +185,10 @@ def e2e_settings(web_port: int) -> Settings:
         dev_password=SecretStr(PASSWORD),
         dev_users=dev_users(),
         flag_cache_seconds=0,
+        s3_endpoint=os.environ.get("KONBORO_S3_ENDPOINT", "http://localhost:9000"),
+        sqs_endpoint=os.environ.get("KONBORO_SQS_ENDPOINT", "http://localhost:9324"),
+        sqs_queue_prefix="e2e-",  # its own queues: a running `make dev` worker never takes E2E messages
+        stage_retry_seconds=1,
     )
 
 
@@ -175,11 +204,20 @@ def main() -> None:
     import uvicorn
 
     from konboro.api.app import create_app
+    from konboro.pipeline.stages import STAGES
+    from konboro.pipeline.worker import start_in_thread
+    from konboro.services.queue import DLQ, STAGE_QUEUES, Queue
 
     api_port = int(os.environ.get("KONBORO_E2E_API_PORT", "8001"))
     web_port = int(os.environ.get("KONBORO_E2E_WEB_PORT", "5181"))
-    app = create_app(e2e_settings(web_port), engine=prepare())
-    uvicorn.run(app, host="127.0.0.1", port=api_port, log_level="warning")
+    settings = e2e_settings(web_port)
+    engine = prepare()
+    queue = Queue(settings)
+    queue.ensure()
+    for base in [*STAGE_QUEUES.values(), DLQ]:  # nothing left over from an earlier run
+        queue.purge(base)
+    start_in_thread(settings, engine, stages=slowed(STAGES))  # the pipeline worker, beside the API
+    uvicorn.run(create_app(settings, engine=engine), host="127.0.0.1", port=api_port, log_level="warning")
 
 
 if __name__ == "__main__":
