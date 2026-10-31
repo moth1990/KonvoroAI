@@ -96,6 +96,7 @@ Ideas and out-of-scope findings from sessions. Each one is scheduled into a sess
 
 - **Eval each stage on labelled input (00 §10.1)** (from S06). Today `make eval` runs the pipeline end to end, so a stage-1 miss also costs stage 4. Stage 4 can be fed the labelled detections once stage 3 has box labels; due with the stage 2–3 labeling work (S10/S12).
 - **Audit metrics read the audit output** (from S06). `eval/predict.py` sets `Prediction.audit = None` until the audit flow exists; S15 maps its differences into `CanonDifference` so `difference_precision` / `difference_recall` stop being n/a.
+- **PDFium in a process pool** (from S07, BUG-010). Every PDFium call in a process takes one lock, because PDFium is not thread-safe. Thumbnails are cheap; S10's tiling and deep-zoom renders are not. If rendering becomes the bottleneck, move it to a process pool.
 - **Record cassettes when the first model-calling stage lands** (from S06). Stubs make no calls, so `eval/cassettes/` is empty. The session that adds the first real call (S08) runs `EVAL_MODE=live EVAL_RECORD=1 make eval`, commits the cassettes and the new baseline.
 
 <a id="s00"></a>**S00** is the planning session that produced this roadmap. It has no session file; its PR is the record.

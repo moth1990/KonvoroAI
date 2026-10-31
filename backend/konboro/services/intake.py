@@ -13,9 +13,9 @@ import zipfile
 from dataclasses import dataclass, field
 from typing import Literal
 
-import pypdfium2 as pdfium
-
 from konboro.contracts.intake import DetectedFormat
+from konboro.services.pdf import PdfiumError
+from konboro.services.pdf import document as pdf_document
 
 MB = 1024 * 1024
 
@@ -135,16 +135,13 @@ def count_pages(fmt: DetectedFormat, data: bytes) -> PageCount:
     """Without rendering (01 §4.3, check 4). An image is one page; a workbook has one page per worksheet."""
     if fmt == "pdf":
         try:
-            pdf = pdfium.PdfDocument(data)
-        except pdfium.PdfiumError as e:
+            with pdf_document(data) as pdf:
+                sizes = [pdf[i].get_size() for i in range(len(pdf))]
+        except PdfiumError as e:
             if "password" in str(e).lower():
                 raise PasswordProtectedError from e
             raise CorruptFileError from e
-        try:
-            sizes = [pdf[i].get_size() for i in range(len(pdf))]
-            return PageCount(len(pdf), [(float(w), float(h)) for w, h in sizes])
-        finally:
-            pdf.close()
+        return PageCount(len(sizes), [(float(w), float(h)) for w, h in sizes])
     if fmt == "xlsx":
         try:
             names = zipfile.ZipFile(io.BytesIO(data)).namelist()

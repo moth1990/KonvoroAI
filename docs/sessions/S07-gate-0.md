@@ -39,7 +39,7 @@ Phase 1 starts from a tagged, stable `phase-0`.
 
 ### Fix
 - [ ] All open P0 and P1 bugs. P2 bugs that fit in the session.
-  - [ ] BUG-005 (P2): intermittent local E2E failures. Reproduce with back-to-back runs and after `make test-int && make eval`, find the shared state, fix it.
+  - [x] BUG-005 (P2): intermittent local E2E failures. Reproduce with back-to-back runs and after `make test-int && make eval`, find the shared state, fix it. Root cause: BUG-010 (P0, PDFium used from two threads at once), fixed with a process-wide lock.
 - [x] Items S05 left for this gate, each logged in `bugs.md` first:
   - [x] A drawing whose stage-1 message was never sent (SQS failed after the commit) stays `uploaded` with its quota reserved. It should be re-queued. (BUG-006, and BUG-007 found on the way.)
   - [x] Per-tenant pipeline concurrency limit (00 §4.3): logged and scheduled for S29, not fixed here.
@@ -80,5 +80,10 @@ Phase 1 starts from a tagged, stable `phase-0`.
   - Stage 4: component recall 0% (0/147), unit recall 0% (0/411).
   - Audit: n/a. Backtest: 0 of 3 within ±5%.
 - **Bugs fixed:**
+  - BUG-010 (P0, found here): PDFium is not thread-safe, and the upload check and the stage-1 renderer called it from different threads of one process. Two uploads at the same moment hung both requests; a standalone probe segfaulted. Every PDFium call now goes through `konboro/services/pdf.py`'s lock, and a test fails if anything else imports pypdfium2. This was BUG-005's cause. How it was found: 20 E2E runs with the traces kept; every failure was a pair of `POST /drawings` started ~80 ms apart that never answered. Vite reloads and machine load were ruled out on the way.
+  - BUG-005 (P2): `make e2e` 20 of 20 green after the fix, against 16 of 20 before.
+  - BUG-006 (P1): stage messages that never arrive are sent again.
+  - BUG-007 (P1): a copy of a running stage's message is dropped.
 - **Known gaps:**
 - **Follow-ups:**
+  - S10 (tiling renders far more than thumbnails): the PDFium lock serializes all rendering in a process. If that becomes the bottleneck, render in a process pool instead of threads. Added to the roadmap backlog.
