@@ -67,6 +67,7 @@ frontend/
 eval/
   normalizers/          one per golden label format → canonical schema
   metrics/              one per stage + audit differences
+  run.py  compare.py    `make eval`, and the comparison with baseline.json (committed)
   cassettes/            recorded LLM responses for replay mode
   reports/              generated, git-ignored
 infra/elasticmq.conf    one queue per stage + DLQ
@@ -127,14 +128,14 @@ The golden set measures the system and catches regressions (README §6.2).
   Known quirks (for example `single_line` vs `single_line_diagram`) are mapped in code.
 - **Metrics follow the acceptance sections of each spec:**
   - Stage 1: page kind accuracy, routes, `input_kind` (01 §10).
-  - Stage 4: per-panel component P/R and quantity accuracy (04 §10).
+  - Stage 4: per-panel component P/R, `current_a` and poles accuracy, and quantity accuracy (04 §10). Components match by family + designators. Without designators (designer plans, BOM-only), they match by family + `current_a` + poles, with quantities added up (S06 decision).
   - Audit: difference accuracy and recall of omissions confirmed by the factory (11 §10).
   - Pricing: backtest against actual quote totals (07 §10.2).
   - Stages 2–3 need span- and box-level labels that do not exist yet. Those metrics are added once the labeling work provides them.
 - **Modes:**
   - `replay` (default, CI) uses recorded LLM responses from `eval/cassettes/`. It is deterministic and free.
   - `live` calls Claude and can re-record cassettes with `EVAL_RECORD=1`.
-- **Output:** `eval/reports/<timestamp>.json` and `.md`. CI posts the markdown summary on the PR and compares against the last report on `main`. A drop in any metric fails the job unless the PR explains it.
+- **Output:** `eval/reports/<timestamp>.json` and `.md`. The run compares itself with the committed `eval/baseline.json` (S06 decision). The CI `eval` job writes the markdown to the job summary, uploads the report, and fails on any drop. A PR that moves a score on purpose runs `make eval-baseline` and commits the new baseline, so reviewers see the change. Details are in [eval/README.md](../eval/README.md).
 - **Growth:** new golden drawings go in `golden/<id>/` with a README and labels. README §6.2 targets 10 drawings by the first full measurement, from more than one factory.
 
 ## 7. Definition of done, bugs, gates

@@ -4,7 +4,7 @@
 BACKEND := cd backend &&
 FRONTEND := cd frontend &&
 
-.PHONY: help install up down migrate seed dev lint licenses test-unit test-int e2e fidelity screenshots check-screenshots eval gen-client check-client check
+.PHONY: help install up down migrate seed dev lint licenses test-unit test-int e2e fidelity screenshots check-screenshots eval eval-baseline gen-client check-client check
 
 help:
 	@grep -E '^[a-z-]+:.*?## ' $(MAKEFILE_LIST) | awk -F':.*?## ' '{printf "  %-12s %s\n", $$1, $$2}'
@@ -34,8 +34,8 @@ dev: ## Run the API (port 8000), the pipeline worker and the web app (port 5180)
 	cd frontend && pnpm dev
 
 lint: ## Lint, format check and types, backend and frontend
-	$(BACKEND) uv run ruff check .
-	$(BACKEND) uv run ruff format --check .
+	$(BACKEND) uv run ruff check . ../eval
+	$(BACKEND) uv run ruff format --check . ../eval
 	$(BACKEND) uv run mypy
 	$(FRONTEND) pnpm lint
 	$(FRONTEND) pnpm typecheck
@@ -63,8 +63,11 @@ screenshots: ## Rewrite the screenshot baselines in Playwright's Linux image, af
 check-screenshots: ## Compare the screens against the baselines, in the same image (needs `make up`, Docker)
 	SCREENSHOTS_CHECK=1 frontend/e2e/visual/update.sh
 
-eval: ## Golden-set evaluation (arrives in S06)
-	@echo "eval: not built yet, see docs/sessions/S06-golden-eval.md"
+eval: ## Golden-set eval vs eval/baseline.json. Replay by default; EVAL_MODE=live, EVAL_RECORD=1 re-records (needs `make up`)
+	$(BACKEND) PYTHONPATH=.. uv run python -m eval.run
+
+eval-baseline: ## Make this run's metrics the committed baseline, after an intended change (needs `make up`)
+	$(BACKEND) PYTHONPATH=.. uv run python -m eval.run --write-baseline --allow-regression
 
 gen-client: ## Regenerate the TS API client from FastAPI's OpenAPI (frontend/src/api/schema.ts)
 	$(BACKEND) uv run python -m konboro.api.openapi ../frontend/src/api/openapi.json
@@ -73,4 +76,4 @@ gen-client: ## Regenerate the TS API client from FastAPI's OpenAPI (frontend/src
 check-client: gen-client ## Fail if the committed API client is stale (run `make gen-client` and commit)
 	git diff --exit-code -- frontend/src/api/openapi.json frontend/src/api/schema.ts
 
-check: lint licenses check-client test-unit test-int e2e check-screenshots ## Everything CI runs
+check: lint licenses check-client test-unit test-int eval e2e check-screenshots ## Everything CI runs

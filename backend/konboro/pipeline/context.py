@@ -1,4 +1,5 @@
-"""What a stage gets to work with: the tenant's session, its files, and the outputs of the stages before it."""
+"""What a stage gets to work with: the tenant's session, its files, the outputs of the stages before it, and the
+model gateway (every LLM call goes through `llm`, CLAUDE.md non-negotiable 2)."""
 
 from dataclasses import dataclass
 from typing import TypeVar
@@ -9,6 +10,7 @@ from sqlalchemy.orm import Session
 from konboro.contracts import STAGE_OUTPUTS
 from konboro.db.models import Drawing, StageRun
 from konboro.services.storage import Storage
+from konboro_llm import LLMClient
 
 M = TypeVar("M", bound=BaseModel)
 
@@ -19,6 +21,7 @@ class StageContext:
     storage: Storage
     drawing: Drawing
     stage: int
+    llm: LLMClient  # every answered call is written to llm_calls for this tenant and drawing
 
     @property
     def tenant_id(self) -> str:

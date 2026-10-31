@@ -80,7 +80,7 @@ Mock data in the prototype (lines 393–580) suggests field names for the API: `
 ```
 backend/        Python 3.12 (uv): konboro/ (api, db, contracts, pipeline, domain, services, devtools), konboro_llm/, alembic/, tests/{unit,integration}
 frontend/       React + TS + Vite + MUI, RTL. src/theme/tokens.ts mirrors the prototype tokens. e2e/ = Playwright
-eval/           golden-set evaluation harness (S06)
+eval/           golden-set evaluation harness: normalizers, metrics, cassettes, baseline.json ([eval/README.md](eval/README.md))
 infra/          local service config (ElasticMQ queues)
 golden/ specs/ prototype/   reference material; do not modify without the user
 docs/           strategy, roadmap, session files, bug log
@@ -90,7 +90,7 @@ Schema changes are Alembic migrations in `backend/alembic/versions/`. Update `do
 
 **The pipeline** (00 §4–5, 12 §3):
 - **Contracts.** `konboro/contracts/` holds one Pydantic model per stage boundary, taken from each spec's §6. `tests/unit/test_contracts.py` validates every spec example against its model and pins each schema. A contract change is a change to the spec that defines it and to every spec that consumes it.
-- **Stages.** `konboro/pipeline/stages/sN_*.py` are stubs since S05. A later session replaces one by writing a function `run(ctx) -> Contract` that reads earlier outputs through `ctx.output(n, Model)`. The coordinator (`pipeline/coordinator.py`) doesn't change.
+- **Stages.** `konboro/pipeline/stages/sN_*.py` are stubs since S05. A later session replaces one by writing a function `run(ctx) -> Contract` that reads earlier outputs through `ctx.output(n, Model)` and calls the model only through `ctx.llm`, which writes each call to `llm_calls`. The coordinator (`pipeline/coordinator.py`) doesn't change.
 - **Queues.** One SQS queue per stage (`konboro-s1-intake` … `-s7-pricing`), each sending to `konboro-dlq` after 3 failed receives. Messages carry IDs only (`StageMessage`). Files and stage outputs live in S3 under `tenants/{tenant_id}/`, through `services/storage.py`, which refuses another tenant's key.
 
 ## Commands
@@ -108,11 +108,12 @@ Schema changes are Alembic migrations in `backend/alembic/versions/`. Update `do
 | `make fidelity` | Prototype vs app screenshots into `frontend/e2e/fidelity/report.html`, for the user's review |
 | `make check-screenshots` | Compare the accepted screens with their baselines, in Playwright's Linux Docker image (the same check runs in CI) |
 | `make screenshots` | Rewrite those baselines, only after the user accepts a visual change |
-| `make eval` | Golden-set evaluation. Replay by default; `EVAL_MODE=live` uses real Claude |
+| `make eval` | Golden-set evaluation against `eval/baseline.json`, which fails on any drop. Replay by default; `EVAL_MODE=live` uses real Claude, and `EVAL_RECORD=1` saves its answers as cassettes. Needs `make up` ([eval/README.md](eval/README.md)) |
+| `make eval-baseline` | Make this run's metrics the committed baseline, after a change that moves a score on purpose |
 | `make gen-client` | Regenerate the TS API client from FastAPI's OpenAPI (`frontend/src/api/openapi.json` → `schema.ts`). Run it after any API change and commit both files |
 | `make check-client` | Fail if the committed client is stale. CI runs the same check |
 | `make licenses` | Fail on GPL or AGPL dependencies, Python and npm |
-| `make check` | Everything CI runs: lint, types, licenses, client freshness, unit, integration, e2e, screenshots |
+| `make check` | Everything CI runs: lint, types, licenses, client freshness, unit, integration, eval, e2e, screenshots |
 
 Tooling: uv for Python 3.12 (`backend/.python-version`), pnpm with Node 22 (`.nvmrc`; run `nvm use` first). Ports can be changed in `.env` (see `.env.example`).
 
