@@ -34,7 +34,7 @@ Later sessions replace the stubs one at a time without touching the plumbing.
 
 ### Backend
 - [ ] `konboro/contracts/`: Pydantic models for every stage boundary in 00 §5.1 and the side flows in §5.2, field for field from the specs, starting with the minimum each stub needs. Each model gets a JSON-schema snapshot test.
-- [ ] `services/storage.py` (S3 via boto3, against MinIO locally): tenant prefix, server-side encryption flag, presigned GET.
+- [ ] `services/storage.py` (S3 via boto3, against S3Mock locally): tenant prefix, server-side encryption flag, presigned GET.
 - [ ] `services/queue.py` (SQS via boto3, against ElasticMQ): one queue per stage plus a DLQ, messages `{drawing_id, tenant_id, stage, trace_id}`.
 - [ ] `POST /drawings` (multipart). Checks run in the order of 01 §4.3:
   1. quota;

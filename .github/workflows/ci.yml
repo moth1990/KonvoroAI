@@ -1,0 +1,85 @@
+# Runs what `make check` runs, on every PR and every push to main (docs/sessions/S01-tooling.md).
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    name: Backend (lint, types, licenses, unit, integration)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          cache-dependency-glob: backend/uv.lock
+      - run: uv sync --frozen
+      - name: Lint and format
+        run: |
+          uv run ruff check .
+          uv run ruff format --check .
+      - name: Types
+        run: uv run mypy
+      - name: Licenses (no GPL or AGPL)
+        run: uv run python -m konboro.licenses
+      - name: Unit tests
+        run: uv run pytest -m "not integration"
+      - name: Start local services
+        working-directory: .
+        run: docker compose up -d --wait
+      - name: Integration tests
+        run: uv run pytest -m integration
+      - name: Service logs on failure
+        if: failure()
+        working-directory: .
+        run: docker compose logs --no-color
+
+  frontend:
+    name: Frontend (lint, types, licenses, unit, e2e)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          package_json_file: frontend/package.json
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - name: Lint and format
+        run: pnpm lint
+      - name: Types
+        run: pnpm typecheck
+      - name: Licenses (no GPL or AGPL)
+        run: pnpm run license-check
+      - name: Unit tests
+        run: pnpm test
+      - name: Install Playwright browser
+        run: pnpm exec playwright install --with-deps chromium
+      - name: E2E (desktop and mobile)
+        run: pnpm e2e
+      - name: Upload Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: frontend/playwright-report
+          retention-days: 7

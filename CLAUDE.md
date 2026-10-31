@@ -56,7 +56,7 @@ Mock data in the prototype (lines 393–580) suggests field names for the API: `
 6. **Prices, costs and customer details are never sent to any model.** In chat, amounts reach the model only as references such as `$T1` (08). A test enforces this.
 7. **Tenant isolation:** every tenant table has `tenant_id` and a Postgres RLS policy. Every endpoint checks permission against the single `owner` role (00 §8, §14.1). Cross-tenant tests are mandatory.
 8. **Every new feature sits behind a flag**, evaluated on the server (13).
-9. **No AGPL or GPL dependencies.** That rules out PyMuPDF and Ultralytics YOLO (12 §8). CI checks licenses.
+9. **No AGPL or GPL dependencies.** That rules out PyMuPDF and Ultralytics YOLO (12 §8). LGPL is allowed (psycopg). `make licenses` and CI check this.
 10. **RTL from day one.** Use `dir="rtl"`, logical CSS properties, and wrap numbers and designators in `dir="ltr"` (the prototype's `.mono` and `.des` classes).
 11. **IDs, coordinates, confidence and colors** follow 00 §6:
     - ID prefixes: `drw_`, `pg_`, `ln_`…
@@ -67,29 +67,32 @@ Mock data in the prototype (lines 393–580) suggests field names for the API: `
 ## Repository layout
 
 ```
-backend/        Python 3.12 (uv): konboro/ (api, db, contracts, pipeline, domain, services), konboro_llm/, alembic/, tests/
+backend/        Python 3.12 (uv): konboro/ (api, db, contracts, pipeline, domain, services), konboro_llm/, tests/{unit,integration}
 frontend/       React + TS + Vite + MUI, RTL. src/theme/tokens.ts mirrors the prototype tokens. e2e/ = Playwright
-eval/           golden-set evaluation harness
+eval/           golden-set evaluation harness (S06)
+infra/          local service config (ElasticMQ queues)
 golden/ specs/ prototype/   reference material; do not modify without the user
 docs/           strategy, roadmap, session files, bug log
 ```
 
-The layout is built during phase 0. Until S01 lands, `konboro_llm/` and `tests/` are still at the repo root.
+`alembic/` arrives in S02. Tests marked `integration` need `make up`.
 
 ## Commands
 
 | Command | What it does |
 | --- | --- |
-| `make up` / `make down` | Start or stop local services: Postgres + pgvector, MinIO (S3), ElasticMQ (SQS) |
-| `make dev` | API, worker and Vite dev server |
+| `make install` | uv sync, pnpm install, and the Playwright Chromium |
+| `make up` / `make down` | Start or stop local services: Postgres + pgvector (host port 5433), S3Mock as S3 (9000), ElasticMQ as SQS (9324) |
+| `make dev` | Vite dev server on port 5180. The API and worker join in S03 and S05 |
 | `make test-unit` | pytest unit tests + Vitest |
 | `make test-int` | pytest integration tests against the compose services |
 | `make e2e` | Playwright, desktop and mobile projects |
 | `make eval` | Golden-set evaluation. Replay by default; `EVAL_MODE=live` uses real Claude |
 | `make gen-client` | Regenerate the TS API client from FastAPI's OpenAPI |
-| `make check` | Everything CI runs: lint, types, license check, unit, integration, e2e, client freshness |
+| `make licenses` | Fail on GPL or AGPL dependencies, Python and npm |
+| `make check` | Everything CI runs: lint, types, licenses, unit, integration, e2e (client freshness joins in S03) |
 
-Until the Makefile exists (S01), run the LLM tests with `python -m pytest tests/`.
+Tooling: uv for Python 3.12 (`backend/.python-version`), pnpm with Node 22 (`.nvmrc`; run `nvm use` first). Ports can be changed in `.env` (see `.env.example`).
 
 ## Testing rules
 

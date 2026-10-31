@@ -1,0 +1,57 @@
+# Local stand-ins for the AWS services in specs/12-tech-stack.md (docs/dev-strategy.md §3).
+# The application talks to them through the same clients it uses in AWS (psycopg, boto3).
+name: konboro
+
+services:
+  postgres:
+    # RDS PostgreSQL + pgvector
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: konboro
+      POSTGRES_PASSWORD: konboro
+      POSTGRES_DB: konboro
+    ports:
+      - "${KONBORO_PG_PORT:-5433}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U konboro -d konboro"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+  s3:
+    # S3. MinIO images are no longer published on Docker Hub, so this is Adobe's S3Mock (Apache 2.0),
+    # which speaks the S3 API to boto3 and creates the bucket on start.
+    image: adobe/s3mock:4.7.0
+    environment:
+      COM_ADOBE_TESTING_S3MOCK_STORE_INITIAL_BUCKETS: konboro-files
+      COM_ADOBE_TESTING_S3MOCK_STORE_RETAIN_FILES_ON_EXIT: "true"
+      COM_ADOBE_TESTING_S3MOCK_STORE_ROOT: /data
+    ports:
+      - "${KONBORO_S3_PORT:-9000}:9090"
+    volumes:
+      - s3data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:9090/ | grep -q konboro-files"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+  elasticmq:
+    # SQS: one queue per pipeline stage plus a dead-letter queue (infra/elasticmq.conf)
+    image: softwaremill/elasticmq-native:1.6.14
+    ports:
+      - "${KONBORO_SQS_PORT:-9324}:9324"
+      - "${KONBORO_SQS_UI_PORT:-9325}:9325"
+    volumes:
+      - ./infra/elasticmq.conf:/opt/elasticmq.conf:ro
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- 'http://localhost:9324/?Action=ListQueues' | grep -q konboro-dlq"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+volumes:
+  pgdata:
+  s3data:

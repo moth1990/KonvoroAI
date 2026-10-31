@@ -36,7 +36,7 @@ This follows [specs/12-tech-stack.md](../specs/12-tech-stack.md). Locally, each 
 | API | FastAPI on ECS Fargate | `uvicorn` |
 | Pipeline workers | ECS Fargate, one SQS queue per stage plus a DLQ | Worker process + **ElasticMQ** (SQS API, same boto3 code) |
 | Database | RDS PostgreSQL + pgvector, RLS | `pgvector/pgvector` container |
-| Files | S3 with KMS, one prefix per tenant | **MinIO** |
+| Files | S3 with KMS, one prefix per tenant | **S3Mock** (`adobe/s3mock`; MinIO images are no longer published) |
 | Auth | Cognito, `tenant_id` claim | Dev JWT issuer with the same claims |
 | LLM | Claude through Bedrock (`AnthropicProvider.for_bedrock()`) | Direct Anthropic API key. Tests use `FakeProvider` or replay cassettes |
 | OCR | Google Vision or Azure, chosen in S31 | `OcrEngine` interface. Interim implementation: `ClaudeVisionOcr` |
@@ -56,6 +56,7 @@ backend/
     domain/             pricing, quota, flags, versions: pure logic, no I/O
     services/           storage (S3), queue (SQS), ocr, auth, transcribe
   konboro_llm/          the model gateway (moved from the repo root in S01)
+  konboro/licenses.py   the Python license gate (GPL/AGPL fail, LGPL allowed)
   alembic/              migrations, one per schema change
   tests/unit/  tests/integration/
 frontend/
@@ -68,7 +69,8 @@ eval/
   metrics/              one per stage + audit differences
   cassettes/            recorded LLM responses for replay mode
   reports/              generated, git-ignored
-docker-compose.yml  Makefile  .github/workflows/ci.yml
+infra/elasticmq.conf    one queue per stage + DLQ
+docker-compose.yml  Makefile  .github/workflows/ci.yml  .nvmrc  .env.example
 ```
 
 ### Conventions that cross the stack
@@ -90,7 +92,7 @@ docker-compose.yml  Makefile  .github/workflows/ci.yml
 | Prototype fidelity | Playwright script | Side-by-side report, prototype vs app (§5) | `frontend/e2e/fidelity` | Sessions that build or change a screen, and gates |
 | Golden eval | `eval/` CLI | Per-stage metrics against `golden/` (§6) | `eval/` | Pipeline PRs (replay), gates (live) |
 | Contract | openapi-typescript | Generated client matches the API | CI | Every PR |
-| License | pip-licenses, license-checker | Fails on AGPL or GPL | CI | Every PR |
+| License | `python -m konboro.licenses`, license-checker | Fails on AGPL or GPL. LGPL (psycopg) is allowed: linked as a library, never modified | CI | Every PR |
 | Lint and types | ruff, mypy (strict for `domain/` and `contracts/`), ESLint, `tsc --noEmit` | | CI | Every PR |
 
 Rules:
