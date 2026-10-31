@@ -54,8 +54,12 @@ class Worker:
 
     def run_forever(self, stop: threading.Event) -> None:
         log.info("worker started")
+        next_sweep = time.monotonic()
         while not stop.is_set():
             try:
+                if time.monotonic() >= next_sweep:
+                    next_sweep = time.monotonic() + self.pipeline.settings.requeue_check_seconds
+                    self.pipeline.requeue_unsent()
                 if self.run_once() == 0:
                     stop.wait(IDLE_SLEEP_S)
             except Exception:  # a queue or DB hiccup must not kill the worker

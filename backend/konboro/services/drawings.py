@@ -6,6 +6,7 @@ trace (01 §4.5: "not counted"). Stage 1 is queued only after the commit, by the
 """
 
 from dataclasses import dataclass
+from datetime import UTC, datetime
 from typing import Literal
 
 from sqlalchemy import select
@@ -126,7 +127,9 @@ def create_upload(
             )
         )
     for stage in range(1, 8):
-        session.add(StageRun(tenant_id=tenant_id, drawing_id=drawing_id, stage=stage, status="queued"))
+        # Stage 1's message is sent once this transaction commits; the others when the stage before them ends.
+        sent_at = datetime.now(UTC) if stage == 1 else None
+        session.add(StageRun(tenant_id=tenant_id, drawing_id=drawing_id, stage=stage, status="queued", sent_at=sent_at))
     drawing.quota = {"counted": False, "reason": reason, "reservation_id": reservation_id, "quota_event_id": None}
     session.flush()
     return NewUpload(drawing, check.files, reason)

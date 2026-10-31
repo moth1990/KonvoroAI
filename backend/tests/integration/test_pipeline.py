@@ -1,6 +1,8 @@
 """The pipeline end to end on the local services (00 §4, 12 §3): upload → 7 stub stages through the queues →
-a quote, with the quota counted at stage 1, given back on cancel or failure, and never for a new version."""
+a quote, with the quota counted at stage 1, given back on cancel or failure, and never for a new version.
+A stage message that was never delivered is sent again, and a copy of a running stage's message is dropped."""
 
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 import pytest
@@ -15,7 +17,7 @@ from konboro.pipeline.context import StageContext
 from konboro.pipeline.coordinator import Pipeline
 from konboro.pipeline.stages import STAGES
 from konboro.pipeline.worker import Worker
-from konboro.services.queue import STAGE_QUEUES, Queue
+from konboro.services.queue import STAGE_QUEUES, Queue, StageMessage
 from konboro.services.storage import Storage
 
 from .api import Api, ApiTenant, add_tenant
@@ -194,3 +196,112 @@ def test_a_new_version_never_counts(api: Api, migrated_db: dict[str, Engine], pi
         assert drawing.status == "ready"
         assert drawing.quota is not None and drawing.quota["counted"] is False
     assert quota_state(engine, tenant) == (10, 0, [])
+
+
+# --- messages that never arrive, and copies (BUG-006, BUG-007) --------------------------------------------------
+
+LONG_AGO = timedelta(hours=1)  # other tests' drawings are minutes old at most, so the sweep never sees them
+
+
+def backdate(engine: Engine, tenant: ApiTenant, drawing_id: str, stage: int) -> None:
+    with tenant_session(tenant.tenant_id, engine) as s:
+        s.get_one(m.StageRun, (tenant.tenant_id, drawing_id, stage)).sent_at = datetime.now(UTC) - 2 * LONG_AGO
+
+
+def test_an_unsent_stage_is_sent_again(
+    api: Api, migrated_db: dict[str, Engine], pipeline: Pipeline, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    engine = migrated_db["app"]
+    tenant = add_tenant(engine)
+    monkeypatch.setattr(api.app.state.queue, "send", lambda message: None)  # the upload's send never happens
+    drawing_id = start(api, tenant)
+    assert Worker(pipeline).run_until_idle() == 0
+    assert pipeline.requeue_unsent(LONG_AGO) == []  # not long enough yet
+
+    backdate(engine, tenant, drawing_id, 1)
+    assert pipeline.requeue_unsent(LONG_AGO) == [(tenant.tenant_id, drawing_id, 1)]
+    assert pipeline.requeue_unsent(LONG_AGO) == []  # sent again once, not on every sweep
+    assert Worker(pipeline).run_until_idle() == 7
+    with tenant_session(tenant.tenant_id, engine) as s:
+        assert s.get_one(m.Drawing, drawing_id).status == "ready"
+    assert quota_state(engine, tenant) == (1, 0, ["reserve", "confirm"])
+
+
+def test_a_lost_hand_off_between_stages_is_sent_again(
+    api: Api, migrated_db: dict[str, Engine], pipeline: Pipeline, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    engine = migrated_db["app"]
+    tenant = add_tenant(engine)
+    drawing_id = start(api, tenant)
+    send = pipeline.queue.send
+
+    def lose_stage_3(message: StageMessage) -> None:
+        if message.stage != 3:
+            send(message)
+
+    monkeypatch.setattr(pipeline.queue, "send", lose_stage_3)
+    assert Worker(pipeline).run_until_idle() == 2
+    monkeypatch.setattr(pipeline.queue, "send", send)
+    backdate(engine, tenant, drawing_id, 3)
+    assert pipeline.requeue_unsent(LONG_AGO) == [(tenant.tenant_id, drawing_id, 3)]
+    assert Worker(pipeline).run_until_idle() == 5
+    with tenant_session(tenant.tenant_id, engine) as s:
+        assert s.get_one(m.Drawing, drawing_id).status == "ready"
+
+
+def test_the_sweep_skips_cancelled_drawings_and_spans_tenants(
+    api: Api, migrated_db: dict[str, Engine], pipeline: Pipeline, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    engine = migrated_db["app"]
+    a, b, c = add_tenant(engine), add_tenant(engine), add_tenant(engine)
+    monkeypatch.setattr(api.app.state.queue, "send", lambda message: None)
+    stuck = {t.tenant_id: start(api, t) for t in (a, b, c)}
+    for t in (a, b, c):
+        backdate(engine, t, stuck[t.tenant_id], 1)
+    with tenant_session(c.tenant_id, engine) as s:
+        coordinator.cancel(s, c.tenant_id, stuck[c.tenant_id])
+    found = pipeline.requeue_unsent(LONG_AGO)
+    assert sorted(found) == sorted((t.tenant_id, stuck[t.tenant_id], 1) for t in (a, b))
+    assert Worker(pipeline).run_until_idle() == 14
+
+
+def test_a_copy_of_a_running_stage_is_dropped(api: Api, migrated_db: dict[str, Engine], pipeline: Pipeline) -> None:
+    engine = migrated_db["app"]
+    tenant = add_tenant(engine)
+    drawing_id = start(api, tenant)
+    with tenant_session(tenant.tenant_id, engine) as s:
+        trace_id = str(s.get_one(m.Drawing, drawing_id).trace_id)
+    pipeline.queue.send(StageMessage(drawing_id=drawing_id, tenant_id=tenant.tenant_id, stage=1, trace_id=trace_id))
+    first, copy = pipeline.queue.receive(STAGE_QUEUES[1], wait_s=2, max_messages=2)
+    seen: list[str] = []
+
+    def stage_1_meets_its_copy(ctx: StageContext):  # type: ignore[no-untyped-def]
+        seen.append(pipeline.handle(copy))  # the copy arrives while stage 1 runs
+        return STAGES[1](ctx)
+
+    pipeline.stages[1] = stage_1_meets_its_copy
+    assert pipeline.handle(first) == "done"
+    assert seen == ["skipped"]
+    pipeline.stages[1] = STAGES[1]
+    assert Worker(pipeline).run_until_idle() == 6
+    with tenant_session(tenant.tenant_id, engine) as s:
+        assert s.get_one(m.StageRun, (tenant.tenant_id, drawing_id, 1)).attempts == 1  # ran once
+        assert s.get_one(m.Drawing, drawing_id).status == "ready"
+    assert quota_state(engine, tenant) == (1, 0, ["reserve", "confirm"])
+
+
+def test_a_stage_left_running_by_a_crash_runs_on_redelivery(
+    api: Api, migrated_db: dict[str, Engine], pipeline: Pipeline
+) -> None:
+    engine = migrated_db["app"]
+    tenant = add_tenant(engine)
+    drawing_id = start(api, tenant)
+    (received,) = pipeline.queue.receive(STAGE_QUEUES[1], wait_s=2)
+    assert pipeline._claim(received.message)  # a worker claims stage 1, then dies before it finishes
+    pipeline.queue.retry_later(received, 0)  # the visibility timeout runs out
+    (again,) = pipeline.queue.receive(STAGE_QUEUES[1], wait_s=2)
+    assert again.receive_count == 2
+    assert pipeline.handle(again) == "done"
+    Worker(pipeline).run_until_idle()
+    with tenant_session(tenant.tenant_id, engine) as s:
+        assert s.get_one(m.Drawing, drawing_id).status == "ready"

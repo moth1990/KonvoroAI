@@ -54,7 +54,7 @@ backend/
     contracts/          Pydantic stage contracts from 00 §5 (the single source for stage I/O)
     pipeline/           coordinator, worker loop, stages/s1_intake … s7_pricing
     domain/             pricing, quota, flags, versions: pure logic, no I/O
-    services/           storage (S3), queue (SQS), ocr, auth, transcribe
+    services/           storage (S3), queue (SQS), pdf (the PDFium lock), ocr, auth, transcribe
   konboro_llm/          the model gateway (moved from the repo root in S01)
   konboro/licenses.py   the Python license gate (GPL/AGPL fail, LGPL allowed)
   alembic/              migrations, one per schema change
@@ -94,6 +94,7 @@ docker-compose.yml  Makefile  .github/workflows/ci.yml  .nvmrc  .env.example
 | Golden eval | `eval/` CLI | Per-stage metrics against `golden/` (§6) | `eval/` | Pipeline PRs (replay), gates (live) |
 | Contract | openapi-typescript | Generated client matches the API | CI | Every PR |
 | License | `python -m konboro.licenses`, license-checker | Fails on AGPL or GPL. LGPL (psycopg) is allowed: linked as a library, never modified | CI | Every PR |
+| Secrets | gitleaks, pinned Docker image (`make secrets`) | Fails on a secret in any commit of the full history | CI | Every PR |
 | Lint and types | ruff, mypy (strict for `domain/` and `contracts/`), ESLint, `tsc --noEmit` | | CI | Every PR |
 
 Rules:

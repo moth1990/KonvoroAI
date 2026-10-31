@@ -5,8 +5,8 @@
 | **Track** | G |
 | **Branch** | `s07-gate-0` |
 | **Depends on** | S06 |
-| **Status** | todo |
-| **PR** | |
+| **Status** | in review |
+| **PR** | [moth1990/KonvoroAI#8](https://github.com/moth1990/KonvoroAI/pull/8) |
 
 ## Goal
 
@@ -26,43 +26,78 @@ Phase 1 starts from a tagged, stable `phase-0`.
 ## Tasks
 
 ### Verify
-- [ ] On a fresh clone: `make up && make seed && make check`.
-- [ ] Full Playwright suite on `desktop` and `mobile`, in light and dark.
-- [ ] Fidelity report for login, shell, home and new-quote. Compare it with the accepted baselines.
-- [ ] `make eval` in replay, plus one live run to refresh the cassettes after the stubs. Record the numbers.
-- [ ] Security spot checks:
+- [x] On a fresh clone: `make up && make seed && make check`.
+- [x] Full Playwright suite on `desktop` and `mobile`, in light and dark.
+- [x] Fidelity report for login, shell, home and new-quote. Compare it with the accepted baselines.
+- [x] `make eval` in replay. Record the numbers. (No live run: the stubs make no model calls, so S08 records the first cassettes.)
+- [x] Security spot checks:
   - the RLS suite;
   - the route-actor audit;
-  - no secrets in the repo (`gitleaks` or similar);
+  - no secrets in the repo: a new `make secrets` target (pinned gitleaks Docker image, full history), also in `make check` and CI;
   - the license gate.
-- [ ] Manual smoke as a user: log in, upload each golden PDF, cancel one, and check the quota meter.
+- [x] Manual smoke as a user: log in, upload each golden PDF, cancel one, and check the quota meter.
 
 ### Fix
-- [ ] All open P0 and P1 bugs. P2 bugs that fit in the session.
-- [ ] Each fix starts with a failing test.
+- [x] All open P0 and P1 bugs. P2 bugs that fit in the session. Left open: BUG-008 (P2, S29) and BUG-009 (P2, S08).
+  - [x] BUG-005 (P2): intermittent local E2E failures. Reproduce with back-to-back runs and after `make test-int && make eval`, find the shared state, fix it. Root cause: BUG-010 (P0, PDFium used from two threads at once), fixed with a process-wide lock.
+- [x] Items S05 left for this gate, each logged in `bugs.md` first:
+  - [x] A drawing whose stage-1 message was never sent (SQS failed after the commit) stays `uploaded` with its quota reserved. It should be re-queued. (BUG-006, and BUG-007 found on the way.)
+  - [x] Per-tenant pipeline concurrency limit (00 §4.3): logged and scheduled for S29, not fixed here.
+  - [x] Stage summaries for stages 2–7: only once those stages are real, so this moves to their sessions.
+- [x] Each fix starts with a failing test.
 
 ### Docs
-- [ ] CLAUDE.md, dev-strategy and the roadmap match reality (commands, layout, statuses).
-- [ ] Resolve and fix any spec inconsistency touched in phase 0.
-- [ ] Update README §6 readiness checkboxes for the items phase 0 completed.
+- [x] CLAUDE.md, dev-strategy and the roadmap match reality (commands, layout, statuses). Markdown links and anchors checked across all 39 files (one-off script): none broken.
+- [x] Resolve and fix any spec inconsistency touched in phase 0: rewrite the 00 §14 phase table to follow README §7, and remove the item from CLAUDE.md.
+- [x] Update README §6 readiness checkboxes for the items phase 0 completed.
 
 ### Close
-- [ ] Merge, tag `phase-0`, and set the S01–S07 status to `done`.
-- [ ] Prepare the phase 1 session files S08 and S09 from the template, so the next session starts immediately.
+- [ ] Merge, tag `phase-0`, and set the S01–S07 status to `done`. After the user merges the PR.
+- [x] Prepare the phase 1 session files S08 and S09 from the template, so the next session starts immediately.
 
 ## Acceptance criteria (phase 0 exit)
 
-- [ ] Eval runs automatically on the golden set, in CI and through `make eval`.
-- [ ] The skeleton E2E (login → upload → stub pipeline → done) is green on both projects.
-- [ ] The cross-tenant RLS tests are green, and so is the test that fails on a tenant table without RLS.
-- [ ] No open P0 or P1 bugs.
-- [ ] External blocker B1 (golden set at 10 drawings) has its status recorded. Missing drawings are a known gap, not a failed gate.
+- [x] Eval runs automatically on the golden set, in CI and through `make eval`. (`make eval` inside `make check`: no change; the CI `eval` job since S06.)
+- [x] The skeleton E2E (login → upload → stub pipeline → done) is green on both projects. (69 passed in the final `make check`; 20 of 20 back-to-back runs after BUG-010.)
+- [x] The cross-tenant RLS tests are green, and so is the test that fails on a tenant table without RLS. (214 in `test_rls.py`, including the guard and the new sweeper tests.)
+- [x] No open P0 or P1 bugs. (Open: BUG-008 and BUG-009, both P2 and scheduled.)
+- [x] External blocker B1 (golden set at 10 drawings) has its status recorded. Missing drawings are a known gap, not a failed gate. (5 of 10, under Known gaps.)
 
 ## Outcome
 
-- **Done:**
+- **Done:** phase 0 checked end to end, and four bugs fixed on the way:
+  - A fresh clone passes `make check`. Full E2E on both projects, light and dark, with screenshot baselines 24/24. Fidelity report regenerated; no screen changed in this session.
+  - Security: RLS suite (214 tests), route-actor audit (27), API isolation (3), license gate, and the new `make secrets` (gitleaks over every commit; proven to fail on a planted fake token).
+  - Re-queue of stage messages that never arrive (BUG-006) and drop of duplicate copies (BUG-007), via migration 0004.
+  - PDFium behind one lock (BUG-010, P0), which was the cause of the flaky E2E (BUG-005).
+  - Docs: 00 §14 follows README §7; CLAUDE.md, dev-strategy, db-schema, README §6, the roadmap and the bug log match the repo. S08 and S09 session files are ready.
 - **Decisions made:**
-- **Eval / metrics:**
+  - Eval at this gate (2026-10-31, user): replay only. A live run with stub stages records nothing; the first cassettes come with S08.
+  - Secret scan (user): a `make secrets` target running the pinned gitleaks Docker image over the full git history, added to `make check` and CI.
+  - S05 gaps (user): fix the re-queue of drawings stuck at `uploaded` in this session. The per-tenant concurrency limit (00 §4.3) is logged and scheduled for S29, when the workers scale out.
+  - Finding stuck uploads across tenants (user): a `SECURITY DEFINER` function owned by the owner role returns only `(tenant_id, drawing_id, trace_id)` for stage-1 runs that were never claimed and are older than a threshold. Only `konboro_app` may execute it. The worker calls it on a timer, re-checks each row inside `tenant_session`, and only then re-sends. The alternative, re-queueing from the progress poll, was rejected because a drawing nobody reopens would stay stuck.
+    - As built (Claude, during the build): the function is owned by a dedicated `konboro_sweeper` role (NOLOGIN, no BYPASSRLS, column-level SELECT, its own read-only policies) rather than the table owner, so the rule "the app never runs as the owner" holds. It covers every stage, not only stage 1: a stage's hand-off is sent after its commit too, so a crash in between loses it the same way. It also returns `stage`.
+  - Duplicate claims (user): fix here. `_claim` drops a copy of a message whose stage is still `running`; a redelivery after a worker crash still runs.
+    - As built (Claude): the test is the queue's receive count, not a time window. The crashed worker's own message comes back with a count of 2 or more, while a copy (an SQS duplicate, or a re-send) arrives with a count of 1. A window equal to the visibility timeout would have dropped the real redelivery, which arrives right at that boundary.
+  - Phase order (user): README §7 wins. 00 §14 is rewritten to match, and the item leaves CLAUDE.md's inconsistency list.
+- **Manual smoke** (`make dev` in the browser pane, demo tenant; the new `dev-backend` entry in `.claude/launch.json` runs the API and the worker):
+  - Logged in as `demo@konboro.local`. Quota at the start: 14 of 50.
+  - 26-993, 6199-2-50, NEVIS-1 and NURSERY-1 each ran all 7 stages to the done step, with real thumbnails. The meter went 15, 16, 17, 18.
+  - BOM-HW-1.jpg was cancelled during stage 1: "הפענוח בוטל. המקום במכסה שוחרר", back to picking with the file kept, the meter stayed at 18.
+  - DB: the four finished drawings have `reserve,confirm`, the cancelled one `reserve,release`; `quota_usage` 18 used, 0 reserved. No server errors.
+  - The built-in browser has no file chooser, so each file was handed to `#file-in` from a script; everything after that went through the UI.
+- **Eval / metrics:** replay, no change against the baseline, both on a fresh clone of `022f73e` and in the final `make check` on this branch:
+  - Stage 1: page kind 0% (0/24), route 58.3% (14/24), missed process pages 0 of 14, `input_kind` 20% (1/5), panel count 80% (4/5).
+  - Stage 4: component recall 0% (0/147), unit recall 0% (0/411).
+  - Audit: n/a. Backtest: 0 of 3 within ±5%.
 - **Bugs fixed:**
+  - BUG-010 (P0, found here): PDFium is not thread-safe, and the upload check and the stage-1 renderer called it from different threads of one process. Two uploads at the same moment hung both requests; a standalone probe segfaulted. Every PDFium call now goes through `konboro/services/pdf.py`'s lock, and a test fails if anything else imports pypdfium2. This was BUG-005's cause. How it was found: 20 E2E runs with the traces kept; every failure was a pair of `POST /drawings` started ~80 ms apart that never answered. Vite reloads and machine load were ruled out on the way.
+  - BUG-005 (P2): `make e2e` 20 of 20 green after the fix, against 16 of 20 before.
+  - BUG-006 (P1): stage messages that never arrive are sent again.
+  - BUG-007 (P1): a copy of a running stage's message is dropped.
 - **Known gaps:**
+  - B1, the golden set: 5 of 10 drawings, all factory drawings from one factory (owner: user and estimator). The roadmap's count; the user has not yet confirmed whether new drawings arrived. A known gap, not a failed gate (dev-strategy §7).
+  - The phase-0 tag and the S01–S07 `done` statuses wait for the merge.
+  - BUG-008 (P2, per-tenant concurrency) is scheduled for S29; BUG-009 (P2, visibility heartbeat for long stages) for S08.
 - **Follow-ups:**
+  - S10 (tiling renders far more than thumbnails): the PDFium lock serializes all rendering in a process. If that becomes the bottleneck, render in a process pool instead of threads. Added to the roadmap backlog.

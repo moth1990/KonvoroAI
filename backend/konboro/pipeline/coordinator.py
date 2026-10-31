@@ -10,18 +10,23 @@ One message = one stage of one drawing. For each:
 A stage that raises is retried after `stage_retry_seconds`. After the third receive the queue's redrive policy
 moves the message to the DLQ; `handle_dead` marks the drawing `failed` and gives the quota back, released or
 refunded (01 §4.5: a technical failure is not counted).
+
+Messages are sent after the commit, so one can be lost: a failed send, or a process that dies first. Each stage run
+records `sent_at`, and `requeue_unsent` sends again any stage that no worker claimed in time (BUG-006). A second
+copy of a message whose stage is already running is dropped, so a stage never runs twice at once (BUG-007).
 """
 
 import logging
 from dataclasses import dataclass, field
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from typing import Any, Literal
 
-from sqlalchemy import Engine, select, update
+from sqlalchemy import Engine, select, text, update
 from sqlalchemy.orm import Session
 
+from konboro.db.ids import new_id
 from konboro.db.models import Drawing, QuotaEvent, StageRun
-from konboro.db.session import tenant_session
+from konboro.db.session import global_session, tenant_session
 from konboro.services import quota
 from konboro.services.llm import usage_recorder
 from konboro.services.queue import MAX_RECEIVES, Queue, Received, StageMessage
@@ -101,7 +106,7 @@ class Pipeline:
 
     def handle(self, received: Received) -> Outcome:
         msg = received.message
-        if not self._claim(msg):
+        if not self._claim(msg, redelivered=received.receive_count > 1):
             self.queue.delete(received)
             return "skipped"
         try:
@@ -146,7 +151,33 @@ class Pipeline:
                 raise RuntimeError(f"stage {msg.stage} of {msg.drawing_id} could not be claimed")
             msg = self._run(msg)
 
-    def _claim(self, msg: StageMessage) -> bool:
+    def requeue_unsent(self, older_than: timedelta | None = None) -> list[tuple[str, str, int]]:
+        """Send again every stage whose message went out `older_than` ago and was never claimed (BUG-006). The
+        lookup is the one cross-tenant read, IDs only (migration 0004); each row is checked again inside its
+        tenant's session before anything is sent. Returns what it sent, as (tenant_id, drawing_id, stage)."""
+        age = older_than if older_than is not None else timedelta(seconds=self.settings.requeue_after_seconds)
+        with global_session(self.engine) as s:
+            rows = s.execute(text("SELECT * FROM konboro_unsent_stages(:age)"), {"age": age}).all()
+        sent = []
+        for row in rows:
+            with tenant_session(row.tenant_id, self.engine) as s:
+                drawing = _lock(s, row.drawing_id)
+                run = s.get(StageRun, (row.tenant_id, row.drawing_id, row.stage))
+                if drawing is None or drawing.status in FINISHED or run is None:
+                    continue
+                if run.status != "queued" or run.attempts or run.sent_at is None or run.sent_at > _now() - age:
+                    continue  # claimed or sent meanwhile
+                run.sent_at = _now()
+                trace_id = drawing.trace_id or new_id("trc")
+                msg = StageMessage(
+                    drawing_id=drawing.id, tenant_id=drawing.tenant_id, stage=run.stage, trace_id=trace_id
+                )
+            self.queue.send(msg)  # after the commit, like every send
+            log.warning("stage %s of %s was never claimed; sent again", msg.stage, msg.drawing_id)
+            sent.append((msg.tenant_id, msg.drawing_id, msg.stage))
+        return sent
+
+    def _claim(self, msg: StageMessage, redelivered: bool = False) -> bool:
         with tenant_session(msg.tenant_id, self.engine) as s:
             drawing = _lock(s, msg.drawing_id)
             if drawing is None or drawing.status in FINISHED:
@@ -154,6 +185,10 @@ class Pipeline:
             run = s.get_one(StageRun, (msg.tenant_id, msg.drawing_id, msg.stage))
             if run.status in ("done", "skipped"):
                 return False  # a duplicate delivery
+            if run.status == "running" and not redelivered:
+                # A second copy of the message, while the first copy's stage runs. A worker that died mid-stage
+                # is different: its own message comes back once the visibility timeout ends, received again.
+                return False
             run.status, run.attempts, run.started_at = "running", run.attempts + 1, _now()
             drawing.status, drawing.current_stage = "processing", msg.stage
             return True
@@ -179,6 +214,7 @@ class Pipeline:
             if msg.stage == 7:
                 drawing.status = "ready"
                 return None
+            s.get_one(StageRun, (msg.tenant_id, msg.drawing_id, msg.stage + 1)).sent_at = _now()
             return StageMessage(
                 drawing_id=msg.drawing_id, tenant_id=msg.tenant_id, stage=msg.stage + 1, trace_id=msg.trace_id
             )

@@ -59,6 +59,8 @@ The full data model for Konboro v1.0. This document was listed as missing in [00
    - `konboro` owns the tables and runs migrations. The app never connects as it.
    - `konboro_app` is the role the API and workers use. It has `LOGIN`, is not a superuser, has no `BYPASSRLS`, and does not own any table.
 
+   - `konboro_sweeper` (migration 0004) has no login and owns one function, `konboro_unsent_stages(interval)`. That function is the only read across tenants. It is `SECURITY DEFINER`, only `konboro_app` may execute it, and it returns `(tenant_id, drawing_id, stage, trace_id)` for stages whose message was sent that long ago and never claimed. The role has no `BYPASSRLS`. It reads through its own `requeue_sweep` policies (`FOR SELECT`) and a column-level `SELECT` on those columns of `stage_runs` and `drawings`. The worker re-checks each row inside `tenant_session` before it sends anything (S07 decision, BUG-006).
+
    Postgres superusers and table owners bypass RLS. That is why this split matters.
 
 **Tenant context:**
@@ -76,6 +78,7 @@ The full data model for Konboro v1.0. This document was listed as missing in [00
 **Tests:**
 - The cross-tenant suite tries `SELECT`, `UPDATE`, `DELETE` and `INSERT` across tenants on **every** tenant table.
 - A guard test reads `pg_class` and `pg_policies` and fails when any table with a `tenant_id` column lacks RLS or the policy.
+- The sweeper tests pin the role's flags, its column grants, who may execute the function, and that it returns IDs only.
 
 ## 3. Global layer
 
@@ -224,6 +227,7 @@ This table answers the customer's question "why was this counted?".
 - `attempts`, `started_at`, `finished_at`.
 - `output_key`: the contract JSON in S3 (00 §5).
 - `error jsonb`: `{type, message, attempt}` of the last failure.
+- `sent_at`: when the stage's message was last sent. Stage 1's is set by the upload, every other stage's by the stage before it, and the worker's sweep updates it when it sends one again.
 - All seven rows are created with the upload, as `queued`. A cancel marks the unfinished ones `skipped`.
 
 **`components`** (`cmp_`, 04 §6.3) is the stage 4 output, kept in the DB because quote lines and audits point at it.

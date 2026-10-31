@@ -8,13 +8,13 @@ default of 01 §7), and BOM files are `bom_table` → `context`.
 import io
 from datetime import UTC, datetime
 
-import pypdfium2 as pdfium
 from PIL import Image
 from sqlalchemy import select
 
 from konboro.contracts.intake import IntakeResult, Page, Panel, QuotaOutcome, SourceFile
 from konboro.db import models as m
 from konboro.db.ids import new_id
+from konboro.services.pdf import document
 from konboro.services.storage import drawing_key
 
 from ..context import StageContext
@@ -39,16 +39,13 @@ PageImage = tuple[tuple[float, float], bytes | None]  # size in points, thumbnai
 
 def _pages_of(fmt: str, data: bytes) -> list[PageImage]:
     if fmt == "pdf":
-        pdf = pdfium.PdfDocument(data)
-        try:
+        with document(data) as pdf:  # the PDFium lock (BUG-010)
             out: list[PageImage] = []
             for i in range(len(pdf)):
                 page = pdf[i]
                 w, h = page.get_size()
                 out.append(((float(w), float(h)), _png(page.render(scale=THUMB_PX / max(w, h)).to_pil())))
             return out
-        finally:
-            pdf.close()
     if fmt in ("png", "jpg", "webp"):
         image = Image.open(io.BytesIO(data))
         w, h = image.size  # pixels; real DPI handling is S08's (01 §6.4)

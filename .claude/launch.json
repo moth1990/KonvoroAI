@@ -6,6 +6,15 @@
       "runtimeExecutable": "bash",
       "runtimeArgs": ["-c", "cd frontend && exec ./node_modules/.bin/vite"],
       "port": 5180
+    },
+    {
+      "name": "dev-backend",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": [
+        "-c",
+        "cd backend && trap 'kill 0' EXIT; uv run python -m konboro.pipeline.worker & uv run uvicorn --factory konboro.api.app:create_app --port 8000"
+      ],
+      "port": 8000
     }
   ]
 }
