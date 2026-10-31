@@ -88,7 +88,7 @@ Lay down the monorepo every later session builds on:
 
 ## Acceptance criteria
 
-- [x] On a clean clone, `make install && make up && make check` passes. Verified from a fresh clone of this branch.
+- [ ] On a clean clone, `make install && make up && make check` passes. **Not verified:** the fresh-clone run was blocked by a permission prompt. `make check` passed in the working tree, and CI on the PR is the clean-environment check.
 - [ ] The CI run on the PR is green.
 - [x] `git log --follow backend/konboro_llm/client.py` shows the history (moved with `git mv`).
 - [x] The license check fails when an AGPL package is added on purpose. Tested locally and not committed:
