@@ -11,6 +11,7 @@ import "./theme/base.css";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 
+import { QueryProvider } from "./api/QueryProvider";
 import App from "./App";
 import { ThemeRoot } from "./theme/ThemeRoot";
 
@@ -20,7 +21,9 @@ if (!root) throw new Error("#root missing from index.html");
 createRoot(root).render(
   <StrictMode>
     <ThemeRoot>
-      <App />
+      <QueryProvider>
+        <App />
+      </QueryProvider>
     </ThemeRoot>
   </StrictMode>,
 );

@@ -58,7 +58,8 @@ Mock data in the prototype (lines 393–580) suggests field names for the API: `
 7. **Tenant isolation** ([docs/db-schema.md §2](docs/db-schema.md#2-two-layers-and-tenant-isolation)):
    - Every tenant table has `tenant_id`, forced RLS, and composite foreign keys `(tenant_id, id)`.
    - The app connects only as `konboro_app`, never as the owner, and runs tenant queries inside `tenant_session(tenant_id)`.
-   - Every endpoint checks permission against the single `owner` role (00 §8, §14.1).
+   - Every endpoint checks permission against the single `owner` role (00 §8, §14.1). In code, every route depends on `require(Permission.X)` from `konboro/api/deps.py`. That runs `current_actor`, which verifies the token, opens `tenant_session` for the token's tenant, and loads the user (the DB role counts, not the token's). Public routes are listed in `PUBLIC_ROUTES`, and `tests/integration/test_api_routes.py` fails for any other route without an actor.
+   - Flag-gated routes add `Depends(require_flag(key))`. A flag that is off answers 404, as if the route did not exist (13 §3).
    - A new tenant table needs a row in `tests/integration/factory.py`; the RLS suite fails until it has one.
 8. **Every new feature sits behind a flag**, evaluated on the server (13).
 9. **No AGPL or GPL dependencies.** That rules out PyMuPDF and Ultralytics YOLO (12 §8). LGPL is allowed (psycopg). `make licenses` and CI check this.
@@ -90,14 +91,15 @@ Schema changes are Alembic migrations in `backend/alembic/versions/`. Update `do
 | `make migrate` | Create the `konboro_app` role, then `alembic upgrade head` |
 | `make seed` | Migrate, then load the demo tenant (made-up names, the prototype's price list). Safe to rerun |
 | `make up` / `make down` | Start or stop local services: Postgres + pgvector (host port 5433), S3Mock as S3 (9000), ElasticMQ as SQS (9324) |
-| `make dev` | Vite dev server on port 5180. The API and worker join in S03 and S05 |
+| `make dev` | API on port 8000 (uvicorn, reload) and the Vite dev server on port 5180. The worker joins in S05. Dev login: `demo@konboro.local` with `KONBORO_DEV_PASSWORD` from `.env` |
 | `make test-unit` | pytest unit tests + Vitest |
 | `make test-int` | pytest integration tests against the compose services |
 | `make e2e` | Playwright, desktop and mobile projects |
 | `make eval` | Golden-set evaluation. Replay by default; `EVAL_MODE=live` uses real Claude |
-| `make gen-client` | Regenerate the TS API client from FastAPI's OpenAPI |
+| `make gen-client` | Regenerate the TS API client from FastAPI's OpenAPI (`frontend/src/api/openapi.json` → `schema.ts`). Run it after any API change and commit both files |
+| `make check-client` | Fail if the committed client is stale. CI runs the same check |
 | `make licenses` | Fail on GPL or AGPL dependencies, Python and npm |
-| `make check` | Everything CI runs: lint, types, licenses, unit, integration, e2e (client freshness joins in S03) |
+| `make check` | Everything CI runs: lint, types, licenses, client freshness, unit, integration, e2e |
 
 Tooling: uv for Python 3.12 (`backend/.python-version`), pnpm with Node 22 (`.nvmrc`; run `nvm use` first). Ports can be changed in `.env` (see `.env.example`).
 

@@ -33,7 +33,17 @@ def build_tenant_graph(s: Session, tenant_id: str) -> dict[str, str]:
     add(cus := m.Customer(id=new_id("cus"), tenant_id=tenant_id, name="לקוח"))
     add(prj := m.Project(id=new_id("prj"), tenant_id=tenant_id, customer_id=cus.id, name="פרויקט"))
     add(drw := m.Drawing(id=new_id("drw"), tenant_id=tenant_id, project_id=prj.id, created_by=user.id))
-    add(m.QuotaEvent(id=new_id("qev"), tenant_id=tenant_id, month=date(2026, 10, 1), drawing_id=drw.id, kind="reserve"))
+    add(res := m.QuotaEvent(id=new_id("qev"), tenant_id=tenant_id, month=date(2026, 10, 1), kind="reserve"))
+    add(
+        m.QuotaEvent(
+            id=new_id("qev"),
+            tenant_id=tenant_id,
+            month=date(2026, 10, 1),
+            drawing_id=drw.id,
+            kind="confirm",
+            reservation_id=res.id,
+        )
+    )
     add(
         m.LlmCall(
             id=new_id("llm"),
