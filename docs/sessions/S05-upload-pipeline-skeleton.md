@@ -5,8 +5,8 @@
 | **Track** | X |
 | **Branch** | `s05-upload-pipeline` |
 | **Depends on** | S04 |
-| **Status** | in review |
-| **PR** | |
+| **Status** | done |
+| **PR** | [#6](https://github.com/moth1990/KonvoroAI/pull/6) |
 
 ## Goal
 

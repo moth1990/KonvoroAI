@@ -21,8 +21,8 @@ Prototype references are line ranges in [prototype/konboro-app.html](../prototyp
 | [S02](sessions/S02-db-schema-rls.md) | P | DB schema and RLS | `docs/db-schema.md`, SQLAlchemy models, first migration, RLS policies, cross-tenant tests, demo seed | 00 §6, §8; 01 §4.5; 07 §7.2; 13 §2 | 393–580 (data shapes) | S01 | done |
 | [S03](sessions/S03-api-auth-flags.md) | P | API, auth, flags, quota | FastAPI app, dev JWT, `owner` permission check, `/me`, flags and quota endpoints, OpenAPI → TS client | 00 §14.1; 01 §4.5; 13 §2–3 | 384–388, 560–572 | S02 | done |
 | [S04](sessions/S04-app-shell.md) | R | App shell, login, home | Shell, rail and tab bar, login, classic home and `home_chat` home, quota meter, first fidelity report | 09 §5, §13; 13 §4.3 | 660–751, 1253–1284 | S03 | done |
-| [S05](sessions/S05-upload-pipeline-skeleton.md) | X | Upload and pipeline skeleton | Upload checks, atomic quota, S3 (S3Mock), ElasticMQ, coordinator with 7 stub stages emitting the contracts, progress and cancel, new-quote screen wired end to end | 00 §4–5; 01 §4.3–4.6; 12 §3 | 754–869 | S04 | in review |
-| [S06](sessions/S06-golden-eval.md) | P | Golden eval harness | Normalizers for 5 formats, per-stage metrics, reports, `make eval`, cassette record and replay, CI job | 00 §10; 01 §10; 04 §10; 11 §10 | — | S05 | todo |
+| [S05](sessions/S05-upload-pipeline-skeleton.md) | X | Upload and pipeline skeleton | Upload checks, atomic quota, S3 (S3Mock), ElasticMQ, coordinator with 7 stub stages emitting the contracts, progress and cancel, new-quote screen wired end to end | 00 §4–5; 01 §4.3–4.6; 12 §3 | 754–869 | S04 | done |
+| [S06](sessions/S06-golden-eval.md) | P | Golden eval harness | Normalizers for 5 formats, per-stage metrics, reports, `make eval`, cassette record and replay, CI job | 00 §10; 01 §10; 04 §10; 11 §10 | — | S05 | in review |
 | [S07](sessions/S07-gate-0.md) | G | **Gate 0** | Full suite, fix bugs, docs. Tag `phase-0` | dev-strategy §7 | all built screens | S06 | todo |
 
 **Exit:** eval runs automatically on the golden set, the skeleton E2E is green, and the RLS tests are green.
@@ -94,6 +94,8 @@ These items are owned outside the code. They do not stop sessions from starting,
 
 Ideas and out-of-scope findings from sessions. Each one is scheduled into a session, or dropped, at the next gate.
 
-- (empty)
+- **Eval each stage on labelled input (00 §10.1)** (from S06). Today `make eval` runs the pipeline end to end, so a stage-1 miss also costs stage 4. Stage 4 can be fed the labelled detections once stage 3 has box labels; due with the stage 2–3 labeling work (S10/S12).
+- **Audit metrics read the audit output** (from S06). `eval/predict.py` sets `Prediction.audit = None` until the audit flow exists; S15 maps its differences into `CanonDifference` so `difference_precision` / `difference_recall` stop being n/a.
+- **Record cassettes when the first model-calling stage lands** (from S06). Stubs make no calls, so `eval/cassettes/` is empty. The session that adds the first real call (S08) runs `EVAL_MODE=live EVAL_RECORD=1 make eval`, commits the cassettes and the new baseline.
 
 <a id="s00"></a>**S00** is the planning session that produced this roadmap. It has no session file; its PR is the record.

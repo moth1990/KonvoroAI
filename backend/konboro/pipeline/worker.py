@@ -12,6 +12,7 @@ import time
 from sqlalchemy import Engine
 
 from konboro.db.session import app_engine
+from konboro.services.llm import live_providers
 from konboro.services.queue import DLQ, STAGE_QUEUES, Queue
 from konboro.services.storage import Storage
 from konboro.settings import Settings, get_settings
@@ -64,7 +65,9 @@ class Worker:
 
 
 def build(settings: Settings, engine: Engine | None = None, stages: dict[int, Stage] | None = None) -> Worker:
-    pipeline = Pipeline(settings, engine or app_engine(), Storage(settings), Queue(settings))
+    pipeline = Pipeline(
+        settings, engine or app_engine(), Storage(settings), Queue(settings), llm_providers=live_providers()
+    )
     if stages is not None:
         pipeline.stages = stages
     return Worker(pipeline)

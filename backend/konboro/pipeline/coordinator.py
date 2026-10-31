@@ -23,9 +23,12 @@ from sqlalchemy.orm import Session
 from konboro.db.models import Drawing, QuotaEvent, StageRun
 from konboro.db.session import tenant_session
 from konboro.services import quota
+from konboro.services.llm import usage_recorder
 from konboro.services.queue import MAX_RECEIVES, Queue, Received, StageMessage
 from konboro.services.storage import Storage, drawing_key
 from konboro.settings import Settings
+from konboro_llm import LLMClient
+from konboro_llm.base import LLMProvider
 
 from .context import StageContext
 from .stages import STAGES, Stage
@@ -94,6 +97,7 @@ class Pipeline:
     storage: Storage
     queue: Queue
     stages: dict[int, Stage] = field(default_factory=lambda: dict(STAGES))
+    llm_providers: dict[str, LLMProvider] = field(default_factory=dict)  # live in the worker, cassettes in eval
 
     def handle(self, received: Received) -> Outcome:
         msg = received.message
@@ -133,6 +137,15 @@ class Pipeline:
                 log.error("drawing %s failed at stage %s; quota %s", msg.drawing_id, msg.stage, outcome)
         self.queue.delete(received)
 
+    def run_inline(self, first: StageMessage) -> None:
+        """Every stage in turn in this process, without the queue: the golden-set eval (S06). A stage that raises
+        is not retried; the error goes to the caller."""
+        msg: StageMessage | None = first
+        while msg is not None:
+            if not self._claim(msg):
+                raise RuntimeError(f"stage {msg.stage} of {msg.drawing_id} could not be claimed")
+            msg = self._run(msg)
+
     def _claim(self, msg: StageMessage) -> bool:
         with tenant_session(msg.tenant_id, self.engine) as s:
             drawing = _lock(s, msg.drawing_id)
@@ -148,7 +161,8 @@ class Pipeline:
     def _run(self, msg: StageMessage) -> StageMessage | None:
         with tenant_session(msg.tenant_id, self.engine) as s:
             drawing = s.get_one(Drawing, msg.drawing_id)
-            output = self.stages[msg.stage](StageContext(s, self.storage, drawing, msg.stage))
+            llm = LLMClient(self.llm_providers, on_call=usage_recorder(self.engine, msg.tenant_id, msg.drawing_id))
+            output = self.stages[msg.stage](StageContext(s, self.storage, drawing, msg.stage, llm))
             key = drawing_key(msg.tenant_id, msg.drawing_id, "stages", f"s{msg.stage}.json")
             self.storage.put(msg.tenant_id, key, output.model_dump_json().encode(), "application/json")
 

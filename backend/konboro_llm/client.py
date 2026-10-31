@@ -5,13 +5,15 @@
 
 It picks the provider and model for the stage, validates the answer against the schema,
 retries once with the validation error, falls back to another model if configured,
-and logs tokens and latency per stage and per factory.
+and logs tokens and latency per stage and per factory. `on_call` gets every answered call too: the backend writes
+it to `llm_calls` (00 §7.2), which konboro_llm doesn't know about.
 """
 
 from __future__ import annotations
 
 import logging
 import time
+from collections.abc import Callable
 from typing import Any
 
 from pydantic import ValidationError
@@ -22,11 +24,19 @@ from .types import LLMError, LLMRequest, LLMResult, T
 
 log = logging.getLogger("konboro.llm")
 
+OnCall = Callable[[LLMRequest[Any], LLMResult[Any]], None]
+
 
 class LLMClient:
-    def __init__(self, providers: dict[str, LLMProvider], routes: dict[str, StageRoute] | None = None):
+    def __init__(
+        self,
+        providers: dict[str, LLMProvider],
+        routes: dict[str, StageRoute] | None = None,
+        on_call: OnCall | None = None,
+    ):
         self.providers = providers
         self.routes = routes or ROUTES
+        self.on_call = on_call
 
     def run(self, request: LLMRequest[T]) -> LLMResult[T]:
         route = self.routes.get(request.stage)
@@ -75,9 +85,8 @@ class LLMClient:
 
         raise LLMError(f"output did not match schema after {route.max_attempts} attempts: {hint}")
 
-    @staticmethod
-    def _log_usage(request: LLMRequest[Any], result: LLMResult[Any]) -> None:
-        # Send this to your metrics store: cost per factory and per stage comes from here.
+    def _log_usage(self, request: LLMRequest[Any], result: LLMResult[Any]) -> None:
+        # A log line for local runs; on_call is the record that cost per factory and per stage comes from.
         log.info(
             "llm_call stage=%s tenant=%s provider=%s model=%s in=%d out=%d ms=%d attempts=%d",
             request.stage,
@@ -89,3 +98,5 @@ class LLMClient:
             result.latency_ms,
             result.attempts,
         )
+        if self.on_call is not None:
+            self.on_call(request, result)

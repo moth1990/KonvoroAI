@@ -19,7 +19,7 @@ Every bug found during development goes here, including bugs fixed in the same s
 
 | ID | Found in | Sev | Area | Summary | Repro | Status | Fixed in |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| | | | | | | | |
+| BUG-005 | S06 | P2 | E2E / pipeline | Local `make e2e` failed intermittently: 2 of 10 runs on `s06-golden-eval`. One was inside `make check`, right after the integration tests and the eval: `new-quote.spec.ts` "the run step … can be cancelled" (mobile) never reached the run step, and "a new version does not count" (desktop) waited 30s for `done`. The other run had 8 failures, including a login `toHaveURL`. The E2E API logged no error. `main` passed 5 of 5 on the same machine. The branch's only change on that path builds the worker's LLM client, which makes no calls in E2E. Not reproduced on demand | Run `make e2e` back to back several times, or after `make test-int` and `make eval` | open | |
 
 ## Closed
 

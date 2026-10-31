@@ -38,6 +38,7 @@ packages = ["konboro", "konboro_llm"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = [".."]  # the repo root, for the eval harness (../eval)
 addopts = "-ra --strict-markers"
 markers = [
     "integration: needs the docker-compose services (make up)",
@@ -64,10 +65,12 @@ ignore = [
 
 [tool.ruff.lint.isort]
 known-third-party = ["alembic"]  # the local alembic/ folder is not our package
+known-first-party = ["eval"]  # ../eval, on the path through pytest's pythonpath
 
 [tool.mypy]
 python_version = "3.12"
-packages = ["konboro", "konboro_llm"]
+mypy_path = ".."
+packages = ["konboro", "konboro_llm", "eval"]
 warn_unused_configs = true
 warn_redundant_casts = true
 warn_unused_ignores = true

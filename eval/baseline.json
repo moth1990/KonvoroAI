@@ -1,0 +1,1016 @@
+{
+  "drawings": {
+    "26-993": {
+      "confirmed_value_at_risk": "1250",
+      "input_kind": "factory_drawing",
+      "labelled": {
+        "products": 22,
+        "units": 47
+      },
+      "panels": {
+        "MAIN ELECTRICAL BOARD": {
+          "component_precision": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          },
+          "component_recall": {
+            "den": 22,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": 0.0
+          }
+        }
+      },
+      "predicted": {
+        "products": 0,
+        "units": 0
+      },
+      "predicted_total": "0",
+      "quote_total": "14022.0",
+      "scores": {
+        "audit": {
+          "difference_precision": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          },
+          "difference_recall": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          },
+          "type_agreement": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          }
+        },
+        "pricing": {
+          "backtest_deviation": {
+            "den": 1,
+            "kind": "mean",
+            "num": 1.0,
+            "value": 1.0
+          },
+          "backtest_within_5pct": {
+            "den": 1,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": 0.0
+          }
+        },
+        "s1": {
+          "input_kind_accuracy": {
+            "den": 1,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": 0.0
+          },
+          "missed_process_pages": {
+            "den": 3,
+            "kind": "count",
+            "num": 0.0,
+            "value": 0.0
+          },
+          "page_kind_accuracy": {
+            "den": 5,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": 0.0
+          },
+          "panel_count_accuracy": {
+            "den": 1,
+            "kind": "ratio",
+            "num": 1.0,
+            "value": 1.0
+          },
+          "route_accuracy": {
+            "den": 5,
+            "kind": "ratio",
+            "num": 3.0,
+            "value": 0.6
+          }
+        },
+        "s4": {
+          "component_precision": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          },
+          "component_recall": {
+            "den": 22,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": 0.0
+          },
+          "current_a_accuracy": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          },
+          "poles_accuracy": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          },
+          "quantity_accuracy": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          },
+          "unit_recall": {
+            "den": 47,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": 0.0
+          }
+        }
+      }
+    },
+    "6199-2-50": {
+      "confirmed_value_at_risk": null,
+      "input_kind": "designer_plan",
+      "labelled": {
+        "products": 109,
+        "units": 184
+      },
+      "panels": {
+        "לוח ביתן שומר": {
+          "component_precision": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          },
+          "component_recall": {
+            "den": 14,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": 0.0
+          }
+        },
+        "לוח סככה": {
+          "component_precision": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          },
+          "component_recall": {
+            "den": 29,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": 0.0
+          }
+        },
+        "לוח ראשי": {
+          "component_precision": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          },
+          "component_recall": {
+            "den": 30,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": 0.0
+          }
+        }
+      },
+      "predicted": {
+        "products": 0,
+        "units": 0
+      },
+      "predicted_total": "0",
+      "quote_total": null,
+      "scores": {
+        "audit": {},
+        "pricing": {},
+        "s1": {
+          "input_kind_accuracy": {
+            "den": 1,
+            "kind": "ratio",
+            "num": 1.0,
+            "value": 1.0
+          },
+          "missed_process_pages": {
+            "den": 1,
+            "kind": "count",
+            "num": 0.0,
+            "value": 0.0
+          },
+          "page_kind_accuracy": {
+            "den": 1,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": 0.0
+          },
+          "panel_count_accuracy": {
+            "den": 1,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": 0.0
+          },
+          "route_accuracy": {
+            "den": 1,
+            "kind": "ratio",
+            "num": 1.0,
+            "value": 1.0
+          }
+        },
+        "s4": {
+          "component_precision": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          },
+          "component_recall": {
+            "den": 73,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": 0.0
+          },
+          "current_a_accuracy": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          },
+          "poles_accuracy": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          },
+          "quantity_accuracy": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          },
+          "unit_recall": {
+            "den": 184,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": 0.0
+          }
+        }
+      }
+    },
+    "BOM-HW-1": {
+      "confirmed_value_at_risk": null,
+      "input_kind": "bom_only",
+      "labelled": {
+        "products": 19,
+        "units": 91
+      },
+      "panels": {
+        "לוח חשמל קומה י\"א": {
+          "component_precision": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          },
+          "component_recall": {
+            "den": 18,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": 0.0
+          }
+        }
+      },
+      "predicted": {
+        "products": 0,
+        "units": 0
+      },
+      "predicted_total": "0",
+      "quote_total": null,
+      "scores": {
+        "audit": {},
+        "pricing": {},
+        "s1": {
+          "input_kind_accuracy": {
+            "den": 1,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": 0.0
+          },
+          "missed_process_pages": {
+            "den": 0,
+            "kind": "count",
+            "num": 0.0,
+            "value": null
+          },
+          "page_kind_accuracy": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          },
+          "panel_count_accuracy": {
+            "den": 1,
+            "kind": "ratio",
+            "num": 1.0,
+            "value": 1.0
+          },
+          "route_accuracy": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          }
+        },
+        "s4": {
+          "component_precision": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          },
+          "component_recall": {
+            "den": 18,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": 0.0
+          },
+          "current_a_accuracy": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          },
+          "poles_accuracy": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          },
+          "quantity_accuracy": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          },
+          "unit_recall": {
+            "den": 91,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": 0.0
+          }
+        }
+      }
+    },
+    "NEVIS-1": {
+      "confirmed_value_at_risk": "0",
+      "input_kind": "factory_drawing",
+      "labelled": {
+        "products": 21,
+        "units": 47
+      },
+      "panels": {
+        "KARWANI": {
+          "component_precision": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          },
+          "component_recall": {
+            "den": 21,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": 0.0
+          }
+        }
+      },
+      "predicted": {
+        "products": 0,
+        "units": 0
+      },
+      "predicted_total": "0",
+      "quote_total": "11603.0",
+      "scores": {
+        "audit": {
+          "difference_precision": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          },
+          "difference_recall": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          },
+          "type_agreement": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          }
+        },
+        "pricing": {
+          "backtest_deviation": {
+            "den": 1,
+            "kind": "mean",
+            "num": 1.0,
+            "value": 1.0
+          },
+          "backtest_within_5pct": {
+            "den": 1,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": 0.0
+          }
+        },
+        "s1": {
+          "input_kind_accuracy": {
+            "den": 1,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": 0.0
+          },
+          "missed_process_pages": {
+            "den": 5,
+            "kind": "count",
+            "num": 0.0,
+            "value": 0.0
+          },
+          "page_kind_accuracy": {
+            "den": 9,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": 0.0
+          },
+          "panel_count_accuracy": {
+            "den": 1,
+            "kind": "ratio",
+            "num": 1.0,
+            "value": 1.0
+          },
+          "route_accuracy": {
+            "den": 9,
+            "kind": "ratio",
+            "num": 5.0,
+            "value": 0.555556
+          }
+        },
+        "s4": {
+          "component_precision": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          },
+          "component_recall": {
+            "den": 21,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": 0.0
+          },
+          "current_a_accuracy": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          },
+          "poles_accuracy": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          },
+          "quantity_accuracy": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          },
+          "unit_recall": {
+            "den": 47,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": 0.0
+          }
+        }
+      }
+    },
+    "NURSERY-1": {
+      "confirmed_value_at_risk": "185",
+      "input_kind": "factory_drawing",
+      "labelled": {
+        "products": 13,
+        "units": 42
+      },
+      "panels": {
+        "NURSERY": {
+          "component_precision": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          },
+          "component_recall": {
+            "den": 13,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": 0.0
+          }
+        }
+      },
+      "predicted": {
+        "products": 0,
+        "units": 0
+      },
+      "predicted_total": "0",
+      "quote_total": "14109.0",
+      "scores": {
+        "audit": {
+          "difference_precision": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          },
+          "difference_recall": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          },
+          "type_agreement": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          }
+        },
+        "pricing": {
+          "backtest_deviation": {
+            "den": 1,
+            "kind": "mean",
+            "num": 1.0,
+            "value": 1.0
+          },
+          "backtest_within_5pct": {
+            "den": 1,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": 0.0
+          }
+        },
+        "s1": {
+          "input_kind_accuracy": {
+            "den": 1,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": 0.0
+          },
+          "missed_process_pages": {
+            "den": 5,
+            "kind": "count",
+            "num": 0.0,
+            "value": 0.0
+          },
+          "page_kind_accuracy": {
+            "den": 9,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": 0.0
+          },
+          "panel_count_accuracy": {
+            "den": 1,
+            "kind": "ratio",
+            "num": 1.0,
+            "value": 1.0
+          },
+          "route_accuracy": {
+            "den": 9,
+            "kind": "ratio",
+            "num": 5.0,
+            "value": 0.555556
+          }
+        },
+        "s4": {
+          "component_precision": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          },
+          "component_recall": {
+            "den": 13,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": 0.0
+          },
+          "current_a_accuracy": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          },
+          "poles_accuracy": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          },
+          "quantity_accuracy": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          },
+          "unit_recall": {
+            "den": 42,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": 0.0
+          }
+        }
+      }
+    }
+  },
+  "not_labelled": {
+    "s2": "אין עדיין תיוג ברמת אריח ומקטע טקסט",
+    "s3": "אין עדיין תיוג ברמת תיבת סימן"
+  },
+  "totals": {
+    "all": {
+      "audit": {
+        "difference_precision": {
+          "den": 0,
+          "kind": "ratio",
+          "num": 0.0,
+          "value": null
+        },
+        "difference_recall": {
+          "den": 0,
+          "kind": "ratio",
+          "num": 0.0,
+          "value": null
+        },
+        "type_agreement": {
+          "den": 0,
+          "kind": "ratio",
+          "num": 0.0,
+          "value": null
+        }
+      },
+      "pricing": {
+        "backtest_deviation": {
+          "den": 3,
+          "kind": "mean",
+          "num": 3.0,
+          "value": 1.0
+        },
+        "backtest_within_5pct": {
+          "den": 3,
+          "kind": "ratio",
+          "num": 0.0,
+          "value": 0.0
+        }
+      },
+      "s1": {
+        "input_kind_accuracy": {
+          "den": 5,
+          "kind": "ratio",
+          "num": 1.0,
+          "value": 0.2
+        },
+        "missed_process_pages": {
+          "den": 14,
+          "kind": "count",
+          "num": 0.0,
+          "value": 0.0
+        },
+        "page_kind_accuracy": {
+          "den": 24,
+          "kind": "ratio",
+          "num": 0.0,
+          "value": 0.0
+        },
+        "panel_count_accuracy": {
+          "den": 5,
+          "kind": "ratio",
+          "num": 4.0,
+          "value": 0.8
+        },
+        "route_accuracy": {
+          "den": 24,
+          "kind": "ratio",
+          "num": 14.0,
+          "value": 0.583333
+        }
+      },
+      "s4": {
+        "component_precision": {
+          "den": 0,
+          "kind": "ratio",
+          "num": 0.0,
+          "value": null
+        },
+        "component_recall": {
+          "den": 147,
+          "kind": "ratio",
+          "num": 0.0,
+          "value": 0.0
+        },
+        "current_a_accuracy": {
+          "den": 0,
+          "kind": "ratio",
+          "num": 0.0,
+          "value": null
+        },
+        "poles_accuracy": {
+          "den": 0,
+          "kind": "ratio",
+          "num": 0.0,
+          "value": null
+        },
+        "quantity_accuracy": {
+          "den": 0,
+          "kind": "ratio",
+          "num": 0.0,
+          "value": null
+        },
+        "unit_recall": {
+          "den": 411,
+          "kind": "ratio",
+          "num": 0.0,
+          "value": 0.0
+        }
+      }
+    },
+    "by_input_kind": {
+      "bom_only": {
+        "audit": {},
+        "pricing": {},
+        "s1": {
+          "input_kind_accuracy": {
+            "den": 1,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": 0.0
+          },
+          "missed_process_pages": {
+            "den": 0,
+            "kind": "count",
+            "num": 0.0,
+            "value": null
+          },
+          "page_kind_accuracy": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          },
+          "panel_count_accuracy": {
+            "den": 1,
+            "kind": "ratio",
+            "num": 1.0,
+            "value": 1.0
+          },
+          "route_accuracy": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          }
+        },
+        "s4": {
+          "component_precision": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          },
+          "component_recall": {
+            "den": 18,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": 0.0
+          },
+          "current_a_accuracy": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          },
+          "poles_accuracy": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          },
+          "quantity_accuracy": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          },
+          "unit_recall": {
+            "den": 91,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": 0.0
+          }
+        }
+      },
+      "designer_plan": {
+        "audit": {},
+        "pricing": {},
+        "s1": {
+          "input_kind_accuracy": {
+            "den": 1,
+            "kind": "ratio",
+            "num": 1.0,
+            "value": 1.0
+          },
+          "missed_process_pages": {
+            "den": 1,
+            "kind": "count",
+            "num": 0.0,
+            "value": 0.0
+          },
+          "page_kind_accuracy": {
+            "den": 1,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": 0.0
+          },
+          "panel_count_accuracy": {
+            "den": 1,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": 0.0
+          },
+          "route_accuracy": {
+            "den": 1,
+            "kind": "ratio",
+            "num": 1.0,
+            "value": 1.0
+          }
+        },
+        "s4": {
+          "component_precision": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          },
+          "component_recall": {
+            "den": 73,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": 0.0
+          },
+          "current_a_accuracy": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          },
+          "poles_accuracy": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          },
+          "quantity_accuracy": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          },
+          "unit_recall": {
+            "den": 184,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": 0.0
+          }
+        }
+      },
+      "factory_drawing": {
+        "audit": {
+          "difference_precision": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          },
+          "difference_recall": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          },
+          "type_agreement": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          }
+        },
+        "pricing": {
+          "backtest_deviation": {
+            "den": 3,
+            "kind": "mean",
+            "num": 3.0,
+            "value": 1.0
+          },
+          "backtest_within_5pct": {
+            "den": 3,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": 0.0
+          }
+        },
+        "s1": {
+          "input_kind_accuracy": {
+            "den": 3,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": 0.0
+          },
+          "missed_process_pages": {
+            "den": 13,
+            "kind": "count",
+            "num": 0.0,
+            "value": 0.0
+          },
+          "page_kind_accuracy": {
+            "den": 23,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": 0.0
+          },
+          "panel_count_accuracy": {
+            "den": 3,
+            "kind": "ratio",
+            "num": 3.0,
+            "value": 1.0
+          },
+          "route_accuracy": {
+            "den": 23,
+            "kind": "ratio",
+            "num": 13.0,
+            "value": 0.565217
+          }
+        },
+        "s4": {
+          "component_precision": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          },
+          "component_recall": {
+            "den": 56,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": 0.0
+          },
+          "current_a_accuracy": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          },
+          "poles_accuracy": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          },
+          "quantity_accuracy": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          },
+          "unit_recall": {
+            "den": 136,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": 0.0
+          }
+        }
+      }
+    }
+  }
+}
