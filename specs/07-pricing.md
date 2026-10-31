@@ -529,7 +529,7 @@ fixed:   unit_price = fixed_price
 | `line_type` | enum | `component`, `derived`, `labor`, `manual`, `missing` |
 | `component_id` | string \| null | מהשלבים הקודמים. **דרכו השורה מצביעה על המקום בשרטוט** |
 | `sku`, `description`, `manufacturer` | string | מתמונת המצב של פריט הקטלוג |
-| `qty` | int | |
+| `qty` | decimal | כמות. לרוב שלמה, אבל מוצר שנמכר לפי מטר (`unit`, 7.2.1) יכול להיות שבר. נשמר כ-`numeric(12,3)` ([db-schema](../docs/db-schema.md)) |
 | `unit_cost` | decimal \| null | `null` כשאין מחיר |
 | `cost_source` | object | מקור העלות (7.2) |
 | `price_status` | enum | `ok`, `stale`, `discount_based`, `missing` |

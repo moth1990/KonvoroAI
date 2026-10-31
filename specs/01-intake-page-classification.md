@@ -532,7 +532,7 @@
 | `regions` | `Region[]` | אזורים שאינם לוח: מסגרות הערות, סכמת הזנות, מקרא (5.4) |
 | `title_block` | `TitleBlock` \| null | פרטים מטבלת הכותרת, כולל מהדורה וסטטוס (`for_info`, `for_bidding`, `for_execution`) |
 | `context_artifact_ids` | string[] | תוכן הקשר שהופק מהעמוד |
-| `classified_by` | enum | `model`, `user`, `reused` |
+| `classified_by` | enum | `model`, `user`, `reused`, `template` (עמוד תבנית של המפעל, 5.7) |
 | `model` | string \| null | המודל שסיווג |
 
 ### 6.4 מערכת קואורדינטות
