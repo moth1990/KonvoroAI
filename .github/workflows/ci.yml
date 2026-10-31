@@ -14,6 +14,16 @@ permissions:
   contents: read
 
 jobs:
+  secrets:
+    name: Secrets (gitleaks, full history)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # every commit, not only the last one
+      - name: No secrets in any commit (like `make secrets`)
+        run: make secrets
+
   backend:
     name: Backend (lint, types, licenses, unit, integration)
     runs-on: ubuntu-latest

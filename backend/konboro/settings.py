@@ -40,6 +40,9 @@ class Settings(BaseSettings):
     # How long the worker waits on an empty queue, and how long a failed stage waits before its retry.
     worker_poll_seconds: int = 2
     stage_retry_seconds: int = 5
+    # A stage whose message nobody claimed this long after it was sent is sent again; the worker looks this often.
+    requeue_after_seconds: int = 120
+    requeue_check_seconds: int = 60
 
     @model_validator(mode="after")
     def _safe(self) -> "Settings":

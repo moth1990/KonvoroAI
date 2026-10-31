@@ -22,8 +22,8 @@ Prototype references are line ranges in [prototype/konboro-app.html](../prototyp
 | [S03](sessions/S03-api-auth-flags.md) | P | API, auth, flags, quota | FastAPI app, dev JWT, `owner` permission check, `/me`, flags and quota endpoints, OpenAPI → TS client | 00 §14.1; 01 §4.5; 13 §2–3 | 384–388, 560–572 | S02 | done |
 | [S04](sessions/S04-app-shell.md) | R | App shell, login, home | Shell, rail and tab bar, login, classic home and `home_chat` home, quota meter, first fidelity report | 09 §5, §13; 13 §4.3 | 660–751, 1253–1284 | S03 | done |
 | [S05](sessions/S05-upload-pipeline-skeleton.md) | X | Upload and pipeline skeleton | Upload checks, atomic quota, S3 (S3Mock), ElasticMQ, coordinator with 7 stub stages emitting the contracts, progress and cancel, new-quote screen wired end to end | 00 §4–5; 01 §4.3–4.6; 12 §3 | 754–869 | S04 | done |
-| [S06](sessions/S06-golden-eval.md) | P | Golden eval harness | Normalizers for 5 formats, per-stage metrics, reports, `make eval`, cassette record and replay, CI job | 00 §10; 01 §10; 04 §10; 11 §10 | — | S05 | in review |
-| [S07](sessions/S07-gate-0.md) | G | **Gate 0** | Full suite, fix bugs, docs. Tag `phase-0` | dev-strategy §7 | all built screens | S06 | todo |
+| [S06](sessions/S06-golden-eval.md) | P | Golden eval harness | Normalizers for 5 formats, per-stage metrics, reports, `make eval`, cassette record and replay, CI job | 00 §10; 01 §10; 04 §10; 11 §10 | — | S05 | done |
+| [S07](sessions/S07-gate-0.md) | G | **Gate 0** | Full suite, fix bugs, docs. Tag `phase-0` | dev-strategy §7 | all built screens | S06 | in progress |
 
 **Exit:** eval runs automatically on the golden set, the skeleton E2E is green, and the RLS tests are green.
 
@@ -33,8 +33,8 @@ P and R sessions alternate. R sessions use a fixture quote seeded through the re
 
 | # | Track | Session | Main contents | Specs | Prototype | Depends on | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| S08 | P | Stage 1: intake and page classification | pypdfium2 rendering, rotation and quality, geometry and text source, sha256 reuse, `page_classification`, `input_kind`, context extraction, page confirmation and page-kind change | 01 (all) | 840–855 | S07 | todo |
-| S09 | R | Review I: lines | Quote read API and fixture seed, split layout, virtualized grouped lines table, colors and filters, line detail (raw text, sources, why), keyboard | 09 §5–6.4, §8–9 | 872–941, 942–995 | S07 | todo |
+| [S08](sessions/S08-stage1-intake.md) | P | Stage 1: intake and page classification | pypdfium2 rendering, rotation and quality, geometry and text source, sha256 reuse, `page_classification`, `input_kind`, context extraction, page confirmation and page-kind change, visibility heartbeat for long stages (BUG-009) | 01 (all) | 840–855 | S07 | todo |
+| [S09](sessions/S09-review-lines.md) | R | Review I: lines | Quote read API and fixture seed, split layout, virtualized grouped lines table, colors and filters, line detail (raw text, sources, why), keyboard | 09 §5–6.4, §8–9 | 872–941, 942–995 | S07 | todo |
 | S10 | P | Stage 2: extraction and tiling | pdfplumber vector text, `OcrEngine` interface + `ClaudeVisionOcr`, normalization with `raw_text`, low-confidence re-read, 1024/256 tiles, deep-zoom tiles in S3 | 02 (all); 12 §5 | — | S08 | todo |
 | S11 | R | Review II: drawing | OpenSeadragon viewer, SVG highlight boxes, page strip, "show on drawing", mobile tabs, toast, undo (5 s, 30 actions) | 09 §5.2, §6.5, §7.11 | 942–1004 | S09, S10 | todo |
 | S12 | P | Stage 3 v1: symbols | LLM-vision detection with library examples and the abbreviation dictionary, cross-tile de-duplication and owner tile, orphan text, designator linking | 03 §3.4–3.7, §6, §10 | — | S10 | todo |
@@ -68,7 +68,7 @@ P and R sessions alternate. R sessions use a fixture quote seeded through the re
 
 | # | Track | Session | Main contents | Specs | Depends on | Status |
 | --- | --- | --- | --- | --- | --- | --- |
-| S29 | X | Infrastructure as code | Terraform or CDK (decide at kickoff): VPC, RDS, S3 + KMS, SQS + DLQ, ECS API and workers, ALB, CloudFront, Secrets Manager, Cognito replacing dev auth, Bedrock provider, Transcribe | 12 §2, §4, §7 | S28 | todo |
+| S29 | X | Infrastructure as code | Terraform or CDK (decide at kickoff): VPC, RDS, S3 + KMS, SQS + DLQ, ECS API and workers, ALB, CloudFront, Secrets Manager, Cognito replacing dev auth, Bedrock provider, Transcribe, per-tenant pipeline concurrency limit (00 §4.3, BUG-008) | 12 §2, §4, §7 | S28 | todo |
 | S30 | X | Deploy and observability | GitHub Actions deploy to staging, Sentry, OpenTelemetry `trace_id`, CloudWatch, per-tenant cost table | 12 §7 | S29 | todo |
 | S31 | P | **Floating:** OCR engine choice | Google Vision vs Azure on the golden set by electrical-token accuracy, plug in the winner, live eval. **Runs whenever OCR keys exist** | 02 §10; 12 §5 | S10 | blocked (keys) |
 | S32 | G | **Gate 3: pilot readiness** | Security review, RLS checks on staging, backups and restore test, staging E2E, live eval. Tag `phase-3` | 00 §11, §14.2 | S30, S31 | todo |

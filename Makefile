@@ -1,10 +1,13 @@
 # Konboro developer commands. `make check` runs everything CI runs (CLAUDE.md, Commands).
 # Backend: uv (Python 3.12). Frontend: pnpm (Node 22, see .nvmrc).
 
+# Secret scanner, pinned by version and digest (S07). gitleaks is MIT.
+GITLEAKS_IMAGE := ghcr.io/gitleaks/gitleaks:v8.21.2@sha256:0e99e8821643ea5b235718642b93bb32486af9c8162c8b8731f7cbdc951a7f46
+
 BACKEND := cd backend &&
 FRONTEND := cd frontend &&
 
-.PHONY: help install up down migrate seed dev lint licenses test-unit test-int e2e fidelity screenshots check-screenshots eval eval-baseline gen-client check-client check
+.PHONY: help install up down migrate seed dev lint licenses secrets test-unit test-int e2e fidelity screenshots check-screenshots eval eval-baseline gen-client check-client check
 
 help:
 	@grep -E '^[a-z-]+:.*?## ' $(MAKEFILE_LIST) | awk -F':.*?## ' '{printf "  %-12s %s\n", $$1, $$2}'
@@ -44,6 +47,9 @@ licenses: ## Fail on GPL or AGPL dependencies (specs/12-tech-stack.md §8)
 	$(BACKEND) uv run python -m konboro.licenses
 	$(FRONTEND) pnpm run license-check
 
+secrets: ## Scan every commit for secrets with the pinned gitleaks image (needs Docker)
+	docker run --rm -v "$(CURDIR):/repo" $(GITLEAKS_IMAGE) git /repo --log-opts="--all" --redact --no-banner
+
 test-unit: ## Backend unit tests and frontend Vitest
 	$(BACKEND) uv run pytest -m "not integration"
 	$(FRONTEND) pnpm test
@@ -76,4 +82,4 @@ gen-client: ## Regenerate the TS API client from FastAPI's OpenAPI (frontend/src
 check-client: gen-client ## Fail if the committed API client is stale (run `make gen-client` and commit)
 	git diff --exit-code -- frontend/src/api/openapi.json frontend/src/api/schema.ts
 
-check: lint licenses check-client test-unit test-int eval e2e check-screenshots ## Everything CI runs
+check: lint licenses secrets check-client test-unit test-int eval e2e check-screenshots ## Everything CI runs

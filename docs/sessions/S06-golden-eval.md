@@ -105,7 +105,7 @@
   - **Eval needs `make up`.** Stages use a DB session and S3, so `eval/run.py` runs the coordinator's stage functions in order, without the queue, on its own `konboro_eval` database, with a throwaway tenant per run. The CI eval job reuses the backend job's services.
 - **Eval / metrics:** The first baseline, with stub stages. All numbers are expected to be low; what matters is that the measurement is real.
   - Stage 1: page kind 0% (0/24), route 58.3% (14/24), missed process pages 0 of 14, `input_kind` 20% (1/5), panel count 80% (4/5).
-  - Stage 4: component recall 0% (0/143), unit recall 0% (0/411). Precision and attribute accuracy are n/a (nothing predicted).
+  - Stage 4: component recall 0% (0/147), unit recall 0% (0/411). Precision and attribute accuracy are n/a (nothing predicted).
   - Audit: n/a (the audit flow arrives in S15). Backtest: 0 of 3 within ±5% (the stub prices nothing).
   - Replay is deterministic: `test_replay_is_deterministic` compares two runs byte for byte.
 - **Bugs logged:** BUG-005 (P2, open): local E2E failed in 2 of 10 runs on this branch, against 0 of 5 on `main`. It could not be reproduced on demand and is left for the Gate 0 session (S07). The stage-4 denominator flaw was found and fixed in this session's own new code before anything shipped (see Decisions).

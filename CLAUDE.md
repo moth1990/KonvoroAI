@@ -113,7 +113,8 @@ Schema changes are Alembic migrations in `backend/alembic/versions/`. Update `do
 | `make gen-client` | Regenerate the TS API client from FastAPI's OpenAPI (`frontend/src/api/openapi.json` → `schema.ts`). Run it after any API change and commit both files |
 | `make check-client` | Fail if the committed client is stale. CI runs the same check |
 | `make licenses` | Fail on GPL or AGPL dependencies, Python and npm |
-| `make check` | Everything CI runs: lint, types, licenses, client freshness, unit, integration, eval, e2e, screenshots |
+| `make secrets` | Scan every commit for secrets with the pinned gitleaks Docker image. CI runs the same scan |
+| `make check` | Everything CI runs: lint, types, licenses, secrets, client freshness, unit, integration, eval, e2e, screenshots |
 
 Tooling: uv for Python 3.12 (`backend/.python-version`), pnpm with Node 22 (`.nvmrc`; run `nvm use` first). Ports can be changed in `.env` (see `.env.example`).
 
@@ -162,6 +163,5 @@ Resolve each one with the user when its session arrives, then fix the spec in th
 
 - 01 §7, the routing table, lacks `technical_data` and `factory_template`. Due in S08.
 - 02 §2.6 says duplicates are removed after stage 4, but 03 §3.5 moved that into stage 3. Due in S12.
-- 00 §14 and README §7 order the phases differently. The roadmap follows README §7.
 - Flag keys differ between the two references. The prototype uses `chat_builder`, `voice` and `unresolved`; spec 13 uses `chat_quote_builder`, `voice_input` and `unresolved_overlay`. **The spec's keys win** everywhere in code.
 - `golden/NEVIS-1/labels.json` uses page kind `single_line` where the other files use `single_line_diagram`. The eval normalizer maps it; the file stays as is.

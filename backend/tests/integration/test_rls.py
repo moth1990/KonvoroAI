@@ -162,3 +162,93 @@ def test_global_tables_are_read_only_for_the_app(migrated_db: dict[str, Engine],
         s.execute(text(f"SELECT count(*) FROM {table}"))  # readable
     with pytest.raises(ProgrammingError, match="permission denied"), global_session(migrated_db["app"]) as s:
         s.execute(text(f"DELETE FROM {table}"))
+
+
+# --- the one cross-tenant lookup: konboro_unsent_stages (migration 0004, BUG-006) -------------------------------
+
+
+def test_the_sweeper_role_is_narrow(migrated_db: dict[str, Engine]) -> None:
+    """konboro_sweeper owns one function, can't log in or bypass RLS, and sees only the columns the sweep needs."""
+    with migrated_db["owner"].connect() as conn:
+        role = conn.execute(
+            text("SELECT rolsuper, rolbypassrls, rolcanlogin FROM pg_roles WHERE rolname = 'konboro_sweeper'")
+        ).one()
+        tables = conn.execute(
+            text("SELECT count(*) FROM pg_tables WHERE schemaname = 'public' AND tableowner = 'konboro_sweeper'")
+        ).scalar_one()
+        functions = (
+            conn.execute(
+                text(
+                    "SELECT p.proname FROM pg_proc p JOIN pg_roles r ON r.oid = p.proowner "
+                    "WHERE r.rolname = 'konboro_sweeper'"
+                )
+            )
+            .scalars()
+            .all()
+        )
+        table_grants = conn.execute(
+            text("SELECT count(*) FROM information_schema.table_privileges WHERE grantee = 'konboro_sweeper'")
+        ).scalar_one()
+        columns = (
+            conn.execute(
+                text(
+                    "SELECT table_name || '.' || column_name FROM information_schema.column_privileges "
+                    "WHERE grantee = 'konboro_sweeper' ORDER BY 1"
+                )
+            )
+            .scalars()
+            .all()
+        )
+        member_of = conn.execute(text("SELECT pg_has_role('konboro_app', 'konboro_sweeper', 'USAGE')")).scalar_one()
+    assert (role.rolsuper, role.rolbypassrls, role.rolcanlogin) == (False, False, False)
+    assert (tables, functions, table_grants) == (0, ["konboro_unsent_stages"], 0)
+    assert columns == [
+        "drawings.id", "drawings.status", "drawings.tenant_id", "drawings.trace_id",
+        "stage_runs.attempts", "stage_runs.drawing_id", "stage_runs.sent_at", "stage_runs.stage",
+        "stage_runs.status", "stage_runs.tenant_id",
+    ]  # fmt: skip
+    assert member_of is False  # the app can call the function, never act as its owner
+
+
+def test_only_the_app_may_call_the_unsent_lookup(migrated_db: dict[str, Engine]) -> None:
+    with migrated_db["owner"].connect() as conn:
+        callers = (
+            conn.execute(
+                text(
+                    "SELECT grantee FROM information_schema.routine_privileges "
+                    "WHERE routine_name = 'konboro_unsent_stages' AND privilege_type = 'EXECUTE' ORDER BY 1"
+                )
+            )
+            .scalars()
+            .all()
+        )
+        definer = conn.execute(
+            text("SELECT prosecdef, proconfig FROM pg_proc WHERE proname = 'konboro_unsent_stages'")
+        ).one()
+    assert "PUBLIC" not in callers and "konboro_app" in callers
+    assert set(callers) <= {"konboro_app", "konboro_sweeper"}  # the owner keeps its implicit right
+    assert definer.prosecdef is True and definer.proconfig == ["search_path=public, pg_temp"]
+
+
+def test_the_unsent_lookup_returns_ids_only(migrated_db: dict[str, Engine], two_tenants: tuple[str, str]) -> None:
+    """The one place the app sees across tenants: ids of stuck stages, nothing else, and RLS still holds after."""
+    a, b = two_tenants
+    for tenant in (a, b):
+        with tenant_session(tenant, migrated_db["app"]) as s:
+            s.execute(text("UPDATE drawings SET status = 'uploaded'"))
+            s.execute(
+                text("UPDATE stage_runs SET status = 'queued', attempts = 0, sent_at = now() - interval '3 days'")
+            )
+    try:
+        with global_session(migrated_db["app"]) as s:
+            result = s.execute(text("SELECT * FROM konboro_unsent_stages(interval '2 days')"))
+            columns, rows = list(result.keys()), result.all()
+            assert s.execute(text("SELECT count(*) FROM stage_runs")).scalar_one() == 0  # no context: RLS as before
+    finally:  # the rows stay invisible to the pipeline tests' sweeps
+        for tenant in (a, b):
+            with tenant_session(tenant, migrated_db["app"]) as s:
+                s.execute(text("UPDATE stage_runs SET sent_at = NULL"))
+    assert columns == ["tenant_id", "drawing_id", "stage", "trace_id"]
+    assert {r.tenant_id for r in rows} >= {a, b}
+    with tenant_session(a, migrated_db["app"]) as s:
+        assert s.execute(text("SELECT count(*) FROM stage_runs WHERE tenant_id = :b"), {"b": b}).scalar_one() == 0

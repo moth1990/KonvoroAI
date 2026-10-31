@@ -177,6 +177,8 @@ class StageRun(Base, TenantScoped):
     finished_at: Mapped[datetime | None]
     output_key: Mapped[str | None]
     error: Mapped[dict[str, Any] | None]
+    # When this stage's message was last sent. The worker re-sends one that no worker claimed (migration 0004).
+    sent_at: Mapped[datetime | None]
 
 
 class Component(Base, TenantScoped, Created):
