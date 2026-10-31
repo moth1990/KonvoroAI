@@ -16,6 +16,9 @@ export type Quota = Schemas["QuotaOut"];
 export type TenantSettings = Schemas["SettingsOut"];
 export type QuoteListItem = Schemas["QuoteListItem"];
 export type HomeSummary = Schemas["HomeSummaryOut"];
+export type Progress = Schemas["ProgressOut"];
+export type Revisable = Schemas["RevisableOut"];
+export type UploadedFile = Schemas["UploadedFileOut"];
 
 const FALLBACK_MESSAGE = "משהו השתבש אצלנו. נסו שוב בעוד רגע";
 const LOGIN_PATH = "/auth/login";
@@ -23,12 +26,14 @@ const LOGIN_PATH = "/auth/login";
 export class ApiError extends Error {
   readonly status: number;
   readonly code: string;
+  readonly details: Record<string, unknown>[];
 
-  constructor(status: number, code: string, message: string) {
+  constructor(status: number, code: string, message: string, details: Record<string, unknown>[] = []) {
     super(message);
     this.name = "ApiError";
     this.status = status;
     this.code = code;
+    this.details = details;
   }
 }
 
@@ -71,11 +76,14 @@ export const api = createApiClient();
 /** openapi-fetch returns `{data}` or `{error}`. This returns the data or throws an ApiError. */
 export function unwrap<T>(result: { data?: T; error?: unknown; response: Response }): T {
   if (result.error === undefined && result.response.ok) return result.data as T;
-  const body = (result.error ?? {}) as { error?: { code?: string; message?: string } };
+  const body = (result.error ?? {}) as {
+    error?: { code?: string; message?: string; details?: Record<string, unknown>[] | null };
+  };
   throw new ApiError(
     result.response.status,
     body.error?.code ?? "internal_error",
     body.error?.message ?? FALLBACK_MESSAGE,
+    body.error?.details ?? [],
   );
 }
 
@@ -107,4 +115,41 @@ export async function fetchQuotes(limit: number, client = api): Promise<QuoteLis
 
 export async function fetchHomeSummary(client = api): Promise<HomeSummary> {
   return unwrap(await client.GET("/home/summary"));
+}
+
+export interface UploadForm {
+  files: File[];
+  customer?: string;
+  project?: string;
+  revisionOf?: string;
+}
+
+/** POST /drawings as multipart. A rejected upload throws ApiError("upload_rejected") with one detail per file. */
+export async function uploadDrawing(form: UploadForm, client = api) {
+  const data = new FormData();
+  for (const f of form.files) data.append("files", f, f.name);
+  if (form.revisionOf) data.append("revision_of", form.revisionOf);
+  else {
+    if (form.customer?.trim()) data.append("customer", form.customer.trim());
+    if (form.project?.trim()) data.append("project", form.project.trim());
+  }
+  return unwrap(
+    await client.POST("/drawings", {
+      // openapi-fetch types the multipart body as its fields; the FormData built above is what goes out.
+      body: data as unknown as Schemas["Body_upload_drawings_post"],
+      bodySerializer: (body) => body as unknown as FormData,
+    }),
+  );
+}
+
+export async function fetchProgress(drawingId: string, client = api): Promise<Progress> {
+  return unwrap(await client.GET("/drawings/{drawing_id}/progress", { params: { path: { drawing_id: drawingId } } }));
+}
+
+export async function cancelDrawing(drawingId: string, client = api): Promise<Progress> {
+  return unwrap(await client.POST("/drawings/{drawing_id}/cancel", { params: { path: { drawing_id: drawingId } } }));
+}
+
+export async function fetchRevisable(client = api): Promise<Revisable[]> {
+  return unwrap(await client.GET("/drawings/revisable"));
 }

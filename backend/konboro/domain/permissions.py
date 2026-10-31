@@ -9,6 +9,8 @@ class Permission(StrEnum):
     ACCOUNT_READ = "account.read"
     QUOTA_READ = "quota.read"
     QUOTES_READ = "quotes.read"
+    DRAWINGS_READ = "drawings.read"
+    DRAWINGS_WRITE = "drawings.write"
     SETTINGS_READ = "settings.read"
     SETTINGS_WRITE = "settings.write"
 

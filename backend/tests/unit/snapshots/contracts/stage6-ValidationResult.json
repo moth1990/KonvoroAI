@@ -1,0 +1,420 @@
+{
+  "$defs": {
+    "BomCrosscheck": {
+      "additionalProperties": false,
+      "properties": {
+        "available": {
+          "title": "Available",
+          "type": "boolean"
+        },
+        "extra_in_quote": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Extra In Quote",
+          "type": "array"
+        },
+        "matched_signatures": {
+          "default": 0,
+          "title": "Matched Signatures",
+          "type": "integer"
+        },
+        "missing_in_quote": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Missing In Quote",
+          "type": "array"
+        },
+        "qty_diffs": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/QtyDiff"
+          },
+          "title": "Qty Diffs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "available"
+      ],
+      "title": "BomCrosscheck",
+      "type": "object"
+    },
+    "Issue": {
+      "additionalProperties": false,
+      "properties": {
+        "bbox": {
+          "anyOf": [
+            {
+              "maxItems": 4,
+              "minItems": 4,
+              "prefixItems": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                }
+              ],
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Bbox"
+        },
+        "category": {
+          "enum": [
+            "A",
+            "B",
+            "C",
+            "D",
+            "E"
+          ],
+          "title": "Category",
+          "type": "string"
+        },
+        "component_ids": {
+          "default": [],
+          "items": {
+            "pattern": "^cmp_[0-9A-Za-z_]+$",
+            "type": "string"
+          },
+          "title": "Component Ids",
+          "type": "array"
+        },
+        "confidence": {
+          "default": 1.0,
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "instance_ids": {
+          "default": [],
+          "items": {
+            "pattern": "^ins_[0-9A-Za-z_]+$",
+            "type": "string"
+          },
+          "title": "Instance Ids",
+          "type": "array"
+        },
+        "issue_id": {
+          "pattern": "^iss_[0-9A-Za-z_]+$",
+          "title": "Issue Id",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "panel_id": {
+          "anyOf": [
+            {
+              "pattern": "^pnl_[0-9A-Za-z_]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Panel Id"
+        },
+        "rule_id": {
+          "title": "Rule Id",
+          "type": "string"
+        },
+        "rule_version": {
+          "title": "Rule Version",
+          "type": "integer"
+        },
+        "severity": {
+          "enum": [
+            "info",
+            "warning",
+            "error"
+          ],
+          "title": "Severity",
+          "type": "string"
+        },
+        "source": {
+          "enum": [
+            "rule",
+            "bom_crosscheck",
+            "agent"
+          ],
+          "title": "Source",
+          "type": "string"
+        },
+        "status": {
+          "default": "open",
+          "enum": [
+            "open",
+            "resolved",
+            "dismissed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "values": {
+          "additionalProperties": true,
+          "default": {},
+          "title": "Values",
+          "type": "object"
+        }
+      },
+      "required": [
+        "issue_id",
+        "source",
+        "rule_id",
+        "rule_version",
+        "category",
+        "severity",
+        "panel_id",
+        "message"
+      ],
+      "title": "Issue",
+      "type": "object"
+    },
+    "PanelSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "hierarchy_available": {
+          "title": "Hierarchy Available",
+          "type": "boolean"
+        },
+        "issue_counts": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "default": {},
+          "title": "Issue Counts",
+          "type": "object"
+        },
+        "main_device_component_id": {
+          "anyOf": [
+            {
+              "pattern": "^cmp_[0-9A-Za-z_]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Main Device Component Id"
+        },
+        "panel_id": {
+          "pattern": "^pnl_[0-9A-Za-z_]+$",
+          "title": "Panel Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "panel_id",
+        "hierarchy_available"
+      ],
+      "title": "PanelSummary",
+      "type": "object"
+    },
+    "QtyDiff": {
+      "additionalProperties": false,
+      "properties": {
+        "bom_qty": {
+          "title": "Bom Qty",
+          "type": "number"
+        },
+        "quote_qty": {
+          "title": "Quote Qty",
+          "type": "number"
+        },
+        "signature": {
+          "title": "Signature",
+          "type": "string"
+        }
+      },
+      "required": [
+        "signature",
+        "bom_qty",
+        "quote_qty"
+      ],
+      "title": "QtyDiff",
+      "type": "object"
+    },
+    "RowStatusCap": {
+      "additionalProperties": false,
+      "properties": {
+        "component_id": {
+          "pattern": "^cmp_[0-9A-Za-z_]+$",
+          "title": "Component Id",
+          "type": "string"
+        },
+        "issue_ids": {
+          "items": {
+            "pattern": "^iss_[0-9A-Za-z_]+$",
+            "type": "string"
+          },
+          "title": "Issue Ids",
+          "type": "array"
+        },
+        "max_status": {
+          "enum": [
+            "green",
+            "yellow",
+            "red"
+          ],
+          "title": "Max Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "component_id",
+        "max_status",
+        "issue_ids"
+      ],
+      "title": "RowStatusCap",
+      "type": "object"
+    },
+    "SkippedCheck": {
+      "additionalProperties": false,
+      "properties": {
+        "panel_id": {
+          "anyOf": [
+            {
+              "pattern": "^pnl_[0-9A-Za-z_]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Panel Id"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        },
+        "rule_id": {
+          "title": "Rule Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "rule_id",
+        "panel_id",
+        "reason"
+      ],
+      "title": "SkippedCheck",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "agent_calls": {
+      "default": 0,
+      "title": "Agent Calls",
+      "type": "integer"
+    },
+    "bom_crosscheck": {
+      "$ref": "#/$defs/BomCrosscheck",
+      "default": {
+        "available": false,
+        "extra_in_quote": [],
+        "matched_signatures": 0,
+        "missing_in_quote": [],
+        "qty_diffs": []
+      }
+    },
+    "checks_run": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Checks Run",
+      "type": "array"
+    },
+    "checks_skipped": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/SkippedCheck"
+      },
+      "title": "Checks Skipped",
+      "type": "array"
+    },
+    "drawing_id": {
+      "pattern": "^drw_[0-9A-Za-z_]+$",
+      "title": "Drawing Id",
+      "type": "string"
+    },
+    "issues": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Issue"
+      },
+      "title": "Issues",
+      "type": "array"
+    },
+    "panel_summaries": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/PanelSummary"
+      },
+      "title": "Panel Summaries",
+      "type": "array"
+    },
+    "row_status_caps": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/RowStatusCap"
+      },
+      "title": "Row Status Caps",
+      "type": "array"
+    },
+    "rules_version": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Rules Version"
+    },
+    "tenant_rules_version": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Tenant Rules Version"
+    },
+    "trace_id": {
+      "pattern": "^trc_[0-9A-Za-z_]+$",
+      "title": "Trace Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "drawing_id",
+    "trace_id"
+  ],
+  "title": "ValidationResult",
+  "type": "object"
+}

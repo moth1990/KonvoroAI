@@ -75,7 +75,19 @@ export function Shell({ title, children }: { title?: string; children: ReactNode
             )}
           </div>
           <div className="row small">
-            <span className="muted" style={{ overflow: "hidden", textOverflow: "ellipsis", direction: "ltr" }}>
+            <span
+              className="muted"
+              style={{
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+                direction: "ltr",
+                textAlign: "right", // at the start of the RTL row, like the prototype
+                flex: 1,
+                minWidth: 0,
+              }}
+              title={me.data?.user.email}
+            >
               {me.data?.user.email}
             </span>
             <span className="spacer" />

@@ -31,4 +31,5 @@ def sqs():  # type: ignore[no-untyped-def]
 
 
 from .api import api  # noqa: E402, F401  (module fixture: the app on konboro_test, two tenants)
+from .aws import clean_queue, queue, storage  # noqa: E402, F401  (local S3 and this run's own queues)
 from .db import migrated_db  # noqa: E402, F401  (session fixture: a fresh, migrated konboro_test database)

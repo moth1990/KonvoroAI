@@ -6,14 +6,23 @@ from sqlalchemy import Engine
 
 from konboro.db.session import app_engine
 from konboro.services import auth, flags
+from konboro.services.queue import Queue
+from konboro.services.storage import Storage
 from konboro.settings import Settings, get_settings
 
 from . import errors
-from .routes import account, health, home
+from .routes import account, drawings, health, home
 from .routes import auth as auth_routes
 from .routes import settings as settings_routes
 
-ROUTERS = (health.router, auth_routes.router, account.router, settings_routes.router, home.router)
+ROUTERS = (
+    health.router,
+    auth_routes.router,
+    account.router,
+    settings_routes.router,
+    home.router,
+    drawings.router,
+)
 
 
 def create_app(
@@ -33,6 +42,8 @@ def create_app(
     app.state.settings = settings
     app.state.engine = engine or app_engine()
     app.state.verifier = verifier or auth.dev_tokens(settings)
+    app.state.storage = Storage(settings)
+    app.state.queue = Queue(settings)
     flags.cache.ttl = settings.flag_cache_seconds
 
     app.add_middleware(

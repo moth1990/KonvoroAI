@@ -9,7 +9,13 @@ export const TENANTS = {
   classic: "classic@e2e.konboro.local", // home_chat off, 12 of 50, sample quotes
   near: "near@e2e.konboro.local", // 43 of 50: quota_near
   full: "full@e2e.konboro.local", // 50 of 50: quota_reached
+  // Uploads change the quota: one tenant per Playwright project, since the projects run at the same time.
+  uploadDesktop: "upload-desktop@e2e.konboro.local",
+  uploadMobile: "upload-mobile@e2e.konboro.local",
 } as const;
+
+/** The E2E worker runs this project's stages slowly, so a test can cancel mid-run (devtools/e2e.py). */
+export const SLOW_PROJECT = "E2E איטי";
 
 export const PASSWORD = "konboro-e2e-password";
 

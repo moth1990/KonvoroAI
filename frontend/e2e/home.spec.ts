@@ -89,7 +89,11 @@ test("quota at 100%: new quote is disabled and says why", async ({ page, request
   // Existing work stays available (01 §4.5).
   await expect(page.getByRole("link", { name: /בדיקת הצעה קיימת/ })).toBeEnabled();
   await page.goto("/new");
-  await expect(page.getByText("אי אפשר להתחיל הצעה חדשה החודש")).toBeVisible();
+  await page
+    .locator("#file-in")
+    .setInputFiles({ name: "a.pdf", mimeType: "application/pdf", buffer: Buffer.from("%PDF-1.7") });
+  await expect(page.getByTestId("start")).toBeDisabled();
+  await expect(page.getByTestId("start-note")).toHaveText("המכסה החודשית מלאה. אפשר להעלות גרסה חדשה של שרטוט קיים");
 });
 
 test("the chat builder route exists only with its flag", async ({ page, request }) => {

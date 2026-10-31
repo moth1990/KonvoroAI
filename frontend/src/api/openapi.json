@@ -49,6 +49,60 @@
         "title": "AuditOmissionsItem",
         "type": "object"
       },
+      "Body_upload_drawings_post": {
+        "properties": {
+          "customer": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Customer"
+          },
+          "files": {
+            "description": "The drawing: PDF, images, XLSX, CSV or ZIP",
+            "items": {
+              "contentMediaType": "application/octet-stream",
+              "type": "string"
+            },
+            "title": "Files",
+            "type": "array"
+          },
+          "project": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Project"
+          },
+          "revision_of": {
+            "anyOf": [
+              {
+                "pattern": "^drw_[0-9A-Z]{26}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Revision Of"
+          }
+        },
+        "required": [
+          "files"
+        ],
+        "title": "Body_upload_drawings_post",
+        "type": "object"
+      },
       "ErrorBody": {
         "properties": {
           "code": {
@@ -284,6 +338,276 @@
         "title": "PlanOut",
         "type": "object"
       },
+      "ProgressFileOut": {
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "page_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Page Count"
+          }
+        },
+        "required": [
+          "name",
+          "page_count"
+        ],
+        "title": "ProgressFileOut",
+        "type": "object"
+      },
+      "ProgressOut": {
+        "properties": {
+          "counted": {
+            "description": "Whether this upload is counted in the quota right now",
+            "title": "Counted",
+            "type": "boolean"
+          },
+          "counted_as": {
+            "enum": [
+              "new_drawing",
+              "revision"
+            ],
+            "title": "Counted As",
+            "type": "string"
+          },
+          "current_stage": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Current Stage"
+          },
+          "drawing_id": {
+            "title": "Drawing Id",
+            "type": "string"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Hebrew, when the pipeline failed",
+            "title": "Error"
+          },
+          "files": {
+            "items": {
+              "$ref": "#/components/schemas/ProgressFileOut"
+            },
+            "title": "Files",
+            "type": "array"
+          },
+          "name": {
+            "description": "The project's name, or else the first file's",
+            "title": "Name",
+            "type": "string"
+          },
+          "pages": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/ProgressPageOut"
+            },
+            "title": "Pages",
+            "type": "array"
+          },
+          "progress": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Progress",
+            "type": "number"
+          },
+          "quote_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quote Id"
+          },
+          "stages": {
+            "items": {
+              "$ref": "#/components/schemas/StageOut"
+            },
+            "title": "Stages",
+            "type": "array"
+          },
+          "status": {
+            "enum": [
+              "uploaded",
+              "processing",
+              "awaiting_confirmation",
+              "ready",
+              "failed",
+              "cancelled"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "summary": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ProgressSummaryOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "drawing_id",
+          "name",
+          "status",
+          "current_stage",
+          "progress",
+          "counted_as",
+          "counted",
+          "files",
+          "stages",
+          "quote_id"
+        ],
+        "title": "ProgressOut",
+        "type": "object"
+      },
+      "ProgressPageOut": {
+        "properties": {
+          "file_name": {
+            "title": "File Name",
+            "type": "string"
+          },
+          "page_id": {
+            "title": "Page Id",
+            "type": "string"
+          },
+          "page_kind": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Page Kind"
+          },
+          "page_no": {
+            "title": "Page No",
+            "type": "integer"
+          },
+          "route": {
+            "anyOf": [
+              {
+                "enum": [
+                  "process",
+                  "context",
+                  "skip"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Route"
+          },
+          "thumbnail_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Short-lived; load it, don't store it",
+            "title": "Thumbnail Url"
+          }
+        },
+        "required": [
+          "page_id",
+          "page_no",
+          "file_name",
+          "route",
+          "page_kind"
+        ],
+        "title": "ProgressPageOut",
+        "type": "object"
+      },
+      "ProgressSummaryOut": {
+        "description": "The done step's grid (01 §4.6 \"סיום\"). Products, prices and findings stay 0 until stages 4–7 are real.",
+        "properties": {
+          "findings": {
+            "title": "Findings",
+            "type": "integer"
+          },
+          "input_kind": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Input Kind"
+          },
+          "page_count": {
+            "title": "Page Count",
+            "type": "integer"
+          },
+          "pages_by_route": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Pages By Route",
+            "type": "object"
+          },
+          "panels": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Panels",
+            "type": "array"
+          },
+          "priced": {
+            "title": "Priced",
+            "type": "integer"
+          },
+          "products": {
+            "title": "Products",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "input_kind",
+          "panels",
+          "page_count",
+          "pages_by_route",
+          "products",
+          "priced",
+          "findings"
+        ],
+        "title": "ProgressSummaryOut",
+        "type": "object"
+      },
       "QuotaCounterOut": {
         "properties": {
           "counter": {
@@ -436,6 +760,36 @@
           "updated_at"
         ],
         "title": "QuoteListItem",
+        "type": "object"
+      },
+      "RevisableOut": {
+        "description": "A finished drawing a new version can follow (01 §4.6 item 1).",
+        "properties": {
+          "drawing_id": {
+            "title": "Drawing Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "drawing_id",
+          "name",
+          "version",
+          "updated_at"
+        ],
+        "title": "RevisableOut",
         "type": "object"
       },
       "SettingsOut": {
@@ -655,6 +1009,49 @@
         "title": "SettingsPatch",
         "type": "object"
       },
+      "StageOut": {
+        "properties": {
+          "name": {
+            "description": "Hebrew, as on the new-quote screen",
+            "title": "Name",
+            "type": "string"
+          },
+          "stage": {
+            "title": "Stage",
+            "type": "integer"
+          },
+          "status": {
+            "enum": [
+              "queued",
+              "running",
+              "done",
+              "failed",
+              "skipped"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "summary": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "A short Hebrew summary once the stage is done",
+            "title": "Summary"
+          }
+        },
+        "required": [
+          "stage",
+          "name",
+          "status"
+        ],
+        "title": "StageOut",
+        "type": "object"
+      },
       "TenantOut": {
         "properties": {
           "currency": {
@@ -706,6 +1103,109 @@
           "expires_in"
         ],
         "title": "TokenOut",
+        "type": "object"
+      },
+      "UploadOut": {
+        "properties": {
+          "counted_as": {
+            "description": "new_drawing: counts once stage 1 succeeds; revision: never counts (S05)",
+            "enum": [
+              "new_drawing",
+              "revision"
+            ],
+            "title": "Counted As",
+            "type": "string"
+          },
+          "drawing_id": {
+            "title": "Drawing Id",
+            "type": "string"
+          },
+          "files": {
+            "items": {
+              "$ref": "#/components/schemas/UploadedFileOut"
+            },
+            "title": "Files",
+            "type": "array"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "drawing_id",
+          "status",
+          "files",
+          "counted_as"
+        ],
+        "title": "UploadOut",
+        "type": "object"
+      },
+      "UploadedFileOut": {
+        "description": "One file of an upload. A rejected upload lists every file, each with its own error (01 §4.3).",
+        "properties": {
+          "detected_format": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Detected Format"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "01 §8 code, e.g. cad_not_supported",
+            "title": "Error"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Hebrew, ready to show next to the file",
+            "title": "Message"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "page_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Page Count"
+          },
+          "size_bytes": {
+            "title": "Size Bytes",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "name",
+          "size_bytes",
+          "detected_format",
+          "page_count"
+        ],
+        "title": "UploadedFileOut",
         "type": "object"
       },
       "UserOut": {
@@ -866,6 +1366,192 @@
         "summary": "Password Reset",
         "tags": [
           "auth"
+        ]
+      }
+    },
+    "/drawings": {
+      "post": {
+        "description": "Checks run in the order of 01 §4.3: quota, size, format, pages. One failing file rejects the upload.",
+        "operationId": "upload_drawings_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_drawings_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Upload",
+        "tags": [
+          "drawings"
+        ]
+      }
+    },
+    "/drawings/revisable": {
+      "get": {
+        "description": "Finished drawings a new version can follow, newest first (the \"new version\" picker).",
+        "operationId": "list_revisable_drawings_revisable_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/RevisableOut"
+                  },
+                  "title": "Response List Revisable Drawings Revisable Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Revisable",
+        "tags": [
+          "drawings"
+        ]
+      }
+    },
+    "/drawings/{drawing_id}/cancel": {
+      "post": {
+        "description": "Stops the pipeline at the next stage boundary and gives the quota back; the files stay (01 §4.6).",
+        "operationId": "cancel_drawings__drawing_id__cancel_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "drawing_id",
+            "required": true,
+            "schema": {
+              "pattern": "^drw_[0-9A-Z]{26}$",
+              "title": "Drawing Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgressOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Cancel",
+        "tags": [
+          "drawings"
+        ]
+      }
+    },
+    "/drawings/{drawing_id}/progress": {
+      "get": {
+        "description": "Polled every second by the new-quote screen (S05 decision).",
+        "operationId": "get_progress_drawings__drawing_id__progress_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "drawing_id",
+            "required": true,
+            "schema": {
+              "pattern": "^drw_[0-9A-Z]{26}$",
+              "title": "Drawing Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgressOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Progress",
+        "tags": [
+          "drawings"
         ]
       }
     },

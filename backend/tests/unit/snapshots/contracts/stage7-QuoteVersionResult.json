@@ -1,0 +1,926 @@
+{
+  "$defs": {
+    "CostSource": {
+      "additionalProperties": false,
+      "properties": {
+        "fx_rate": {
+          "anyOf": [
+            {
+              "examples": [
+                "0.15"
+              ],
+              "pattern": "^-?\\d+(\\.\\d+)?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fx Rate"
+        },
+        "original_currency": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Original Currency"
+        },
+        "price_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Price Date"
+        },
+        "price_list_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Price List Id"
+        },
+        "supplier": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Supplier"
+        },
+        "type": {
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "title": "CostSource",
+      "type": "object"
+    },
+    "Derived": {
+      "additionalProperties": false,
+      "properties": {
+        "explanation": {
+          "title": "Explanation",
+          "type": "string"
+        },
+        "from_component_ids": {
+          "default": [],
+          "items": {
+            "pattern": "^cmp_[0-9A-Za-z_]+$",
+            "type": "string"
+          },
+          "title": "From Component Ids",
+          "type": "array"
+        },
+        "rule_id": {
+          "title": "Rule Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "rule_id",
+        "explanation"
+      ],
+      "title": "Derived",
+      "type": "object"
+    },
+    "Discount": {
+      "additionalProperties": false,
+      "properties": {
+        "amount": {
+          "examples": [
+            "0.15"
+          ],
+          "pattern": "^-?\\d+(\\.\\d+)?$",
+          "title": "Amount",
+          "type": "string"
+        },
+        "pct": {
+          "examples": [
+            "0.15"
+          ],
+          "pattern": "^-?\\d+(\\.\\d+)?$",
+          "title": "Pct",
+          "type": "string"
+        }
+      },
+      "required": [
+        "pct",
+        "amount"
+      ],
+      "title": "Discount",
+      "type": "object"
+    },
+    "Line": {
+      "additionalProperties": false,
+      "properties": {
+        "component_id": {
+          "anyOf": [
+            {
+              "pattern": "^cmp_[0-9A-Za-z_]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Component Id"
+        },
+        "cost_source": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CostSource"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "derived": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Derived"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "is_derived": {
+          "default": false,
+          "title": "Is Derived",
+          "type": "boolean"
+        },
+        "issue_ids": {
+          "default": [],
+          "items": {
+            "pattern": "^iss_[0-9A-Za-z_]+$",
+            "type": "string"
+          },
+          "title": "Issue Ids",
+          "type": "array"
+        },
+        "line_cost": {
+          "anyOf": [
+            {
+              "examples": [
+                "0.15"
+              ],
+              "pattern": "^-?\\d+(\\.\\d+)?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Line Cost"
+        },
+        "line_id": {
+          "pattern": "^ln_[0-9A-Za-z_]+$",
+          "title": "Line Id",
+          "type": "string"
+        },
+        "line_total": {
+          "anyOf": [
+            {
+              "examples": [
+                "0.15"
+              ],
+              "pattern": "^-?\\d+(\\.\\d+)?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Line Total"
+        },
+        "line_type": {
+          "enum": [
+            "component",
+            "derived",
+            "labor",
+            "manual",
+            "missing"
+          ],
+          "title": "Line Type",
+          "type": "string"
+        },
+        "manufacturer": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Manufacturer"
+        },
+        "margin_pct": {
+          "anyOf": [
+            {
+              "examples": [
+                "0.15"
+              ],
+              "pattern": "^-?\\d+(\\.\\d+)?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Margin Pct"
+        },
+        "margin_rule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/MarginRule"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "override": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Override"
+        },
+        "parent_line_id": {
+          "anyOf": [
+            {
+              "pattern": "^ln_[0-9A-Za-z_]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parent Line Id"
+        },
+        "price_status": {
+          "enum": [
+            "ok",
+            "stale",
+            "discount_based",
+            "missing"
+          ],
+          "title": "Price Status",
+          "type": "string"
+        },
+        "qty": {
+          "description": "numeric(12,3): products sold by the metre can be fractional",
+          "examples": [
+            "4",
+            "2.5"
+          ],
+          "title": "Qty",
+          "type": [
+            "string",
+            "number"
+          ]
+        },
+        "rounding": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rounding"
+        },
+        "sku": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Sku"
+        },
+        "status": {
+          "enum": [
+            "green",
+            "yellow",
+            "red"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "status_reasons": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/StatusReason"
+          },
+          "title": "Status Reasons",
+          "type": "array"
+        },
+        "unit_cost": {
+          "anyOf": [
+            {
+              "examples": [
+                "0.15"
+              ],
+              "pattern": "^-?\\d+(\\.\\d+)?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Unit Cost"
+        },
+        "unit_price": {
+          "anyOf": [
+            {
+              "examples": [
+                "0.15"
+              ],
+              "pattern": "^-?\\d+(\\.\\d+)?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Unit Price"
+        },
+        "unit_price_raw": {
+          "anyOf": [
+            {
+              "examples": [
+                "0.15"
+              ],
+              "pattern": "^-?\\d+(\\.\\d+)?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Unit Price Raw"
+        }
+      },
+      "required": [
+        "line_id",
+        "line_type",
+        "component_id",
+        "sku",
+        "description",
+        "manufacturer",
+        "qty",
+        "unit_cost",
+        "price_status",
+        "unit_price_raw",
+        "unit_price",
+        "line_cost",
+        "line_total",
+        "margin_pct",
+        "status"
+      ],
+      "title": "Line",
+      "type": "object"
+    },
+    "LineCounts": {
+      "additionalProperties": false,
+      "properties": {
+        "green": {
+          "default": 0,
+          "title": "Green",
+          "type": "integer"
+        },
+        "red": {
+          "default": 0,
+          "title": "Red",
+          "type": "integer"
+        },
+        "yellow": {
+          "default": 0,
+          "title": "Yellow",
+          "type": "integer"
+        }
+      },
+      "title": "LineCounts",
+      "type": "object"
+    },
+    "MarginRule": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "markup",
+            "margin"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "level": {
+          "title": "Level",
+          "type": "string"
+        },
+        "rule_id": {
+          "title": "Rule Id",
+          "type": "string"
+        },
+        "value": {
+          "examples": [
+            "0.15"
+          ],
+          "pattern": "^-?\\d+(\\.\\d+)?$",
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "rule_id",
+        "level",
+        "kind",
+        "value"
+      ],
+      "title": "MarginRule",
+      "type": "object"
+    },
+    "PanelTotals": {
+      "additionalProperties": false,
+      "properties": {
+        "cost_total": {
+          "examples": [
+            "0.15"
+          ],
+          "pattern": "^-?\\d+(\\.\\d+)?$",
+          "title": "Cost Total",
+          "type": "string"
+        },
+        "line_counts": {
+          "$ref": "#/$defs/LineCounts",
+          "default": {
+            "green": 0,
+            "red": 0,
+            "yellow": 0
+          }
+        },
+        "price_total": {
+          "examples": [
+            "0.15"
+          ],
+          "pattern": "^-?\\d+(\\.\\d+)?$",
+          "title": "Price Total",
+          "type": "string"
+        },
+        "unpriced_count": {
+          "default": 0,
+          "title": "Unpriced Count",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "cost_total",
+        "price_total"
+      ],
+      "title": "PanelTotals",
+      "type": "object"
+    },
+    "PricingIssue": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "line_id": {
+          "anyOf": [
+            {
+              "pattern": "^ln_[0-9A-Za-z_]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Line Id"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "message"
+      ],
+      "title": "PricingIssue",
+      "type": "object"
+    },
+    "QuotePanel": {
+      "additionalProperties": false,
+      "properties": {
+        "lines": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Line"
+          },
+          "title": "Lines",
+          "type": "array"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "panel_id": {
+          "pattern": "^pnl_[0-9A-Za-z_]+$",
+          "title": "Panel Id",
+          "type": "string"
+        },
+        "totals": {
+          "$ref": "#/$defs/PanelTotals"
+        }
+      },
+      "required": [
+        "panel_id",
+        "name",
+        "totals"
+      ],
+      "title": "QuotePanel",
+      "type": "object"
+    },
+    "QuoteTotals": {
+      "additionalProperties": false,
+      "properties": {
+        "cost_total": {
+          "examples": [
+            "0.15"
+          ],
+          "pattern": "^-?\\d+(\\.\\d+)?$",
+          "title": "Cost Total",
+          "type": "string"
+        },
+        "discount": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Discount"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "gross_total": {
+          "examples": [
+            "0.15"
+          ],
+          "pattern": "^-?\\d+(\\.\\d+)?$",
+          "title": "Gross Total",
+          "type": "string"
+        },
+        "line_counts": {
+          "$ref": "#/$defs/LineCounts",
+          "default": {
+            "green": 0,
+            "red": 0,
+            "yellow": 0
+          }
+        },
+        "margin_abs": {
+          "examples": [
+            "0.15"
+          ],
+          "pattern": "^-?\\d+(\\.\\d+)?$",
+          "title": "Margin Abs",
+          "type": "string"
+        },
+        "margin_pct": {
+          "anyOf": [
+            {
+              "examples": [
+                "0.15"
+              ],
+              "pattern": "^-?\\d+(\\.\\d+)?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Margin Pct"
+        },
+        "net_total": {
+          "examples": [
+            "0.15"
+          ],
+          "pattern": "^-?\\d+(\\.\\d+)?$",
+          "title": "Net Total",
+          "type": "string"
+        },
+        "price_total": {
+          "examples": [
+            "0.15"
+          ],
+          "pattern": "^-?\\d+(\\.\\d+)?$",
+          "title": "Price Total",
+          "type": "string"
+        },
+        "unpriced_count": {
+          "default": 0,
+          "title": "Unpriced Count",
+          "type": "integer"
+        },
+        "vat": {
+          "examples": [
+            "0.15"
+          ],
+          "pattern": "^-?\\d+(\\.\\d+)?$",
+          "title": "Vat",
+          "type": "string"
+        },
+        "vat_rate": {
+          "examples": [
+            "0.15"
+          ],
+          "pattern": "^-?\\d+(\\.\\d+)?$",
+          "title": "Vat Rate",
+          "type": "string"
+        }
+      },
+      "required": [
+        "cost_total",
+        "price_total",
+        "net_total",
+        "margin_abs",
+        "margin_pct",
+        "vat_rate",
+        "vat",
+        "gross_total"
+      ],
+      "title": "QuoteTotals",
+      "type": "object"
+    },
+    "Snapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "derived_rules_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Derived Rules Version"
+        },
+        "fx_rates": {
+          "default": [],
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "title": "Fx Rates",
+          "type": "array"
+        },
+        "margin_rules_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Margin Rules Version"
+        },
+        "price_list_ids": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Price List Ids",
+          "type": "array"
+        },
+        "vat_rate_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Vat Rate Id"
+        }
+      },
+      "title": "Snapshot",
+      "type": "object"
+    },
+    "StatusReason": {
+      "additionalProperties": false,
+      "properties": {
+        "issue_id": {
+          "anyOf": [
+            {
+              "pattern": "^iss_[0-9A-Za-z_]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Issue Id"
+        },
+        "source": {
+          "enum": [
+            "confidence",
+            "match",
+            "validator",
+            "price",
+            "missing",
+            "user"
+          ],
+          "title": "Source",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "green",
+            "yellow",
+            "red"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "value": {
+          "default": null,
+          "title": "Value"
+        }
+      },
+      "required": [
+        "source",
+        "status"
+      ],
+      "title": "StatusReason",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "currency": {
+      "default": "ILS",
+      "title": "Currency",
+      "type": "string"
+    },
+    "customer_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Customer Id"
+    },
+    "drawing_id": {
+      "anyOf": [
+        {
+          "pattern": "^drw_[0-9A-Za-z_]+$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Drawing Id"
+    },
+    "panels": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/QuotePanel"
+      },
+      "title": "Panels",
+      "type": "array"
+    },
+    "pricing_issues": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/PricingIssue"
+      },
+      "title": "Pricing Issues",
+      "type": "array"
+    },
+    "quote_date": {
+      "anyOf": [
+        {
+          "format": "date",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Quote Date"
+    },
+    "quote_id": {
+      "pattern": "^quo_[0-9A-Za-z_]+$",
+      "title": "Quote Id",
+      "type": "string"
+    },
+    "snapshot": {
+      "$ref": "#/$defs/Snapshot",
+      "default": {
+        "derived_rules_version": null,
+        "fx_rates": [],
+        "margin_rules_version": null,
+        "price_list_ids": [],
+        "vat_rate_id": null
+      }
+    },
+    "status": {
+      "enum": [
+        "draft",
+        "sent"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "tenant_id": {
+      "title": "Tenant Id",
+      "type": "string"
+    },
+    "totals": {
+      "$ref": "#/$defs/QuoteTotals"
+    },
+    "trace_id": {
+      "pattern": "^trc_[0-9A-Za-z_]+$",
+      "title": "Trace Id",
+      "type": "string"
+    },
+    "version": {
+      "minimum": 1,
+      "title": "Version",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "quote_id",
+    "version",
+    "status",
+    "drawing_id",
+    "tenant_id",
+    "totals",
+    "trace_id"
+  ],
+  "title": "QuoteVersionResult",
+  "type": "object"
+}

@@ -21,6 +21,7 @@ from konboro.domain.quota import month_start
 from konboro.services import auth
 from konboro.settings import Settings
 
+from .aws import aws_settings
 from .factory import GLOBAL_PLAN
 
 DEV_PASSWORD = "s03-test-password"
@@ -78,9 +79,7 @@ def set_tenant_flag(engine: Engine, tenant_id: str, key: str, enabled: bool) -> 
 
 
 def api_settings(directory: list[ApiTenant]) -> Settings:
-    return Settings(  # type: ignore[call-arg]
-        _env_file=None,  # hermetic: never read a developer's .env
-        env="test",
+    return aws_settings(  # hermetic: never reads a developer's .env; local S3 and this run's own queues
         dev_password=SecretStr(DEV_PASSWORD),
         dev_users=",".join(f"{t.email}={t.tenant_id}" for t in directory),
         flag_cache_seconds=0,  # a flag change is visible on the next request

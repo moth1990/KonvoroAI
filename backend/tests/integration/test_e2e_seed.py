@@ -30,6 +30,8 @@ def test_e2e_tenants_have_their_states(migrated_db: dict[str, Engine]) -> None:
         "classic@e2e.konboro.local": (False, 12, "ok"),
         "near@e2e.konboro.local": (False, 43, "quota_near"),
         "full@e2e.konboro.local": (False, 50, "quota_reached"),
+        "upload-desktop@e2e.konboro.local": (False, 12, "ok"),
+        "upload-mobile@e2e.konboro.local": (False, 12, "ok"),
     }
     sample = states["classic@e2e.konboro.local"][3]
     assert sample.queue_pending == 3

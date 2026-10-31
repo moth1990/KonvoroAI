@@ -1,4 +1,4 @@
-"""Quota in the DB (01 §4.5): atomic reservations, confirm and release, 24 h expiry, the events log."""
+"""Quota in the DB (01 §4.5): atomic reservations, confirm, release and refund, 24 h expiry, the events log."""
 
 from concurrent.futures import ThreadPoolExecutor
 from datetime import UTC, date, datetime, timedelta
@@ -115,6 +115,52 @@ def test_closing_event_needs_a_reservation(app_engine: Engine) -> None:
     with tenant_session(tid, app_engine) as s, pytest.raises(IntegrityError):
         s.add(m.QuotaEvent(id=new_id("qev"), tenant_id=tid, month=MONTH, kind="confirm"))
         s.flush()
+
+
+def test_refund_gives_a_counted_upload_back_once(app_engine: Engine) -> None:
+    tid = make_tenant(app_engine, limit=1)
+    with tenant_session(tid, app_engine) as s:
+        rid = quota.reserve(s, tid, now=NOW)
+        quota.confirm(s, tid, rid)
+    with tenant_session(tid, app_engine) as s:
+        assert quota.refund(s, tid, rid, "stage_failed") is True
+        assert quota.refund(s, tid, rid, "stage_failed") is False  # a retry can't refund twice
+    assert usage(app_engine, tid) == (0, 0)
+    assert events(app_engine, tid) == ["reserve", "confirm", "refund"]
+    with tenant_session(tid, app_engine) as s:
+        quota.reserve(s, tid, now=NOW)  # the slot is free again
+
+
+def test_only_a_confirmed_upload_can_be_refunded(app_engine: Engine) -> None:
+    tid = make_tenant(app_engine, limit=5)
+    with tenant_session(tid, app_engine) as s:
+        rid = quota.reserve(s, tid, now=NOW)
+        assert quota.refund(s, tid, rid, "cancelled") is False
+    assert usage(app_engine, tid) == (0, 1)
+    assert events(app_engine, tid) == ["reserve"]
+
+
+def test_one_refund_per_reservation_in_the_db(app_engine: Engine) -> None:
+    tid = make_tenant(app_engine, limit=5)
+    with tenant_session(tid, app_engine) as s:
+        rid = quota.reserve(s, tid, now=NOW)
+        quota.confirm(s, tid, rid)
+        quota.refund(s, tid, rid, "cancelled")
+    with tenant_session(tid, app_engine) as s, pytest.raises(IntegrityError):
+        s.add(m.QuotaEvent(id=new_id("qev"), tenant_id=tid, month=MONTH, kind="refund", reservation_id=rid))
+        s.flush()
+
+
+def test_give_back_releases_before_stage_1_and_refunds_after(app_engine: Engine) -> None:
+    tid = make_tenant(app_engine, limit=5)
+    with tenant_session(tid, app_engine) as s:
+        early, late = quota.reserve(s, tid, now=NOW), quota.reserve(s, tid, now=NOW)
+        quota.confirm(s, tid, late)
+    with tenant_session(tid, app_engine) as s:
+        assert quota.give_back(s, tid, early, "cancelled") == "released"
+        assert quota.give_back(s, tid, late, "stage_failed") == "refunded"
+        assert quota.give_back(s, tid, late, "stage_failed") == "none"
+    assert usage(app_engine, tid) == (0, 0)
 
 
 def test_stale_reservations_expire_after_24_hours(app_engine: Engine) -> None:

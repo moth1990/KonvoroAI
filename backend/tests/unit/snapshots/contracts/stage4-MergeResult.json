@@ -1,0 +1,780 @@
+{
+  "$defs": {
+    "AttributeValue": {
+      "additionalProperties": false,
+      "properties": {
+        "confidence": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Confidence"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "enum": [
+                "drawing",
+                "cad_attrib",
+                "graphic",
+                "shared_label",
+                "bom"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Source"
+        },
+        "span_ids": {
+          "default": [],
+          "items": {
+            "pattern": "^ts_[0-9A-Za-z_]+$",
+            "type": "string"
+          },
+          "title": "Span Ids",
+          "type": "array"
+        },
+        "value": {
+          "title": "Value"
+        }
+      },
+      "required": [
+        "value",
+        "source",
+        "confidence"
+      ],
+      "title": "AttributeValue",
+      "type": "object"
+    },
+    "Cable": {
+      "additionalProperties": false,
+      "properties": {
+        "cores": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cores"
+        },
+        "cross_section_mm2": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cross Section Mm2"
+        },
+        "raw": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Raw"
+        }
+      },
+      "title": "Cable",
+      "type": "object"
+    },
+    "CircuitContext": {
+      "additionalProperties": false,
+      "properties": {
+        "cable": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Cable"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "circuit_numbers": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Circuit Numbers",
+          "type": "array"
+        },
+        "load_current_a": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Load Current A"
+        },
+        "outputs": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Outputs",
+          "type": "array"
+        },
+        "upstream_component_id": {
+          "anyOf": [
+            {
+              "pattern": "^cmp_[0-9A-Za-z_]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Upstream Component Id"
+        },
+        "upstream_designator": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Upstream Designator"
+        }
+      },
+      "title": "CircuitContext",
+      "type": "object"
+    },
+    "Component": {
+      "additionalProperties": false,
+      "properties": {
+        "attributes": {
+          "additionalProperties": {
+            "$ref": "#/$defs/AttributeValue"
+          },
+          "default": {},
+          "title": "Attributes",
+          "type": "object"
+        },
+        "brand_hint": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Brand Hint"
+        },
+        "circuit_context": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CircuitContext"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "component_id": {
+          "pattern": "^cmp_[0-9A-Za-z_]+$",
+          "title": "Component Id",
+          "type": "string"
+        },
+        "confidence": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "designators": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Designators",
+          "type": "array"
+        },
+        "drawing_id": {
+          "pattern": "^drw_[0-9A-Za-z_]+$",
+          "title": "Drawing Id",
+          "type": "string"
+        },
+        "explicit_texts": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Explicit Texts",
+          "type": "array"
+        },
+        "family": {
+          "title": "Family",
+          "type": "string"
+        },
+        "instance_ids": {
+          "default": [],
+          "items": {
+            "pattern": "^ins_[0-9A-Za-z_]+$",
+            "type": "string"
+          },
+          "title": "Instance Ids",
+          "type": "array"
+        },
+        "multiplicity_inherited": {
+          "default": false,
+          "title": "Multiplicity Inherited",
+          "type": "boolean"
+        },
+        "panel_id": {
+          "pattern": "^pnl_[0-9A-Za-z_]+$",
+          "title": "Panel Id",
+          "type": "string"
+        },
+        "parent_designators": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Parent Designators",
+          "type": "array"
+        },
+        "quantity": {
+          "minimum": 0,
+          "title": "Quantity",
+          "type": "integer"
+        },
+        "source_det_ids": {
+          "default": [],
+          "items": {
+            "pattern": "^det_[0-9A-Za-z_]+$",
+            "type": "string"
+          },
+          "title": "Source Det Ids",
+          "type": "array"
+        },
+        "status": {
+          "enum": [
+            "accepted",
+            "uncertain"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "supply_scope": {
+          "default": "in_panel",
+          "enum": [
+            "in_panel",
+            "other_location",
+            "prepare_only",
+            "by_others"
+          ],
+          "title": "Supply Scope",
+          "type": "string"
+        },
+        "symbol_class": {
+          "title": "Symbol Class",
+          "type": "string"
+        }
+      },
+      "required": [
+        "component_id",
+        "drawing_id",
+        "panel_id",
+        "family",
+        "symbol_class",
+        "quantity",
+        "confidence",
+        "status"
+      ],
+      "title": "Component",
+      "type": "object"
+    },
+    "ContextElement": {
+      "additionalProperties": false,
+      "properties": {
+        "bbox": {
+          "maxItems": 4,
+          "minItems": 4,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Bbox",
+          "type": "array"
+        },
+        "det_id": {
+          "pattern": "^det_[0-9A-Za-z_]+$",
+          "title": "Det Id",
+          "type": "string"
+        },
+        "family": {
+          "title": "Family",
+          "type": "string"
+        },
+        "panel_id": {
+          "anyOf": [
+            {
+              "pattern": "^pnl_[0-9A-Za-z_]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Panel Id"
+        }
+      },
+      "required": [
+        "det_id",
+        "family",
+        "panel_id",
+        "bbox"
+      ],
+      "title": "ContextElement",
+      "type": "object"
+    },
+    "Instance": {
+      "additionalProperties": false,
+      "properties": {
+        "attributes": {
+          "additionalProperties": {
+            "$ref": "#/$defs/AttributeValue"
+          },
+          "default": {},
+          "title": "Attributes",
+          "type": "object"
+        },
+        "bbox": {
+          "maxItems": 4,
+          "minItems": 4,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Bbox",
+          "type": "array"
+        },
+        "brand_hint": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Brand Hint"
+        },
+        "component_id": {
+          "anyOf": [
+            {
+              "pattern": "^cmp_[0-9A-Za-z_]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Component Id"
+        },
+        "confidence": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "det_id": {
+          "pattern": "^det_[0-9A-Za-z_]+$",
+          "title": "Det Id",
+          "type": "string"
+        },
+        "explicit_texts": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Explicit Texts",
+          "type": "array"
+        },
+        "family": {
+          "title": "Family",
+          "type": "string"
+        },
+        "instance_id": {
+          "pattern": "^ins_[0-9A-Za-z_]+$",
+          "title": "Instance Id",
+          "type": "string"
+        },
+        "issues": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/StageIssue"
+          },
+          "title": "Issues",
+          "type": "array"
+        },
+        "method": {
+          "enum": [
+            "cad_attrib",
+            "geometric",
+            "agent",
+            "fallback_geometric"
+          ],
+          "title": "Method",
+          "type": "string"
+        },
+        "multiplicity": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Multiplicity",
+          "type": "integer"
+        },
+        "page_id": {
+          "pattern": "^pg_[0-9A-Za-z_]+$",
+          "title": "Page Id",
+          "type": "string"
+        },
+        "panel_id": {
+          "anyOf": [
+            {
+              "pattern": "^pnl_[0-9A-Za-z_]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Panel Id"
+        },
+        "status": {
+          "enum": [
+            "accepted",
+            "uncertain",
+            "missing"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "symbol_class": {
+          "title": "Symbol Class",
+          "type": "string"
+        }
+      },
+      "required": [
+        "instance_id",
+        "det_id",
+        "page_id",
+        "panel_id",
+        "bbox",
+        "family",
+        "symbol_class",
+        "method",
+        "status",
+        "confidence"
+      ],
+      "title": "Instance",
+      "type": "object"
+    },
+    "MergeStats": {
+      "additionalProperties": false,
+      "properties": {
+        "by_method": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "default": {},
+          "title": "By Method",
+          "type": "object"
+        },
+        "citation_mismatches": {
+          "default": 0,
+          "title": "Citation Mismatches",
+          "type": "integer"
+        },
+        "component_count": {
+          "default": 0,
+          "title": "Component Count",
+          "type": "integer"
+        },
+        "instance_count": {
+          "default": 0,
+          "title": "Instance Count",
+          "type": "integer"
+        },
+        "missing_count": {
+          "default": 0,
+          "title": "Missing Count",
+          "type": "integer"
+        },
+        "shared_labels": {
+          "default": 0,
+          "title": "Shared Labels",
+          "type": "integer"
+        },
+        "tiles_total": {
+          "default": 0,
+          "title": "Tiles Total",
+          "type": "integer"
+        },
+        "tiles_with_agent": {
+          "default": 0,
+          "title": "Tiles With Agent",
+          "type": "integer"
+        }
+      },
+      "title": "MergeStats",
+      "type": "object"
+    },
+    "MissingInstance": {
+      "additionalProperties": false,
+      "properties": {
+        "attributes": {
+          "additionalProperties": {
+            "$ref": "#/$defs/AttributeValue"
+          },
+          "default": {},
+          "title": "Attributes",
+          "type": "object"
+        },
+        "bbox": {
+          "maxItems": 4,
+          "minItems": 4,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Bbox",
+          "type": "array"
+        },
+        "confidence": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "family": {
+          "title": "Family",
+          "type": "string"
+        },
+        "instance_id": {
+          "pattern": "^ins_[0-9A-Za-z_]+$",
+          "title": "Instance Id",
+          "type": "string"
+        },
+        "origin": {
+          "title": "Origin",
+          "type": "string"
+        },
+        "page_id": {
+          "pattern": "^pg_[0-9A-Za-z_]+$",
+          "title": "Page Id",
+          "type": "string"
+        },
+        "panel_id": {
+          "anyOf": [
+            {
+              "pattern": "^pnl_[0-9A-Za-z_]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Panel Id"
+        },
+        "status": {
+          "const": "missing",
+          "default": "missing",
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "instance_id",
+        "page_id",
+        "panel_id",
+        "bbox",
+        "family",
+        "origin",
+        "confidence"
+      ],
+      "title": "MissingInstance",
+      "type": "object"
+    },
+    "StageIssue": {
+      "additionalProperties": false,
+      "description": "A warning or error a stage reports about its input (01 §6.5). `message` is Hebrew, ready to show.",
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "page_id": {
+          "anyOf": [
+            {
+              "pattern": "^pg_[0-9A-Za-z_]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Id"
+        },
+        "severity": {
+          "enum": [
+            "info",
+            "warning",
+            "error"
+          ],
+          "title": "Severity",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "severity",
+        "message"
+      ],
+      "title": "StageIssue",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "components": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Component"
+      },
+      "title": "Components",
+      "type": "array"
+    },
+    "context_elements": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/ContextElement"
+      },
+      "title": "Context Elements",
+      "type": "array"
+    },
+    "drawing_id": {
+      "pattern": "^drw_[0-9A-Za-z_]+$",
+      "title": "Drawing Id",
+      "type": "string"
+    },
+    "instances": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/Instance"
+      },
+      "title": "Instances",
+      "type": "array"
+    },
+    "issues": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/StageIssue"
+      },
+      "title": "Issues",
+      "type": "array"
+    },
+    "missing": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/MissingInstance"
+      },
+      "title": "Missing",
+      "type": "array"
+    },
+    "stats": {
+      "$ref": "#/$defs/MergeStats",
+      "default": {
+        "by_method": {},
+        "citation_mismatches": 0,
+        "component_count": 0,
+        "instance_count": 0,
+        "missing_count": 0,
+        "shared_labels": 0,
+        "tiles_total": 0,
+        "tiles_with_agent": 0
+      }
+    },
+    "trace_id": {
+      "pattern": "^trc_[0-9A-Za-z_]+$",
+      "title": "Trace Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "drawing_id",
+    "trace_id"
+  ],
+  "title": "MergeResult",
+  "type": "object"
+}

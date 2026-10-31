@@ -3,10 +3,10 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends
-from sqlalchemy import select
 
-from konboro.db.models import Plan, Tenant, TenantPlanOverride, User
+from konboro.db.models import Plan, Tenant, User
 from konboro.domain.permissions import Permission
+from konboro.services import plan as plan_limits
 from konboro.services import quota
 
 from ..deps import Actor, require
@@ -41,9 +41,7 @@ def me(actor: Annotated[Actor, Depends(require(Permission.ACCOUNT_READ))]) -> Me
     user = s.get_one(User, actor.user_id)
     tenant = s.get_one(Tenant, actor.tenant_id)
     plan = s.get_one(Plan, tenant.plan_id)
-    override = s.scalar(select(TenantPlanOverride).where(TenantPlanOverride.tenant_id == actor.tenant_id))
     limits = quota.tenant_quota(s, actor.tenant_id).limits
-    pages = override.max_pages_per_file if override and override.max_pages_per_file is not None else None
     return MeOut(
         user=UserOut(id=user.id, email=user.email, display_name=user.display_name, role=user.role),
         tenant=TenantOut(id=tenant.id, name=tenant.name, timezone=tenant.timezone, currency=tenant.currency),
@@ -52,7 +50,7 @@ def me(actor: Annotated[Actor, Depends(require(Permission.ACCOUNT_READ))]) -> Me
             name_he=plan.name_he,
             monthly_quote_limit=limits.monthly_quote_limit,
             monthly_audit_limit=limits.monthly_audit_limit,
-            max_pages_per_file=pages if pages is not None else plan.max_pages_per_file,
+            max_pages_per_file=plan_limits.max_pages_per_file(s, actor.tenant_id),
         ),
         flags=actor.flags,
         quota=quota_out(actor),
