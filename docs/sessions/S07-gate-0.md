@@ -6,7 +6,7 @@
 | **Branch** | `s07-gate-0` |
 | **Depends on** | S06 |
 | **Status** | in review |
-| **PR** | |
+| **PR** | [moth1990/KonvoroAI#8](https://github.com/moth1990/KonvoroAI/pull/8) |
 
 ## Goal
 
