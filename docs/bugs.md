@@ -25,4 +25,4 @@ Every bug found during development goes here, including bugs fixed in the same s
 
 | ID | Found in | Sev | Area | Summary | Fixed in |
 | --- | --- | --- | --- | --- | --- |
-| | | | | | |
+| BUG-001 | S01 | P1 | CI / licenses | The npm license gate never ran. The script was named `licenses`, and `pnpm licenses` is a built-in pnpm command that shadows it: it printed a usage error and exited 1. The script is now `license-check`, called with `pnpm run`. A probe with an AGPL package now fails as it should | S01 |

@@ -4,3 +4,15 @@ __pycache__/
 .venv/
 .env
 .DS_Store
+.env.*
+!.env.example
+node_modules/
+dist/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+frontend/playwright-report/
+frontend/test-results/
+frontend/e2e/fidelity/out/
+eval/reports/
