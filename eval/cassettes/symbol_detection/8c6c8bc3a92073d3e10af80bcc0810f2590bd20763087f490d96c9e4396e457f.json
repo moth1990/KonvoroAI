@@ -1,0 +1,103 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 409,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            399,
+            3,
+            481,
+            45
+          ],
+          "box_text": "C1",
+          "family": "contactor",
+          "orientation": 0,
+          "role": "coil",
+          "sure": true,
+          "symbol_class": "contactor",
+          "tag": "C1"
+        },
+        {
+          "box": [
+            665,
+            3,
+            747,
+            45
+          ],
+          "box_text": "C2",
+          "family": "contactor",
+          "orientation": 0,
+          "role": "coil",
+          "sure": true,
+          "symbol_class": "contactor",
+          "tag": "C2"
+        },
+        {
+          "box": [
+            78,
+            324,
+            123,
+            360
+          ],
+          "box_text": null,
+          "family": "socket_outlet",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "socket_outlet",
+          "tag": null
+        },
+        {
+          "box": [
+            181,
+            324,
+            226,
+            360
+          ],
+          "box_text": null,
+          "family": "socket_outlet",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "socket_outlet",
+          "tag": null
+        },
+        {
+          "box": [
+            939,
+            478,
+            967,
+            508
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "terminal",
+          "tag": "31"
+        },
+        {
+          "box": [
+            943,
+            4,
+            1024,
+            76
+          ],
+          "box_text": null,
+          "family": "changeover_switch",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "changeover_switch",
+          "tag": "T1"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

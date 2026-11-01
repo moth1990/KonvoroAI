@@ -90,7 +90,7 @@ Schema changes are Alembic migrations in `backend/alembic/versions/`. Update `do
 
 **The pipeline** (00 §4–5, 12 §3):
 - **Contracts.** `konboro/contracts/` holds one Pydantic model per stage boundary, taken from each spec's §6. `tests/unit/test_contracts.py` validates every spec example against its model and pins each schema. A contract change is a change to the spec that defines it and to every spec that consumes it.
-- **Stages.** `konboro/pipeline/stages/sN_*.py` are stubs since S05; stage 1 is real since S08 (its parts are in `pipeline/intake/`) and stage 2 since S10 (`pipeline/extraction/`; OCR goes through the `OcrEngine` interface, `ClaudeVisionOcr` until S31). A later session replaces one by writing a function `run(ctx) -> Contract` that reads earlier outputs through `ctx.output(n, Model)` and calls the model only through `ctx.llm`, which writes each call to `llm_calls`. The coordinator (`pipeline/coordinator.py`) doesn't change.
+- **Stages.** `konboro/pipeline/stages/sN_*.py` are stubs since S05; stage 1 is real since S08 (its parts are in `pipeline/intake/`), stage 2 since S10 (`pipeline/extraction/`; OCR goes through the `OcrEngine` interface, `ClaudeVisionOcr` until S31) and stage 3 since S12 (`pipeline/detection/`; the `symbol_detection` route stands in for the family detector until phase 4, the symbol library is data in `detection/library.py` seeded into the global tables, and its reference drawings come from `python -m konboro.devtools.draw_symbols`). A later session replaces one by writing a function `run(ctx) -> Contract` that reads earlier outputs through `ctx.output(n, Model)` and calls the model only through `ctx.llm`, which writes each call to `llm_calls`. The coordinator (`pipeline/coordinator.py`) doesn't change.
 - **Queues.** One SQS queue per stage (`konboro-s1-intake` … `-s7-pricing`), each sending to `konboro-dlq` after 3 failed receives. Messages carry IDs only (`StageMessage`). Files and stage outputs live in S3 under `tenants/{tenant_id}/`, through `services/storage.py`, which refuses another tenant's key.
 
 ## Commands
@@ -161,6 +161,5 @@ Each phase ends with a **gate session** that fixes the open bug list and checks 
 
 Resolve each one with the user when its session arrives, then fix the spec in the same PR.
 
-- 02 §2.6 says duplicates are removed after stage 4, but 03 §3.5 moved that into stage 3. Due in S12.
 - Flag keys differ between the two references. The prototype uses `chat_builder`, `voice` and `unresolved`; spec 13 uses `chat_quote_builder`, `voice_input` and `unresolved_overlay`. **The spec's keys win** everywhere in code.
 - `golden/NEVIS-1/labels.json` uses page kind `single_line` where the other files use `single_line_diagram`. The eval normalizer maps it; the file stays as is.

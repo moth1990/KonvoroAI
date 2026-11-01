@@ -1,0 +1,88 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 342,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            126,
+            296,
+            222,
+            383
+          ],
+          "box_text": null,
+          "family": "switch_disconnector",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "switch_disconnector",
+          "tag": null
+        },
+        {
+          "box": [
+            435,
+            648,
+            502,
+            749
+          ],
+          "box_text": null,
+          "family": "switch_disconnector",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "switch_disconnector",
+          "tag": null
+        },
+        {
+          "box": [
+            825,
+            556,
+            923,
+            656
+          ],
+          "box_text": "G",
+          "family": "measuring_instrument",
+          "orientation": 90,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "motor_load",
+          "tag": null
+        },
+        {
+          "box": [
+            120,
+            591,
+            151,
+            621
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "terminal",
+          "tag": null
+        },
+        {
+          "box": [
+            528,
+            648,
+            550,
+            668
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "terminal",
+          "tag": null
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

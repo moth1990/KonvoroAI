@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1541,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 108,
+    "payload": {
+      "confidence": 0.6,
+      "decision": "none_of_these",
+      "reason": "הסמל הוא מגע מתג עם סמל מוט מעוין (מברשת) על הקו, ללא איקס או מלבן נתיך, ולכן אינו תואם אף מועמד.}",
+      "symbol_class": null
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

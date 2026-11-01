@@ -8,6 +8,7 @@ import pytest
 from eval.canonical import (
     CanonAudit,
     CanonComponent,
+    CanonDetection,
     CanonDifference,
     CanonPage,
     CanonPanel,
@@ -263,7 +264,7 @@ def test_backtest_na() -> None:
 def test_score_drawing_has_every_section() -> None:
     label = drawing(CanonPanel(name="P", components=(comp("rcd"),)), audit=CONFIRMED, quote_total=Decimal(100))
     scores = score_drawing(label, predicted(quote_total=Decimal(100)))
-    assert set(scores) == {"s1", "s2", "s4", "audit", "pricing"}
+    assert set(scores) == {"s1", "s2", "s3", "s3_family", "s4", "audit", "pricing"}
     assert scores["pricing"]["backtest_within_5pct"].value == 1.0
 
 
@@ -306,3 +307,82 @@ def test_designator_recall_leaves_out_what_is_drawn_only_on_other_pages() -> Non
     )
     found = stage2.score(label, predicted(span_texts=("PM/MS1",)))["designator_recall"]
     assert (found.num, found.den) == (1, 2)  # RF is on the front view only; Q1 has no pages, so it counts
+
+
+# --- stage 3 (S12) ----------------------------------------------------------------------------------------------
+
+
+def det(
+    family: str,
+    designator: str | None = None,
+    page: int = 3,
+    bbox: tuple[float, float, float, float] = (0, 0, 10, 10),
+    role: str = "device",
+    billable: bool = True,
+) -> CanonDetection:
+    return CanonDetection(
+        page_no=page,
+        family=family,
+        role=role,
+        designator=designator,
+        bbox=bbox,
+        billable=billable,
+    )
+
+
+def test_stage_3_designator_recall_and_family_accuracy() -> None:
+    from eval.metrics import stage3
+
+    pages = (CanonPage(no=3, kind="single_line_diagram", route="process"),)
+    label = drawing(
+        CanonPanel(
+            name="P",
+            components=(
+                CanonComponent(family="circuit_breaker", designators=("F1", "F2", "F3"), qty=3),  # "F1–F3", expanded
+                CanonComponent(family="contactor", designators=("C1",), qty=1),
+                CanonComponent(family="enclosure", designators=(), qty=1),  # never drawn
+            ),
+        ),
+        pages=pages,
+    )
+    dets = (
+        det("circuit_breaker", "F1"),
+        det("circuit_breaker", "F2-F3", bbox=(50, 0, 60, 10)),  # a range on the drawing counts for both
+        det("relay", "C1", role="coil", bbox=(100, 0, 110, 10)),  # found, but with another family
+        det("circuit_breaker", "F1", bbox=(1, 0, 10, 10)),  # a copy left behind: a duplicate
+    )
+    scores, by_family = stage3.score(
+        label, predicted(pages=pages, detections=dets, detection={"detections": 4, "disambiguation_calls": 1})
+    )
+    assert values(scores) == {
+        "designator_recall": 1.0,
+        "family_accuracy": 0.75,
+        "duplicates_left": 1,
+        "llm_share": 0.25,
+    }
+    assert values(by_family) == {"circuit_breaker": 1.0, "contactor": 0.0}
+    assert stage3.score(label, predicted())[0]["designator_recall"].value is None  # stage 3 wrote nothing
+
+
+def test_stage_3_counts_families_on_a_plan_without_designators() -> None:
+    from eval.metrics import stage3
+
+    pages = (CanonPage(no=1, kind="single_line_diagram", route="process"),)
+    label = drawing(
+        CanonPanel(name="P", components=(comp("rcd"), comp("rcd", 4), comp("time_switch"), comp("contactor"))),
+        pages=pages,
+    )
+    dets = (
+        det("rcd"),
+        det("rcd", bbox=(20, 0, 30, 10)),
+        det("rcd", bbox=(40, 0, 50, 10)),
+        det("rcd", role="relay_contact", bbox=(60, 0, 70, 10)),
+        det("busbar", billable=False, bbox=(0, 50, 99, 52)),
+    )
+    dets += (det("contactor", role="coil", bbox=(80, 0, 90, 10)),)  # a contactor drawn as its coil box
+    scores, by_family = stage3.score(label, predicted(detections=dets))
+    assert values(scores)["family_count_recall"] == pytest.approx(3 / 4)  # the time switch is missing
+    assert values(by_family) == {"rcd": 1.0, "time_switch": 0.0, "contactor": 1.0}
+    bom = drawing(CanonPanel(name="P", components=(comp("rcd"),)))  # no pages: a photographed BOM
+    assert stage3.score(bom, predicted(detections=()))[0]["designator_recall"].value is None
+    assert values(scores)["llm_share"] is None  # no detection counts: n/a

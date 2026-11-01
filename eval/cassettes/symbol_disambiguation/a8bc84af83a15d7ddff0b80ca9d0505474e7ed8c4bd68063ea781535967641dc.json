@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1331,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 110,
+    "payload": {
+      "confidence": 0.8,
+      "decision": "not_a_symbol",
+      "reason": "זהו קו חיבור אופקי עם קצה אנכי קצר (סימן סיום חוט), ללא מנגנון לחיצה או מגע, ולכן אינו סמל של התקן.}",
+      "symbol_class": null
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

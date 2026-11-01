@@ -1,0 +1,118 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 480,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            352,
+            344,
+            434,
+            385
+          ],
+          "box_text": "TC",
+          "family": "shunt_trip",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "shunt_trip",
+          "tag": null
+        },
+        {
+          "box": [
+            568,
+            607,
+            768,
+            690
+          ],
+          "box_text": "SATEC 135E",
+          "family": "energy_meter",
+          "orientation": 90,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "energy_meter",
+          "tag": null
+        },
+        {
+          "box": [
+            482,
+            318,
+            580,
+            396
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "mccb",
+          "tag": null
+        },
+        {
+          "box": [
+            250,
+            210,
+            358,
+            310
+          ],
+          "box_text": null,
+          "family": "push_button",
+          "orientation": 90,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "push_button",
+          "tag": null
+        },
+        {
+          "box": [
+            254,
+            441,
+            350,
+            531
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 90,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "mcb",
+          "tag": null
+        },
+        {
+          "box": [
+            628,
+            718,
+            727,
+            808
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 90,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "motor_protection",
+          "tag": null
+        },
+        {
+          "box": [
+            454,
+            630,
+            500,
+            672
+          ],
+          "box_text": null,
+          "family": "current_transformer",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "current_transformer",
+          "tag": null
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

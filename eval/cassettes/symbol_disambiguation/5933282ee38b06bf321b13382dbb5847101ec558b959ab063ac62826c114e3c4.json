@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1654,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 101,
+    "payload": {
+      "confidence": 0.85,
+      "decision": "choose",
+      "reason": "בסמל יש מגע מתג עם פס קצר חוצה במגע הקבוע ללא איקס, ולכן זהו מנתק ולא מא\"ז.}",
+      "symbol_class": "switch_disconnector"
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

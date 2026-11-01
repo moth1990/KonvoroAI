@@ -17,6 +17,8 @@ Report = dict[str, Any]
 TITLES = {
     "s1": "Stage 1: intake and page classification (01 §10)",
     "s2": "Stage 2: extraction, designators found in the text (02 §10, S10)",
+    "s3": "Stage 3: symbols, by designators and family counts (03 §10, S12)",
+    "s3_family": "Stage 3: recall by family (03 §10)",
     "s4": "Stage 4: association and merge (04 §10)",
     "audit": "Quote audit (11 §10)",
     "pricing": "Pricing backtest against the real quote (07 §10.2)",
@@ -51,6 +53,7 @@ def build(results: list[tuple[GoldenDrawing, Prediction]]) -> Report:
             "predicted_total": str(pred.quote_total) if pred.quote_total is not None else None,
             "confirmed_value_at_risk": str(sum(at_risk, Decimal(0))) if label.audit else None,
             "extraction": pred.extraction,
+            "detection": pred.detection,
             "scores": _dump(scores),
             "panels": _dump(panel_scores(label, pred)),
         }
@@ -95,7 +98,7 @@ def markdown(report: Report) -> str:
     out.append(
         f"Mode `{meta.get('mode', '?')}`, commit `{meta.get('commit', '?')}`, {len(report['drawings'])} drawings."
     )
-    out += ["", "Stages 2 and 3 are n/a: " + "; ".join(f"{k}: {v}" for k, v in report["not_labelled"].items()), ""]
+    out += ["", "Not labelled yet: " + "; ".join(f"{k}: {v}" for k, v in report["not_labelled"].items()), ""]
     for section in SECTIONS:
         rows = [(d, v["scores"][section]) for d, v in report["drawings"].items() if v["scores"][section]]
         table = _table([*rows, ("**all**", report["totals"]["all"][section])], "Drawing")
@@ -121,6 +124,12 @@ def markdown(report: Report) -> str:
         rows = [(kind, sections[section]) for kind, sections in by_kind.items() if sections[section]]
         if rows:
             out += [f"**{section}**", "", *_table(rows, "Input kind"), ""]
+    counted = [(d, v["detection"]) for d, v in report["drawings"].items() if v.get("detection")]
+    if counted:
+        keys = list(counted[0][1])
+        out += ["## Stage 3 counts", "", "| Drawing | " + " | ".join(keys) + " |", "| --- " * (len(keys) + 1) + "|"]
+        out += [f"| {d} | " + " | ".join(str(c.get(k, "")) for k in keys) + " |" for d, c in counted]
+        out.append("")
     out += [
         "## Counts",
         "",

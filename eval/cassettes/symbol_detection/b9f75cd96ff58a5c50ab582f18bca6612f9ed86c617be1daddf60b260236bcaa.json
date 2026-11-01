@@ -1,0 +1,103 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 403,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            243,
+            472,
+            272,
+            553
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "mcb",
+          "tag": "F24"
+        },
+        {
+          "box": [
+            541,
+            472,
+            570,
+            553
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "mcb",
+          "tag": "F25"
+        },
+        {
+          "box": [
+            218,
+            806,
+            257,
+            870
+          ],
+          "box_text": null,
+          "family": "contactor",
+          "orientation": 0,
+          "role": "power_contact",
+          "sure": true,
+          "symbol_class": "contactor",
+          "tag": "C3"
+        },
+        {
+          "box": [
+            516,
+            806,
+            555,
+            870
+          ],
+          "box_text": null,
+          "family": "contactor",
+          "orientation": 0,
+          "role": "power_contact",
+          "sure": true,
+          "symbol_class": "contactor",
+          "tag": "C4"
+        },
+        {
+          "box": [
+            872,
+            611,
+            1024,
+            649
+          ],
+          "box_text": null,
+          "family": "push_button",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "push_button",
+          "tag": null
+        },
+        {
+          "box": [
+            894,
+            804,
+            1024,
+            843
+          ],
+          "box_text": null,
+          "family": "push_button",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "push_button",
+          "tag": null
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

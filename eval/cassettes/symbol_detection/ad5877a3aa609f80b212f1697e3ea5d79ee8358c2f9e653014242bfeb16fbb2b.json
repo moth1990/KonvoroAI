@@ -1,0 +1,178 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 725,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            16,
+            282,
+            98,
+            370
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "mcb",
+          "tag": null
+        },
+        {
+          "box": [
+            355,
+            291,
+            445,
+            380
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "mcb",
+          "tag": null
+        },
+        {
+          "box": [
+            543,
+            291,
+            633,
+            380
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "mcb",
+          "tag": null
+        },
+        {
+          "box": [
+            891,
+            291,
+            981,
+            380
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "mcb",
+          "tag": null
+        },
+        {
+          "box": [
+            6,
+            675,
+            98,
+            762
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "mcb",
+          "tag": null
+        },
+        {
+          "box": [
+            260,
+            455,
+            445,
+            543
+          ],
+          "box_text": null,
+          "family": "overload_relay",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "overload_relay",
+          "tag": null
+        },
+        {
+          "box": [
+            795,
+            455,
+            981,
+            543
+          ],
+          "box_text": null,
+          "family": "overload_relay",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "overload_relay",
+          "tag": null
+        },
+        {
+          "box": [
+            398,
+            698,
+            475,
+            762
+          ],
+          "box_text": "C",
+          "family": "contactor",
+          "orientation": 0,
+          "role": "coil",
+          "sure": true,
+          "symbol_class": "contactor",
+          "tag": null
+        },
+        {
+          "box": [
+            570,
+            681,
+            634,
+            768
+          ],
+          "box_text": null,
+          "family": "contactor",
+          "orientation": 0,
+          "role": "power_contact",
+          "sure": false,
+          "symbol_class": "contactor",
+          "tag": null
+        },
+        {
+          "box": [
+            283,
+            573,
+            318,
+            601
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "terminal",
+          "tag": null
+        },
+        {
+          "box": [
+            819,
+            573,
+            854,
+            601
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "terminal",
+          "tag": null
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

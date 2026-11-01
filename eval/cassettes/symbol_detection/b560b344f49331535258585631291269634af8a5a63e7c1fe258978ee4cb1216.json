@@ -1,0 +1,118 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 470,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            665,
+            176,
+            687,
+            200
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "mcb",
+          "tag": "F4"
+        },
+        {
+          "box": [
+            353,
+            126,
+            419,
+            319
+          ],
+          "box_text": null,
+          "family": "aux_contact",
+          "orientation": 0,
+          "role": "aux_contact",
+          "sure": true,
+          "symbol_class": "aux_contact",
+          "tag": null
+        },
+        {
+          "box": [
+            556,
+            208,
+            592,
+            264
+          ],
+          "box_text": null,
+          "family": "relay",
+          "orientation": 0,
+          "role": "relay_contact",
+          "sure": false,
+          "symbol_class": "relay",
+          "tag": null
+        },
+        {
+          "box": [
+            640,
+            474,
+            678,
+            538
+          ],
+          "box_text": null,
+          "family": "contactor",
+          "orientation": 0,
+          "role": "power_contact",
+          "sure": true,
+          "symbol_class": "contactor",
+          "tag": "C4"
+        },
+        {
+          "box": [
+            554,
+            467,
+            592,
+            534
+          ],
+          "box_text": null,
+          "family": "contactor",
+          "orientation": 0,
+          "role": "power_contact",
+          "sure": true,
+          "symbol_class": "contactor",
+          "tag": "C4"
+        },
+        {
+          "box": [
+            578,
+            810,
+            603,
+            838
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "terminal",
+          "tag": "N4"
+        },
+        {
+          "box": [
+            663,
+            810,
+            689,
+            838
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "terminal",
+          "tag": "L4"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

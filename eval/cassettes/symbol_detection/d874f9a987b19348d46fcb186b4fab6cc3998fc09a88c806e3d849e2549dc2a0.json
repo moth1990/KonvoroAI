@@ -1,0 +1,43 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 153,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            740,
+            201,
+            802,
+            257
+          ],
+          "box_text": null,
+          "family": "aux_contact",
+          "orientation": 0,
+          "role": "aux_contact",
+          "sure": true,
+          "symbol_class": "aux_contact",
+          "tag": null
+        },
+        {
+          "box": [
+            767,
+            452,
+            832,
+            516
+          ],
+          "box_text": null,
+          "family": "indicator_lamp",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "indicator_lamp",
+          "tag": "HT1"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

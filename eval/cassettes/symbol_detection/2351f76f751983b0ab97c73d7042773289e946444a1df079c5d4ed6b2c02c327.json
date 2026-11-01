@@ -1,0 +1,118 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 470,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            165,
+            173,
+            275,
+            232
+          ],
+          "box_text": "R1",
+          "family": "relay",
+          "orientation": 0,
+          "role": "coil",
+          "sure": true,
+          "symbol_class": "relay",
+          "tag": "R1"
+        },
+        {
+          "box": [
+            535,
+            432,
+            628,
+            484
+          ],
+          "box_text": "C2",
+          "family": "contactor",
+          "orientation": 0,
+          "role": "coil",
+          "sure": true,
+          "symbol_class": "contactor",
+          "tag": "C2"
+        },
+        {
+          "box": [
+            515,
+            262,
+            676,
+            331
+          ],
+          "box_text": null,
+          "family": "selector_switch",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "selector_switch",
+          "tag": "SW2"
+        },
+        {
+          "box": [
+            628,
+            68,
+            676,
+            190
+          ],
+          "box_text": null,
+          "family": "relay",
+          "orientation": 0,
+          "role": "relay_contact",
+          "sure": true,
+          "symbol_class": "relay",
+          "tag": "R3"
+        },
+        {
+          "box": [
+            778,
+            68,
+            826,
+            190
+          ],
+          "box_text": null,
+          "family": "temperature_controller",
+          "orientation": 0,
+          "role": "relay_contact",
+          "sure": false,
+          "symbol_class": "temperature_controller",
+          "tag": "TH1"
+        },
+        {
+          "box": [
+            90,
+            667,
+            116,
+            693
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "terminal",
+          "tag": null
+        },
+        {
+          "box": [
+            205,
+            667,
+            232,
+            693
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "terminal",
+          "tag": null
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

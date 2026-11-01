@@ -1,0 +1,58 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 216,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            240,
+            27,
+            278,
+            62
+          ],
+          "box_text": null,
+          "family": "indicator_lamp",
+          "orientation": 90,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "indicator_lamp",
+          "tag": null
+        },
+        {
+          "box": [
+            123,
+            98,
+            205,
+            140
+          ],
+          "box_text": "C",
+          "family": "contactor",
+          "orientation": 0,
+          "role": "coil",
+          "sure": true,
+          "symbol_class": "contactor",
+          "tag": "C"
+        },
+        {
+          "box": [
+            554,
+            565,
+            596,
+            590
+          ],
+          "box_text": null,
+          "family": "socket_outlet",
+          "orientation": 0,
+          "role": "front_view",
+          "sure": false,
+          "symbol_class": "socket_outlet",
+          "tag": "7-12"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

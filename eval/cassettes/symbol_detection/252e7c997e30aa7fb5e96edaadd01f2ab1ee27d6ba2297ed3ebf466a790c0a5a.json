@@ -1,0 +1,73 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 264,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            838,
+            238,
+            880,
+            322
+          ],
+          "box_text": null,
+          "family": "fuse",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "fuse_base",
+          "tag": null
+        },
+        {
+          "box": [
+            862,
+            394,
+            908,
+            482
+          ],
+          "box_text": null,
+          "family": "surge_protector",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "surge_protector",
+          "tag": null
+        },
+        {
+          "box": [
+            862,
+            516,
+            908,
+            534
+          ],
+          "box_text": null,
+          "family": "ground",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "ground",
+          "tag": null
+        },
+        {
+          "box": [
+            816,
+            118,
+            1024,
+            138
+          ],
+          "box_text": null,
+          "family": "busbar",
+          "orientation": 90,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "busbar",
+          "tag": null
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

@@ -87,6 +87,19 @@ test("the run step says how stage 2 read the text", async ({ page }) => {
   await expect(page.getByRole("status")).toHaveText("הפענוח בוטל. המקום במכסה שוחרר");
 });
 
+test("the run step counts the symbols stage 3 found", async ({ page }) => {
+  await page.getByLabel("פרויקט / שם הלוח").fill(SLOW_PROJECT);
+  await page.locator("#file-in").setInputFiles(NURSERY);
+  await page.getByTestId("start").click();
+  const stage3 = page.getByTestId("stage-3");
+  await expect(stage3).toHaveAttribute("data-state", "done", { timeout: 75_000 });
+  // the stand-in model finds a breaker on every tile and is always sure: no disambiguation part (prototype line 763)
+  await expect(stage3).toContainText(/\d+ סימנים/);
+  await expect(stage3).not.toContainText("בהכרעת מודל");
+  await page.getByTestId("cancelrun").click();
+  await expect(page.getByRole("status")).toHaveText("הפענוח בוטל. המקום במכסה שוחרר");
+});
+
 test("a CAD file and an oversized file are rejected before upload", async ({ page }) => {
   await page.locator("#file-in").setInputFiles([
     { name: "MAIN_BOARD.dwg", mimeType: "application/octet-stream", buffer: Buffer.from("AC1027") },

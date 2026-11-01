@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1664,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 115,
+    "payload": {
+      "confidence": 0.8,
+      "decision": "choose",
+      "reason": "מלבן עם סימן זיגזג (אלמנט תרמי) בתוכו, והכיתוב \"לוח מבנה\" אינו מצביע על מפסק, ולכן זה ממסר תרמי.",
+      "symbol_class": "overload_relay"
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

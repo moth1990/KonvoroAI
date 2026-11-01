@@ -1,0 +1,111 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 421,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            476,
+            68,
+            503,
+            98
+          ],
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "terminal",
+          "tag": "EM1"
+        },
+        {
+          "box": [
+            476,
+            222,
+            503,
+            252
+          ],
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "terminal",
+          "tag": "EM2"
+        },
+        {
+          "box": [
+            421,
+            113,
+            492,
+            196
+          ],
+          "family": "push_button",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "emergency_button",
+          "tag": "EMS"
+        },
+        {
+          "box": [
+            567,
+            113,
+            637,
+            196
+          ],
+          "family": "push_button",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "push_button",
+          "tag": "EMS"
+        },
+        {
+          "box": [
+            648,
+            437,
+            793,
+            572
+          ],
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "motor_protection",
+          "tag": "QRF"
+        },
+        {
+          "box": [
+            728,
+            572,
+            828,
+            705
+          ],
+          "family": "overload_relay",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "overload_relay",
+          "tag": null
+        },
+        {
+          "box": [
+            877,
+            68,
+            1024,
+            287
+          ],
+          "family": "relay",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "relay",
+          "tag": "GIC-1"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

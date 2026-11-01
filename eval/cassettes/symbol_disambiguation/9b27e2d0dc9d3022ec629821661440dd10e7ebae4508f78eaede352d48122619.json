@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1541,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 116,
+    "payload": {
+      "confidence": 0.8,
+      "decision": "choose",
+      "reason": "הסמל הוא מלבן עם וו תרמי על קו הכוח, ובתוכו סימון I> של הגנה; אין מגע עם צלב ולכן זה ממסר תרמי ולא מפסק.}",
+      "symbol_class": "overload_relay"
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

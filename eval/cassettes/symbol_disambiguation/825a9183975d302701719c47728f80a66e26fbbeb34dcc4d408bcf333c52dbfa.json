@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1290,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 88,
+    "payload": {
+      "confidence": 0.6,
+      "decision": "choose",
+      "reason": "זהו מגע מתג עם התווית T1, שמצביעה על מגע של ממסר זמן ולא של ממסר עזר רגיל.}",
+      "symbol_class": "timer"
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

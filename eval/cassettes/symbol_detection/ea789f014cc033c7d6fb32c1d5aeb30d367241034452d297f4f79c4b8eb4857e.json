@@ -1,0 +1,43 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 145,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            30,
+            105,
+            98,
+            194
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "motor_protection",
+          "tag": "QPM"
+        },
+        {
+          "box": [
+            414,
+            125,
+            450,
+            190
+          ],
+          "box_text": null,
+          "family": "fuse",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "fuse",
+          "tag": "FPB"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1024,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 120,
+    "payload": {
+      "confidence": 0.55,
+      "decision": "none_of_these",
+      "reason": "הסמל הוא מלבן עם אלכסון ושלושה קווים מקבילים, שאינו דומה למגע עזר 13/14 וגם לא לסליל ממסר R1, ולכן אף מועמד לא מתאים.",
+      "symbol_class": null
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

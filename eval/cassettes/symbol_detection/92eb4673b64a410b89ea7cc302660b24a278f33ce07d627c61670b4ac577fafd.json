@@ -1,0 +1,133 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 548,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            599,
+            385,
+            636,
+            420
+          ],
+          "box_text": null,
+          "family": "indicator_lamp",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "indicator_lamp",
+          "tag": "HNV"
+        },
+        {
+          "box": [
+            825,
+            464,
+            944,
+            523
+          ],
+          "box_text": "RNV",
+          "family": "relay",
+          "orientation": 0,
+          "role": "coil",
+          "sure": true,
+          "symbol_class": "relay",
+          "tag": "RNV"
+        },
+        {
+          "box": [
+            750,
+            476,
+            797,
+            535
+          ],
+          "box_text": null,
+          "family": "relay",
+          "orientation": 0,
+          "role": "relay_contact",
+          "sure": true,
+          "symbol_class": "relay",
+          "tag": "RNV"
+        },
+        {
+          "box": [
+            224,
+            700,
+            1024,
+            732
+          ],
+          "box_text": null,
+          "family": "busbar",
+          "orientation": 90,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "busbar",
+          "tag": "W0"
+        },
+        {
+          "box": [
+            288,
+            899,
+            332,
+            955
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "mcb",
+          "tag": "F1"
+        },
+        {
+          "box": [
+            379,
+            892,
+            419,
+            1024
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "mcb",
+          "tag": "F1"
+        },
+        {
+          "box": [
+            648,
+            899,
+            692,
+            955
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "mcb",
+          "tag": "F2"
+        },
+        {
+          "box": [
+            739,
+            892,
+            779,
+            1024
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "mcb",
+          "tag": "F2"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

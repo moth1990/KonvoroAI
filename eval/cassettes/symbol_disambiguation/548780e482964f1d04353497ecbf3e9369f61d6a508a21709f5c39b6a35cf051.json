@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1212,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 86,
+    "payload": {
+      "confidence": 0.95,
+      "decision": "choose",
+      "reason": "הסמל מציג שלוש נקודות מגע במיקומים 1-0-2 עם תווית SW2, כלומר בורר.",
+      "symbol_class": "selector_switch"
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

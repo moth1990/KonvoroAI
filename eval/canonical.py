@@ -94,6 +94,17 @@ class GoldenDrawing(Canon):
         return sum(c.qty for p in self.panels for c in p.components)
 
 
+class CanonDetection(Canon):
+    """One of stage 3's detections, as the metrics read it (S12)."""
+
+    page_no: int
+    family: str
+    role: str
+    designator: str | None
+    bbox: tuple[float, float, float, float]
+    billable: bool
+
+
 class Prediction(Canon):
     """What one pipeline run produced, in the same shape. `None` = the stage produced nothing to score."""
 
@@ -106,3 +117,5 @@ class Prediction(Canon):
     needs_confirmation: bool | None = None
     span_texts: tuple[str, ...] | None = None  # stage 2's normalized text on the process pages
     extraction: dict[str, int] = {}  # stage 2's counts, reported, not scored
+    detections: tuple[CanonDetection, ...] | None = None  # stage 3's, on the process pages
+    detection: dict[str, int] = {}  # stage 3's counts: detections, orphan texts, disambiguation calls

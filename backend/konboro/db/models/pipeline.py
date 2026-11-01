@@ -116,6 +116,10 @@ class Page(Base, TenantScoped, Timestamps):
         ),
         CheckConstraint("route IS NULL OR route IN ('process', 'context', 'skip')", name="route"),
         CheckConstraint("tile_count IS NULL OR tile_count >= 0", name="tile_count"),
+        CheckConstraint("symbol_count IS NULL OR symbol_count >= 0", name="symbol_count"),
+        CheckConstraint(
+            "symbol_llm_count IS NULL OR symbol_llm_count BETWEEN 0 AND symbol_count", name="symbol_llm_count"
+        ),
         CheckConstraint(
             "classified_by IS NULL OR classified_by IN ('model', 'user', 'reused', 'template')",
             name="classified_by",
@@ -145,6 +149,8 @@ class Page(Base, TenantScoped, Timestamps):
     render_key: Mapped[str | None]
     tiles_prefix: Mapped[str | None]
     tile_count: Mapped[int | None]  # tiles that are not blank, for the run step (migration 0007)
+    symbol_count: Mapped[int | None]  # stage 3's detections, for the run step (migration 0008)
+    symbol_llm_count: Mapped[int | None]  # of them, decided by the disambiguation call (migration 0008)
 
 
 class Panel(Base, TenantScoped, Created):

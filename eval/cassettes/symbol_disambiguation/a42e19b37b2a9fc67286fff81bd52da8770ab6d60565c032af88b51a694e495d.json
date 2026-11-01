@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1702,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 136,
+    "payload": {
+      "confidence": 0.8,
+      "decision": "choose",
+      "reason": "הסמל הוא מפסק עם סימוני קטבים (קווים אלכסוניים) וחץ תרמי/מגנטי, ללא פס מנתק, והזרם הנקוב 160A (מעל 100A) מצביע על מפסק בתיבה יצוקה.}",
+      "symbol_class": "mccb"
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

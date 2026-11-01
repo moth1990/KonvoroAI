@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1541,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 121,
+    "payload": {
+      "confidence": 0.6,
+      "decision": "none_of_these",
+      "reason": "הסמל מציג מגע מתג אלכסוני עם סימן סליל או מברשת מקווקוו ועיגולים בקצוות, ואינו דומה למלבן של נתיך או לאחד המפסקים שברשימה.}",
+      "symbol_class": null
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

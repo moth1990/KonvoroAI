@@ -1,0 +1,73 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 267,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            303,
+            38,
+            342,
+            102
+          ],
+          "box_text": null,
+          "family": "contactor",
+          "orientation": 0,
+          "role": "power_contact",
+          "sure": true,
+          "symbol_class": "contactor",
+          "tag": "C1"
+        },
+        {
+          "box": [
+            679,
+            38,
+            718,
+            102
+          ],
+          "box_text": null,
+          "family": "contactor",
+          "orientation": 0,
+          "role": "power_contact",
+          "sure": true,
+          "symbol_class": "contactor",
+          "tag": "C2"
+        },
+        {
+          "box": [
+            322,
+            452,
+            352,
+            483
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "terminal",
+          "tag": "22"
+        },
+        {
+          "box": [
+            699,
+            452,
+            729,
+            483
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "terminal",
+          "tag": "23"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

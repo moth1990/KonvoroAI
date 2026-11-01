@@ -1,0 +1,43 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 136,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            45,
+            45,
+            169,
+            112
+          ],
+          "box_text": "R7",
+          "family": "relay",
+          "orientation": 0,
+          "role": "coil",
+          "sure": true,
+          "symbol_class": "relay",
+          "tag": "R7"
+        },
+        {
+          "box": [
+            91,
+            599,
+            120,
+            626
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "terminal",
+          "tag": null
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

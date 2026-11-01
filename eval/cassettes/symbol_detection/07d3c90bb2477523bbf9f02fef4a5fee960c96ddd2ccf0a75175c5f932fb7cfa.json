@@ -1,0 +1,163 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 706,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            534,
+            379,
+            655,
+            440
+          ],
+          "box_text": "NVR",
+          "family": "voltage_relay",
+          "orientation": 0,
+          "role": "coil",
+          "sure": true,
+          "symbol_class": "voltage_relay",
+          "tag": "NVR"
+        },
+        {
+          "box": [
+            218,
+            530,
+            339,
+            591
+          ],
+          "box_text": "RNV",
+          "family": "relay",
+          "orientation": 0,
+          "role": "coil",
+          "sure": true,
+          "symbol_class": "relay",
+          "tag": "RNV"
+        },
+        {
+          "box": [
+            376,
+            376,
+            423,
+            446
+          ],
+          "box_text": null,
+          "family": "voltage_relay",
+          "orientation": 0,
+          "role": "relay_contact",
+          "sure": false,
+          "symbol_class": "voltage_relay",
+          "tag": "NVR"
+        },
+        {
+          "box": [
+            140,
+            533,
+            189,
+            602
+          ],
+          "box_text": null,
+          "family": "relay",
+          "orientation": 0,
+          "role": "relay_contact",
+          "sure": false,
+          "symbol_class": "relay",
+          "tag": "RNV"
+        },
+        {
+          "box": [
+            763,
+            260,
+            802,
+            299
+          ],
+          "box_text": null,
+          "family": "indicator_lamp",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "indicator_lamp",
+          "tag": "L1"
+        },
+        {
+          "box": [
+            819,
+            260,
+            858,
+            299
+          ],
+          "box_text": null,
+          "family": "indicator_lamp",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "indicator_lamp",
+          "tag": "L2"
+        },
+        {
+          "box": [
+            879,
+            260,
+            918,
+            299
+          ],
+          "box_text": null,
+          "family": "indicator_lamp",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "indicator_lamp",
+          "tag": "L3"
+        },
+        {
+          "box": [
+            567,
+            537,
+            609,
+            690
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "mcb",
+          "tag": "FNV"
+        },
+        {
+          "box": [
+            148,
+            938,
+            172,
+            1024
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "mcb",
+          "tag": "F2"
+        },
+        {
+          "box": [
+            752,
+            945,
+            788,
+            1024
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "mcb",
+          "tag": "F3"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

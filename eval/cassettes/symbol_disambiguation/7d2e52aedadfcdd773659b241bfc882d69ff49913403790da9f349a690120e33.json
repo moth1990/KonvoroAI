@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 971,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 125,
+    "payload": {
+      "confidence": 0.8,
+      "decision": "none_of_these",
+      "reason": "הסימן המסומן הוא מסגרת אדומה עם צירי קואורדינטות (חץ למעלה וימינה) ללא מלבן עם kWh או כיתוב מונה, ולכן אינו תואם למונה האנרגיה.",
+      "symbol_class": null
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

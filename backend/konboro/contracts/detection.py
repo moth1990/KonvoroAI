@@ -2,6 +2,8 @@
 
 from typing import Any, Literal
 
+from pydantic import Field
+
 from .common import (
     Bbox,
     BlockId,
@@ -32,7 +34,9 @@ class Detection(Contract):
     family: str
     symbol_class: str
     billable: bool
-    method: Literal["cad_block", "detector_knn", "detector_llm", "orphan_recovery"]
+    method: Literal["cad_block", "detector_knn", "detector_llm", "orphan_recovery", "llm_vision"] = Field(
+        description="llm_vision: found and classed by the interim vision model alone (S12, 03 §3.2)"
+    )
     detector_score: Confidence | None
     class_score: Confidence
     confidence: Confidence
@@ -48,6 +52,9 @@ class Detection(Contract):
     linked_designator: str | None = None
     crop_uri: str | None = None
     llm_decision: dict[str, Any] | None = None
+    flags: list[Literal["no_tag"]] = Field(
+        default=[], description="no_tag: a device without a tag on a tagged drawing (03 §3.7)"
+    )
 
 
 class OrphanText(Contract):

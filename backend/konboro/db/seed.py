@@ -24,6 +24,7 @@ if TYPE_CHECKING:
     from konboro.services.storage import Storage
 
 from .models import (
+    Abbreviation,
     Customer,
     FeatureFlag,
     MarginRule,
@@ -32,7 +33,9 @@ from .models import (
     ProductSupplier,
     Project,
     QuotaUsage,
+    ReferenceCrop,
     Supplier,
+    SymbolClass,
     Tenant,
     TenantFeatureOverride,
     TenantSettings,
@@ -136,6 +139,37 @@ def seed_global(session: Session) -> None:
         .values(id="vat_01JD0DEM000000000000000000", rate=Decimal("0.18"), valid_from=date(2025, 1, 1))
         .on_conflict_do_nothing(index_elements=["valid_from"])
     )
+    seed_symbol_library(session)
+
+
+def seed_symbol_library(session: Session) -> None:
+    """03 §4.3–4.6, global layer, from `konboro.pipeline.detection.library` (S12). Rows already there are kept: a
+    curated row may have been approved or edited since."""
+    from konboro.pipeline.detection import library
+
+    for c in library.CLASSES:
+        session.execute(
+            insert(SymbolClass)
+            .values(id=c.symbol_class, family=c.family, display_name_he=c.display_name_he, billable=c.billable)
+            .on_conflict_do_nothing(index_elements=["id"])
+        )
+    session.flush()
+    for written, symbol_class in library.ABBREVIATIONS:
+        family = next(c.family for c in library.CLASSES if c.symbol_class == symbol_class)
+        session.execute(
+            insert(Abbreviation)
+            .values(id=new_id("abr"), text=written, symbol_class=symbol_class, family=family)
+            .on_conflict_do_nothing(index_elements=["text"])
+        )
+    have = set(session.scalars(select(ReferenceCrop.image_key)))
+    for ref in library.curated_references():
+        if ref.image_key not in have:
+            session.add(
+                ReferenceCrop(
+                    id=new_id("ref"), symbol_class=ref.symbol_class, image_key=ref.image_key, source="curated"
+                )
+            )
+    session.flush()
 
 
 def seed_demo_tenant(session: Session) -> bool:

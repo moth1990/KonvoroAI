@@ -1,0 +1,88 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 334,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            235,
+            764,
+            253,
+            848
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "terminal",
+          "tag": null
+        },
+        {
+          "box": [
+            231,
+            401,
+            259,
+            431
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "terminal",
+          "tag": null
+        },
+        {
+          "box": [
+            236,
+            766,
+            328,
+            856
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "mcb",
+          "tag": "MCB"
+        },
+        {
+          "box": [
+            106,
+            792,
+            186,
+            862
+          ],
+          "box_text": "TC",
+          "family": "shunt_trip",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "shunt_trip",
+          "tag": null
+        },
+        {
+          "box": [
+            4,
+            658,
+            110,
+            757
+          ],
+          "box_text": null,
+          "family": "push_button",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "push_button",
+          "tag": null
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

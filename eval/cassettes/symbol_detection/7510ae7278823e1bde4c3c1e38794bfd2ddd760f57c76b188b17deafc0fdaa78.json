@@ -1,0 +1,118 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 450,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            88,
+            563,
+            114,
+            592
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "terminal",
+          "tag": "1"
+        },
+        {
+          "box": [
+            262,
+            563,
+            288,
+            592
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "terminal",
+          "tag": "2"
+        },
+        {
+          "box": [
+            433,
+            563,
+            459,
+            592
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "terminal",
+          "tag": "3"
+        },
+        {
+          "box": [
+            595,
+            563,
+            621,
+            592
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "terminal",
+          "tag": "4"
+        },
+        {
+          "box": [
+            760,
+            563,
+            787,
+            592
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "terminal",
+          "tag": "5"
+        },
+        {
+          "box": [
+            890,
+            97,
+            973,
+            141
+          ],
+          "box_text": "C",
+          "family": "contactor",
+          "orientation": 0,
+          "role": "coil",
+          "sure": true,
+          "symbol_class": "contactor",
+          "tag": null
+        },
+        {
+          "box": [
+            763,
+            82,
+            832,
+            170
+          ],
+          "box_text": null,
+          "family": "contactor",
+          "orientation": 0,
+          "role": "relay_contact",
+          "sure": false,
+          "symbol_class": "contactor",
+          "tag": "C"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

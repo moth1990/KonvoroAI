@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1255,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 124,
+    "payload": {
+      "confidence": 0.8,
+      "decision": "not_a_symbol",
+      "reason": "התמונה מציגה מסגרת אדומה עם צירים (חץ אנכי ואופקי) ומעליה סימון קרקע, ולא סמל של ממסר או סליל; זה סימן או מסגרת ולא התקן.}",
+      "symbol_class": null
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

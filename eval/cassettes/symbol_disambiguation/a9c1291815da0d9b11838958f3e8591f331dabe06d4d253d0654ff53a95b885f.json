@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1169,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 95,
+    "payload": {
+      "confidence": 0.8,
+      "decision": "choose",
+      "reason": "הסימן מציג בלוק מהדקים עם עיגולים מוברגים ותוויות K ו-L לכל פאזה, ולכן זה מהדק.}",
+      "symbol_class": "terminal"
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 997,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 91,
+    "payload": {
+      "confidence": 0.8,
+      "decision": "choose",
+      "reason": "התיבה מכילה את הסימון TC-G1, כלומר סליל הפסקה (TC) שמתאים למועמד shunt_trip.",
+      "symbol_class": "shunt_trip"
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

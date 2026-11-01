@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1263,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 150,
+    "payload": {
+      "confidence": 0.8,
+      "decision": "none_of_these",
+      "reason": "הסמל הוא ריבוע עם חיצי צירים (אנכי ואופקי) בתוך מסגרת אדומה, בדומה לסמל של מקור/מתג חשמלי או חיישן, ואין בו C1, A1, שעון או סימן צעד, ולכן אינו תואם אף מועמד.",
+      "symbol_class": null
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

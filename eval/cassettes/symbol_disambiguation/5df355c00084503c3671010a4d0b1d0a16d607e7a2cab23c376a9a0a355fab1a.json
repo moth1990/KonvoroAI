@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1286,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 129,
+    "payload": {
+      "confidence": 0.6,
+      "decision": "choose",
+      "reason": "הסמל הוא מגע כוח עם מוביל אלכסוני וקו חוצה בתוך מסגרת, ללא חצי עיגול ברור, ולכן הוא שייך למגען, וההתאמה הקרובה ביותר היא מגען.}",
+      "symbol_class": "contactor"
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

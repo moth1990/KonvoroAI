@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1098,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 106,
+    "payload": {
+      "confidence": 0.6,
+      "decision": "choose",
+      "reason": "הסמל מורכב משתי לולאות קטנות סביב הקו, ולידו כתוב יחס כמו 25/5A, ולכן זה משנה זרם ולא מהדק.}",
+      "symbol_class": "current_transformer"
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

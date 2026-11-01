@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1259,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 114,
+    "payload": {
+      "confidence": 0.7,
+      "decision": "none_of_these",
+      "reason": "הסמל הוא מלבן עם חיצים בצורת צירים (L) ואין בו אות סליל, שעון או סימן צעד, ולכן הוא אינו תואם אף אחד מהמועמדים.}",
+      "symbol_class": null
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

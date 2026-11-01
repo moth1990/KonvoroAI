@@ -1,0 +1,88 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 331,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            872,
+            46,
+            994,
+            111
+          ],
+          "box_text": "R5",
+          "family": "relay",
+          "orientation": 0,
+          "role": "coil",
+          "sure": true,
+          "symbol_class": "relay",
+          "tag": "R5"
+        },
+        {
+          "box": [
+            499,
+            337,
+            603,
+            394
+          ],
+          "box_text": "C3",
+          "family": "contactor",
+          "orientation": 0,
+          "role": "coil",
+          "sure": true,
+          "symbol_class": "contactor",
+          "tag": "C3"
+        },
+        {
+          "box": [
+            788,
+            599,
+            816,
+            625
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "terminal",
+          "tag": null
+        },
+        {
+          "box": [
+            917,
+            599,
+            945,
+            625
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "terminal",
+          "tag": null
+        },
+        {
+          "box": [
+            478,
+            153,
+            500,
+            175
+          ],
+          "box_text": null,
+          "family": "selector_switch",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "selector_switch",
+          "tag": "SW3"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

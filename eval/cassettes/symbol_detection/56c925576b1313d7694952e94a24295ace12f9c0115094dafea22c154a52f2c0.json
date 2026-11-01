@@ -1,0 +1,58 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 214,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            0,
+            690,
+            141,
+            774
+          ],
+          "box_text": "SATEC 135E",
+          "family": "energy_meter",
+          "orientation": 90,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "energy_meter",
+          "tag": null
+        },
+        {
+          "box": [
+            0,
+            800,
+            104,
+            893
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 90,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "motor_protection",
+          "tag": null
+        },
+        {
+          "box": [
+            0,
+            972,
+            1024,
+            992
+          ],
+          "box_text": null,
+          "family": "busbar",
+          "orientation": 90,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "busbar",
+          "tag": null
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1271,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 104,
+    "payload": {
+      "confidence": 0.72,
+      "decision": "choose",
+      "reason": "המלבן עם קו אלכסוני על קו ההספק לצד התווית RN מייצג מגע של ממסר עזר, ולכן הוא שייך לממסר.&quot;}</br>",
+      "symbol_class": "relay"
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

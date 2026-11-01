@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1079,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 99,
+    "payload": {
+      "confidence": 0.8,
+      "decision": "choose",
+      "reason": "הסימן המסומן הוא עיגול קטן בקצה קו, כמו מהדק, ואין בו מלבן של נתיך או טבעת של משנה זרם.\n",
+      "symbol_class": "terminal"
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

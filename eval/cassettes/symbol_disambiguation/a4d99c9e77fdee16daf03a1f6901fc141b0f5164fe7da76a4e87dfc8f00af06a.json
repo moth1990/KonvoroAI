@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1283,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 95,
+    "payload": {
+      "confidence": 0.8,
+      "decision": "choose",
+      "reason": "הסמל הוא מגע כוח עם חצי עיגול בנקודת המגע הקבועה ולכן שייך למגען ולא לממסר עזר.\n",
+      "symbol_class": "contactor"
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

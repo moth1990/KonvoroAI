@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1286,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 121,
+    "payload": {
+      "confidence": 0.4,
+      "decision": "none_of_these",
+      "reason": "הסמל הוא מגע מוחלף/מפסק עם קו מקווקו אופקי ועיגולים בקצוות, ללא חצי עיגול של מגען, ולכן אף מועמד אינו מתאים בבירור.}",
+      "symbol_class": null
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

@@ -1,0 +1,193 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 804,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            58,
+            676,
+            141,
+            723
+          ],
+          "box_text": "מ.פ.",
+          "family": "rcd",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "rcd",
+          "tag": null
+        },
+        {
+          "box": [
+            400,
+            771,
+            481,
+            814
+          ],
+          "box_text": "C1",
+          "family": "contactor",
+          "orientation": 0,
+          "role": "coil",
+          "sure": true,
+          "symbol_class": "contactor",
+          "tag": "C1"
+        },
+        {
+          "box": [
+            666,
+            771,
+            748,
+            814
+          ],
+          "box_text": "C2",
+          "family": "contactor",
+          "orientation": 0,
+          "role": "coil",
+          "sure": true,
+          "symbol_class": "contactor",
+          "tag": "C2"
+        },
+        {
+          "box": [
+            836,
+            493,
+            889,
+            549
+          ],
+          "box_text": null,
+          "family": "contactor",
+          "orientation": 0,
+          "role": "coil",
+          "sure": false,
+          "symbol_class": "contactor",
+          "tag": null
+        },
+        {
+          "box": [
+            93,
+            279,
+            185,
+            368
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "mccb",
+          "tag": null
+        },
+        {
+          "box": [
+            93,
+            533,
+            185,
+            622
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "mcb",
+          "tag": null
+        },
+        {
+          "box": [
+            475,
+            288,
+            567,
+            379
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "mcb",
+          "tag": null
+        },
+        {
+          "box": [
+            743,
+            291,
+            835,
+            380
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "mcb",
+          "tag": null
+        },
+        {
+          "box": [
+            942,
+            289,
+            1024,
+            378
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "mcb",
+          "tag": null
+        },
+        {
+          "box": [
+            475,
+            479,
+            541,
+            651
+          ],
+          "box_text": null,
+          "family": "changeover_switch",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "changeover_switch",
+          "tag": null
+        },
+        {
+          "box": [
+            738,
+            479,
+            806,
+            651
+          ],
+          "box_text": null,
+          "family": "changeover_switch",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "changeover_switch",
+          "tag": null
+        },
+        {
+          "box": [
+            943,
+            755,
+            1024,
+            845
+          ],
+          "box_text": null,
+          "family": "relay",
+          "orientation": 0,
+          "role": "relay_contact",
+          "sure": false,
+          "symbol_class": "relay",
+          "tag": "T1"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

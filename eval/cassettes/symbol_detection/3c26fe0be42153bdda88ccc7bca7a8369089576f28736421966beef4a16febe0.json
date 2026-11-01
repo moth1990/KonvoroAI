@@ -1,0 +1,43 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 143,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            96,
+            731,
+            300,
+            820
+          ],
+          "box_text": null,
+          "family": "overload_relay",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "overload_relay",
+          "tag": null
+        },
+        {
+          "box": [
+            536,
+            731,
+            740,
+            820
+          ],
+          "box_text": null,
+          "family": "overload_relay",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "overload_relay",
+          "tag": null
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

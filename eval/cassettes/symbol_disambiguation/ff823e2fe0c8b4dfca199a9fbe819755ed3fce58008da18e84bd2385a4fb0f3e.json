@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1079,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 102,
+    "payload": {
+      "confidence": 0.85,
+      "decision": "choose",
+      "reason": "הסמל הוא עיגול קטן בקצה קו, ללא קו אלכסוני אך תואם למהדק, ולכן מתאים ביותר להגדרת מהדק.}",
+      "symbol_class": "terminal"
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

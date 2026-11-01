@@ -1,0 +1,103 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 413,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            429,
+            172,
+            495,
+            238
+          ],
+          "box_text": null,
+          "family": "current_transformer",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "current_transformer",
+          "tag": null
+        },
+        {
+          "box": [
+            345,
+            295,
+            510,
+            598
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "mccb",
+          "tag": "Q0"
+        },
+        {
+          "box": [
+            208,
+            899,
+            244,
+            955
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "mcb",
+          "tag": null
+        },
+        {
+          "box": [
+            300,
+            870,
+            342,
+            1024
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "mcb",
+          "tag": "F5"
+        },
+        {
+          "box": [
+            546,
+            899,
+            582,
+            955
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "mcb",
+          "tag": null
+        },
+        {
+          "box": [
+            638,
+            870,
+            680,
+            1024
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "mcb",
+          "tag": "F6"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

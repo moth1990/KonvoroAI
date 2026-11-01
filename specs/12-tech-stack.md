@@ -85,7 +85,7 @@ ALB ──→ ECS Fargate: API (FastAPI)
 | קווים, מלבנים, שכבת טקסט | **pdfplumber** (MIT) | חילוץ וקטורי ([02 §2.2](02-extraction-tiling.md)) |
 | עיבוד תמונה | OpenCV, Pillow | |
 | OCR | **השוואה על סט הבדיקה**: Google Cloud Vision מול Azure AI Document Intelligence | ראו למטה |
-| גלאי סימנים (שלב 3 ייעודי, אחרי גרסה 1.0) | RT-DETR דרך Hugging Face, או Detectron2 (שניהם Apache 2.0) | **לא YOLO של Ultralytics** (AGPL). אימון על Amazon SageMaker, ושרת GPU רק כשמגיעים לשם |
+| גלאי סימנים (שלב 3 ייעודי, אחרי גרסה 1.0) | RT-DETR דרך Hugging Face, או Detectron2 (שניהם Apache 2.0) | **לא YOLO של Ultralytics** (AGPL). אימון על Amazon SageMaker, ושרת GPU רק כשמגיעים לשם. עד אז: LLM ראייה דרך `konboro_llm` ([03 §3.2א](03-symbol-detection.md)) |
 
 **OCR היא ההחלטה הטכנית החשובה ביותר בגרסה 1.0.** בכל חמשת השרטוטים בסט כל הטקסט הוא קווים, ולכן כל הפענוח עובר דרך OCR ([02 §2.3](02-extraction-tiling.md)).
 

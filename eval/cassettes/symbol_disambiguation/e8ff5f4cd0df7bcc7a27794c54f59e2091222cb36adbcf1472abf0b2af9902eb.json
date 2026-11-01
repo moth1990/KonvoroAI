@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1143,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 90,
+    "payload": {
+      "confidence": 0.93,
+      "decision": "choose",
+      "reason": "מלבן עם הכיתוב SATEC 135E, שהוא דגם מונה חשמל, ולכן מתאים לסמל מונה.",
+      "symbol_class": "energy_meter"
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

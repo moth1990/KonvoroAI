@@ -1,0 +1,88 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 354,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            84,
+            0,
+            182,
+            156
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "mccb",
+          "tag": null
+        },
+        {
+          "box": [
+            670,
+            0,
+            770,
+            215
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "motor_protection",
+          "tag": "QLG2"
+        },
+        {
+          "box": [
+            394,
+            662,
+            606,
+            749
+          ],
+          "box_text": "SATEC-135 E",
+          "family": "energy_meter",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "energy_meter",
+          "tag": "PM"
+        },
+        {
+          "box": [
+            768,
+            785,
+            866,
+            963
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "motor_protection",
+          "tag": "QPM"
+        },
+        {
+          "box": [
+            20,
+            753,
+            113,
+            900
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 90,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "terminal",
+          "tag": null
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

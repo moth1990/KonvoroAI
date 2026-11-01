@@ -1,0 +1,178 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 773,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            367,
+            317,
+            485,
+            376
+          ],
+          "box_text": "NVR",
+          "family": "voltage_relay",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "voltage_relay",
+          "tag": "NVR"
+        },
+        {
+          "box": [
+            58,
+            464,
+            176,
+            523
+          ],
+          "box_text": "RNV",
+          "family": "relay",
+          "orientation": 0,
+          "role": "coil",
+          "sure": true,
+          "symbol_class": "relay",
+          "tag": "RNV"
+        },
+        {
+          "box": [
+            212,
+            313,
+            259,
+            382
+          ],
+          "box_text": null,
+          "family": "relay",
+          "orientation": 0,
+          "role": "relay_contact",
+          "sure": false,
+          "symbol_class": "relay",
+          "tag": "NVR"
+        },
+        {
+          "box": [
+            591,
+            200,
+            629,
+            240
+          ],
+          "box_text": null,
+          "family": "indicator_lamp",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "indicator_lamp",
+          "tag": "L1"
+        },
+        {
+          "box": [
+            646,
+            200,
+            684,
+            240
+          ],
+          "box_text": null,
+          "family": "indicator_lamp",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "indicator_lamp",
+          "tag": "L2"
+        },
+        {
+          "box": [
+            704,
+            200,
+            742,
+            240
+          ],
+          "box_text": null,
+          "family": "indicator_lamp",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "indicator_lamp",
+          "tag": "L3"
+        },
+        {
+          "box": [
+            400,
+            474,
+            445,
+            650
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "mcb",
+          "tag": "FNV"
+        },
+        {
+          "box": [
+            304,
+            868,
+            348,
+            1024
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "mcb",
+          "tag": "F3"
+        },
+        {
+          "box": [
+            708,
+            868,
+            752,
+            1024
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "mcb",
+          "tag": "F4"
+        },
+        {
+          "box": [
+            215,
+            897,
+            250,
+            1024
+          ],
+          "box_text": null,
+          "family": "switch_disconnector",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "switch_disconnector",
+          "tag": null
+        },
+        {
+          "box": [
+            619,
+            897,
+            653,
+            1024
+          ],
+          "box_text": null,
+          "family": "switch_disconnector",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "switch_disconnector",
+          "tag": null
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

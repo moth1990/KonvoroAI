@@ -7,7 +7,9 @@ from pydantic import BaseModel, ConfigDict, computed_field
 Kind = Literal["ratio", "count", "mean"]
 
 # Every other metric is better when higher.
-LOWER_IS_BETTER = frozenset({"missed_process_pages", "backtest_deviation", "confirmation_rate"})
+LOWER_IS_BETTER = frozenset(
+    {"missed_process_pages", "backtest_deviation", "confirmation_rate", "duplicates_left", "llm_share"}
+)
 
 
 class Score(BaseModel):
