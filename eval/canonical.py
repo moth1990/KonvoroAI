@@ -119,3 +119,4 @@ class Prediction(Canon):
     extraction: dict[str, int] = {}  # stage 2's counts, reported, not scored
     detections: tuple[CanonDetection, ...] | None = None  # stage 3's, on the process pages
     detection: dict[str, int] = {}  # stage 3's counts: detections, orphan texts, disambiguation calls
+    merge: dict[str, int] = {}  # stage 4's counts: agent tiles, cited values, mismatches, values with no evidence

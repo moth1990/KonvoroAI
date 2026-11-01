@@ -1,0 +1,65 @@
+{
+  "answer": {
+    "input_tokens": 5115,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 327,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "evidence": null,
+              "name": "current_a",
+              "value": null
+            },
+            {
+              "confidence": 0.4,
+              "evidence": "graphic",
+              "graphic_note": "single line enters and leaves the contactor with no slanted pole strokes, so 1 pole",
+              "name": "poles",
+              "span_ids": [],
+              "value": 1
+            },
+            {
+              "evidence": null,
+              "name": "coil_voltage_v",
+              "value": null
+            }
+          ],
+          "brand_hint": null,
+          "det": "d1",
+          "explicit_texts": [
+            "s3"
+          ],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          },
+          "uses_shared_label": false
+        }
+      ],
+      "possible_missed": [],
+      "shared_labels": [],
+      "unassigned_spans": [
+        {
+          "reason": "drawing frame row marker",
+          "span_id": "s1"
+        },
+        {
+          "reason": "tag of neighbour c2",
+          "span_id": "s2"
+        },
+        {
+          "reason": "drawing frame row marker",
+          "span_id": "s4"
+        },
+        {
+          "reason": "drawing frame row marker",
+          "span_id": "s5"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

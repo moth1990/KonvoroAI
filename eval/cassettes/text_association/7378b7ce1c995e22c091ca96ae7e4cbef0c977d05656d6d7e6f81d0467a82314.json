@@ -1,0 +1,132 @@
+{
+  "answer": {
+    "input_tokens": 6020,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 537,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [],
+          "det": "d1",
+          "explicit_texts": [
+            "s9"
+          ]
+        },
+        {
+          "attributes": [],
+          "det": "d2"
+        },
+        {
+          "attributes": [],
+          "det": "d3",
+          "explicit_texts": [
+            "s7",
+            "s11"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "evidence": null,
+              "name": "cross_section_mm2",
+              "value": null
+            }
+          ],
+          "det": "d4"
+        },
+        {
+          "attributes": [
+            {
+              "evidence": null,
+              "name": "cross_section_mm2",
+              "value": null
+            }
+          ],
+          "det": "d5"
+        },
+        {
+          "attributes": [
+            {
+              "evidence": null,
+              "name": "cross_section_mm2",
+              "value": null
+            }
+          ],
+          "det": "d6"
+        },
+        {
+          "attributes": [
+            {
+              "evidence": null,
+              "name": "cross_section_mm2",
+              "value": null
+            }
+          ],
+          "det": "d7"
+        }
+      ],
+      "possible_missed": [],
+      "shared_labels": [],
+      "unassigned_spans": [
+        {
+          "reason": "load name",
+          "span_id": "s20"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s21"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s22"
+        },
+        {
+          "reason": "cable",
+          "span_id": "s12"
+        },
+        {
+          "reason": "cable",
+          "span_id": "s13"
+        },
+        {
+          "reason": "cable",
+          "span_id": "s14"
+        },
+        {
+          "reason": "cable",
+          "span_id": "s15"
+        },
+        {
+          "reason": "cable",
+          "span_id": "s16"
+        },
+        {
+          "reason": "circuit number",
+          "span_id": "s24"
+        },
+        {
+          "reason": "circuit number",
+          "span_id": "s25"
+        },
+        {
+          "reason": "circuit number",
+          "span_id": "s26"
+        },
+        {
+          "reason": "circuit number",
+          "span_id": "s27"
+        },
+        {
+          "reason": "circuit number",
+          "span_id": "s28"
+        },
+        {
+          "reason": "circuit number",
+          "span_id": "s29"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

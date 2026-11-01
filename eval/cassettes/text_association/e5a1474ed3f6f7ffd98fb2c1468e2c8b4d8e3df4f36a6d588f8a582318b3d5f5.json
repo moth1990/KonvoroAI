@@ -1,0 +1,206 @@
+{
+  "answer": {
+    "input_tokens": 6235,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 854,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [],
+          "det": "d1"
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.85,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s17",
+                "s11"
+              ],
+              "value": 630
+            },
+            {
+              "confidence": 0.85,
+              "evidence": "text",
+              "name": "setting_a",
+              "span_ids": [
+                "s13",
+                "s17"
+              ],
+              "value": 500
+            },
+            {
+              "confidence": 0.8,
+              "evidence": "text",
+              "name": "trip_unit",
+              "span_ids": [
+                "s14"
+              ],
+              "value": "LSI"
+            }
+          ],
+          "det": "d2",
+          "explicit_texts": [
+            "s7",
+            "s8",
+            "s9",
+            "s11",
+            "s13",
+            "s14",
+            "s15",
+            "s17"
+          ]
+        },
+        {
+          "attributes": [],
+          "det": "d3",
+          "explicit_texts": [
+            "s10"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s18"
+              ],
+              "value": 6
+            }
+          ],
+          "det": "d4",
+          "explicit_texts": [
+            "s18"
+          ]
+        },
+        {
+          "attributes": [],
+          "det": "d5",
+          "explicit_texts": [
+            "s20",
+            "s21"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.95,
+              "evidence": "text",
+              "name": "ratio_primary_a",
+              "span_ids": [
+                "s19"
+              ],
+              "value": 800
+            },
+            {
+              "confidence": 0.95,
+              "evidence": "text",
+              "name": "ratio_secondary_a",
+              "span_ids": [
+                "s19"
+              ],
+              "value": 5
+            }
+          ],
+          "det": "d6",
+          "explicit_texts": [
+            "s19"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.8,
+              "evidence": null,
+              "name": "trip_unit",
+              "span_ids": [],
+              "value": null
+            },
+            {
+              "confidence": 0.8,
+              "evidence": null,
+              "name": "range_min_a",
+              "span_ids": [],
+              "value": null
+            },
+            {
+              "confidence": 0.8,
+              "evidence": null,
+              "name": "range_max_a",
+              "span_ids": [],
+              "value": null
+            }
+          ],
+          "det": "d7"
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "range_min_a",
+              "span_ids": [
+                "s24"
+              ],
+              "value": 1
+            },
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "range_max_a",
+              "span_ids": [
+                "s24"
+              ],
+              "value": 2.4
+            }
+          ],
+          "det": "d8",
+          "explicit_texts": [
+            "s23",
+            "s24"
+          ]
+        }
+      ],
+      "unassigned_spans": [
+        {
+          "reason": "cable",
+          "span_id": "s1"
+        },
+        {
+          "reason": "cable",
+          "span_id": "s2"
+        },
+        {
+          "reason": "feeder",
+          "span_id": "s3"
+        },
+        {
+          "reason": "note",
+          "span_id": "s4"
+        },
+        {
+          "reason": "note",
+          "span_id": "s5"
+        },
+        {
+          "reason": "note",
+          "span_id": "s6"
+        },
+        {
+          "reason": "neutral label",
+          "span_id": "s16"
+        },
+        {
+          "reason": "note",
+          "span_id": "s22"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

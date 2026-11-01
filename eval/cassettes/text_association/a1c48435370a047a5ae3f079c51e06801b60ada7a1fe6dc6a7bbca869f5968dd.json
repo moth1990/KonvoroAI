@@ -1,0 +1,131 @@
+{
+  "answer": {
+    "input_tokens": 5797,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 648,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [],
+          "brand_hint": null,
+          "det": "d1",
+          "explicit_texts": [
+            "s8"
+          ],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          },
+          "uses_shared_label": false
+        },
+        {
+          "attributes": [],
+          "brand_hint": null,
+          "det": "d2",
+          "explicit_texts": [],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          },
+          "uses_shared_label": false
+        },
+        {
+          "attributes": [],
+          "brand_hint": null,
+          "det": "d3",
+          "explicit_texts": [],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          },
+          "uses_shared_label": false
+        },
+        {
+          "attributes": [],
+          "brand_hint": null,
+          "det": "d4",
+          "explicit_texts": [],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          },
+          "uses_shared_label": false
+        }
+      ],
+      "possible_missed": [],
+      "shared_labels": [],
+      "unassigned_spans": [
+        {
+          "reason": "terminal polarity label, not a cross-section",
+          "span_id": "s9"
+        },
+        {
+          "reason": "terminal polarity label, not a cross-section",
+          "span_id": "s10"
+        },
+        {
+          "reason": "terminal polarity label",
+          "span_id": "s11"
+        },
+        {
+          "reason": "terminal polarity label",
+          "span_id": "s12"
+        },
+        {
+          "reason": "load description",
+          "span_id": "s13"
+        },
+        {
+          "reason": "load description",
+          "span_id": "s14"
+        },
+        {
+          "reason": "load description",
+          "span_id": "s15"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s16"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s17"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s18"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s19"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s20"
+        },
+        {
+          "reason": "load supply",
+          "span_id": "s21"
+        },
+        {
+          "reason": "load supply",
+          "span_id": "s22"
+        },
+        {
+          "reason": "title block",
+          "span_id": "s23"
+        },
+        {
+          "reason": "title block",
+          "span_id": "s24"
+        },
+        {
+          "reason": "title block",
+          "span_id": "s25"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

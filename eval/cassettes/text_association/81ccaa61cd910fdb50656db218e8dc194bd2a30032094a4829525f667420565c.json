@@ -1,0 +1,115 @@
+{
+  "answer": {
+    "input_tokens": 5749,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 499,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "confidence": 0.5,
+              "evidence": "text",
+              "name": "cross_section_mm2",
+              "span_ids": [
+                "s12"
+              ],
+              "value": 6
+            }
+          ],
+          "det": "d1",
+          "explicit_texts": [
+            "s6"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.5,
+              "evidence": "graphic",
+              "graphic_note": "single line with one slanted stroke symbol, no pole strokes",
+              "name": "poles",
+              "span_ids": [],
+              "value": 1
+            }
+          ],
+          "det": "d2",
+          "explicit_texts": [
+            "s6"
+          ]
+        },
+        {
+          "attributes": [],
+          "det": "d3",
+          "explicit_texts": [
+            "s4"
+          ]
+        },
+        {
+          "attributes": [],
+          "det": "d4",
+          "explicit_texts": [
+            "s5"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.5,
+              "evidence": "text",
+              "name": "cross_section_mm2",
+              "span_ids": [
+                "s12"
+              ],
+              "value": 6
+            }
+          ],
+          "det": "d5",
+          "explicit_texts": [
+            "s17"
+          ]
+        }
+      ],
+      "unassigned_spans": [
+        {
+          "reason": "load description",
+          "span_id": "s1"
+        },
+        {
+          "reason": "load description",
+          "span_id": "s2"
+        },
+        {
+          "reason": "load description",
+          "span_id": "s3"
+        },
+        {
+          "reason": "ground marking",
+          "span_id": "s9"
+        },
+        {
+          "reason": "ground marking",
+          "span_id": "s10"
+        },
+        {
+          "reason": "cable of neighbour T2",
+          "span_id": "s11"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s15"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s16"
+        },
+        {
+          "reason": "circuit number of neighbour",
+          "span_id": "s18"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

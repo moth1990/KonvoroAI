@@ -1,0 +1,87 @@
+{
+  "answer": {
+    "input_tokens": 5675,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 386,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "evidence": null,
+              "name": "current_a",
+              "value": null
+            },
+            {
+              "evidence": null,
+              "name": "poles",
+              "value": null
+            },
+            {
+              "evidence": null,
+              "name": "coil_voltage_v",
+              "value": null
+            }
+          ],
+          "brand_hint": null,
+          "det": "d1",
+          "explicit_texts": [
+            "s9"
+          ],
+          "multiplicity": {
+            "count": 1
+          },
+          "uses_shared_label": false
+        },
+        {
+          "attributes": [
+            {
+              "evidence": null,
+              "name": "cross_section_mm2",
+              "value": null
+            }
+          ],
+          "brand_hint": null,
+          "det": "d2",
+          "explicit_texts": [
+            "s12"
+          ],
+          "multiplicity": {
+            "count": 1
+          },
+          "uses_shared_label": false
+        }
+      ],
+      "possible_missed": [],
+      "shared_labels": [],
+      "unassigned_spans": [
+        {
+          "reason": "Hebrew title text, not a device value",
+          "span_id": "s13"
+        },
+        {
+          "reason": "Hebrew title text, not a device value",
+          "span_id": "s14"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s15"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s16"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s17"
+        },
+        {
+          "reason": "load description, not a device value for these symbols",
+          "span_id": "s18"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

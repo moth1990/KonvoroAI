@@ -1,0 +1,154 @@
+{
+  "answer": {
+    "input_tokens": 6477,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 687,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "confidence": 0.95,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s3"
+              ],
+              "value": 6
+            }
+          ],
+          "det": "d1",
+          "explicit_texts": [
+            "s3",
+            "s9"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.95,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s4"
+              ],
+              "value": 20
+            }
+          ],
+          "det": "d2",
+          "explicit_texts": [
+            "s4",
+            "s10"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.8,
+              "evidence": null,
+              "name": "current_a",
+              "span_ids": [],
+              "value": null
+            },
+            {
+              "confidence": 0.8,
+              "evidence": null,
+              "name": "poles",
+              "span_ids": [],
+              "value": null
+            }
+          ],
+          "det": "d3",
+          "explicit_texts": []
+        },
+        {
+          "attributes": [],
+          "det": "d4",
+          "explicit_texts": []
+        },
+        {
+          "attributes": [],
+          "det": "d5",
+          "explicit_texts": [
+            "s18",
+            "s20"
+          ]
+        },
+        {
+          "attributes": [],
+          "det": "d6",
+          "explicit_texts": [
+            "s19",
+            "s21"
+          ]
+        },
+        {
+          "attributes": [],
+          "det": "d7",
+          "explicit_texts": []
+        },
+        {
+          "attributes": [],
+          "det": "d8",
+          "explicit_texts": [
+            "s22"
+          ]
+        }
+      ],
+      "possible_missed": [],
+      "shared_labels": [],
+      "unassigned_spans": [
+        {
+          "reason": "belongs to the RCD c5, not d3",
+          "span_id": "s17"
+        },
+        {
+          "reason": "RCD label",
+          "span_id": "s15"
+        },
+        {
+          "reason": "belongs to c3",
+          "span_id": "s2"
+        },
+        {
+          "reason": "belongs to c3",
+          "span_id": "s7"
+        },
+        {
+          "reason": "belongs to c4",
+          "span_id": "s5"
+        },
+        {
+          "reason": "belongs to c4",
+          "span_id": "s11"
+        },
+        {
+          "reason": "belongs to c6",
+          "span_id": "s25"
+        },
+        {
+          "reason": "multiplier for c6",
+          "span_id": "s28"
+        },
+        {
+          "reason": "on the outgoing line, not a device multiplier",
+          "span_id": "s29"
+        },
+        {
+          "reason": "cable",
+          "span_id": "s30"
+        },
+        {
+          "reason": "cable",
+          "span_id": "s32"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s33"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

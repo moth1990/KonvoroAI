@@ -1,0 +1,131 @@
+{
+  "answer": {
+    "input_tokens": 5660,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 526,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "confidence": 0.85,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s9"
+              ],
+              "value": 630
+            },
+            {
+              "evidence": null,
+              "name": "poles",
+              "value": null
+            },
+            {
+              "evidence": null,
+              "name": "neutral",
+              "value": null
+            }
+          ],
+          "det": "d1",
+          "explicit_texts": [
+            "s9"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "evidence": null,
+              "name": "cross_section_mm2",
+              "value": null
+            }
+          ],
+          "det": "d2"
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.85,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s18"
+              ],
+              "value": 630
+            },
+            {
+              "confidence": 0.85,
+              "evidence": "text",
+              "name": "poles",
+              "span_ids": [
+                "s18"
+              ],
+              "value": 4
+            },
+            {
+              "evidence": null,
+              "name": "neutral",
+              "value": null
+            }
+          ],
+          "det": "d3",
+          "explicit_texts": [
+            "s18"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "evidence": null,
+              "name": "cross_section_mm2",
+              "value": null
+            }
+          ],
+          "det": "d4"
+        }
+      ],
+      "possible_missed": [],
+      "shared_labels": [],
+      "unassigned_spans": [
+        {
+          "reason": "description of breaker",
+          "span_id": "s4"
+        },
+        {
+          "reason": "description",
+          "span_id": "s5"
+        },
+        {
+          "reason": "description",
+          "span_id": "s6"
+        },
+        {
+          "reason": "description label, same as d1 rating",
+          "span_id": "s8"
+        },
+        {
+          "reason": "description",
+          "span_id": "s10"
+        },
+        {
+          "reason": "protection type description",
+          "span_id": "s11"
+        },
+        {
+          "reason": "cable length",
+          "span_id": "s13"
+        },
+        {
+          "reason": "cable",
+          "span_id": "s16"
+        },
+        {
+          "reason": "cable",
+          "span_id": "s17"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

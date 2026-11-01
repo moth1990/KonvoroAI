@@ -232,7 +232,7 @@ class Component(Base, TenantScoped, Created):
         tenant_unique(),
         tenant_fk("drawing_id", "drawings", ondelete="CASCADE"),
         tenant_fk("panel_id", "panels", ondelete="CASCADE"),
-        one_of("supply_scope", ("in_panel", "outside_panel", "prep_only", "not_in_scope")),
+        one_of("supply_scope", ("in_panel", "other_location", "prepare_only", "by_others")),
     )
 
     id: Mapped[str] = pk()

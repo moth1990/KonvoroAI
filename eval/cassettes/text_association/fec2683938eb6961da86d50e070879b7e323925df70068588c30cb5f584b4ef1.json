@@ -1,0 +1,60 @@
+{
+  "answer": {
+    "input_tokens": 5175,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 280,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [],
+          "brand_hint": null,
+          "det": "d1",
+          "explicit_texts": [
+            "s3"
+          ],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          },
+          "uses_shared_label": false
+        },
+        {
+          "attributes": [],
+          "brand_hint": null,
+          "det": "d2",
+          "explicit_texts": [
+            "s2"
+          ],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          },
+          "uses_shared_label": false
+        },
+        {
+          "attributes": [],
+          "brand_hint": null,
+          "det": "d3",
+          "explicit_texts": [
+            "s4"
+          ],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          },
+          "uses_shared_label": false
+        }
+      ],
+      "possible_missed": [],
+      "shared_labels": [],
+      "unassigned_spans": [
+        {
+          "reason": "Number on the incoming line, not a device value for these contactors",
+          "span_id": "s1"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

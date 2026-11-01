@@ -1,0 +1,170 @@
+{
+  "answer": {
+    "input_tokens": 6378,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 670,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [],
+          "det": "d1",
+          "explicit_texts": []
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.6,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s9"
+              ],
+              "value": 160
+            },
+            {
+              "confidence": 0.7,
+              "evidence": "text",
+              "name": "setting_a",
+              "span_ids": [
+                "s9",
+                "s12"
+              ],
+              "value": 160
+            },
+            {
+              "confidence": 0.3,
+              "evidence": "text",
+              "name": "range_max_a",
+              "span_ids": [
+                "s12"
+              ],
+              "value": 250
+            },
+            {
+              "confidence": 0.85,
+              "evidence": "text",
+              "name": "trip_unit",
+              "span_ids": [
+                "s10"
+              ],
+              "value": "LSI"
+            }
+          ],
+          "det": "d2",
+          "explicit_texts": [
+            "s9",
+            "s12",
+            "s7",
+            "s8",
+            "s10"
+          ]
+        },
+        {
+          "attributes": [],
+          "det": "d3",
+          "explicit_texts": [
+            "s6"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s13"
+              ],
+              "value": 6
+            }
+          ],
+          "det": "d4",
+          "explicit_texts": [
+            "s13"
+          ]
+        },
+        {
+          "attributes": [],
+          "det": "d5",
+          "explicit_texts": [
+            "s15",
+            "s16"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.5,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s14"
+              ],
+              "value": 400
+            },
+            {
+              "evidence": null,
+              "name": "setting_a",
+              "value": null
+            }
+          ],
+          "det": "d6",
+          "explicit_texts": [
+            "s14"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "range_min_a",
+              "span_ids": [
+                "s20"
+              ],
+              "value": 1
+            },
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "range_max_a",
+              "span_ids": [
+                "s20"
+              ],
+              "value": 2.4
+            }
+          ],
+          "det": "d7",
+          "explicit_texts": [
+            "s19",
+            "s20"
+          ]
+        }
+      ],
+      "unassigned_spans": [
+        {
+          "reason": "cable",
+          "span_id": "s1"
+        },
+        {
+          "reason": "cable length",
+          "span_id": "s5"
+        },
+        {
+          "span_id": "s2"
+        },
+        {
+          "span_id": "s3"
+        },
+        {
+          "span_id": "s4"
+        },
+        {
+          "span_id": "s11"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

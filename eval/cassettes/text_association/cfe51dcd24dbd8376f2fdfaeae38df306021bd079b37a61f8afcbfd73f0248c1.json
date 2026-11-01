@@ -1,0 +1,227 @@
+{
+  "answer": {
+    "input_tokens": 6119,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 1114,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "confidence": 0.95,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s5"
+              ],
+              "value": 16
+            },
+            {
+              "confidence": 0.5,
+              "evidence": "graphic",
+              "graphic_note": "single line with one short slanted stroke across it",
+              "name": "poles",
+              "span_ids": [],
+              "value": 1
+            }
+          ],
+          "brand_hint": null,
+          "det": "d1",
+          "explicit_texts": [
+            "s5",
+            "s18"
+          ],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          },
+          "uses_shared_label": false
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.95,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s6"
+              ],
+              "value": 16
+            },
+            {
+              "confidence": 0.8,
+              "evidence": "graphic",
+              "graphic_note": "three slanted strokes across the line",
+              "name": "poles",
+              "span_ids": [],
+              "value": 3
+            }
+          ],
+          "brand_hint": null,
+          "det": "d2",
+          "explicit_texts": [
+            "s6",
+            "s10",
+            "s16"
+          ],
+          "multiplicity": {
+            "count": 5,
+            "span_ids": [
+              "s16"
+            ]
+          },
+          "uses_shared_label": false
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.95,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s7"
+              ],
+              "value": 63
+            },
+            {
+              "confidence": 0.8,
+              "evidence": "graphic",
+              "graphic_note": "three slanted strokes across the line",
+              "name": "poles",
+              "span_ids": [],
+              "value": 3
+            }
+          ],
+          "brand_hint": null,
+          "det": "d3",
+          "explicit_texts": [
+            "s7",
+            "s11",
+            "s17"
+          ],
+          "multiplicity": {
+            "count": 6,
+            "span_ids": [
+              "s17"
+            ]
+          },
+          "uses_shared_label": false
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.95,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s8"
+              ],
+              "value": 80
+            },
+            {
+              "confidence": 0.8,
+              "evidence": "graphic",
+              "graphic_note": "three slanted strokes across the line",
+              "name": "poles",
+              "span_ids": [],
+              "value": 3
+            }
+          ],
+          "brand_hint": null,
+          "det": "d4",
+          "explicit_texts": [
+            "s8",
+            "s15"
+          ],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          },
+          "uses_shared_label": false
+        }
+      ],
+      "possible_missed": [],
+      "shared_labels": [],
+      "unassigned_spans": [
+        {
+          "reason": "belongs to neighbour c2",
+          "span_id": "s1"
+        },
+        {
+          "reason": "belongs to neighbour c2",
+          "span_id": "s2"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s3"
+        },
+        {
+          "reason": "belongs to a symbol outside the tile",
+          "span_id": "s4"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s9"
+        },
+        {
+          "reason": "load description",
+          "span_id": "s12"
+        },
+        {
+          "reason": "load description",
+          "span_id": "s13"
+        },
+        {
+          "reason": "belongs to a symbol outside the tile",
+          "span_id": "s14"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s19"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s20"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s21"
+        },
+        {
+          "reason": "cable",
+          "span_id": "s22"
+        },
+        {
+          "reason": "cable",
+          "span_id": "s23"
+        },
+        {
+          "reason": "cable",
+          "span_id": "s24"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s25"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s26"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s27"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s28"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s29"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

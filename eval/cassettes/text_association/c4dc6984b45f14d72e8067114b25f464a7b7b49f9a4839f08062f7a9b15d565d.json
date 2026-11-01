@@ -1,0 +1,138 @@
+{
+  "answer": {
+    "input_tokens": 6344,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 558,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "confidence": 0.85,
+              "evidence": "text",
+              "name": "contacts",
+              "span_ids": [
+                "s13",
+                "s20"
+              ],
+              "value": "21/22"
+            }
+          ],
+          "det": "d1",
+          "explicit_texts": [
+            "s13",
+            "s20"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.3,
+              "evidence": null,
+              "name": "contacts",
+              "value": null
+            }
+          ],
+          "det": "d2",
+          "explicit_texts": [
+            "s15"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s16"
+              ],
+              "value": 16
+            },
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "poles",
+              "span_ids": [
+                "s16"
+              ],
+              "value": 3
+            }
+          ],
+          "brand_hint": "ABB",
+          "det": "d3",
+          "explicit_texts": [
+            "s14",
+            "s16",
+            "s21",
+            "s23",
+            "s25"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.85,
+              "evidence": "text",
+              "name": "contacts",
+              "span_ids": [
+                "s12",
+                "s19"
+              ],
+              "value": "21/22"
+            }
+          ],
+          "det": "d4",
+          "explicit_texts": [
+            "s12",
+            "s19"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.8,
+              "evidence": "graphic",
+              "graphic_note": "three slanted strokes across the line",
+              "name": "poles",
+              "span_ids": [],
+              "value": 3
+            }
+          ],
+          "det": "d5",
+          "explicit_texts": [
+            "s28"
+          ]
+        }
+      ],
+      "unassigned_spans": [
+        {
+          "reason": "load voltage",
+          "span_id": "s34"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s38"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s36"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s32"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s30"
+        },
+        {
+          "reason": "terminal number",
+          "span_id": "s42"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}
