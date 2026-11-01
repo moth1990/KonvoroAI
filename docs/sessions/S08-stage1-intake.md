@@ -6,7 +6,7 @@
 | **Branch** | `s08-stage1-intake` |
 | **Depends on** | S07 |
 | **Status** | in review |
-| **PR** | |
+| **PR** | [moth1990/KonvoroAI#9](https://github.com/moth1990/KonvoroAI/pull/9) |
 
 ## Goal
 
