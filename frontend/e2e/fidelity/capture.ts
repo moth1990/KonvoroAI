@@ -11,6 +11,7 @@ import { fileURLToPath } from "node:url";
 import { test, type Page } from "@playwright/test";
 
 import { signIn, SLOW_PROJECT, TENANTS } from "../fixtures";
+import { lineWith } from "../review-helpers";
 import { prototypePort } from "./fidelity.config";
 
 const OUT = fileURLToPath(new URL("./out/", import.meta.url));
@@ -24,6 +25,8 @@ interface Screen {
   prototype: { hash: string; authed: boolean; flags?: Record<string, boolean>; setup?: (page: Page) => Promise<void> };
   app: { path: string; tenant?: string; setup?: (page: Page) => Promise<void> };
   notes: string[];
+  /** The window as it is, not the whole page: the drawing viewer fills the window and would collapse unrolled. */
+  window?: boolean;
 }
 
 const NURSERY = fileURLToPath(new URL("../../../golden/NURSERY-1/NURSERY-1.pdf", import.meta.url));
@@ -202,8 +205,8 @@ async function appReview(page: Page) {
 
 function reviewScreens(): Screen[] {
   const notes = [
-    'Header: undo, export, chat and "אשר ושלח" are left out until their sessions (S23, S25); the drawing pane is a ' +
-      "placeholder until S11.",
+    'Header: export, chat and "אשר ושלח" are left out until their sessions (S23, S25). The drawing pane is S11 ' +
+      "(its own screens below).",
     "S09 decision 3: a shape icon beside each stripe (check, triangle, X, box), so color is never the only signal.",
     'S09 decision 4: the spec\'s filter row (הכל · רק לבדיקה · ירוק · צהוב · אדום) and the "X מתוך Y שורות מוכנות" bar.',
     "S09 decision 5: after the groups, a panel total row (09 §6.3). The prototype's footnote about accessories " +
@@ -217,7 +220,84 @@ function reviewScreens(): Screen[] {
     "Data differs by design in the rail: the E2E tenant has no approval-queue items.",
   ];
   const review = { path: "/home", tenant: TENANTS.review };
+  const phone = (page: Page) => (page.viewportSize()?.width ?? 0) <= 860;
+  const drawingReady = (page: Page) =>
+    page.locator("[data-testid=viewer][data-state=ready]").waitFor({ timeout: 20_000 });
+  const drawingNotes = [
+    "S11 decision 1: every component is boxed in its line's color, red dashed; the prototype boxes only the " +
+      "selected line. A click on a box selects its line.",
+    "S11 decision 2: the fixture's pages are the prototype's own images, so they match; real drawings are rendered " +
+      "by stage 2 and zoom sharp.",
+    "S11 decision 4: \"עמוד x מתוך y\" and previous / next, each thumbnail's red (or yellow) count, and the page's " +
+      "route, confidence and vector or scanned beside its title. Zoom is free; the buttons step ×1.5.",
+    "The header's undo button (09 §7.11) is in; it stays disabled until S23's actions.",
+  ];
   return [
+    {
+      id: "review-drawing",
+      title: "Review: the drawing (page 5)",
+      prototype: {
+        hash: "#review",
+        authed: true,
+        setup: async (p) => {
+          if (phone(p)) await p.locator('[data-act="tab"][data-tab="drawing"]').click();
+        },
+      },
+      app: {
+        ...review,
+        setup: async (page) => {
+          await appReview(page);
+          if (phone(page)) await page.getByRole("tab", { name: "שרטוט" }).click();
+          await drawingReady(page);
+        },
+      },
+      notes: drawingNotes,
+      window: true,
+    },
+    {
+      id: "review-showdraw",
+      title: 'Review: "הצג בשרטוט" on RNV',
+      prototype: {
+        hash: "#review",
+        authed: true,
+        setup: async (p) => {
+          await p.locator('[data-line="rnv"]').click();
+          await p.locator('[data-act="showdraw"][data-id="rnv"]').click();
+        },
+      },
+      app: {
+        ...review,
+        setup: async (page) => {
+          await appReview(page);
+          await (await lineWith(page, "ממסר עזר")).click();
+          await page.getByRole("button", { name: "הצג בשרטוט" }).click();
+          await drawingReady(page);
+        },
+      },
+      notes: [
+        "Framed the prototype's way: the component a third of the view. On the phone the sheet closes and the drawing " +
+          "tab opens (09 §5.2).",
+      ],
+      window: true,
+    },
+    {
+      id: "review-finding",
+      title: 'Review: a finding\'s "בשרטוט" (F26–F29, page 4)',
+      prototype: { hash: "#review", authed: true, setup: (p) => p.locator('[data-act="f-show"]').first().click() },
+      app: {
+        ...review,
+        setup: async (page) => {
+          await appReview(page);
+          await page.getByTestId("f-show").click();
+          await drawingReady(page);
+        },
+      },
+      notes: [
+        "A context page: the image with its role in a chip, and no component boxes; the finding's box only.",
+        "The finding's other buttons (התעלם, הוסף 4 שורות) wait for S23.",
+      ],
+      window: true,
+    },
     {
       id: "review-lines",
       title: "Review: lines (NURSERY-1 fixture)",
@@ -238,7 +318,7 @@ function reviewScreens(): Screen[] {
         },
       },
       notes: [
-        "S09 decision 7: read-only. No price and cost inputs, no supplier select, no החלף / מחק / הצג בשרטוט.",
+        "S09 decision 7: read-only. No price and cost inputs, no supplier select, no החלף / מחק. הצג בשרטוט is in since S11.",
         "On the phone the detail opens in a bottom sheet (09 §5.2); the prototype expands the row.",
       ],
     },
@@ -271,11 +351,11 @@ const SCHEMES = ["light", "dark"] as const;
 const UNROLL = `html,body,#root,#app{height:auto!important}
 .shell{height:auto!important;min-height:100vh}.main{height:auto!important;overflow:visible!important}`;
 
-async function shoot(page: Page, file: string) {
+async function shoot(page: Page, file: string, window = false) {
   await page.waitForLoadState("networkidle");
-  if (await page.locator(".shell").count()) await page.addStyleTag({ content: UNROLL });
+  if (!window && (await page.locator(".shell").count())) await page.addStyleTag({ content: UNROLL });
   await page.evaluate(() => document.fonts.ready);
-  await page.screenshot({ path: `${OUT}${file}`, fullPage: true, animations: "disabled" });
+  await page.screenshot({ path: `${OUT}${file}`, fullPage: !window, animations: "disabled" });
 }
 
 /** Screenshots go inside the report, so it opens anywhere as one file. */
@@ -297,6 +377,7 @@ for (const screen of SCREENS.filter((s) => !ONLY || ONLY.includes(s.id))) {
           timezoneId: "Asia/Jerusalem",
           isMobile: viewport.id === "mobile",
           hasTouch: viewport.id === "mobile",
+          reducedMotion: "reduce" as const, // the drawing viewer jumps straight to where it goes
         };
 
         // The prototype has no viewport meta, so mobile emulation would lay it out at 980px: give it a plain
@@ -314,7 +395,7 @@ for (const screen of SCREENS.filter((s) => !ONLY || ONLY.includes(s.id))) {
         );
         await p.goto(`${PROTOTYPE}${hash}`);
         await screen.prototype.setup?.(p);
-        await shoot(p, `${name}-prototype.png`);
+        await shoot(p, `${name}-prototype.png`, screen.window);
         await proto.close();
 
         const app = await browser.newContext({ ...options, baseURL: test.info().project.use.baseURL });
@@ -322,7 +403,7 @@ for (const screen of SCREENS.filter((s) => !ONLY || ONLY.includes(s.id))) {
         if (screen.app.tenant) await signIn(a, app.request, screen.app.tenant);
         await a.goto(screen.app.path);
         await screen.app.setup?.(a);
-        await shoot(a, `${name}-app.png`);
+        await shoot(a, `${name}-app.png`, screen.window);
         await app.close();
 
         shots.push({ screen, viewport: viewport.id, scheme, file: name });

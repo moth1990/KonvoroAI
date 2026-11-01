@@ -2,6 +2,8 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 
 /** How long a toast stays up (prototype `toast()`, line 628). */
 export const TOAST_MS = 4200;
+/** A toast that offers "בטל" stays 5 s (09 §7.11). */
+export const UNDO_TOAST_MS = 5000;
 
 interface ToastState {
   id: number;
@@ -25,7 +27,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!toast) return;
-    const timer = window.setTimeout(() => setToast(null), TOAST_MS);
+    const timer = window.setTimeout(() => setToast(null), toast.onUndo ? UNDO_TOAST_MS : TOAST_MS);
     return () => window.clearTimeout(timer);
   }, [toast]);
 

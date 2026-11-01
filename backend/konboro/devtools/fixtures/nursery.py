@@ -12,8 +12,10 @@ the fixture drawing is left alone. No customer, factory or person name from the 
 from dataclasses import dataclass, field
 from datetime import date
 from decimal import Decimal
+from pathlib import Path
 from typing import Any
 
+from PIL import Image
 from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
@@ -21,12 +23,21 @@ from sqlalchemy.orm import Session
 from konboro.db import models as m
 from konboro.db.ids import new_id
 from konboro.db.seed import PRODUCTS, SUPPLIERS
+from konboro.pipeline.extraction import deepzoom
+from konboro.pipeline.extraction.config import DEFAULT as EXTRACTION
+from konboro.pipeline.intake.pages import png
+from konboro.pipeline.stages.s1_intake import THUMB_PX, thumbnail_key
 from konboro.services.quotes import LineIn, store_totals, write_lines
+from konboro.services.storage import Storage, drawing_key
 
 MARKER = "fixture:NURSERY-1"  # drawings.trace_id of the fixture drawing
 FLAG = "review_screen"
 QUOTE_DATE = date(2026, 10, 13)
 PRICE_DATE = "2026-10-01"
+
+# The drawing pane's pages (S11 decision 2): the prototype's own page images, 1400 × 989, title block blanked. The
+# golden PDF's title block names the real customer, so it is never rendered into a tenant.
+PAGE_IMAGES = Path(__file__).with_name("nursery_pages")
 
 # The prototype's page boxes are in 1755 × 1240 page pixels; the PDF's pages are 842 × 595 points (00 §6.2).
 PX_TO_PT = 842 / 1755
@@ -376,7 +387,7 @@ def seed_nursery(session: Session, tenant_id: str) -> str | None:
             drawing_id=drawing.id,
             original_name="NURSERY-1.pdf",
             detected_format="pdf",
-            sha256="0" * 64,  # nothing is stored in S3 for the fixture; the drawing pane arrives in S11
+            sha256="0" * 64,  # no PDF is stored for the fixture, only its page images (seed_nursery_pages)
             size_bytes=0,
             page_count=len(PAGE_KINDS),
             storage_key=f"tenants/{tenant_id}/drawings/{drawing.id}/files/fixture.pdf",
@@ -511,3 +522,35 @@ def _worst(reasons: list[dict[str, Any]]) -> str:
     """07 §7.5: the line's color is the worst of its reasons. The fixture plays stage 7 here."""
     statuses = {r["status"] for r in reasons}
     return "red" if "red" in statuses else "yellow" if "yellow" in statuses else "green"
+
+
+def seed_nursery_pages(session: Session, storage: Storage, tenant_id: str) -> int:
+    """Puts each fixture page's render, thumbnail and viewer pyramid in S3, where stage 2 would (S11 decision 2),
+    and sets the page's keys. Safe to rerun: a page whose pyramid is in S3 is left alone, and one whose objects are
+    gone (a bucket emptied by a test run) is written again. Returns the number of pages written."""
+    drawing_id = session.scalar(
+        select(m.Drawing.id).where(m.Drawing.tenant_id == tenant_id, m.Drawing.trace_id == MARKER)
+    )
+    if drawing_id is None:
+        return 0
+    written = 0
+    pages = session.scalars(select(m.Page).where(m.Page.tenant_id == tenant_id, m.Page.drawing_id == drawing_id))
+    tile, overlap = EXTRACTION.dzi_tile_px, EXTRACTION.dzi_overlap_px
+    for page in pages:
+        base = drawing_key(tenant_id, drawing_id, "pages", page.id) + "/"
+        if page.tiles_prefix is not None and storage.exists(tenant_id, base + "dz/index.json"):
+            continue
+        image = Image.open(PAGE_IMAGES / f"p{page.page_no}.jpg").convert("RGB")
+        thumb = image.copy()
+        thumb.thumbnail((THUMB_PX, THUMB_PX))
+        storage.put(tenant_id, thumbnail_key(tenant_id, drawing_id, page.id), png(thumb), "image/png")
+        storage.put(tenant_id, base + "render.png", png(image), "image/png")
+        dzi = deepzoom.descriptor(image.width, image.height, tile, overlap)
+        storage.put(tenant_id, base + "dz/page.dzi", dzi, "application/xml")
+        packed, index = deepzoom.pack(image, tile, overlap)
+        storage.put(tenant_id, base + "dz/tiles.bin", packed)
+        storage.put(tenant_id, base + "dz/index.json", index, "application/json")
+        page.render_key, page.tiles_prefix = base + "render.png", base + "tiles/"
+        written += 1
+    session.flush()
+    return written

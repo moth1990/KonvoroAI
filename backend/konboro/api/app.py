@@ -5,13 +5,13 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import Engine
 
 from konboro.db.session import app_engine
-from konboro.services import auth, flags
+from konboro.services import auth, flags, viewer
 from konboro.services.queue import Queue
 from konboro.services.storage import Storage
 from konboro.settings import Settings, get_settings
 
 from . import errors
-from .routes import account, drawings, health, home, quotes
+from .routes import account, drawings, health, home, pages, quotes
 from .routes import auth as auth_routes
 from .routes import settings as settings_routes
 
@@ -23,6 +23,7 @@ ROUTERS = (
     home.router,
     drawings.router,
     quotes.router,
+    pages.router,
 )
 
 
@@ -45,6 +46,7 @@ def create_app(
     app.state.verifier = verifier or auth.dev_tokens(settings)
     app.state.storage = Storage(settings)
     app.state.queue = Queue(settings)
+    app.state.tile_indexes = viewer.TileIndexes()
     flags.cache.ttl = settings.flag_cache_seconds
 
     app.add_middleware(

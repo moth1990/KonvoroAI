@@ -8,14 +8,21 @@ factory name appears here.
 
 from datetime import date, datetime
 from decimal import Decimal
+from typing import TYPE_CHECKING
 from zoneinfo import ZoneInfo
 
 from sqlalchemy import Engine, create_engine, select, text
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
+from konboro.settings import get_settings
+
 from .config import migration_dsn
 from .ids import new_id
+
+if TYPE_CHECKING:
+    from konboro.services.storage import Storage
+
 from .models import (
     Customer,
     FeatureFlag,
@@ -209,24 +216,30 @@ def seed_demo_tenant(session: Session) -> bool:
     return True
 
 
-def seed_demo_fixtures(session: Session) -> None:
-    """The review screen's fixture quote (S09). Runs every time, so a demo tenant from before S09 gets it too."""
-    from konboro.devtools.fixtures.nursery import enable_flag, seed_nursery  # it reads this module's price list
+def seed_demo_fixtures(session: Session, storage: "Storage") -> None:
+    """The review screen's fixture quote (S09) and its page images (S11). Runs every time, so a demo tenant from
+    before S09 gets it too, and a bucket that lost the images gets them again."""
+    # it reads this module's price list
+    from konboro.devtools.fixtures.nursery import enable_flag, seed_nursery, seed_nursery_pages
 
     session.execute(text("SELECT set_config('app.tenant_id', :t, true)"), {"t": DEMO_TENANT})
     enable_flag(session, DEMO_TENANT)
     seed_nursery(session, DEMO_TENANT)
+    seed_nursery_pages(session, storage, DEMO_TENANT)
 
 
-def seed(engine: Engine | None = None) -> bool:
-    """Runs as the owner role, inside the demo tenant's context for tenant rows."""
+def seed(engine: Engine | None = None, storage: "Storage | None" = None) -> bool:
+    """Runs as the owner role, inside the demo tenant's context for tenant rows. Needs S3 (`make up`)."""
+    from konboro.services.storage import Storage
+
     engine = engine or create_engine(migration_dsn())
+    storage = storage or Storage(get_settings())
     with Session(engine) as session, session.begin():
         seed_global(session)
     with Session(engine) as session, session.begin():
         created = seed_demo_tenant(session)
     with Session(engine) as session, session.begin():
-        seed_demo_fixtures(session)
+        seed_demo_fixtures(session, storage)
     return created
 
 

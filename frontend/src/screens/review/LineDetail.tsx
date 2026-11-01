@@ -1,12 +1,18 @@
 import type { Finding, QuoteLine } from "../../api/client";
+import { Icon } from "../../ui/Icon";
 import { attributeLabel, lineFindings, percent, priceSourceText, shekels, sourceText } from "./model";
 
 /**
  * Line detail, read-only in S09 (S09 decision 7): what the drawing says, where each value comes from, why, the
  * price and its source, cost and margin, the line's findings and its alternatives (09 §6.4, prototype `lineDetail`).
- * Editing arrives in S23 and "הצג בשרטוט" in S11.
+ * Editing arrives in S23. "הצג בשרטוט" frames the line on the drawing (S11), for a line that has an instance.
  */
-export function LineDetail({ line, findings }: { line: QuoteLine; findings: Finding[] }) {
+export function LineDetail(props: {
+  line: QuoteLine;
+  findings: Finding[];
+  onShowOnDrawing?: (line: QuoteLine) => void;
+}) {
+  const { line, findings, onShowOnDrawing } = props;
   const own = lineFindings(line, findings);
   return (
     <div className="detail" data-testid="line-detail" id={`detail-${line.line_id}`}>
@@ -83,6 +89,14 @@ export function LineDetail({ line, findings }: { line: QuoteLine; findings: Find
           <span className="small muted">אין חלופות. הדגם כתוב בשרטוט</span>
         )}
       </div>
+      {onShowOnDrawing && line.boxes.length ? (
+        <div className="row">
+          <button type="button" className="btn sm" data-testid="showdraw" onClick={() => onShowOnDrawing(line)}>
+            <Icon name="eye" />
+            הצג בשרטוט
+          </button>
+        </div>
+      ) : null}
     </div>
   );
 }

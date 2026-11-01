@@ -9,6 +9,7 @@ from konboro.pipeline import coordinator
 from konboro.pipeline.intake import corrections
 from konboro.pipeline.intake.routing import CONFIRM_THRESHOLD
 from konboro.pipeline.stages import NAMES
+from konboro.pipeline.stages.s1_intake import thumbnail_key
 from konboro.services import drawings, quota
 from konboro.services.intake import MB, Limits
 from konboro.services.queue import Queue, StageMessage
@@ -216,7 +217,12 @@ def _progress_out(actor: Actor, storage: Storage, drawing_id: str) -> ProgressOu
                 page_kind_confidence=page.page_kind_confidence,
                 classified_by=page.classified_by,  # type: ignore[arg-type]
                 unsure=page.classified_by != "user" and (page.page_kind_confidence or 0) < CONFIRM_THRESHOLD,
-                thumbnail_url=storage.presigned_get(actor.tenant_id, page.render_key) if page.render_key else None,
+                # stage 2 points `render_key` at the full render; the thumbnail stays where stage 1 put it (BUG-023)
+                thumbnail_url=storage.presigned_get(
+                    actor.tenant_id, thumbnail_key(actor.tenant_id, drawing_id, page.id)
+                )
+                if page.render_key
+                else None,
             )
             for page, file_name in p.pages
         ]

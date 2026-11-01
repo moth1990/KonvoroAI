@@ -173,6 +173,13 @@ class DerivedOut(BaseModel):
     explanation: str
 
 
+class BoxOut(BaseModel):
+    """One instance on the drawing: PDF points, origin top left (00 §6.2)."""
+
+    page_id: str
+    bbox: list[float] = Field(min_length=4, max_length=4, description="x0, y0, x1, y1")
+
+
 class LineOut(BaseModel):
     """A quote line (07 §6.2) with what the review screen shows of its component (09 §6.3–6.4)."""
 
@@ -207,6 +214,7 @@ class LineOut(BaseModel):
     alternatives: list[AlternativeOut]
     derived: DerivedOut | None
     approved: bool
+    boxes: list[BoxOut] = Field(description="Every instance of the line's component, for the drawing (09 §6.5)")
 
 
 class LineCountsOut(BaseModel):
@@ -251,6 +259,35 @@ class FindingOut(BaseModel):
     message: str
     line_ids: list[str]
     page_no: int | None
+    page_id: str | None
+    bbox: list[float] | None = Field(description='Where the finding is on the page, for "בשרטוט"')
+
+
+class PagePanelOut(BaseModel):
+    panel_id: str
+    name: str
+    bbox: list[float] | None = Field(description="The panel's area on this page, if the classifier boxed it")
+
+
+class PageOut(BaseModel):
+    """One page of the quote's drawing, for the drawing pane (09 §6.5)."""
+
+    page_id: str
+    page_no: int
+    sheet: str | None = Field(description="The page's own drawing number, e.g. E-104")
+    page_kind: str | None
+    page_kind_confidence: float | None
+    classified_by: Literal["model", "user", "reused", "template"] | None
+    route: Literal["process", "context", "skip"] | None
+    quality: str | None
+    geometry_source: str | None = Field(description="vector or raster")
+    width_pt: float | None
+    height_pt: float | None
+    panels: list[PagePanelOut]
+    thumbnail_url: str | None = Field(None, description="Short-lived; load it, don't store it")
+    has_viewer: bool = Field(description="GET /pages/{page_id}/dz/page.dzi serves the page's pyramid")
+    red_count: int = Field(description="Red lines with an instance on the page")
+    yellow_count: int
 
 
 class QuoteOut(BaseModel):
@@ -270,6 +307,7 @@ class QuoteOut(BaseModel):
     panels: list[PanelOut]
     findings: list[FindingOut] = Field(description="Open findings, errors first")
     totals: QuoteTotalsOut
+    pages: list[PageOut] = Field(description="The drawing's pages, in order")
 
 
 # --- drawings (01 §4, §4.6) ----------------------------------------------------------------------------

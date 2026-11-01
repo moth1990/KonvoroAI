@@ -1022,6 +1022,12 @@ a.list-item:hover {
   padding: 10px 12px;
   border-top: 1px solid var(--line);
 }
+.finding .acts {
+  grid-column: 2;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
 .sev {
   width: 4px;
   border-radius: 2px;
@@ -1234,6 +1240,208 @@ a.list-item:hover {
 }
 .drawing-pane {
   background: var(--surface-2);
+}
+/* The drawing pane (prototype lines 237–252; 09 §6.5, S11). */
+.strip {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+}
+.strip > [role="listitem"] {
+  flex: none;
+}
+.pg {
+  flex: none;
+  width: 92px;
+  border: 2px solid transparent;
+  border-radius: var(--r-sm);
+  background: none;
+  padding: 0;
+  display: grid;
+  gap: 3px;
+  text-align: start;
+}
+.pg span {
+  font-size: 11px;
+  color: var(--muted);
+  padding-inline: 2px;
+}
+.pg .pg-img {
+  position: relative;
+  display: block;
+  padding: 0;
+}
+.pg img {
+  width: 100%;
+  aspect-ratio: 1755/1240;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid var(--line);
+  background: #fff;
+  display: block;
+}
+.pg .pg-img:not(:has(img)) {
+  aspect-ratio: 1755/1240;
+  border-radius: 4px;
+  border: 1px solid var(--line);
+  background: #fff;
+}
+.pg[aria-current="true"] {
+  border-color: var(--accent);
+}
+.pg.skip img {
+  opacity: 0.5;
+}
+.pg .pg-count {
+  position: absolute;
+  top: 3px;
+  inset-inline-end: 3px;
+  min-width: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 18px;
+  text-align: center;
+  color: #fff;
+}
+.pg .pg-count.r {
+  background: var(--bad);
+}
+.pg .pg-count.y {
+  background: var(--warn);
+}
+.pg .pg-tag {
+  color: var(--warn);
+  font-weight: 500;
+}
+.viewer {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  touch-action: none;
+}
+.viewer .osd {
+  position: absolute;
+  inset: 0;
+  cursor: grab;
+}
+.viewer .osd:active {
+  cursor: grabbing;
+}
+.viewer > .drawing-soon {
+  height: 100%;
+}
+.hl-layer {
+  display: block;
+  overflow: visible;
+}
+.hl-layer .hl {
+  fill: transparent;
+  stroke-width: 2;
+  pointer-events: all;
+  cursor: pointer;
+}
+.hl-layer .hl.g {
+  stroke: var(--ok);
+  fill: color-mix(in srgb, var(--ok) 6%, transparent);
+}
+.hl-layer .hl.y {
+  stroke: var(--warn);
+  fill: color-mix(in srgb, var(--warn) 8%, transparent);
+}
+/* Red is dashed too: the status reads without color (09 §13). */
+.hl-layer .hl.r {
+  stroke: var(--bad);
+  stroke-dasharray: 6 4;
+  fill: color-mix(in srgb, var(--bad) 8%, transparent);
+}
+.hl-layer .hl.dim {
+  opacity: 0.3;
+}
+/* The selected line: the prototype's `.hl`, thick in the accent color. */
+.hl-layer .hl.sel {
+  stroke: var(--accent);
+  stroke-width: 3;
+  fill: color-mix(in srgb, var(--accent) 12%, transparent);
+  opacity: 1;
+}
+.hl-layer .hl.sel.r {
+  stroke-dasharray: none;
+}
+.hl-layer .hl.find {
+  stroke: var(--warn);
+  stroke-width: 3;
+  fill: color-mix(in srgb, var(--warn) 14%, transparent);
+  pointer-events: none;
+}
+.hl-layer .pframe .frame {
+  fill: none;
+  stroke: var(--muted);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 3;
+}
+.hl-layer .pframe.active .frame {
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-dasharray: none;
+}
+.hl-layer .pframe .frame-name {
+  fill: var(--accent);
+  font-size: 9px;
+  font-weight: 600;
+}
+.hl-layer .pframe .veil {
+  fill: color-mix(in srgb, var(--surface-2) 70%, transparent);
+  pointer-events: all;
+  cursor: pointer;
+}
+.hl-layer .pframe .veil-text {
+  fill: var(--fg);
+  font-size: 14px;
+  font-weight: 600;
+  pointer-events: none;
+}
+.vtools {
+  position: absolute;
+  bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  inset-inline-start: 12px;
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  padding: 4px;
+  box-shadow: var(--shadow);
+}
+.vtools .vsep {
+  width: 1px;
+  align-self: stretch;
+  background: var(--line);
+  margin-inline: 2px;
+}
+.pageinfo {
+  position: absolute;
+  top: 10px;
+  inset-inline-start: 12px;
+  inset-inline-end: 12px;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  align-items: center;
+  pointer-events: none;
+}
+.pageinfo > * {
+  pointer-events: auto;
+}
+/* Over the drawing a chip needs a ground of its own to stay legible, in both themes. */
+.pageinfo .chip:not(.acc, .warn, .ok, .bad) {
+  background: var(--surface);
 }
 .drawing-soon {
   margin: auto;

@@ -2,7 +2,7 @@
  * Hand-written quotes for the review screen's tests (S09 decision 8): the states the NURSERY draft doesn't have,
  * such as a missing line, accessories and labor, a low-confidence read, a brand swap and two panels.
  */
-import type { Finding, Quote, QuoteLine } from "../../api/client";
+import type { Finding, Quote, QuoteLine, QuotePage } from "../../api/client";
 
 let n = 0;
 
@@ -40,6 +40,7 @@ export function line(over: Partial<QuoteLine> = {}): QuoteLine {
     alternatives: [],
     derived: null,
     approved: false,
+    boxes: [],
     ...over,
   };
 }
@@ -55,7 +56,7 @@ export function panel(name: string, lines: QuoteLine[], priceTotal = "0.0000"): 
   };
 }
 
-export function quote(panels: Quote["panels"], findings: Finding[] = []): Quote {
+export function quote(panels: Quote["panels"], findings: Finding[] = [], pages: QuotePage[] = []): Quote {
   return {
     quote_id: "quo_01JD0000000000000000000001",
     name: "לוח בדיקה",
@@ -70,6 +71,7 @@ export function quote(panels: Quote["panels"], findings: Finding[] = []): Quote 
     coverage_pct: 100,
     panels,
     findings,
+    pages,
     totals: {
       cost_total: "0",
       price_total: "0",
@@ -89,3 +91,41 @@ export function quote(panels: Quote["panels"], findings: Finding[] = []): Quote 
 }
 
 export const red = (value: string) => ({ source: "price", status: "red" as const, value, issue_id: null });
+
+/** A drawing page as the quote read API sends it (S11): A3 landscape, decoded, with a viewer pyramid. */
+export function page(no: number, over: Partial<QuotePage> = {}): QuotePage {
+  return {
+    page_id: `pg_${String(no).padStart(26, "0")}`,
+    page_no: no,
+    sheet: null,
+    page_kind: "single_line_diagram",
+    page_kind_confidence: 0.95,
+    classified_by: "model",
+    route: "process",
+    quality: "ok",
+    geometry_source: "vector",
+    width_pt: 842,
+    height_pt: 595,
+    panels: [],
+    thumbnail_url: null,
+    has_viewer: true,
+    red_count: 0,
+    yellow_count: 0,
+    ...over,
+  };
+}
+
+export function finding(over: Partial<Finding> = {}): Finding {
+  return {
+    finding_id: "iss_1",
+    severity: "warning",
+    code: "X",
+    title: null,
+    message: "ממצא",
+    line_ids: [],
+    page_no: null,
+    page_id: null,
+    bbox: null,
+    ...over,
+  };
+}

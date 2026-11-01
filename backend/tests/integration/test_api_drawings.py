@@ -1,12 +1,15 @@
 """Progress, cancel and the "new version" picker over HTTP (01 §4.6), tenant-scoped."""
 
+import io
 import urllib.request
 
 import pytest
+from PIL import Image
 from sqlalchemy import Engine
 
 from konboro.pipeline.context import StageContext
 from konboro.pipeline.coordinator import FAILED_MESSAGE, Pipeline
+from konboro.pipeline.stages.s1_intake import THUMB_PX
 from konboro.pipeline.worker import Worker
 
 from .api import Api, add_tenant
@@ -58,8 +61,11 @@ def test_progress_from_upload_to_ready(api: Api, migrated_db: dict[str, Engine],
         "panel_front_view",
     ]
     assert (body["confirmation_reasons"], body["notices"]) == ([], [])
-    with urllib.request.urlopen(body["pages"][0]["thumbnail_url"]) as response:  # noqa: S310 (local S3Mock)
-        assert response.read().startswith(b"\x89PNG")
+    for page in (body["pages"][0], body["pages"][4]):  # a context page and a process page, which stage 2 renders
+        with urllib.request.urlopen(page["thumbnail_url"]) as response:  # noqa: S310 (local S3Mock)
+            thumb = Image.open(io.BytesIO(response.read()))
+        assert thumb.format == "PNG"
+        assert max(thumb.size) <= THUMB_PX  # the thumbnail, never stage 2's full render (BUG-023)
 
 
 def test_cancel_over_http(api: Api, migrated_db: dict[str, Engine], pipeline: Pipeline) -> None:  # noqa: F811

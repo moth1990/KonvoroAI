@@ -232,6 +232,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/pages/{page_id}/dz/page.dzi": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Page Dzi */
+        get: operations["page_dzi_pages__page_id__dz_page_dzi_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/pages/{page_id}/dz/page_files/{level}/{col}_{row}.png": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Page Tile */
+        get: operations["page_tile_pages__page_id__dz_page_files__level___col___row__png_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/quota": {
         parameters: {
             query?: never;
@@ -350,6 +384,19 @@ export interface components {
             /** Revision Of */
             revision_of?: string | null;
         };
+        /**
+         * BoxOut
+         * @description One instance on the drawing: PDF points, origin top left (00 §6.2).
+         */
+        BoxOut: {
+            /**
+             * Bbox
+             * @description x0, y0, x1, y1
+             */
+            bbox: number[];
+            /** Page Id */
+            page_id: string;
+        };
         /** CostSourceOut */
         CostSourceOut: {
             /** Price Date */
@@ -386,6 +433,11 @@ export interface components {
         };
         /** FindingOut */
         FindingOut: {
+            /**
+             * Bbox
+             * @description Where the finding is on the page, for "בשרטוט"
+             */
+            bbox: number[] | null;
             /** Code */
             code: string;
             /** Finding Id */
@@ -394,6 +446,8 @@ export interface components {
             line_ids: string[];
             /** Message */
             message: string;
+            /** Page Id */
+            page_id: string | null;
             /** Page No */
             page_no: number | null;
             /**
@@ -446,6 +500,11 @@ export interface components {
             alternatives: components["schemas"]["AlternativeOut"][];
             /** Approved */
             approved: boolean;
+            /**
+             * Boxes
+             * @description Every instance of the line's component, for the drawing (09 §6.5)
+             */
+            boxes: components["schemas"]["BoxOut"][];
             cost_source: components["schemas"]["CostSourceOut"] | null;
             derived: components["schemas"]["DerivedOut"] | null;
             /** Description */
@@ -587,6 +646,71 @@ export interface components {
              * @enum {string}
              */
             page_kind: "single_line_diagram" | "control_diagram" | "panel_front_view" | "legend" | "bom_table" | "general_notes" | "technical_data" | "terminal_diagram" | "title_cover" | "factory_template" | "other";
+        };
+        /**
+         * PageOut
+         * @description One page of the quote's drawing, for the drawing pane (09 §6.5).
+         */
+        PageOut: {
+            /** Classified By */
+            classified_by: ("model" | "user" | "reused" | "template") | null;
+            /**
+             * Geometry Source
+             * @description vector or raster
+             */
+            geometry_source: string | null;
+            /**
+             * Has Viewer
+             * @description GET /pages/{page_id}/dz/page.dzi serves the page's pyramid
+             */
+            has_viewer: boolean;
+            /** Height Pt */
+            height_pt: number | null;
+            /** Page Id */
+            page_id: string;
+            /** Page Kind */
+            page_kind: string | null;
+            /** Page Kind Confidence */
+            page_kind_confidence: number | null;
+            /** Page No */
+            page_no: number;
+            /** Panels */
+            panels: components["schemas"]["PagePanelOut"][];
+            /** Quality */
+            quality: string | null;
+            /**
+             * Red Count
+             * @description Red lines with an instance on the page
+             */
+            red_count: number;
+            /** Route */
+            route: ("process" | "context" | "skip") | null;
+            /**
+             * Sheet
+             * @description The page's own drawing number, e.g. E-104
+             */
+            sheet: string | null;
+            /**
+             * Thumbnail Url
+             * @description Short-lived; load it, don't store it
+             */
+            thumbnail_url?: string | null;
+            /** Width Pt */
+            width_pt: number | null;
+            /** Yellow Count */
+            yellow_count: number;
+        };
+        /** PagePanelOut */
+        PagePanelOut: {
+            /**
+             * Bbox
+             * @description The panel's area on this page, if the classifier boxed it
+             */
+            bbox: number[] | null;
+            /** Name */
+            name: string;
+            /** Panel Id */
+            panel_id: string;
         };
         /** PanelOut */
         PanelOut: {
@@ -876,6 +1000,11 @@ export interface components {
             input_kind: ("factory_drawing" | "designer_plan" | "bom_only" | "mixed") | null;
             /** Name */
             name: string;
+            /**
+             * Pages
+             * @description The drawing's pages, in order
+             */
+            pages: components["schemas"]["PageOut"][];
             /** Panels */
             panels: components["schemas"]["PanelOut"][];
             /** Quote Date */
@@ -1515,6 +1644,71 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["MeOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    page_dzi_pages__page_id__dz_page_dzi_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                page_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The Deep Zoom descriptor */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/xml": unknown;
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    page_tile_pages__page_id__dz_page_files__level___col___row__png_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                page_id: string;
+                level: number;
+                col: number;
+                row: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description One tile */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "image/png": unknown;
                 };
             };
             /** @description Error */
