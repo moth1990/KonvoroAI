@@ -1,0 +1,273 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 784,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            437,
+            213,
+            505,
+            258
+          ],
+          "legible": "clear",
+          "text": "לוח"
+        },
+        {
+          "box": [
+            321,
+            213,
+            422,
+            258
+          ],
+          "legible": "clear",
+          "text": "במבנה"
+        },
+        {
+          "box": [
+            256,
+            213,
+            306,
+            258
+          ],
+          "legible": "clear",
+          "text": "פח"
+        },
+        {
+          "box": [
+            163,
+            213,
+            240,
+            258
+          ],
+          "legible": "clear",
+          "text": "כולל"
+        },
+        {
+          "box": [
+            387,
+            288,
+            505,
+            335
+          ],
+          "legible": "clear",
+          "text": "ופנלים"
+        },
+        {
+          "box": [
+            256,
+            288,
+            372,
+            335
+          ],
+          "legible": "clear",
+          "text": "במידות"
+        },
+        {
+          "box": [
+            397,
+            368,
+            505,
+            414
+          ],
+          "legible": "clear",
+          "text": "כניסה"
+        },
+        {
+          "box": [
+            290,
+            368,
+            383,
+            414
+          ],
+          "legible": "clear",
+          "text": "כבלים"
+        },
+        {
+          "box": [
+            170,
+            368,
+            275,
+            414
+          ],
+          "legible": "clear",
+          "text": "מלמטה"
+        },
+        {
+          "box": [
+            398,
+            452,
+            505,
+            500
+          ],
+          "legible": "clear",
+          "text": "יציאת"
+        },
+        {
+          "box": [
+            290,
+            452,
+            383,
+            500
+          ],
+          "legible": "clear",
+          "text": "כבלים"
+        },
+        {
+          "box": [
+            148,
+            452,
+            275,
+            500
+          ],
+          "legible": "clear",
+          "text": "מלמעלה"
+        },
+        {
+          "box": [
+            437,
+            538,
+            505,
+            585
+          ],
+          "legible": "clear",
+          "text": "לוח"
+        },
+        {
+          "box": [
+            339,
+            538,
+            425,
+            585
+          ],
+          "legible": "clear",
+          "text": "מיוצר"
+        },
+        {
+          "box": [
+            274,
+            538,
+            325,
+            585
+          ],
+          "legible": "clear",
+          "text": "לפי"
+        },
+        {
+          "box": [
+            190,
+            538,
+            260,
+            585
+          ],
+          "legible": "clear",
+          "text": "תקן"
+        },
+        {
+          "box": [
+            417,
+            620,
+            505,
+            665
+          ],
+          "legible": "clear",
+          "text": "מידור"
+        },
+        {
+          "box": [
+            323,
+            620,
+            368,
+            662
+          ],
+          "legible": "clear",
+          "text": "2B"
+        },
+        {
+          "box": [
+            190,
+            620,
+            308,
+            662
+          ],
+          "legible": "clear",
+          "text": "FORM"
+        },
+        {
+          "box": [
+            430,
+            675,
+            505,
+            725
+          ],
+          "legible": "clear",
+          "text": "טמ\"פ"
+        },
+        {
+          "box": [
+            316,
+            675,
+            414,
+            725
+          ],
+          "legible": "clear",
+          "text": "סביבה"
+        },
+        {
+          "box": [
+            67,
+            680,
+            166,
+            722
+          ],
+          "legible": "unsure",
+          "text": "35C°"
+        },
+        {
+          "box": [
+            418,
+            742,
+            505,
+            790
+          ],
+          "legible": "clear",
+          "text": "דרגת"
+        },
+        {
+          "box": [
+            332,
+            742,
+            404,
+            790
+          ],
+          "legible": "clear",
+          "text": "הגנה"
+        },
+        {
+          "box": [
+            220,
+            742,
+            317,
+            790
+          ],
+          "legible": "clear",
+          "text": "מכנית"
+        },
+        {
+          "box": [
+            110,
+            745,
+            205,
+            788
+          ],
+          "legible": "clear",
+          "text": "IK10"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

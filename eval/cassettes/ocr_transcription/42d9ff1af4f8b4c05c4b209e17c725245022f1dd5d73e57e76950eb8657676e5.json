@@ -1,0 +1,183 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 502,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            130,
+            576,
+            212,
+            609
+          ],
+          "legible": "clear",
+          "text": "Page"
+        },
+        {
+          "box": [
+            233,
+            576,
+            291,
+            609
+          ],
+          "legible": "clear",
+          "text": "No.:"
+        },
+        {
+          "box": [
+            298,
+            570,
+            322,
+            606
+          ],
+          "legible": "clear",
+          "text": "5"
+        },
+        {
+          "box": [
+            135,
+            641,
+            196,
+            677
+          ],
+          "legible": "clear",
+          "text": "OF:"
+        },
+        {
+          "box": [
+            208,
+            640,
+            233,
+            676
+          ],
+          "legible": "clear",
+          "text": "5"
+        },
+        {
+          "box": [
+            135,
+            708,
+            248,
+            744
+          ],
+          "legible": "clear",
+          "text": "Scale:"
+        },
+        {
+          "box": [
+            258,
+            708,
+            367,
+            744
+          ],
+          "legible": "clear",
+          "text": "1:100"
+        },
+        {
+          "box": [
+            458,
+            578,
+            534,
+            620
+          ],
+          "legible": "clear",
+          "text": "S.S"
+        },
+        {
+          "box": [
+            563,
+            578,
+            780,
+            620
+          ],
+          "legible": "clear",
+          "text": "Electrical"
+        },
+        {
+          "box": [
+            845,
+            578,
+            928,
+            620
+          ],
+          "legible": "clear",
+          "text": "and"
+        },
+        {
+          "box": [
+            416,
+            649,
+            670,
+            679
+          ],
+          "legible": "clear",
+          "text": "04-8338123:FAX"
+        },
+        {
+          "box": [
+            688,
+            649,
+            940,
+            679
+          ],
+          "legible": "clear",
+          "text": "04-6565394:TEL"
+        },
+        {
+          "box": [
+            958,
+            650,
+            1011,
+            678
+          ],
+          "legible": "clear",
+          "text": "276"
+        },
+        {
+          "box": [
+            546,
+            693,
+            673,
+            733
+          ],
+          "legible": "clear",
+          "text": "Email:"
+        },
+        {
+          "box": [
+            258,
+            814,
+            282,
+            848
+          ],
+          "legible": "clear",
+          "text": "6"
+        },
+        {
+          "box": [
+            584,
+            811,
+            608,
+            845
+          ],
+          "legible": "clear",
+          "text": "7"
+        },
+        {
+          "box": [
+            890,
+            813,
+            914,
+            847
+          ],
+          "legible": "clear",
+          "text": "8"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

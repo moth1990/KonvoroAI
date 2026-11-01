@@ -1,0 +1,103 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 288,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            50,
+            799,
+            95,
+            830
+          ],
+          "legible": "clear",
+          "text": "Ik="
+        },
+        {
+          "box": [
+            98,
+            799,
+            162,
+            830
+          ],
+          "legible": "clear",
+          "text": "20KA"
+        },
+        {
+          "box": [
+            50,
+            842,
+            168,
+            872
+          ],
+          "legible": "clear",
+          "text": "L1,L2,L3"
+        },
+        {
+          "box": [
+            185,
+            851,
+            201,
+            861
+          ],
+          "legible": "clear",
+          "text": "–"
+        },
+        {
+          "box": [
+            216,
+            842,
+            342,
+            872
+          ],
+          "legible": "clear",
+          "text": "800A+N+E"
+        },
+        {
+          "box": [
+            703,
+            767,
+            894,
+            872
+          ],
+          "legible": "unsure",
+          "text": "שמור"
+        },
+        {
+          "box": [
+            463,
+            767,
+            672,
+            872
+          ],
+          "legible": "unsure",
+          "text": "בלוח"
+        },
+        {
+          "box": [
+            535,
+            951,
+            670,
+            990
+          ],
+          "legible": "unsure",
+          "text": "אלקטרוני"
+        },
+        {
+          "box": [
+            549,
+            1002,
+            598,
+            1024
+          ],
+          "legible": "unsure",
+          "text": "LSI"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

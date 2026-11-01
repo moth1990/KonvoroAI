@@ -1,0 +1,281 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 834,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            31,
+            167,
+            62,
+            194
+          ],
+          "legible": "clear",
+          "text": "F3"
+        },
+        {
+          "box": [
+            699,
+            167,
+            730,
+            194
+          ],
+          "legible": "clear",
+          "text": "F4"
+        },
+        {
+          "box": [
+            578,
+            82,
+            609,
+            100
+          ],
+          "legible": "clear",
+          "text": "\"N\""
+        },
+        {
+          "box": [
+            423,
+            163,
+            460,
+            190
+          ],
+          "legible": "clear",
+          "text": "21"
+        },
+        {
+          "box": [
+            425,
+            248,
+            463,
+            275
+          ],
+          "legible": "clear",
+          "text": "22"
+        },
+        {
+          "box": [
+            44,
+            211,
+            105,
+            238
+          ],
+          "legible": "clear",
+          "text": "16+N"
+        },
+        {
+          "box": [
+            44,
+            244,
+            162,
+            272
+          ],
+          "legible": "clear",
+          "text": "INC=12.8A"
+        },
+        {
+          "box": [
+            44,
+            277,
+            134,
+            302
+          ],
+          "legible": "clear",
+          "text": "SN201M"
+        },
+        {
+          "box": [
+            712,
+            211,
+            774,
+            238
+          ],
+          "legible": "clear",
+          "text": "10+N"
+        },
+        {
+          "box": [
+            712,
+            244,
+            796,
+            272
+          ],
+          "legible": "clear",
+          "text": "INC=8A"
+        },
+        {
+          "box": [
+            712,
+            277,
+            802,
+            302
+          ],
+          "legible": "clear",
+          "text": "SN201M"
+        },
+        {
+          "box": [
+            150,
+            490,
+            184,
+            521
+          ],
+          "legible": "clear",
+          "text": "C3"
+        },
+        {
+          "box": [
+            817,
+            490,
+            851,
+            521
+          ],
+          "legible": "clear",
+          "text": "C4"
+        },
+        {
+          "box": [
+            24,
+            648,
+            50,
+            788
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "CIRCULATION"
+        },
+        {
+          "box": [
+            24,
+            594,
+            50,
+            636
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "FAN"
+        },
+        {
+          "box": [
+            58,
+            665,
+            84,
+            714
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "HRS"
+        },
+        {
+          "box": [
+            92,
+            650,
+            119,
+            732
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "2X208V"
+        },
+        {
+          "box": [
+            697,
+            617,
+            723,
+            755
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "CIRCULATION"
+        },
+        {
+          "box": [
+            697,
+            561,
+            723,
+            604
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "FAN"
+        },
+        {
+          "box": [
+            735,
+            612,
+            762,
+            710
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "NERSERY"
+        },
+        {
+          "box": [
+            766,
+            617,
+            793,
+            700
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "2X208V"
+        },
+        {
+          "box": [
+            15,
+            796,
+            31,
+            812
+          ],
+          "legible": "clear",
+          "text": "L3"
+        },
+        {
+          "box": [
+            594,
+            792,
+            613,
+            808
+          ],
+          "legible": "clear",
+          "text": "N4"
+        },
+        {
+          "box": [
+            681,
+            795,
+            698,
+            810
+          ],
+          "legible": "clear",
+          "text": "L4"
+        },
+        {
+          "box": [
+            617,
+            857,
+            680,
+            885
+          ],
+          "legible": "clear",
+          "text": "C.FAN"
+        },
+        {
+          "box": [
+            599,
+            897,
+            701,
+            925
+          ],
+          "legible": "clear",
+          "text": "NURSERY"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

@@ -1,0 +1,245 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 698,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            22,
+            46,
+            46,
+            76
+          ],
+          "legible": "clear",
+          "text": "C"
+        },
+        {
+          "box": [
+            305,
+            8,
+            337,
+            26
+          ],
+          "legible": "clear",
+          "text": "\"N\""
+        },
+        {
+          "box": [
+            666,
+            8,
+            698,
+            26
+          ],
+          "legible": "clear",
+          "text": "\"N\""
+        },
+        {
+          "box": [
+            425,
+            91,
+            455,
+            117
+          ],
+          "legible": "clear",
+          "text": "F1"
+        },
+        {
+          "box": [
+            785,
+            91,
+            817,
+            117
+          ],
+          "legible": "clear",
+          "text": "F2"
+        },
+        {
+          "box": [
+            437,
+            136,
+            497,
+            161
+          ],
+          "legible": "clear",
+          "text": "10+N"
+        },
+        {
+          "box": [
+            797,
+            136,
+            858,
+            161
+          ],
+          "legible": "clear",
+          "text": "10+N"
+        },
+        {
+          "box": [
+            437,
+            168,
+            519,
+            192
+          ],
+          "legible": "clear",
+          "text": "INC=8A"
+        },
+        {
+          "box": [
+            798,
+            168,
+            879,
+            192
+          ],
+          "legible": "clear",
+          "text": "INC=8A"
+        },
+        {
+          "box": [
+            438,
+            198,
+            525,
+            223
+          ],
+          "legible": "clear",
+          "text": "SN201M"
+        },
+        {
+          "box": [
+            798,
+            198,
+            886,
+            223
+          ],
+          "legible": "clear",
+          "text": "SN201M"
+        },
+        {
+          "box": [
+            23,
+            307,
+            48,
+            340
+          ],
+          "legible": "clear",
+          "text": "D"
+        },
+        {
+          "box": [
+            355,
+            492,
+            384,
+            651
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3X1.5N2XY"
+        },
+        {
+          "box": [
+            715,
+            492,
+            744,
+            651
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3X1.5N2XY"
+        },
+        {
+          "box": [
+            27,
+            655,
+            49,
+            687
+          ],
+          "legible": "clear",
+          "text": "E"
+        },
+        {
+          "box": [
+            322,
+            801,
+            342,
+            816
+          ],
+          "legible": "clear",
+          "text": "N1"
+        },
+        {
+          "box": [
+            408,
+            803,
+            424,
+            818
+          ],
+          "legible": "clear",
+          "text": "L1"
+        },
+        {
+          "box": [
+            683,
+            801,
+            703,
+            816
+          ],
+          "legible": "clear",
+          "text": "N2"
+        },
+        {
+          "box": [
+            769,
+            803,
+            785,
+            818
+          ],
+          "legible": "clear",
+          "text": "L2"
+        },
+        {
+          "box": [
+            299,
+            872,
+            378,
+            906
+          ],
+          "legible": "unsure",
+          "text": "BOM"
+        },
+        {
+          "box": [
+            404,
+            873,
+            422,
+            904
+          ],
+          "legible": "clear",
+          "text": "1"
+        },
+        {
+          "box": [
+            660,
+            872,
+            739,
+            906
+          ],
+          "legible": "unsure",
+          "text": "BOM"
+        },
+        {
+          "box": [
+            767,
+            873,
+            791,
+            904
+          ],
+          "legible": "clear",
+          "text": "2"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

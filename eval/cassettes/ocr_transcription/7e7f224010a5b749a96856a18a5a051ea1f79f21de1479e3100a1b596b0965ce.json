@@ -1,0 +1,83 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 209,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            60,
+            52,
+            138,
+            104
+          ],
+          "legible": "clear",
+          "text": "R7"
+        },
+        {
+          "box": [
+            700,
+            52,
+            722,
+            83
+          ],
+          "legible": "clear",
+          "text": "C"
+        },
+        {
+          "box": [
+            702,
+            301,
+            722,
+            331
+          ],
+          "legible": "clear",
+          "text": "D"
+        },
+        {
+          "box": [
+            701,
+            630,
+            719,
+            660
+          ],
+          "legible": "clear",
+          "text": "E"
+        },
+        {
+          "box": [
+            69,
+            635,
+            163,
+            663
+          ],
+          "legible": "clear",
+          "text": "-24VDC"
+        },
+        {
+          "box": [
+            81,
+            784,
+            173,
+            820
+          ],
+          "legible": "clear",
+          "text": "TOWER"
+        },
+        {
+          "box": [
+            8,
+            837,
+            115,
+            871
+          ],
+          "legible": "clear",
+          "text": "3X208V"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

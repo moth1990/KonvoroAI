@@ -1,0 +1,130 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 404,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            220,
+            261,
+            256,
+            345
+          ],
+          "legible": "clear",
+          "rotation": 270,
+          "text": "שמור"
+        },
+        {
+          "box": [
+            470,
+            164,
+            522,
+            393
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3x2.5²–N2XY"
+        },
+        {
+          "box": [
+            543,
+            222,
+            579,
+            375
+          ],
+          "legible": "clear",
+          "rotation": 270,
+          "text": "מאווררים"
+        },
+        {
+          "box": [
+            780,
+            209,
+            833,
+            433
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3x1.5²–N2XY"
+        },
+        {
+          "box": [
+            847,
+            222,
+            883,
+            336
+          ],
+          "legible": "clear",
+          "rotation": 270,
+          "text": "תאורת"
+        },
+        {
+          "box": [
+            847,
+            347,
+            883,
+            430
+          ],
+          "legible": "clear",
+          "rotation": 270,
+          "text": "חרום"
+        },
+        {
+          "box": [
+            964,
+            209,
+            1016,
+            433
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3x1.5²–N2XY"
+        },
+        {
+          "box": [
+            196,
+            520,
+            238,
+            560
+          ],
+          "legible": "clear",
+          "text": "86"
+        },
+        {
+          "box": [
+            477,
+            516,
+            583,
+            553
+          ],
+          "legible": "clear",
+          "text": "88–91"
+        },
+        {
+          "box": [
+            491,
+            565,
+            576,
+            604
+          ],
+          "legible": "clear",
+          "text": "שמור"
+        },
+        {
+          "box": [
+            779,
+            598,
+            891,
+            636
+          ],
+          "legible": "clear",
+          "text": "92–95"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

@@ -115,6 +115,7 @@ class Page(Base, TenantScoped, Timestamps):
             name="quality",
         ),
         CheckConstraint("route IS NULL OR route IN ('process', 'context', 'skip')", name="route"),
+        CheckConstraint("tile_count IS NULL OR tile_count >= 0", name="tile_count"),
         CheckConstraint(
             "classified_by IS NULL OR classified_by IN ('model', 'user', 'reused', 'template')",
             name="classified_by",
@@ -143,6 +144,7 @@ class Page(Base, TenantScoped, Timestamps):
     regions: Mapped[list[Any]] = mapped_column(server_default="[]")
     render_key: Mapped[str | None]
     tiles_prefix: Mapped[str | None]
+    tile_count: Mapped[int | None]  # tiles that are not blank, for the run step (migration 0007)
 
 
 class Panel(Base, TenantScoped, Created):

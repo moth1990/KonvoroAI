@@ -1,0 +1,35 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 83,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            537,
+            652,
+            846,
+            771
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "ראשי"
+        },
+        {
+          "box": [
+            414,
+            851,
+            680,
+            987
+          ],
+          "legible": "unsure",
+          "rotation": 0,
+          "text": "בטון"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

@@ -1,0 +1,83 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 214,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            935,
+            514,
+            1007,
+            560
+          ],
+          "legible": "clear",
+          "text": "850"
+        },
+        {
+          "box": [
+            789,
+            512,
+            911,
+            560
+          ],
+          "legible": "clear",
+          "text": "מעלות"
+        },
+        {
+          "box": [
+            716,
+            515,
+            764,
+            559
+          ],
+          "legible": "clear",
+          "text": "24"
+        },
+        {
+          "box": [
+            600,
+            512,
+            670,
+            560
+          ],
+          "legible": "clear",
+          "text": "ח\"א"
+        },
+        {
+          "box": [
+            833,
+            650,
+            928,
+            696
+          ],
+          "legible": "clear",
+          "text": "10KA"
+        },
+        {
+          "box": [
+            714,
+            652,
+            777,
+            696
+          ],
+          "legible": "clear",
+          "text": "לפי"
+        },
+        {
+          "box": [
+            510,
+            652,
+            689,
+            697
+          ],
+          "legible": "clear",
+          "text": "IEC60898"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

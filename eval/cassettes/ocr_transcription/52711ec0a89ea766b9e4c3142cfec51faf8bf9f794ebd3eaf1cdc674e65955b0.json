@@ -1,0 +1,266 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 766,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            20,
+            587,
+            57,
+            607
+          ],
+          "legible": "clear",
+          "text": "Via:"
+        },
+        {
+          "box": [
+            127,
+            581,
+            195,
+            603
+          ],
+          "legible": "clear",
+          "text": "קובי"
+        },
+        {
+          "box": [
+            127,
+            581,
+            147,
+            603
+          ],
+          "legible": "unsure",
+          "text": "רן"
+        },
+        {
+          "box": [
+            250,
+            583,
+            300,
+            605
+          ],
+          "legible": "clear",
+          "text": "מכון"
+        },
+        {
+          "box": [
+            328,
+            587,
+            392,
+            608
+          ],
+          "legible": "clear",
+          "text": "Client:"
+        },
+        {
+          "box": [
+            481,
+            581,
+            540,
+            603
+          ],
+          "legible": "clear",
+          "text": "רולצור"
+        },
+        {
+          "box": [
+            654,
+            583,
+            695,
+            606
+          ],
+          "legible": "clear",
+          "text": "ע\"ח"
+        },
+        {
+          "box": [
+            53,
+            620,
+            119,
+            646
+          ],
+          "legible": "clear",
+          "text": "תאריך"
+        },
+        {
+          "box": [
+            137,
+            618,
+            163,
+            672
+          ],
+          "legible": "unsure",
+          "rotation": 270,
+          "text": "כמות"
+        },
+        {
+          "box": [
+            205,
+            620,
+            271,
+            646
+          ],
+          "legible": "clear",
+          "text": "תאריך"
+        },
+        {
+          "box": [
+            287,
+            618,
+            313,
+            672
+          ],
+          "legible": "unsure",
+          "rotation": 270,
+          "text": "כמות"
+        },
+        {
+          "box": [
+            357,
+            620,
+            423,
+            646
+          ],
+          "legible": "clear",
+          "text": "תאריך"
+        },
+        {
+          "box": [
+            439,
+            618,
+            465,
+            672
+          ],
+          "legible": "unsure",
+          "rotation": 270,
+          "text": "כמות"
+        },
+        {
+          "box": [
+            681,
+            622,
+            699,
+            645
+          ],
+          "legible": "unsure",
+          "text": "ת"
+        },
+        {
+          "box": [
+            655,
+            622,
+            672,
+            645
+          ],
+          "legible": "unsure",
+          "text": "פ"
+        },
+        {
+          "box": [
+            629,
+            622,
+            639,
+            645
+          ],
+          "legible": "unsure",
+          "text": "ו"
+        },
+        {
+          "box": [
+            606,
+            622,
+            623,
+            645
+          ],
+          "legible": "unsure",
+          "text": "צ"
+        },
+        {
+          "box": [
+            583,
+            622,
+            600,
+            645
+          ],
+          "legible": "unsure",
+          "text": "ה"
+        },
+        {
+          "box": [
+            28,
+            683,
+            77,
+            706
+          ],
+          "legible": "clear",
+          "text": "Date"
+        },
+        {
+          "box": [
+            134,
+            683,
+            164,
+            706
+          ],
+          "legible": "clear",
+          "text": "Qt."
+        },
+        {
+          "box": [
+            180,
+            683,
+            228,
+            706
+          ],
+          "legible": "clear",
+          "text": "Date"
+        },
+        {
+          "box": [
+            285,
+            683,
+            315,
+            706
+          ],
+          "legible": "clear",
+          "text": "Qt."
+        },
+        {
+          "box": [
+            331,
+            683,
+            379,
+            706
+          ],
+          "legible": "clear",
+          "text": "Date"
+        },
+        {
+          "box": [
+            436,
+            683,
+            466,
+            706
+          ],
+          "legible": "clear",
+          "text": "Qt."
+        },
+        {
+          "box": [
+            482,
+            683,
+            601,
+            706
+          ],
+          "legible": "clear",
+          "text": "Distribution"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

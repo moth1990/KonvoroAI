@@ -1,0 +1,113 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 284,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            118,
+            50,
+            140,
+            80
+          ],
+          "legible": "clear",
+          "text": "6"
+        },
+        {
+          "box": [
+            418,
+            48,
+            440,
+            78
+          ],
+          "legible": "clear",
+          "text": "7"
+        },
+        {
+          "box": [
+            700,
+            49,
+            722,
+            79
+          ],
+          "legible": "clear",
+          "text": "8"
+        },
+        {
+          "box": [
+            578,
+            738,
+            638,
+            779
+          ],
+          "legible": "clear",
+          "text": "R7"
+        },
+        {
+          "box": [
+            118,
+            820,
+            194,
+            874
+          ],
+          "legible": "clear",
+          "text": "R6"
+        },
+        {
+          "box": [
+            829,
+            820,
+            905,
+            874
+          ],
+          "legible": "clear",
+          "text": "R7"
+        },
+        {
+          "box": [
+            447,
+            821,
+            529,
+            857
+          ],
+          "legible": "clear",
+          "text": "SW5"
+        },
+        {
+          "box": [
+            396,
+            897,
+            413,
+            935
+          ],
+          "legible": "clear",
+          "text": "1"
+        },
+        {
+          "box": [
+            480,
+            910,
+            507,
+            947
+          ],
+          "legible": "clear",
+          "text": "0"
+        },
+        {
+          "box": [
+            556,
+            951,
+            583,
+            990
+          ],
+          "legible": "clear",
+          "text": "2"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

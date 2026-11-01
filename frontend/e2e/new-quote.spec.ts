@@ -13,7 +13,9 @@ const NURSERY = fileURLToPath(new URL("../../golden/NURSERY-1/NURSERY-1.pdf", im
 const NEVIS = fileURLToPath(new URL("../../golden/NEVIS-1/NEVIS-1.pdf", import.meta.url));
 const MB = 1024 * 1024;
 
-test.describe.configure({ mode: "serial" });
+// These tests wait on the real pipeline worker, and since S10 stage 2 really renders, tiles and reads every page:
+// a test that decodes twice (a page kind change runs stages 2–7 again) needs more than Playwright's 30 s on CI.
+test.describe.configure({ mode: "serial", timeout: 90_000 });
 
 function tenant(page: Page): string {
   return isMobile(page) ? TENANTS.uploadMobile : TENANTS.uploadDesktop;
@@ -71,6 +73,18 @@ test("the run step lists the 7 stages and can be cancelled", async ({ page }) =>
   // Back to picking, with the files still there (01 §4.6).
   await expect(page.getByRole("listitem").filter({ hasText: "NURSERY-1.pdf" })).toBeVisible();
   await expect(page.getByTestId("start-note")).toContainText("(נותרו 37)"); // nothing new was counted
+});
+
+test("the run step says how stage 2 read the text", async ({ page }) => {
+  await page.getByLabel("פרויקט / שם הלוח").fill(SLOW_PROJECT);
+  await page.locator("#file-in").setInputFiles(NURSERY);
+  await page.getByTestId("start").click();
+  const stage2 = page.getByTestId("stage-2");
+  await expect(stage2).toHaveAttribute("data-state", "done", { timeout: 60_000 });
+  // NURSERY-1 draws its letters as lines: every process page goes through OCR (02 §2.3, prototype line 762)
+  await expect(stage2).toContainText(/שכבת טקסט חסרה, OCR על 5 עמודים · \d+ אריחים/);
+  await page.getByTestId("cancelrun").click();
+  await expect(page.getByRole("status")).toHaveText("הפענוח בוטל. המקום במכסה שוחרר");
 });
 
 test("a CAD file and an oversized file are rejected before upload", async ({ page }) => {

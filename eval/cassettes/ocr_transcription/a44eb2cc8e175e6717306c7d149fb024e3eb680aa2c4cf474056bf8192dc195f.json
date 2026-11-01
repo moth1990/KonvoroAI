@@ -1,0 +1,193 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 525,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            954,
+            90,
+            978,
+            122
+          ],
+          "legible": "clear",
+          "text": "E"
+        },
+        {
+          "box": [
+            954,
+            522,
+            974,
+            555
+          ],
+          "legible": "clear",
+          "text": "F"
+        },
+        {
+          "box": [
+            956,
+            711,
+            982,
+            743
+          ],
+          "legible": "clear",
+          "text": "G"
+        },
+        {
+          "box": [
+            77,
+            583,
+            160,
+            620
+          ],
+          "legible": "clear",
+          "text": "and"
+        },
+        {
+          "box": [
+            193,
+            583,
+            358,
+            620
+          ],
+          "legible": "clear",
+          "text": "control"
+        },
+        {
+          "box": [
+            391,
+            583,
+            544,
+            620
+          ],
+          "legible": "clear",
+          "text": "panels"
+        },
+        {
+          "box": [
+            0,
+            651,
+            117,
+            678
+          ],
+          "legible": "unsure",
+          "text": "565394:"
+        },
+        {
+          "box": [
+            124,
+            651,
+            171,
+            677
+          ],
+          "legible": "clear",
+          "text": "TEL"
+        },
+        {
+          "box": [
+            189,
+            651,
+            243,
+            677
+          ],
+          "legible": "clear",
+          "text": "276"
+        },
+        {
+          "box": [
+            261,
+            651,
+            319,
+            677
+          ],
+          "legible": "clear",
+          "text": "P.O."
+        },
+        {
+          "box": [
+            337,
+            651,
+            522,
+            679
+          ],
+          "legible": "unsure",
+          "text": "B36590200"
+        },
+        {
+          "box": [
+            3,
+            694,
+            389,
+            735
+          ],
+          "legible": "clear",
+          "text": "trcpss@gmail.com"
+        },
+        {
+          "box": [
+            722,
+            674,
+            766,
+            693
+          ],
+          "legible": "unsure",
+          "text": "ISO"
+        },
+        {
+          "box": [
+            760,
+            674,
+            816,
+            693
+          ],
+          "legible": "unsure",
+          "text": "9001:"
+        },
+        {
+          "box": [
+            737,
+            697,
+            772,
+            716
+          ],
+          "legible": "unsure",
+          "text": "2008"
+        },
+        {
+          "box": [
+            121,
+            812,
+            147,
+            848
+          ],
+          "legible": "clear",
+          "text": "8"
+        },
+        {
+          "box": [
+            449,
+            812,
+            472,
+            846
+          ],
+          "legible": "clear",
+          "text": "9"
+        },
+        {
+          "box": [
+            780,
+            812,
+            827,
+            848
+          ],
+          "legible": "clear",
+          "text": "10"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

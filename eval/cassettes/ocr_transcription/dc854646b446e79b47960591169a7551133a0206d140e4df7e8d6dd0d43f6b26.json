@@ -1,0 +1,223 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 636,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            338,
+            108,
+            378,
+            135
+          ],
+          "legible": "clear",
+          "text": "Ik="
+        },
+        {
+          "box": [
+            384,
+            107,
+            448,
+            136
+          ],
+          "legible": "clear",
+          "text": "15KA"
+        },
+        {
+          "box": [
+            339,
+            146,
+            441,
+            177
+          ],
+          "legible": "clear",
+          "text": "L1,L2,L3"
+        },
+        {
+          "box": [
+            457,
+            160,
+            473,
+            168
+          ],
+          "legible": "clear",
+          "text": "-"
+        },
+        {
+          "box": [
+            491,
+            146,
+            629,
+            177
+          ],
+          "legible": "clear",
+          "text": "400A+N+E"
+        },
+        {
+          "box": [
+            775,
+            68,
+            949,
+            148
+          ],
+          "legible": "unsure",
+          "text": "בלוח"
+        },
+        {
+          "box": [
+            7,
+            271,
+            63,
+            302
+          ],
+          "legible": "clear",
+          "text": "25A"
+        },
+        {
+          "box": [
+            412,
+            333,
+            502,
+            364
+          ],
+          "legible": "clear",
+          "text": "3x100A"
+        },
+        {
+          "box": [
+            431,
+            367,
+            483,
+            397
+          ],
+          "legible": "clear",
+          "text": "HRC"
+        },
+        {
+          "box": [
+            884,
+            347,
+            951,
+            379
+          ],
+          "legible": "clear",
+          "text": "160A"
+        },
+        {
+          "box": [
+            887,
+            393,
+            951,
+            423
+          ],
+          "legible": "clear",
+          "text": "160A"
+        },
+        {
+          "box": [
+            444,
+            484,
+            477,
+            512
+          ],
+          "legible": "clear",
+          "text": "4P"
+        },
+        {
+          "box": [
+            417,
+            517,
+            495,
+            548
+          ],
+          "legible": "clear",
+          "text": "100KA"
+        },
+        {
+          "box": [
+            432,
+            553,
+            488,
+            584
+          ],
+          "legible": "clear",
+          "text": "B+C"
+        },
+        {
+          "box": [
+            670,
+            598,
+            725,
+            630
+          ],
+          "legible": "clear",
+          "text": "63A"
+        },
+        {
+          "box": [
+            903,
+            598,
+            955,
+            630
+          ],
+          "legible": "clear",
+          "text": "16A"
+        },
+        {
+          "box": [
+            667,
+            643,
+            741,
+            675
+          ],
+          "legible": "clear",
+          "text": "MCB"
+        },
+        {
+          "box": [
+            905,
+            639,
+            978,
+            670
+          ],
+          "legible": "clear",
+          "text": "MCB"
+        },
+        {
+          "box": [
+            611,
+            685,
+            669,
+            717
+          ],
+          "legible": "unsure",
+          "text": "מ.פ."
+        },
+        {
+          "box": [
+            838,
+            685,
+            899,
+            717
+          ],
+          "legible": "unsure",
+          "text": "מ.פ."
+        },
+        {
+          "box": [
+            658,
+            740,
+            827,
+            772
+          ],
+          "legible": "clear",
+          "text": "4x63A/0,03A"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

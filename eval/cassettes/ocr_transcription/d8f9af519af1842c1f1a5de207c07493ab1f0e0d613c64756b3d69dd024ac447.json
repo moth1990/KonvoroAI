@@ -1,0 +1,183 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 514,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            84,
+            164,
+            108,
+            195
+          ],
+          "legible": "clear",
+          "text": "3"
+        },
+        {
+          "box": [
+            397,
+            166,
+            419,
+            196
+          ],
+          "legible": "clear",
+          "text": "4"
+        },
+        {
+          "box": [
+            726,
+            164,
+            749,
+            195
+          ],
+          "legible": "clear",
+          "text": "5"
+        },
+        {
+          "box": [
+            94,
+            362,
+            171,
+            390
+          ],
+          "legible": "clear",
+          "text": "+25CU"
+        },
+        {
+          "box": [
+            2,
+            416,
+            156,
+            444
+          ],
+          "legible": "clear",
+          "text": "ESSENTIAL"
+        },
+        {
+          "box": [
+            174,
+            416,
+            268,
+            444
+          ],
+          "legible": "clear",
+          "text": "WATER"
+        },
+        {
+          "box": [
+            10,
+            453,
+            81,
+            481
+          ],
+          "legible": "clear",
+          "text": "MAIN"
+        },
+        {
+          "box": [
+            100,
+            453,
+            194,
+            481
+          ],
+          "legible": "clear",
+          "text": "BOARD"
+        },
+        {
+          "box": [
+            939,
+            362,
+            1024,
+            390
+          ],
+          "legible": "unsure",
+          "text": "3X50+2"
+        },
+        {
+          "box": [
+            381,
+            734,
+            445,
+            771
+          ],
+          "legible": "clear",
+          "text": "QG1"
+        },
+        {
+          "box": [
+            374,
+            803,
+            458,
+            832
+          ],
+          "legible": "clear",
+          "text": "4X125A"
+        },
+        {
+          "box": [
+            372,
+            839,
+            489,
+            868
+          ],
+          "legible": "clear",
+          "text": "ABB-XT1C"
+        },
+        {
+          "box": [
+            374,
+            877,
+            486,
+            906
+          ],
+          "legible": "clear",
+          "text": "INC=100A"
+        },
+        {
+          "box": [
+            131,
+            846,
+            160,
+            867
+          ],
+          "legible": "clear",
+          "text": "T.C"
+        },
+        {
+          "box": [
+            168,
+            846,
+            191,
+            867
+          ],
+          "legible": "clear",
+          "text": "G1"
+        },
+        {
+          "box": [
+            721,
+            846,
+            750,
+            867
+          ],
+          "legible": "clear",
+          "text": "T.C"
+        },
+        {
+          "box": [
+            758,
+            846,
+            781,
+            867
+          ],
+          "legible": "clear",
+          "text": "G2"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

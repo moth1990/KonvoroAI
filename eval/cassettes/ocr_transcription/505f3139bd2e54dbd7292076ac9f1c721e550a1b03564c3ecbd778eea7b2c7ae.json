@@ -1,0 +1,193 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 543,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            668,
+            512,
+            733,
+            560
+          ],
+          "legible": "clear",
+          "text": "לוח"
+        },
+        {
+          "box": [
+            535,
+            512,
+            654,
+            560
+          ],
+          "legible": "clear",
+          "text": "במבנה"
+        },
+        {
+          "box": [
+            288,
+            512,
+            520,
+            560
+          ],
+          "legible": "clear",
+          "text": "פולקרבונט"
+        },
+        {
+          "box": [
+            168,
+            515,
+            240,
+            559
+          ],
+          "legible": "clear",
+          "text": "850"
+        },
+        {
+          "box": [
+            636,
+            580,
+            731,
+            626
+          ],
+          "legible": "clear",
+          "text": "עה\"ט"
+        },
+        {
+          "box": [
+            536,
+            580,
+            622,
+            626
+          ],
+          "legible": "clear",
+          "text": "כולל"
+        },
+        {
+          "box": [
+            391,
+            580,
+            473,
+            626
+          ],
+          "legible": "clear",
+          "text": "דלת"
+        },
+        {
+          "box": [
+            684,
+            648,
+            727,
+            694
+          ],
+          "legible": "clear",
+          "text": "כל"
+        },
+        {
+          "box": [
+            499,
+            648,
+            670,
+            694
+          ],
+          "legible": "clear",
+          "text": "המאז\"ים"
+        },
+        {
+          "box": [
+            422,
+            648,
+            490,
+            694
+          ],
+          "legible": "clear",
+          "text": "יהיו"
+        },
+        {
+          "box": [
+            330,
+            648,
+            408,
+            694
+          ],
+          "legible": "clear",
+          "text": "לזרם"
+        },
+        {
+          "box": [
+            250,
+            648,
+            316,
+            694
+          ],
+          "legible": "clear",
+          "text": "קצר"
+        },
+        {
+          "box": [
+            66,
+            650,
+            159,
+            694
+          ],
+          "legible": "clear",
+          "text": "10KA"
+        },
+        {
+          "box": [
+            624,
+            718,
+            725,
+            762
+          ],
+          "legible": "clear",
+          "text": "נדרש"
+        },
+        {
+          "box": [
+            529,
+            718,
+            605,
+            760
+          ],
+          "legible": "clear",
+          "text": "30%"
+        },
+        {
+          "box": [
+            385,
+            718,
+            514,
+            762
+          ],
+          "legible": "clear",
+          "text": "מקום"
+        },
+        {
+          "box": [
+            263,
+            718,
+            372,
+            762
+          ],
+          "legible": "clear",
+          "text": "שמור"
+        },
+        {
+          "box": [
+            169,
+            718,
+            248,
+            762
+          ],
+          "legible": "clear",
+          "text": "בלוח"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

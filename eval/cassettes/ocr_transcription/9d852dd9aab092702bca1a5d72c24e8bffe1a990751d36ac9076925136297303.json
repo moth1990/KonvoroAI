@@ -1,0 +1,153 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 404,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            69,
+            371,
+            227,
+            411
+          ],
+          "legible": "clear",
+          "text": "control"
+        },
+        {
+          "box": [
+            256,
+            371,
+            402,
+            411
+          ],
+          "legible": "clear",
+          "text": "panels"
+        },
+        {
+          "box": [
+            93,
+            438,
+            145,
+            464
+          ],
+          "legible": "clear",
+          "text": "276"
+        },
+        {
+          "box": [
+            220,
+            438,
+            342,
+            466
+          ],
+          "legible": "clear",
+          "text": "3659200"
+        },
+        {
+          "box": [
+            790,
+            316,
+            808,
+            346
+          ],
+          "legible": "clear",
+          "text": "F"
+        },
+        {
+          "box": [
+            792,
+            494,
+            818,
+            526
+          ],
+          "legible": "clear",
+          "text": "G"
+        },
+        {
+          "box": [
+            311,
+            591,
+            333,
+            621
+          ],
+          "legible": "clear",
+          "text": "9"
+        },
+        {
+          "box": [
+            626,
+            592,
+            670,
+            624
+          ],
+          "legible": "clear",
+          "text": "10"
+        },
+        {
+          "box": [
+            568,
+            463,
+            596,
+            480
+          ],
+          "legible": "clear",
+          "text": "ISO"
+        },
+        {
+          "box": [
+            596,
+            463,
+            632,
+            480
+          ],
+          "legible": "clear",
+          "text": "9001:"
+        },
+        {
+          "box": [
+            583,
+            483,
+            617,
+            502
+          ],
+          "legible": "clear",
+          "text": "2008"
+        },
+        {
+          "box": [
+            651,
+            526,
+            716,
+            551
+          ],
+          "legible": "clear",
+          "text": "מכון"
+        },
+        {
+          "box": [
+            541,
+            526,
+            650,
+            551
+          ],
+          "legible": "clear",
+          "text": "התקנים"
+        },
+        {
+          "box": [
+            468,
+            526,
+            540,
+            551
+          ],
+          "legible": "clear",
+          "text": "הישראלי"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

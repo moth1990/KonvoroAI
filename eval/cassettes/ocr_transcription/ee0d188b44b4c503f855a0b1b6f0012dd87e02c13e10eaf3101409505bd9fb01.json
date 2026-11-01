@@ -1,0 +1,193 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 531,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            84,
+            163,
+            108,
+            196
+          ],
+          "legible": "clear",
+          "text": "3"
+        },
+        {
+          "box": [
+            396,
+            164,
+            419,
+            196
+          ],
+          "legible": "clear",
+          "text": "4"
+        },
+        {
+          "box": [
+            726,
+            163,
+            749,
+            196
+          ],
+          "legible": "clear",
+          "text": "5"
+        },
+        {
+          "box": [
+            684,
+            652,
+            743,
+            680
+          ],
+          "legible": "clear",
+          "text": "Fire"
+        },
+        {
+          "box": [
+            762,
+            652,
+            853,
+            680
+          ],
+          "legible": "clear",
+          "text": "Alarm"
+        },
+        {
+          "box": [
+            861,
+            652,
+            977,
+            680
+          ],
+          "legible": "clear",
+          "text": "Control"
+        },
+        {
+          "box": [
+            826,
+            682,
+            885,
+            712
+          ],
+          "legible": "clear",
+          "text": "COM"
+        },
+        {
+          "box": [
+            428,
+            802,
+            479,
+            833
+          ],
+          "legible": "clear",
+          "text": "EM1"
+        },
+        {
+          "box": [
+            396,
+            867,
+            448,
+            898
+          ],
+          "legible": "clear",
+          "text": "EMS"
+        },
+        {
+          "box": [
+            568,
+            867,
+            620,
+            898
+          ],
+          "legible": "clear",
+          "text": "EMS"
+        },
+        {
+          "box": [
+            905,
+            861,
+            917,
+            882
+          ],
+          "legible": "clear",
+          "text": "C"
+        },
+        {
+          "box": [
+            916,
+            955,
+            990,
+            982
+          ],
+          "legible": "clear",
+          "text": "GIC-1"
+        },
+        {
+          "box": [
+            52,
+            1004,
+            82,
+            1020
+          ],
+          "legible": "clear",
+          "text": "for"
+        },
+        {
+          "box": [
+            91,
+            1004,
+            102,
+            1020
+          ],
+          "legible": "clear",
+          "text": "a"
+        },
+        {
+          "box": [
+            110,
+            1004,
+            171,
+            1020
+          ],
+          "legible": "clear",
+          "text": "Remote"
+        },
+        {
+          "box": [
+            180,
+            1004,
+            269,
+            1020
+          ],
+          "legible": "clear",
+          "text": "Emergency"
+        },
+        {
+          "box": [
+            279,
+            1004,
+            320,
+            1020
+          ],
+          "legible": "clear",
+          "text": "Push"
+        },
+        {
+          "box": [
+            328,
+            1004,
+            388,
+            1020
+          ],
+          "legible": "clear",
+          "text": "Button"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

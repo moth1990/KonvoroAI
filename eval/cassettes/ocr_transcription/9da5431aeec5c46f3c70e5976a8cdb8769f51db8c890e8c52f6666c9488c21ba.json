@@ -1,0 +1,333 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 961,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            333,
+            0,
+            427,
+            32
+          ],
+          "legible": "unsure",
+          "text": "בקר"
+        },
+        {
+          "box": [
+            276,
+            0,
+            328,
+            40
+          ],
+          "legible": "unsure",
+          "text": "חיצוני"
+        },
+        {
+          "box": [
+            493,
+            24,
+            631,
+            60
+          ],
+          "legible": "clear",
+          "text": "טמפרטורה"
+        },
+        {
+          "box": [
+            309,
+            45,
+            341,
+            94
+          ],
+          "legible": "clear",
+          "text": "B"
+        },
+        {
+          "box": [
+            175,
+            126,
+            284,
+            157
+          ],
+          "legible": "clear",
+          "text": "EXHUST"
+        },
+        {
+          "box": [
+            289,
+            126,
+            337,
+            157
+          ],
+          "legible": "clear",
+          "text": "FAN"
+        },
+        {
+          "box": [
+            353,
+            126,
+            440,
+            157
+          ],
+          "legible": "clear",
+          "text": "GROUP"
+        },
+        {
+          "box": [
+            457,
+            127,
+            474,
+            155
+          ],
+          "legible": "clear",
+          "text": "B"
+        },
+        {
+          "box": [
+            267,
+            158,
+            364,
+            187
+          ],
+          "legible": "clear",
+          "text": "3X208V"
+        },
+        {
+          "box": [
+            75,
+            265,
+            212,
+            298
+          ],
+          "legible": "clear",
+          "text": "הפרויקט"
+        },
+        {
+          "box": [
+            232,
+            265,
+            277,
+            297
+          ],
+          "legible": "clear",
+          "text": "שם"
+        },
+        {
+          "box": [
+            213,
+            361,
+            262,
+            396
+          ],
+          "legible": "clear",
+          "text": "דף"
+        },
+        {
+          "box": [
+            82,
+            361,
+            193,
+            396
+          ],
+          "legible": "unsure",
+          "text": "מס':8"
+        },
+        {
+          "box": [
+            51,
+            485,
+            164,
+            517
+          ],
+          "legible": "clear",
+          "text": "1:100:"
+        },
+        {
+          "box": [
+            170,
+            483,
+            265,
+            518
+          ],
+          "legible": "unsure",
+          "text": "קנ\"מ"
+        },
+        {
+          "box": [
+            453,
+            308,
+            599,
+            355
+          ],
+          "legible": "clear",
+          "text": "ובקרה"
+        },
+        {
+          "box": [
+            611,
+            308,
+            785,
+            355
+          ],
+          "legible": "clear",
+          "text": "חשמל"
+        },
+        {
+          "box": [
+            795,
+            308,
+            915,
+            355
+          ],
+          "legible": "clear",
+          "text": "לוחות"
+        },
+        {
+          "box": [
+            359,
+            371,
+            429,
+            408
+          ],
+          "legible": "clear",
+          "text": "S.S"
+        },
+        {
+          "box": [
+            459,
+            371,
+            664,
+            408
+          ],
+          "legible": "clear",
+          "text": "Electrical"
+        },
+        {
+          "box": [
+            726,
+            371,
+            804,
+            408
+          ],
+          "legible": "clear",
+          "text": "and"
+        },
+        {
+          "box": [
+            838,
+            371,
+            993,
+            408
+          ],
+          "legible": "clear",
+          "text": "control"
+        },
+        {
+          "box": [
+            338,
+            438,
+            521,
+            466
+          ],
+          "legible": "clear",
+          "text": "04-8338123:"
+        },
+        {
+          "box": [
+            524,
+            438,
+            598,
+            466
+          ],
+          "legible": "clear",
+          "text": "פקס"
+        },
+        {
+          "box": [
+            615,
+            438,
+            792,
+            466
+          ],
+          "legible": "clear",
+          "text": "04-6565394:"
+        },
+        {
+          "box": [
+            797,
+            437,
+            842,
+            466
+          ],
+          "legible": "clear",
+          "text": "טל"
+        },
+        {
+          "box": [
+            861,
+            439,
+            912,
+            465
+          ],
+          "legible": "clear",
+          "text": "276"
+        },
+        {
+          "box": [
+            444,
+            480,
+            564,
+            516
+          ],
+          "legible": "clear",
+          "text": "Email:"
+        },
+        {
+          "box": [
+            574,
+            480,
+            1022,
+            516
+          ],
+          "legible": "clear",
+          "text": "electrcpss@gmail.com"
+        },
+        {
+          "box": [
+            169,
+            592,
+            191,
+            624
+          ],
+          "legible": "clear",
+          "text": "6"
+        },
+        {
+          "box": [
+            478,
+            590,
+            500,
+            622
+          ],
+          "legible": "clear",
+          "text": "7"
+        },
+        {
+          "box": [
+            770,
+            593,
+            792,
+            624
+          ],
+          "legible": "clear",
+          "text": "8"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

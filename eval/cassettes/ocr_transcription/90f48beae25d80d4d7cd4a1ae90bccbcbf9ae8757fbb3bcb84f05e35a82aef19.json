@@ -1,0 +1,288 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 908,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            808,
+            70,
+            836,
+            158
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "EXHUST"
+        },
+        {
+          "box": [
+            808,
+            26,
+            836,
+            64
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "FAN"
+        },
+        {
+          "box": [
+            846,
+            0,
+            870,
+            50
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "3X2C"
+        },
+        {
+          "box": [
+            106,
+            277,
+            364,
+            316
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "05/10/2026"
+        },
+        {
+          "box": [
+            379,
+            284,
+            392,
+            308
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": ":"
+        },
+        {
+          "box": [
+            399,
+            277,
+            520,
+            314
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "תאריך"
+        },
+        {
+          "box": [
+            570,
+            283,
+            802,
+            324
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "26/952-5"
+        },
+        {
+          "box": [
+            830,
+            290,
+            845,
+            315
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": ":"
+        },
+        {
+          "box": [
+            860,
+            283,
+            1006,
+            325
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "תוכנית"
+        },
+        {
+          "box": [
+            22,
+            316,
+            42,
+            346
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "F"
+        },
+        {
+          "box": [
+            496,
+            342,
+            528,
+            372
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": ":1"
+        },
+        {
+          "box": [
+            870,
+            371,
+            977,
+            405
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "מחמוד"
+        },
+        {
+          "box": [
+            804,
+            371,
+            865,
+            405
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "זועבי"
+        },
+        {
+          "box": [
+            486,
+            400,
+            525,
+            431
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": ":2"
+        },
+        {
+          "box": [
+            917,
+            436,
+            1004,
+            481
+          ],
+          "legible": "unsure",
+          "rotation": 0,
+          "text": "הבה"
+        },
+        {
+          "box": [
+            776,
+            436,
+            912,
+            482
+          ],
+          "legible": "unsure",
+          "rotation": 0,
+          "text": "גמאחנה"
+        },
+        {
+          "box": [
+            480,
+            459,
+            522,
+            490
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": ":3"
+        },
+        {
+          "box": [
+            19,
+            500,
+            43,
+            530
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "G"
+        },
+        {
+          "box": [
+            897,
+            508,
+            997,
+            543
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "עופר"
+        },
+        {
+          "box": [
+            847,
+            508,
+            892,
+            545
+          ],
+          "legible": "unsure",
+          "rotation": 0,
+          "text": "אלרון"
+        },
+        {
+          "box": [
+            444,
+            513,
+            523,
+            549
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "בדק"
+        },
+        {
+          "box": [
+            430,
+            520,
+            440,
+            545
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": ":"
+        },
+        {
+          "box": [
+            224,
+            594,
+            240,
+            622
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "1"
+        },
+        {
+          "box": [
+            507,
+            594,
+            528,
+            624
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "2"
+        },
+        {
+          "box": [
+            811,
+            592,
+            833,
+            621
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "3"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

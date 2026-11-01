@@ -1,0 +1,203 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 571,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            127,
+            30,
+            166,
+            61
+          ],
+          "legible": "clear",
+          "text": "TC"
+        },
+        {
+          "box": [
+            266,
+            70,
+            321,
+            99
+          ],
+          "legible": "clear",
+          "text": "25A"
+        },
+        {
+          "box": [
+            136,
+            104,
+            157,
+            132
+          ],
+          "legible": "clear",
+          "text": "N"
+        },
+        {
+          "box": [
+            205,
+            226,
+            284,
+            263
+          ],
+          "legible": "unsure",
+          "text": "מ.פ."
+        },
+        {
+          "box": [
+            299,
+            230,
+            467,
+            261
+          ],
+          "legible": "clear",
+          "text": "4x40A/0,03A"
+        },
+        {
+          "box": [
+            22,
+            325,
+            83,
+            358
+          ],
+          "legible": "clear",
+          "text": "MCB"
+        },
+        {
+          "box": [
+            296,
+            411,
+            358,
+            447
+          ],
+          "legible": "clear",
+          "text": "שעון"
+        },
+        {
+          "box": [
+            287,
+            468,
+            357,
+            505
+          ],
+          "legible": "clear",
+          "text": "פקוד"
+        },
+        {
+          "box": [
+            233,
+            490,
+            271,
+            513
+          ],
+          "legible": "unsure",
+          "text": "\"0\""
+        },
+        {
+          "box": [
+            37,
+            441,
+            89,
+            472
+          ],
+          "legible": "clear",
+          "text": "16A"
+        },
+        {
+          "box": [
+            606,
+            435,
+            658,
+            465
+          ],
+          "legible": "clear",
+          "text": "16A"
+        },
+        {
+          "box": [
+            610,
+            471,
+            671,
+            505
+          ],
+          "legible": "clear",
+          "text": "MCB"
+        },
+        {
+          "box": [
+            613,
+            517,
+            667,
+            553
+          ],
+          "legible": "clear",
+          "text": "(x6)"
+        },
+        {
+          "box": [
+            143,
+            605,
+            195,
+            635
+          ],
+          "legible": "clear",
+          "text": "10A"
+        },
+        {
+          "box": [
+            174,
+            691,
+            193,
+            721
+          ],
+          "legible": "unsure",
+          "text": "0"
+        },
+        {
+          "box": [
+            80,
+            753,
+            138,
+            792
+          ],
+          "legible": "clear",
+          "text": "ידני"
+        },
+        {
+          "box": [
+            305,
+            799,
+            343,
+            825
+          ],
+          "legible": "unsure",
+          "text": "\"0\""
+        },
+        {
+          "box": [
+            154,
+            873,
+            174,
+            901
+          ],
+          "legible": "clear",
+          "text": "C"
+        },
+        {
+          "box": [
+            147,
+            934,
+            183,
+            959
+          ],
+          "legible": "unsure",
+          "text": "\"0\""
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

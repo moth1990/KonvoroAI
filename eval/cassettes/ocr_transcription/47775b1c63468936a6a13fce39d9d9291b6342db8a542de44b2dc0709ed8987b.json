@@ -1,0 +1,90 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 267,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            415,
+            82,
+            680,
+            218
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "בטון"
+        },
+        {
+          "box": [
+            137,
+            288,
+            696,
+            410
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "מהמתחם"
+        },
+        {
+          "box": [
+            303,
+            535,
+            394,
+            573
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "הכנה"
+        },
+        {
+          "box": [
+            219,
+            535,
+            297,
+            573
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "בלבד"
+        },
+        {
+          "box": [
+            262,
+            592,
+            398,
+            630
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "לגנרטור"
+        },
+        {
+          "box": [
+            189,
+            592,
+            257,
+            630
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "חרום"
+        },
+        {
+          "box": [
+            90,
+            585,
+            119,
+            629
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "G"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

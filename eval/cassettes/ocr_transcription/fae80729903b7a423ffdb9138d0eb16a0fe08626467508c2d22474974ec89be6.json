@@ -1,0 +1,143 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 398,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            286,
+            50,
+            465,
+            95
+          ],
+          "legible": "clear",
+          "text": "IEC60898"
+        },
+        {
+          "box": [
+            489,
+            48,
+            552,
+            95
+          ],
+          "legible": "clear",
+          "text": "לפי"
+        },
+        {
+          "box": [
+            609,
+            50,
+            703,
+            95
+          ],
+          "legible": "clear",
+          "text": "10KA"
+        },
+        {
+          "box": [
+            729,
+            48,
+            805,
+            95
+          ],
+          "legible": "clear",
+          "text": "קצר"
+        },
+        {
+          "box": [
+            826,
+            48,
+            923,
+            95
+          ],
+          "legible": "clear",
+          "text": "לזרם"
+        },
+        {
+          "box": [
+            938,
+            48,
+            1002,
+            95
+          ],
+          "legible": "clear",
+          "text": "יהיו"
+        },
+        {
+          "box": [
+            714,
+            113,
+            811,
+            160
+          ],
+          "legible": "clear",
+          "text": "בלוח"
+        },
+        {
+          "box": [
+            828,
+            113,
+            953,
+            160
+          ],
+          "legible": "clear",
+          "text": "שמור"
+        },
+        {
+          "box": [
+            334,
+            177,
+            470,
+            228
+          ],
+          "legible": "clear",
+          "text": "המותקן"
+        },
+        {
+          "box": [
+            491,
+            177,
+            595,
+            228
+          ],
+          "legible": "clear",
+          "text": "לציוד"
+        },
+        {
+          "box": [
+            615,
+            177,
+            758,
+            228
+          ],
+          "legible": "clear",
+          "text": "בהתאם"
+        },
+        {
+          "box": [
+            779,
+            177,
+            872,
+            228
+          ],
+          "legible": "clear",
+          "text": "הלוח"
+        },
+        {
+          "box": [
+            891,
+            177,
+            963,
+            228
+          ],
+          "legible": "clear",
+          "text": "יצרן"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

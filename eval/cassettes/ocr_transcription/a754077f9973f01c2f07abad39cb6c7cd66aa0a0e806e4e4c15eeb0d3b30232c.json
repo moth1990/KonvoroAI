@@ -1,0 +1,143 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 390,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            122,
+            164,
+            146,
+            197
+          ],
+          "legible": "clear",
+          "text": "8"
+        },
+        {
+          "box": [
+            449,
+            162,
+            472,
+            194
+          ],
+          "legible": "clear",
+          "text": "9"
+        },
+        {
+          "box": [
+            780,
+            164,
+            826,
+            196
+          ],
+          "legible": "clear",
+          "text": "10"
+        },
+        {
+          "box": [
+            956,
+            469,
+            980,
+            502
+          ],
+          "legible": "clear",
+          "text": "A"
+        },
+        {
+          "box": [
+            955,
+            739,
+            979,
+            771
+          ],
+          "legible": "clear",
+          "text": "B"
+        },
+        {
+          "box": [
+            358,
+            525,
+            407,
+            553
+          ],
+          "legible": "clear",
+          "text": "FC2"
+        },
+        {
+          "box": [
+            364,
+            577,
+            436,
+            605
+          ],
+          "legible": "clear",
+          "text": "3X40A"
+        },
+        {
+          "box": [
+            364,
+            609,
+            462,
+            637
+          ],
+          "legible": "clear",
+          "text": "INC=32A"
+        },
+        {
+          "box": [
+            364,
+            637,
+            438,
+            664
+          ],
+          "legible": "clear",
+          "text": "S203M"
+        },
+        {
+          "box": [
+            365,
+            665,
+            409,
+            691
+          ],
+          "legible": "clear",
+          "text": "ABB"
+        },
+        {
+          "box": [
+            364,
+            788,
+            414,
+            816
+          ],
+          "legible": "clear",
+          "text": "FB2"
+        },
+        {
+          "box": [
+            365,
+            834,
+            451,
+            863
+          ],
+          "legible": "clear",
+          "text": "4x40A"
+        },
+        {
+          "box": [
+            365,
+            869,
+            577,
+            901
+          ],
+          "legible": "clear",
+          "text": "30mA-TYPE\"A\""
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

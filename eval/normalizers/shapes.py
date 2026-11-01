@@ -40,6 +40,7 @@ def bom_list(folder: str, labels: Labels, quote: Quote) -> GoldenDrawing:
             attributes=common.attributes(row.get("attributes")),
             qty=row["qty"],
             label=row["product"],
+            pages=tuple(row.get("pages") or ()),
         )
         for row in labels["bom"]
     ]
@@ -61,6 +62,7 @@ def component_list(folder: str, labels: Labels, quote: Quote) -> GoldenDrawing:
                 attributes=attrs,
                 qty=row["qty"],
                 label=" ".join(row.get("model_tokens") or []) or row["family"],
+                pages=tuple(row.get("pages") or ()),
             )
         )
     panel = CanonPanel(name=labels["title_block"]["panel"], components=tuple(components))

@@ -1,0 +1,155 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 431,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            82,
+            323,
+            156,
+            356
+          ],
+          "legible": "clear",
+          "text": "MCB"
+        },
+        {
+          "box": [
+            275,
+            322,
+            348,
+            354
+          ],
+          "legible": "clear",
+          "text": "MCB"
+        },
+        {
+          "box": [
+            102,
+            438,
+            154,
+            469
+          ],
+          "legible": "clear",
+          "text": "10A"
+        },
+        {
+          "box": [
+            289,
+            438,
+            341,
+            469
+          ],
+          "legible": "clear",
+          "text": "10A"
+        },
+        {
+          "box": [
+            80,
+            494,
+            133,
+            532
+          ],
+          "legible": "clear",
+          "text": "(x4)"
+        },
+        {
+          "box": [
+            271,
+            494,
+            324,
+            532
+          ],
+          "legible": "clear",
+          "text": "(x5)"
+        },
+        {
+          "box": [
+            700,
+            115,
+            752,
+            177
+          ],
+          "legible": "unsure",
+          "text": "Ik="
+        },
+        {
+          "box": [
+            769,
+            140,
+            840,
+            175
+          ],
+          "legible": "clear",
+          "text": "10kA"
+        },
+        {
+          "box": [
+            700,
+            200,
+            757,
+            264
+          ],
+          "legible": "unsure",
+          "text": "In="
+        },
+        {
+          "box": [
+            775,
+            229,
+            834,
+            263
+          ],
+          "legible": "clear",
+          "text": "63A"
+        },
+        {
+          "box": [
+            907,
+            440,
+            959,
+            471
+          ],
+          "legible": "clear",
+          "text": "10A"
+        },
+        {
+          "box": [
+            892,
+            480,
+            954,
+            514
+          ],
+          "legible": "clear",
+          "text": "MCB"
+        },
+        {
+          "box": [
+            28,
+            975,
+            58,
+            1024
+          ],
+          "legible": "unsure",
+          "rotation": 270,
+          "text": "XY"
+        },
+        {
+          "box": [
+            214,
+            978,
+            244,
+            1024
+          ],
+          "legible": "unsure",
+          "rotation": 270,
+          "text": "XY"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

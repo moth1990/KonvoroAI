@@ -1,0 +1,43 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 97,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            184,
+            633,
+            389,
+            769
+          ],
+          "legible": "clear",
+          "text": "לוח"
+        },
+        {
+          "box": [
+            21,
+            652,
+            78,
+            769
+          ],
+          "legible": "clear",
+          "text": "ר"
+        },
+        {
+          "box": [
+            16,
+            851,
+            513,
+            970
+          ],
+          "legible": "clear",
+          "text": "בגומחת"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

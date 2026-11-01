@@ -1,0 +1,336 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 1016,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            8,
+            175,
+            36,
+            233
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3*1.5"
+        },
+        {
+          "box": [
+            8,
+            100,
+            36,
+            166
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "N2XY"
+        },
+        {
+          "box": [
+            58,
+            152,
+            86,
+            268
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "EXTEROIOR"
+        },
+        {
+          "box": [
+            58,
+            38,
+            86,
+            145
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "LGHITING"
+        },
+        {
+          "box": [
+            205,
+            175,
+            233,
+            233
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3*1.5"
+        },
+        {
+          "box": [
+            205,
+            100,
+            233,
+            166
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "N2XY"
+        },
+        {
+          "box": [
+            252,
+            157,
+            278,
+            228
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "SPARE"
+        },
+        {
+          "box": [
+            762,
+            191,
+            790,
+            224
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "5X6"
+        },
+        {
+          "box": [
+            762,
+            109,
+            790,
+            182
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "N2XY"
+        },
+        {
+          "box": [
+            808,
+            170,
+            834,
+            226
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "BOX"
+        },
+        {
+          "box": [
+            808,
+            84,
+            834,
+            162
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "SOCKET"
+        },
+        {
+          "box": [
+            960,
+            191,
+            988,
+            224
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "5X6"
+        },
+        {
+          "box": [
+            960,
+            109,
+            988,
+            182
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "N2XY"
+        },
+        {
+          "box": [
+            130,
+            577,
+            212,
+            609
+          ],
+          "legible": "clear",
+          "text": "Page"
+        },
+        {
+          "box": [
+            233,
+            577,
+            292,
+            609
+          ],
+          "legible": "clear",
+          "text": "No.:"
+        },
+        {
+          "box": [
+            297,
+            572,
+            321,
+            607
+          ],
+          "legible": "clear",
+          "text": "4"
+        },
+        {
+          "box": [
+            135,
+            641,
+            197,
+            677
+          ],
+          "legible": "clear",
+          "text": "OF:"
+        },
+        {
+          "box": [
+            210,
+            639,
+            233,
+            677
+          ],
+          "legible": "clear",
+          "text": "5"
+        },
+        {
+          "box": [
+            135,
+            709,
+            277,
+            745
+          ],
+          "legible": "clear",
+          "text": "Scale:"
+        },
+        {
+          "box": [
+            258,
+            709,
+            367,
+            745
+          ],
+          "legible": "clear",
+          "text": "1:100"
+        },
+        {
+          "box": [
+            458,
+            578,
+            533,
+            620
+          ],
+          "legible": "clear",
+          "text": "S.S"
+        },
+        {
+          "box": [
+            563,
+            578,
+            780,
+            620
+          ],
+          "legible": "clear",
+          "text": "Electrical"
+        },
+        {
+          "box": [
+            845,
+            580,
+            927,
+            620
+          ],
+          "legible": "clear",
+          "text": "and"
+        },
+        {
+          "box": [
+            416,
+            649,
+            669,
+            678
+          ],
+          "legible": "clear",
+          "text": "04-8338123:FAX"
+        },
+        {
+          "box": [
+            688,
+            649,
+            886,
+            678
+          ],
+          "legible": "clear",
+          "text": "04-6565394:"
+        },
+        {
+          "box": [
+            892,
+            649,
+            940,
+            678
+          ],
+          "legible": "clear",
+          "text": "TEL"
+        },
+        {
+          "box": [
+            958,
+            649,
+            1010,
+            678
+          ],
+          "legible": "clear",
+          "text": "276"
+        },
+        {
+          "box": [
+            546,
+            693,
+            674,
+            733
+          ],
+          "legible": "clear",
+          "text": "Email:"
+        },
+        {
+          "box": [
+            258,
+            813,
+            282,
+            848
+          ],
+          "legible": "clear",
+          "text": "6"
+        },
+        {
+          "box": [
+            584,
+            811,
+            608,
+            845
+          ],
+          "legible": "clear",
+          "text": "7"
+        },
+        {
+          "box": [
+            890,
+            813,
+            914,
+            848
+          ],
+          "legible": "clear",
+          "text": "8"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

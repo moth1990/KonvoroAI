@@ -1,0 +1,189 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 627,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            24,
+            0,
+            64,
+            262
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "5x16²–N2XY"
+        },
+        {
+          "box": [
+            63,
+            98,
+            115,
+            222
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "למתקן"
+        },
+        {
+          "box": [
+            63,
+            240,
+            115,
+            314
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "ביוב"
+        },
+        {
+          "box": [
+            15,
+            436,
+            130,
+            478
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "26–27"
+        },
+        {
+          "box": [
+            247,
+            43,
+            287,
+            262
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "5x25²–N2XY"
+        },
+        {
+          "box": [
+            285,
+            28,
+            338,
+            92
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "הזנה"
+        },
+        {
+          "box": [
+            285,
+            112,
+            338,
+            288
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "למשרדים"
+        },
+        {
+          "box": [
+            277,
+            438,
+            319,
+            478
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "28"
+        },
+        {
+          "box": [
+            470,
+            0,
+            510,
+            366
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "4x240²–NA2XY+150C"
+        },
+        {
+          "box": [
+            510,
+            86,
+            563,
+            214
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "לסכנת"
+        },
+        {
+          "box": [
+            510,
+            228,
+            563,
+            340
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "משאיות"
+        },
+        {
+          "box": [
+            487,
+            436,
+            529,
+            470
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "29"
+        },
+        {
+          "box": [
+            693,
+            0,
+            733,
+            262
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "5x10²–N2XY"
+        },
+        {
+          "box": [
+            734,
+            98,
+            789,
+            222
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "שומר"
+        },
+        {
+          "box": [
+            734,
+            240,
+            789,
+            370
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "בכניסה"
+        },
+        {
+          "box": [
+            723,
+            432,
+            765,
+            468
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "30"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

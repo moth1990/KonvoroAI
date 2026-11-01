@@ -1,0 +1,237 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 674,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            232,
+            56,
+            247,
+            86
+          ],
+          "legible": "clear",
+          "text": "1"
+        },
+        {
+          "box": [
+            522,
+            56,
+            545,
+            87
+          ],
+          "legible": "clear",
+          "text": "2"
+        },
+        {
+          "box": [
+            836,
+            53,
+            858,
+            85
+          ],
+          "legible": "clear",
+          "text": "3"
+        },
+        {
+          "box": [
+            288,
+            225,
+            337,
+            267
+          ],
+          "legible": "clear",
+          "text": "WO"
+        },
+        {
+          "box": [
+            361,
+            226,
+            516,
+            267
+          ],
+          "legible": "clear",
+          "text": "L1,L2,L3"
+        },
+        {
+          "box": [
+            542,
+            223,
+            609,
+            265
+          ],
+          "legible": "clear",
+          "text": "\"N\""
+        },
+        {
+          "box": [
+            22,
+            352,
+            47,
+            385
+          ],
+          "legible": "clear",
+          "text": "A"
+        },
+        {
+          "box": [
+            457,
+            443,
+            495,
+            471
+          ],
+          "legible": "clear",
+          "text": "F6"
+        },
+        {
+          "box": [
+            792,
+            436,
+            828,
+            463
+          ],
+          "legible": "clear",
+          "text": "21"
+        },
+        {
+          "box": [
+            967,
+            441,
+            1006,
+            469
+          ],
+          "legible": "clear",
+          "text": "F7"
+        },
+        {
+          "box": [
+            476,
+            512,
+            546,
+            539
+          ],
+          "legible": "clear",
+          "text": "3X10A"
+        },
+        {
+          "box": [
+            467,
+            544,
+            550,
+            570
+          ],
+          "legible": "clear",
+          "text": "INC=8A"
+        },
+        {
+          "box": [
+            794,
+            520,
+            832,
+            546
+          ],
+          "legible": "clear",
+          "text": "22"
+        },
+        {
+          "box": [
+            466,
+            570,
+            538,
+            596
+          ],
+          "legible": "clear",
+          "text": "S203M"
+        },
+        {
+          "box": [
+            468,
+            601,
+            511,
+            628
+          ],
+          "legible": "clear",
+          "text": "ABB"
+        },
+        {
+          "box": [
+            978,
+            599,
+            1021,
+            626
+          ],
+          "legible": "clear",
+          "text": "ABB"
+        },
+        {
+          "box": [
+            22,
+            616,
+            46,
+            649
+          ],
+          "legible": "clear",
+          "text": "B"
+        },
+        {
+          "box": [
+            22,
+            870,
+            47,
+            902
+          ],
+          "legible": "clear",
+          "text": "C"
+        },
+        {
+          "box": [
+            443,
+            869,
+            470,
+            953
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "BLOWER"
+        },
+        {
+          "box": [
+            445,
+            966,
+            470,
+            1003
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "AIR"
+        },
+        {
+          "box": [
+            960,
+            823,
+            987,
+            894
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "TOWER"
+        },
+        {
+          "box": [
+            960,
+            908,
+            987,
+            1000
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "COOLING"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

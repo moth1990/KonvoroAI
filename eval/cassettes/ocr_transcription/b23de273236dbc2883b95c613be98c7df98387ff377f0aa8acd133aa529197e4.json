@@ -1,0 +1,174 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 474,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            173,
+            0,
+            199,
+            42
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "EXH"
+        },
+        {
+          "box": [
+            694,
+            24,
+            714,
+            40
+          ],
+          "legible": "clear",
+          "text": "N3"
+        },
+        {
+          "box": [
+            782,
+            28,
+            800,
+            43
+          ],
+          "legible": "clear",
+          "text": "L3"
+        },
+        {
+          "box": [
+            697,
+            88,
+            761,
+            114
+          ],
+          "legible": "clear",
+          "text": "C.FAN"
+        },
+        {
+          "box": [
+            703,
+            126,
+            750,
+            153
+          ],
+          "legible": "clear",
+          "text": "HRS"
+        },
+        {
+          "box": [
+            169,
+            177,
+            187,
+            203
+          ],
+          "legible": "clear",
+          "text": "2"
+        },
+        {
+          "box": [
+            157,
+            237,
+            178,
+            262
+          ],
+          "legible": "clear",
+          "text": "B"
+        },
+        {
+          "box": [
+            588,
+            371,
+            741,
+            411
+          ],
+          "legible": "clear",
+          "text": "NEVIS"
+        },
+        {
+          "box": [
+            459,
+            503,
+            673,
+            543
+          ],
+          "legible": "clear",
+          "text": "KARWANI"
+        },
+        {
+          "box": [
+            463,
+            617,
+            552,
+            653
+          ],
+          "legible": "clear",
+          "text": "pro"
+        },
+        {
+          "box": [
+            585,
+            613,
+            654,
+            652
+          ],
+          "legible": "clear",
+          "text": "fit"
+        },
+        {
+          "box": [
+            688,
+            615,
+            807,
+            654
+          ],
+          "legible": "clear",
+          "text": "agro"
+        },
+        {
+          "box": [
+            895,
+            586,
+            1014,
+            619
+          ],
+          "legible": "clear",
+          "text": "1:100:"
+        },
+        {
+          "box": [
+            82,
+            696,
+            105,
+            729
+          ],
+          "legible": "clear",
+          "text": "3"
+        },
+        {
+          "box": [
+            393,
+            697,
+            415,
+            729
+          ],
+          "legible": "clear",
+          "text": "4"
+        },
+        {
+          "box": [
+            722,
+            696,
+            745,
+            729
+          ],
+          "legible": "clear",
+          "text": "5"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

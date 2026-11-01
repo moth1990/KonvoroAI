@@ -9,6 +9,8 @@
 | `make eval` | Replay mode: the model's answers come from `cassettes/`. Deterministic and free. CI runs it |
 | `EVAL_MODE=live make eval` | Real Claude (`ANTHROPIC_API_KEY`) |
 | `EVAL_MODE=live EVAL_RECORD=1 make eval` | Real Claude, saving every answer as a cassette. Commit the new cassettes |
+| `EVAL_MODE=live EVAL_RECORD=missing make eval` | Replays what is recorded and sends only the calls with no cassette to Claude, saving them. For a new stage or prompt, so the stages before it keep their recorded answers |
+| `EVAL_MAX_USD=20` (with `EVAL_MODE=live`) | Stops the run once its calls cost this much at list prices. The call that crosses the line finishes; the next one fails the run |
 | `make eval-baseline` | Make this run's metrics the new `baseline.json`, after a change that moves a score on purpose |
 
 Every run needs `make up`. It recreates the `konboro_eval` database, uploads each drawing to one throwaway tenant, and runs the 7 stages in-process, without the queue (`Pipeline.run_inline`).

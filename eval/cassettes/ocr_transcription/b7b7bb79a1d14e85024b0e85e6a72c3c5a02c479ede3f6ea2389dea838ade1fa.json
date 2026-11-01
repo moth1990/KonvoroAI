@@ -1,0 +1,286 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 883,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            6,
+            60,
+            24,
+            92
+          ],
+          "legible": "clear",
+          "text": "2"
+        },
+        {
+          "box": [
+            749,
+            58,
+            806,
+            97
+          ],
+          "legible": "clear",
+          "text": "ידני"
+        },
+        {
+          "box": [
+            842,
+            0,
+            861,
+            24
+          ],
+          "legible": "unsure",
+          "text": "0"
+        },
+        {
+          "box": [
+            822,
+            174,
+            842,
+            204
+          ],
+          "legible": "clear",
+          "text": "C"
+        },
+        {
+          "box": [
+            77,
+            216,
+            104,
+            248
+          ],
+          "legible": "clear",
+          "text": "T1"
+        },
+        {
+          "box": [
+            194,
+            216,
+            228,
+            248
+          ],
+          "legible": "clear",
+          "text": "T2"
+        },
+        {
+          "box": [
+            815,
+            234,
+            850,
+            261
+          ],
+          "legible": "unsure",
+          "text": "\"0\""
+        },
+        {
+          "box": [
+            6,
+            306,
+            43,
+            503
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "5x6²-N2XY"
+        },
+        {
+          "box": [
+            58,
+            350,
+            93,
+            459
+          ],
+          "legible": "clear",
+          "rotation": 270,
+          "text": "תאורה"
+        },
+        {
+          "box": [
+            124,
+            291,
+            163,
+            518
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "5x2,5²-N2XY"
+        },
+        {
+          "box": [
+            180,
+            350,
+            212,
+            459
+          ],
+          "legible": "clear",
+          "rotation": 270,
+          "text": "תאורה"
+        },
+        {
+          "box": [
+            268,
+            308,
+            306,
+            501
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3x4²-N2XY"
+        },
+        {
+          "box": [
+            320,
+            230,
+            354,
+            320
+          ],
+          "legible": "clear",
+          "rotation": 270,
+          "text": "הדנה"
+        },
+        {
+          "box": [
+            320,
+            325,
+            354,
+            462
+          ],
+          "legible": "clear",
+          "rotation": 270,
+          "text": "למחסום"
+        },
+        {
+          "box": [
+            320,
+            470,
+            354,
+            577
+          ],
+          "legible": "clear",
+          "rotation": 270,
+          "text": "יציאה"
+        },
+        {
+          "box": [
+            386,
+            291,
+            426,
+            518
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3x2,5²-N2XY"
+        },
+        {
+          "box": [
+            440,
+            358,
+            474,
+            447
+          ],
+          "legible": "clear",
+          "rotation": 270,
+          "text": "שמור"
+        },
+        {
+          "box": [
+            508,
+            291,
+            548,
+            518
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3x2,5²-N2XY"
+        },
+        {
+          "box": [
+            562,
+            358,
+            596,
+            447
+          ],
+          "legible": "clear",
+          "rotation": 270,
+          "text": "שמור"
+        },
+        {
+          "box": [
+            684,
+            356,
+            718,
+            443
+          ],
+          "legible": "clear",
+          "rotation": 270,
+          "text": "שמור"
+        },
+        {
+          "box": [
+            35,
+            684,
+            50,
+            718
+          ],
+          "legible": "clear",
+          "text": "1"
+        },
+        {
+          "box": [
+            156,
+            684,
+            180,
+            718
+          ],
+          "legible": "clear",
+          "text": "2"
+        },
+        {
+          "box": [
+            295,
+            677,
+            318,
+            713
+          ],
+          "legible": "clear",
+          "text": "4"
+        },
+        {
+          "box": [
+            392,
+            680,
+            465,
+            715
+          ],
+          "legible": "clear",
+          "text": "6-9"
+        },
+        {
+          "box": [
+            497,
+            680,
+            605,
+            718
+          ],
+          "legible": "clear",
+          "text": "10-15"
+        },
+        {
+          "box": [
+            653,
+            675,
+            697,
+            712
+          ],
+          "legible": "clear",
+          "text": "20"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

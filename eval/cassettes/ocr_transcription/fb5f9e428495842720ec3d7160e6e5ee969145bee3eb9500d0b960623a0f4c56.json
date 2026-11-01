@@ -1,0 +1,153 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 415,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            229,
+            55,
+            244,
+            84
+          ],
+          "legible": "clear",
+          "text": "1"
+        },
+        {
+          "box": [
+            514,
+            55,
+            537,
+            86
+          ],
+          "legible": "clear",
+          "text": "2"
+        },
+        {
+          "box": [
+            823,
+            52,
+            846,
+            83
+          ],
+          "legible": "clear",
+          "text": "3"
+        },
+        {
+          "box": [
+            242,
+            259,
+            289,
+            300
+          ],
+          "legible": "clear",
+          "text": "W0"
+        },
+        {
+          "box": [
+            315,
+            259,
+            466,
+            300
+          ],
+          "legible": "clear",
+          "text": "L1,L2,L3"
+        },
+        {
+          "box": [
+            493,
+            257,
+            557,
+            300
+          ],
+          "legible": "clear",
+          "text": "\"N\""
+        },
+        {
+          "box": [
+            22,
+            349,
+            46,
+            379
+          ],
+          "legible": "clear",
+          "text": "A"
+        },
+        {
+          "box": [
+            654,
+            424,
+            713,
+            458
+          ],
+          "legible": "clear",
+          "text": "Q01"
+        },
+        {
+          "box": [
+            656,
+            504,
+            726,
+            529
+          ],
+          "legible": "clear",
+          "text": "3X80A"
+        },
+        {
+          "box": [
+            656,
+            537,
+            768,
+            563
+          ],
+          "legible": "clear",
+          "text": "ABB-XT1C"
+        },
+        {
+          "box": [
+            656,
+            563,
+            750,
+            588
+          ],
+          "legible": "clear",
+          "text": "INC=63A"
+        },
+        {
+          "box": [
+            22,
+            608,
+            45,
+            639
+          ],
+          "legible": "clear",
+          "text": "B"
+        },
+        {
+          "box": [
+            22,
+            858,
+            45,
+            889
+          ],
+          "legible": "clear",
+          "text": "C"
+        },
+        {
+          "box": [
+            612,
+            926,
+            648,
+            959
+          ],
+          "legible": "clear",
+          "text": "01"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

@@ -1,0 +1,193 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 528,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            80,
+            16,
+            173,
+            53
+          ],
+          "legible": "clear",
+          "text": "TOWER"
+        },
+        {
+          "box": [
+            7,
+            69,
+            116,
+            105
+          ],
+          "legible": "clear",
+          "text": "3X208V"
+        },
+        {
+          "box": [
+            12,
+            314,
+            150,
+            352
+          ],
+          "legible": "clear",
+          "text": "control"
+        },
+        {
+          "box": [
+            180,
+            314,
+            321,
+            352
+          ],
+          "legible": "clear",
+          "text": "panels"
+        },
+        {
+          "box": [
+            21,
+            380,
+            71,
+            405
+          ],
+          "legible": "clear",
+          "text": "276"
+        },
+        {
+          "box": [
+            88,
+            378,
+            138,
+            406
+          ],
+          "legible": "unsure",
+          "text": "ת\"ד"
+        },
+        {
+          "box": [
+            145,
+            380,
+            263,
+            406
+          ],
+          "legible": "clear",
+          "text": "3659200"
+        },
+        {
+          "box": [
+            0,
+            420,
+            178,
+            456
+          ],
+          "legible": "unsure",
+          "text": "mail.com"
+        },
+        {
+          "box": [
+            698,
+            260,
+            718,
+            290
+          ],
+          "legible": "clear",
+          "text": "F"
+        },
+        {
+          "box": [
+            700,
+            434,
+            724,
+            464
+          ],
+          "legible": "clear",
+          "text": "G"
+        },
+        {
+          "box": [
+            233,
+            527,
+            255,
+            558
+          ],
+          "legible": "clear",
+          "text": "9"
+        },
+        {
+          "box": [
+            539,
+            529,
+            581,
+            559
+          ],
+          "legible": "clear",
+          "text": "10"
+        },
+        {
+          "box": [
+            483,
+            404,
+            511,
+            419
+          ],
+          "legible": "clear",
+          "text": "ISO"
+        },
+        {
+          "box": [
+            512,
+            404,
+            541,
+            419
+          ],
+          "legible": "clear",
+          "text": "9001:"
+        },
+        {
+          "box": [
+            497,
+            423,
+            527,
+            439
+          ],
+          "legible": "clear",
+          "text": "2008"
+        },
+        {
+          "box": [
+            565,
+            463,
+            626,
+            490
+          ],
+          "legible": "clear",
+          "text": "מכון"
+        },
+        {
+          "box": [
+            477,
+            463,
+            562,
+            490
+          ],
+          "legible": "clear",
+          "text": "התקנים"
+        },
+        {
+          "box": [
+            387,
+            463,
+            474,
+            490
+          ],
+          "legible": "clear",
+          "text": "הישראלי"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

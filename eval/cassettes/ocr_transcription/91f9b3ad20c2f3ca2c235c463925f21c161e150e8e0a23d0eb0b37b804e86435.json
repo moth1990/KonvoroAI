@@ -1,0 +1,233 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 658,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            519,
+            0,
+            644,
+            31
+          ],
+          "legible": "clear",
+          "text": "4x630A"
+        },
+        {
+          "box": [
+            73,
+            66,
+            144,
+            104
+          ],
+          "legible": "clear",
+          "text": "לחצן"
+        },
+        {
+          "box": [
+            136,
+            126,
+            173,
+            162
+          ],
+          "legible": "clear",
+          "text": "על"
+        },
+        {
+          "box": [
+            43,
+            126,
+            127,
+            163
+          ],
+          "legible": "clear",
+          "text": "הלוח"
+        },
+        {
+          "box": [
+            838,
+            311,
+            925,
+            347
+          ],
+          "legible": "clear",
+          "text": "מפסק"
+        },
+        {
+          "box": [
+            773,
+            311,
+            825,
+            347
+          ],
+          "legible": "clear",
+          "text": "זרם"
+        },
+        {
+          "box": [
+            616,
+            311,
+            761,
+            349
+          ],
+          "legible": "clear",
+          "text": "אלקטרוני"
+        },
+        {
+          "box": [
+            727,
+            362,
+            803,
+            396
+          ],
+          "legible": "clear",
+          "text": "630A"
+        },
+        {
+          "box": [
+            821,
+            363,
+            917,
+            397
+          ],
+          "legible": "clear",
+          "text": "MCCB"
+        },
+        {
+          "box": [
+            832,
+            411,
+            929,
+            447
+          ],
+          "legible": "clear",
+          "text": "הגנה"
+        },
+        {
+          "box": [
+            744,
+            415,
+            801,
+            448
+          ],
+          "legible": "clear",
+          "text": "LSI"
+        },
+        {
+          "box": [
+            376,
+            349,
+            413,
+            381
+          ],
+          "legible": "clear",
+          "text": "TC"
+        },
+        {
+          "box": [
+            504,
+            391,
+            579,
+            421
+          ],
+          "legible": "clear",
+          "text": "500A"
+        },
+        {
+          "box": [
+            383,
+            424,
+            405,
+            454
+          ],
+          "legible": "clear",
+          "text": "N"
+        },
+        {
+          "box": [
+            504,
+            435,
+            581,
+            468
+          ],
+          "legible": "clear",
+          "text": "630A"
+        },
+        {
+          "box": [
+            222,
+            466,
+            259,
+            497
+          ],
+          "legible": "clear",
+          "text": "6A"
+        },
+        {
+          "box": [
+            309,
+            631,
+            424,
+            668
+          ],
+          "legible": "clear",
+          "text": "5/800A"
+        },
+        {
+          "box": [
+            576,
+            633,
+            666,
+            666
+          ],
+          "legible": "clear",
+          "text": "SATEC"
+        },
+        {
+          "box": [
+            683,
+            634,
+            749,
+            665
+          ],
+          "legible": "clear",
+          "text": "135E"
+        },
+        {
+          "box": [
+            586,
+            821,
+            682,
+            855
+          ],
+          "legible": "clear",
+          "text": "PKZM"
+        },
+        {
+          "box": [
+            705,
+            821,
+            831,
+            855
+          ],
+          "legible": "unsure",
+          "text": "1–2.4A"
+        },
+        {
+          "box": [
+            404,
+            952,
+            539,
+            990
+          ],
+          "legible": "clear",
+          "text": "אלקטרוני"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

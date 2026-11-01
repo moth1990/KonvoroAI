@@ -1,0 +1,343 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 1095,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            138,
+            12,
+            191,
+            42
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "FAN"
+        },
+        {
+          "box": [
+            24,
+            61,
+            78,
+            92
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "HRS"
+        },
+        {
+          "box": [
+            944,
+            0,
+            1000,
+            25
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "FAN"
+        },
+        {
+          "box": [
+            810,
+            43,
+            939,
+            76
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "NERSERY"
+        },
+        {
+          "box": [
+            831,
+            89,
+            939,
+            121
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "2X208V"
+        },
+        {
+          "box": [
+            487,
+            226,
+            627,
+            264
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "NEVIS"
+        },
+        {
+          "box": [
+            942,
+            212,
+            990,
+            241
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "שם"
+        },
+        {
+          "box": [
+            794,
+            212,
+            939,
+            242
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "הפרויקט"
+        },
+        {
+          "box": [
+            757,
+            216,
+            768,
+            236
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": ":"
+        },
+        {
+          "box": [
+            235,
+            229,
+            292,
+            266
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "מס"
+        },
+        {
+          "box": [
+            53,
+            227,
+            223,
+            268
+          ],
+          "legible": "unsure",
+          "rotation": 0,
+          "text": "תוכנית:"
+        },
+        {
+          "box": [
+            929,
+            308,
+            975,
+            341
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "דף"
+        },
+        {
+          "box": [
+            801,
+            306,
+            913,
+            341
+          ],
+          "legible": "unsure",
+          "rotation": 0,
+          "text": "מס:9"
+        },
+        {
+          "box": [
+            686,
+            317,
+            737,
+            345
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "שם"
+        },
+        {
+          "box": [
+            590,
+            317,
+            676,
+            345
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "הלוח:"
+        },
+        {
+          "box": [
+            368,
+            351,
+            565,
+            388
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "KARWANI"
+        },
+        {
+          "box": [
+            678,
+            409,
+            739,
+            435
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "מזמין"
+        },
+        {
+          "box": [
+            647,
+            413,
+            656,
+            432
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": ":"
+        },
+        {
+          "box": [
+            773,
+            420,
+            978,
+            458
+          ],
+          "legible": "unsure",
+          "rotation": 0,
+          "text": "קנ\"מ:1:100"
+        },
+        {
+          "box": [
+            371,
+            454,
+            454,
+            490
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "pro"
+        },
+        {
+          "box": [
+            487,
+            452,
+            550,
+            488
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "fit"
+        },
+        {
+          "box": [
+            583,
+            454,
+            690,
+            490
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "agro"
+        },
+        {
+          "box": [
+            258,
+            443,
+            334,
+            480
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "אישר"
+        },
+        {
+          "box": [
+            222,
+            452,
+            232,
+            472
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": ":"
+        },
+        {
+          "box": [
+            130,
+            447,
+            208,
+            480
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "עופר"
+        },
+        {
+          "box": [
+            50,
+            447,
+            126,
+            483
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "אלרון"
+        },
+        {
+          "box": [
+            19,
+            526,
+            40,
+            558
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "3"
+        },
+        {
+          "box": [
+            306,
+            530,
+            328,
+            560
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "4"
+        },
+        {
+          "box": [
+            609,
+            527,
+            631,
+            560
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "5"
+        },
+        {
+          "box": [
+            886,
+            529,
+            906,
+            560
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "6"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

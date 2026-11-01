@@ -1,0 +1,33 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 68,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            159,
+            655,
+            476,
+            772
+          ],
+          "legible": "clear",
+          "text": "שומר"
+        },
+        {
+          "box": [
+            583,
+            655,
+            862,
+            790
+          ],
+          "legible": "clear",
+          "text": "ביתן"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

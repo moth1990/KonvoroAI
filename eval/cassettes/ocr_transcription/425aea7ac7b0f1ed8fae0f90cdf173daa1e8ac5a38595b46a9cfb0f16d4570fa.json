@@ -1,0 +1,253 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 703,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            429,
+            36,
+            479,
+            66
+          ],
+          "legible": "clear",
+          "text": "EM1"
+        },
+        {
+          "box": [
+            396,
+            100,
+            449,
+            130
+          ],
+          "legible": "clear",
+          "text": "EMS"
+        },
+        {
+          "box": [
+            568,
+            100,
+            621,
+            130
+          ],
+          "legible": "clear",
+          "text": "EMS"
+        },
+        {
+          "box": [
+            427,
+            253,
+            479,
+            283
+          ],
+          "legible": "clear",
+          "text": "EM2"
+        },
+        {
+          "box": [
+            52,
+            236,
+            82,
+            251
+          ],
+          "legible": "clear",
+          "text": "for"
+        },
+        {
+          "box": [
+            91,
+            238,
+            101,
+            251
+          ],
+          "legible": "clear",
+          "text": "a"
+        },
+        {
+          "box": [
+            110,
+            236,
+            170,
+            251
+          ],
+          "legible": "clear",
+          "text": "Remote"
+        },
+        {
+          "box": [
+            179,
+            236,
+            269,
+            252
+          ],
+          "legible": "clear",
+          "text": "Emergency"
+        },
+        {
+          "box": [
+            277,
+            236,
+            314,
+            251
+          ],
+          "legible": "clear",
+          "text": "Push"
+        },
+        {
+          "box": [
+            328,
+            236,
+            388,
+            251
+          ],
+          "legible": "clear",
+          "text": "Button"
+        },
+        {
+          "box": [
+            149,
+            355,
+            239,
+            371
+          ],
+          "legible": "clear",
+          "text": "Emergency"
+        },
+        {
+          "box": [
+            248,
+            355,
+            285,
+            370
+          ],
+          "legible": "clear",
+          "text": "Push"
+        },
+        {
+          "box": [
+            299,
+            355,
+            359,
+            370
+          ],
+          "legible": "clear",
+          "text": "Button"
+        },
+        {
+          "box": [
+            367,
+            357,
+            388,
+            370
+          ],
+          "legible": "clear",
+          "text": "on"
+        },
+        {
+          "box": [
+            398,
+            355,
+            427,
+            370
+          ],
+          "legible": "clear",
+          "text": "the"
+        },
+        {
+          "box": [
+            435,
+            355,
+            476,
+            370
+          ],
+          "legible": "clear",
+          "text": "Door"
+        },
+        {
+          "box": [
+            916,
+            184,
+            990,
+            214
+          ],
+          "legible": "clear",
+          "text": "GIC-1"
+        },
+        {
+          "box": [
+            904,
+            94,
+            918,
+            114
+          ],
+          "legible": "clear",
+          "text": "C"
+        },
+        {
+          "box": [
+            887,
+            237,
+            899,
+            255
+          ],
+          "legible": "clear",
+          "text": "L"
+        },
+        {
+          "box": [
+            985,
+            242,
+            1010,
+            264
+          ],
+          "legible": "clear",
+          "text": "15"
+        },
+        {
+          "box": [
+            913,
+            594,
+            997,
+            630
+          ],
+          "legible": "clear",
+          "text": "QRF"
+        },
+        {
+          "box": [
+            885,
+            636,
+            1018,
+            678
+          ],
+          "legible": "clear",
+          "text": "4-6.3A"
+        },
+        {
+          "box": [
+            26,
+            714,
+            185,
+            758
+          ],
+          "legible": "clear",
+          "text": "L1,L2,L3"
+        },
+        {
+          "box": [
+            213,
+            707,
+            278,
+            757
+          ],
+          "legible": "unsure",
+          "text": "\"N\""
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

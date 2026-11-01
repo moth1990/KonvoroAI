@@ -1,0 +1,230 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 679,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            99,
+            271,
+            157,
+            302
+          ],
+          "legible": "clear",
+          "text": "80A"
+        },
+        {
+          "box": [
+            84,
+            326,
+            137,
+            362
+          ],
+          "legible": "clear",
+          "text": "(x2)"
+        },
+        {
+          "box": [
+            88,
+            377,
+            186,
+            407
+          ],
+          "legible": "clear",
+          "text": "MCCB"
+        },
+        {
+          "box": [
+            322,
+            271,
+            379,
+            301
+          ],
+          "legible": "clear",
+          "text": "80A"
+        },
+        {
+          "box": [
+            312,
+            313,
+            385,
+            345
+          ],
+          "legible": "clear",
+          "text": "100A"
+        },
+        {
+          "box": [
+            315,
+            351,
+            412,
+            381
+          ],
+          "legible": "clear",
+          "text": "MCCB"
+        },
+        {
+          "box": [
+            306,
+            381,
+            442,
+            434
+          ],
+          "legible": "clear",
+          "text": "אלקטרוני"
+        },
+        {
+          "box": [
+            320,
+            436,
+            369,
+            464
+          ],
+          "legible": "clear",
+          "text": "LSI"
+        },
+        {
+          "box": [
+            537,
+            271,
+            608,
+            302
+          ],
+          "legible": "clear",
+          "text": "160A"
+        },
+        {
+          "box": [
+            537,
+            335,
+            635,
+            365
+          ],
+          "legible": "clear",
+          "text": "MCCB"
+        },
+        {
+          "box": [
+            532,
+            364,
+            669,
+            418
+          ],
+          "legible": "clear",
+          "text": "אלקטרוני"
+        },
+        {
+          "box": [
+            548,
+            413,
+            597,
+            441
+          ],
+          "legible": "clear",
+          "text": "LSI"
+        },
+        {
+          "box": [
+            776,
+            271,
+            831,
+            301
+          ],
+          "legible": "clear",
+          "text": "25A"
+        },
+        {
+          "box": [
+            763,
+            312,
+            861,
+            343
+          ],
+          "legible": "clear",
+          "text": "MCCB"
+        },
+        {
+          "box": [
+            483,
+            518,
+            512,
+            622
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "129m"
+        },
+        {
+          "box": [
+            254,
+            676,
+            285,
+            775
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "135m"
+        },
+        {
+          "box": [
+            702,
+            704,
+            733,
+            805
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "112m"
+        },
+        {
+          "box": [
+            83,
+            768,
+            116,
+            874
+          ],
+          "legible": "unsure",
+          "rotation": 270,
+          "text": "שמור"
+        },
+        {
+          "box": [
+            303,
+            793,
+            336,
+            877
+          ],
+          "legible": "unsure",
+          "rotation": 270,
+          "text": "הזנה"
+        },
+        {
+          "box": [
+            528,
+            741,
+            562,
+            823
+          ],
+          "legible": "unsure",
+          "rotation": 270,
+          "text": "הזנה"
+        },
+        {
+          "box": [
+            752,
+            641,
+            788,
+            725
+          ],
+          "legible": "unsure",
+          "rotation": 270,
+          "text": "הזנה"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

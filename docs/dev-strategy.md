@@ -135,7 +135,7 @@ The golden set measures the system and catches regressions (README §6.2).
   - Stages 2–3 need span- and box-level labels that do not exist yet. Those metrics are added once the labeling work provides them.
 - **Modes:**
   - `replay` (default, CI) uses recorded LLM responses from `eval/cassettes/`. It is deterministic and free.
-  - `live` calls Claude and can re-record cassettes with `EVAL_RECORD=1`.
+  - `live` calls Claude and can re-record cassettes with `EVAL_RECORD=1`, or record only the calls that have none with `EVAL_RECORD=missing` (so earlier stages keep their recorded answers). `EVAL_MAX_USD` stops a live run at a spending cap.
 - **Output:** `eval/reports/<timestamp>.json` and `.md`. The run compares itself with the committed `eval/baseline.json` (S06 decision). The CI `eval` job writes the markdown to the job summary, uploads the report, and fails on any drop. A PR that moves a score on purpose runs `make eval-baseline` and commits the new baseline, so reviewers see the change. Details are in [eval/README.md](../eval/README.md).
 - **Growth:** new golden drawings go in `golden/<id>/` with a README and labels. README §6.2 targets 10 drawings by the first full measurement, from more than one factory.
 

@@ -36,6 +36,7 @@ class CanonComponent(Canon):
     qty: int
     supply_scope: SupplyScope = "in_panel"
     label: str = ""  # the product name in the label, for the report only
+    pages: tuple[int, ...] = ()  # where the label says it is drawn, when it says (stage 2's designator recall)
 
     @property
     def current_a(self) -> float | None:
@@ -103,3 +104,5 @@ class Prediction(Canon):
     quote_total: Decimal | None = None
     title_block: dict[str, str | None] = {}
     needs_confirmation: bool | None = None
+    span_texts: tuple[str, ...] | None = None  # stage 2's normalized text on the process pages
+    extraction: dict[str, int] = {}  # stage 2's counts, reported, not scored

@@ -1,0 +1,43 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 99,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            78,
+            310,
+            157,
+            346
+          ],
+          "legible": "clear",
+          "text": "מפסק"
+        },
+        {
+          "box": [
+            53,
+            362,
+            149,
+            397
+          ],
+          "legible": "clear",
+          "text": "MCCB"
+        },
+        {
+          "box": [
+            61,
+            411,
+            161,
+            449
+          ],
+          "legible": "clear",
+          "text": "הגנה"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

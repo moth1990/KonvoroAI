@@ -1,0 +1,83 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 235,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            20,
+            0,
+            300,
+            24
+          ],
+          "legible": "unsure",
+          "text": "P\\PROJECTS-2013\\5712-ALON\\5712-03"
+        },
+        {
+          "box": [
+            371,
+            0,
+            391,
+            18
+          ],
+          "legible": "unsure",
+          "text": "IJ"
+        },
+        {
+          "box": [
+            396,
+            0,
+            409,
+            17
+          ],
+          "legible": "unsure",
+          "text": "U"
+        },
+        {
+          "box": [
+            488,
+            0,
+            530,
+            18
+          ],
+          "legible": "clear",
+          "text": "90.0"
+        },
+        {
+          "box": [
+            534,
+            5,
+            545,
+            17
+          ],
+          "legible": "clear",
+          "text": "x"
+        },
+        {
+          "box": [
+            552,
+            0,
+            590,
+            18
+          ],
+          "legible": "clear",
+          "text": "55.0"
+        },
+        {
+          "box": [
+            662,
+            0,
+            704,
+            17
+          ],
+          "legible": "clear",
+          "text": "Cm."
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

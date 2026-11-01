@@ -1,0 +1,223 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 621,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            219,
+            54,
+            243,
+            87
+          ],
+          "legible": "clear",
+          "text": "6"
+        },
+        {
+          "box": [
+            538,
+            50,
+            561,
+            84
+          ],
+          "legible": "clear",
+          "text": "7"
+        },
+        {
+          "box": [
+            837,
+            52,
+            861,
+            87
+          ],
+          "legible": "clear",
+          "text": "8"
+        },
+        {
+          "box": [
+            200,
+            473,
+            258,
+            502
+          ],
+          "legible": "clear",
+          "text": "F19"
+        },
+        {
+          "box": [
+            474,
+            473,
+            533,
+            502
+          ],
+          "legible": "clear",
+          "text": "F20"
+        },
+        {
+          "box": [
+            680,
+            473,
+            737,
+            502
+          ],
+          "legible": "clear",
+          "text": "F21"
+        },
+        {
+          "box": [
+            219,
+            541,
+            288,
+            568
+          ],
+          "legible": "clear",
+          "text": "3X20A"
+        },
+        {
+          "box": [
+            209,
+            572,
+            305,
+            600
+          ],
+          "legible": "clear",
+          "text": "INC=16A"
+        },
+        {
+          "box": [
+            208,
+            600,
+            281,
+            627
+          ],
+          "legible": "clear",
+          "text": "S203M"
+        },
+        {
+          "box": [
+            210,
+            631,
+            253,
+            658
+          ],
+          "legible": "clear",
+          "text": "ABB"
+        },
+        {
+          "box": [
+            495,
+            541,
+            563,
+            568
+          ],
+          "legible": "clear",
+          "text": "3X20A"
+        },
+        {
+          "box": [
+            485,
+            572,
+            580,
+            600
+          ],
+          "legible": "clear",
+          "text": "INC=16A"
+        },
+        {
+          "box": [
+            484,
+            600,
+            556,
+            627
+          ],
+          "legible": "clear",
+          "text": "S203M"
+        },
+        {
+          "box": [
+            486,
+            631,
+            528,
+            658
+          ],
+          "legible": "clear",
+          "text": "ABB"
+        },
+        {
+          "box": [
+            699,
+            541,
+            768,
+            568
+          ],
+          "legible": "clear",
+          "text": "3X20A"
+        },
+        {
+          "box": [
+            690,
+            572,
+            785,
+            600
+          ],
+          "legible": "clear",
+          "text": "INC=16A"
+        },
+        {
+          "box": [
+            688,
+            600,
+            761,
+            627
+          ],
+          "legible": "clear",
+          "text": "S203M"
+        },
+        {
+          "box": [
+            691,
+            631,
+            733,
+            658
+          ],
+          "legible": "clear",
+          "text": "ABB"
+        },
+        {
+          "box": [
+            183,
+            1001,
+            220,
+            1024
+          ],
+          "legible": "unsure",
+          "text": "19"
+        },
+        {
+          "box": [
+            456,
+            1001,
+            495,
+            1024
+          ],
+          "legible": "unsure",
+          "text": "20"
+        },
+        {
+          "box": [
+            662,
+            1001,
+            698,
+            1024
+          ],
+          "legible": "unsure",
+          "text": "21"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

@@ -1,0 +1,178 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 555,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            662,
+            0,
+            697,
+            131
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "SERVI"
+        },
+        {
+          "box": [
+            707,
+            0,
+            744,
+            131
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "SOCKE"
+        },
+        {
+          "box": [
+            903,
+            6,
+            938,
+            136
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "SERVI"
+        },
+        {
+          "box": [
+            946,
+            6,
+            983,
+            136
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "SOCKE"
+        },
+        {
+          "box": [
+            427,
+            345,
+            598,
+            392
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "joyech"
+        },
+        {
+          "box": [
+            631,
+            349,
+            829,
+            392
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "ethiopia"
+        },
+        {
+          "box": [
+            443,
+            470,
+            651,
+            512
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "NURSERY"
+        },
+        {
+          "box": [
+            441,
+            576,
+            527,
+            614
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "pro"
+        },
+        {
+          "box": [
+            561,
+            573,
+            630,
+            612
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "fit"
+        },
+        {
+          "box": [
+            662,
+            576,
+            779,
+            616
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "agro"
+        },
+        {
+          "box": [
+            865,
+            545,
+            985,
+            581
+          ],
+          "legible": "unsure",
+          "rotation": 0,
+          "text": "1:100:"
+        },
+        {
+          "box": [
+            67,
+            655,
+            90,
+            688
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "3"
+        },
+        {
+          "box": [
+            372,
+            658,
+            394,
+            688
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "4"
+        },
+        {
+          "box": [
+            694,
+            657,
+            717,
+            688
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "5"
+        },
+        {
+          "box": [
+            988,
+            657,
+            1010,
+            688
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "6"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

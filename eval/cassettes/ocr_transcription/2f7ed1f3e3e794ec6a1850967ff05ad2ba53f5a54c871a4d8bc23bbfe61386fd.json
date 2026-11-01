@@ -1,0 +1,316 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 948,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            0,
+            110,
+            22,
+            165
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "N2XY"
+        },
+        {
+          "box": [
+            41,
+            187,
+            67,
+            227
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "BOX"
+        },
+        {
+          "box": [
+            41,
+            83,
+            68,
+            177
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "SOCKET"
+        },
+        {
+          "box": [
+            193,
+            185,
+            218,
+            227
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "5X6"
+        },
+        {
+          "box": [
+            193,
+            110,
+            219,
+            168
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "N2XY"
+        },
+        {
+          "box": [
+            239,
+            187,
+            265,
+            227
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "BOX"
+        },
+        {
+          "box": [
+            239,
+            83,
+            266,
+            177
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "SOCKET"
+        },
+        {
+          "box": [
+            389,
+            176,
+            415,
+            232
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3*1.5"
+        },
+        {
+          "box": [
+            389,
+            99,
+            416,
+            166
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "N2XY"
+        },
+        {
+          "box": [
+            436,
+            156,
+            463,
+            227
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "SPARE"
+        },
+        {
+          "box": [
+            587,
+            176,
+            613,
+            232
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3*1.5"
+        },
+        {
+          "box": [
+            587,
+            99,
+            614,
+            166
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "N2XY"
+        },
+        {
+          "box": [
+            633,
+            156,
+            660,
+            227
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "SPARE"
+        },
+        {
+          "box": [
+            955,
+            91,
+            977,
+            123
+          ],
+          "legible": "clear",
+          "text": "E"
+        },
+        {
+          "box": [
+            955,
+            522,
+            974,
+            556
+          ],
+          "legible": "clear",
+          "text": "F"
+        },
+        {
+          "box": [
+            956,
+            711,
+            982,
+            743
+          ],
+          "legible": "clear",
+          "text": "G"
+        },
+        {
+          "box": [
+            77,
+            581,
+            160,
+            621
+          ],
+          "legible": "clear",
+          "text": "and"
+        },
+        {
+          "box": [
+            193,
+            581,
+            358,
+            621
+          ],
+          "legible": "clear",
+          "text": "control"
+        },
+        {
+          "box": [
+            391,
+            581,
+            544,
+            621
+          ],
+          "legible": "clear",
+          "text": "panels"
+        },
+        {
+          "box": [
+            125,
+            651,
+            171,
+            677
+          ],
+          "legible": "unsure",
+          "text": "TEL"
+        },
+        {
+          "box": [
+            190,
+            651,
+            240,
+            677
+          ],
+          "legible": "unsure",
+          "text": "276"
+        },
+        {
+          "box": [
+            262,
+            651,
+            320,
+            677
+          ],
+          "legible": "unsure",
+          "text": "P.O."
+        },
+        {
+          "box": [
+            5,
+            695,
+            390,
+            735
+          ],
+          "legible": "clear",
+          "text": "trcpss@gmail.com"
+        },
+        {
+          "box": [
+            121,
+            812,
+            147,
+            848
+          ],
+          "legible": "clear",
+          "text": "8"
+        },
+        {
+          "box": [
+            449,
+            812,
+            472,
+            845
+          ],
+          "legible": "clear",
+          "text": "9"
+        },
+        {
+          "box": [
+            780,
+            813,
+            827,
+            847
+          ],
+          "legible": "clear",
+          "text": "10"
+        },
+        {
+          "box": [
+            722,
+            677,
+            748,
+            693
+          ],
+          "legible": "clear",
+          "text": "ISO"
+        },
+        {
+          "box": [
+            748,
+            677,
+            792,
+            693
+          ],
+          "legible": "unsure",
+          "text": "9001:"
+        },
+        {
+          "box": [
+            736,
+            699,
+            772,
+            716
+          ],
+          "legible": "clear",
+          "text": "2008"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

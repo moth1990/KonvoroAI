@@ -1,0 +1,213 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 590,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            243,
+            33,
+            262,
+            49
+          ],
+          "legible": "clear",
+          "text": "N5"
+        },
+        {
+          "box": [
+            329,
+            35,
+            346,
+            51
+          ],
+          "legible": "clear",
+          "text": "L5"
+        },
+        {
+          "box": [
+            581,
+            32,
+            600,
+            48
+          ],
+          "legible": "clear",
+          "text": "N6"
+        },
+        {
+          "box": [
+            667,
+            35,
+            684,
+            51
+          ],
+          "legible": "clear",
+          "text": "L6"
+        },
+        {
+          "box": [
+            961,
+            32,
+            981,
+            48
+          ],
+          "legible": "clear",
+          "text": "N7"
+        },
+        {
+          "box": [
+            221,
+            104,
+            299,
+            140
+          ],
+          "legible": "clear",
+          "text": "BOM"
+        },
+        {
+          "box": [
+            328,
+            106,
+            352,
+            138
+          ],
+          "legible": "clear",
+          "text": "5"
+        },
+        {
+          "box": [
+            559,
+            104,
+            637,
+            140
+          ],
+          "legible": "clear",
+          "text": "BOM"
+        },
+        {
+          "box": [
+            665,
+            106,
+            689,
+            138
+          ],
+          "legible": "clear",
+          "text": "6"
+        },
+        {
+          "box": [
+            405,
+            364,
+            479,
+            402
+          ],
+          "legible": "clear",
+          "text": "S.S"
+        },
+        {
+          "box": [
+            507,
+            364,
+            719,
+            402
+          ],
+          "legible": "clear",
+          "text": "Electrical"
+        },
+        {
+          "box": [
+            781,
+            367,
+            862,
+            402
+          ],
+          "legible": "clear",
+          "text": "and"
+        },
+        {
+          "box": [
+            210,
+            591,
+            233,
+            624
+          ],
+          "legible": "clear",
+          "text": "6"
+        },
+        {
+          "box": [
+            528,
+            589,
+            551,
+            621
+          ],
+          "legible": "clear",
+          "text": "7"
+        },
+        {
+          "box": [
+            825,
+            591,
+            849,
+            624
+          ],
+          "legible": "clear",
+          "text": "8"
+        },
+        {
+          "box": [
+            491,
+            475,
+            616,
+            513
+          ],
+          "legible": "clear",
+          "text": "Email:"
+        },
+        {
+          "box": [
+            626,
+            475,
+            1024,
+            513
+          ],
+          "legible": "unsure",
+          "text": "electrcpss@gmail.c"
+        },
+        {
+          "box": [
+            384,
+            431,
+            565,
+            461
+          ],
+          "legible": "clear",
+          "text": "04-8338123:"
+        },
+        {
+          "box": [
+            668,
+            431,
+            860,
+            461
+          ],
+          "legible": "clear",
+          "text": "04-6565394:"
+        },
+        {
+          "box": [
+            89,
+            482,
+            205,
+            515
+          ],
+          "legible": "clear",
+          "text": "1:100:"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

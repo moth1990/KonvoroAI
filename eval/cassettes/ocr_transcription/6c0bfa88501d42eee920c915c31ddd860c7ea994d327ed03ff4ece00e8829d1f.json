@@ -1,0 +1,223 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 631,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            234,
+            165,
+            251,
+            197
+          ],
+          "legible": "clear",
+          "text": "1"
+        },
+        {
+          "box": [
+            532,
+            166,
+            556,
+            198
+          ],
+          "legible": "clear",
+          "text": "2"
+        },
+        {
+          "box": [
+            852,
+            163,
+            877,
+            196
+          ],
+          "legible": "clear",
+          "text": "3"
+        },
+        {
+          "box": [
+            22,
+            469,
+            46,
+            503
+          ],
+          "legible": "clear",
+          "text": "A"
+        },
+        {
+          "box": [
+            21,
+            740,
+            46,
+            772
+          ],
+          "legible": "clear",
+          "text": "B"
+        },
+        {
+          "box": [
+            686,
+            362,
+            847,
+            391
+          ],
+          "legible": "clear",
+          "text": "3X50+25N2XY"
+        },
+        {
+          "box": [
+            863,
+            362,
+            939,
+            391
+          ],
+          "legible": "clear",
+          "text": "+25CU"
+        },
+        {
+          "box": [
+            673,
+            417,
+            747,
+            443
+          ],
+          "legible": "clear",
+          "text": "QEN1"
+        },
+        {
+          "box": [
+            767,
+            417,
+            924,
+            443
+          ],
+          "legible": "clear",
+          "text": "ESSENTIAL"
+        },
+        {
+          "box": [
+            676,
+            454,
+            757,
+            480
+          ],
+          "legible": "clear",
+          "text": "PUMP"
+        },
+        {
+          "box": [
+            777,
+            454,
+            849,
+            480
+          ],
+          "legible": "clear",
+          "text": "MAIN"
+        },
+        {
+          "box": [
+            868,
+            454,
+            962,
+            480
+          ],
+          "legible": "clear",
+          "text": "BOARD"
+        },
+        {
+          "box": [
+            560,
+            456,
+            591,
+            477
+          ],
+          "legible": "unsure",
+          "text": "\"N\""
+        },
+        {
+          "box": [
+            452,
+            576,
+            475,
+            598
+          ],
+          "legible": "clear",
+          "text": "L1"
+        },
+        {
+          "box": [
+            509,
+            576,
+            537,
+            598
+          ],
+          "legible": "clear",
+          "text": "L2"
+        },
+        {
+          "box": [
+            569,
+            575,
+            597,
+            598
+          ],
+          "legible": "clear",
+          "text": "L3"
+        },
+        {
+          "box": [
+            898,
+            846,
+            931,
+            867
+          ],
+          "legible": "clear",
+          "text": "T.C"
+        },
+        {
+          "box": [
+            936,
+            846,
+            960,
+            867
+          ],
+          "legible": "clear",
+          "text": "G1"
+        },
+        {
+          "box": [
+            597,
+            890,
+            668,
+            915
+          ],
+          "legible": "clear",
+          "text": "QLG1"
+        },
+        {
+          "box": [
+            579,
+            922,
+            668,
+            950
+          ],
+          "legible": "clear",
+          "text": "4-6.3A"
+        },
+        {
+          "box": [
+            551,
+            966,
+            689,
+            994
+          ],
+          "legible": "clear",
+          "text": "ABB-MS116"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

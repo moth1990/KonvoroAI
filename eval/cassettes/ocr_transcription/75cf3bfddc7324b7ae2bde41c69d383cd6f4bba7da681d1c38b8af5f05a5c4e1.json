@@ -1,0 +1,243 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 671,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            402,
+            45,
+            423,
+            63
+          ],
+          "legible": "clear",
+          "text": "N5"
+        },
+        {
+          "box": [
+            490,
+            48,
+            509,
+            66
+          ],
+          "legible": "clear",
+          "text": "L5"
+        },
+        {
+          "box": [
+            367,
+            106,
+            506,
+            134
+          ],
+          "legible": "clear",
+          "text": "CIRCULATION"
+        },
+        {
+          "box": [
+            398,
+            146,
+            460,
+            173
+          ],
+          "legible": "clear",
+          "text": "PUMP"
+        },
+        {
+          "box": [
+            299,
+            401,
+            375,
+            445
+          ],
+          "legible": "unsure",
+          "text": "ס.ט"
+        },
+        {
+          "box": [
+            66,
+            466,
+            152,
+            503
+          ],
+          "legible": "clear",
+          "text": "and"
+        },
+        {
+          "box": [
+            184,
+            466,
+            347,
+            503
+          ],
+          "legible": "clear",
+          "text": "control"
+        },
+        {
+          "box": [
+            380,
+            466,
+            533,
+            503
+          ],
+          "legible": "clear",
+          "text": "panels"
+        },
+        {
+          "box": [
+            343,
+            535,
+            470,
+            562
+          ],
+          "legible": "clear",
+          "text": "3659200"
+        },
+        {
+          "box": [
+            299,
+            534,
+            343,
+            562
+          ],
+          "legible": "unsure",
+          "text": "ת\"ד"
+        },
+        {
+          "box": [
+            209,
+            535,
+            262,
+            562
+          ],
+          "legible": "clear",
+          "text": "276"
+        },
+        {
+          "box": [
+            165,
+            535,
+            205,
+            562
+          ],
+          "legible": "unsure",
+          "text": "טל"
+        },
+        {
+          "box": [
+            941,
+            406,
+            960,
+            436
+          ],
+          "legible": "clear",
+          "text": "F"
+        },
+        {
+          "box": [
+            944,
+            592,
+            968,
+            625
+          ],
+          "legible": "clear",
+          "text": "G"
+        },
+        {
+          "box": [
+            113,
+            696,
+            136,
+            729
+          ],
+          "legible": "clear",
+          "text": "8"
+        },
+        {
+          "box": [
+            439,
+            695,
+            461,
+            727
+          ],
+          "legible": "clear",
+          "text": "9"
+        },
+        {
+          "box": [
+            768,
+            697,
+            813,
+            728
+          ],
+          "legible": "clear",
+          "text": "10"
+        },
+        {
+          "box": [
+            707,
+            561,
+            735,
+            579
+          ],
+          "legible": "clear",
+          "text": "ISO"
+        },
+        {
+          "box": [
+            736,
+            561,
+            771,
+            579
+          ],
+          "legible": "clear",
+          "text": "9001:"
+        },
+        {
+          "box": [
+            725,
+            581,
+            757,
+            598
+          ],
+          "legible": "clear",
+          "text": "2008"
+        },
+        {
+          "box": [
+            790,
+            627,
+            862,
+            652
+          ],
+          "legible": "clear",
+          "text": "מכון"
+        },
+        {
+          "box": [
+            690,
+            627,
+            788,
+            652
+          ],
+          "legible": "clear",
+          "text": "התקנים"
+        },
+        {
+          "box": [
+            604,
+            627,
+            690,
+            652
+          ],
+          "legible": "clear",
+          "text": "הישראלי"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

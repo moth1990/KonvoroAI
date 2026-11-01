@@ -56,9 +56,7 @@ class AnthropicProvider:
                 max_tokens=request.max_tokens,
                 system=request.system,
                 messages=self._build_messages(request, retry_hint),
-                output_config={
-                    "format": {"type": "json_schema", "schema": anthropic.transform_schema(request.output_schema)}
-                },
+                output_config=self._output_config(request),
             )
         except anthropic.APIError as exc:
             raise LLMError(f"anthropic call failed: {exc}") from exc
@@ -81,6 +79,15 @@ class AnthropicProvider:
         )
 
     # ------------------------------------------------------------------ helpers
+
+    @staticmethod
+    def _output_config(request: LLMRequest[Any]) -> dict[str, Any]:
+        config: dict[str, Any] = {
+            "format": {"type": "json_schema", "schema": anthropic.transform_schema(request.output_schema)}
+        }
+        if request.effort is not None:
+            config["effort"] = request.effort
+        return config
 
     def _build_messages(self, request: LLMRequest[Any], retry_hint: str | None) -> list[dict[str, Any]]:
         content: list[dict[str, Any]] = []

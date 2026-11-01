@@ -1,0 +1,203 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 575,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            57,
+            130,
+            131,
+            157
+          ],
+          "legible": "clear",
+          "text": "QLG2"
+        },
+        {
+          "box": [
+            39,
+            160,
+            129,
+            190
+          ],
+          "legible": "clear",
+          "text": "4-6.3A"
+        },
+        {
+          "box": [
+            11,
+            199,
+            150,
+            227
+          ],
+          "legible": "clear",
+          "text": "ABB-MS116"
+        },
+        {
+          "box": [
+            954,
+            231,
+            981,
+            263
+          ],
+          "legible": "clear",
+          "text": "C"
+        },
+        {
+          "box": [
+            956,
+            501,
+            982,
+            534
+          ],
+          "legible": "clear",
+          "text": "D"
+        },
+        {
+          "box": [
+            504,
+            610,
+            557,
+            644
+          ],
+          "legible": "clear",
+          "text": "PB"
+        },
+        {
+          "box": [
+            499,
+            657,
+            631,
+            679
+          ],
+          "legible": "clear",
+          "text": "Overvoltage"
+        },
+        {
+          "box": [
+            641,
+            657,
+            754,
+            679
+          ],
+          "legible": "clear",
+          "text": "Protector"
+        },
+        {
+          "box": [
+            531,
+            693,
+            597,
+            714
+          ],
+          "legible": "clear",
+          "text": "Surge"
+        },
+        {
+          "box": [
+            606,
+            693,
+            719,
+            714
+          ],
+          "legible": "clear",
+          "text": "Protector"
+        },
+        {
+          "box": [
+            507,
+            731,
+            572,
+            759
+          ],
+          "legible": "clear",
+          "text": "50KA"
+        },
+        {
+          "box": [
+            153,
+            874,
+            216,
+            900
+          ],
+          "legible": "clear",
+          "text": "QPM"
+        },
+        {
+          "box": [
+            135,
+            904,
+            226,
+            934
+          ],
+          "legible": "clear",
+          "text": "4-6.3A"
+        },
+        {
+          "box": [
+            108,
+            946,
+            246,
+            974
+          ],
+          "legible": "clear",
+          "text": "ABB-MS116"
+        },
+        {
+          "box": [
+            955,
+            860,
+            979,
+            891
+          ],
+          "legible": "clear",
+          "text": "E"
+        },
+        {
+          "box": [
+            473,
+            888,
+            551,
+            922
+          ],
+          "legible": "clear",
+          "text": "FPB"
+        },
+        {
+          "box": [
+            477,
+            927,
+            550,
+            959
+          ],
+          "legible": "clear",
+          "text": "H.R.C"
+        },
+        {
+          "box": [
+            476,
+            964,
+            555,
+            992
+          ],
+          "legible": "clear",
+          "text": "3X50A"
+        },
+        {
+          "box": [
+            641,
+            974,
+            716,
+            1024
+          ],
+          "legible": "unsure",
+          "text": "WO"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

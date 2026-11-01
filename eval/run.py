@@ -2,6 +2,8 @@
 
     EVAL_MODE=replay (default)  the model's answers come from eval/cassettes/: deterministic and free (CI)
     EVAL_MODE=live              real Claude (ANTHROPIC_API_KEY); with EVAL_RECORD=1 its answers become cassettes
+    EVAL_RECORD=missing         live, but only calls with no cassette yet go to the model (S10)
+    EVAL_MAX_USD=20             a live run stops once its calls cost this much at list prices
 
 Each run recreates the `konboro_eval` database and uploads every drawing to one throwaway tenant, as a user would.
 Then the coordinator's own stage code runs every stage in order in this process (`Pipeline.run_inline`), with no
@@ -15,10 +17,12 @@ import subprocess
 import sys
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Literal
 
 from sqlalchemy import Engine, create_engine, select
 from sqlalchemy.orm import Session
 
+from konboro.contracts.extraction import ExtractionResult
 from konboro.contracts.intake import IntakeResult
 from konboro.contracts.merge import MergeResult
 from konboro.contracts.pricing import QuoteVersionResult
@@ -53,6 +57,7 @@ def eval_settings() -> Settings:
         s3_endpoint=os.environ.get("KONBORO_S3_ENDPOINT", "http://localhost:9000"),
         sqs_endpoint=os.environ.get("KONBORO_SQS_ENDPOINT", "http://localhost:9324"),
         sqs_queue_prefix="eval-",  # never used: no stage goes through a queue here
+        s3_bucket="konboro-eval",  # its own bucket, emptied at start (Storage.reset_local_bucket)
     )
 
 
@@ -93,14 +98,25 @@ def run_drawing(pipeline: Pipeline, tenant_id: str, user_id: str, label: GoldenD
         assert key is not None, f"stage {stage} of {label.id} wrote nothing"  # noqa: S101
         return model.model_validate_json(pipeline.storage.get(tenant_id, key))
 
-    return prediction(output(1, IntakeResult), output(4, MergeResult), output(7, QuoteVersionResult))
+    return prediction(
+        output(1, IntakeResult), output(4, MergeResult), output(7, QuoteVersionResult), output(2, ExtractionResult)
+    )
 
 
-def evaluate(mode: EvalMode = "replay", *, record: bool = False, golden: Path = GOLDEN) -> report.Report:
-    providers = eval_providers(mode, CASSETTES, record=record)  # a bad mode fails before the database is dropped
+def evaluate(
+    mode: EvalMode = "replay",
+    *,
+    record: bool | Literal["missing"] = False,
+    max_usd: float | None = None,
+    golden: Path = GOLDEN,
+) -> report.Report:
+    # a bad mode fails before the database is dropped
+    providers = eval_providers(mode, CASSETTES, record=record, max_usd=max_usd)
     settings = eval_settings()
     engine = prepare()
-    pipeline = Pipeline(settings, engine, Storage(settings), Queue(settings), llm_providers=providers)
+    storage = Storage(settings)
+    storage.reset_local_bucket()
+    pipeline = Pipeline(settings, engine, storage, Queue(settings), llm_providers=providers)
     tenant_id, user_id = add_tenant(engine)
     labels = load_all(golden)
     results = [(label, run_drawing(pipeline, tenant_id, user_id, label, golden)) for label in labels]
@@ -133,9 +149,11 @@ def main(argv: list[str] | None = None) -> int:
     mode = os.environ.get("EVAL_MODE", "replay")
     if mode not in ("replay", "live"):
         parser.error(f"EVAL_MODE must be replay or live, not {mode!r}")
-    record = os.environ.get("EVAL_RECORD") == "1"
+    flag = os.environ.get("EVAL_RECORD")
+    record: bool | Literal["missing"] = "missing" if flag == "missing" else flag == "1"
+    max_usd = float(os.environ["EVAL_MAX_USD"]) if os.environ.get("EVAL_MAX_USD") else None
     now = datetime.now(UTC)
-    result = evaluate(mode, record=record)  # type: ignore[arg-type]
+    result = evaluate(mode, record=record, max_usd=max_usd)  # type: ignore[arg-type]
     result["meta"] = {
         "created_at": now.isoformat(timespec="seconds"),
         "mode": mode,

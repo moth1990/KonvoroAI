@@ -1,0 +1,213 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 591,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            21,
+            53,
+            44,
+            83
+          ],
+          "legible": "clear",
+          "text": "C"
+        },
+        {
+          "box": [
+            505,
+            55,
+            587,
+            90
+          ],
+          "legible": "clear",
+          "text": "SW3"
+        },
+        {
+          "box": [
+            886,
+            54,
+            967,
+            104
+          ],
+          "legible": "clear",
+          "text": "R5"
+        },
+        {
+          "box": [
+            452,
+            130,
+            470,
+            168
+          ],
+          "legible": "clear",
+          "text": "1"
+        },
+        {
+          "box": [
+            538,
+            140,
+            566,
+            179
+          ],
+          "legible": "clear",
+          "text": "0"
+        },
+        {
+          "box": [
+            613,
+            182,
+            640,
+            223
+          ],
+          "legible": "clear",
+          "text": "2"
+        },
+        {
+          "box": [
+            22,
+            300,
+            46,
+            332
+          ],
+          "legible": "clear",
+          "text": "D"
+        },
+        {
+          "box": [
+            518,
+            350,
+            581,
+            388
+          ],
+          "legible": "clear",
+          "text": "C3"
+        },
+        {
+          "box": [
+            26,
+            630,
+            46,
+            658
+          ],
+          "legible": "clear",
+          "text": "E"
+        },
+        {
+          "box": [
+            746,
+            636,
+            842,
+            663
+          ],
+          "legible": "clear",
+          "text": "+24VDC"
+        },
+        {
+          "box": [
+            894,
+            636,
+            989,
+            663
+          ],
+          "legible": "clear",
+          "text": "-24VDC"
+        },
+        {
+          "box": [
+            797,
+            699,
+            889,
+            741
+          ],
+          "legible": "clear",
+          "text": "חיצוני"
+        },
+        {
+          "box": [
+            904,
+            699,
+            966,
+            741
+          ],
+          "legible": "clear",
+          "text": "בקר"
+        },
+        {
+          "box": [
+            710,
+            777,
+            886,
+            811
+          ],
+          "legible": "clear",
+          "text": "CIRCULATION"
+        },
+        {
+          "box": [
+            908,
+            777,
+            960,
+            811
+          ],
+          "legible": "clear",
+          "text": "FAN"
+        },
+        {
+          "box": [
+            789,
+            826,
+            846,
+            859
+          ],
+          "legible": "clear",
+          "text": "HRS"
+        },
+        {
+          "box": [
+            767,
+            867,
+            875,
+            900
+          ],
+          "legible": "clear",
+          "text": "2X208V"
+        },
+        {
+          "box": [
+            103,
+            990,
+            343,
+            1024
+          ],
+          "legible": "clear",
+          "text": "05/10/2026"
+        },
+        {
+          "box": [
+            360,
+            1000,
+            380,
+            1024
+          ],
+          "legible": "clear",
+          "text": ":"
+        },
+        {
+          "box": [
+            386,
+            988,
+            503,
+            1024
+          ],
+          "legible": "clear",
+          "text": "תאריך"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

@@ -1,0 +1,143 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 388,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            556,
+            286,
+            636,
+            328
+          ],
+          "legible": "clear",
+          "text": "מפסק"
+        },
+        {
+          "box": [
+            485,
+            288,
+            545,
+            328
+          ],
+          "legible": "clear",
+          "text": "זרם"
+        },
+        {
+          "box": [
+            330,
+            286,
+            475,
+            328
+          ],
+          "legible": "clear",
+          "text": "אלקטרוני"
+        },
+        {
+          "box": [
+            560,
+            344,
+            636,
+            380
+          ],
+          "legible": "clear",
+          "text": "630A"
+        },
+        {
+          "box": [
+            540,
+            393,
+            639,
+            429
+          ],
+          "legible": "clear",
+          "text": "הגנה"
+        },
+        {
+          "box": [
+            455,
+            395,
+            517,
+            428
+          ],
+          "legible": "clear",
+          "text": "LSI"
+        },
+        {
+          "box": [
+            147,
+            373,
+            220,
+            404
+          ],
+          "legible": "clear",
+          "text": "630A"
+        },
+        {
+          "box": [
+            222,
+            566,
+            294,
+            601
+          ],
+          "legible": "clear",
+          "text": "29m"
+        },
+        {
+          "box": [
+            857,
+            583,
+            887,
+            632
+          ],
+          "legible": "clear",
+          "text": "G"
+        },
+        {
+          "box": [
+            518,
+            760,
+            644,
+            797
+          ],
+          "legible": "clear",
+          "text": "4x630A"
+        },
+        {
+          "box": [
+            74,
+            832,
+            143,
+            872
+          ],
+          "legible": "clear",
+          "text": "לחצן"
+        },
+        {
+          "box": [
+            135,
+            895,
+            172,
+            930
+          ],
+          "legible": "clear",
+          "text": "על"
+        },
+        {
+          "box": [
+            43,
+            895,
+            128,
+            930
+          ],
+          "legible": "clear",
+          "text": "הלוח"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

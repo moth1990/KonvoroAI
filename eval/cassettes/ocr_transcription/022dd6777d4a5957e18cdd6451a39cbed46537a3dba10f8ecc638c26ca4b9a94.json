@@ -1,0 +1,23 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 39,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            234,
+            653,
+            597,
+            773
+          ],
+          "legible": "clear",
+          "text": "סכמת"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

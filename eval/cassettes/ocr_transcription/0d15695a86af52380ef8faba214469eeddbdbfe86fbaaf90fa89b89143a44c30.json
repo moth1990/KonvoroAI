@@ -1,0 +1,445 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 1329,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            365,
+            22,
+            414,
+            47
+          ],
+          "legible": "clear",
+          "text": "FB2"
+        },
+        {
+          "box": [
+            367,
+            70,
+            452,
+            94
+          ],
+          "legible": "clear",
+          "text": "4x40A"
+        },
+        {
+          "box": [
+            367,
+            104,
+            575,
+            132
+          ],
+          "legible": "clear",
+          "text": "30mA-TYPE\"A\""
+        },
+        {
+          "box": [
+            955,
+            233,
+            980,
+            262
+          ],
+          "legible": "clear",
+          "text": "C"
+        },
+        {
+          "box": [
+            955,
+            502,
+            982,
+            534
+          ],
+          "legible": "clear",
+          "text": "D"
+        },
+        {
+          "box": [
+            956,
+            860,
+            977,
+            890
+          ],
+          "legible": "clear",
+          "text": "E"
+        },
+        {
+          "box": [
+            56,
+            363,
+            104,
+            391
+          ],
+          "legible": "clear",
+          "text": "F13"
+        },
+        {
+          "box": [
+            254,
+            363,
+            302,
+            391
+          ],
+          "legible": "clear",
+          "text": "F14"
+        },
+        {
+          "box": [
+            451,
+            363,
+            499,
+            391
+          ],
+          "legible": "clear",
+          "text": "F17"
+        },
+        {
+          "box": [
+            649,
+            363,
+            697,
+            391
+          ],
+          "legible": "clear",
+          "text": "F18"
+        },
+        {
+          "box": [
+            57,
+            420,
+            128,
+            443
+          ],
+          "legible": "clear",
+          "text": "3X25A"
+        },
+        {
+          "box": [
+            57,
+            452,
+            155,
+            477
+          ],
+          "legible": "clear",
+          "text": "INC=20A"
+        },
+        {
+          "box": [
+            57,
+            476,
+            131,
+            499
+          ],
+          "legible": "clear",
+          "text": "S203M"
+        },
+        {
+          "box": [
+            57,
+            502,
+            101,
+            525
+          ],
+          "legible": "clear",
+          "text": "ABB"
+        },
+        {
+          "box": [
+            254,
+            420,
+            325,
+            443
+          ],
+          "legible": "clear",
+          "text": "3X25A"
+        },
+        {
+          "box": [
+            254,
+            452,
+            352,
+            477
+          ],
+          "legible": "clear",
+          "text": "INC=20A"
+        },
+        {
+          "box": [
+            254,
+            476,
+            328,
+            499
+          ],
+          "legible": "clear",
+          "text": "S203M"
+        },
+        {
+          "box": [
+            254,
+            502,
+            298,
+            525
+          ],
+          "legible": "clear",
+          "text": "ABB"
+        },
+        {
+          "box": [
+            451,
+            420,
+            522,
+            443
+          ],
+          "legible": "clear",
+          "text": "1X16A"
+        },
+        {
+          "box": [
+            451,
+            452,
+            535,
+            477
+          ],
+          "legible": "clear",
+          "text": "INC=8A"
+        },
+        {
+          "box": [
+            451,
+            476,
+            526,
+            499
+          ],
+          "legible": "clear",
+          "text": "S201M"
+        },
+        {
+          "box": [
+            451,
+            502,
+            495,
+            525
+          ],
+          "legible": "clear",
+          "text": "ABB"
+        },
+        {
+          "box": [
+            649,
+            420,
+            720,
+            443
+          ],
+          "legible": "clear",
+          "text": "1X16A"
+        },
+        {
+          "box": [
+            649,
+            452,
+            733,
+            477
+          ],
+          "legible": "clear",
+          "text": "INC=8A"
+        },
+        {
+          "box": [
+            649,
+            476,
+            724,
+            499
+          ],
+          "legible": "clear",
+          "text": "S201M"
+        },
+        {
+          "box": [
+            649,
+            502,
+            693,
+            525
+          ],
+          "legible": "clear",
+          "text": "ABB"
+        },
+        {
+          "box": [
+            40,
+            688,
+            71,
+            716
+          ],
+          "legible": "clear",
+          "text": "13"
+        },
+        {
+          "box": [
+            238,
+            688,
+            269,
+            716
+          ],
+          "legible": "clear",
+          "text": "14"
+        },
+        {
+          "box": [
+            435,
+            688,
+            466,
+            716
+          ],
+          "legible": "clear",
+          "text": "17"
+        },
+        {
+          "box": [
+            633,
+            688,
+            664,
+            716
+          ],
+          "legible": "clear",
+          "text": "18"
+        },
+        {
+          "box": [
+            40,
+            951,
+            67,
+            993
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "BOX"
+        },
+        {
+          "box": [
+            40,
+            853,
+            67,
+            942
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "SOCKET"
+        },
+        {
+          "box": [
+            191,
+            951,
+            218,
+            993
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "5X6"
+        },
+        {
+          "box": [
+            191,
+            881,
+            218,
+            942
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "N2XY"
+        },
+        {
+          "box": [
+            238,
+            951,
+            265,
+            993
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "BOX"
+        },
+        {
+          "box": [
+            238,
+            853,
+            265,
+            942
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "SOCKET"
+        },
+        {
+          "box": [
+            388,
+            945,
+            415,
+            998
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3*1.5"
+        },
+        {
+          "box": [
+            388,
+            872,
+            415,
+            934
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "N2XY"
+        },
+        {
+          "box": [
+            437,
+            923,
+            464,
+            992
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "SPARE"
+        },
+        {
+          "box": [
+            585,
+            945,
+            612,
+            998
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3*1.5"
+        },
+        {
+          "box": [
+            585,
+            872,
+            612,
+            934
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "N2XY"
+        },
+        {
+          "box": [
+            634,
+            923,
+            661,
+            992
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "SPARE"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

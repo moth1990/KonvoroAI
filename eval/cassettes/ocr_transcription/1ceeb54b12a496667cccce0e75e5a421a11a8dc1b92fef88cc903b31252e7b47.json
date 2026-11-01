@@ -1,0 +1,113 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 298,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            21,
+            231,
+            46,
+            263
+          ],
+          "legible": "clear",
+          "text": "C"
+        },
+        {
+          "box": [
+            23,
+            502,
+            48,
+            534
+          ],
+          "legible": "clear",
+          "text": "D"
+        },
+        {
+          "box": [
+            27,
+            858,
+            49,
+            891
+          ],
+          "legible": "clear",
+          "text": "E"
+        },
+        {
+          "box": [
+            707,
+            235,
+            811,
+            252
+          ],
+          "legible": "clear",
+          "text": "Preparation"
+        },
+        {
+          "box": [
+            819,
+            235,
+            849,
+            252
+          ],
+          "legible": "clear",
+          "text": "for"
+        },
+        {
+          "box": [
+            859,
+            236,
+            870,
+            251
+          ],
+          "legible": "clear",
+          "text": "a"
+        },
+        {
+          "box": [
+            879,
+            235,
+            939,
+            252
+          ],
+          "legible": "clear",
+          "text": "Remote"
+        },
+        {
+          "box": [
+            917,
+            355,
+            1007,
+            372
+          ],
+          "legible": "clear",
+          "text": "Emergency"
+        },
+        {
+          "box": [
+            719,
+            712,
+            769,
+            757
+          ],
+          "legible": "unsure",
+          "text": "W0"
+        },
+        {
+          "box": [
+            795,
+            712,
+            953,
+            757
+          ],
+          "legible": "unsure",
+          "text": "L1,L2,L3"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

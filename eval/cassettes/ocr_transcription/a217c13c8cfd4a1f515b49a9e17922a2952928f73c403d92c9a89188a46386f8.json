@@ -1,0 +1,107 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 292,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            22,
+            102,
+            46,
+            135
+          ],
+          "legible": "clear",
+          "text": "C"
+        },
+        {
+          "box": [
+            24,
+            366,
+            47,
+            398
+          ],
+          "legible": "clear",
+          "text": "D"
+        },
+        {
+          "box": [
+            27,
+            716,
+            48,
+            748
+          ],
+          "legible": "clear",
+          "text": "E"
+        },
+        {
+          "box": [
+            445,
+            200,
+            469,
+            235
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "AIR"
+        },
+        {
+          "box": [
+            445,
+            99,
+            469,
+            187
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "BLOWER"
+        },
+        {
+          "box": [
+            961,
+            152,
+            986,
+            232
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "COOLING"
+        },
+        {
+          "box": [
+            961,
+            54,
+            986,
+            138
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "TOWER"
+        },
+        {
+          "box": [
+            439,
+            291,
+            456,
+            317
+          ],
+          "legible": "clear",
+          "text": "6"
+        },
+        {
+          "box": [
+            949,
+            291,
+            967,
+            316
+          ],
+          "legible": "clear",
+          "text": "7"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

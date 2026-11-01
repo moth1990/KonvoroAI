@@ -1,5 +1,6 @@
 """The pipeline's own contracts, in the canonical shape the metrics read."""
 
+from konboro.contracts.extraction import ExtractionResult
 from konboro.contracts.intake import IntakeResult
 from konboro.contracts.merge import MergeResult
 from konboro.contracts.pricing import QuoteVersionResult
@@ -7,7 +8,9 @@ from konboro.contracts.pricing import QuoteVersionResult
 from .canonical import CanonComponent, CanonPage, CanonPanel, Prediction
 
 
-def prediction(intake: IntakeResult, merge: MergeResult, quote: QuoteVersionResult) -> Prediction:
+def prediction(
+    intake: IntakeResult, merge: MergeResult, quote: QuoteVersionResult, extraction: ExtractionResult | None = None
+) -> Prediction:
     names = {p.panel_id: p.name for p in intake.panels}
     by_panel: dict[str, list[CanonComponent]] = {panel_id: [] for panel_id in names}
     for c in merge.components:
@@ -29,4 +32,19 @@ def prediction(intake: IntakeResult, merge: MergeResult, quote: QuoteVersionResu
         quote_total=quote.totals.net_total,
         title_block=intake.title_block.model_dump(exclude={"designer"}) if intake.title_block else {},
         needs_confirmation=intake.needs_confirmation,
+        span_texts=tuple(s.text for p in extraction.pages for s in p.text_spans) if extraction else None,
+        extraction=_extraction_counts(extraction) if extraction else {},
     )
+
+
+def _extraction_counts(extraction: ExtractionResult) -> dict[str, int]:
+    pages = extraction.pages
+    return {
+        "pages": len(pages),
+        "tiles": sum(p.stats.tile_count for p in pages),
+        "blank_tiles": sum(p.stats.blank_tile_count for p in pages),
+        "spans": sum(p.stats.span_count for p in pages),
+        "ocr_spans": sum(p.stats.ocr_span_count for p in pages),
+        "corrected_spans": sum(p.stats.corrected_span_count for p in pages),
+        "wire_edges": sum(p.wire_graph.edge_count for p in pages if p.wire_graph),
+    }

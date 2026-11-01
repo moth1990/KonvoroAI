@@ -1,0 +1,129 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 393,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            372,
+            291,
+            428,
+            519
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "5x2,5²-N2XY"
+        },
+        {
+          "box": [
+            379,
+            688,
+            488,
+            727
+          ],
+          "legible": "clear",
+          "text": "21-23"
+        },
+        {
+          "box": [
+            555,
+            45,
+            609,
+            260
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "5x16²-N2XY"
+        },
+        {
+          "box": [
+            594,
+            438,
+            637,
+            476
+          ],
+          "legible": "clear",
+          "text": "25"
+        },
+        {
+          "box": [
+            777,
+            45,
+            831,
+            260
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "5x16²-N2XY"
+        },
+        {
+          "box": [
+            783,
+            438,
+            895,
+            476
+          ],
+          "legible": "clear",
+          "text": "26-27"
+        },
+        {
+          "box": [
+            627,
+            15,
+            658,
+            176
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "תיבות"
+        },
+        {
+          "box": [
+            634,
+            114,
+            656,
+            190
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "בתי"
+        },
+        {
+          "box": [
+            627,
+            222,
+            658,
+            294
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "תקע"
+        },
+        {
+          "box": [
+            54,
+            176,
+            75,
+            203
+          ],
+          "legible": "clear",
+          "text": "C"
+        },
+        {
+          "box": [
+            47,
+            232,
+            82,
+            260
+          ],
+          "legible": "unsure",
+          "text": "\"0\""
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

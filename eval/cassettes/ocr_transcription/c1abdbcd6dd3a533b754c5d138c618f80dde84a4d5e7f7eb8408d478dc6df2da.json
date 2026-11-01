@@ -1,0 +1,288 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 915,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            14,
+            27,
+            32,
+            45
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "L3"
+        },
+        {
+          "box": [
+            593,
+            24,
+            613,
+            41
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "N4"
+        },
+        {
+          "box": [
+            681,
+            28,
+            700,
+            45
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "L4"
+        },
+        {
+          "box": [
+            616,
+            89,
+            680,
+            117
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "C.FAN"
+        },
+        {
+          "box": [
+            598,
+            128,
+            701,
+            157
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "NURSERY"
+        },
+        {
+          "box": [
+            318,
+            352,
+            366,
+            386
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "שם"
+        },
+        {
+          "box": [
+            153,
+            352,
+            295,
+            389
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "הפרויקט"
+        },
+        {
+          "box": [
+            114,
+            362,
+            123,
+            383
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": ":"
+        },
+        {
+          "box": [
+            309,
+            455,
+            346,
+            488
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "דף"
+        },
+        {
+          "box": [
+            161,
+            455,
+            299,
+            490
+          ],
+          "legible": "unsure",
+          "rotation": 0,
+          "text": "מס':5"
+        },
+        {
+          "box": [
+            52,
+            464,
+            98,
+            495
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "שם"
+        },
+        {
+          "box": [
+            551,
+            398,
+            775,
+            445
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "ובקרה"
+        },
+        {
+          "box": [
+            450,
+            462,
+            525,
+            503
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "S.S"
+        },
+        {
+          "box": [
+            556,
+            462,
+            773,
+            505
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "Electrical"
+        },
+        {
+          "box": [
+            834,
+            462,
+            918,
+            503
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "and"
+        },
+        {
+          "box": [
+            429,
+            535,
+            620,
+            562
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "04-8338123:"
+        },
+        {
+          "box": [
+            632,
+            535,
+            700,
+            562
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "פקס"
+        },
+        {
+          "box": [
+            719,
+            535,
+            917,
+            562
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "04-6565394:"
+        },
+        {
+          "box": [
+            922,
+            535,
+            958,
+            562
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "טל"
+        },
+        {
+          "box": [
+            540,
+            577,
+            666,
+            617
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "Email:"
+        },
+        {
+          "box": [
+            127,
+            586,
+            275,
+            620
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "1:100:"
+        },
+        {
+          "box": [
+            259,
+            580,
+            353,
+            621
+          ],
+          "legible": "unsure",
+          "rotation": 0,
+          "text": "קנ\"מ"
+        },
+        {
+          "box": [
+            252,
+            694,
+            274,
+            730
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "6"
+        },
+        {
+          "box": [
+            577,
+            692,
+            598,
+            727
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "7"
+        },
+        {
+          "box": [
+            881,
+            694,
+            904,
+            730
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "8"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

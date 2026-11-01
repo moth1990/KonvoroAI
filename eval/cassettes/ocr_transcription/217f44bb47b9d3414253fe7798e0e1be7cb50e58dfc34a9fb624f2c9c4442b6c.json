@@ -1,0 +1,123 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 335,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            426,
+            24,
+            499,
+            60
+          ],
+          "legible": "clear",
+          "text": "29m"
+        },
+        {
+          "box": [
+            497,
+            274,
+            607,
+            322
+          ],
+          "legible": "clear",
+          "text": "לוח"
+        },
+        {
+          "box": [
+            390,
+            274,
+            495,
+            322
+          ],
+          "legible": "clear",
+          "text": "חשמל"
+        },
+        {
+          "box": [
+            293,
+            274,
+            386,
+            322
+          ],
+          "legible": "clear",
+          "text": "ראשי"
+        },
+        {
+          "box": [
+            497,
+            338,
+            607,
+            383
+          ],
+          "legible": "clear",
+          "text": "מתחם"
+        },
+        {
+          "box": [
+            396,
+            338,
+            477,
+            383
+          ],
+          "legible": "clear",
+          "text": "רכב"
+        },
+        {
+          "box": [
+            450,
+            515,
+            620,
+            551
+          ],
+          "legible": "clear",
+          "text": "5x25N2XY"
+        },
+        {
+          "box": [
+            531,
+            580,
+            622,
+            615
+          ],
+          "legible": "clear",
+          "text": "135m"
+        },
+        {
+          "box": [
+            675,
+            858,
+            768,
+            903
+          ],
+          "legible": "clear",
+          "text": "לוח"
+        },
+        {
+          "box": [
+            577,
+            858,
+            672,
+            903
+          ],
+          "legible": "clear",
+          "text": "מבנה"
+        },
+        {
+          "box": [
+            614,
+            919,
+            768,
+            962
+          ],
+          "legible": "clear",
+          "text": "משרדים"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

@@ -1,0 +1,265 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 767,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            228,
+            8,
+            258,
+            26
+          ],
+          "legible": "clear",
+          "text": "\"N\""
+        },
+        {
+          "box": [
+            566,
+            8,
+            596,
+            26
+          ],
+          "legible": "clear",
+          "text": "\"N\""
+        },
+        {
+          "box": [
+            946,
+            8,
+            976,
+            26
+          ],
+          "legible": "clear",
+          "text": "\"N\""
+        },
+        {
+          "box": [
+            346,
+            91,
+            377,
+            118
+          ],
+          "legible": "clear",
+          "text": "F5"
+        },
+        {
+          "box": [
+            684,
+            91,
+            715,
+            118
+          ],
+          "legible": "clear",
+          "text": "F6"
+        },
+        {
+          "box": [
+            360,
+            135,
+            419,
+            162
+          ],
+          "legible": "clear",
+          "text": "10+N"
+        },
+        {
+          "box": [
+            360,
+            167,
+            440,
+            193
+          ],
+          "legible": "clear",
+          "text": "INC=8A"
+        },
+        {
+          "box": [
+            360,
+            197,
+            446,
+            224
+          ],
+          "legible": "clear",
+          "text": "SN201M"
+        },
+        {
+          "box": [
+            698,
+            135,
+            757,
+            162
+          ],
+          "legible": "clear",
+          "text": "10+N"
+        },
+        {
+          "box": [
+            698,
+            167,
+            778,
+            193
+          ],
+          "legible": "clear",
+          "text": "INC=8A"
+        },
+        {
+          "box": [
+            698,
+            197,
+            784,
+            224
+          ],
+          "legible": "clear",
+          "text": "SN201M"
+        },
+        {
+          "box": [
+            2,
+            135,
+            60,
+            162
+          ],
+          "legible": "unsure",
+          "text": "10+N"
+        },
+        {
+          "box": [
+            2,
+            167,
+            80,
+            193
+          ],
+          "legible": "unsure",
+          "text": "INC=8A"
+        },
+        {
+          "box": [
+            2,
+            197,
+            88,
+            224
+          ],
+          "legible": "unsure",
+          "text": "SN201M"
+        },
+        {
+          "box": [
+            275,
+            492,
+            304,
+            651
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3X1.5N2XY"
+        },
+        {
+          "box": [
+            614,
+            492,
+            642,
+            651
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3X1.5N2XY"
+        },
+        {
+          "box": [
+            244,
+            800,
+            262,
+            816
+          ],
+          "legible": "clear",
+          "text": "N5"
+        },
+        {
+          "box": [
+            329,
+            803,
+            345,
+            819
+          ],
+          "legible": "clear",
+          "text": "L5"
+        },
+        {
+          "box": [
+            582,
+            800,
+            600,
+            816
+          ],
+          "legible": "clear",
+          "text": "N6"
+        },
+        {
+          "box": [
+            668,
+            803,
+            684,
+            819
+          ],
+          "legible": "clear",
+          "text": "L6"
+        },
+        {
+          "box": [
+            962,
+            800,
+            981,
+            816
+          ],
+          "legible": "clear",
+          "text": "N7"
+        },
+        {
+          "box": [
+            220,
+            873,
+            298,
+            907
+          ],
+          "legible": "clear",
+          "text": "BOM"
+        },
+        {
+          "box": [
+            328,
+            873,
+            352,
+            906
+          ],
+          "legible": "clear",
+          "text": "5"
+        },
+        {
+          "box": [
+            558,
+            873,
+            637,
+            907
+          ],
+          "legible": "clear",
+          "text": "BOM"
+        },
+        {
+          "box": [
+            666,
+            873,
+            690,
+            906
+          ],
+          "legible": "clear",
+          "text": "6"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

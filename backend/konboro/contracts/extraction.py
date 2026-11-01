@@ -28,6 +28,7 @@ class Render(Contract):
     width_px: int
     height_px: int
     image_uri: str
+    dzi_uri: str | None = Field(None, description="The deep-zoom pyramid for the drawing viewer (12 §6, S10)")
 
 
 class TextSpan(Contract):
@@ -40,6 +41,7 @@ class TextSpan(Contract):
     source: Literal["pdf_text", "ocr", "cad_text", "cad_attrib"]
     confidence: Confidence
     layer: str | None = None
+    color: str | None = Field(None, description="#rrggbb when not black (02 §12 item 5, S10)")
     tags: dict[str, Any] = Field(default={}, description="current_a, poles, curve, breaking_capacity_ka, residual_ma")
     corrections: list[dict[str, Any]] = []
     block_id: BlockId | None = None
@@ -85,7 +87,9 @@ class WireGraph(Contract):
     node_count: int = 0
     edge_count: int = 0
     block_links: int = 0
-    status: Literal["built", "partial", "unavailable"]
+    status: Literal["built", "skipped", "not_supported"] = Field(
+        description="skipped: `vector_too_complex`; not_supported: a raster page (02 §7–8)"
+    )
 
 
 class Tile(Contract):

@@ -1,0 +1,123 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 324,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            113,
+            54,
+            136,
+            87
+          ],
+          "legible": "clear",
+          "text": "8"
+        },
+        {
+          "box": [
+            440,
+            52,
+            462,
+            85
+          ],
+          "legible": "clear",
+          "text": "9"
+        },
+        {
+          "box": [
+            768,
+            54,
+            814,
+            87
+          ],
+          "legible": "clear",
+          "text": "10"
+        },
+        {
+          "box": [
+            943,
+            358,
+            968,
+            392
+          ],
+          "legible": "clear",
+          "text": "A"
+        },
+        {
+          "box": [
+            942,
+            628,
+            967,
+            661
+          ],
+          "legible": "clear",
+          "text": "B"
+        },
+        {
+          "box": [
+            943,
+            886,
+            967,
+            919
+          ],
+          "legible": "clear",
+          "text": "C"
+        },
+        {
+          "box": [
+            688,
+            718,
+            760,
+            778
+          ],
+          "legible": "clear",
+          "text": "WO"
+        },
+        {
+          "box": [
+            387,
+            851,
+            417,
+            869
+          ],
+          "legible": "clear",
+          "text": "\"N\""
+        },
+        {
+          "box": [
+            508,
+            934,
+            540,
+            962
+          ],
+          "legible": "clear",
+          "text": "F5"
+        },
+        {
+          "box": [
+            521,
+            981,
+            583,
+            1009
+          ],
+          "legible": "clear",
+          "text": "16+N"
+        },
+        {
+          "box": [
+            517,
+            1011,
+            638,
+            1024
+          ],
+          "legible": "unsure",
+          "text": "INC=12.8A"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

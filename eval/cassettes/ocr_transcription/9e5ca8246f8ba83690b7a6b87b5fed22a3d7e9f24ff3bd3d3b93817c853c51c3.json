@@ -1,0 +1,223 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 628,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            119,
+            50,
+            196,
+            101
+          ],
+          "legible": "clear",
+          "text": "R6"
+        },
+        {
+          "box": [
+            829,
+            50,
+            910,
+            101
+          ],
+          "legible": "clear",
+          "text": "R7"
+        },
+        {
+          "box": [
+            448,
+            57,
+            528,
+            89
+          ],
+          "legible": "clear",
+          "text": "SW5"
+        },
+        {
+          "box": [
+            392,
+            131,
+            413,
+            167
+          ],
+          "legible": "clear",
+          "text": "1"
+        },
+        {
+          "box": [
+            480,
+            141,
+            508,
+            178
+          ],
+          "legible": "clear",
+          "text": "0"
+        },
+        {
+          "box": [
+            557,
+            184,
+            581,
+            223
+          ],
+          "legible": "clear",
+          "text": "2"
+        },
+        {
+          "box": [
+            461,
+            352,
+            523,
+            388
+          ],
+          "legible": "clear",
+          "text": "C5"
+        },
+        {
+          "box": [
+            125,
+            634,
+            219,
+            663
+          ],
+          "legible": "clear",
+          "text": "-24VDC"
+        },
+        {
+          "box": [
+            688,
+            634,
+            785,
+            663
+          ],
+          "legible": "clear",
+          "text": "+24VDC"
+        },
+        {
+          "box": [
+            837,
+            634,
+            932,
+            663
+          ],
+          "legible": "clear",
+          "text": "-24VDC"
+        },
+        {
+          "box": [
+            131,
+            687,
+            175,
+            727
+          ],
+          "legible": "clear",
+          "text": "בקר"
+        },
+        {
+          "box": [
+            755,
+            692,
+            896,
+            735
+          ],
+          "legible": "unsure",
+          "text": "חיצוני"
+        },
+        {
+          "box": [
+            862,
+            694,
+            910,
+            733
+          ],
+          "legible": "clear",
+          "text": "בקר"
+        },
+        {
+          "box": [
+            181,
+            763,
+            233,
+            794
+          ],
+          "legible": "clear",
+          "text": "FAN"
+        },
+        {
+          "box": [
+            42,
+            809,
+            169,
+            842
+          ],
+          "legible": "clear",
+          "text": "NERSERY"
+        },
+        {
+          "box": [
+            63,
+            857,
+            170,
+            889
+          ],
+          "legible": "clear",
+          "text": "2X208V"
+        },
+        {
+          "box": [
+            709,
+            786,
+            829,
+            818
+          ],
+          "legible": "clear",
+          "text": "COOLING"
+        },
+        {
+          "box": [
+            851,
+            786,
+            941,
+            818
+          ],
+          "legible": "clear",
+          "text": "TOWER"
+        },
+        {
+          "box": [
+            776,
+            837,
+            885,
+            869
+          ],
+          "legible": "clear",
+          "text": "3X208V"
+        },
+        {
+          "box": [
+            179,
+            980,
+            232,
+            1010
+          ],
+          "legible": "clear",
+          "text": "שם"
+        },
+        {
+          "box": [
+            26,
+            982,
+            160,
+            1013
+          ],
+          "legible": "clear",
+          "text": "הפרויקט"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

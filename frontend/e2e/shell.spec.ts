@@ -95,6 +95,8 @@ test("keyboard only: Tab reaches the navigation and home actions, with a visible
 }) => {
   await signIn(page, request, TENANTS.classic);
   await page.goto("/home");
+  // the home actions render after the summary loads; tabbing before that cycles through the navigation only (BUG-021)
+  await expect(page.getByText("בדיקת הצעה קיימת").first()).toBeVisible();
   const reached: string[] = [];
   for (let i = 0; i < 25; i++) {
     await page.keyboard.press("Tab");

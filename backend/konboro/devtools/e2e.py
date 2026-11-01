@@ -40,7 +40,8 @@ from konboro.db.seed import FLAGS, seed_global
 from konboro.db.session import app_engine
 from konboro.devtools.fixtures.nursery import seed_nursery
 from konboro.pipeline.context import StageContext
-from konboro.pipeline.stages import Stage
+from konboro.pipeline.extraction.config import ExtractionConfig
+from konboro.pipeline.stages import Stage, s2_extraction
 from konboro.settings import Settings
 
 DATABASE = "konboro_e2e"
@@ -98,6 +99,18 @@ def slowed(stages: dict[int, Stage]) -> dict[int, Stage]:
         return run
 
     return {n: wrap(stage) for n, stage in stages.items()}
+
+
+# Stage 2 at 100 DPI: E2E checks screens, not OCR, and the screenshot check runs the worker in an emulated amd64
+# container, where full-size renders made the new-quote shots wait past their 90 s (S10).
+E2E_EXTRACTION = ExtractionConfig(dpi=100, low_resolution_dpi=100, min_dpi=50)
+
+
+def e2e_stages(stages: dict[int, Stage]) -> dict[int, Stage]:
+    def extraction(ctx: StageContext) -> BaseModel:
+        return s2_extraction.run(ctx, E2E_EXTRACTION)
+
+    return slowed({**stages, 2: extraction})
 
 
 def dev_users() -> str:
@@ -199,6 +212,7 @@ def e2e_settings(web_port: int) -> Settings:
         s3_endpoint=os.environ.get("KONBORO_S3_ENDPOINT", "http://localhost:9000"),
         sqs_endpoint=os.environ.get("KONBORO_SQS_ENDPOINT", "http://localhost:9324"),
         sqs_queue_prefix="e2e-",  # its own queues: a running `make dev` worker never takes E2E messages
+        s3_bucket="konboro-e2e",  # and its own bucket, emptied at start (Storage.reset_local_bucket)
         stage_retry_seconds=1,
     )
 
@@ -219,17 +233,19 @@ def main() -> None:
     from konboro.pipeline.stages import STAGES
     from konboro.pipeline.worker import start_in_thread
     from konboro.services.queue import DLQ, STAGE_QUEUES, Queue
+    from konboro.services.storage import Storage
 
     api_port = int(os.environ.get("KONBORO_E2E_API_PORT", "8001"))
     web_port = int(os.environ.get("KONBORO_E2E_WEB_PORT", "5181"))
     settings = e2e_settings(web_port)
     engine = prepare()
+    Storage(settings).reset_local_bucket()
     queue = Queue(settings)
     queue.ensure()
     for base in [*STAGE_QUEUES.values(), DLQ]:  # nothing left over from an earlier run
         queue.purge(base)
     # The pipeline worker, beside the API, with the stand-in model: E2E never calls a real one (CLAUDE.md, testing)
-    start_in_thread(settings, engine, stages=slowed(STAGES), llm_providers=fake_providers())
+    start_in_thread(settings, engine, stages=e2e_stages(STAGES), llm_providers=fake_providers())
     uvicorn.run(create_app(settings, engine=engine), host="127.0.0.1", port=api_port, log_level="warning")
 
 

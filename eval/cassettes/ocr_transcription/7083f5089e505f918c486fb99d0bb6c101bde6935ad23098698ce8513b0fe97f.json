@@ -1,0 +1,90 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 258,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            21,
+            232,
+            46,
+            264
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "C"
+        },
+        {
+          "box": [
+            23,
+            502,
+            47,
+            534
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "D"
+        },
+        {
+          "box": [
+            27,
+            859,
+            49,
+            891
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "E"
+        },
+        {
+          "box": [
+            499,
+            625,
+            525,
+            683
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "5X25"
+        },
+        {
+          "box": [
+            499,
+            551,
+            525,
+            611
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "N2XY"
+        },
+        {
+          "box": [
+            544,
+            643,
+            570,
+            699
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "PUMP"
+        },
+        {
+          "box": [
+            544,
+            549,
+            570,
+            625
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "BOARD"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

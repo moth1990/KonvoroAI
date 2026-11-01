@@ -1,0 +1,63 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 158,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            939,
+            213,
+            1024,
+            248
+          ],
+          "legible": "unsure",
+          "text": "הלוח"
+        },
+        {
+          "box": [
+            0,
+            827,
+            183,
+            920
+          ],
+          "legible": "unsure",
+          "text": "בלוח"
+        },
+        {
+          "box": [
+            378,
+            830,
+            562,
+            920
+          ],
+          "legible": "clear",
+          "text": "שמור"
+        },
+        {
+          "box": [
+            483,
+            830,
+            664,
+            925
+          ],
+          "legible": "clear",
+          "text": "מקום"
+        },
+        {
+          "box": [
+            721,
+            834,
+            869,
+            914
+          ],
+          "legible": "clear",
+          "text": "30%"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

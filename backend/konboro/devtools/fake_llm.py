@@ -5,14 +5,20 @@ Never used by the product's workers when a key is set, and never in the eval (ca
 Pages are classified like NURSERY-1 (01 §5.7 example): page 1 technical data, pages 2–3 factory templates, page 4 the
 front view, the rest single-line diagrams. A file whose name contains "unsure" gets a low-confidence first page, so
 stage 1 asks the user to confirm (01 §5.6).
+
+OCR (stage 2) reads one word, "Q1", at the top left of each tile's ink, so the stage's ink check keeps it.
 """
 
+import io
 import re
 from typing import Any
+
+from PIL import Image
 
 from konboro_llm import LLMRequest
 from konboro_llm.providers import FakeProvider
 from konboro_llm.stages.context_extraction import GeneralNotes
+from konboro_llm.stages.ocr_transcription import STAGE as OCR
 from konboro_llm.stages.page_classification import STAGE as CLASSIFY
 from konboro_llm.stages.page_classification import TitleBlockAnswer
 
@@ -42,9 +48,24 @@ def classification(request: LLMRequest[Any]) -> dict[str, Any]:
     }
 
 
+OCR_SPOT_PX = 48
+
+
+def ocr_words(request: LLMRequest[Any]) -> dict[str, Any]:
+    image = Image.open(io.BytesIO(request.images[0].data)).convert("L")
+    ink = image.point(lambda v: 255 if v < 160 else 0).getbbox()
+    if ink is None:
+        return {"words": []}
+    x0, y0 = ink[0], ink[1]
+    box = [x0, y0, min(ink[2], x0 + OCR_SPOT_PX), min(ink[3], y0 + OCR_SPOT_PX)]
+    return {"words": [{"text": "Q1", "box": box, "rotation": 0, "legible": "clear"}]}
+
+
 def answer(request: LLMRequest[Any]) -> dict[str, Any]:
     if request.stage == CLASSIFY:
         return classification(request)
+    if request.stage == OCR:
+        return ocr_words(request)
     if request.output_schema is TitleBlockAnswer:
         return TITLE_BLOCK
     if request.output_schema is GeneralNotes:

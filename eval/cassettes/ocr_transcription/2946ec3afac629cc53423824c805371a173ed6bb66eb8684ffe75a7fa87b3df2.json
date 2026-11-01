@@ -1,0 +1,283 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 789,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            586,
+            56,
+            682,
+            88
+          ],
+          "legible": "clear",
+          "text": "PKZM"
+        },
+        {
+          "box": [
+            705,
+            56,
+            831,
+            88
+          ],
+          "legible": "clear",
+          "text": "1-2.4A"
+        },
+        {
+          "box": [
+            403,
+            184,
+            540,
+            224
+          ],
+          "legible": "clear",
+          "text": "אלקטרוני"
+        },
+        {
+          "box": [
+            418,
+            231,
+            466,
+            261
+          ],
+          "legible": "clear",
+          "text": "LSI"
+        },
+        {
+          "box": [
+            321,
+            289,
+            390,
+            318
+          ],
+          "legible": "clear",
+          "text": "100A"
+        },
+        {
+          "box": [
+            78,
+            520,
+            130,
+            551
+          ],
+          "legible": "clear",
+          "text": "16A"
+        },
+        {
+          "box": [
+            55,
+            563,
+            128,
+            592
+          ],
+          "legible": "clear",
+          "text": "MCB"
+        },
+        {
+          "box": [
+            200,
+            520,
+            252,
+            551
+          ],
+          "legible": "clear",
+          "text": "16A"
+        },
+        {
+          "box": [
+            178,
+            560,
+            250,
+            589
+          ],
+          "legible": "clear",
+          "text": "MCB"
+        },
+        {
+          "box": [
+            336,
+            519,
+            391,
+            549
+          ],
+          "legible": "clear",
+          "text": "20A"
+        },
+        {
+          "box": [
+            316,
+            562,
+            389,
+            591
+          ],
+          "legible": "clear",
+          "text": "MCB"
+        },
+        {
+          "box": [
+            459,
+            520,
+            511,
+            550
+          ],
+          "legible": "clear",
+          "text": "10A"
+        },
+        {
+          "box": [
+            438,
+            563,
+            510,
+            593
+          ],
+          "legible": "clear",
+          "text": "MCB"
+        },
+        {
+          "box": [
+            438,
+            607,
+            489,
+            641
+          ],
+          "legible": "clear",
+          "text": "(x4)"
+        },
+        {
+          "box": [
+            582,
+            520,
+            634,
+            550
+          ],
+          "legible": "clear",
+          "text": "16A"
+        },
+        {
+          "box": [
+            562,
+            553,
+            635,
+            583
+          ],
+          "legible": "clear",
+          "text": "MCB"
+        },
+        {
+          "box": [
+            565,
+            606,
+            619,
+            640
+          ],
+          "legible": "clear",
+          "text": "(x6)"
+        },
+        {
+          "box": [
+            714,
+            499,
+            787,
+            529
+          ],
+          "legible": "clear",
+          "text": "MCB"
+        },
+        {
+          "box": [
+            703,
+            537,
+            756,
+            567
+          ],
+          "legible": "clear",
+          "text": "16A"
+        },
+        {
+          "box": [
+            812,
+            676,
+            863,
+            706
+          ],
+          "legible": "clear",
+          "text": "10A"
+        },
+        {
+          "box": [
+            951,
+            491,
+            1017,
+            531
+          ],
+          "legible": "clear",
+          "text": "שעון"
+        },
+        {
+          "box": [
+            843,
+            762,
+            861,
+            790
+          ],
+          "legible": "clear",
+          "text": "0"
+        },
+        {
+          "box": [
+            748,
+            825,
+            806,
+            864
+          ],
+          "legible": "clear",
+          "text": "ידני"
+        },
+        {
+          "box": [
+            7,
+            829,
+            23,
+            859
+          ],
+          "legible": "clear",
+          "text": "2"
+        },
+        {
+          "box": [
+            823,
+            943,
+            842,
+            973
+          ],
+          "legible": "clear",
+          "text": "C"
+        },
+        {
+          "box": [
+            78,
+            985,
+            104,
+            1015
+          ],
+          "legible": "clear",
+          "text": "T1"
+        },
+        {
+          "box": [
+            194,
+            985,
+            229,
+            1015
+          ],
+          "legible": "clear",
+          "text": "T2"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

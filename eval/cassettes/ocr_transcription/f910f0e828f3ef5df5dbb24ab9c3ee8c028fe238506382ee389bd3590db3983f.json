@@ -1,0 +1,332 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 978,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            8,
+            171,
+            45,
+            200
+          ],
+          "legible": "clear",
+          "text": "21"
+        },
+        {
+          "box": [
+            8,
+            257,
+            48,
+            284
+          ],
+          "legible": "clear",
+          "text": "22"
+        },
+        {
+          "box": [
+            188,
+            177,
+            227,
+            206
+          ],
+          "legible": "clear",
+          "text": "F2"
+        },
+        {
+          "box": [
+            207,
+            249,
+            277,
+            275
+          ],
+          "legible": "clear",
+          "text": "3X16A"
+        },
+        {
+          "box": [
+            198,
+            280,
+            317,
+            306
+          ],
+          "legible": "clear",
+          "text": "INC=12.8A"
+        },
+        {
+          "box": [
+            197,
+            308,
+            271,
+            334
+          ],
+          "legible": "clear",
+          "text": "S203M"
+        },
+        {
+          "box": [
+            199,
+            340,
+            242,
+            365
+          ],
+          "legible": "clear",
+          "text": "ABB"
+        },
+        {
+          "box": [
+            293,
+            440,
+            328,
+            474
+          ],
+          "legible": "clear",
+          "text": "C2"
+        },
+        {
+          "box": [
+            172,
+            704,
+            199,
+            811
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "EXHUST"
+        },
+        {
+          "box": [
+            172,
+            646,
+            199,
+            692
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "FAN"
+        },
+        {
+          "box": [
+            172,
+            579,
+            199,
+            634
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "GROUP"
+        },
+        {
+          "box": [
+            172,
+            548,
+            199,
+            567
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "B"
+        },
+        {
+          "box": [
+            207,
+            613,
+            236,
+            697
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3X208V"
+        },
+        {
+          "box": [
+            169,
+            945,
+            188,
+            972
+          ],
+          "legible": "clear",
+          "text": "2"
+        },
+        {
+          "box": [
+            158,
+            1004,
+            178,
+            1024
+          ],
+          "legible": "unsure",
+          "text": "B"
+        },
+        {
+          "box": [
+            678,
+            82,
+            710,
+            98
+          ],
+          "legible": "clear",
+          "text": "\"N\""
+        },
+        {
+          "box": [
+            522,
+            162,
+            558,
+            190
+          ],
+          "legible": "clear",
+          "text": "21"
+        },
+        {
+          "box": [
+            524,
+            247,
+            562,
+            274
+          ],
+          "legible": "clear",
+          "text": "22"
+        },
+        {
+          "box": [
+            799,
+            167,
+            831,
+            194
+          ],
+          "legible": "clear",
+          "text": "F3"
+        },
+        {
+          "box": [
+            812,
+            212,
+            873,
+            238
+          ],
+          "legible": "clear",
+          "text": "16+N"
+        },
+        {
+          "box": [
+            812,
+            243,
+            930,
+            270
+          ],
+          "legible": "clear",
+          "text": "INC=12.8A"
+        },
+        {
+          "box": [
+            813,
+            275,
+            902,
+            301
+          ],
+          "legible": "clear",
+          "text": "SN201M"
+        },
+        {
+          "box": [
+            918,
+            490,
+            953,
+            523
+          ],
+          "legible": "clear",
+          "text": "C3"
+        },
+        {
+          "box": [
+            792,
+            594,
+            818,
+            788
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "CIRCULATION"
+        },
+        {
+          "box": [
+            792,
+            594,
+            818,
+            640
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "FAN"
+        },
+        {
+          "box": [
+            825,
+            651,
+            850,
+            714
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "HRS"
+        },
+        {
+          "box": [
+            861,
+            647,
+            888,
+            731
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "2X208V"
+        },
+        {
+          "box": [
+            694,
+            791,
+            713,
+            809
+          ],
+          "legible": "clear",
+          "text": "N3"
+        },
+        {
+          "box": [
+            783,
+            795,
+            800,
+            811
+          ],
+          "legible": "clear",
+          "text": "L3"
+        },
+        {
+          "box": [
+            698,
+            853,
+            761,
+            882
+          ],
+          "legible": "clear",
+          "text": "C.FAN"
+        },
+        {
+          "box": [
+            704,
+            896,
+            749,
+            921
+          ],
+          "legible": "clear",
+          "text": "HRS"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

@@ -1,0 +1,253 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 714,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            46,
+            488,
+            203,
+            530
+          ],
+          "legible": "clear",
+          "text": "26/993"
+        },
+        {
+          "box": [
+            452,
+            478,
+            577,
+            508
+          ],
+          "legible": "clear",
+          "text": "Project"
+        },
+        {
+          "box": [
+            596,
+            478,
+            678,
+            508
+          ],
+          "legible": "clear",
+          "text": "Name:"
+        },
+        {
+          "box": [
+            19,
+            580,
+            76,
+            614
+          ],
+          "legible": "clear",
+          "text": "by:"
+        },
+        {
+          "box": [
+            100,
+            578,
+            272,
+            614
+          ],
+          "legible": "clear",
+          "text": "Mahmoud"
+        },
+        {
+          "box": [
+            297,
+            578,
+            402,
+            614
+          ],
+          "legible": "clear",
+          "text": "Zoabi"
+        },
+        {
+          "box": [
+            449,
+            578,
+            566,
+            614
+          ],
+          "legible": "clear",
+          "text": "Panel"
+        },
+        {
+          "box": [
+            595,
+            578,
+            711,
+            614
+          ],
+          "legible": "clear",
+          "text": "Name:"
+        },
+        {
+          "box": [
+            897,
+            577,
+            981,
+            608
+          ],
+          "legible": "clear",
+          "text": "Page"
+        },
+        {
+          "box": [
+            466,
+            634,
+            538,
+            664
+          ],
+          "legible": "clear",
+          "text": "MAIN"
+        },
+        {
+          "box": [
+            558,
+            634,
+            738,
+            664
+          ],
+          "legible": "clear",
+          "text": "ELECTRICAL"
+        },
+        {
+          "box": [
+            757,
+            634,
+            861,
+            664
+          ],
+          "legible": "clear",
+          "text": "BOARD"
+        },
+        {
+          "box": [
+            903,
+            641,
+            964,
+            676
+          ],
+          "legible": "clear",
+          "text": "OF:"
+        },
+        {
+          "box": [
+            977,
+            640,
+            1001,
+            674
+          ],
+          "legible": "clear",
+          "text": "5"
+        },
+        {
+          "box": [
+            73,
+            654,
+            168,
+            690
+          ],
+          "legible": "clear",
+          "text": "Baha"
+        },
+        {
+          "box": [
+            194,
+            654,
+            387,
+            690
+          ],
+          "legible": "clear",
+          "text": "Ghamahna"
+        },
+        {
+          "box": [
+            465,
+            680,
+            685,
+            716
+          ],
+          "legible": "clear",
+          "text": "Customer:"
+        },
+        {
+          "box": [
+            903,
+            709,
+            1017,
+            745
+          ],
+          "legible": "clear",
+          "text": "Scale:"
+        },
+        {
+          "box": [
+            72,
+            726,
+            134,
+            760
+          ],
+          "legible": "clear",
+          "text": "by:"
+        },
+        {
+          "box": [
+            154,
+            724,
+            250,
+            760
+          ],
+          "legible": "unsure",
+          "text": "Ofer"
+        },
+        {
+          "box": [
+            277,
+            724,
+            386,
+            760
+          ],
+          "legible": "clear",
+          "text": "Alron"
+        },
+        {
+          "box": [
+            85,
+            814,
+            108,
+            846
+          ],
+          "legible": "clear",
+          "text": "3"
+        },
+        {
+          "box": [
+            397,
+            816,
+            419,
+            848
+          ],
+          "legible": "clear",
+          "text": "4"
+        },
+        {
+          "box": [
+            726,
+            814,
+            749,
+            847
+          ],
+          "legible": "clear",
+          "text": "5"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

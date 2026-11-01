@@ -1,0 +1,113 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 293,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            193,
+            54,
+            218,
+            85
+          ],
+          "legible": "unsure",
+          "text": "6"
+        },
+        {
+          "box": [
+            507,
+            49,
+            530,
+            82
+          ],
+          "legible": "clear",
+          "text": "7"
+        },
+        {
+          "box": [
+            802,
+            51,
+            828,
+            85
+          ],
+          "legible": "clear",
+          "text": "8"
+        },
+        {
+          "box": [
+            581,
+            414,
+            638,
+            447
+          ],
+          "legible": "clear",
+          "text": "FP1"
+        },
+        {
+          "box": [
+            583,
+            494,
+            648,
+            526
+          ],
+          "legible": "clear",
+          "text": "1X6A"
+        },
+        {
+          "box": [
+            581,
+            534,
+            678,
+            565
+          ],
+          "legible": "clear",
+          "text": "INC=4A"
+        },
+        {
+          "box": [
+            581,
+            564,
+            668,
+            594
+          ],
+          "legible": "clear",
+          "text": "S201M"
+        },
+        {
+          "box": [
+            730,
+            650,
+            753,
+            681
+          ],
+          "legible": "clear",
+          "text": "9"
+        },
+        {
+          "box": [
+            727,
+            716,
+            791,
+            750
+          ],
+          "legible": "clear",
+          "text": "RNV"
+        },
+        {
+          "box": [
+            733,
+            769,
+            757,
+            802
+          ],
+          "legible": "clear",
+          "text": "5"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

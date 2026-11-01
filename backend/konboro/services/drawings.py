@@ -173,16 +173,30 @@ def progress(session: Session, tenant_id: str, drawing_id: str) -> Progress | No
 
 
 def stage_summary(p: Progress, stage: int) -> str | None:
-    """Stage 1 is the only real one so far (prototype STAGES, line 761: "9 עמודים · 2 תבניות של המפעל · לוח אחד").
-    The templates part shows only when there are any."""
+    """Stages 1 and 2 are the real ones so far (prototype STAGES, lines 761–762)."""
+    if stage == 2:
+        return _extraction_summary(p)
     if stage != 1:
         return None
+    # "9 עמודים · 2 תבניות של המפעל · לוח אחד"; the templates part only when there are any
     parts = [_count_text(len(p.pages), "עמוד אחד", "עמודים")]
     factory = sum(1 for page, _ in p.pages if page.page_kind == "factory_template")
     if factory:
         parts.append(_count_text(factory, "תבנית אחת של המפעל", "תבניות של המפעל"))
     parts.append(_count_text(len(p.panels), "לוח אחד", "לוחות"))
     return " · ".join(parts)
+
+
+def _extraction_summary(p: Progress) -> str:
+    """ "שכבת טקסט חסרה, OCR על 6 עמודים · 58 אריחים": how the text was read, and the tiles that go on to detection
+    (02 §2.6, the ones that are not blank)."""
+    process = [page for page, _ in p.pages if page.route == "process"]
+    by_ocr = [page for page in process if page.text_source in ("ocr", "mixed")]
+    tiles = _count_text(sum(page.tile_count or 0 for page in process), "אריח אחד", "אריחים")
+    if not by_ocr:
+        return f"טקסט מהקובץ · {tiles}"
+    layer = "חסרה" if all(page.text_source == "ocr" for page in process) else "חלקית"
+    return f"שכבת טקסט {layer}, OCR על {_count_text(len(by_ocr), 'עמוד אחד', 'עמודים')} · {tiles}"
 
 
 def revisable(session: Session, tenant_id: str, limit: int = 50) -> list[tuple[Drawing, Quote]]:

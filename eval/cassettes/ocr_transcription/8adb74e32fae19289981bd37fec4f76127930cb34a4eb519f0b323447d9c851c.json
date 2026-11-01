@@ -1,0 +1,233 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 675,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            52,
+            33,
+            92,
+            62
+          ],
+          "legible": "clear",
+          "text": "Ik="
+        },
+        {
+          "box": [
+            97,
+            33,
+            162,
+            62
+          ],
+          "legible": "clear",
+          "text": "20KA"
+        },
+        {
+          "box": [
+            54,
+            74,
+            155,
+            103
+          ],
+          "legible": "clear",
+          "text": "L1,L2,L3"
+        },
+        {
+          "box": [
+            170,
+            87,
+            186,
+            92
+          ],
+          "legible": "clear",
+          "text": "-"
+        },
+        {
+          "box": [
+            204,
+            74,
+            342,
+            103
+          ],
+          "legible": "clear",
+          "text": "800A+N+E"
+        },
+        {
+          "box": [
+            535,
+            185,
+            670,
+            222
+          ],
+          "legible": "unsure",
+          "text": "אלקטרוני"
+        },
+        {
+          "box": [
+            548,
+            230,
+            597,
+            260
+          ],
+          "legible": "clear",
+          "text": "LSI"
+        },
+        {
+          "box": [
+            131,
+            245,
+            221,
+            274
+          ],
+          "legible": "clear",
+          "text": "3x100A"
+        },
+        {
+          "box": [
+            150,
+            279,
+            202,
+            308
+          ],
+          "legible": "clear",
+          "text": "HRC"
+        },
+        {
+          "box": [
+            443,
+            265,
+            514,
+            295
+          ],
+          "legible": "clear",
+          "text": "160A"
+        },
+        {
+          "box": [
+            449,
+            309,
+            512,
+            338
+          ],
+          "legible": "clear",
+          "text": "160A"
+        },
+        {
+          "box": [
+            164,
+            396,
+            194,
+            422
+          ],
+          "legible": "clear",
+          "text": "4P"
+        },
+        {
+          "box": [
+            136,
+            427,
+            215,
+            458
+          ],
+          "legible": "clear",
+          "text": "100KA"
+        },
+        {
+          "box": [
+            151,
+            464,
+            207,
+            494
+          ],
+          "legible": "clear",
+          "text": "B+C"
+        },
+        {
+          "box": [
+            463,
+            516,
+            515,
+            545
+          ],
+          "legible": "clear",
+          "text": "16A"
+        },
+        {
+          "box": [
+            462,
+            556,
+            537,
+            587
+          ],
+          "legible": "clear",
+          "text": "MCB"
+        },
+        {
+          "box": [
+            676,
+            516,
+            731,
+            545
+          ],
+          "legible": "clear",
+          "text": "32A"
+        },
+        {
+          "box": [
+            679,
+            556,
+            752,
+            587
+          ],
+          "legible": "clear",
+          "text": "MCB"
+        },
+        {
+          "box": [
+            397,
+            601,
+            462,
+            634
+          ],
+          "legible": "unsure",
+          "text": "מ.פ."
+        },
+        {
+          "box": [
+            610,
+            601,
+            676,
+            634
+          ],
+          "legible": "unsure",
+          "text": "מ.פ."
+        },
+        {
+          "box": [
+            449,
+            658,
+            618,
+            688
+          ],
+          "legible": "clear",
+          "text": "4x63A/0,03A"
+        },
+        {
+          "box": [
+            664,
+            658,
+            832,
+            688
+          ],
+          "legible": "clear",
+          "text": "4x40A/0,03A"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

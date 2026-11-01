@@ -16,6 +16,7 @@ Report = dict[str, Any]
 
 TITLES = {
     "s1": "Stage 1: intake and page classification (01 §10)",
+    "s2": "Stage 2: extraction, designators found in the text (02 §10, S10)",
     "s4": "Stage 4: association and merge (04 §10)",
     "audit": "Quote audit (11 §10)",
     "pricing": "Pricing backtest against the real quote (07 §10.2)",
@@ -49,6 +50,7 @@ def build(results: list[tuple[GoldenDrawing, Prediction]]) -> Report:
             "quote_total": str(label.quote_total) if label.quote_total is not None else None,
             "predicted_total": str(pred.quote_total) if pred.quote_total is not None else None,
             "confirmed_value_at_risk": str(sum(at_risk, Decimal(0))) if label.audit else None,
+            "extraction": pred.extraction,
             "scores": _dump(scores),
             "panels": _dump(panel_scores(label, pred)),
         }

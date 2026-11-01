@@ -1,0 +1,193 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 526,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            780,
+            122,
+            876,
+            153
+          ],
+          "legible": "clear",
+          "text": "EXHUST"
+        },
+        {
+          "box": [
+            895,
+            122,
+            942,
+            153
+          ],
+          "legible": "clear",
+          "text": "FAN"
+        },
+        {
+          "box": [
+            908,
+            164,
+            1004,
+            194
+          ],
+          "legible": "clear",
+          "text": "3X208V"
+        },
+        {
+          "box": [
+            400,
+            276,
+            521,
+            313
+          ],
+          "legible": "clear",
+          "text": "תאריך"
+        },
+        {
+          "box": [
+            378,
+            284,
+            390,
+            308
+          ],
+          "legible": "clear",
+          "text": ":"
+        },
+        {
+          "box": [
+            105,
+            276,
+            355,
+            314
+          ],
+          "legible": "clear",
+          "text": "05/10/2026"
+        },
+        {
+          "box": [
+            570,
+            284,
+            803,
+            324
+          ],
+          "legible": "clear",
+          "text": "26/952-5"
+        },
+        {
+          "box": [
+            830,
+            288,
+            842,
+            314
+          ],
+          "legible": "clear",
+          "text": ":"
+        },
+        {
+          "box": [
+            850,
+            282,
+            1008,
+            324
+          ],
+          "legible": "clear",
+          "text": "תוכנית"
+        },
+        {
+          "box": [
+            496,
+            341,
+            529,
+            372
+          ],
+          "legible": "clear",
+          "text": "1:"
+        },
+        {
+          "box": [
+            486,
+            400,
+            525,
+            432
+          ],
+          "legible": "clear",
+          "text": "2:"
+        },
+        {
+          "box": [
+            480,
+            459,
+            521,
+            491
+          ],
+          "legible": "clear",
+          "text": "3:"
+        },
+        {
+          "box": [
+            428,
+            512,
+            524,
+            550
+          ],
+          "legible": "clear",
+          "text": "בדק:"
+        },
+        {
+          "box": [
+            21,
+            316,
+            41,
+            346
+          ],
+          "legible": "clear",
+          "text": "F"
+        },
+        {
+          "box": [
+            19,
+            473,
+            43,
+            503
+          ],
+          "legible": "clear",
+          "text": "G"
+        },
+        {
+          "box": [
+            224,
+            594,
+            241,
+            622
+          ],
+          "legible": "clear",
+          "text": "1"
+        },
+        {
+          "box": [
+            507,
+            594,
+            527,
+            624
+          ],
+          "legible": "clear",
+          "text": "2"
+        },
+        {
+          "box": [
+            811,
+            591,
+            832,
+            622
+          ],
+          "legible": "clear",
+          "text": "3"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

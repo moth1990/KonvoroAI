@@ -1,0 +1,203 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 543,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            250,
+            33,
+            269,
+            48
+          ],
+          "legible": "clear",
+          "text": "N3"
+        },
+        {
+          "box": [
+            337,
+            36,
+            353,
+            51
+          ],
+          "legible": "clear",
+          "text": "L3"
+        },
+        {
+          "box": [
+            653,
+            33,
+            672,
+            48
+          ],
+          "legible": "clear",
+          "text": "N4"
+        },
+        {
+          "box": [
+            740,
+            36,
+            756,
+            51
+          ],
+          "legible": "clear",
+          "text": "L4"
+        },
+        {
+          "box": [
+            228,
+            103,
+            306,
+            140
+          ],
+          "legible": "clear",
+          "text": "BOM"
+        },
+        {
+          "box": [
+            334,
+            105,
+            358,
+            138
+          ],
+          "legible": "clear",
+          "text": "3"
+        },
+        {
+          "box": [
+            630,
+            103,
+            708,
+            140
+          ],
+          "legible": "clear",
+          "text": "BOM"
+        },
+        {
+          "box": [
+            739,
+            105,
+            761,
+            138
+          ],
+          "legible": "clear",
+          "text": "4"
+        },
+        {
+          "box": [
+            420,
+            282,
+            592,
+            327
+          ],
+          "legible": "clear",
+          "text": "joyech"
+        },
+        {
+          "box": [
+            623,
+            282,
+            820,
+            327
+          ],
+          "legible": "clear",
+          "text": "ethiopia"
+        },
+        {
+          "box": [
+            845,
+            262,
+            853,
+            285
+          ],
+          "legible": "clear",
+          "text": ":"
+        },
+        {
+          "box": [
+            437,
+            405,
+            643,
+            448
+          ],
+          "legible": "clear",
+          "text": "NURSERY"
+        },
+        {
+          "box": [
+            434,
+            511,
+            522,
+            552
+          ],
+          "legible": "clear",
+          "text": "pro"
+        },
+        {
+          "box": [
+            555,
+            511,
+            622,
+            550
+          ],
+          "legible": "clear",
+          "text": "fit"
+        },
+        {
+          "box": [
+            655,
+            511,
+            772,
+            552
+          ],
+          "legible": "clear",
+          "text": "agro"
+        },
+        {
+          "box": [
+            63,
+            592,
+            86,
+            623
+          ],
+          "legible": "clear",
+          "text": "3"
+        },
+        {
+          "box": [
+            366,
+            594,
+            388,
+            623
+          ],
+          "legible": "clear",
+          "text": "4"
+        },
+        {
+          "box": [
+            686,
+            592,
+            709,
+            623
+          ],
+          "legible": "clear",
+          "text": "5"
+        },
+        {
+          "box": [
+            979,
+            592,
+            1001,
+            623
+          ],
+          "legible": "clear",
+          "text": "6"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

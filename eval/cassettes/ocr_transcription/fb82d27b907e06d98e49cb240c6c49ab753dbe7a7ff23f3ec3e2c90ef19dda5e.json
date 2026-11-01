@@ -1,0 +1,303 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 867,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            463,
+            47,
+            566,
+            83
+          ],
+          "legible": "clear",
+          "text": "125/5A"
+        },
+        {
+          "box": [
+            416,
+            94,
+            617,
+            128
+          ],
+          "legible": "clear",
+          "text": "MS1/MS2/MS3"
+        },
+        {
+          "box": [
+            795,
+            36,
+            812,
+            52
+          ],
+          "legible": "unsure",
+          "text": "I2"
+        },
+        {
+          "box": [
+            795,
+            85,
+            812,
+            101
+          ],
+          "legible": "unsure",
+          "text": "I3"
+        },
+        {
+          "box": [
+            452,
+            478,
+            577,
+            507
+          ],
+          "legible": "clear",
+          "text": "Project"
+        },
+        {
+          "box": [
+            595,
+            478,
+            677,
+            507
+          ],
+          "legible": "clear",
+          "text": "Name:"
+        },
+        {
+          "box": [
+            46,
+            488,
+            203,
+            530
+          ],
+          "legible": "clear",
+          "text": "26/993"
+        },
+        {
+          "box": [
+            19,
+            581,
+            76,
+            615
+          ],
+          "legible": "clear",
+          "text": "by:"
+        },
+        {
+          "box": [
+            100,
+            578,
+            271,
+            615
+          ],
+          "legible": "clear",
+          "text": "Mahmoud"
+        },
+        {
+          "box": [
+            297,
+            578,
+            402,
+            613
+          ],
+          "legible": "clear",
+          "text": "Zoabi"
+        },
+        {
+          "box": [
+            449,
+            578,
+            567,
+            616
+          ],
+          "legible": "clear",
+          "text": "Panel"
+        },
+        {
+          "box": [
+            594,
+            578,
+            710,
+            616
+          ],
+          "legible": "clear",
+          "text": "Name:"
+        },
+        {
+          "box": [
+            466,
+            634,
+            539,
+            664
+          ],
+          "legible": "clear",
+          "text": "MAIN"
+        },
+        {
+          "box": [
+            558,
+            634,
+            738,
+            664
+          ],
+          "legible": "clear",
+          "text": "ELECTRICAL"
+        },
+        {
+          "box": [
+            757,
+            634,
+            861,
+            664
+          ],
+          "legible": "clear",
+          "text": "BOARD"
+        },
+        {
+          "box": [
+            10,
+            656,
+            67,
+            690
+          ],
+          "legible": "clear",
+          "text": "by:"
+        },
+        {
+          "box": [
+            73,
+            655,
+            168,
+            690
+          ],
+          "legible": "clear",
+          "text": "Baha"
+        },
+        {
+          "box": [
+            194,
+            655,
+            388,
+            692
+          ],
+          "legible": "clear",
+          "text": "Ghamahna"
+        },
+        {
+          "box": [
+            465,
+            681,
+            686,
+            718
+          ],
+          "legible": "clear",
+          "text": "Customer:"
+        },
+        {
+          "box": [
+            72,
+            727,
+            129,
+            761
+          ],
+          "legible": "clear",
+          "text": "by:"
+        },
+        {
+          "box": [
+            154,
+            725,
+            251,
+            761
+          ],
+          "legible": "unsure",
+          "text": "Ofer"
+        },
+        {
+          "box": [
+            277,
+            725,
+            386,
+            760
+          ],
+          "legible": "clear",
+          "text": "Alron"
+        },
+        {
+          "box": [
+            897,
+            577,
+            981,
+            608
+          ],
+          "legible": "clear",
+          "text": "Page"
+        },
+        {
+          "box": [
+            903,
+            640,
+            966,
+            677
+          ],
+          "legible": "clear",
+          "text": "OF:"
+        },
+        {
+          "box": [
+            977,
+            640,
+            1002,
+            675
+          ],
+          "legible": "clear",
+          "text": "5"
+        },
+        {
+          "box": [
+            903,
+            709,
+            1017,
+            745
+          ],
+          "legible": "clear",
+          "text": "Scale:"
+        },
+        {
+          "box": [
+            85,
+            814,
+            109,
+            847
+          ],
+          "legible": "clear",
+          "text": "3"
+        },
+        {
+          "box": [
+            396,
+            815,
+            419,
+            848
+          ],
+          "legible": "clear",
+          "text": "4"
+        },
+        {
+          "box": [
+            725,
+            814,
+            750,
+            847
+          ],
+          "legible": "clear",
+          "text": "5"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

@@ -1,0 +1,83 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 211,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            565,
+            193,
+            597,
+            221
+          ],
+          "legible": "clear",
+          "text": "29"
+        },
+        {
+          "box": [
+            108,
+            224,
+            198,
+            257
+          ],
+          "legible": "clear",
+          "text": "129m"
+        },
+        {
+          "box": [
+            91,
+            434,
+            164,
+            468
+          ],
+          "legible": "clear",
+          "text": "250A"
+        },
+        {
+          "box": [
+            183,
+            436,
+            279,
+            467
+          ],
+          "legible": "clear",
+          "text": "MCCB"
+        },
+        {
+          "box": [
+            107,
+            488,
+            162,
+            521
+          ],
+          "legible": "clear",
+          "text": "LSI"
+        },
+        {
+          "box": [
+            55,
+            718,
+            123,
+            750
+          ],
+          "legible": "clear",
+          "text": "135E"
+        },
+        {
+          "box": [
+            67,
+            903,
+            195,
+            936
+          ],
+          "legible": "clear",
+          "text": "1-2.4A"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

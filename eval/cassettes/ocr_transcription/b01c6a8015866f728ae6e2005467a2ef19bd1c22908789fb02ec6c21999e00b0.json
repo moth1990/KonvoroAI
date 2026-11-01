@@ -1,0 +1,283 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 829,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            37,
+            183,
+            74,
+            210
+          ],
+          "legible": "clear",
+          "text": "21"
+        },
+        {
+          "box": [
+            39,
+            263,
+            77,
+            290
+          ],
+          "legible": "clear",
+          "text": "22"
+        },
+        {
+          "box": [
+            54,
+            429,
+            114,
+            456
+          ],
+          "legible": "clear",
+          "text": "HT1"
+        },
+        {
+          "box": [
+            50,
+            521,
+            129,
+            549
+          ],
+          "legible": "clear",
+          "text": "FULT"
+        },
+        {
+          "box": [
+            348,
+            183,
+            384,
+            210
+          ],
+          "legible": "clear",
+          "text": "21"
+        },
+        {
+          "box": [
+            350,
+            263,
+            387,
+            290
+          ],
+          "legible": "clear",
+          "text": "22"
+        },
+        {
+          "box": [
+            361,
+            427,
+            422,
+            454
+          ],
+          "legible": "clear",
+          "text": "HT2"
+        },
+        {
+          "box": [
+            361,
+            521,
+            439,
+            549
+          ],
+          "legible": "clear",
+          "text": "FULT"
+        },
+        {
+          "box": [
+            685,
+            183,
+            721,
+            210
+          ],
+          "legible": "clear",
+          "text": "21"
+        },
+        {
+          "box": [
+            686,
+            263,
+            723,
+            290
+          ],
+          "legible": "clear",
+          "text": "22"
+        },
+        {
+          "box": [
+            698,
+            427,
+            759,
+            454
+          ],
+          "legible": "clear",
+          "text": "HT3"
+        },
+        {
+          "box": [
+            698,
+            521,
+            776,
+            549
+          ],
+          "legible": "clear",
+          "text": "FULT"
+        },
+        {
+          "box": [
+            983,
+            183,
+            1018,
+            210
+          ],
+          "legible": "clear",
+          "text": "21"
+        },
+        {
+          "box": [
+            654,
+            661,
+            714,
+            687
+          ],
+          "legible": "clear",
+          "text": "C.FAN"
+        },
+        {
+          "box": [
+            660,
+            699,
+            703,
+            724
+          ],
+          "legible": "clear",
+          "text": "HRS"
+        },
+        {
+          "box": [
+            957,
+            661,
+            1017,
+            687
+          ],
+          "legible": "clear",
+          "text": "C.FAN"
+        },
+        {
+          "box": [
+            48,
+            677,
+            67,
+            692
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "A"
+        },
+        {
+          "box": [
+            46,
+            694,
+            67,
+            777
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "GROUP"
+        },
+        {
+          "box": [
+            46,
+            785,
+            67,
+            832
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "FAN"
+        },
+        {
+          "box": [
+            46,
+            843,
+            67,
+            925
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "EXHUST"
+        },
+        {
+          "box": [
+            79,
+            738,
+            102,
+            818
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3X208V"
+        },
+        {
+          "box": [
+            337,
+            677,
+            358,
+            692
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "B"
+        },
+        {
+          "box": [
+            335,
+            694,
+            358,
+            777
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "GROUP"
+        },
+        {
+          "box": [
+            335,
+            785,
+            358,
+            832
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "FAN"
+        },
+        {
+          "box": [
+            335,
+            843,
+            358,
+            925
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "EXHUST"
+        },
+        {
+          "box": [
+            370,
+            738,
+            394,
+            818
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3X208V"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

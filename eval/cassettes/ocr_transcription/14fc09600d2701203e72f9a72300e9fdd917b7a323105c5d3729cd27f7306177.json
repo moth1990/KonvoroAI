@@ -1,0 +1,138 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 385,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            21,
+            77,
+            45,
+            109
+          ],
+          "legible": "clear",
+          "text": "C"
+        },
+        {
+          "box": [
+            22,
+            333,
+            47,
+            366
+          ],
+          "legible": "clear",
+          "text": "D"
+        },
+        {
+          "box": [
+            25,
+            673,
+            48,
+            706
+          ],
+          "legible": "clear",
+          "text": "E"
+        },
+        {
+          "box": [
+            806,
+            182,
+            841,
+            210
+          ],
+          "legible": "clear",
+          "text": "21"
+        },
+        {
+          "box": [
+            807,
+            262,
+            844,
+            290
+          ],
+          "legible": "clear",
+          "text": "22"
+        },
+        {
+          "box": [
+            822,
+            428,
+            881,
+            457
+          ],
+          "legible": "clear",
+          "text": "HT1"
+        },
+        {
+          "box": [
+            818,
+            520,
+            897,
+            549
+          ],
+          "legible": "clear",
+          "text": "FULT"
+        },
+        {
+          "box": [
+            810,
+            677,
+            834,
+            694
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "A"
+        },
+        {
+          "box": [
+            810,
+            703,
+            834,
+            779
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "GROUP"
+        },
+        {
+          "box": [
+            810,
+            788,
+            834,
+            831
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "FAN"
+        },
+        {
+          "box": [
+            808,
+            845,
+            834,
+            925
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "EXHUST"
+        },
+        {
+          "box": [
+            844,
+            738,
+            872,
+            818
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3X208V"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

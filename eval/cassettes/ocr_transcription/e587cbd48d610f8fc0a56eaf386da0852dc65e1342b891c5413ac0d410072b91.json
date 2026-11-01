@@ -1,0 +1,144 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 385,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            70,
+            52,
+            92,
+            86
+          ],
+          "legible": "clear",
+          "text": "8"
+        },
+        {
+          "box": [
+            390,
+            52,
+            412,
+            86
+          ],
+          "legible": "clear",
+          "text": "9"
+        },
+        {
+          "box": [
+            713,
+            54,
+            758,
+            86
+          ],
+          "legible": "clear",
+          "text": "10"
+        },
+        {
+          "box": [
+            634,
+            220,
+            707,
+            277
+          ],
+          "legible": "clear",
+          "text": "WO"
+        },
+        {
+          "box": [
+            885,
+            352,
+            910,
+            384
+          ],
+          "legible": "clear",
+          "text": "A"
+        },
+        {
+          "box": [
+            214,
+            441,
+            272,
+            470
+          ],
+          "legible": "clear",
+          "text": "F12"
+        },
+        {
+          "box": [
+            233,
+            510,
+            303,
+            536
+          ],
+          "legible": "clear",
+          "text": "3X16A"
+        },
+        {
+          "box": [
+            224,
+            544,
+            341,
+            567
+          ],
+          "legible": "clear",
+          "text": "INC=12.8A"
+        },
+        {
+          "box": [
+            224,
+            568,
+            282,
+            594
+          ],
+          "legible": "clear",
+          "text": "S203M"
+        },
+        {
+          "box": [
+            226,
+            604,
+            269,
+            626
+          ],
+          "legible": "clear",
+          "text": "ABB"
+        },
+        {
+          "box": [
+            886,
+            618,
+            909,
+            650
+          ],
+          "legible": "clear",
+          "text": "B"
+        },
+        {
+          "box": [
+            886,
+            870,
+            909,
+            901
+          ],
+          "legible": "clear",
+          "text": "C"
+        },
+        {
+          "box": [
+            210,
+            945,
+            238,
+            998
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "SAVE"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

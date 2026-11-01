@@ -1,0 +1,443 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 1311,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            820,
+            32,
+            862,
+            64
+          ],
+          "legible": "clear",
+          "text": "Ik="
+        },
+        {
+          "box": [
+            866,
+            32,
+            930,
+            62
+          ],
+          "legible": "clear",
+          "text": "20KA"
+        },
+        {
+          "box": [
+            822,
+            73,
+            951,
+            103
+          ],
+          "legible": "clear",
+          "text": "L1,L2,L3"
+        },
+        {
+          "box": [
+            938,
+            86,
+            953,
+            92
+          ],
+          "legible": "clear",
+          "text": "-"
+        },
+        {
+          "box": [
+            899,
+            243,
+            989,
+            274
+          ],
+          "legible": "clear",
+          "text": "3x100A"
+        },
+        {
+          "box": [
+            918,
+            280,
+            970,
+            308
+          ],
+          "legible": "clear",
+          "text": "HRC"
+        },
+        {
+          "box": [
+            931,
+            396,
+            962,
+            422
+          ],
+          "legible": "clear",
+          "text": "4P"
+        },
+        {
+          "box": [
+            904,
+            427,
+            982,
+            459
+          ],
+          "legible": "clear",
+          "text": "100KA"
+        },
+        {
+          "box": [
+            920,
+            463,
+            975,
+            494
+          ],
+          "legible": "clear",
+          "text": "B+C"
+        },
+        {
+          "box": [
+            42,
+            189,
+            108,
+            210
+          ],
+          "legible": "clear",
+          "text": "12.02.26"
+        },
+        {
+          "box": [
+            44,
+            221,
+            110,
+            243
+          ],
+          "legible": "clear",
+          "text": "09.02.26"
+        },
+        {
+          "box": [
+            45,
+            252,
+            109,
+            274
+          ],
+          "legible": "clear",
+          "text": "01.02.26"
+        },
+        {
+          "box": [
+            47,
+            283,
+            107,
+            305
+          ],
+          "legible": "clear",
+          "text": "11.01.26"
+        },
+        {
+          "box": [
+            44,
+            313,
+            110,
+            335
+          ],
+          "legible": "clear",
+          "text": "24.08.25"
+        },
+        {
+          "box": [
+            44,
+            343,
+            110,
+            366
+          ],
+          "legible": "clear",
+          "text": "18.08.25"
+        },
+        {
+          "box": [
+            27,
+            423,
+            76,
+            448
+          ],
+          "legible": "clear",
+          "text": "Date"
+        },
+        {
+          "box": [
+            133,
+            421,
+            333,
+            447
+          ],
+          "legible": "clear",
+          "text": "Revisions"
+        },
+        {
+          "box": [
+            651,
+            423,
+            684,
+            447
+          ],
+          "legible": "clear",
+          "text": "No."
+        },
+        {
+          "box": [
+            66,
+            574,
+            229,
+            609
+          ],
+          "legible": "clear",
+          "text": "RAMOR"
+        },
+        {
+          "box": [
+            259,
+            574,
+            343,
+            609
+          ],
+          "legible": "clear",
+          "text": "LTD."
+        },
+        {
+          "box": [
+            32,
+            697,
+            240,
+            720
+          ],
+          "legible": "clear",
+          "text": "TEL-AVIV"
+        },
+        {
+          "box": [
+            32,
+            727,
+            60,
+            748
+          ],
+          "legible": "clear",
+          "text": "14"
+        },
+        {
+          "box": [
+            74,
+            727,
+            130,
+            748
+          ],
+          "legible": "clear",
+          "text": "Prof."
+        },
+        {
+          "box": [
+            146,
+            727,
+            222,
+            748
+          ],
+          "legible": "clear",
+          "text": "Shore"
+        },
+        {
+          "box": [
+            231,
+            727,
+            260,
+            748
+          ],
+          "legible": "clear",
+          "text": "St."
+        },
+        {
+          "box": [
+            32,
+            753,
+            66,
+            775
+          ],
+          "legible": "clear",
+          "text": "Tel."
+        },
+        {
+          "box": [
+            85,
+            753,
+            123,
+            775
+          ],
+          "legible": "clear",
+          "text": "No."
+        },
+        {
+          "box": [
+            281,
+            753,
+            429,
+            775
+          ],
+          "legible": "clear",
+          "text": "03-6052170"
+        },
+        {
+          "box": [
+            32,
+            779,
+            78,
+            801
+          ],
+          "legible": "clear",
+          "text": "Fax."
+        },
+        {
+          "box": [
+            92,
+            779,
+            129,
+            801
+          ],
+          "legible": "clear",
+          "text": "No."
+        },
+        {
+          "box": [
+            280,
+            779,
+            430,
+            801
+          ],
+          "legible": "clear",
+          "text": "03-5442737"
+        },
+        {
+          "box": [
+            32,
+            805,
+            106,
+            827
+          ],
+          "legible": "clear",
+          "text": "E-MAIL"
+        },
+        {
+          "box": [
+            110,
+            805,
+            191,
+            827
+          ],
+          "legible": "clear",
+          "text": "ADDRESS"
+        },
+        {
+          "box": [
+            246,
+            805,
+            465,
+            827
+          ],
+          "legible": "clear",
+          "text": "carola@ramor.co.il"
+        },
+        {
+          "box": [
+            27,
+            480,
+            111,
+            502
+          ],
+          "legible": "clear",
+          "text": "LIGHTING"
+        },
+        {
+          "box": [
+            132,
+            481,
+            148,
+            500
+          ],
+          "legible": "clear",
+          "text": "&"
+        },
+        {
+          "box": [
+            168,
+            480,
+            279,
+            502
+          ],
+          "legible": "clear",
+          "text": "ELECTRICAL"
+        },
+        {
+          "box": [
+            27,
+            511,
+            131,
+            533
+          ],
+          "legible": "clear",
+          "text": "ENGINEERING"
+        },
+        {
+          "box": [
+            150,
+            511,
+            265,
+            533
+          ],
+          "legible": "clear",
+          "text": "CONSULTANTS"
+        },
+        {
+          "box": [
+            27,
+            855,
+            62,
+            874
+          ],
+          "legible": "clear",
+          "text": "JOB"
+        },
+        {
+          "box": [
+            27,
+            883,
+            80,
+            905
+          ],
+          "legible": "clear",
+          "text": "NAME"
+        },
+        {
+          "box": [
+            27,
+            937,
+            112,
+            959
+          ],
+          "legible": "clear",
+          "text": "DRAWING"
+        },
+        {
+          "box": [
+            27,
+            971,
+            80,
+            993
+          ],
+          "legible": "clear",
+          "text": "NAME"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

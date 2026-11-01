@@ -1,0 +1,53 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 130,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            702,
+            881,
+            751,
+            943
+          ],
+          "legible": "clear",
+          "text": "Ik="
+        },
+        {
+          "box": [
+            770,
+            907,
+            840,
+            944
+          ],
+          "legible": "clear",
+          "text": "10kA"
+        },
+        {
+          "box": [
+            705,
+            968,
+            757,
+            1024
+          ],
+          "legible": "unsure",
+          "text": "In="
+        },
+        {
+          "box": [
+            775,
+            997,
+            834,
+            1024
+          ],
+          "legible": "unsure",
+          "text": "6.3A"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

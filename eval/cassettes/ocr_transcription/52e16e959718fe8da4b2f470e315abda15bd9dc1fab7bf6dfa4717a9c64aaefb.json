@@ -1,0 +1,142 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 420,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            183,
+            235,
+            219,
+            260
+          ],
+          "legible": "clear",
+          "text": "19"
+        },
+        {
+          "box": [
+            457,
+            235,
+            495,
+            260
+          ],
+          "legible": "clear",
+          "text": "20"
+        },
+        {
+          "box": [
+            661,
+            235,
+            698,
+            260
+          ],
+          "legible": "clear",
+          "text": "21"
+        },
+        {
+          "box": [
+            135,
+            719,
+            172,
+            903
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "SERVICE"
+        },
+        {
+          "box": [
+            181,
+            748,
+            217,
+            903
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "SOCKET"
+        },
+        {
+          "box": [
+            183,
+            689,
+            215,
+            714
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "2"
+        },
+        {
+          "box": [
+            411,
+            712,
+            447,
+            897
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "SERVICE"
+        },
+        {
+          "box": [
+            457,
+            741,
+            492,
+            897
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "SOCKET"
+        },
+        {
+          "box": [
+            459,
+            682,
+            491,
+            708
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3"
+        },
+        {
+          "box": [
+            622,
+            708,
+            658,
+            893
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "SERVICE"
+        },
+        {
+          "box": [
+            667,
+            737,
+            703,
+            893
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "SOCKET"
+        },
+        {
+          "box": [
+            670,
+            682,
+            702,
+            704
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "4"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

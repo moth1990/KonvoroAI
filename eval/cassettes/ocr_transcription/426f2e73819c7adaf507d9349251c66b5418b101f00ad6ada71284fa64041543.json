@@ -1,0 +1,93 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 237,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            596,
+            511,
+            663,
+            552
+          ],
+          "legible": "clear",
+          "text": "לחצן"
+        },
+        {
+          "box": [
+            655,
+            572,
+            693,
+            609
+          ],
+          "legible": "clear",
+          "text": "על"
+        },
+        {
+          "box": [
+            563,
+            572,
+            634,
+            609
+          ],
+          "legible": "clear",
+          "text": "הלוח"
+        },
+        {
+          "box": [
+            894,
+            796,
+            933,
+            828
+          ],
+          "legible": "clear",
+          "text": "TC"
+        },
+        {
+          "box": [
+            903,
+            871,
+            925,
+            900
+          ],
+          "legible": "clear",
+          "text": "N"
+        },
+        {
+          "box": [
+            544,
+            872,
+            608,
+            911
+          ],
+          "legible": "clear",
+          "text": "שעון"
+        },
+        {
+          "box": [
+            2,
+            908,
+            72,
+            943
+          ],
+          "legible": "clear",
+          "text": "10kA"
+        },
+        {
+          "box": [
+            740,
+            913,
+            778,
+            944
+          ],
+          "legible": "clear",
+          "text": "6A"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

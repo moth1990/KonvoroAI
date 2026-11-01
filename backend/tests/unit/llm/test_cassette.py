@@ -79,6 +79,7 @@ def test_record_needs_a_provider(tmp_path: Path) -> None:
         {"images": [ImageInput(b"thumb", "image/jpeg")]},
         {"examples": [Example(image=None, text="a legend", expected_json="{}")]},
         {"stage": "context_extraction"},
+        {"effort": "low"},
     ],
 )
 def test_the_key_changes_with_the_input(change: dict[str, object]) -> None:
@@ -112,3 +113,37 @@ def test_a_stable_image_key_replaces_the_pixels() -> None:
     keyed = cassette_key(request(images=[ImageInput(b"mac pixels", key="pg-sha:1024")]), "m", None)
     assert cassette_key(request(images=[ImageInput(b"linux pixels", key="pg-sha:1024")]), "m", None) == keyed
     assert cassette_key(request(images=[ImageInput(b"mac pixels", key="pg-sha:1568")]), "m", None) != keyed
+
+
+def test_fill_replays_what_is_recorded_and_records_only_the_rest(tmp_path: Path) -> None:
+    calls: list[str] = []
+
+    def answer(req: LLMRequest[Kind]) -> dict[str, object]:
+        calls.append(req.user_text)
+        return ANSWER
+
+    first = request()
+    CassetteProvider(tmp_path, "record", wrapped=FakeProvider(answer)).complete_structured(first, "m")
+    fill = CassetteProvider(tmp_path, "fill", wrapped=FakeProvider(answer))
+    fill.complete_structured(first, "m")
+    fill.complete_structured(request(user_text="Page 7 of 9"), "m")
+    assert calls == [first.user_text, "Page 7 of 9"]  # the recorded call was not made again
+    assert CassetteProvider(tmp_path, "replay").complete_structured(request(user_text="Page 7 of 9"), "m")
+
+
+def test_the_spending_cap_stops_a_live_run_after_the_line() -> None:
+    from konboro.services.llm import SpendingCap
+    from konboro_llm import LLMError
+    from konboro_llm.base import RawAnswer
+
+    class Billed:
+        name = "anthropic"
+
+        def complete_structured(self, req: object, model: str, retry_hint: str | None = None) -> RawAnswer:
+            return RawAnswer(payload=ANSWER, model=model, input_tokens=1_000, output_tokens=10_000)
+
+    capped = SpendingCap(Billed(), max_usd=0.05)  # type: ignore[arg-type]
+    capped.complete_structured(request(), "claude-sonnet-5-5")  # $0.002 + $0.10: this call crosses the line
+    assert capped.spent_usd == pytest.approx(0.102)
+    with pytest.raises(LLMError, match="spending cap"):
+        capped.complete_structured(request(), "claude-sonnet-5-5")

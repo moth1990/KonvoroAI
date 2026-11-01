@@ -1,0 +1,223 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 602,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            27,
+            91,
+            48,
+            121
+          ],
+          "legible": "clear",
+          "text": "E"
+        },
+        {
+          "box": [
+            20,
+            522,
+            38,
+            555
+          ],
+          "legible": "clear",
+          "text": "F"
+        },
+        {
+          "box": [
+            18,
+            716,
+            43,
+            748
+          ],
+          "legible": "clear",
+          "text": "G"
+        },
+        {
+          "box": [
+            106,
+            481,
+            202,
+            513
+          ],
+          "legible": "clear",
+          "text": "Date:"
+        },
+        {
+          "box": [
+            237,
+            479,
+            493,
+            519
+          ],
+          "legible": "clear",
+          "text": "02/10/2026"
+        },
+        {
+          "box": [
+            521,
+            548,
+            555,
+            581
+          ],
+          "legible": "clear",
+          "text": ":1"
+        },
+        {
+          "box": [
+            509,
+            611,
+            552,
+            645
+          ],
+          "legible": "clear",
+          "text": ":2"
+        },
+        {
+          "box": [
+            503,
+            673,
+            548,
+            707
+          ],
+          "legible": "clear",
+          "text": ":3"
+        },
+        {
+          "box": [
+            581,
+            495,
+            717,
+            530
+          ],
+          "legible": "clear",
+          "text": "Drawing"
+        },
+        {
+          "box": [
+            740,
+            495,
+            798,
+            528
+          ],
+          "legible": "clear",
+          "text": "No.:"
+        },
+        {
+          "box": [
+            815,
+            489,
+            971,
+            528
+          ],
+          "legible": "clear",
+          "text": "26/993"
+        },
+        {
+          "box": [
+            584,
+            578,
+            762,
+            614
+          ],
+          "legible": "clear",
+          "text": "Designed"
+        },
+        {
+          "box": [
+            787,
+            580,
+            846,
+            614
+          ],
+          "legible": "clear",
+          "text": "by:"
+        },
+        {
+          "box": [
+            612,
+            655,
+            732,
+            690
+          ],
+          "legible": "clear",
+          "text": "Drawn"
+        },
+        {
+          "box": [
+            758,
+            658,
+            816,
+            690
+          ],
+          "legible": "clear",
+          "text": "by:"
+        },
+        {
+          "box": [
+            841,
+            655,
+            937,
+            691
+          ],
+          "legible": "clear",
+          "text": "Baha"
+        },
+        {
+          "box": [
+            620,
+            724,
+            815,
+            760
+          ],
+          "legible": "clear",
+          "text": "Approved"
+        },
+        {
+          "box": [
+            841,
+            727,
+            899,
+            760
+          ],
+          "legible": "clear",
+          "text": "by:"
+        },
+        {
+          "box": [
+            235,
+            815,
+            252,
+            847
+          ],
+          "legible": "clear",
+          "text": "1"
+        },
+        {
+          "box": [
+            532,
+            817,
+            556,
+            850
+          ],
+          "legible": "clear",
+          "text": "2"
+        },
+        {
+          "box": [
+            852,
+            813,
+            877,
+            847
+          ],
+          "legible": "clear",
+          "text": "3"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

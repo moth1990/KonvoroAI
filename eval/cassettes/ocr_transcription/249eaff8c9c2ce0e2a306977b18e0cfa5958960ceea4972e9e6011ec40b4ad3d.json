@@ -1,0 +1,101 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 313,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            25,
+            208,
+            65,
+            435
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3x1.5²–N2XY"
+        },
+        {
+          "box": [
+            80,
+            222,
+            116,
+            333
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "תאורת"
+        },
+        {
+          "box": [
+            80,
+            345,
+            116,
+            431
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "חרום"
+        },
+        {
+          "box": [
+            209,
+            208,
+            249,
+            435
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3x1.5²–N2XY"
+        },
+        {
+          "box": [
+            265,
+            268,
+            300,
+            380
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "תאורה"
+        },
+        {
+          "box": [
+            12,
+            598,
+            124,
+            637
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "92–95"
+        },
+        {
+          "box": [
+            190,
+            598,
+            320,
+            637
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "99–103"
+        },
+        {
+          "box": [
+            861,
+            604,
+            874,
+            636
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "1"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

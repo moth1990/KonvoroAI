@@ -1,0 +1,233 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 650,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            533,
+            6,
+            619,
+            40
+          ],
+          "legible": "clear",
+          "text": "TC-G1"
+        },
+        {
+          "box": [
+            674,
+            6,
+            760,
+            40
+          ],
+          "legible": "clear",
+          "text": "TC-G2"
+        },
+        {
+          "box": [
+            734,
+            57,
+            767,
+            80
+          ],
+          "legible": "clear",
+          "text": "\"N\""
+        },
+        {
+          "box": [
+            137,
+            94,
+            150,
+            114
+          ],
+          "legible": "clear",
+          "text": "C"
+        },
+        {
+          "box": [
+            230,
+            94,
+            253,
+            114
+          ],
+          "legible": "clear",
+          "text": "Z1"
+        },
+        {
+          "box": [
+            143,
+            131,
+            247,
+            148
+          ],
+          "legible": "clear",
+          "text": "Single-Alarm"
+        },
+        {
+          "box": [
+            254,
+            131,
+            343,
+            148
+          ],
+          "legible": "clear",
+          "text": "Controller"
+        },
+        {
+          "box": [
+            193,
+            151,
+            239,
+            168
+          ],
+          "legible": "clear",
+          "text": "from"
+        },
+        {
+          "box": [
+            244,
+            151,
+            273,
+            168
+          ],
+          "legible": "clear",
+          "text": "the"
+        },
+        {
+          "box": [
+            279,
+            151,
+            315,
+            168
+          ],
+          "legible": "clear",
+          "text": "Fire"
+        },
+        {
+          "box": [
+            169,
+            171,
+            219,
+            188
+          ],
+          "legible": "clear",
+          "text": "Alarm"
+        },
+        {
+          "box": [
+            224,
+            171,
+            290,
+            188
+          ],
+          "legible": "clear",
+          "text": "Control"
+        },
+        {
+          "box": [
+            295,
+            171,
+            343,
+            188
+          ],
+          "legible": "clear",
+          "text": "Panel"
+        },
+        {
+          "box": [
+            148,
+            186,
+            222,
+            214
+          ],
+          "legible": "clear",
+          "text": "GIC-1"
+        },
+        {
+          "box": [
+            267,
+            232,
+            288,
+            244
+          ],
+          "legible": "clear",
+          "text": "N.O"
+        },
+        {
+          "box": [
+            119,
+            237,
+            130,
+            257
+          ],
+          "legible": "clear",
+          "text": "L"
+        },
+        {
+          "box": [
+            218,
+            243,
+            242,
+            265
+          ],
+          "legible": "clear",
+          "text": "15"
+        },
+        {
+          "box": [
+            307,
+            243,
+            331,
+            265
+          ],
+          "legible": "clear",
+          "text": "18"
+        },
+        {
+          "box": [
+            390,
+            241,
+            404,
+            262
+          ],
+          "legible": "clear",
+          "text": "N"
+        },
+        {
+          "box": [
+            403,
+            335,
+            443,
+            356
+          ],
+          "legible": "clear",
+          "text": "\"N\""
+        },
+        {
+          "box": [
+            146,
+            592,
+            230,
+            629
+          ],
+          "legible": "clear",
+          "text": "QRF"
+        },
+        {
+          "box": [
+            118,
+            636,
+            250,
+            679
+          ],
+          "legible": "clear",
+          "text": "4-6.3A"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

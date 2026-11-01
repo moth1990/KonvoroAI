@@ -1,0 +1,63 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 169,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            214,
+            915,
+            285,
+            957
+          ],
+          "legible": "clear",
+          "text": "לחצן"
+        },
+        {
+          "box": [
+            277,
+            980,
+            315,
+            1015
+          ],
+          "legible": "clear",
+          "text": "על"
+        },
+        {
+          "box": [
+            183,
+            980,
+            274,
+            1016
+          ],
+          "legible": "clear",
+          "text": "הלוח"
+        },
+        {
+          "box": [
+            704,
+            909,
+            1022,
+            970
+          ],
+          "legible": "unsure",
+          "text": "(4x240²-NA2XY)+"
+        },
+        {
+          "box": [
+            876,
+            988,
+            967,
+            1024
+          ],
+          "legible": "unsure",
+          "text": "129m"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

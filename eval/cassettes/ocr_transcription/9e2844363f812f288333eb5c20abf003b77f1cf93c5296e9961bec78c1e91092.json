@@ -1,0 +1,155 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 440,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            424,
+            8,
+            457,
+            41
+          ],
+          "legible": "clear",
+          "text": "C1"
+        },
+        {
+          "box": [
+            688,
+            8,
+            724,
+            41
+          ],
+          "legible": "clear",
+          "text": "C2"
+        },
+        {
+          "box": [
+            421,
+            70,
+            458,
+            95
+          ],
+          "legible": "clear",
+          "text": "\"0\""
+        },
+        {
+          "box": [
+            687,
+            70,
+            724,
+            95
+          ],
+          "legible": "clear",
+          "text": "\"0\""
+        },
+        {
+          "box": [
+            987,
+            52,
+            1014,
+            82
+          ],
+          "legible": "clear",
+          "text": "T1"
+        },
+        {
+          "box": [
+            896,
+            125,
+            950,
+            352
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "5x2,5²–N2XY"
+        },
+        {
+          "box": [
+            968,
+            184,
+            1001,
+            291
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "תאורה"
+        },
+        {
+          "box": [
+            73,
+            367,
+            126,
+            401
+          ],
+          "legible": "clear",
+          "text": "CEE"
+        },
+        {
+          "box": [
+            68,
+            406,
+            142,
+            439
+          ],
+          "legible": "clear",
+          "text": "1x16A"
+        },
+        {
+          "box": [
+            176,
+            367,
+            229,
+            401
+          ],
+          "legible": "clear",
+          "text": "ת.י."
+        },
+        {
+          "box": [
+            933,
+            514,
+            970,
+            552
+          ],
+          "legible": "clear",
+          "text": "31"
+        },
+        {
+          "box": [
+            175,
+            517,
+            229,
+            553
+          ],
+          "legible": "clear",
+          "text": "בתי"
+        },
+        {
+          "box": [
+            97,
+            517,
+            158,
+            553
+          ],
+          "legible": "clear",
+          "text": "תקע"
+        },
+        {
+          "box": [
+            44,
+            517,
+            79,
+            553
+          ],
+          "legible": "clear",
+          "text": "על"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

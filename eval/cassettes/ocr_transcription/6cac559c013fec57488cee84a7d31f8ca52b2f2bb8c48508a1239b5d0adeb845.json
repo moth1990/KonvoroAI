@@ -1,0 +1,167 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 479,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            689,
+            3,
+            754,
+            45
+          ],
+          "legible": "clear",
+          "text": "שעון"
+        },
+        {
+          "box": [
+            773,
+            59,
+            792,
+            91
+          ],
+          "legible": "clear",
+          "text": "2"
+        },
+        {
+          "box": [
+            652,
+            57,
+            757,
+            92
+          ],
+          "legible": "clear",
+          "text": "תכניות"
+        },
+        {
+          "box": [
+            284,
+            176,
+            315,
+            205
+          ],
+          "legible": "clear",
+          "text": "C1"
+        },
+        {
+          "box": [
+            547,
+            176,
+            583,
+            205
+          ],
+          "legible": "clear",
+          "text": "C2"
+        },
+        {
+          "box": [
+            280,
+            237,
+            317,
+            261
+          ],
+          "legible": "clear",
+          "text": "”0”"
+        },
+        {
+          "box": [
+            547,
+            237,
+            584,
+            261
+          ],
+          "legible": "clear",
+          "text": "”0”"
+        },
+        {
+          "box": [
+            846,
+            217,
+            872,
+            248
+          ],
+          "legible": "clear",
+          "text": "T1"
+        },
+        {
+          "box": [
+            964,
+            217,
+            996,
+            248
+          ],
+          "legible": "clear",
+          "text": "T2"
+        },
+        {
+          "box": [
+            761,
+            308,
+            811,
+            502
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "5x6²–N2XY"
+        },
+        {
+          "box": [
+            824,
+            351,
+            862,
+            457
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "תאורה"
+        },
+        {
+          "box": [
+            890,
+            292,
+            931,
+            517
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "5x2,5²–N2XY"
+        },
+        {
+          "box": [
+            943,
+            351,
+            979,
+            457
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "תאורה"
+        },
+        {
+          "box": [
+            803,
+            682,
+            819,
+            717
+          ],
+          "legible": "clear",
+          "text": "1"
+        },
+        {
+          "box": [
+            924,
+            682,
+            947,
+            717
+          ],
+          "legible": "clear",
+          "text": "2"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}
