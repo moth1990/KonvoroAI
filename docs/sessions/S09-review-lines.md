@@ -126,7 +126,8 @@ Asked and answered at kickoff (2026-11-01). Where the spec and the prototype dis
   - The Space key's hint reads "Space", not "רווח", which would clash with the "רווחיות" (margin) toggle beside it.
   - The circuit's load (`attributes.load`) is shown in the row's sub line, not under "מאיפה כל ערך".
 - **Eval / metrics:** not a pipeline session; `make eval` is unchanged against `eval/baseline.json`.
-- **Bugs logged:** BUG-017 (P2, fixed in S09): the status icon's class `.st` clashed with the new-quote stage label and changed two accepted phone screenshots. It is now `.ln-st`. Found by `make check-screenshots`.
+- **Bugs logged:** BUG-018 (P2, open, for S17): ids made in the same millisecond have no order, see above. BUG-017 (P2, fixed in S09): the status icon's class `.st` clashed with the new-quote stage label and changed two accepted phone screenshots. It is now `.ln-st`. Found by `make check-screenshots`.
+- **After the PR opened:** CI failed the review screenshots because the two info findings swapped places on a fresh database: they share `created_at` and were ordered by `id`, a random ULID. The read model now breaks the tie by code (tested). The same tie made a quota test flaky on `main`: BUG-018, open for S17.
 - **Follow-ups (in the roadmap backlog):**
   - Remove `review_screen` when the screen is complete (S23).
   - 09 §6.3's sub line also lists the catalog number, multiplicity and pages, which the prototype's row doesn't show. Decide at S23.

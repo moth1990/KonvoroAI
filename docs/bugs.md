@@ -19,6 +19,7 @@ Every bug found during development goes here, including bugs fixed in the same s
 
 | ID | Found in | Sev | Area | Summary | Repro | Status | Fixed in |
 | --- | --- | --- | --- | --- | --- | --- | --- |
+| BUG-018 | S09 | P2 | Tests / IDs | Rows created in the same millisecond are ordered by the random part of their ULID: `new_id` is not monotonic. `tests/integration/test_quota.py::test_refund_gives_a_counted_upload_back_once` orders quota events by `id` and failed on `main` (CI run for 8ea3343: `['confirm', 'reserve', 'refund']`). The review screen's findings had the same tie and broke the S09 PR's screenshots in CI; S09 orders them by code after `created_at`. Fix: order by an explicit sequence or timestamp, or make `new_id` monotonic within a millisecond | Rerun the quota integration test until it fails; it depends on the ids drawn | open, for S17 | |
 | BUG-008 | S05 | P2 | Pipeline | No per-tenant concurrency limit (00 §4.3): one tenant's large drawings can fill every worker. One local worker has nothing to share yet; it matters when workers scale out | — | open, scheduled for S29 | |
 
 ## Closed

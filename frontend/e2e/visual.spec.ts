@@ -120,32 +120,32 @@ const REVIEW = [
 ] as const;
 
 for (const scheme of ["light", "dark"] as const) {
-  test.describe(`${scheme} new quote`, () => {
-    test.describe(`${scheme} review`, () => {
-      test.use({ colorScheme: scheme });
+  test.describe(`${scheme} review`, () => {
+    test.use({ colorScheme: scheme });
 
-      for (const screen of REVIEW) {
-        test(screen.name, async ({ page, request }) => {
-          await signIn(page, request, TENANTS.review);
-          await page.goto("/home");
-          await meLoaded(page);
-          await page
-            .getByTestId("recent")
-            .getByRole("link", { name: /NURSERY/ })
-            .click();
-          await page.getByTestId("rv-totals").waitFor({ timeout: 60_000 });
-          await page.evaluate(() => document.fonts.ready);
-          await screen.setup(page);
-          await page.mouse.move(0, 0);
-          await expect(page).toHaveScreenshot(`${screen.name}-${scheme}.png`, {
-            animations: "disabled",
-            mask: volatile(page),
-            maxDiffPixelRatio: 0.002,
-          });
+    for (const screen of REVIEW) {
+      test(screen.name, async ({ page, request }) => {
+        await signIn(page, request, TENANTS.review);
+        await page.goto("/home");
+        await meLoaded(page);
+        await page
+          .getByTestId("recent")
+          .getByRole("link", { name: /NURSERY/ })
+          .click();
+        await page.getByTestId("rv-totals").waitFor({ timeout: 60_000 });
+        await page.evaluate(() => document.fonts.ready);
+        await screen.setup(page);
+        await page.mouse.move(0, 0);
+        await expect(page).toHaveScreenshot(`${screen.name}-${scheme}.png`, {
+          animations: "disabled",
+          mask: volatile(page),
+          maxDiffPixelRatio: 0.002,
         });
-      }
-    });
+      });
+    }
+  });
 
+  test.describe(`${scheme} new quote`, () => {
     test.use({ colorScheme: scheme });
     test.setTimeout(120_000); // a whole pipeline run, under amd64 emulation on a Mac
 

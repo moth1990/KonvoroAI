@@ -110,9 +110,13 @@ def test_lines_follow_the_review_order_and_every_non_green_line_says_why(nursery
     assert {src.source for src in c1.sources} == {"circuit", "graphic", "notes"}
     assert c1.raw_text == ["C1 … C4", "(אין זרם כתוב)"]
 
-    codes = [(f.severity, f.code) for f in view.findings]
-    assert codes[0] == ("error", "MISSING_PRICE")
-    assert ("warning", "FRONT_VIEW_DESIGNATOR_MISSING") in codes and len(codes) == 4
+    # errors first, then by code: the same order on every database, whatever the ids (CI screenshots)
+    assert [(f.severity, f.code) for f in view.findings] == [
+        ("error", "MISSING_PRICE"),
+        ("warning", "FRONT_VIEW_DESIGNATOR_MISSING"),
+        ("info", "DATA_INFERRED_ATTRIBUTE"),
+        ("info", "DATA_MODEL_TEXT_CONFLICT"),
+    ]
     front = next(f for f in view.findings if f.code == "FRONT_VIEW_DESIGNATOR_MISSING")
     assert front.page_no == 4
     priced = next(f for f in view.findings if f.code == "MISSING_PRICE")

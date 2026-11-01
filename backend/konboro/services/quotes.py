@@ -411,7 +411,9 @@ def _findings(session: Session, version: m.QuoteVersion) -> list[FindingView]:
             m.Finding.status == "open",
         )
     ).all()
-    rows = sorted(rows, key=lambda r: (SEVERITY_ORDER.index(r[0].severity), r[0].created_at, r[0].id))
+    # Findings written in one run share `created_at`; the code breaks the tie, so the order never depends on an id's
+    # random bits (it did, between two E2E databases).
+    rows = sorted(rows, key=lambda r: (SEVERITY_ORDER.index(r[0].severity), r[0].created_at, r[0].code, r[0].id))
     return [
         FindingView(f.id, f.severity, f.code, f.values.get("title"), f.message, list(f.line_ids), page_no)
         for f, page_no in rows
