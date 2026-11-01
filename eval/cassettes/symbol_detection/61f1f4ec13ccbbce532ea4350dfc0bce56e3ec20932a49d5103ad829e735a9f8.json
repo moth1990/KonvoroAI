@@ -1,0 +1,133 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 521,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            259,
+            169,
+            340,
+            211
+          ],
+          "box_text": "C1",
+          "family": "contactor",
+          "orientation": 0,
+          "role": "coil",
+          "sure": true,
+          "symbol_class": "contactor",
+          "tag": "C1"
+        },
+        {
+          "box": [
+            524,
+            169,
+            606,
+            211
+          ],
+          "box_text": "C2",
+          "family": "contactor",
+          "orientation": 0,
+          "role": "coil",
+          "sure": true,
+          "symbol_class": "contactor",
+          "tag": "C2"
+        },
+        {
+          "box": [
+            802,
+            152,
+            868,
+            243
+          ],
+          "box_text": null,
+          "family": "contactor",
+          "orientation": 0,
+          "role": "power_contact",
+          "sure": true,
+          "symbol_class": "contactor",
+          "tag": "C1"
+        },
+        {
+          "box": [
+            922,
+            152,
+            990,
+            243
+          ],
+          "box_text": null,
+          "family": "contactor",
+          "orientation": 0,
+          "role": "power_contact",
+          "sure": true,
+          "symbol_class": "contactor",
+          "tag": "C2"
+        },
+        {
+          "box": [
+            797,
+            643,
+            827,
+            675
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "terminal",
+          "tag": "1"
+        },
+        {
+          "box": [
+            920,
+            643,
+            950,
+            675
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "terminal",
+          "tag": "2"
+        },
+        {
+          "box": [
+            242,
+            26,
+            352,
+            125
+          ],
+          "box_text": null,
+          "family": "push_button",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "push_button",
+          "tag": null
+        },
+        {
+          "box": [
+            508,
+            26,
+            620,
+            125
+          ],
+          "box_text": null,
+          "family": "push_button",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "push_button",
+          "tag": null
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

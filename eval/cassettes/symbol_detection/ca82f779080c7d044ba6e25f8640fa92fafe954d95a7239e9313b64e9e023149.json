@@ -1,0 +1,88 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 336,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            342,
+            176,
+            453,
+            233
+          ],
+          "box_text": "R3",
+          "family": "relay",
+          "orientation": 0,
+          "role": "coil",
+          "sure": true,
+          "symbol_class": "relay",
+          "tag": "R3"
+        },
+        {
+          "box": [
+            630,
+            234,
+            737,
+            293
+          ],
+          "box_text": "TH1",
+          "family": "temperature_controller",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "temperature_controller",
+          "tag": "TH1"
+        },
+        {
+          "box": [
+            268,
+            667,
+            294,
+            693
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "terminal",
+          "tag": null
+        },
+        {
+          "box": [
+            383,
+            667,
+            409,
+            693
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "terminal",
+          "tag": null
+        },
+        {
+          "box": [
+            0,
+            60,
+            60,
+            190
+          ],
+          "box_text": null,
+          "family": "relay",
+          "orientation": 0,
+          "role": "relay_contact",
+          "sure": false,
+          "symbol_class": "relay",
+          "tag": "TH1"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

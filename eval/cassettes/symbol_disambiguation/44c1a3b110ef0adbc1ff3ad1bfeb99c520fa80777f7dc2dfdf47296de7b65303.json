@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1415,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 145,
+    "payload": {
+      "confidence": 0.6,
+      "decision": "none_of_these",
+      "reason": "הסמל הוא מגען עם מפעיל מכני (מלבן עם סמל תרמי/זיז) המחובר למסגרת קטנה מתחתיו, ולא לחצן; אין מועמד שמתאים במדויק, ולכן אף אחד מהמועמדים לא מתאים.}",
+      "symbol_class": null
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

@@ -27,7 +27,10 @@ ROUTES: dict[str, StageRoute] = {
     # Step 2: read the words on one drawing tile, with a box for each. Interim, until S31 picks Google Vision or
     # Azure (S10 decision; 02 §2.3).
     "ocr_transcription": StageRoute(provider="anthropic", model="claude-sonnet-5-5"),
-    # Step 3: pick a symbol class from a short list when similarity search can't decide.
+    # Step 3: find the symbols on one drawing tile, from the closed family and class lists. Interim, until the
+    # phase-4 family detector (S12 decision; 03 §3.2).
+    "symbol_detection": StageRoute(provider="anthropic", model="claude-sonnet-5-5"),
+    # Step 3: pick a symbol class from a short list when the first look can't decide.
     "symbol_disambiguation": StageRoute(provider="anthropic", model="claude-sonnet-5-5"),
     # Step 4: read text near each symbol and tie it to the symbol (vision + reasoning).
     "text_association": StageRoute(

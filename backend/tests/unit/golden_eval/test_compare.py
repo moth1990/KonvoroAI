@@ -92,7 +92,7 @@ def test_the_built_report_compares_with_itself_and_renders() -> None:
     assert compare.compare(r, json.loads(report.metrics_json(r))).ok
     assert set(r["totals"]["by_input_kind"]) == {"factory_drawing"}
     md = report.markdown(r)
-    for heading in ("Stage 1", "Stage 4", "Pricing backtest", "Totals by input kind", "Stages 2 and 3 are n/a"):
+    for heading in ("Stage 1", "Stage 4", "Pricing backtest", "Totals by input kind", "Not labelled yet"):
         assert heading in md
     assert "0.0% (0/1)" in md and "| T | 100 | 0 | None |" in md
 

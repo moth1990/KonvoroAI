@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1338,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 117,
+    "payload": {
+      "confidence": 0.7,
+      "decision": "not_a_symbol",
+      "reason": "בתוך המסגרת יש רק קו אופקי (חוט) עם קו אנכי קצר בקצהו, בלי מגע או מפעיל של לחצן, ולכן זה לא סמל של מכשיר.",
+      "symbol_class": null
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

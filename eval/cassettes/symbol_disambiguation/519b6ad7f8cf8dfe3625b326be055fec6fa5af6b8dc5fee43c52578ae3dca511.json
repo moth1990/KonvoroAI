@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1079,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 84,
+    "payload": {
+      "confidence": 0.85,
+      "decision": "choose",
+      "reason": "עיגול קטן בקצה קו מייצג מהדק, ואין טבעת סביב הקו או מלבן של נתיך.}",
+      "symbol_class": "terminal"
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

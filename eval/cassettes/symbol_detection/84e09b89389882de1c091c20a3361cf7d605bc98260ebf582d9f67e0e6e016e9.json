@@ -1,0 +1,84 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 321,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            243,
+            362,
+            274,
+            436
+          ],
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "mcb",
+          "tag": "FP1"
+        },
+        {
+          "box": [
+            224,
+            606,
+            272,
+            690
+          ],
+          "family": "relay",
+          "orientation": 0,
+          "role": "relay_contact",
+          "sure": false,
+          "symbol_class": "relay",
+          "tag": "RNV"
+        },
+        {
+          "box": [
+            527,
+            834,
+            575,
+            958
+          ],
+          "family": "relay",
+          "orientation": 0,
+          "role": "relay_contact",
+          "sure": true,
+          "symbol_class": "relay",
+          "tag": "R1"
+        },
+        {
+          "box": [
+            676,
+            834,
+            724,
+            958
+          ],
+          "family": "temperature_controller",
+          "orientation": 0,
+          "role": "relay_contact",
+          "sure": true,
+          "symbol_class": "temperature_controller",
+          "tag": "TH1"
+        },
+        {
+          "box": [
+            933,
+            940,
+            1024,
+            1000
+          ],
+          "box_text": "R1",
+          "family": "relay",
+          "orientation": 0,
+          "role": "coil",
+          "sure": false,
+          "symbol_class": "relay",
+          "tag": "R1"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

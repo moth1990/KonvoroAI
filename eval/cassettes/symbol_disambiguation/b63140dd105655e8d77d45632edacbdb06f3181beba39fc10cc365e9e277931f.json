@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1079,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 94,
+    "payload": {
+      "confidence": 0.85,
+      "decision": "choose",
+      "reason": "הסמל הוא עיגול קטן בקצה קו, כלומר מהדק, ואין בו טבעת סביב הקו או מלבן לאורכו.}",
+      "symbol_class": "terminal"
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

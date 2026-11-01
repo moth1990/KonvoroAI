@@ -1,0 +1,27 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 67,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            474,
+            946,
+            497,
+            972
+          ],
+          "family": "fuse",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "fuse",
+          "tag": "F5"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

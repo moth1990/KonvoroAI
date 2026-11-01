@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1063,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 115,
+    "payload": {
+      "confidence": 0.8,
+      "decision": "choose",
+      "reason": "הסמל הוא עיגול על קו ועליו שלוש קוים אלכסוניים, בדומה לצורת משנה זרם על מוליך, ולא מהדק או מכשיר מדידה עם אות.}",
+      "symbol_class": "current_transformer"
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

@@ -1,0 +1,28 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 83,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            6,
+            517,
+            46,
+            556
+          ],
+          "box_text": null,
+          "family": "indicator_lamp",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "indicator_lamp",
+          "tag": "LG3"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

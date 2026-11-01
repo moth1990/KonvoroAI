@@ -1,0 +1,88 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 358,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            534,
+            333,
+            585,
+            383
+          ],
+          "box_text": null,
+          "family": "current_transformer",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "current_transformer",
+          "tag": null
+        },
+        {
+          "box": [
+            473,
+            444,
+            596,
+            649
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "mccb",
+          "tag": "Q0"
+        },
+        {
+          "box": [
+            0,
+            260,
+            34,
+            299
+          ],
+          "box_text": null,
+          "family": "indicator_lamp",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "indicator_lamp",
+          "tag": "L1"
+        },
+        {
+          "box": [
+            51,
+            261,
+            90,
+            299
+          ],
+          "box_text": null,
+          "family": "indicator_lamp",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "indicator_lamp",
+          "tag": "L2"
+        },
+        {
+          "box": [
+            110,
+            261,
+            149,
+            299
+          ],
+          "box_text": null,
+          "family": "indicator_lamp",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "indicator_lamp",
+          "tag": "L3"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

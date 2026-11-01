@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1152,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 142,
+    "payload": {
+      "confidence": 0.55,
+      "decision": "none_of_these",
+      "reason": "הסמל מציג מגע נע עם קו מחוון עבה ושני מגעים עגולים, אך אין סימון מיקומים 1-0-2, אין ראש לחצן ואין שני מגעים קבועים של מחליף, ולכן אף מועמד אינו מתאים בבירור.",
+      "symbol_class": null
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

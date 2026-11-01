@@ -1,0 +1,220 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 908,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            290,
+            408,
+            1024,
+            418
+          ],
+          "family": "busbar",
+          "role": "device",
+          "sure": true,
+          "symbol_class": "busbar"
+        },
+        {
+          "box": [
+            334,
+            457,
+            426,
+            533
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "mcb",
+          "tag": null
+        },
+        {
+          "box": [
+            600,
+            457,
+            692,
+            533
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "mcb",
+          "tag": null
+        },
+        {
+          "box": [
+            802,
+            457,
+            894,
+            533
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "mcb",
+          "tag": null
+        },
+        {
+          "box": [
+            924,
+            457,
+            1016,
+            533
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "mcb",
+          "tag": null
+        },
+        {
+          "box": [
+            696,
+            660,
+            748,
+            713
+          ],
+          "box_text": null,
+          "family": "contactor",
+          "orientation": 0,
+          "role": "coil",
+          "sure": false,
+          "symbol_class": "contactor",
+          "tag": null
+        },
+        {
+          "box": [
+            258,
+            937,
+            340,
+            979
+          ],
+          "box_text": "C1",
+          "family": "contactor",
+          "orientation": 0,
+          "role": "coil",
+          "sure": true,
+          "symbol_class": "contactor",
+          "tag": "C1"
+        },
+        {
+          "box": [
+            524,
+            937,
+            606,
+            979
+          ],
+          "box_text": "C2",
+          "family": "contactor",
+          "orientation": 0,
+          "role": "coil",
+          "sure": true,
+          "symbol_class": "contactor",
+          "tag": "C2"
+        },
+        {
+          "box": [
+            334,
+            645,
+            400,
+            733
+          ],
+          "box_text": null,
+          "family": "contactor",
+          "orientation": 0,
+          "role": "power_contact",
+          "sure": false,
+          "symbol_class": "contactor",
+          "tag": "C1"
+        },
+        {
+          "box": [
+            600,
+            645,
+            666,
+            733
+          ],
+          "box_text": null,
+          "family": "contactor",
+          "orientation": 0,
+          "role": "power_contact",
+          "sure": false,
+          "symbol_class": "contactor",
+          "tag": "C2"
+        },
+        {
+          "box": [
+            289,
+            795,
+            335,
+            890
+          ],
+          "box_text": null,
+          "family": "contactor",
+          "orientation": 0,
+          "role": "power_contact",
+          "sure": false,
+          "symbol_class": "contactor",
+          "tag": "C1"
+        },
+        {
+          "box": [
+            555,
+            795,
+            601,
+            890
+          ],
+          "box_text": null,
+          "family": "contactor",
+          "orientation": 0,
+          "role": "power_contact",
+          "sure": false,
+          "symbol_class": "contactor",
+          "tag": "C2"
+        },
+        {
+          "box": [
+            802,
+            920,
+            868,
+            1012
+          ],
+          "box_text": null,
+          "family": "timer",
+          "orientation": 0,
+          "role": "relay_contact",
+          "sure": false,
+          "symbol_class": "timer",
+          "tag": "T1"
+        },
+        {
+          "box": [
+            924,
+            920,
+            990,
+            1012
+          ],
+          "box_text": null,
+          "family": "timer",
+          "orientation": 0,
+          "role": "relay_contact",
+          "sure": false,
+          "symbol_class": "timer",
+          "tag": "T2"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

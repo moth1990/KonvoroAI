@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1589,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 127,
+    "payload": {
+      "confidence": 0.8,
+      "decision": "choose",
+      "reason": "הסמל הוא מלבן עם קרס תרמי על קו הכוח בחלקו העליון, בהתאם לממסר תרמי; החלק התחתון עם סימן I> הוא רכיב הגנה נלווה באותו מכשיר.",
+      "symbol_class": "overload_relay"
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

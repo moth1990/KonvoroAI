@@ -1,0 +1,97 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 356,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            880,
+            708,
+            909,
+            737
+          ],
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "terminal",
+          "tag": "COM"
+        },
+        {
+          "box": [
+            974,
+            708,
+            1002,
+            736
+          ],
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "terminal",
+          "tag": "Z1"
+        },
+        {
+          "box": [
+            477,
+            839,
+            503,
+            866
+          ],
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "terminal",
+          "tag": "EM1"
+        },
+        {
+          "box": [
+            421,
+            883,
+            492,
+            965
+          ],
+          "family": "push_button",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "emergency_button",
+          "tag": "EMS"
+        },
+        {
+          "box": [
+            565,
+            883,
+            637,
+            992
+          ],
+          "family": "push_button",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "emergency_button",
+          "tag": "EMS"
+        },
+        {
+          "box": [
+            477,
+            990,
+            503,
+            1018
+          ],
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "terminal",
+          "tag": null
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

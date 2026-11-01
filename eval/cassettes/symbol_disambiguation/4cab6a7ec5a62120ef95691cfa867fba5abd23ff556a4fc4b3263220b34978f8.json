@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1001,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 101,
+    "payload": {
+      "confidence": 0.7,
+      "decision": "choose",
+      "reason": "התווית TC-G2 מציינת סליל הפסקה (Trip Coil) המחובר בקו מקווקו, ולכן זה שייך ל-shunt_trip.",
+      "symbol_class": "shunt_trip"
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

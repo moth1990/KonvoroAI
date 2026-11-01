@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1666,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 137,
+    "payload": {
+      "confidence": 0.6,
+      "decision": "choose",
+      "reason": "הסמל מציג מגע מתג בודד עם פס קצר חוצה על המגע הקבוע, ללא איקס, ולכן הוא מנתק. ייתכן שזה פס מקווקו ורוד, אך הסמל עצמו תואם למנתק.}",
+      "symbol_class": "switch_disconnector"
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

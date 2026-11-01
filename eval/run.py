@@ -22,6 +22,7 @@ from typing import Literal
 from sqlalchemy import Engine, create_engine, select
 from sqlalchemy.orm import Session
 
+from konboro.contracts.detection import DetectionResult
 from konboro.contracts.extraction import ExtractionResult
 from konboro.contracts.intake import IntakeResult
 from konboro.contracts.merge import MergeResult
@@ -99,7 +100,11 @@ def run_drawing(pipeline: Pipeline, tenant_id: str, user_id: str, label: GoldenD
         return model.model_validate_json(pipeline.storage.get(tenant_id, key))
 
     return prediction(
-        output(1, IntakeResult), output(4, MergeResult), output(7, QuoteVersionResult), output(2, ExtractionResult)
+        output(1, IntakeResult),
+        output(4, MergeResult),
+        output(7, QuoteVersionResult),
+        output(2, ExtractionResult),
+        output(3, DetectionResult),
     )
 
 

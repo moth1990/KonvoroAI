@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1706,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 106,
+    "payload": {
+      "confidence": 0.6,
+      "decision": "choose",
+      "reason": "הסמל מציג מגע מיתוג עם פס קצר חוצה במגע הקבוע, ללא איקס וללא וו תרמי, ולכן זה מנתק.\"}",
+      "symbol_class": "switch_disconnector"
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

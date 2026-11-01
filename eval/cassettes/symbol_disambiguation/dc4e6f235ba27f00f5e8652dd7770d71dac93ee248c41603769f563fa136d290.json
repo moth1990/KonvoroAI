@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1688,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 126,
+    "payload": {
+      "confidence": 0.55,
+      "decision": "choose",
+      "reason": "הסמל מציג מגע מפסק אופקי עם סימוני קוטב ומנגנון תרמי/מגנטי, והכיתוב 6A מצביע על מגן מנוע ולא על מא\"ז או מפסק יצוק.}",
+      "symbol_class": "motor_protection"
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

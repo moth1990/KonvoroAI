@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1664,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 135,
+    "payload": {
+      "confidence": 0.8,
+      "decision": "none_of_these",
+      "reason": "זהו מלבן אדום עם סימן זיגזג (ברק) ומתחתיו כיתוב 'לוח סככת' - סמל של לוח חשמל או חיווי ולא ממסר תרמי, ואף אחד מהמועמדים אינו מתאים.",
+      "symbol_class": null
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

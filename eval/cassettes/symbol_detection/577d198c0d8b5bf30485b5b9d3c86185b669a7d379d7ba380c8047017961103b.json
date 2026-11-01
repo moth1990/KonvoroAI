@@ -1,0 +1,58 @@
+{
+  "answer": {
+    "input_tokens": 4927,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 199,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            580,
+            527,
+            681,
+            628
+          ],
+          "box_text": "G",
+          "family": "motor_load",
+          "orientation": 90,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "motor_load",
+          "tag": null
+        },
+        {
+          "box": [
+            189,
+            619,
+            209,
+            639
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "terminal",
+          "tag": null
+        },
+        {
+          "box": [
+            285,
+            619,
+            303,
+            638
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "terminal",
+          "tag": null
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

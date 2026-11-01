@@ -1,0 +1,73 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 270,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            103,
+            813,
+            227,
+            880
+          ],
+          "box_text": "R5",
+          "family": "relay",
+          "orientation": 0,
+          "role": "coil",
+          "sure": true,
+          "symbol_class": "relay",
+          "tag": "R5"
+        },
+        {
+          "box": [
+            869,
+            813,
+            992,
+            880
+          ],
+          "box_text": "R6",
+          "family": "relay",
+          "orientation": 0,
+          "role": "coil",
+          "sure": true,
+          "symbol_class": "relay",
+          "tag": "R6"
+        },
+        {
+          "box": [
+            600,
+            695,
+            654,
+            832
+          ],
+          "box_text": null,
+          "family": "relay",
+          "orientation": 0,
+          "role": "relay_contact",
+          "sure": true,
+          "symbol_class": "relay",
+          "tag": "R6"
+        },
+        {
+          "box": [
+            449,
+            897,
+            566,
+            991
+          ],
+          "box_text": null,
+          "family": "selector_switch",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "selector_switch",
+          "tag": "SW4"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

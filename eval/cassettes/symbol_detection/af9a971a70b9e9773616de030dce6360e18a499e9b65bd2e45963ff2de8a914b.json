@@ -1,0 +1,118 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 485,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            392,
+            295,
+            498,
+            393
+          ],
+          "box_text": null,
+          "family": "push_button",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "push_button",
+          "tag": null
+        },
+        {
+          "box": [
+            494,
+            428,
+            575,
+            468
+          ],
+          "box_text": "TC",
+          "family": "shunt_trip",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "shunt_trip",
+          "tag": null
+        },
+        {
+          "box": [
+            624,
+            396,
+            720,
+            495
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "mccb",
+          "tag": null
+        },
+        {
+          "box": [
+            396,
+            525,
+            492,
+            615
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 90,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "mcb",
+          "tag": null
+        },
+        {
+          "box": [
+            596,
+            712,
+            640,
+            757
+          ],
+          "box_text": null,
+          "family": "socket_outlet",
+          "orientation": 90,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "socket_outlet",
+          "tag": null
+        },
+        {
+          "box": [
+            710,
+            690,
+            909,
+            774
+          ],
+          "box_text": "SATEC 135E",
+          "family": "energy_meter",
+          "orientation": 90,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "energy_meter",
+          "tag": null
+        },
+        {
+          "box": [
+            771,
+            801,
+            869,
+            891
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 90,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "motor_protection",
+          "tag": "PKZM"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

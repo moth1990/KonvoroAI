@@ -1,0 +1,133 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 541,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            4,
+            282,
+            96,
+            380
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "mcb",
+          "tag": null
+        },
+        {
+          "box": [
+            260,
+            276,
+            350,
+            372
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "mcb",
+          "tag": null
+        },
+        {
+          "box": [
+            478,
+            276,
+            570,
+            372
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "mcb",
+          "tag": null
+        },
+        {
+          "box": [
+            774,
+            276,
+            866,
+            372
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "mcb",
+          "tag": null
+        },
+        {
+          "box": [
+            446,
+            428,
+            527,
+            468
+          ],
+          "box_text": "מ.פ.",
+          "family": "rcd",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "rcd",
+          "tag": null
+        },
+        {
+          "box": [
+            742,
+            428,
+            822,
+            468
+          ],
+          "box_text": "מ.פ.",
+          "family": "rcd",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "rcd",
+          "tag": null
+        },
+        {
+          "box": [
+            478,
+            666,
+            570,
+            762
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "mcb",
+          "tag": null
+        },
+        {
+          "box": [
+            774,
+            666,
+            866,
+            762
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "mcb",
+          "tag": null
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

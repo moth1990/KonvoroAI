@@ -327,7 +327,8 @@ def test_the_model_never_sees_the_customer_or_the_project(
         sent = f"{request.system}\n{request.user_text}\n{[i.key for i in request.images]}"
         assert "סודי" not in sent
         assert request.tenant_id == tenant.tenant_id  # for cost logging; never sent (konboro_llm.types)
-        assert all(i.key and i.key.split(":")[0] in hashes for i in request.images)  # images of the pages only
+        # images of the pages only, and stage 3's reference sheets: our own drawings, keyed by the library version
+        assert all(i.key and (i.key.split(":")[0] in hashes or i.key.startswith("lib-")) for i in request.images)
 
 
 # --- every golden file through the queue -------------------------------------------------------------------------

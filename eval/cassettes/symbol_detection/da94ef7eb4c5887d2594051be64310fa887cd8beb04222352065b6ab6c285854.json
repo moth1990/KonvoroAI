@@ -1,0 +1,118 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 481,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            527,
+            3,
+            626,
+            45
+          ],
+          "box_text": "TC-G1",
+          "family": "shunt_trip",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "shunt_trip",
+          "tag": "TC-G1"
+        },
+        {
+          "box": [
+            669,
+            3,
+            768,
+            45
+          ],
+          "box_text": "TC-G2",
+          "family": "shunt_trip",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "shunt_trip",
+          "tag": "TC-G2"
+        },
+        {
+          "box": [
+            240,
+            232,
+            306,
+            267
+          ],
+          "box_text": null,
+          "family": "relay",
+          "orientation": 0,
+          "role": "relay_contact",
+          "sure": false,
+          "symbol_class": "relay",
+          "tag": "GIC-1"
+        },
+        {
+          "box": [
+            121,
+            76,
+            132,
+            89
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "terminal",
+          "tag": "C"
+        },
+        {
+          "box": [
+            215,
+            76,
+            226,
+            89
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "terminal",
+          "tag": "Z1"
+        },
+        {
+          "box": [
+            121,
+            259,
+            133,
+            271
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "terminal",
+          "tag": "L"
+        },
+        {
+          "box": [
+            394,
+            259,
+            406,
+            271
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "terminal",
+          "tag": "N"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

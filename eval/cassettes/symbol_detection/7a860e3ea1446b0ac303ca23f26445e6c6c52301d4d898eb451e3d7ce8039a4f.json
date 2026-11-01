@@ -1,0 +1,73 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 290,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            114,
+            707,
+            141,
+            737
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "terminal",
+          "tag": "COM"
+        },
+        {
+          "box": [
+            206,
+            707,
+            233,
+            737
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "terminal",
+          "tag": "Z1"
+        },
+        {
+          "box": [
+            528,
+            769,
+            626,
+            812
+          ],
+          "box_text": "TC-G1",
+          "family": "shunt_trip",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "shunt_trip",
+          "tag": "TC-G1"
+        },
+        {
+          "box": [
+            669,
+            769,
+            768,
+            812
+          ],
+          "box_text": "TC-G2",
+          "family": "shunt_trip",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "shunt_trip",
+          "tag": "TC-G2"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

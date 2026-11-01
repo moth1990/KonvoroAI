@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1687,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 122,
+    "payload": {
+      "confidence": 0.8,
+      "decision": "choose",
+      "reason": "הסמל מציג מגע מפסק אופקי עם סימוני קטבים וחץ, והכיתוב 6A מעיד על מא\"ז רגיל ולא על מפסק בתיבה יצוקה או מגן מנוע.}",
+      "symbol_class": "mcb"
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

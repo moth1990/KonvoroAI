@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1054,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 152,
+    "payload": {
+      "confidence": 0.6,
+      "decision": "none_of_these",
+      "reason": "הסמל מציג עיגול עם קווים אלכסוניים מרובים (שלושה) החוצים אותו על קו אנכי, בלי יחס זרם ובלי אות מדידה; זה אינו משנה זרם, מהדק או מכשיר מדידה, ולכן אף מועמד אינו מתאים.}",
+      "symbol_class": null
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

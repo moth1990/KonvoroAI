@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1254,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 110,
+    "payload": {
+      "confidence": 0.8,
+      "decision": "none_of_these",
+      "reason": "הסימן הוא מסגרת אדומה עם צירי קואורדינטות (חץ למעלה וימינה) על בסיס, ולא סליל או מגע של אחד המכשירים המוצעים.",
+      "symbol_class": null
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

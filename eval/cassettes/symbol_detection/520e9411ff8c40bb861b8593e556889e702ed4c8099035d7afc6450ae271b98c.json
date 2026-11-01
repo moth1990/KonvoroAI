@@ -1,0 +1,163 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 663,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            351,
+            328,
+            409,
+            405
+          ],
+          "box_text": null,
+          "family": "fuse",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "fuse_base",
+          "tag": null
+        },
+        {
+          "box": [
+            374,
+            484,
+            420,
+            570
+          ],
+          "box_text": null,
+          "family": "surge_protector",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "surge_protector",
+          "tag": null
+        },
+        {
+          "box": [
+            384,
+            603,
+            414,
+            622
+          ],
+          "box_text": null,
+          "family": "ground",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "ground",
+          "tag": null
+        },
+        {
+          "box": [
+            859,
+            282,
+            951,
+            370
+          ],
+          "box_text": null,
+          "family": "switch_disconnector",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "switch_disconnector",
+          "tag": null
+        },
+        {
+          "box": [
+            628,
+            535,
+            721,
+            624
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "mcb",
+          "tag": null
+        },
+        {
+          "box": [
+            859,
+            535,
+            951,
+            624
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "mcb",
+          "tag": null
+        },
+        {
+          "box": [
+            597,
+            681,
+            679,
+            722
+          ],
+          "box_text": "מ.פ.",
+          "family": "rcd",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "rcd",
+          "tag": null
+        },
+        {
+          "box": [
+            827,
+            681,
+            909,
+            722
+          ],
+          "box_text": "מ.פ.",
+          "family": "rcd",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "rcd",
+          "tag": null
+        },
+        {
+          "box": [
+            324,
+            207,
+            1024,
+            222
+          ],
+          "box_text": null,
+          "family": "busbar",
+          "orientation": 90,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "busbar",
+          "tag": null
+        },
+        {
+          "box": [
+            591,
+            458,
+            1005,
+            470
+          ],
+          "box_text": null,
+          "family": "busbar",
+          "orientation": 90,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "busbar",
+          "tag": null
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

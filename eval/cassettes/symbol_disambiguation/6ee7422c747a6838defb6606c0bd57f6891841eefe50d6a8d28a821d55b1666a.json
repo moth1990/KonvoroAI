@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1639,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 108,
+    "payload": {
+      "confidence": 0.8,
+      "decision": "choose",
+      "reason": "הסמל הוא מגע מתג עם ווי תרמי/מגנטי בקו, והטקסט 16A MCB לידו מצביע על מא\"ז ולא על ממסר תרמי.}",
+      "symbol_class": "mcb"
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

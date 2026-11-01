@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1695,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 119,
+    "payload": {
+      "confidence": 0.82,
+      "decision": "choose",
+      "reason": "הסמל הוא מנתק עם מגעים מעגליים, ידית הפעלה וסימן מנגנון, ללא איקס של מא\"ז; הכיתוב 630A מציין רק זרם נקוב.}",
+      "symbol_class": "switch_disconnector"
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

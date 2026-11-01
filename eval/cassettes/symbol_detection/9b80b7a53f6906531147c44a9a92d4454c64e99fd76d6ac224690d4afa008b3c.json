@@ -1,0 +1,65 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 217,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            521,
+            403,
+            563,
+            632
+          ],
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "mcb",
+          "tag": "FP1"
+        },
+        {
+          "box": [
+            671,
+            693,
+            709,
+            757
+          ],
+          "family": "relay",
+          "orientation": 0,
+          "role": "relay_contact",
+          "sure": true,
+          "symbol_class": "relay",
+          "tag": "RNV"
+        },
+        {
+          "box": [
+            104,
+            626,
+            1024,
+            650
+          ],
+          "family": "busbar",
+          "role": "device",
+          "sure": true,
+          "symbol_class": "busbar"
+        },
+        {
+          "box": [
+            126,
+            820,
+            1024,
+            844
+          ],
+          "family": "busbar",
+          "role": "device",
+          "sure": true,
+          "symbol_class": "busbar"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

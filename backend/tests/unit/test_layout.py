@@ -31,6 +31,7 @@ def test_llm_gateway_has_a_route_for_every_stage_key() -> None:
         "context_extraction",
         "table_transcription",
         "ocr_transcription",  # stage 2, interim until S31 (S10 decision)
+        "symbol_detection",  # stage 3, interim until the phase-4 family detector (S12 decision)
         "symbol_disambiguation",
         "text_association",
         "catalog_disambiguation",

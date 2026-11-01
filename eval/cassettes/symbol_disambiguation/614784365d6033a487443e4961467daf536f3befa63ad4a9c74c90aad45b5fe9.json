@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1639,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 122,
+    "payload": {
+      "confidence": 0.8,
+      "decision": "choose",
+      "reason": "הסמל הוא מגע מפסק עם ווי תרמי (זיגזג) וכפתור לחיצה, והכיתוב MCB 6A ליד הסמל מצביע על מא\"ז ולא על ממסר תרמי.}",
+      "symbol_class": "mcb"
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

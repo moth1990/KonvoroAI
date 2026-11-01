@@ -1,0 +1,43 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 145,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            306,
+            518,
+            348,
+            664
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "mcb",
+          "tag": "FC2"
+        },
+        {
+          "box": [
+            266,
+            758,
+            358,
+            877
+          ],
+          "box_text": null,
+          "family": "rcbo",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "rcbo",
+          "tag": "FB2"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

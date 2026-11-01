@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1779,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 89,
+    "payload": {
+      "confidence": 0.8,
+      "decision": "choose",
+      "reason": "מלבן עם וו/זיגזag תרמי באמצע וקווי הספק מחוברים אליו, תואם לממסר תרמי.",
+      "symbol_class": "overload_relay"
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

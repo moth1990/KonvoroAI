@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1647,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 115,
+    "payload": {
+      "confidence": 0.6,
+      "decision": "none_of_these",
+      "reason": "בחתך רואים ריבוע אדום עם איקס בתוכו וליד האות P, בלי מגע מתג או קו של מא\"ז, ולכן זה לא נראה כסמל של אחד המועמדים.",
+      "symbol_class": null
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1271,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 110,
+    "payload": {
+      "confidence": 0.6,
+      "decision": "choose",
+      "reason": "מגע מיתוג עם מספרי טרמינלים 10 ו-6 וקו מקווקו למנגנון, ללא חצי עיגול של מגען, ולכן מגע עזר של ממסר.}",
+      "symbol_class": "relay"
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

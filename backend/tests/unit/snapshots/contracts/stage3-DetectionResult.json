@@ -140,6 +140,16 @@
           "title": "Family",
           "type": "string"
         },
+        "flags": {
+          "default": [],
+          "description": "no_tag: a device without a tag on a tagged drawing (03 §3.7)",
+          "items": {
+            "const": "no_tag",
+            "type": "string"
+          },
+          "title": "Flags",
+          "type": "array"
+        },
         "linked_designator": {
           "anyOf": [
             {
@@ -166,11 +176,13 @@
           "title": "Llm Decision"
         },
         "method": {
+          "description": "llm_vision: found and classed by the interim vision model alone (S12, 03 §3.2)",
           "enum": [
             "cad_block",
             "detector_knn",
             "detector_llm",
-            "orphan_recovery"
+            "orphan_recovery",
+            "llm_vision"
           ],
           "title": "Method",
           "type": "string"

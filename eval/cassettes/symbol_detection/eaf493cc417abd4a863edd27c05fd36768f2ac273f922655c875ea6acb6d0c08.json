@@ -1,0 +1,43 @@
+{
+  "answer": {
+    "input_tokens": 4927,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 149,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            79,
+            282,
+            172,
+            372
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "mccb",
+          "tag": null
+        },
+        {
+          "box": [
+            166,
+            572,
+            364,
+            654
+          ],
+          "box_text": "SATEC 135E",
+          "family": "energy_meter",
+          "orientation": 90,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "energy_meter",
+          "tag": null
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

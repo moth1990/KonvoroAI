@@ -173,9 +173,11 @@ def progress(session: Session, tenant_id: str, drawing_id: str) -> Progress | No
 
 
 def stage_summary(p: Progress, stage: int) -> str | None:
-    """Stages 1 and 2 are the real ones so far (prototype STAGES, lines 761–762)."""
+    """Stages 1 to 3 are the real ones so far (prototype STAGES, lines 761–763)."""
     if stage == 2:
         return _extraction_summary(p)
+    if stage == 3:
+        return _symbols_summary(p)
     if stage != 1:
         return None
     # "9 עמודים · 2 תבניות של המפעל · לוח אחד"; the templates part only when there are any
@@ -197,6 +199,18 @@ def _extraction_summary(p: Progress) -> str:
         return f"טקסט מהקובץ · {tiles}"
     layer = "חסרה" if all(page.text_source == "ocr" for page in process) else "חלקית"
     return f"שכבת טקסט {layer}, OCR על {_count_text(len(by_ocr), 'עמוד אחד', 'עמודים')} · {tiles}"
+
+
+def _symbols_summary(p: Progress) -> str:
+    """ "61 סימנים · 54 בזיהוי ישיר, 7 בהכרעת מודל": the prototype's "מהספרייה" is the similarity index (03 §3.3),
+    which arrives in phase 4; until then the first look is the model's (S12)."""
+    process = [page for page, _ in p.pages if page.route == "process"]
+    total = sum(page.symbol_count or 0 for page in process)
+    decided = sum(page.symbol_llm_count or 0 for page in process)
+    symbols = _count_text(total, "סימן אחד", "סימנים")
+    if not decided:
+        return symbols
+    return f"{symbols} · {total - decided} בזיהוי ישיר, {decided} בהכרעת מודל"
 
 
 def revisable(session: Session, tenant_id: str, limit: int = 50) -> list[tuple[Drawing, Quote]]:

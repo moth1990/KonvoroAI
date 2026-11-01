@@ -120,9 +120,9 @@ System limits (20 MB per file, 20 files, 200 pages per drawing, 2 m² per page) 
 
 The remaining global tables:
 - **`attribute_schemas`** (05 §4.4): `family text pk`, `version int`, `attributes jsonb`. `attributes` is a list of `{name, required, match_mode, default_allowed}`. For `current_a` and `poles`, `default_allowed` is always false.
-- **`symbol_classes`** (03 §4.3): `id text pk` (e.g. `mcb`), `family`, `display_name_he`, `billable bool`, `standard_ref`, `attribute_schema → attribute_schemas.family`, plus the source columns.
-- **`reference_crops`** (03 §4.3), global scope only: `id` (`ref_`), `symbol_class → symbol_classes`, `image_key`, `source`, `approved_count`. The `embedding vector` column is added with the similarity index in phase 4. The `vector` extension is enabled now.
-- **`abbreviations`** (03 §4.6), global: `id` (`abr_`), `text`, `symbol_class`, `family`, `display_he`, plus the source columns.
+- **`symbol_classes`** (03 §4.3): `id text pk` (e.g. `mcb`), `family`, `display_name_he`, `billable bool`, `standard_ref`, `attribute_schema → attribute_schemas.family`, plus the source columns. Seeded by `seed_global` from `konboro/pipeline/detection/library.py` (S12); a row already there is kept.
+- **`reference_crops`** (03 §4.3), global scope only: `id` (`ref_`), `symbol_class → symbol_classes`, `image_key`, `source`, `approved_count`. The `embedding vector` column is added with the similarity index in phase 4. The `vector` extension is enabled now. The curated rows (S12) have `image_key` = `reference/<file>.png`, a file in `konboro/pipeline/detection/reference/`, not an S3 key.
+- **`abbreviations`** (03 §4.6), global: `id` (`abr_`), `text`, `symbol_class`, `family`, `display_he`, plus the source columns. Seeded from the same module (S12).
 - **`validator_rules`** (06 §6.2): PK `(rule_id, version)`, `category` (A–E), `applies_to text[]`, `requires text null`, `severity`, `params jsonb`, `message_he`, `enabled bool`.
 - **`vat_rates`** (07 §4.3): `id` (`vat_`), `rate numeric(7,4)`, `valid_from date`. The VAT rate is data, never a constant in code.
 - **`fx_rates`**: `currency`, `rate_date`, `rate numeric(14,6)`, `source`, with PK `(currency, rate_date)`.
@@ -220,6 +220,7 @@ This table answers the customer's question "why was this counted?".
 | `title_block jsonb`, `regions jsonb` | `regions`: everything the classifier found, `[{region_kind, bbox, panel_name, confidence}]`, panels included (`panel`) whatever the page's route, so a page-kind change can rebuild the panels (S08) |
 | `render_key`, `tiles_prefix` | S3 keys, written by stage 2: the page render, and the prefix of its detection tiles and its viewer pyramid (`dz/`) |
 | `tile_count` | The page's tiles that are not blank (02 §2.6), for the run step's stage-2 line. Null until stage 2 runs on the page (migration 0007, S10) |
+| `symbol_count`, `symbol_llm_count` | Stage 3's detections on the page, and how many of them the disambiguation call decided (03 §3.4), for the run step's stage-3 line. Null until stage 3 runs on the page (migration 0008, S12) |
 
 **`panels`** (`pnl_`): `drawing_id`, `name`, `page_ids text[]`, `bboxes jsonb` (page → bbox), and `confidence`.
 

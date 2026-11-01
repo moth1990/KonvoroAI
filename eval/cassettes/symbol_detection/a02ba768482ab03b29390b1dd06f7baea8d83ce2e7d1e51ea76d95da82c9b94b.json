@@ -1,0 +1,83 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 315,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            148,
+            433,
+            190,
+            580
+          ],
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "mcb",
+          "tag": "F7"
+        },
+        {
+          "box": [
+            445,
+            433,
+            486,
+            580
+          ],
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "mcb",
+          "tag": "F8"
+        },
+        {
+          "box": [
+            720,
+            433,
+            762,
+            580
+          ],
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "mcb",
+          "tag": "F9"
+        },
+        {
+          "box": [
+            971,
+            433,
+            1013,
+            580
+          ],
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "mcb",
+          "tag": null
+        },
+        {
+          "box": [
+            138,
+            686,
+            176,
+            750
+          ],
+          "family": "aux_contact",
+          "orientation": 0,
+          "role": "aux_contact",
+          "sure": false,
+          "symbol_class": "aux_contact",
+          "tag": "C5"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

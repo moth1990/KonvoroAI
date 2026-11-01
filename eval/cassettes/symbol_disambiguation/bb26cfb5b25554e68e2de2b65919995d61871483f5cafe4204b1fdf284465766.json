@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1500,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 92,
+    "payload": {
+      "confidence": 0.93,
+      "decision": "choose",
+      "reason": "הסמל מסומן SW5 ומכיל מגעים עם מיקומים 1-0-2 ומגע נע, ולכן זה בורר.}",
+      "symbol_class": "selector_switch"
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

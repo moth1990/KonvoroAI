@@ -1,0 +1,163 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 668,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            105,
+            23,
+            187,
+            65
+          ],
+          "box_text": "TC",
+          "family": "shunt_trip",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "shunt_trip",
+          "tag": null
+        },
+        {
+          "box": [
+            204,
+            223,
+            286,
+            265
+          ],
+          "box_text": "מ.פ.",
+          "family": "rcd",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "rcd",
+          "tag": null
+        },
+        {
+          "box": [
+            224,
+            410,
+            278,
+            464
+          ],
+          "box_text": null,
+          "family": "energy_meter",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "energy_meter",
+          "tag": null
+        },
+        {
+          "box": [
+            240,
+            792,
+            278,
+            830
+          ],
+          "box_text": null,
+          "family": "indicator_lamp",
+          "orientation": 90,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "indicator_lamp",
+          "tag": null
+        },
+        {
+          "box": [
+            123,
+            866,
+            205,
+            908
+          ],
+          "box_text": "C",
+          "family": "contactor",
+          "orientation": 0,
+          "role": "coil",
+          "sure": true,
+          "symbol_class": "contactor",
+          "tag": null
+        },
+        {
+          "box": [
+            565,
+            372,
+            657,
+            460
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "mcb",
+          "tag": null
+        },
+        {
+          "box": [
+            110,
+            543,
+            198,
+            630
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "mcb",
+          "tag": null
+        },
+        {
+          "box": [
+            258,
+            550,
+            285,
+            579
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "terminal",
+          "tag": null
+        },
+        {
+          "box": [
+            362,
+            550,
+            389,
+            579
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "terminal",
+          "tag": null
+        },
+        {
+          "box": [
+            155,
+            720,
+            246,
+            820
+          ],
+          "box_text": null,
+          "family": "selector_switch",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "selector_switch",
+          "tag": null
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

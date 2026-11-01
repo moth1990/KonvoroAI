@@ -1,0 +1,118 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 477,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            70,
+            238,
+            126,
+            322
+          ],
+          "box_text": null,
+          "family": "fuse",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "fuse_base",
+          "tag": null
+        },
+        {
+          "box": [
+            94,
+            394,
+            139,
+            481
+          ],
+          "box_text": null,
+          "family": "surge_protector",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "surge_protector",
+          "tag": null
+        },
+        {
+          "box": [
+            418,
+            190,
+            512,
+            288
+          ],
+          "box_text": null,
+          "family": "switch_disconnector",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "switch_disconnector",
+          "tag": null
+        },
+        {
+          "box": [
+            418,
+            451,
+            511,
+            540
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "mcb",
+          "tag": null
+        },
+        {
+          "box": [
+            632,
+            451,
+            725,
+            540
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "mcb",
+          "tag": null
+        },
+        {
+          "box": [
+            389,
+            597,
+            469,
+            638
+          ],
+          "box_text": "מ.פ.",
+          "family": "rcd",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "rcd",
+          "tag": null
+        },
+        {
+          "box": [
+            602,
+            597,
+            682,
+            638
+          ],
+          "box_text": "מ.פ.",
+          "family": "rcd",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "rcd",
+          "tag": null
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}
