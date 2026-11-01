@@ -1,0 +1,134 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 412,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            386,
+            229,
+            438,
+            421
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3x6²–N2XY"
+        },
+        {
+          "box": [
+            548,
+            209,
+            599,
+            433
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3x1.5²–N2XY"
+        },
+        {
+          "box": [
+            619,
+            272,
+            653,
+            380
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "תאורה"
+        },
+        {
+          "box": [
+            790,
+            288,
+            822,
+            395
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "תאורה"
+        },
+        {
+          "box": [
+            920,
+            103,
+            943,
+            134
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "C"
+        },
+        {
+          "box": [
+            913,
+            166,
+            951,
+            190
+          ],
+          "legible": "unsure",
+          "rotation": 0,
+          "text": "\"0\""
+        },
+        {
+          "box": [
+            92,
+            603,
+            107,
+            637
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "1"
+        },
+        {
+          "box": [
+            262,
+            601,
+            284,
+            636
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "2"
+        },
+        {
+          "box": [
+            433,
+            601,
+            456,
+            635
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "3"
+        },
+        {
+          "box": [
+            598,
+            601,
+            619,
+            635
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "4"
+        },
+        {
+          "box": [
+            764,
+            601,
+            785,
+            635
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "5"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

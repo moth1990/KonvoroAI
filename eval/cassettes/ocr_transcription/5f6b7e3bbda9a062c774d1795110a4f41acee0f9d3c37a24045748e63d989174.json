@@ -1,0 +1,123 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 312,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            19,
+            50,
+            41,
+            80
+          ],
+          "legible": "clear",
+          "text": "3"
+        },
+        {
+          "box": [
+            305,
+            51,
+            327,
+            81
+          ],
+          "legible": "clear",
+          "text": "4"
+        },
+        {
+          "box": [
+            609,
+            50,
+            631,
+            80
+          ],
+          "legible": "clear",
+          "text": "5"
+        },
+        {
+          "box": [
+            886,
+            51,
+            908,
+            81
+          ],
+          "legible": "unsure",
+          "text": "6"
+        },
+        {
+          "box": [
+            636,
+            738,
+            695,
+            778
+          ],
+          "legible": "clear",
+          "text": "R6"
+        },
+        {
+          "box": [
+            118,
+            820,
+            197,
+            873
+          ],
+          "legible": "clear",
+          "text": "R5"
+        },
+        {
+          "box": [
+            886,
+            820,
+            963,
+            873
+          ],
+          "legible": "clear",
+          "text": "R6"
+        },
+        {
+          "box": [
+            502,
+            820,
+            584,
+            858
+          ],
+          "legible": "clear",
+          "text": "SW4"
+        },
+        {
+          "box": [
+            451,
+            898,
+            469,
+            934
+          ],
+          "legible": "clear",
+          "text": "1"
+        },
+        {
+          "box": [
+            535,
+            910,
+            563,
+            948
+          ],
+          "legible": "clear",
+          "text": "0"
+        },
+        {
+          "box": [
+            611,
+            952,
+            638,
+            991
+          ],
+          "legible": "clear",
+          "text": "2"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

@@ -1,0 +1,113 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 310,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            16,
+            76,
+            513,
+            203
+          ],
+          "legible": "clear",
+          "text": "בגומחת"
+        },
+        {
+          "box": [
+            574,
+            285,
+            790,
+            409
+          ],
+          "legible": "clear",
+          "text": "ליד"
+        },
+        {
+          "box": [
+            18,
+            285,
+            470,
+            410
+          ],
+          "legible": "clear",
+          "text": "היציאה"
+        },
+        {
+          "box": [
+            744,
+            868,
+            836,
+            916
+          ],
+          "legible": "clear",
+          "text": "מבנה"
+        },
+        {
+          "box": [
+            648,
+            868,
+            722,
+            914
+          ],
+          "legible": "clear",
+          "text": "לוח"
+        },
+        {
+          "box": [
+            443,
+            868,
+            621,
+            916
+          ],
+          "legible": "clear",
+          "text": "פוליאסטר"
+        },
+        {
+          "box": [
+            333,
+            868,
+            417,
+            914
+          ],
+          "legible": "clear",
+          "text": "גודל"
+        },
+        {
+          "box": [
+            283,
+            870,
+            304,
+            914
+          ],
+          "legible": "clear",
+          "text": "2"
+        },
+        {
+          "box": [
+            665,
+            938,
+            840,
+            988
+          ],
+          "legible": "clear",
+          "text": "פוליאסטר"
+        },
+        {
+          "box": [
+            500,
+            938,
+            642,
+            990
+          ],
+          "legible": "clear",
+          "text": "משוריין"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

@@ -1,0 +1,200 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 650,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            124,
+            122,
+            166,
+            352
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "5x2,5²–N2XY"
+        },
+        {
+          "box": [
+            180,
+            106,
+            216,
+            214
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "שערים"
+        },
+        {
+          "box": [
+            180,
+            222,
+            216,
+            378
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "חשמליים"
+        },
+        {
+          "box": [
+            308,
+            124,
+            348,
+            346
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "5x16²–N2XY"
+        },
+        {
+          "box": [
+            360,
+            98,
+            398,
+            232
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "תיבות"
+        },
+        {
+          "box": [
+            360,
+            240,
+            398,
+            312
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "בתי"
+        },
+        {
+          "box": [
+            360,
+            318,
+            398,
+            380
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "תקע"
+        },
+        {
+          "box": [
+            530,
+            124,
+            570,
+            346
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "5x16²–N2XY"
+        },
+        {
+          "box": [
+            584,
+            196,
+            620,
+            276
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "שמור"
+        },
+        {
+          "box": [
+            796,
+            158,
+            832,
+            322
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "רכנות"
+        },
+        {
+          "box": [
+            972,
+            62,
+            1010,
+            148
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "הזנה"
+        },
+        {
+          "box": [
+            972,
+            156,
+            1010,
+            260
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "מגבה"
+        },
+        {
+          "box": [
+            972,
+            266,
+            1010,
+            428
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "הידראולי"
+        },
+        {
+          "box": [
+            116,
+            520,
+            230,
+            562
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "36–40"
+        },
+        {
+          "box": [
+            298,
+            520,
+            410,
+            562
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "44–49"
+        },
+        {
+          "box": [
+            558,
+            522,
+            600,
+            560
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "50"
+        },
+        {
+          "box": [
+            770,
+            522,
+            806,
+            560
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "51"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

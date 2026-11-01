@@ -1,0 +1,321 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 944,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            67,
+            52,
+            90,
+            86
+          ],
+          "legible": "clear",
+          "text": "3"
+        },
+        {
+          "box": [
+            372,
+            54,
+            395,
+            86
+          ],
+          "legible": "clear",
+          "text": "4"
+        },
+        {
+          "box": [
+            694,
+            52,
+            718,
+            86
+          ],
+          "legible": "clear",
+          "text": "5"
+        },
+        {
+          "box": [
+            988,
+            54,
+            1010,
+            88
+          ],
+          "legible": "clear",
+          "text": "6"
+        },
+        {
+          "box": [
+            24,
+            435,
+            60,
+            464
+          ],
+          "legible": "clear",
+          "text": "21"
+        },
+        {
+          "box": [
+            26,
+            516,
+            64,
+            547
+          ],
+          "legible": "clear",
+          "text": "22"
+        },
+        {
+          "box": [
+            200,
+            441,
+            239,
+            470
+          ],
+          "legible": "clear",
+          "text": "F7"
+        },
+        {
+          "box": [
+            495,
+            440,
+            534,
+            469
+          ],
+          "legible": "clear",
+          "text": "F8"
+        },
+        {
+          "box": [
+            771,
+            443,
+            809,
+            472
+          ],
+          "legible": "clear",
+          "text": "F9"
+        },
+        {
+          "box": [
+            219,
+            510,
+            288,
+            537
+          ],
+          "legible": "clear",
+          "text": "3X10A"
+        },
+        {
+          "box": [
+            209,
+            540,
+            291,
+            567
+          ],
+          "legible": "clear",
+          "text": "INC=8A"
+        },
+        {
+          "box": [
+            209,
+            568,
+            281,
+            595
+          ],
+          "legible": "clear",
+          "text": "S203M"
+        },
+        {
+          "box": [
+            211,
+            599,
+            253,
+            626
+          ],
+          "legible": "clear",
+          "text": "ABB"
+        },
+        {
+          "box": [
+            516,
+            510,
+            584,
+            537
+          ],
+          "legible": "clear",
+          "text": "1X10A"
+        },
+        {
+          "box": [
+            505,
+            540,
+            587,
+            567
+          ],
+          "legible": "clear",
+          "text": "INC=8A"
+        },
+        {
+          "box": [
+            504,
+            567,
+            577,
+            594
+          ],
+          "legible": "clear",
+          "text": "S201M"
+        },
+        {
+          "box": [
+            506,
+            599,
+            549,
+            626
+          ],
+          "legible": "clear",
+          "text": "ABB"
+        },
+        {
+          "box": [
+            791,
+            512,
+            859,
+            539
+          ],
+          "legible": "clear",
+          "text": "2X10A"
+        },
+        {
+          "box": [
+            781,
+            542,
+            863,
+            569
+          ],
+          "legible": "clear",
+          "text": "INC=8A"
+        },
+        {
+          "box": [
+            780,
+            570,
+            853,
+            597
+          ],
+          "legible": "clear",
+          "text": "S202M"
+        },
+        {
+          "box": [
+            782,
+            601,
+            825,
+            628
+          ],
+          "legible": "clear",
+          "text": "ABB"
+        },
+        {
+          "box": [
+            303,
+            701,
+            338,
+            733
+          ],
+          "legible": "clear",
+          "text": "C5"
+        },
+        {
+          "box": [
+            192,
+            908,
+            218,
+            1000
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "COOLING"
+        },
+        {
+          "box": [
+            192,
+            823,
+            218,
+            899
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "TOWER"
+        },
+        {
+          "box": [
+            258,
+            862,
+            286,
+            945
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3X208V"
+        },
+        {
+          "box": [
+            483,
+            962,
+            509,
+            1022
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "ROW"
+        },
+        {
+          "box": [
+            483,
+            859,
+            509,
+            953
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "DIRECTOR"
+        },
+        {
+          "box": [
+            527,
+            915,
+            553,
+            988
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "EC/PH"
+        },
+        {
+          "box": [
+            763,
+            942,
+            789,
+            1000
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "BRAUN"
+        },
+        {
+          "box": [
+            763,
+            854,
+            789,
+            932
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "PUMP"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

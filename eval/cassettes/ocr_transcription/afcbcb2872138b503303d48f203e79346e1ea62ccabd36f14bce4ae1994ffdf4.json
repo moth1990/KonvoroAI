@@ -1,0 +1,133 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 373,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            819,
+            797,
+            860,
+            832
+          ],
+          "legible": "clear",
+          "text": "Ik="
+        },
+        {
+          "box": [
+            865,
+            797,
+            931,
+            832
+          ],
+          "legible": "clear",
+          "text": "20KA"
+        },
+        {
+          "box": [
+            821,
+            843,
+            950,
+            877
+          ],
+          "legible": "clear",
+          "text": "L1,L2,L3"
+        },
+        {
+          "box": [
+            961,
+            858,
+            979,
+            864
+          ],
+          "legible": "unsure",
+          "text": "–"
+        },
+        {
+          "box": [
+            45,
+            957,
+            110,
+            978
+          ],
+          "legible": "clear",
+          "text": "12.02.26"
+        },
+        {
+          "box": [
+            541,
+            956,
+            597,
+            979
+          ],
+          "legible": "clear",
+          "text": "שינוי"
+        },
+        {
+          "box": [
+            507,
+            956,
+            539,
+            979
+          ],
+          "legible": "unsure",
+          "text": "סטטוס"
+        },
+        {
+          "box": [
+            470,
+            956,
+            505,
+            979
+          ],
+          "legible": "unsure",
+          "text": "לביצוע"
+        },
+        {
+          "box": [
+            670,
+            960,
+            683,
+            976
+          ],
+          "legible": "clear",
+          "text": "6"
+        },
+        {
+          "box": [
+            45,
+            989,
+            110,
+            1010
+          ],
+          "legible": "clear",
+          "text": "09.02.26"
+        },
+        {
+          "box": [
+            571,
+            989,
+            616,
+            1011
+          ],
+          "legible": "clear",
+          "text": "עדכון"
+        },
+        {
+          "box": [
+            670,
+            992,
+            683,
+            1008
+          ],
+          "legible": "clear",
+          "text": "5"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

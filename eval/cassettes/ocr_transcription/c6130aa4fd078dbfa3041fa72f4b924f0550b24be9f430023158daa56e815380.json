@@ -1,0 +1,215 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 582,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            482,
+            0,
+            509,
+            28
+          ],
+          "legible": "unsure",
+          "rotation": 270,
+          "text": "EXH"
+        },
+        {
+          "box": [
+            941,
+            0,
+            967,
+            42
+          ],
+          "legible": "unsure",
+          "rotation": 270,
+          "text": "EXH"
+        },
+        {
+          "box": [
+            483,
+            179,
+            496,
+            204
+          ],
+          "legible": "clear",
+          "text": "1"
+        },
+        {
+          "box": [
+            937,
+            178,
+            956,
+            204
+          ],
+          "legible": "clear",
+          "text": "2"
+        },
+        {
+          "box": [
+            461,
+            245,
+            483,
+            271
+          ],
+          "legible": "clear",
+          "text": "A"
+        },
+        {
+          "box": [
+            925,
+            236,
+            946,
+            262
+          ],
+          "legible": "clear",
+          "text": "B"
+        },
+        {
+          "box": [
+            110,
+            366,
+            370,
+            404
+          ],
+          "legible": "clear",
+          "text": "05/10/2026"
+        },
+        {
+          "box": [
+            397,
+            370,
+            407,
+            399
+          ],
+          "legible": "clear",
+          "text": ":"
+        },
+        {
+          "box": [
+            420,
+            364,
+            546,
+            404
+          ],
+          "legible": "clear",
+          "text": "תאריך"
+        },
+        {
+          "box": [
+            597,
+            372,
+            843,
+            415
+          ],
+          "legible": "clear",
+          "text": "26/952-5"
+        },
+        {
+          "box": [
+            871,
+            380,
+            881,
+            410
+          ],
+          "legible": "clear",
+          "text": ":"
+        },
+        {
+          "box": [
+            22,
+            406,
+            43,
+            435
+          ],
+          "legible": "clear",
+          "text": "F"
+        },
+        {
+          "box": [
+            520,
+            432,
+            553,
+            464
+          ],
+          "legible": "clear",
+          "text": ":1"
+        },
+        {
+          "box": [
+            510,
+            494,
+            551,
+            529
+          ],
+          "legible": "clear",
+          "text": ":2"
+        },
+        {
+          "box": [
+            503,
+            556,
+            547,
+            591
+          ],
+          "legible": "clear",
+          "text": ":3"
+        },
+        {
+          "box": [
+            448,
+            614,
+            548,
+            653
+          ],
+          "legible": "clear",
+          "text": "בדק:"
+        },
+        {
+          "box": [
+            19,
+            597,
+            45,
+            631
+          ],
+          "legible": "clear",
+          "text": "G"
+        },
+        {
+          "box": [
+            235,
+            697,
+            252,
+            730
+          ],
+          "legible": "clear",
+          "text": "1"
+        },
+        {
+          "box": [
+            531,
+            697,
+            554,
+            732
+          ],
+          "legible": "clear",
+          "text": "2"
+        },
+        {
+          "box": [
+            850,
+            696,
+            874,
+            730
+          ],
+          "legible": "clear",
+          "text": "3"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

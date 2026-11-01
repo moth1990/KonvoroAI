@@ -99,6 +99,17 @@ def test_the_answer_comes_back_as_json_output_not_a_forced_tool():
     assert "tool_choice" not in messages.kwargs and "tools" not in messages.kwargs
     fmt = messages.kwargs["output_config"]["format"]
     assert fmt["type"] == "json_schema" and fmt["schema"]["additionalProperties"] is False
+    assert "effort" not in messages.kwargs["output_config"]  # the model's default unless a stage sets one
+
+
+def test_a_stage_can_ask_for_less_effort():
+    from konboro_llm import ImageInput
+    from konboro_llm.stages import ocr_transcription
+
+    provider, messages = _provider(_Answer('{"words": []}'))
+    llm = LLMClient({"anthropic": provider}, {"ocr_transcription": StageRoute("anthropic", "claude-sonnet-5-5")})
+    ocr_transcription.transcribe(llm, ImageInput(b"png"), (1024, 1024))
+    assert messages.kwargs["output_config"]["effort"] == "low"
 
 
 def test_a_refusal_a_cut_answer_or_non_json_is_an_error():

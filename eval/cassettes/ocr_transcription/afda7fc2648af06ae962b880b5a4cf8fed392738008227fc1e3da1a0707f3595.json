@@ -1,0 +1,131 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 390,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            193,
+            152,
+            219,
+            233
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "COOLING"
+        },
+        {
+          "box": [
+            193,
+            55,
+            219,
+            146
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "TOWER"
+        },
+        {
+          "box": [
+            257,
+            96,
+            285,
+            178
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3X208V"
+        },
+        {
+          "box": [
+            181,
+            291,
+            200,
+            317
+          ],
+          "legible": "clear",
+          "text": "7"
+        },
+        {
+          "box": [
+            483,
+            184,
+            509,
+            270
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "GROW"
+        },
+        {
+          "box": [
+            483,
+            90,
+            509,
+            178
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "DIRECTOR"
+        },
+        {
+          "box": [
+            528,
+            147,
+            553,
+            220
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "EC/PH"
+        },
+        {
+          "box": [
+            477,
+            293,
+            494,
+            318
+          ],
+          "legible": "clear",
+          "text": "8"
+        },
+        {
+          "box": [
+            764,
+            168,
+            790,
+            232
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "BRAUN"
+        },
+        {
+          "box": [
+            764,
+            96,
+            790,
+            162
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "PUMP"
+        },
+        {
+          "box": [
+            753,
+            292,
+            771,
+            317
+          ],
+          "legible": "clear",
+          "text": "9"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

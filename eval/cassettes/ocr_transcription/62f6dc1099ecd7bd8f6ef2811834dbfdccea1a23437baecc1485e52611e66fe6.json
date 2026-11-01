@@ -1,0 +1,313 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 901,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            744,
+            104,
+            844,
+            152
+          ],
+          "legible": "clear",
+          "text": "מבנה"
+        },
+        {
+          "box": [
+            672,
+            104,
+            734,
+            152
+          ],
+          "legible": "clear",
+          "text": "לוח"
+        },
+        {
+          "box": [
+            500,
+            104,
+            664,
+            152
+          ],
+          "legible": "clear",
+          "text": "פוליאסטר"
+        },
+        {
+          "box": [
+            410,
+            104,
+            490,
+            152
+          ],
+          "legible": "clear",
+          "text": "גודל"
+        },
+        {
+          "box": [
+            280,
+            104,
+            306,
+            152
+          ],
+          "legible": "clear",
+          "text": "2"
+        },
+        {
+          "box": [
+            678,
+            180,
+            844,
+            230
+          ],
+          "legible": "clear",
+          "text": "פוליאסטר"
+        },
+        {
+          "box": [
+            500,
+            180,
+            666,
+            230
+          ],
+          "legible": "clear",
+          "text": "משוריין"
+        },
+        {
+          "box": [
+            746,
+            264,
+            844,
+            312
+          ],
+          "legible": "clear",
+          "text": "מוגן"
+        },
+        {
+          "box": [
+            672,
+            264,
+            736,
+            312
+          ],
+          "legible": "clear",
+          "text": "מים"
+        },
+        {
+          "box": [
+            562,
+            264,
+            664,
+            312
+          ],
+          "legible": "clear",
+          "text": "IP65"
+        },
+        {
+          "box": [
+            704,
+            340,
+            844,
+            390
+          ],
+          "legible": "clear",
+          "text": "במידות"
+        },
+        {
+          "box": [
+            392,
+            340,
+            696,
+            390
+          ],
+          "legible": "clear",
+          "text": "1250x1115x320"
+        },
+        {
+          "box": [
+            292,
+            340,
+            372,
+            390
+          ],
+          "legible": "clear",
+          "text": "מ\"מ"
+        },
+        {
+          "box": [
+            776,
+            414,
+            844,
+            466
+          ],
+          "legible": "clear",
+          "text": "לוח"
+        },
+        {
+          "box": [
+            672,
+            414,
+            766,
+            466
+          ],
+          "legible": "clear",
+          "text": "מיוצר"
+        },
+        {
+          "box": [
+            606,
+            414,
+            662,
+            466
+          ],
+          "legible": "clear",
+          "text": "לפי"
+        },
+        {
+          "box": [
+            530,
+            414,
+            596,
+            466
+          ],
+          "legible": "clear",
+          "text": "תקן"
+        },
+        {
+          "box": [
+            276,
+            414,
+            520,
+            466
+          ],
+          "legible": "clear",
+          "text": "61439-2"
+        },
+        {
+          "box": [
+            744,
+            490,
+            844,
+            540
+          ],
+          "legible": "clear",
+          "text": "מידור"
+        },
+        {
+          "box": [
+            536,
+            490,
+            632,
+            540
+          ],
+          "legible": "clear",
+          "text": "FORM"
+        },
+        {
+          "box": [
+            656,
+            490,
+            716,
+            540
+          ],
+          "legible": "clear",
+          "text": "2B"
+        },
+        {
+          "box": [
+            748,
+            562,
+            844,
+            610
+          ],
+          "legible": "clear",
+          "text": "טמ\"פ"
+        },
+        {
+          "box": [
+            626,
+            562,
+            736,
+            610
+          ],
+          "legible": "clear",
+          "text": "סביבה"
+        },
+        {
+          "box": [
+            528,
+            578,
+            550,
+            590
+          ],
+          "legible": "clear",
+          "text": "-"
+        },
+        {
+          "box": [
+            404,
+            562,
+            496,
+            610
+          ],
+          "legible": "clear",
+          "text": "40C°"
+        },
+        {
+          "box": [
+            748,
+            614,
+            844,
+            662
+          ],
+          "legible": "clear",
+          "text": "נדרש"
+        },
+        {
+          "box": [
+            642,
+            614,
+            740,
+            662
+          ],
+          "legible": "clear",
+          "text": "מקום"
+        },
+        {
+          "box": [
+            522,
+            614,
+            632,
+            662
+          ],
+          "legible": "clear",
+          "text": "30%"
+        },
+        {
+          "box": [
+            446,
+            614,
+            556,
+            662
+          ],
+          "legible": "unsure",
+          "text": "שמור"
+        },
+        {
+          "box": [
+            274,
+            614,
+            432,
+            662
+          ],
+          "legible": "clear",
+          "text": "בלוח"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

@@ -1,0 +1,253 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 707,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            259,
+            163,
+            281,
+            197
+          ],
+          "legible": "clear",
+          "text": "6"
+        },
+        {
+          "box": [
+            585,
+            161,
+            607,
+            195
+          ],
+          "legible": "clear",
+          "text": "7"
+        },
+        {
+          "box": [
+            891,
+            163,
+            913,
+            197
+          ],
+          "legible": "clear",
+          "text": "8"
+        },
+        {
+          "box": [
+            93,
+            653,
+            209,
+            680
+          ],
+          "legible": "clear",
+          "text": "Control"
+        },
+        {
+          "box": [
+            227,
+            653,
+            307,
+            680
+          ],
+          "legible": "clear",
+          "text": "Panel"
+        },
+        {
+          "box": [
+            325,
+            653,
+            427,
+            680
+          ],
+          "legible": "clear",
+          "text": "(FACP)."
+        },
+        {
+          "box": [
+            58,
+            683,
+            116,
+            712
+          ],
+          "legible": "clear",
+          "text": "COM"
+        },
+        {
+          "box": [
+            233,
+            683,
+            264,
+            712
+          ],
+          "legible": "clear",
+          "text": "Z1"
+        },
+        {
+          "box": [
+            533,
+            774,
+            618,
+            807
+          ],
+          "legible": "clear",
+          "text": "TC-G1"
+        },
+        {
+          "box": [
+            673,
+            774,
+            759,
+            807
+          ],
+          "legible": "clear",
+          "text": "TC-G2"
+        },
+        {
+          "box": [
+            733,
+            824,
+            767,
+            849
+          ],
+          "legible": "unsure",
+          "text": "\"N\""
+        },
+        {
+          "box": [
+            137,
+            862,
+            150,
+            881
+          ],
+          "legible": "clear",
+          "text": "C"
+        },
+        {
+          "box": [
+            230,
+            862,
+            253,
+            881
+          ],
+          "legible": "clear",
+          "text": "Z1"
+        },
+        {
+          "box": [
+            144,
+            899,
+            251,
+            916
+          ],
+          "legible": "clear",
+          "text": "Single-Alarm"
+        },
+        {
+          "box": [
+            254,
+            899,
+            343,
+            916
+          ],
+          "legible": "clear",
+          "text": "Controller"
+        },
+        {
+          "box": [
+            194,
+            919,
+            236,
+            936
+          ],
+          "legible": "clear",
+          "text": "from"
+        },
+        {
+          "box": [
+            243,
+            919,
+            273,
+            936
+          ],
+          "legible": "clear",
+          "text": "the"
+        },
+        {
+          "box": [
+            281,
+            919,
+            315,
+            936
+          ],
+          "legible": "clear",
+          "text": "Fire"
+        },
+        {
+          "box": [
+            169,
+            938,
+            215,
+            955
+          ],
+          "legible": "clear",
+          "text": "Alarm"
+        },
+        {
+          "box": [
+            223,
+            938,
+            285,
+            955
+          ],
+          "legible": "clear",
+          "text": "Control"
+        },
+        {
+          "box": [
+            292,
+            938,
+            343,
+            955
+          ],
+          "legible": "clear",
+          "text": "Panel"
+        },
+        {
+          "box": [
+            148,
+            955,
+            222,
+            982
+          ],
+          "legible": "clear",
+          "text": "GIC-1"
+        },
+        {
+          "box": [
+            266,
+            999,
+            288,
+            1012
+          ],
+          "legible": "clear",
+          "text": "N.O"
+        },
+        {
+          "box": [
+            119,
+            1005,
+            130,
+            1023
+          ],
+          "legible": "clear",
+          "text": "L"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

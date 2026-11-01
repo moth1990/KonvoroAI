@@ -1,0 +1,114 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 314,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            178,
+            8,
+            208,
+            27
+          ],
+          "legible": "clear",
+          "text": "\"N\""
+        },
+        {
+          "box": [
+            296,
+            91,
+            328,
+            117
+          ],
+          "legible": "clear",
+          "text": "F7"
+        },
+        {
+          "box": [
+            309,
+            134,
+            369,
+            161
+          ],
+          "legible": "clear",
+          "text": "10+N"
+        },
+        {
+          "box": [
+            309,
+            168,
+            391,
+            192
+          ],
+          "legible": "clear",
+          "text": "INC=8A"
+        },
+        {
+          "box": [
+            309,
+            198,
+            397,
+            223
+          ],
+          "legible": "clear",
+          "text": "SN201M"
+        },
+        {
+          "box": [
+            226,
+            493,
+            255,
+            651
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3X1.5N2XY"
+        },
+        {
+          "box": [
+            193,
+            799,
+            212,
+            816
+          ],
+          "legible": "clear",
+          "text": "N7"
+        },
+        {
+          "box": [
+            280,
+            803,
+            297,
+            820
+          ],
+          "legible": "unsure",
+          "text": "L7"
+        },
+        {
+          "box": [
+            171,
+            872,
+            250,
+            906
+          ],
+          "legible": "unsure",
+          "text": "BOM"
+        },
+        {
+          "box": [
+            278,
+            872,
+            301,
+            905
+          ],
+          "legible": "clear",
+          "text": "7"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

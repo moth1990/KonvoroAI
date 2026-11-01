@@ -1,0 +1,113 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 304,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            592,
+            370,
+            682,
+            404
+          ],
+          "legible": "clear",
+          "text": "5x63A"
+        },
+        {
+          "box": [
+            739,
+            368,
+            791,
+            399
+          ],
+          "legible": "clear",
+          "text": "CEE"
+        },
+        {
+          "box": [
+            728,
+            405,
+            804,
+            438
+          ],
+          "legible": "clear",
+          "text": "5x16A"
+        },
+        {
+          "box": [
+            841,
+            368,
+            893,
+            399
+          ],
+          "legible": "clear",
+          "text": "CEE"
+        },
+        {
+          "box": [
+            836,
+            405,
+            910,
+            438
+          ],
+          "legible": "clear",
+          "text": "1x16A"
+        },
+        {
+          "box": [
+            945,
+            367,
+            996,
+            399
+          ],
+          "legible": "unsure",
+          "text": "ת.י."
+        },
+        {
+          "box": [
+            941,
+            513,
+            996,
+            553
+          ],
+          "legible": "clear",
+          "text": "בתי"
+        },
+        {
+          "box": [
+            864,
+            513,
+            925,
+            553
+          ],
+          "legible": "clear",
+          "text": "תקע"
+        },
+        {
+          "box": [
+            811,
+            513,
+            847,
+            553
+          ],
+          "legible": "clear",
+          "text": "על"
+        },
+        {
+          "box": [
+            717,
+            513,
+            790,
+            553
+          ],
+          "legible": "clear",
+          "text": "הלוח"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

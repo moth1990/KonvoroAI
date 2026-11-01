@@ -1,0 +1,183 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 512,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            299,
+            285,
+            352,
+            315
+          ],
+          "legible": "clear",
+          "text": "CEE"
+        },
+        {
+          "box": [
+            289,
+            323,
+            365,
+            354
+          ],
+          "legible": "clear",
+          "text": "5x16A"
+        },
+        {
+          "box": [
+            402,
+            285,
+            455,
+            315
+          ],
+          "legible": "clear",
+          "text": "CEE"
+        },
+        {
+          "box": [
+            398,
+            323,
+            470,
+            354
+          ],
+          "legible": "clear",
+          "text": "1x16A"
+        },
+        {
+          "box": [
+            506,
+            284,
+            557,
+            314
+          ],
+          "legible": "unsure",
+          "text": "ת.י."
+        },
+        {
+          "box": [
+            616,
+            288,
+            668,
+            318
+          ],
+          "legible": "clear",
+          "text": "CEE"
+        },
+        {
+          "box": [
+            609,
+            324,
+            689,
+            354
+          ],
+          "legible": "clear",
+          "text": "5x32A"
+        },
+        {
+          "box": [
+            558,
+            418,
+            617,
+            456
+          ],
+          "legible": "clear",
+          "text": "בתי"
+        },
+        {
+          "box": [
+            480,
+            418,
+            548,
+            456
+          ],
+          "legible": "clear",
+          "text": "תקע"
+        },
+        {
+          "box": [
+            441,
+            418,
+            473,
+            456
+          ],
+          "legible": "clear",
+          "text": "על"
+        },
+        {
+          "box": [
+            334,
+            418,
+            432,
+            456
+          ],
+          "legible": "clear",
+          "text": "הלוח"
+        },
+        {
+          "box": [
+            541,
+            468,
+            653,
+            506
+          ],
+          "legible": "clear",
+          "text": "בקופסת"
+        },
+        {
+          "box": [
+            455,
+            468,
+            533,
+            506
+          ],
+          "legible": "clear",
+          "text": "שרות"
+        },
+        {
+          "box": [
+            317,
+            468,
+            447,
+            506
+          ],
+          "legible": "clear",
+          "text": "חיצונית"
+        },
+        {
+          "box": [
+            525,
+            518,
+            609,
+            556
+          ],
+          "legible": "clear",
+          "text": "מוגנת"
+        },
+        {
+          "box": [
+            468,
+            518,
+            517,
+            556
+          ],
+          "legible": "clear",
+          "text": "מים"
+        },
+        {
+          "box": [
+            366,
+            522,
+            432,
+            556
+          ],
+          "legible": "clear",
+          "text": "IP54"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

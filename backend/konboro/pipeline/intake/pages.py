@@ -166,6 +166,17 @@ def render(
     region_long_pt = max((x1 - x0) * w, (y1 - y0) * h)
     scale = min(long_side_px / region_long_pt, max_dpi / 72.0)
     scale = min(scale, (MAX_RENDER_PX / max(1.0, (x1 - x0) * w * (y1 - y0) * h)) ** 0.5)
+    return _render(page, data, scale, crop)
+
+
+def render_at(page: PageRead, data: bytes, dpi: float, crop: Crop | None = None) -> Image.Image:
+    """The page (or the crop), upright, at exactly `dpi` (02 §2.1): stage 2 keeps `px_per_pt = dpi / 72`."""
+    return _render(page, data, dpi / 72.0, crop)
+
+
+def _render(page: PageRead, data: bytes, scale: float, crop: Crop | None) -> Image.Image:
+    x0, y0, x1, y1 = crop or (0.0, 0.0, 1.0, 1.0)
+    w, h = page.size_pt
     if page._image is not None:
         img = page._image
         iw, ih = img.size

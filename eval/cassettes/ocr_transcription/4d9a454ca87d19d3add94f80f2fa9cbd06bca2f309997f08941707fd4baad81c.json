@@ -1,0 +1,193 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 555,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            563,
+            301,
+            618,
+            347
+          ],
+          "legible": "clear",
+          "text": "Q0"
+        },
+        {
+          "box": [
+            540,
+            377,
+            651,
+            411
+          ],
+          "legible": "clear",
+          "text": "4X160A"
+        },
+        {
+          "box": [
+            538,
+            424,
+            693,
+            459
+          ],
+          "legible": "clear",
+          "text": "ABB-XT1C"
+        },
+        {
+          "box": [
+            545,
+            462,
+            692,
+            497
+          ],
+          "legible": "clear",
+          "text": "INC=125A"
+        },
+        {
+          "box": [
+            638,
+            522,
+            741,
+            564
+          ],
+          "legible": "unsure",
+          "text": "משולב"
+        },
+        {
+          "box": [
+            545,
+            522,
+            616,
+            564
+          ],
+          "legible": "unsure",
+          "text": "פחת"
+        },
+        {
+          "box": [
+            229,
+            775,
+            258,
+            794
+          ],
+          "legible": "clear",
+          "text": "\"N\""
+        },
+        {
+          "box": [
+            566,
+            775,
+            596,
+            794
+          ],
+          "legible": "clear",
+          "text": "\"N\""
+        },
+        {
+          "box": [
+            946,
+            775,
+            976,
+            794
+          ],
+          "legible": "clear",
+          "text": "\"N\""
+        },
+        {
+          "box": [
+            346,
+            857,
+            377,
+            886
+          ],
+          "legible": "clear",
+          "text": "F5"
+        },
+        {
+          "box": [
+            684,
+            857,
+            715,
+            886
+          ],
+          "legible": "clear",
+          "text": "F6"
+        },
+        {
+          "box": [
+            359,
+            903,
+            419,
+            929
+          ],
+          "legible": "unsure",
+          "text": "10+N"
+        },
+        {
+          "box": [
+            359,
+            935,
+            440,
+            961
+          ],
+          "legible": "clear",
+          "text": "INC=8A"
+        },
+        {
+          "box": [
+            359,
+            964,
+            447,
+            992
+          ],
+          "legible": "clear",
+          "text": "SN201M"
+        },
+        {
+          "box": [
+            697,
+            903,
+            757,
+            929
+          ],
+          "legible": "unsure",
+          "text": "10+N"
+        },
+        {
+          "box": [
+            697,
+            935,
+            778,
+            961
+          ],
+          "legible": "clear",
+          "text": "INC=8A"
+        },
+        {
+          "box": [
+            697,
+            964,
+            785,
+            992
+          ],
+          "legible": "clear",
+          "text": "SN201M"
+        },
+        {
+          "box": [
+            1,
+            964,
+            88,
+            992
+          ],
+          "legible": "unsure",
+          "text": "SN201M"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

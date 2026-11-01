@@ -86,11 +86,11 @@ golden/ specs/ prototype/   reference material; do not modify without the user
 docs/           strategy, roadmap, session files, bug log
 ```
 
-Schema changes are Alembic migrations in `backend/alembic/versions/`. Update `docs/db-schema.md` in the same PR. Tests marked `integration` need `make up`; they create their own `konboro_test` database and their own prefixed SQS queues.
+Schema changes are Alembic migrations in `backend/alembic/versions/`. Update `docs/db-schema.md` in the same PR. Tests marked `integration` need `make up`; they create their own `konboro_test` database, their own prefixed SQS queues and their own S3 bucket (`konboro-test`, emptied per run; E2E and the eval have theirs too, BUG-020).
 
 **The pipeline** (00 §4–5, 12 §3):
 - **Contracts.** `konboro/contracts/` holds one Pydantic model per stage boundary, taken from each spec's §6. `tests/unit/test_contracts.py` validates every spec example against its model and pins each schema. A contract change is a change to the spec that defines it and to every spec that consumes it.
-- **Stages.** `konboro/pipeline/stages/sN_*.py` are stubs since S05; stage 1 is real since S08 (its parts are in `pipeline/intake/`). A later session replaces one by writing a function `run(ctx) -> Contract` that reads earlier outputs through `ctx.output(n, Model)` and calls the model only through `ctx.llm`, which writes each call to `llm_calls`. The coordinator (`pipeline/coordinator.py`) doesn't change.
+- **Stages.** `konboro/pipeline/stages/sN_*.py` are stubs since S05; stage 1 is real since S08 (its parts are in `pipeline/intake/`) and stage 2 since S10 (`pipeline/extraction/`; OCR goes through the `OcrEngine` interface, `ClaudeVisionOcr` until S31). A later session replaces one by writing a function `run(ctx) -> Contract` that reads earlier outputs through `ctx.output(n, Model)` and calls the model only through `ctx.llm`, which writes each call to `llm_calls`. The coordinator (`pipeline/coordinator.py`) doesn't change.
 - **Queues.** One SQS queue per stage (`konboro-s1-intake` … `-s7-pricing`), each sending to `konboro-dlq` after 3 failed receives. Messages carry IDs only (`StageMessage`). Files and stage outputs live in S3 under `tenants/{tenant_id}/`, through `services/storage.py`, which refuses another tenant's key.
 
 ## Commands
@@ -108,7 +108,7 @@ Schema changes are Alembic migrations in `backend/alembic/versions/`. Update `do
 | `make fidelity` | Prototype vs app screenshots into `frontend/e2e/fidelity/report.html`, for the user's review |
 | `make check-screenshots` | Compare the accepted screens with their baselines, in Playwright's Linux Docker image (the same check runs in CI) |
 | `make screenshots` | Rewrite those baselines, only after the user accepts a visual change |
-| `make eval` | Golden-set evaluation against `eval/baseline.json`, which fails on any drop. Replay by default; `EVAL_MODE=live` uses real Claude, and `EVAL_RECORD=1` saves its answers as cassettes. Needs `make up` ([eval/README.md](eval/README.md)) |
+| `make eval` | Golden-set evaluation against `eval/baseline.json`, which fails on any drop. Replay by default; `EVAL_MODE=live` uses real Claude, and `EVAL_RECORD=1` saves its answers as cassettes (`=missing`: only calls with none yet; `EVAL_MAX_USD` caps the spend). Needs `make up` ([eval/README.md](eval/README.md)) |
 | `make eval-baseline` | Make this run's metrics the committed baseline, after a change that moves a score on purpose |
 | `make gen-client` | Regenerate the TS API client from FastAPI's OpenAPI (`frontend/src/api/openapi.json` → `schema.ts`). Run it after any API change and commit both files |
 | `make check-client` | Fail if the committed client is stale. CI runs the same check |

@@ -1,0 +1,53 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 130,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            400,
+            975,
+            517,
+            1024
+          ],
+          "legible": "clear",
+          "text": "לוח"
+        },
+        {
+          "box": [
+            279,
+            975,
+            391,
+            1024
+          ],
+          "legible": "clear",
+          "text": "במבנה"
+        },
+        {
+          "box": [
+            212,
+            975,
+            266,
+            1024
+          ],
+          "legible": "unsure",
+          "text": "פח"
+        },
+        {
+          "box": [
+            117,
+            975,
+            203,
+            1024
+          ],
+          "legible": "clear",
+          "text": "כולל"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

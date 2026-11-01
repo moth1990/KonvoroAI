@@ -1,0 +1,343 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 980,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            287,
+            20,
+            319,
+            68
+          ],
+          "legible": "clear",
+          "text": "A"
+        },
+        {
+          "box": [
+            343,
+            15,
+            481,
+            48
+          ],
+          "legible": "clear",
+          "text": "טמפרטורה"
+        },
+        {
+          "box": [
+            12,
+            122,
+            120,
+            154
+          ],
+          "legible": "clear",
+          "text": "EXHUST"
+        },
+        {
+          "box": [
+            127,
+            122,
+            184,
+            154
+          ],
+          "legible": "clear",
+          "text": "FAN"
+        },
+        {
+          "box": [
+            191,
+            122,
+            287,
+            154
+          ],
+          "legible": "clear",
+          "text": "GROUP"
+        },
+        {
+          "box": [
+            294,
+            122,
+            312,
+            154
+          ],
+          "legible": "clear",
+          "text": "A"
+        },
+        {
+          "box": [
+            142,
+            164,
+            239,
+            196
+          ],
+          "legible": "clear",
+          "text": "3X208V"
+        },
+        {
+          "box": [
+            526,
+            282,
+            670,
+            322
+          ],
+          "legible": "clear",
+          "text": "NEVIS"
+        },
+        {
+          "box": [
+            263,
+            282,
+            328,
+            322
+          ],
+          "legible": "clear",
+          "text": "מס"
+        },
+        {
+          "box": [
+            85,
+            282,
+            247,
+            322
+          ],
+          "legible": "unsure",
+          "text": "תוכנית:"
+        },
+        {
+          "box": [
+            259,
+            368,
+            357,
+            404
+          ],
+          "legible": "clear",
+          "text": "מתכנן"
+        },
+        {
+          "box": [
+            221,
+            372,
+            235,
+            402
+          ],
+          "legible": "clear",
+          "text": ":"
+        },
+        {
+          "box": [
+            105,
+            370,
+            213,
+            406
+          ],
+          "legible": "unsure",
+          "text": "מחמוד"
+        },
+        {
+          "box": [
+            36,
+            372,
+            97,
+            406
+          ],
+          "legible": "unsure",
+          "text": "זועבי"
+        },
+        {
+          "box": [
+            744,
+            370,
+            790,
+            402
+          ],
+          "legible": "clear",
+          "text": "שם"
+        },
+        {
+          "box": [
+            632,
+            368,
+            730,
+            402
+          ],
+          "legible": "clear",
+          "text": "הלוח:"
+        },
+        {
+          "box": [
+            402,
+            382,
+            607,
+            422
+          ],
+          "legible": "clear",
+          "text": "KARWANI"
+        },
+        {
+          "box": [
+            262,
+            438,
+            358,
+            482
+          ],
+          "legible": "unsure",
+          "text": "שרטט:"
+        },
+        {
+          "box": [
+            160,
+            438,
+            254,
+            482
+          ],
+          "legible": "unsure",
+          "text": "הבה"
+        },
+        {
+          "box": [
+            0,
+            438,
+            148,
+            482
+          ],
+          "legible": "unsure",
+          "text": "גמאחנה"
+        },
+        {
+          "box": [
+            689,
+            466,
+            788,
+            500
+          ],
+          "legible": "clear",
+          "text": "מזמין:"
+        },
+        {
+          "box": [
+            277,
+            508,
+            358,
+            544
+          ],
+          "legible": "clear",
+          "text": "אישר"
+        },
+        {
+          "box": [
+            248,
+            514,
+            262,
+            540
+          ],
+          "legible": "clear",
+          "text": ":"
+        },
+        {
+          "box": [
+            162,
+            510,
+            238,
+            546
+          ],
+          "legible": "clear",
+          "text": "עופר"
+        },
+        {
+          "box": [
+            78,
+            510,
+            152,
+            546
+          ],
+          "legible": "clear",
+          "text": "אלרון"
+        },
+        {
+          "box": [
+            406,
+            514,
+            491,
+            552
+          ],
+          "legible": "clear",
+          "text": "pro"
+        },
+        {
+          "box": [
+            525,
+            514,
+            590,
+            552
+          ],
+          "legible": "clear",
+          "text": "fit"
+        },
+        {
+          "box": [
+            621,
+            514,
+            735,
+            552
+          ],
+          "legible": "clear",
+          "text": "agro"
+        },
+        {
+          "box": [
+            819,
+            484,
+            933,
+            518
+          ],
+          "legible": "clear",
+          "text": "1:100:"
+        },
+        {
+          "box": [
+            42,
+            592,
+            64,
+            622
+          ],
+          "legible": "clear",
+          "text": "3"
+        },
+        {
+          "box": [
+            339,
+            592,
+            360,
+            622
+          ],
+          "legible": "clear",
+          "text": "4"
+        },
+        {
+          "box": [
+            652,
+            592,
+            674,
+            622
+          ],
+          "legible": "clear",
+          "text": "5"
+        },
+        {
+          "box": [
+            938,
+            592,
+            959,
+            622
+          ],
+          "legible": "clear",
+          "text": "6"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

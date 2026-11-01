@@ -1,0 +1,75 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 192,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            22,
+            90,
+            45,
+            121
+          ],
+          "legible": "clear",
+          "text": "C"
+        },
+        {
+          "box": [
+            23,
+            350,
+            47,
+            381
+          ],
+          "legible": "clear",
+          "text": "D"
+        },
+        {
+          "box": [
+            26,
+            696,
+            48,
+            727
+          ],
+          "legible": "clear",
+          "text": "E"
+        },
+        {
+          "box": [
+            612,
+            158,
+            648,
+            190
+          ],
+          "legible": "clear",
+          "text": "01"
+        },
+        {
+          "box": [
+            622,
+            252,
+            657,
+            526
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "CIREULATION"
+        },
+        {
+          "box": [
+            667,
+            318,
+            701,
+            423
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "FANS"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

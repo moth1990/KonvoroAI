@@ -1,0 +1,143 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 396,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            441,
+            48,
+            503,
+            93
+          ],
+          "legible": "clear",
+          "text": "כל"
+        },
+        {
+          "box": [
+            272,
+            48,
+            430,
+            95
+          ],
+          "legible": "unsure",
+          "text": "המאז\"ים"
+        },
+        {
+          "box": [
+            188,
+            50,
+            262,
+            93
+          ],
+          "legible": "clear",
+          "text": "יהיו"
+        },
+        {
+          "box": [
+            88,
+            50,
+            175,
+            93
+          ],
+          "legible": "clear",
+          "text": "לזרם"
+        },
+        {
+          "box": [
+            419,
+            115,
+            503,
+            160
+          ],
+          "legible": "clear",
+          "text": "נדרש"
+        },
+        {
+          "box": [
+            307,
+            115,
+            404,
+            160
+          ],
+          "legible": "clear",
+          "text": "מקום"
+        },
+        {
+          "box": [
+            239,
+            115,
+            300,
+            160
+          ],
+          "legible": "clear",
+          "text": "30%"
+        },
+        {
+          "box": [
+            132,
+            115,
+            230,
+            160
+          ],
+          "legible": "clear",
+          "text": "שמור"
+        },
+        {
+          "box": [
+            420,
+            182,
+            512,
+            228
+          ],
+          "legible": "clear",
+          "text": "חישוב"
+        },
+        {
+          "box": [
+            342,
+            182,
+            408,
+            228
+          ],
+          "legible": "clear",
+          "text": "חום"
+        },
+        {
+          "box": [
+            274,
+            182,
+            334,
+            228
+          ],
+          "legible": "clear",
+          "text": "ע\"י"
+        },
+        {
+          "box": [
+            185,
+            182,
+            262,
+            228
+          ],
+          "legible": "clear",
+          "text": "יצרן"
+        },
+        {
+          "box": [
+            79,
+            182,
+            170,
+            228
+          ],
+          "legible": "clear",
+          "text": "הלוח"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

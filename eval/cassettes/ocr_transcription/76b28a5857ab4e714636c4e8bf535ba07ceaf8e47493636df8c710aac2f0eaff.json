@@ -1,0 +1,300 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 891,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            0,
+            22,
+            32,
+            49
+          ],
+          "legible": "unsure",
+          "text": "B1"
+        },
+        {
+          "box": [
+            0,
+            66,
+            70,
+            96
+          ],
+          "legible": "unsure",
+          "text": "x40A"
+        },
+        {
+          "box": [
+            0,
+            103,
+            194,
+            133
+          ],
+          "legible": "unsure",
+          "text": "0mA-TYPE\"A\""
+        },
+        {
+          "box": [
+            70,
+            362,
+            103,
+            391
+          ],
+          "legible": "clear",
+          "text": "F9"
+        },
+        {
+          "box": [
+            267,
+            362,
+            316,
+            391
+          ],
+          "legible": "clear",
+          "text": "F10"
+        },
+        {
+          "box": [
+            824,
+            362,
+            873,
+            391
+          ],
+          "legible": "clear",
+          "text": "F13"
+        },
+        {
+          "box": [
+            69,
+            418,
+            141,
+            444
+          ],
+          "legible": "clear",
+          "text": "1X10A"
+        },
+        {
+          "box": [
+            277,
+            418,
+            347,
+            444
+          ],
+          "legible": "clear",
+          "text": "1X10A"
+        },
+        {
+          "box": [
+            825,
+            418,
+            896,
+            444
+          ],
+          "legible": "clear",
+          "text": "3X25A"
+        },
+        {
+          "box": [
+            69,
+            451,
+            153,
+            476
+          ],
+          "legible": "clear",
+          "text": "INC=8A"
+        },
+        {
+          "box": [
+            277,
+            451,
+            359,
+            476
+          ],
+          "legible": "clear",
+          "text": "INC=8A"
+        },
+        {
+          "box": [
+            825,
+            451,
+            921,
+            476
+          ],
+          "legible": "clear",
+          "text": "INC=20A"
+        },
+        {
+          "box": [
+            69,
+            476,
+            144,
+            501
+          ],
+          "legible": "clear",
+          "text": "S201M"
+        },
+        {
+          "box": [
+            277,
+            476,
+            351,
+            501
+          ],
+          "legible": "clear",
+          "text": "S201M"
+        },
+        {
+          "box": [
+            825,
+            476,
+            898,
+            501
+          ],
+          "legible": "clear",
+          "text": "S203M"
+        },
+        {
+          "box": [
+            70,
+            501,
+            114,
+            525
+          ],
+          "legible": "clear",
+          "text": "ABB"
+        },
+        {
+          "box": [
+            277,
+            501,
+            321,
+            525
+          ],
+          "legible": "clear",
+          "text": "ABB"
+        },
+        {
+          "box": [
+            825,
+            501,
+            869,
+            525
+          ],
+          "legible": "clear",
+          "text": "ABB"
+        },
+        {
+          "box": [
+            52,
+            688,
+            68,
+            716
+          ],
+          "legible": "clear",
+          "text": "9"
+        },
+        {
+          "box": [
+            250,
+            688,
+            282,
+            716
+          ],
+          "legible": "clear",
+          "text": "10"
+        },
+        {
+          "box": [
+            808,
+            688,
+            838,
+            716
+          ],
+          "legible": "clear",
+          "text": "13"
+        },
+        {
+          "box": [
+            8,
+            868,
+            36,
+            946
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "N2XY"
+        },
+        {
+          "box": [
+            205,
+            868,
+            233,
+            946
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "N2XY"
+        },
+        {
+          "box": [
+            765,
+            878,
+            792,
+            959
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "N2XY"
+        },
+        {
+          "box": [
+            60,
+            805,
+            85,
+            918
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "LGHITING"
+        },
+        {
+          "box": [
+            250,
+            922,
+            277,
+            992
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "SPARE"
+        },
+        {
+          "box": [
+            808,
+            852,
+            835,
+            938
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "SOCKET"
+        },
+        {
+          "box": [
+            808,
+            945,
+            835,
+            994
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "BOX"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

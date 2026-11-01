@@ -205,7 +205,7 @@ This table answers the customer's question "why was this counted?".
 
 **`drawing_files`** (`fil_`): `original_name`, `detected_format`, `sha256`, `size_bytes`, `page_count`, `storage_key`. An index on `(tenant_id, sha256)` supports reuse (01 §5.1). A file inside a ZIP is its own row, named `archive.zip/inner.pdf`.
 
-**S3 keys** (`konboro.services.storage`): everything sits under `tenants/{tenant_id}/`, and every read checks the key is under the caller's tenant. Under it, `drawings/{drawing_id}/` holds `files/{file_id}.{ext}` (never the uploaded name), `pages/{page_id}/thumb.png`, and `stages/s{n}.json` (each stage's contract).
+**S3 keys** (`konboro.services.storage`): everything sits under `tenants/{tenant_id}/`, and every read checks the key is under the caller's tenant. Under it, `drawings/{drawing_id}/` holds `files/{file_id}.{ext}` (never the uploaded name), `pages/{page_id}/thumb.png`, and `stages/s{n}.json` (each stage's contract). Stage 2 adds, per page: `render.png`, `paths.json.gz` (lines and shapes), `wires.json.gz` (the wire graph), `tiles/r{row}c{col}.png` (detection tiles) and `dz/page.dzi` with `dz/page_files/{level}/{col}_{row}.png` (the viewer's pyramid, 12 §6).
 
 **`pages`** (`pg_`, 01 §6.3):
 
@@ -218,7 +218,8 @@ This table answers the customer's question "why was this counted?".
 | `classified_by`, `model` | `classified_by` is `model`, `user`, `reused` or `template` (01 §5.7) |
 | `component_labels` | The classifier's reading of the device tags: `tags_and_models`, `tags_only`, `none` or `not_applicable` (01 §5.4). `input_kind` counts them on the diagram pages (01 §4.4), so a page reused by hash keeps them. Null for a page classified by a template or the user (migration 0006, BUG-015) |
 | `title_block jsonb`, `regions jsonb` | `regions`: everything the classifier found, `[{region_kind, bbox, panel_name, confidence}]`, panels included (`panel`) whatever the page's route, so a page-kind change can rebuild the panels (S08) |
-| `render_key`, `tiles_prefix` | S3 keys |
+| `render_key`, `tiles_prefix` | S3 keys, written by stage 2: the page render, and the prefix of its detection tiles and its viewer pyramid (`dz/`) |
+| `tile_count` | The page's tiles that are not blank (02 §2.6), for the run step's stage-2 line. Null until stage 2 runs on the page (migration 0007, S10) |
 
 **`panels`** (`pnl_`): `drawing_id`, `name`, `page_ids text[]`, `bboxes jsonb` (page → bbox), and `confidence`.
 

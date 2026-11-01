@@ -5,7 +5,7 @@
 | **Track** | R |
 | **Branch** | `s09-review-lines` |
 | **Depends on** | S07 |
-| **Status** | in review |
+| **Status** | done |
 | **PR** | [moth1990/KonvoroAI#10](https://github.com/moth1990/KonvoroAI/pull/10) |
 
 ## Goal

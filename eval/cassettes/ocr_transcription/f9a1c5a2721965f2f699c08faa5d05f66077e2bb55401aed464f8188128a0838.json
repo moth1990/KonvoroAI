@@ -1,0 +1,93 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 242,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            168,
+            50,
+            192,
+            85
+          ],
+          "legible": "unsure",
+          "text": "6"
+        },
+        {
+          "box": [
+            477,
+            48,
+            500,
+            82
+          ],
+          "legible": "clear",
+          "text": "7"
+        },
+        {
+          "box": [
+            769,
+            50,
+            792,
+            85
+          ],
+          "legible": "clear",
+          "text": "8"
+        },
+        {
+          "box": [
+            85,
+            860,
+            158,
+            898
+          ],
+          "legible": "clear",
+          "text": "TH1"
+        },
+        {
+          "box": [
+            59,
+            917,
+            171,
+            956
+          ],
+          "legible": "clear",
+          "text": "OUT2"
+        },
+        {
+          "box": [
+            355,
+            946,
+            428,
+            994
+          ],
+          "legible": "clear",
+          "text": "R3"
+        },
+        {
+          "box": [
+            771,
+            970,
+            829,
+            1002
+          ],
+          "legible": "unsure",
+          "text": "טמפ'"
+        },
+        {
+          "box": [
+            838,
+            970,
+            892,
+            1002
+          ],
+          "legible": "unsure",
+          "text": "בקר"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

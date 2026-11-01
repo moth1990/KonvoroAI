@@ -1,0 +1,133 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 349,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            36,
+            53,
+            58,
+            84
+          ],
+          "legible": "clear",
+          "text": "8"
+        },
+        {
+          "box": [
+            351,
+            50,
+            372,
+            82
+          ],
+          "legible": "clear",
+          "text": "9"
+        },
+        {
+          "box": [
+            669,
+            53,
+            713,
+            84
+          ],
+          "legible": "clear",
+          "text": "10"
+        },
+        {
+          "box": [
+            550,
+            255,
+            620,
+            312
+          ],
+          "legible": "clear",
+          "text": "WO"
+        },
+        {
+          "box": [
+            838,
+            347,
+            862,
+            378
+          ],
+          "legible": "clear",
+          "text": "A"
+        },
+        {
+          "box": [
+            92,
+            394,
+            121,
+            411
+          ],
+          "legible": "unsure",
+          "text": "\"N\""
+        },
+        {
+          "box": [
+            207,
+            477,
+            254,
+            502
+          ],
+          "legible": "clear",
+          "text": "F14"
+        },
+        {
+          "box": [
+            221,
+            520,
+            280,
+            545
+          ],
+          "legible": "clear",
+          "text": "10+N"
+        },
+        {
+          "box": [
+            221,
+            551,
+            301,
+            576
+          ],
+          "legible": "clear",
+          "text": "INC=8A"
+        },
+        {
+          "box": [
+            221,
+            581,
+            308,
+            606
+          ],
+          "legible": "clear",
+          "text": "SN201M"
+        },
+        {
+          "box": [
+            838,
+            608,
+            861,
+            639
+          ],
+          "legible": "clear",
+          "text": "B"
+        },
+        {
+          "box": [
+            838,
+            858,
+            862,
+            889
+          ],
+          "legible": "clear",
+          "text": "C"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

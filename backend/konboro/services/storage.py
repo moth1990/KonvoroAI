@@ -36,6 +36,23 @@ class Storage:
         self.bucket = settings.s3_bucket
         self.sse = settings.s3_sse
         self.s3 = s3 or aws.client("s3", settings)
+        self._local = settings.env in ("local", "test") and settings.s3_endpoint is not None
+
+    def reset_local_bucket(self) -> None:
+        """Tests, E2E and the eval each start on an empty bucket of their own: S3Mock slows down with every object
+        a bucket holds (a put took 270 ms at 27,000 objects, 5 ms on an empty bucket), and stage 2 writes dozens
+        per page (S10). Only against the local S3 stand-in, never AWS."""
+        if not self._local:
+            raise RuntimeError("reset_local_bucket is for the local S3 stand-in only")
+        try:
+            self.s3.head_bucket(Bucket=self.bucket)
+        except self.s3.exceptions.ClientError:
+            self.s3.create_bucket(Bucket=self.bucket)
+            return
+        for page in self.s3.get_paginator("list_objects_v2").paginate(Bucket=self.bucket):
+            keys = [{"Key": o["Key"]} for o in page.get("Contents", [])]
+            if keys:
+                self.s3.delete_objects(Bucket=self.bucket, Delete={"Objects": keys, "Quiet": True})
 
     def _check(self, tenant_id: str, key: str) -> None:
         if not key.startswith(tenant_prefix(tenant_id)) or ".." in key.split("/"):

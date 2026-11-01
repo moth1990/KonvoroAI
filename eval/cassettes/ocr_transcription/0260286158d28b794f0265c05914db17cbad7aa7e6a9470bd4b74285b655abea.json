@@ -1,0 +1,253 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 695,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            27,
+            92,
+            48,
+            122
+          ],
+          "legible": "clear",
+          "text": "E"
+        },
+        {
+          "box": [
+            422,
+            226,
+            470,
+            268
+          ],
+          "legible": "clear",
+          "text": "WO"
+        },
+        {
+          "box": [
+            498,
+            226,
+            656,
+            268
+          ],
+          "legible": "clear",
+          "text": "L1,L2,L3"
+        },
+        {
+          "box": [
+            681,
+            222,
+            751,
+            266
+          ],
+          "legible": "clear",
+          "text": "\"N\""
+        },
+        {
+          "box": [
+            106,
+            482,
+            202,
+            513
+          ],
+          "legible": "clear",
+          "text": "Date:"
+        },
+        {
+          "box": [
+            237,
+            480,
+            493,
+            517
+          ],
+          "legible": "clear",
+          "text": "02/10/2026"
+        },
+        {
+          "box": [
+            581,
+            495,
+            717,
+            529
+          ],
+          "legible": "clear",
+          "text": "Drawing"
+        },
+        {
+          "box": [
+            739,
+            496,
+            798,
+            528
+          ],
+          "legible": "clear",
+          "text": "No.:"
+        },
+        {
+          "box": [
+            814,
+            490,
+            971,
+            527
+          ],
+          "legible": "clear",
+          "text": "26/993"
+        },
+        {
+          "box": [
+            21,
+            523,
+            38,
+            555
+          ],
+          "legible": "clear",
+          "text": "F"
+        },
+        {
+          "box": [
+            521,
+            549,
+            556,
+            582
+          ],
+          "legible": "clear",
+          "text": ":1"
+        },
+        {
+          "box": [
+            584,
+            579,
+            761,
+            613
+          ],
+          "legible": "clear",
+          "text": "Designed"
+        },
+        {
+          "box": [
+            787,
+            580,
+            845,
+            613
+          ],
+          "legible": "clear",
+          "text": "by:"
+        },
+        {
+          "box": [
+            510,
+            612,
+            553,
+            645
+          ],
+          "legible": "clear",
+          "text": ":2"
+        },
+        {
+          "box": [
+            612,
+            656,
+            732,
+            689
+          ],
+          "legible": "clear",
+          "text": "Drawn"
+        },
+        {
+          "box": [
+            758,
+            657,
+            815,
+            690
+          ],
+          "legible": "clear",
+          "text": "by:"
+        },
+        {
+          "box": [
+            841,
+            656,
+            937,
+            690
+          ],
+          "legible": "clear",
+          "text": "Baha"
+        },
+        {
+          "box": [
+            503,
+            675,
+            548,
+            708
+          ],
+          "legible": "clear",
+          "text": ":3"
+        },
+        {
+          "box": [
+            620,
+            723,
+            814,
+            759
+          ],
+          "legible": "clear",
+          "text": "Approved"
+        },
+        {
+          "box": [
+            840,
+            725,
+            899,
+            758
+          ],
+          "legible": "clear",
+          "text": "by:"
+        },
+        {
+          "box": [
+            18,
+            716,
+            43,
+            748
+          ],
+          "legible": "clear",
+          "text": "G"
+        },
+        {
+          "box": [
+            235,
+            816,
+            252,
+            847
+          ],
+          "legible": "clear",
+          "text": "1"
+        },
+        {
+          "box": [
+            532,
+            817,
+            556,
+            849
+          ],
+          "legible": "clear",
+          "text": "2"
+        },
+        {
+          "box": [
+            852,
+            814,
+            877,
+            846
+          ],
+          "legible": "clear",
+          "text": "3"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

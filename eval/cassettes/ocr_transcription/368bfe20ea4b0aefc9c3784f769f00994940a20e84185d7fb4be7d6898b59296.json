@@ -1,0 +1,223 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 620,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            657,
+            104,
+            713,
+            142
+          ],
+          "legible": "clear",
+          "text": "R3"
+        },
+        {
+          "box": [
+            855,
+            95,
+            925,
+            130
+          ],
+          "legible": "clear",
+          "text": "TH1"
+        },
+        {
+          "box": [
+            827,
+            151,
+            939,
+            187
+          ],
+          "legible": "clear",
+          "text": "OUT2"
+        },
+        {
+          "box": [
+            541,
+            181,
+            613,
+            213
+          ],
+          "legible": "clear",
+          "text": "SW2"
+        },
+        {
+          "box": [
+            193,
+            184,
+            251,
+            224
+          ],
+          "legible": "clear",
+          "text": "R1"
+        },
+        {
+          "box": [
+            490,
+            249,
+            509,
+            282
+          ],
+          "legible": "clear",
+          "text": "1"
+        },
+        {
+          "box": [
+            569,
+            259,
+            594,
+            291
+          ],
+          "legible": "clear",
+          "text": "0"
+        },
+        {
+          "box": [
+            636,
+            296,
+            661,
+            331
+          ],
+          "legible": "clear",
+          "text": "2"
+        },
+        {
+          "box": [
+            552,
+            443,
+            607,
+            479
+          ],
+          "legible": "clear",
+          "text": "C2"
+        },
+        {
+          "box": [
+            55,
+            703,
+            139,
+            724
+          ],
+          "legible": "clear",
+          "text": "+24VDC"
+        },
+        {
+          "box": [
+            186,
+            703,
+            271,
+            724
+          ],
+          "legible": "clear",
+          "text": "-24VDC"
+        },
+        {
+          "box": [
+            383,
+            735,
+            441,
+            768
+          ],
+          "legible": "clear",
+          "text": "בקר"
+        },
+        {
+          "box": [
+            343,
+            785,
+            480,
+            816
+          ],
+          "legible": "clear",
+          "text": "טמפרטורה"
+        },
+        {
+          "box": [
+            92,
+            755,
+            176,
+            792
+          ],
+          "legible": "clear",
+          "text": "חיצוני"
+        },
+        {
+          "box": [
+            183,
+            755,
+            246,
+            790
+          ],
+          "legible": "clear",
+          "text": "בקר"
+        },
+        {
+          "box": [
+            286,
+            787,
+            318,
+            836
+          ],
+          "legible": "clear",
+          "text": "A"
+        },
+        {
+          "box": [
+            13,
+            889,
+            114,
+            921
+          ],
+          "legible": "clear",
+          "text": "EXHUST"
+        },
+        {
+          "box": [
+            128,
+            889,
+            172,
+            921
+          ],
+          "legible": "clear",
+          "text": "FAN"
+        },
+        {
+          "box": [
+            187,
+            889,
+            278,
+            921
+          ],
+          "legible": "clear",
+          "text": "GROUP"
+        },
+        {
+          "box": [
+            293,
+            889,
+            311,
+            921
+          ],
+          "legible": "clear",
+          "text": "A"
+        },
+        {
+          "box": [
+            141,
+            934,
+            238,
+            968
+          ],
+          "legible": "clear",
+          "text": "3X208V"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

@@ -1,0 +1,103 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 265,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            235,
+            164,
+            252,
+            198
+          ],
+          "legible": "clear",
+          "text": "1"
+        },
+        {
+          "box": [
+            532,
+            165,
+            555,
+            198
+          ],
+          "legible": "clear",
+          "text": "2"
+        },
+        {
+          "box": [
+            853,
+            163,
+            876,
+            196
+          ],
+          "legible": "clear",
+          "text": "3"
+        },
+        {
+          "box": [
+            21,
+            470,
+            47,
+            503
+          ],
+          "legible": "clear",
+          "text": "A"
+        },
+        {
+          "box": [
+            21,
+            739,
+            46,
+            772
+          ],
+          "legible": "clear",
+          "text": "B"
+        },
+        {
+          "box": [
+            707,
+            1003,
+            812,
+            1020
+          ],
+          "legible": "clear",
+          "text": "Preparation"
+        },
+        {
+          "box": [
+            819,
+            1003,
+            850,
+            1020
+          ],
+          "legible": "clear",
+          "text": "for"
+        },
+        {
+          "box": [
+            859,
+            1005,
+            871,
+            1020
+          ],
+          "legible": "clear",
+          "text": "a"
+        },
+        {
+          "box": [
+            878,
+            1003,
+            939,
+            1020
+          ],
+          "legible": "clear",
+          "text": "Remote"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

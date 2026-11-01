@@ -1,0 +1,213 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 607,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            84,
+            93,
+            159,
+            131
+          ],
+          "legible": "clear",
+          "text": "TH1"
+        },
+        {
+          "box": [
+            59,
+            150,
+            171,
+            187
+          ],
+          "legible": "clear",
+          "text": "OUT2"
+        },
+        {
+          "box": [
+            354,
+            181,
+            426,
+            227
+          ],
+          "legible": "clear",
+          "text": "R3"
+        },
+        {
+          "box": [
+            640,
+            243,
+            722,
+            288
+          ],
+          "legible": "clear",
+          "text": "TH1"
+        },
+        {
+          "box": [
+            838,
+            203,
+            894,
+            233
+          ],
+          "legible": "clear",
+          "text": "בקר"
+        },
+        {
+          "box": [
+            766,
+            203,
+            826,
+            233
+          ],
+          "legible": "unsure",
+          "text": "טמפ'"
+        },
+        {
+          "box": [
+            786,
+            253,
+            879,
+            280
+          ],
+          "legible": "clear",
+          "text": "DELTA"
+        },
+        {
+          "box": [
+            757,
+            290,
+            934,
+            317
+          ],
+          "legible": "clear",
+          "text": "DTB4848RR"
+        },
+        {
+          "box": [
+            231,
+            703,
+            316,
+            724
+          ],
+          "legible": "clear",
+          "text": "+24VDC"
+        },
+        {
+          "box": [
+            363,
+            701,
+            448,
+            723
+          ],
+          "legible": "clear",
+          "text": "-24VDC"
+        },
+        {
+          "box": [
+            525,
+            745,
+            590,
+            778
+          ],
+          "legible": "clear",
+          "text": "בקר"
+        },
+        {
+          "box": [
+            493,
+            791,
+            631,
+            826
+          ],
+          "legible": "clear",
+          "text": "טמפרטורה"
+        },
+        {
+          "box": [
+            371,
+            764,
+            427,
+            797
+          ],
+          "legible": "clear",
+          "text": "בקר"
+        },
+        {
+          "box": [
+            275,
+            764,
+            357,
+            797
+          ],
+          "legible": "clear",
+          "text": "חיצוני"
+        },
+        {
+          "box": [
+            309,
+            815,
+            341,
+            862
+          ],
+          "legible": "clear",
+          "text": "B"
+        },
+        {
+          "box": [
+            176,
+            896,
+            271,
+            923
+          ],
+          "legible": "clear",
+          "text": "EXHUST"
+        },
+        {
+          "box": [
+            287,
+            896,
+            343,
+            923
+          ],
+          "legible": "clear",
+          "text": "FAN"
+        },
+        {
+          "box": [
+            354,
+            896,
+            440,
+            923
+          ],
+          "legible": "clear",
+          "text": "GROUP"
+        },
+        {
+          "box": [
+            455,
+            896,
+            475,
+            923
+          ],
+          "legible": "clear",
+          "text": "B"
+        },
+        {
+          "box": [
+            266,
+            925,
+            364,
+            953
+          ],
+          "legible": "clear",
+          "text": "3X208V"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

@@ -69,7 +69,7 @@ screenshots: ## Rewrite the screenshot baselines in Playwright's Linux image, af
 check-screenshots: ## Compare the screens against the baselines, in the same image (needs `make up`, Docker)
 	SCREENSHOTS_CHECK=1 frontend/e2e/visual/update.sh
 
-eval: ## Golden-set eval vs eval/baseline.json. Replay by default; EVAL_MODE=live, EVAL_RECORD=1 re-records (needs `make up`)
+eval: ## Golden-set eval vs eval/baseline.json. Replay by default; EVAL_MODE=live, EVAL_RECORD=1 re-records, =missing records only new calls (needs `make up`)
 	$(BACKEND) PYTHONPATH=.. uv run python -m eval.run
 
 eval-baseline: ## Make this run's metrics the committed baseline, after an intended change (needs `make up`)

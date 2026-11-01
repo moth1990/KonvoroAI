@@ -263,5 +263,46 @@ def test_backtest_na() -> None:
 def test_score_drawing_has_every_section() -> None:
     label = drawing(CanonPanel(name="P", components=(comp("rcd"),)), audit=CONFIRMED, quote_total=Decimal(100))
     scores = score_drawing(label, predicted(quote_total=Decimal(100)))
-    assert set(scores) == {"s1", "s4", "audit", "pricing"}
+    assert set(scores) == {"s1", "s2", "s4", "audit", "pricing"}
     assert scores["pricing"]["backtest_within_5pct"].value == 1.0
+
+
+def test_designator_recall_counts_whole_tokens_in_the_text() -> None:
+    from eval.metrics import stage2
+
+    label = drawing(
+        CanonPanel(
+            name="P",
+            components=(
+                CanonComponent(family="rcd", designators=("Q1", "TC-G1"), qty=1),
+                CanonComponent(family="rcd", designators=("F3",), qty=1),
+            ),
+        )
+    )
+    found = stage2.score(label, predicted(span_texts=("q1 C16", "tc-g1", "F33", "F 3")))["designator_recall"]
+    assert (found.num, found.den) == (2, 3)  # Q1 and TC-G1 in any case; F33 is not F3, and "F 3" is split
+    assert stage2.score(label, predicted())["designator_recall"].value is None  # stage 2 wrote nothing
+    no_tags = drawing(CanonPanel(name="P", components=(CanonComponent(family="rcd", qty=1),)))
+    assert stage2.score(no_tags, predicted(span_texts=("Q1",)))["designator_recall"].value is None
+
+
+def test_designator_recall_leaves_out_what_is_drawn_only_on_other_pages() -> None:
+    from eval.metrics import stage2
+
+    pages = (
+        CanonPage(no=2, kind="panel_front_view", route="context"),
+        CanonPage(no=3, kind="single_line_diagram", route="process"),
+    )
+    label = drawing(
+        CanonPanel(
+            name="P",
+            components=(
+                CanonComponent(family="rcd", designators=("RF",), qty=1, pages=(2,)),
+                CanonComponent(family="rcd", designators=("PM",), qty=1, pages=(3,)),
+                CanonComponent(family="rcd", designators=("Q1",), qty=1),
+            ),
+        ),
+        pages=pages,
+    )
+    found = stage2.score(label, predicted(span_texts=("PM/MS1",)))["designator_recall"]
+    assert (found.num, found.den) == (1, 2)  # RF is on the front view only; Q1 has no pages, so it counts

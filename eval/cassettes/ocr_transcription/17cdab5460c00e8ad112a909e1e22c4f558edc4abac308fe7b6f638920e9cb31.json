@@ -1,0 +1,133 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 360,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            234,
+            166,
+            252,
+            196
+          ],
+          "legible": "clear",
+          "text": "1"
+        },
+        {
+          "box": [
+            531,
+            166,
+            556,
+            198
+          ],
+          "legible": "clear",
+          "text": "2"
+        },
+        {
+          "box": [
+            852,
+            164,
+            877,
+            196
+          ],
+          "legible": "clear",
+          "text": "3"
+        },
+        {
+          "box": [
+            21,
+            470,
+            47,
+            502
+          ],
+          "legible": "clear",
+          "text": "A"
+        },
+        {
+          "box": [
+            21,
+            740,
+            46,
+            772
+          ],
+          "legible": "clear",
+          "text": "B"
+        },
+        {
+          "box": [
+            491,
+            356,
+            540,
+            399
+          ],
+          "legible": "clear",
+          "text": "WO"
+        },
+        {
+          "box": [
+            567,
+            358,
+            723,
+            399
+          ],
+          "legible": "clear",
+          "text": "L1,L2,L3"
+        },
+        {
+          "box": [
+            749,
+            356,
+            819,
+            398
+          ],
+          "legible": "clear",
+          "text": "\"N\""
+        },
+        {
+          "box": [
+            589,
+            547,
+            630,
+            582
+          ],
+          "legible": "clear",
+          "text": "Q1"
+        },
+        {
+          "box": [
+            582,
+            622,
+            653,
+            648
+          ],
+          "legible": "clear",
+          "text": "3X80A"
+        },
+        {
+          "box": [
+            581,
+            656,
+            682,
+            684
+          ],
+          "legible": "clear",
+          "text": "ABB-XT1"
+        },
+        {
+          "box": [
+            586,
+            699,
+            684,
+            727
+          ],
+          "legible": "clear",
+          "text": "INC=64A"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

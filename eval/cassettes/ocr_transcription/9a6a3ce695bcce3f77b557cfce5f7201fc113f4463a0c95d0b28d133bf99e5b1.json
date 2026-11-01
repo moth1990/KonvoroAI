@@ -1,0 +1,273 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 797,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            32,
+            11,
+            75,
+            34
+          ],
+          "legible": "clear",
+          "text": "Fax."
+        },
+        {
+          "box": [
+            84,
+            11,
+            129,
+            34
+          ],
+          "legible": "clear",
+          "text": "No."
+        },
+        {
+          "box": [
+            280,
+            10,
+            431,
+            35
+          ],
+          "legible": "clear",
+          "text": "03-5442737"
+        },
+        {
+          "box": [
+            644,
+            10,
+            692,
+            34
+          ],
+          "legible": "clear",
+          "text": "פקס"
+        },
+        {
+          "box": [
+            32,
+            37,
+            102,
+            61
+          ],
+          "legible": "clear",
+          "text": "E-MAIL"
+        },
+        {
+          "box": [
+            109,
+            37,
+            191,
+            61
+          ],
+          "legible": "clear",
+          "text": "ADDRESS"
+        },
+        {
+          "box": [
+            246,
+            38,
+            466,
+            62
+          ],
+          "legible": "clear",
+          "text": "carola@ramor.co.il"
+        },
+        {
+          "box": [
+            527,
+            38,
+            628,
+            62
+          ],
+          "legible": "clear",
+          "text": "אלקטרוני"
+        },
+        {
+          "box": [
+            637,
+            38,
+            692,
+            62
+          ],
+          "legible": "clear",
+          "text": "דואר"
+        },
+        {
+          "box": [
+            28,
+            86,
+            63,
+            107
+          ],
+          "legible": "clear",
+          "text": "JOB"
+        },
+        {
+          "box": [
+            28,
+            115,
+            80,
+            137
+          ],
+          "legible": "clear",
+          "text": "NAME"
+        },
+        {
+          "box": [
+            313,
+            91,
+            423,
+            132
+          ],
+          "legible": "clear",
+          "text": "חצרים"
+        },
+        {
+          "box": [
+            672,
+            85,
+            700,
+            108
+          ],
+          "legible": "clear",
+          "text": "שם"
+        },
+        {
+          "box": [
+            621,
+            114,
+            700,
+            138
+          ],
+          "legible": "clear",
+          "text": "הפרויקט"
+        },
+        {
+          "box": [
+            28,
+            170,
+            112,
+            192
+          ],
+          "legible": "clear",
+          "text": "DRAWING"
+        },
+        {
+          "box": [
+            28,
+            203,
+            80,
+            225
+          ],
+          "legible": "clear",
+          "text": "NAME"
+        },
+        {
+          "box": [
+            430,
+            181,
+            544,
+            223
+          ],
+          "legible": "clear",
+          "text": "תכנית"
+        },
+        {
+          "box": [
+            306,
+            181,
+            411,
+            222
+          ],
+          "legible": "clear",
+          "text": "לוחות"
+        },
+        {
+          "box": [
+            184,
+            181,
+            285,
+            222
+          ],
+          "legible": "clear",
+          "text": "חשמל"
+        },
+        {
+          "box": [
+            621,
+            168,
+            700,
+            192
+          ],
+          "legible": "clear",
+          "text": "נושא"
+        },
+        {
+          "box": [
+            627,
+            202,
+            700,
+            226
+          ],
+          "legible": "clear",
+          "text": "התכנית"
+        },
+        {
+          "box": [
+            28,
+            265,
+            112,
+            287
+          ],
+          "legible": "clear",
+          "text": "DRAWING"
+        },
+        {
+          "box": [
+            28,
+            300,
+            60,
+            321
+          ],
+          "legible": "clear",
+          "text": "NO."
+        },
+        {
+          "box": [
+            184,
+            258,
+            556,
+            322
+          ],
+          "legible": "clear",
+          "text": "6199-2-50"
+        },
+        {
+          "box": [
+            646,
+            263,
+            700,
+            287
+          ],
+          "legible": "clear",
+          "text": "מספר"
+        },
+        {
+          "box": [
+            627,
+            296,
+            700,
+            320
+          ],
+          "legible": "clear",
+          "text": "התכנית"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

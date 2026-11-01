@@ -1,0 +1,248 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 725,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            219,
+            54,
+            243,
+            87
+          ],
+          "legible": "clear",
+          "text": "6"
+        },
+        {
+          "box": [
+            538,
+            50,
+            561,
+            84
+          ],
+          "legible": "clear",
+          "text": "7"
+        },
+        {
+          "box": [
+            837,
+            52,
+            861,
+            87
+          ],
+          "legible": "clear",
+          "text": "8"
+        },
+        {
+          "box": [
+            3,
+            444,
+            42,
+            471
+          ],
+          "legible": "clear",
+          "text": "F9"
+        },
+        {
+          "box": [
+            253,
+            440,
+            312,
+            468
+          ],
+          "legible": "clear",
+          "text": "F10"
+        },
+        {
+          "box": [
+            589,
+            437,
+            646,
+            465
+          ],
+          "legible": "clear",
+          "text": "F11"
+        },
+        {
+          "box": [
+            22,
+            512,
+            91,
+            539
+          ],
+          "legible": "clear",
+          "text": "2X10A"
+        },
+        {
+          "box": [
+            12,
+            542,
+            95,
+            570
+          ],
+          "legible": "clear",
+          "text": "INC=8A"
+        },
+        {
+          "box": [
+            11,
+            571,
+            85,
+            597
+          ],
+          "legible": "clear",
+          "text": "S202M"
+        },
+        {
+          "box": [
+            13,
+            601,
+            57,
+            628
+          ],
+          "legible": "clear",
+          "text": "ABB"
+        },
+        {
+          "box": [
+            274,
+            510,
+            343,
+            537
+          ],
+          "legible": "clear",
+          "text": "1X16A"
+        },
+        {
+          "box": [
+            263,
+            538,
+            381,
+            567
+          ],
+          "legible": "clear",
+          "text": "INC=12.8A"
+        },
+        {
+          "box": [
+            262,
+            567,
+            336,
+            594
+          ],
+          "legible": "clear",
+          "text": "S201M"
+        },
+        {
+          "box": [
+            264,
+            598,
+            307,
+            625
+          ],
+          "legible": "clear",
+          "text": "ABB"
+        },
+        {
+          "box": [
+            609,
+            506,
+            678,
+            533
+          ],
+          "legible": "clear",
+          "text": "2X16A"
+        },
+        {
+          "box": [
+            599,
+            535,
+            716,
+            563
+          ],
+          "legible": "clear",
+          "text": "INC=12.8A"
+        },
+        {
+          "box": [
+            598,
+            564,
+            672,
+            591
+          ],
+          "legible": "clear",
+          "text": "S202M"
+        },
+        {
+          "box": [
+            600,
+            594,
+            643,
+            621
+          ],
+          "legible": "clear",
+          "text": "ABB"
+        },
+        {
+          "box": [
+            0,
+            927,
+            22,
+            1000
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "BRAUN"
+        },
+        {
+          "box": [
+            0,
+            853,
+            22,
+            914
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "PUMP"
+        },
+        {
+          "box": [
+            250,
+            948,
+            276,
+            1000
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "SAVE"
+        },
+        {
+          "box": [
+            586,
+            940,
+            612,
+            993
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "SAVE"
+        },
+        {
+          "box": [
+            979,
+            946,
+            1005,
+            998
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "SAVE"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

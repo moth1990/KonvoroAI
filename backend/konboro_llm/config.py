@@ -24,6 +24,9 @@ class StageRoute:
 ROUTES: dict[str, StageRoute] = {
     # Step 1: classify each page (single-line, legend, notes...) from a thumbnail.
     "page_classification": StageRoute(provider="anthropic", model="claude-haiku-5-5"),
+    # Step 2: read the words on one drawing tile, with a box for each. Interim, until S31 picks Google Vision or
+    # Azure (S10 decision; 02 §2.3).
+    "ocr_transcription": StageRoute(provider="anthropic", model="claude-sonnet-5-5"),
     # Step 3: pick a symbol class from a short list when similarity search can't decide.
     "symbol_disambiguation": StageRoute(provider="anthropic", model="claude-sonnet-5-5"),
     # Step 4: read text near each symbol and tie it to the symbol (vision + reasoning).

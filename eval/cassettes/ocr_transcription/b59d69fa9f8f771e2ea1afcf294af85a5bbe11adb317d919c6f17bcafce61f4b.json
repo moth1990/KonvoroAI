@@ -1,0 +1,144 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 399,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            119,
+            354,
+            171,
+            385
+          ],
+          "legible": "clear",
+          "text": "16A"
+        },
+        {
+          "box": [
+            112,
+            392,
+            185,
+            422
+          ],
+          "legible": "clear",
+          "text": "MCB"
+        },
+        {
+          "box": [
+            318,
+            354,
+            370,
+            385
+          ],
+          "legible": "clear",
+          "text": "16A"
+        },
+        {
+          "box": [
+            311,
+            397,
+            384,
+            428
+          ],
+          "legible": "clear",
+          "text": "MCB"
+        },
+        {
+          "box": [
+            417,
+            402,
+            470,
+            438
+          ],
+          "legible": "clear",
+          "text": "(x4)"
+        },
+        {
+          "box": [
+            850,
+            324,
+            923,
+            354
+          ],
+          "legible": "clear",
+          "text": "MCB"
+        },
+        {
+          "box": [
+            869,
+            438,
+            921,
+            469
+          ],
+          "legible": "clear",
+          "text": "10A"
+        },
+        {
+          "box": [
+            848,
+            497,
+            902,
+            533
+          ],
+          "legible": "clear",
+          "text": "(x4)"
+        },
+        {
+          "box": [
+            27,
+            607,
+            107,
+            650
+          ],
+          "legible": "clear",
+          "text": "לחצן"
+        },
+        {
+          "box": [
+            27,
+            658,
+            107,
+            692
+          ],
+          "legible": "clear",
+          "text": "בלוח"
+        },
+        {
+          "box": [
+            624,
+            713,
+            703,
+            756
+          ],
+          "legible": "clear",
+          "text": "לחצן"
+        },
+        {
+          "box": [
+            624,
+            763,
+            703,
+            797
+          ],
+          "legible": "clear",
+          "text": "בלוח"
+        },
+        {
+          "box": [
+            484,
+            937,
+            520,
+            1020
+          ],
+          "legible": "unsure",
+          "rotation": 270,
+          "text": "N2XY"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

@@ -1,0 +1,23 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 40,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            478,
+            684,
+            810,
+            802
+          ],
+          "legible": "unsure",
+          "text": "הכבס"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

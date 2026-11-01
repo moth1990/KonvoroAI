@@ -1,0 +1,263 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 745,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            470,
+            0,
+            513,
+            14
+          ],
+          "legible": "clear",
+          "text": "PM"
+        },
+        {
+          "box": [
+            27,
+            36,
+            45,
+            52
+          ],
+          "legible": "unsure",
+          "text": "L2"
+        },
+        {
+          "box": [
+            27,
+            86,
+            45,
+            101
+          ],
+          "legible": "unsure",
+          "text": "L3"
+        },
+        {
+          "box": [
+            922,
+            106,
+            984,
+            133
+          ],
+          "legible": "clear",
+          "text": "QPM"
+        },
+        {
+          "box": [
+            903,
+            137,
+            993,
+            165
+          ],
+          "legible": "clear",
+          "text": "4-6.3A"
+        },
+        {
+          "box": [
+            876,
+            178,
+            1014,
+            207
+          ],
+          "legible": "clear",
+          "text": "ABB-MS116"
+        },
+        {
+          "box": [
+            130,
+            577,
+            212,
+            608
+          ],
+          "legible": "clear",
+          "text": "Page"
+        },
+        {
+          "box": [
+            233,
+            577,
+            292,
+            608
+          ],
+          "legible": "clear",
+          "text": "No.:"
+        },
+        {
+          "box": [
+            298,
+            570,
+            322,
+            606
+          ],
+          "legible": "clear",
+          "text": "3"
+        },
+        {
+          "box": [
+            135,
+            640,
+            198,
+            677
+          ],
+          "legible": "clear",
+          "text": "OF:"
+        },
+        {
+          "box": [
+            209,
+            639,
+            233,
+            675
+          ],
+          "legible": "clear",
+          "text": "5"
+        },
+        {
+          "box": [
+            135,
+            708,
+            277,
+            745
+          ],
+          "legible": "clear",
+          "text": "Scale:"
+        },
+        {
+          "box": [
+            258,
+            708,
+            367,
+            745
+          ],
+          "legible": "clear",
+          "text": "1:100"
+        },
+        {
+          "box": [
+            457,
+            578,
+            533,
+            620
+          ],
+          "legible": "clear",
+          "text": "S.S"
+        },
+        {
+          "box": [
+            563,
+            578,
+            780,
+            620
+          ],
+          "legible": "clear",
+          "text": "Electrical"
+        },
+        {
+          "box": [
+            844,
+            578,
+            928,
+            620
+          ],
+          "legible": "clear",
+          "text": "and"
+        },
+        {
+          "box": [
+            416,
+            650,
+            669,
+            679
+          ],
+          "legible": "clear",
+          "text": "04-8338123:FAX"
+        },
+        {
+          "box": [
+            688,
+            650,
+            886,
+            679
+          ],
+          "legible": "clear",
+          "text": "04-6565394:"
+        },
+        {
+          "box": [
+            892,
+            650,
+            940,
+            679
+          ],
+          "legible": "clear",
+          "text": "TEL"
+        },
+        {
+          "box": [
+            958,
+            650,
+            1011,
+            679
+          ],
+          "legible": "clear",
+          "text": "276"
+        },
+        {
+          "box": [
+            546,
+            693,
+            673,
+            733
+          ],
+          "legible": "clear",
+          "text": "Email:"
+        },
+        {
+          "box": [
+            684,
+            693,
+            1024,
+            735
+          ],
+          "legible": "unsure",
+          "text": "electrcpss@gma"
+        },
+        {
+          "box": [
+            258,
+            813,
+            282,
+            848
+          ],
+          "legible": "clear",
+          "text": "6"
+        },
+        {
+          "box": [
+            584,
+            811,
+            608,
+            845
+          ],
+          "legible": "clear",
+          "text": "7"
+        },
+        {
+          "box": [
+            890,
+            812,
+            914,
+            848
+          ],
+          "legible": "clear",
+          "text": "8"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

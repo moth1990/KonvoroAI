@@ -43,6 +43,9 @@ class LLMRequest(Generic[T]):
     examples: list[Example] = field(default_factory=list)
     tenant_id: str | None = None  # for logging and cost per factory, never sent to the model
     max_tokens: int = 4096
+    # How hard the model thinks (low | medium | high | xhigh | max); None leaves the model's default. Transcribing
+    # what is written needs little (S10, `ocr_transcription`).
+    effort: str | None = None
 
 
 @dataclass

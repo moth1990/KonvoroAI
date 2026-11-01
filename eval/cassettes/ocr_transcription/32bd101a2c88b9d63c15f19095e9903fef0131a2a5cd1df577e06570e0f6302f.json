@@ -1,0 +1,163 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 468,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            206,
+            37,
+            291,
+            64
+          ],
+          "legible": "clear",
+          "text": "4X125A"
+        },
+        {
+          "box": [
+            205,
+            72,
+            323,
+            99
+          ],
+          "legible": "clear",
+          "text": "ABB-XT1C"
+        },
+        {
+          "box": [
+            205,
+            111,
+            319,
+            138
+          ],
+          "legible": "clear",
+          "text": "INC=100A"
+        },
+        {
+          "box": [
+            825,
+            131,
+            898,
+            157
+          ],
+          "legible": "clear",
+          "text": "QLG2"
+        },
+        {
+          "box": [
+            807,
+            161,
+            897,
+            189
+          ],
+          "legible": "clear",
+          "text": "4-6.3A"
+        },
+        {
+          "box": [
+            780,
+            198,
+            917,
+            226
+          ],
+          "legible": "clear",
+          "text": "ABB-MS116"
+        },
+        {
+          "box": [
+            421,
+            702,
+            545,
+            727
+          ],
+          "legible": "clear",
+          "text": "SATEC-135"
+        },
+        {
+          "box": [
+            559,
+            702,
+            573,
+            726
+          ],
+          "legible": "clear",
+          "text": "E"
+        },
+        {
+          "box": [
+            470,
+            758,
+            512,
+            782
+          ],
+          "legible": "clear",
+          "text": "PM"
+        },
+        {
+          "box": [
+            921,
+            874,
+            984,
+            900
+          ],
+          "legible": "clear",
+          "text": "QPM"
+        },
+        {
+          "box": [
+            903,
+            904,
+            993,
+            933
+          ],
+          "legible": "clear",
+          "text": "4-6.3A"
+        },
+        {
+          "box": [
+            876,
+            947,
+            1014,
+            974
+          ],
+          "legible": "clear",
+          "text": "ABB-MS116"
+        },
+        {
+          "box": [
+            27,
+            753,
+            44,
+            769
+          ],
+          "legible": "unsure",
+          "text": "L1"
+        },
+        {
+          "box": [
+            27,
+            803,
+            44,
+            821
+          ],
+          "legible": "unsure",
+          "text": "L2"
+        },
+        {
+          "box": [
+            27,
+            855,
+            44,
+            872
+          ],
+          "legible": "unsure",
+          "text": "L3"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

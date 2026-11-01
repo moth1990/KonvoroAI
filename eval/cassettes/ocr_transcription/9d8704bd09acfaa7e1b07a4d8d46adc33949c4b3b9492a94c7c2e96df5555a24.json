@@ -1,0 +1,213 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 588,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            154,
+            107,
+            216,
+            131
+          ],
+          "legible": "clear",
+          "text": "QPM"
+        },
+        {
+          "box": [
+            136,
+            138,
+            226,
+            166
+          ],
+          "legible": "clear",
+          "text": "4-6.3A"
+        },
+        {
+          "box": [
+            108,
+            177,
+            246,
+            207
+          ],
+          "legible": "clear",
+          "text": "ABB-MS116"
+        },
+        {
+          "box": [
+            474,
+            120,
+            551,
+            152
+          ],
+          "legible": "clear",
+          "text": "FPB"
+        },
+        {
+          "box": [
+            477,
+            158,
+            550,
+            191
+          ],
+          "legible": "clear",
+          "text": "H.R.C"
+        },
+        {
+          "box": [
+            477,
+            197,
+            554,
+            224
+          ],
+          "legible": "clear",
+          "text": "3X50A"
+        },
+        {
+          "box": [
+            642,
+            207,
+            715,
+            266
+          ],
+          "legible": "clear",
+          "text": "WO"
+        },
+        {
+          "box": [
+            955,
+            91,
+            977,
+            121
+          ],
+          "legible": "clear",
+          "text": "E"
+        },
+        {
+          "box": [
+            954,
+            522,
+            974,
+            555
+          ],
+          "legible": "clear",
+          "text": "F"
+        },
+        {
+          "box": [
+            956,
+            711,
+            982,
+            742
+          ],
+          "legible": "clear",
+          "text": "G"
+        },
+        {
+          "box": [
+            76,
+            582,
+            160,
+            620
+          ],
+          "legible": "clear",
+          "text": "and"
+        },
+        {
+          "box": [
+            193,
+            582,
+            358,
+            620
+          ],
+          "legible": "clear",
+          "text": "control"
+        },
+        {
+          "box": [
+            391,
+            582,
+            544,
+            620
+          ],
+          "legible": "clear",
+          "text": "panels"
+        },
+        {
+          "box": [
+            5,
+            696,
+            390,
+            734
+          ],
+          "legible": "clear",
+          "text": "trcpss@gmail.com"
+        },
+        {
+          "box": [
+            121,
+            813,
+            146,
+            848
+          ],
+          "legible": "clear",
+          "text": "8"
+        },
+        {
+          "box": [
+            449,
+            811,
+            472,
+            844
+          ],
+          "legible": "clear",
+          "text": "9"
+        },
+        {
+          "box": [
+            780,
+            813,
+            827,
+            847
+          ],
+          "legible": "clear",
+          "text": "10"
+        },
+        {
+          "box": [
+            722,
+            675,
+            759,
+            695
+          ],
+          "legible": "clear",
+          "text": "ISO"
+        },
+        {
+          "box": [
+            758,
+            675,
+            790,
+            695
+          ],
+          "legible": "unsure",
+          "text": "9001:"
+        },
+        {
+          "box": [
+            738,
+            699,
+            772,
+            719
+          ],
+          "legible": "clear",
+          "text": "2008"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

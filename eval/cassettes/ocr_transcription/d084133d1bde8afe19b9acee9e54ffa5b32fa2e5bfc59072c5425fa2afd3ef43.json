@@ -1,0 +1,355 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 1087,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            751,
+            20,
+            801,
+            49
+          ],
+          "legible": "clear",
+          "text": "FB1"
+        },
+        {
+          "box": [
+            752,
+            66,
+            837,
+            96
+          ],
+          "legible": "clear",
+          "text": "4x40A"
+        },
+        {
+          "box": [
+            751,
+            100,
+            964,
+            133
+          ],
+          "legible": "clear",
+          "text": "30mA-TYPE\"A\""
+        },
+        {
+          "box": [
+            443,
+            363,
+            476,
+            391
+          ],
+          "legible": "clear",
+          "text": "F7"
+        },
+        {
+          "box": [
+            640,
+            363,
+            673,
+            391
+          ],
+          "legible": "clear",
+          "text": "F8"
+        },
+        {
+          "box": [
+            838,
+            363,
+            871,
+            391
+          ],
+          "legible": "clear",
+          "text": "F9"
+        },
+        {
+          "box": [
+            444,
+            418,
+            514,
+            445
+          ],
+          "legible": "clear",
+          "text": "1X10A"
+        },
+        {
+          "box": [
+            641,
+            418,
+            711,
+            445
+          ],
+          "legible": "clear",
+          "text": "1X10A"
+        },
+        {
+          "box": [
+            839,
+            418,
+            909,
+            445
+          ],
+          "legible": "clear",
+          "text": "1X10A"
+        },
+        {
+          "box": [
+            443,
+            451,
+            526,
+            477
+          ],
+          "legible": "clear",
+          "text": "INC=8A"
+        },
+        {
+          "box": [
+            640,
+            451,
+            723,
+            477
+          ],
+          "legible": "clear",
+          "text": "INC=8A"
+        },
+        {
+          "box": [
+            838,
+            451,
+            921,
+            477
+          ],
+          "legible": "clear",
+          "text": "INC=8A"
+        },
+        {
+          "box": [
+            443,
+            475,
+            517,
+            501
+          ],
+          "legible": "clear",
+          "text": "S201M"
+        },
+        {
+          "box": [
+            640,
+            475,
+            715,
+            501
+          ],
+          "legible": "clear",
+          "text": "S201M"
+        },
+        {
+          "box": [
+            838,
+            475,
+            913,
+            501
+          ],
+          "legible": "clear",
+          "text": "S201M"
+        },
+        {
+          "box": [
+            444,
+            500,
+            487,
+            525
+          ],
+          "legible": "clear",
+          "text": "ABB"
+        },
+        {
+          "box": [
+            641,
+            500,
+            684,
+            525
+          ],
+          "legible": "clear",
+          "text": "ABB"
+        },
+        {
+          "box": [
+            839,
+            500,
+            882,
+            525
+          ],
+          "legible": "clear",
+          "text": "ABB"
+        },
+        {
+          "box": [
+            425,
+            688,
+            440,
+            716
+          ],
+          "legible": "clear",
+          "text": "7"
+        },
+        {
+          "box": [
+            622,
+            688,
+            638,
+            716
+          ],
+          "legible": "clear",
+          "text": "8"
+        },
+        {
+          "box": [
+            820,
+            688,
+            836,
+            716
+          ],
+          "legible": "clear",
+          "text": "9"
+        },
+        {
+          "box": [
+            382,
+            940,
+            412,
+            1000
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3*1.5"
+        },
+        {
+          "box": [
+            382,
+            872,
+            412,
+            926
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "N2XY"
+        },
+        {
+          "box": [
+            430,
+            898,
+            455,
+            994
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "LIGHTING"
+        },
+        {
+          "box": [
+            579,
+            940,
+            609,
+            1000
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3*1.5"
+        },
+        {
+          "box": [
+            579,
+            872,
+            609,
+            926
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "N2XY"
+        },
+        {
+          "box": [
+            627,
+            898,
+            652,
+            994
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "LIGHTING"
+        },
+        {
+          "box": [
+            627,
+            853,
+            652,
+            890
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "EM"
+        },
+        {
+          "box": [
+            777,
+            940,
+            807,
+            1000
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3*1.5"
+        },
+        {
+          "box": [
+            777,
+            872,
+            807,
+            926
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "N2XY"
+        },
+        {
+          "box": [
+            827,
+            805,
+            854,
+            904
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "LGHITING"
+        },
+        {
+          "box": [
+            974,
+            940,
+            1004,
+            1000
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3*1.5"
+        },
+        {
+          "box": [
+            974,
+            872,
+            1004,
+            926
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "N2XY"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

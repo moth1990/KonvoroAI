@@ -1,0 +1,24 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 46,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            526,
+            653,
+            897,
+            772
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "הזנות"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

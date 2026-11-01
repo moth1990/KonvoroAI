@@ -1,0 +1,181 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 534,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            18,
+            322,
+            48,
+            481
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3X1.5N2XY"
+        },
+        {
+          "box": [
+            401,
+            322,
+            430,
+            481
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3X1.5N2XY"
+        },
+        {
+          "box": [
+            717,
+            234,
+            753,
+            262
+          ],
+          "legible": "clear",
+          "text": "18"
+        },
+        {
+          "box": [
+            951,
+            234,
+            988,
+            262
+          ],
+          "legible": "clear",
+          "text": "19"
+        },
+        {
+          "box": [
+            72,
+            633,
+            97,
+            650
+          ],
+          "legible": "clear",
+          "text": "L16"
+        },
+        {
+          "box": [
+            367,
+            629,
+            397,
+            646
+          ],
+          "legible": "clear",
+          "text": "N17"
+        },
+        {
+          "box": [
+            454,
+            632,
+            480,
+            649
+          ],
+          "legible": "clear",
+          "text": "L17"
+        },
+        {
+          "box": [
+            67,
+            701,
+            109,
+            735
+          ],
+          "legible": "clear",
+          "text": "16"
+        },
+        {
+          "box": [
+            322,
+            703,
+            400,
+            737
+          ],
+          "legible": "clear",
+          "text": "BOM"
+        },
+        {
+          "box": [
+            432,
+            703,
+            471,
+            737
+          ],
+          "legible": "clear",
+          "text": "17"
+        },
+        {
+          "box": [
+            662,
+            712,
+            696,
+            901
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "SERVICE"
+        },
+        {
+          "box": [
+            708,
+            742,
+            742,
+            901
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "SOCKET"
+        },
+        {
+          "box": [
+            708,
+            690,
+            742,
+            722
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "1"
+        },
+        {
+          "box": [
+            902,
+            712,
+            936,
+            901
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "SERVICE"
+        },
+        {
+          "box": [
+            948,
+            742,
+            982,
+            901
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "SOCKET"
+        },
+        {
+          "box": [
+            948,
+            690,
+            982,
+            722
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "2"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

@@ -1,0 +1,146 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 406,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            214,
+            182,
+            252,
+            210
+          ],
+          "legible": "clear",
+          "text": "21"
+        },
+        {
+          "box": [
+            513,
+            182,
+            551,
+            210
+          ],
+          "legible": "clear",
+          "text": "21"
+        },
+        {
+          "box": [
+            216,
+            263,
+            254,
+            290
+          ],
+          "legible": "clear",
+          "text": "22"
+        },
+        {
+          "box": [
+            515,
+            263,
+            553,
+            290
+          ],
+          "legible": "clear",
+          "text": "22"
+        },
+        {
+          "box": [
+            228,
+            427,
+            288,
+            455
+          ],
+          "legible": "clear",
+          "text": "HT4"
+        },
+        {
+          "box": [
+            527,
+            427,
+            588,
+            455
+          ],
+          "legible": "clear",
+          "text": "HT5"
+        },
+        {
+          "box": [
+            228,
+            521,
+            307,
+            549
+          ],
+          "legible": "clear",
+          "text": "FULT"
+        },
+        {
+          "box": [
+            527,
+            521,
+            606,
+            549
+          ],
+          "legible": "clear",
+          "text": "FULT"
+        },
+        {
+          "box": [
+            189,
+            661,
+            249,
+            685
+          ],
+          "legible": "clear",
+          "text": "C.FAN"
+        },
+        {
+          "box": [
+            172,
+            699,
+            269,
+            725
+          ],
+          "legible": "clear",
+          "text": "NURSERY"
+        },
+        {
+          "box": [
+            483,
+            727,
+            509,
+            818
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "COOLING"
+        },
+        {
+          "box": [
+            483,
+            645,
+            509,
+            718
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "TOWER"
+        },
+        {
+          "box": [
+            530,
+            688,
+            555,
+            768
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3X208V"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

@@ -1,0 +1,113 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 300,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            121,
+            162,
+            146,
+            197
+          ],
+          "legible": "clear",
+          "text": "8"
+        },
+        {
+          "box": [
+            448,
+            161,
+            472,
+            195
+          ],
+          "legible": "clear",
+          "text": "9"
+        },
+        {
+          "box": [
+            780,
+            162,
+            827,
+            197
+          ],
+          "legible": "clear",
+          "text": "10"
+        },
+        {
+          "box": [
+            22,
+            456,
+            52,
+            477
+          ],
+          "legible": "unsure",
+          "text": "\"N\""
+        },
+        {
+          "box": [
+            32,
+            577,
+            76,
+            598
+          ],
+          "legible": "clear",
+          "text": "LG3"
+        },
+        {
+          "box": [
+            955,
+            469,
+            981,
+            503
+          ],
+          "legible": "clear",
+          "text": "A"
+        },
+        {
+          "box": [
+            955,
+            740,
+            979,
+            773
+          ],
+          "legible": "clear",
+          "text": "B"
+        },
+        {
+          "box": [
+            57,
+            898,
+            131,
+            923
+          ],
+          "legible": "clear",
+          "text": "QLG2"
+        },
+        {
+          "box": [
+            38,
+            929,
+            129,
+            957
+          ],
+          "legible": "clear",
+          "text": "4-6.3A"
+        },
+        {
+          "box": [
+            11,
+            965,
+            150,
+            994
+          ],
+          "legible": "clear",
+          "text": "ABB-MS116"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

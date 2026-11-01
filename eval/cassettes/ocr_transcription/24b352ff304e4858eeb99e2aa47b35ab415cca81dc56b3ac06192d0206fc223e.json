@@ -1,0 +1,293 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 852,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            22,
+            119,
+            47,
+            151
+          ],
+          "legible": "clear",
+          "text": "C"
+        },
+        {
+          "box": [
+            24,
+            388,
+            49,
+            419
+          ],
+          "legible": "clear",
+          "text": "D"
+        },
+        {
+          "box": [
+            27,
+            743,
+            50,
+            776
+          ],
+          "legible": "clear",
+          "text": "E"
+        },
+        {
+          "box": [
+            319,
+            172,
+            355,
+            200
+          ],
+          "legible": "clear",
+          "text": "21"
+        },
+        {
+          "box": [
+            320,
+            257,
+            358,
+            284
+          ],
+          "legible": "clear",
+          "text": "22"
+        },
+        {
+          "box": [
+            499,
+            177,
+            536,
+            207
+          ],
+          "legible": "clear",
+          "text": "F1"
+        },
+        {
+          "box": [
+            776,
+            172,
+            812,
+            200
+          ],
+          "legible": "clear",
+          "text": "21"
+        },
+        {
+          "box": [
+            777,
+            257,
+            815,
+            284
+          ],
+          "legible": "clear",
+          "text": "22"
+        },
+        {
+          "box": [
+            956,
+            177,
+            995,
+            206
+          ],
+          "legible": "clear",
+          "text": "F2"
+        },
+        {
+          "box": [
+            518,
+            250,
+            589,
+            275
+          ],
+          "legible": "clear",
+          "text": "3X16A"
+        },
+        {
+          "box": [
+            509,
+            280,
+            628,
+            306
+          ],
+          "legible": "clear",
+          "text": "INC=12.8A"
+        },
+        {
+          "box": [
+            508,
+            308,
+            582,
+            335
+          ],
+          "legible": "clear",
+          "text": "S203M"
+        },
+        {
+          "box": [
+            510,
+            340,
+            553,
+            365
+          ],
+          "legible": "clear",
+          "text": "ABB"
+        },
+        {
+          "box": [
+            966,
+            340,
+            1010,
+            365
+          ],
+          "legible": "clear",
+          "text": "ABB"
+        },
+        {
+          "box": [
+            605,
+            443,
+            638,
+            474
+          ],
+          "legible": "clear",
+          "text": "C1"
+        },
+        {
+          "box": [
+            484,
+            535,
+            509,
+            551
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "A"
+        },
+        {
+          "box": [
+            483,
+            565,
+            509,
+            640
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "GROUP"
+        },
+        {
+          "box": [
+            483,
+            650,
+            509,
+            694
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "FAN"
+        },
+        {
+          "box": [
+            483,
+            712,
+            509,
+            795
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "EXHUST"
+        },
+        {
+          "box": [
+            527,
+            599,
+            552,
+            682
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3X208V"
+        },
+        {
+          "box": [
+            942,
+            548,
+            967,
+            566
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "B"
+        },
+        {
+          "box": [
+            942,
+            580,
+            967,
+            655
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "GROUP"
+        },
+        {
+          "box": [
+            942,
+            665,
+            967,
+            709
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "FAN"
+        },
+        {
+          "box": [
+            942,
+            727,
+            967,
+            810
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "EXHUST"
+        },
+        {
+          "box": [
+            977,
+            612,
+            1002,
+            696
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3X208V"
+        },
+        {
+          "box": [
+            483,
+            945,
+            497,
+            972
+          ],
+          "legible": "clear",
+          "text": "1"
+        },
+        {
+          "box": [
+            937,
+            944,
+            956,
+            972
+          ],
+          "legible": "clear",
+          "text": "2"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

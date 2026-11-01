@@ -1,0 +1,154 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 426,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            387,
+            84,
+            418,
+            102
+          ],
+          "legible": "clear",
+          "text": "\"N\""
+        },
+        {
+          "box": [
+            508,
+            167,
+            540,
+            195
+          ],
+          "legible": "clear",
+          "text": "F5"
+        },
+        {
+          "box": [
+            522,
+            212,
+            582,
+            240
+          ],
+          "legible": "clear",
+          "text": "16+N"
+        },
+        {
+          "box": [
+            522,
+            243,
+            639,
+            273
+          ],
+          "legible": "clear",
+          "text": "INC=12.8A"
+        },
+        {
+          "box": [
+            522,
+            277,
+            611,
+            303
+          ],
+          "legible": "clear",
+          "text": "SN201M"
+        },
+        {
+          "box": [
+            49,
+            490,
+            83,
+            522
+          ],
+          "legible": "clear",
+          "text": "C4"
+        },
+        {
+          "box": [
+            943,
+            119,
+            967,
+            151
+          ],
+          "legible": "clear",
+          "text": "C"
+        },
+        {
+          "box": [
+            945,
+            387,
+            969,
+            419
+          ],
+          "legible": "clear",
+          "text": "D"
+        },
+        {
+          "box": [
+            944,
+            744,
+            964,
+            774
+          ],
+          "legible": "clear",
+          "text": "E"
+        },
+        {
+          "box": [
+            403,
+            814,
+            423,
+            830
+          ],
+          "legible": "clear",
+          "text": "N5"
+        },
+        {
+          "box": [
+            491,
+            817,
+            509,
+            833
+          ],
+          "legible": "clear",
+          "text": "L5"
+        },
+        {
+          "box": [
+            367,
+            874,
+            506,
+            903
+          ],
+          "legible": "clear",
+          "text": "CIRCULATION"
+        },
+        {
+          "box": [
+            398,
+            914,
+            461,
+            941
+          ],
+          "legible": "clear",
+          "text": "PUMP"
+        },
+        {
+          "box": [
+            0,
+            615,
+            24,
+            700
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "2X208V"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

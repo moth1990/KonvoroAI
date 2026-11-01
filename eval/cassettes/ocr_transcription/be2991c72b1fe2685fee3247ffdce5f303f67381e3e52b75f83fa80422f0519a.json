@@ -1,0 +1,73 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 183,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            836,
+            64,
+            912,
+            104
+          ],
+          "legible": "clear",
+          "text": "לחצן"
+        },
+        {
+          "box": [
+            895,
+            127,
+            940,
+            164
+          ],
+          "legible": "clear",
+          "text": "על"
+        },
+        {
+          "box": [
+            807,
+            127,
+            885,
+            164
+          ],
+          "legible": "clear",
+          "text": "הלוח"
+        },
+        {
+          "box": [
+            611,
+            766,
+            803,
+            849
+          ],
+          "legible": "clear",
+          "text": "נדרש"
+        },
+        {
+          "box": [
+            413,
+            766,
+            557,
+            849
+          ],
+          "legible": "clear",
+          "text": "30%"
+        },
+        {
+          "box": [
+            175,
+            766,
+            339,
+            857
+          ],
+          "legible": "clear",
+          "text": "מקום"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

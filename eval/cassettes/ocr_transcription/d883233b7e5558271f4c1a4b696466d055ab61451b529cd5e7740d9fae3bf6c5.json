@@ -1,0 +1,223 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 622,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            22,
+            298,
+            46,
+            329
+          ],
+          "legible": "clear",
+          "text": "A"
+        },
+        {
+          "box": [
+            21,
+            560,
+            46,
+            592
+          ],
+          "legible": "clear",
+          "text": "B"
+        },
+        {
+          "box": [
+            22,
+            813,
+            46,
+            845
+          ],
+          "legible": "clear",
+          "text": "C"
+        },
+        {
+          "box": [
+            584,
+            314,
+            656,
+            354
+          ],
+          "legible": "clear",
+          "text": "''N''"
+        },
+        {
+          "box": [
+            521,
+            385,
+            595,
+            424
+          ],
+          "legible": "clear",
+          "text": "HNV"
+        },
+        {
+          "box": [
+            711,
+            450,
+            751,
+            486
+          ],
+          "legible": "clear",
+          "text": "10"
+        },
+        {
+          "box": [
+            728,
+            516,
+            748,
+            550
+          ],
+          "legible": "clear",
+          "text": "6"
+        },
+        {
+          "box": [
+            846,
+            477,
+            918,
+            513
+          ],
+          "legible": "clear",
+          "text": "RNV"
+        },
+        {
+          "box": [
+            286,
+            653,
+            334,
+            696
+          ],
+          "legible": "clear",
+          "text": "W0"
+        },
+        {
+          "box": [
+            360,
+            653,
+            514,
+            698
+          ],
+          "legible": "clear",
+          "text": "L1,L2,L3"
+        },
+        {
+          "box": [
+            538,
+            651,
+            606,
+            696
+          ],
+          "legible": "clear",
+          "text": "\"N\""
+        },
+        {
+          "box": [
+            306,
+            775,
+            336,
+            795
+          ],
+          "legible": "clear",
+          "text": "\"N\""
+        },
+        {
+          "box": [
+            667,
+            775,
+            697,
+            795
+          ],
+          "legible": "clear",
+          "text": "\"N\""
+        },
+        {
+          "box": [
+            425,
+            859,
+            455,
+            885
+          ],
+          "legible": "clear",
+          "text": "F1"
+        },
+        {
+          "box": [
+            785,
+            859,
+            817,
+            885
+          ],
+          "legible": "clear",
+          "text": "F2"
+        },
+        {
+          "box": [
+            439,
+            903,
+            498,
+            930
+          ],
+          "legible": "clear",
+          "text": "10+N"
+        },
+        {
+          "box": [
+            437,
+            934,
+            520,
+            962
+          ],
+          "legible": "clear",
+          "text": "INC=8A"
+        },
+        {
+          "box": [
+            439,
+            964,
+            526,
+            992
+          ],
+          "legible": "clear",
+          "text": "SN201M"
+        },
+        {
+          "box": [
+            799,
+            903,
+            858,
+            930
+          ],
+          "legible": "clear",
+          "text": "10+N"
+        },
+        {
+          "box": [
+            797,
+            934,
+            880,
+            962
+          ],
+          "legible": "clear",
+          "text": "INC=8A"
+        },
+        {
+          "box": [
+            799,
+            964,
+            886,
+            992
+          ],
+          "legible": "clear",
+          "text": "SN201M"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

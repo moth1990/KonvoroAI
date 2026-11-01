@@ -1,0 +1,193 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 542,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            215,
+            150,
+            285,
+            188
+          ],
+          "legible": "clear",
+          "text": "לחצן"
+        },
+        {
+          "box": [
+            265,
+            210,
+            314,
+            247
+          ],
+          "legible": "clear",
+          "text": "על"
+        },
+        {
+          "box": [
+            184,
+            210,
+            255,
+            247
+          ],
+          "legible": "clear",
+          "text": "הלוח"
+        },
+        {
+          "box": [
+            705,
+            150,
+            1022,
+            200
+          ],
+          "legible": "unsure",
+          "text": "(4x240²–NA2XY)+"
+        },
+        {
+          "box": [
+            876,
+            222,
+            967,
+            258
+          ],
+          "legible": "clear",
+          "text": "129m"
+        },
+        {
+          "box": [
+            517,
+            433,
+            553,
+            466
+          ],
+          "legible": "clear",
+          "text": "TC"
+        },
+        {
+          "box": [
+            524,
+            507,
+            546,
+            537
+          ],
+          "legible": "clear",
+          "text": "N"
+        },
+        {
+          "box": [
+            647,
+            475,
+            719,
+            505
+          ],
+          "legible": "clear",
+          "text": "160A"
+        },
+        {
+          "box": [
+            647,
+            515,
+            722,
+            547
+          ],
+          "legible": "clear",
+          "text": "250A"
+        },
+        {
+          "box": [
+            859,
+            435,
+            935,
+            468
+          ],
+          "legible": "clear",
+          "text": "250A"
+        },
+        {
+          "box": [
+            950,
+            437,
+            1024,
+            468
+          ],
+          "legible": "unsure",
+          "text": "MCC"
+        },
+        {
+          "box": [
+            875,
+            487,
+            932,
+            522
+          ],
+          "legible": "clear",
+          "text": "LSI"
+        },
+        {
+          "box": [
+            362,
+            549,
+            400,
+            582
+          ],
+          "legible": "clear",
+          "text": "6A"
+        },
+        {
+          "box": [
+            458,
+            713,
+            575,
+            751
+          ],
+          "legible": "clear",
+          "text": "5/400A"
+        },
+        {
+          "box": [
+            717,
+            717,
+            816,
+            751
+          ],
+          "legible": "clear",
+          "text": "SATEC"
+        },
+        {
+          "box": [
+            824,
+            717,
+            890,
+            751
+          ],
+          "legible": "clear",
+          "text": "135E"
+        },
+        {
+          "box": [
+            718,
+            903,
+            813,
+            937
+          ],
+          "legible": "clear",
+          "text": "PKZM"
+        },
+        {
+          "box": [
+            834,
+            903,
+            962,
+            937
+          ],
+          "legible": "clear",
+          "text": "1–2.4A"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

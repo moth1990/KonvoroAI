@@ -1,0 +1,93 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 248,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            326,
+            527,
+            540,
+            579
+          ],
+          "legible": "clear",
+          "text": "5x10²-N2XY"
+        },
+        {
+          "box": [
+            633,
+            580,
+            666,
+            608
+          ],
+          "legible": "clear",
+          "text": "30"
+        },
+        {
+          "box": [
+            370,
+            611,
+            456,
+            647
+          ],
+          "legible": "clear",
+          "text": "112m"
+        },
+        {
+          "box": [
+            258,
+            712,
+            321,
+            747
+          ],
+          "legible": "clear",
+          "text": "MCB"
+        },
+        {
+          "box": [
+            127,
+            796,
+            165,
+            828
+          ],
+          "legible": "clear",
+          "text": "TC"
+        },
+        {
+          "box": [
+            266,
+            836,
+            321,
+            868
+          ],
+          "legible": "clear",
+          "text": "25A"
+        },
+        {
+          "box": [
+            135,
+            871,
+            158,
+            900
+          ],
+          "legible": "clear",
+          "text": "N"
+        },
+        {
+          "box": [
+            300,
+            996,
+            468,
+            1024
+          ],
+          "legible": "unsure",
+          "text": "4x40A/0.03A"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

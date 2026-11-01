@@ -33,3 +33,9 @@ def sqs():  # type: ignore[no-untyped-def]
 from .api import api  # noqa: E402, F401  (module fixture: the app on konboro_test, two tenants)
 from .aws import clean_queue, queue, storage  # noqa: E402, F401  (local S3 and this run's own queues)
 from .db import migrated_db  # noqa: E402, F401  (session fixture: a fresh, migrated konboro_test database)
+
+
+@pytest.fixture(scope="session", autouse=True)
+def _empty_bucket(storage):  # type: ignore[no-untyped-def]  # noqa: F811
+    """This run's bucket exists and is empty before anything writes to it (Storage.reset_local_bucket)."""
+    return storage

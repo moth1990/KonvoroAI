@@ -1,0 +1,163 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 463,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            130,
+            76,
+            164,
+            99
+          ],
+          "legible": "clear",
+          "text": "T.C"
+        },
+        {
+          "box": [
+            168,
+            76,
+            192,
+            99
+          ],
+          "legible": "clear",
+          "text": "G1"
+        },
+        {
+          "box": [
+            373,
+            36,
+            458,
+            63
+          ],
+          "legible": "clear",
+          "text": "4X125A"
+        },
+        {
+          "box": [
+            373,
+            70,
+            490,
+            101
+          ],
+          "legible": "clear",
+          "text": "ABB-XT1C"
+        },
+        {
+          "box": [
+            373,
+            111,
+            486,
+            139
+          ],
+          "legible": "clear",
+          "text": "INC=100A"
+        },
+        {
+          "box": [
+            721,
+            76,
+            754,
+            99
+          ],
+          "legible": "clear",
+          "text": "T.C"
+        },
+        {
+          "box": [
+            758,
+            76,
+            783,
+            99
+          ],
+          "legible": "clear",
+          "text": "G2"
+        },
+        {
+          "box": [
+            697,
+            336,
+            743,
+            371
+          ],
+          "legible": "clear",
+          "text": "SG"
+        },
+        {
+          "box": [
+            692,
+            382,
+            793,
+            414
+          ],
+          "legible": "clear",
+          "text": "4X125A"
+        },
+        {
+          "box": [
+            679,
+            423,
+            806,
+            457
+          ],
+          "legible": "clear",
+          "text": "SOCOMEC"
+        },
+        {
+          "box": [
+            463,
+            814,
+            565,
+            850
+          ],
+          "legible": "clear",
+          "text": "125/5A"
+        },
+        {
+          "box": [
+            416,
+            860,
+            617,
+            897
+          ],
+          "legible": "clear",
+          "text": "MS1/MS2/MS3"
+        },
+        {
+          "box": [
+            795,
+            753,
+            812,
+            770
+          ],
+          "legible": "unsure",
+          "text": "L1"
+        },
+        {
+          "box": [
+            795,
+            804,
+            812,
+            821
+          ],
+          "legible": "unsure",
+          "text": "L2"
+        },
+        {
+          "box": [
+            795,
+            854,
+            812,
+            871
+          ],
+          "legible": "unsure",
+          "text": "L3"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

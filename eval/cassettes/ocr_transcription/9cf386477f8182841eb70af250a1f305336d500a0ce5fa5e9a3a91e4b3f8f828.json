@@ -1,0 +1,263 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 750,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            722,
+            66,
+            868,
+            148
+          ],
+          "legible": "clear",
+          "text": "30%"
+        },
+        {
+          "box": [
+            482,
+            62,
+            664,
+            156
+          ],
+          "legible": "clear",
+          "text": "מקום"
+        },
+        {
+          "box": [
+            290,
+            62,
+            430,
+            148
+          ],
+          "legible": "clear",
+          "text": "שמור"
+        },
+        {
+          "box": [
+            208,
+            292,
+            345,
+            334
+          ],
+          "legible": "clear",
+          "text": "אלקטרוני"
+        },
+        {
+          "box": [
+            224,
+            340,
+            272,
+            370
+          ],
+          "legible": "clear",
+          "text": "LSI"
+        },
+        {
+          "box": [
+            114,
+            348,
+            186,
+            380
+          ],
+          "legible": "clear",
+          "text": "160A"
+        },
+        {
+          "box": [
+            119,
+            394,
+            184,
+            424
+          ],
+          "legible": "clear",
+          "text": "160A"
+        },
+        {
+          "box": [
+            518,
+            354,
+            556,
+            385
+          ],
+          "legible": "clear",
+          "text": "6A"
+        },
+        {
+          "box": [
+            519,
+            389,
+            592,
+            421
+          ],
+          "legible": "clear",
+          "text": "MCB"
+        },
+        {
+          "box": [
+            784,
+            354,
+            823,
+            385
+          ],
+          "legible": "clear",
+          "text": "6A"
+        },
+        {
+          "box": [
+            782,
+            394,
+            855,
+            424
+          ],
+          "legible": "clear",
+          "text": "MCB"
+        },
+        {
+          "box": [
+            968,
+            394,
+            1024,
+            424
+          ],
+          "legible": "unsure",
+          "text": "MCB"
+        },
+        {
+          "box": [
+            135,
+            598,
+            187,
+            630
+          ],
+          "legible": "clear",
+          "text": "16A"
+        },
+        {
+          "box": [
+            137,
+            638,
+            210,
+            670
+          ],
+          "legible": "clear",
+          "text": "MCB"
+        },
+        {
+          "box": [
+            68,
+            685,
+            132,
+            720
+          ],
+          "legible": "unsure",
+          "text": "מ.פ."
+        },
+        {
+          "box": [
+            121,
+            741,
+            289,
+            772
+          ],
+          "legible": "clear",
+          "text": "4x63A/0,03A"
+        },
+        {
+          "box": [
+            832,
+            606,
+            894,
+            645
+          ],
+          "legible": "clear",
+          "text": "שעון"
+        },
+        {
+          "box": [
+            914,
+            660,
+            934,
+            693
+          ],
+          "legible": "clear",
+          "text": "2"
+        },
+        {
+          "box": [
+            793,
+            658,
+            896,
+            696
+          ],
+          "legible": "clear",
+          "text": "תכניות"
+        },
+        {
+          "box": [
+            845,
+            573,
+            882,
+            594
+          ],
+          "legible": "unsure",
+          "text": "\"0\""
+        },
+        {
+          "box": [
+            424,
+            777,
+            456,
+            808
+          ],
+          "legible": "clear",
+          "text": "C1"
+        },
+        {
+          "box": [
+            687,
+            777,
+            724,
+            808
+          ],
+          "legible": "clear",
+          "text": "C2"
+        },
+        {
+          "box": [
+            422,
+            841,
+            458,
+            863
+          ],
+          "legible": "unsure",
+          "text": "\"0\""
+        },
+        {
+          "box": [
+            689,
+            841,
+            725,
+            863
+          ],
+          "legible": "unsure",
+          "text": "\"0\""
+        },
+        {
+          "box": [
+            987,
+            818,
+            1013,
+            850
+          ],
+          "legible": "clear",
+          "text": "T1"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

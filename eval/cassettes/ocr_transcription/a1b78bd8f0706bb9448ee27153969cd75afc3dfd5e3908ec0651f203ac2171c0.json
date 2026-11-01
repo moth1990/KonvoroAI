@@ -1,0 +1,243 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 706,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            751,
+            212,
+            826,
+            259
+          ],
+          "legible": "clear",
+          "text": "דלת"
+        },
+        {
+          "box": [
+            839,
+            212,
+            945,
+            259
+          ],
+          "legible": "clear",
+          "text": "כולל"
+        },
+        {
+          "box": [
+            636,
+            288,
+            722,
+            335
+          ],
+          "legible": "clear",
+          "text": "מטר"
+        },
+        {
+          "box": [
+            737,
+            291,
+            945,
+            332
+          ],
+          "legible": "clear",
+          "text": "2.1x1.2x0.5"
+        },
+        {
+          "box": [
+            862,
+            365,
+            975,
+            412
+          ],
+          "legible": "clear",
+          "text": "מלמטה"
+        },
+        {
+          "box": [
+            836,
+            441,
+            975,
+            490
+          ],
+          "legible": "clear",
+          "text": "מלמעלה"
+        },
+        {
+          "box": [
+            708,
+            527,
+            879,
+            577
+          ],
+          "legible": "clear",
+          "text": "2–61439"
+        },
+        {
+          "box": [
+            891,
+            527,
+            971,
+            574
+          ],
+          "legible": "clear",
+          "text": "תקן"
+        },
+        {
+          "box": [
+            955,
+            700,
+            978,
+            715
+          ],
+          "legible": "clear",
+          "text": "–"
+        },
+        {
+          "box": [
+            833,
+            677,
+            925,
+            727
+          ],
+          "legible": "clear",
+          "text": "35C°"
+        },
+        {
+          "box": [
+            805,
+            745,
+            881,
+            791
+          ],
+          "legible": "clear",
+          "text": "IK10"
+        },
+        {
+          "box": [
+            892,
+            745,
+            963,
+            791
+          ],
+          "legible": "unsure",
+          "text": "לפי"
+        },
+        {
+          "box": [
+            284,
+            820,
+            467,
+            868
+          ],
+          "legible": "clear",
+          "text": "IEC60898"
+        },
+        {
+          "box": [
+            487,
+            820,
+            566,
+            868
+          ],
+          "legible": "clear",
+          "text": "לפי"
+        },
+        {
+          "box": [
+            609,
+            820,
+            707,
+            868
+          ],
+          "legible": "clear",
+          "text": "10KA"
+        },
+        {
+          "box": [
+            721,
+            820,
+            805,
+            868
+          ],
+          "legible": "clear",
+          "text": "קצר"
+        },
+        {
+          "box": [
+            819,
+            820,
+            929,
+            868
+          ],
+          "legible": "clear",
+          "text": "לזרם"
+        },
+        {
+          "box": [
+            713,
+            895,
+            800,
+            945
+          ],
+          "legible": "clear",
+          "text": "שמור"
+        },
+        {
+          "box": [
+            815,
+            895,
+            903,
+            945
+          ],
+          "legible": "clear",
+          "text": "בלוח"
+        },
+        {
+          "box": [
+            864,
+            969,
+            958,
+            1018
+          ],
+          "legible": "unsure",
+          "text": "הלוח"
+        },
+        {
+          "box": [
+            614,
+            969,
+            848,
+            1018
+          ],
+          "legible": "unsure",
+          "text": "בהתאם"
+        },
+        {
+          "box": [
+            480,
+            969,
+            596,
+            1018
+          ],
+          "legible": "unsure",
+          "text": "לציוד"
+        },
+        {
+          "box": [
+            332,
+            969,
+            466,
+            1018
+          ],
+          "legible": "unsure",
+          "text": "המותקן"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

@@ -1,0 +1,63 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 175,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            900,
+            450,
+            994,
+            497
+          ],
+          "legible": "clear",
+          "text": "פילר"
+        },
+        {
+          "box": [
+            763,
+            452,
+            884,
+            497
+          ],
+          "legible": "clear",
+          "text": "הזנה"
+        },
+        {
+          "box": [
+            630,
+            452,
+            759,
+            497
+          ],
+          "legible": "clear",
+          "text": "למתחם"
+        },
+        {
+          "box": [
+            186,
+            713,
+            738,
+            768
+          ],
+          "legible": "unsure",
+          "text": "2X(4x240²–NA2XY)+2X150CU2X"
+        },
+        {
+          "box": [
+            426,
+            790,
+            498,
+            829
+          ],
+          "legible": "clear",
+          "text": "29m"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

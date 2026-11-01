@@ -1,0 +1,263 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 749,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            250,
+            292,
+            305,
+            325
+          ],
+          "legible": "clear",
+          "text": "שם"
+        },
+        {
+          "box": [
+            100,
+            291,
+            237,
+            325
+          ],
+          "legible": "clear",
+          "text": "הפרויקט"
+        },
+        {
+          "box": [
+            61,
+            298,
+            69,
+            318
+          ],
+          "legible": "clear",
+          "text": ":"
+        },
+        {
+          "box": [
+            236,
+            388,
+            287,
+            424
+          ],
+          "legible": "clear",
+          "text": "דף"
+        },
+        {
+          "box": [
+            106,
+            390,
+            222,
+            425
+          ],
+          "legible": "clear",
+          "text": "מס':6"
+        },
+        {
+          "box": [
+            216,
+            455,
+            280,
+            488
+          ],
+          "legible": "clear",
+          "text": "מתוך"
+        },
+        {
+          "box": [
+            144,
+            458,
+            176,
+            486
+          ],
+          "legible": "clear",
+          "text": "9:"
+        },
+        {
+          "box": [
+            179,
+            512,
+            290,
+            551
+          ],
+          "legible": "clear",
+          "text": "קנ\"מ:"
+        },
+        {
+          "box": [
+            75,
+            516,
+            180,
+            549
+          ],
+          "legible": "clear",
+          "text": "1:100:"
+        },
+        {
+          "box": [
+            781,
+            336,
+            969,
+            383
+          ],
+          "legible": "clear",
+          "text": "לוחות"
+        },
+        {
+          "box": [
+            640,
+            337,
+            777,
+            383
+          ],
+          "legible": "clear",
+          "text": "חשמל"
+        },
+        {
+          "box": [
+            484,
+            337,
+            632,
+            383
+          ],
+          "legible": "clear",
+          "text": "ובקרה"
+        },
+        {
+          "box": [
+            388,
+            398,
+            457,
+            438
+          ],
+          "legible": "clear",
+          "text": "S.S"
+        },
+        {
+          "box": [
+            489,
+            398,
+            696,
+            438
+          ],
+          "legible": "clear",
+          "text": "Electrical"
+        },
+        {
+          "box": [
+            760,
+            398,
+            839,
+            438
+          ],
+          "legible": "clear",
+          "text": "and"
+        },
+        {
+          "box": [
+            366,
+            467,
+            552,
+            495
+          ],
+          "legible": "clear",
+          "text": "04-8338123:"
+        },
+        {
+          "box": [
+            573,
+            467,
+            628,
+            495
+          ],
+          "legible": "clear",
+          "text": "פקס"
+        },
+        {
+          "box": [
+            646,
+            467,
+            834,
+            495
+          ],
+          "legible": "clear",
+          "text": "04-6565394:"
+        },
+        {
+          "box": [
+            838,
+            467,
+            880,
+            495
+          ],
+          "legible": "clear",
+          "text": "טל"
+        },
+        {
+          "box": [
+            896,
+            467,
+            947,
+            495
+          ],
+          "legible": "clear",
+          "text": "276"
+        },
+        {
+          "box": [
+            473,
+            509,
+            596,
+            547
+          ],
+          "legible": "clear",
+          "text": "Email:"
+        },
+        {
+          "box": [
+            606,
+            509,
+            1022,
+            550
+          ],
+          "legible": "unsure",
+          "text": "electrcpss@gmail.co"
+        },
+        {
+          "box": [
+            194,
+            624,
+            217,
+            656
+          ],
+          "legible": "clear",
+          "text": "6"
+        },
+        {
+          "box": [
+            508,
+            622,
+            529,
+            654
+          ],
+          "legible": "clear",
+          "text": "7"
+        },
+        {
+          "box": [
+            803,
+            624,
+            826,
+            656
+          ],
+          "legible": "clear",
+          "text": "8"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

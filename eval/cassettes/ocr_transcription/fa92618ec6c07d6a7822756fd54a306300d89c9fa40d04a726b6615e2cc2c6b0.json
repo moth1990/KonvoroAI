@@ -1,0 +1,163 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 465,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            571,
+            150,
+            665,
+            187
+          ],
+          "legible": "clear",
+          "text": "תוספת"
+        },
+        {
+          "box": [
+            473,
+            150,
+            558,
+            187
+          ],
+          "legible": "clear",
+          "text": "מפסק"
+        },
+        {
+          "box": [
+            390,
+            150,
+            457,
+            187
+          ],
+          "legible": "clear",
+          "text": "חדש"
+        },
+        {
+          "box": [
+            578,
+            215,
+            665,
+            254
+          ],
+          "legible": "clear",
+          "text": "בפילר"
+        },
+        {
+          "box": [
+            477,
+            215,
+            565,
+            254
+          ],
+          "legible": "clear",
+          "text": "חשמל"
+        },
+        {
+          "box": [
+            391,
+            215,
+            458,
+            254
+          ],
+          "legible": "clear",
+          "text": "קיים"
+        },
+        {
+          "box": [
+            584,
+            265,
+            665,
+            300
+          ],
+          "legible": "clear",
+          "text": "הזנה"
+        },
+        {
+          "box": [
+            470,
+            265,
+            572,
+            300
+          ],
+          "legible": "clear",
+          "text": "למתחם"
+        },
+        {
+          "box": [
+            375,
+            265,
+            457,
+            300
+          ],
+          "legible": "clear",
+          "text": "הרכב"
+        },
+        {
+          "box": [
+            914,
+            372,
+            989,
+            402
+          ],
+          "legible": "clear",
+          "text": "630A"
+        },
+        {
+          "box": [
+            686,
+            635,
+            1014,
+            705
+          ],
+          "legible": "unsure",
+          "text": "2x(4x240²–NA2XY)"
+        },
+        {
+          "box": [
+            716,
+            729,
+            858,
+            764
+          ],
+          "legible": "clear",
+          "text": "2x150CU"
+        },
+        {
+          "box": [
+            838,
+            833,
+            911,
+            872
+          ],
+          "legible": "clear",
+          "text": "לחצן"
+        },
+        {
+          "box": [
+            890,
+            897,
+            941,
+            932
+          ],
+          "legible": "clear",
+          "text": "על"
+        },
+        {
+          "box": [
+            810,
+            897,
+            881,
+            932
+          ],
+          "legible": "clear",
+          "text": "הלוח"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

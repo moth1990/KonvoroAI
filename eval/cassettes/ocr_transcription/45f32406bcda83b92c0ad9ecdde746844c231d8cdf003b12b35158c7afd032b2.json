@@ -1,0 +1,245 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 683,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            894,
+            30,
+            934,
+            60
+          ],
+          "legible": "clear",
+          "text": "TC"
+        },
+        {
+          "box": [
+            904,
+            104,
+            924,
+            131
+          ],
+          "legible": "clear",
+          "text": "N"
+        },
+        {
+          "box": [
+            544,
+            104,
+            608,
+            141
+          ],
+          "legible": "clear",
+          "text": "שעון"
+        },
+        {
+          "box": [
+            741,
+            146,
+            778,
+            176
+          ],
+          "legible": "clear",
+          "text": "6A"
+        },
+        {
+          "box": [
+            2,
+            141,
+            72,
+            175
+          ],
+          "legible": "clear",
+          "text": "10kA"
+        },
+        {
+          "box": [
+            7,
+            229,
+            66,
+            264
+          ],
+          "legible": "clear",
+          "text": "63A"
+        },
+        {
+          "box": [
+            790,
+            324,
+            851,
+            358
+          ],
+          "legible": "clear",
+          "text": "MCB"
+        },
+        {
+          "box": [
+            138,
+            440,
+            191,
+            471
+          ],
+          "legible": "clear",
+          "text": "10A"
+        },
+        {
+          "box": [
+            124,
+            480,
+            186,
+            514
+          ],
+          "legible": "clear",
+          "text": "MCB"
+        },
+        {
+          "box": [
+            306,
+            439,
+            359,
+            469
+          ],
+          "legible": "clear",
+          "text": "16A"
+        },
+        {
+          "box": [
+            301,
+            480,
+            362,
+            514
+          ],
+          "legible": "clear",
+          "text": "MCB"
+        },
+        {
+          "box": [
+            476,
+            439,
+            532,
+            469
+          ],
+          "legible": "clear",
+          "text": "20A"
+        },
+        {
+          "box": [
+            472,
+            480,
+            534,
+            514
+          ],
+          "legible": "clear",
+          "text": "MCB"
+        },
+        {
+          "box": [
+            639,
+            439,
+            692,
+            469
+          ],
+          "legible": "clear",
+          "text": "16A"
+        },
+        {
+          "box": [
+            629,
+            480,
+            691,
+            514
+          ],
+          "legible": "clear",
+          "text": "MCB"
+        },
+        {
+          "box": [
+            805,
+            441,
+            858,
+            472
+          ],
+          "legible": "clear",
+          "text": "16A"
+        },
+        {
+          "box": [
+            911,
+            605,
+            963,
+            635
+          ],
+          "legible": "clear",
+          "text": "10A"
+        },
+        {
+          "box": [
+            941,
+            689,
+            960,
+            722
+          ],
+          "legible": "unsure",
+          "text": "0"
+        },
+        {
+          "box": [
+            848,
+            756,
+            906,
+            792
+          ],
+          "legible": "clear",
+          "text": "ידני"
+        },
+        {
+          "box": [
+            922,
+            872,
+            942,
+            902
+          ],
+          "legible": "clear",
+          "text": "C"
+        },
+        {
+          "box": [
+            915,
+            931,
+            949,
+            958
+          ],
+          "legible": "unsure",
+          "text": "\"0\""
+        },
+        {
+          "box": [
+            400,
+            990,
+            437,
+            1024
+          ],
+          "legible": "unsure",
+          "rotation": 270,
+          "text": "NYY"
+        },
+        {
+          "box": [
+            560,
+            978,
+            598,
+            1024
+          ],
+          "legible": "unsure",
+          "rotation": 270,
+          "text": "NYY"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

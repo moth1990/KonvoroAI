@@ -1,0 +1,203 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 556,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            609,
+            2,
+            803,
+            82
+          ],
+          "legible": "clear",
+          "text": "נדרש"
+        },
+        {
+          "box": [
+            413,
+            5,
+            557,
+            80
+          ],
+          "legible": "clear",
+          "text": "30%"
+        },
+        {
+          "box": [
+            175,
+            2,
+            357,
+            88
+          ],
+          "legible": "clear",
+          "text": "מקום"
+        },
+        {
+          "box": [
+            18,
+            2,
+            121,
+            82
+          ],
+          "legible": "unsure",
+          "text": "שמ"
+        },
+        {
+          "box": [
+            377,
+            520,
+            415,
+            550
+          ],
+          "legible": "clear",
+          "text": "6A"
+        },
+        {
+          "box": [
+            380,
+            556,
+            453,
+            587
+          ],
+          "legible": "clear",
+          "text": "MCB"
+        },
+        {
+          "box": [
+            644,
+            520,
+            682,
+            550
+          ],
+          "legible": "clear",
+          "text": "6A"
+        },
+        {
+          "box": [
+            645,
+            556,
+            718,
+            587
+          ],
+          "legible": "clear",
+          "text": "MCB"
+        },
+        {
+          "box": [
+            846,
+            520,
+            898,
+            551
+          ],
+          "legible": "clear",
+          "text": "16A"
+        },
+        {
+          "box": [
+            823,
+            562,
+            896,
+            592
+          ],
+          "legible": "clear",
+          "text": "MCB"
+        },
+        {
+          "box": [
+            967,
+            520,
+            1019,
+            551
+          ],
+          "legible": "clear",
+          "text": "16A"
+        },
+        {
+          "box": [
+            946,
+            562,
+            1018,
+            592
+          ],
+          "legible": "clear",
+          "text": "MCB"
+        },
+        {
+          "box": [
+            690,
+            774,
+            755,
+            810
+          ],
+          "legible": "clear",
+          "text": "שעון"
+        },
+        {
+          "box": [
+            774,
+            827,
+            792,
+            858
+          ],
+          "legible": "clear",
+          "text": "2"
+        },
+        {
+          "box": [
+            653,
+            825,
+            758,
+            859
+          ],
+          "legible": "clear",
+          "text": "תכניות"
+        },
+        {
+          "box": [
+            283,
+            943,
+            315,
+            974
+          ],
+          "legible": "clear",
+          "text": "C1"
+        },
+        {
+          "box": [
+            546,
+            943,
+            582,
+            974
+          ],
+          "legible": "clear",
+          "text": "C2"
+        },
+        {
+          "box": [
+            846,
+            986,
+            873,
+            1014
+          ],
+          "legible": "clear",
+          "text": "T1"
+        },
+        {
+          "box": [
+            964,
+            986,
+            996,
+            1014
+          ],
+          "legible": "clear",
+          "text": "T2"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

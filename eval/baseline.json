@@ -2,6 +2,15 @@
   "drawings": {
     "26-993": {
       "confirmed_value_at_risk": "1250",
+      "extraction": {
+        "blank_tiles": 0,
+        "corrected_spans": 0,
+        "ocr_spans": 468,
+        "pages": 3,
+        "spans": 468,
+        "tiles": 36,
+        "wire_edges": 932
+      },
       "input_kind": "factory_drawing",
       "labelled": {
         "products": 22,
@@ -120,6 +129,14 @@
             "value": 1.0
           }
         },
+        "s2": {
+          "designator_recall": {
+            "den": 36,
+            "kind": "ratio",
+            "num": 35.0,
+            "value": 0.972222
+          }
+        },
         "s4": {
           "component_precision": {
             "den": 0,
@@ -162,6 +179,15 @@
     },
     "6199-2-50": {
       "confirmed_value_at_risk": null,
+      "extraction": {
+        "blank_tiles": 37,
+        "corrected_spans": 0,
+        "ocr_spans": 667,
+        "pages": 1,
+        "spans": 667,
+        "tiles": 144,
+        "wire_edges": 3292
+      },
       "input_kind": "designer_plan",
       "labelled": {
         "products": 109,
@@ -288,6 +314,14 @@
             "value": 1.0
           }
         },
+        "s2": {
+          "designator_recall": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          }
+        },
         "s4": {
           "component_precision": {
             "den": 0,
@@ -330,6 +364,15 @@
     },
     "BOM-HW-1": {
       "confirmed_value_at_risk": null,
+      "extraction": {
+        "blank_tiles": 0,
+        "corrected_spans": 0,
+        "ocr_spans": 0,
+        "pages": 0,
+        "spans": 0,
+        "tiles": 0,
+        "wire_edges": 0
+      },
       "input_kind": "bom_only",
       "labelled": {
         "products": 19,
@@ -398,6 +441,14 @@
             "value": null
           }
         },
+        "s2": {
+          "designator_recall": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          }
+        },
         "s4": {
           "component_precision": {
             "den": 0,
@@ -440,6 +491,15 @@
     },
     "NEVIS-1": {
       "confirmed_value_at_risk": "0",
+      "extraction": {
+        "blank_tiles": 0,
+        "corrected_spans": 0,
+        "ocr_spans": 762,
+        "pages": 5,
+        "spans": 762,
+        "tiles": 60,
+        "wire_edges": 932
+      },
       "input_kind": "factory_drawing",
       "labelled": {
         "products": 21,
@@ -564,6 +624,14 @@
             "value": 1.0
           }
         },
+        "s2": {
+          "designator_recall": {
+            "den": 42,
+            "kind": "ratio",
+            "num": 42.0,
+            "value": 1.0
+          }
+        },
         "s4": {
           "component_precision": {
             "den": 0,
@@ -606,6 +674,15 @@
     },
     "NURSERY-1": {
       "confirmed_value_at_risk": "185",
+      "extraction": {
+        "blank_tiles": 1,
+        "corrected_spans": 0,
+        "ocr_spans": 765,
+        "pages": 5,
+        "spans": 765,
+        "tiles": 60,
+        "wire_edges": 974
+      },
       "input_kind": "factory_drawing",
       "labelled": {
         "products": 13,
@@ -730,6 +807,14 @@
             "value": 1.0
           }
         },
+        "s2": {
+          "designator_recall": {
+            "den": 41,
+            "kind": "ratio",
+            "num": 41.0,
+            "value": 1.0
+          }
+        },
         "s4": {
           "component_precision": {
             "den": 0,
@@ -772,7 +857,7 @@
     }
   },
   "not_labelled": {
-    "s2": "אין עדיין תיוג ברמת אריח ומקטע טקסט",
+    "s2": "אין עדיין תיוג ברמת אריח ומקטע טקסט: דיוק אסימונים וכיסוי אריחים לא נמדדים, רק איתור התגים",
     "s3": "אין עדיין תיוג ברמת תיבת סימן"
   },
   "totals": {
@@ -885,6 +970,14 @@
           "value": 1.0
         }
       },
+      "s2": {
+        "designator_recall": {
+          "den": 119,
+          "kind": "ratio",
+          "num": 118.0,
+          "value": 0.991597
+        }
+      },
       "s4": {
         "component_precision": {
           "den": 0,
@@ -960,6 +1053,14 @@
             "value": 0.0
           },
           "route_accuracy": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          }
+        },
+        "s2": {
+          "designator_recall": {
             "den": 0,
             "kind": "ratio",
             "num": 0.0,
@@ -1074,6 +1175,14 @@
             "kind": "ratio",
             "num": 1.0,
             "value": 1.0
+          }
+        },
+        "s2": {
+          "designator_recall": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
           }
         },
         "s4": {
@@ -1210,6 +1319,14 @@
             "kind": "ratio",
             "num": 2.0,
             "value": 1.0
+          }
+        },
+        "s2": {
+          "designator_recall": {
+            "den": 119,
+            "kind": "ratio",
+            "num": 118.0,
+            "value": 0.991597
           }
         },
         "s4": {

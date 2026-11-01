@@ -1,0 +1,46 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 121,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            746,
+            977,
+            833,
+            1024
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "דלת"
+        },
+        {
+          "box": [
+            853,
+            977,
+            938,
+            1024
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "כולל"
+        },
+        {
+          "box": [
+            950,
+            977,
+            1013,
+            1024
+          ],
+          "legible": "unsure",
+          "rotation": 0,
+          "text": "פח"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

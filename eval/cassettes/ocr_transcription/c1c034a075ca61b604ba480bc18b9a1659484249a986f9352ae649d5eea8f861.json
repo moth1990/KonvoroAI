@@ -1,0 +1,233 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 676,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            258,
+            164,
+            282,
+            197
+          ],
+          "legible": "clear",
+          "text": "6"
+        },
+        {
+          "box": [
+            584,
+            161,
+            608,
+            195
+          ],
+          "legible": "clear",
+          "text": "7"
+        },
+        {
+          "box": [
+            890,
+            163,
+            915,
+            197
+          ],
+          "legible": "clear",
+          "text": "8"
+        },
+        {
+          "box": [
+            172,
+            363,
+            336,
+            391
+          ],
+          "legible": "clear",
+          "text": "3X50+25N2XY"
+        },
+        {
+          "box": [
+            348,
+            363,
+            424,
+            391
+          ],
+          "legible": "clear",
+          "text": "+25CU"
+        },
+        {
+          "box": [
+            178,
+            419,
+            254,
+            447
+          ],
+          "legible": "clear",
+          "text": "QEN2"
+        },
+        {
+          "box": [
+            272,
+            419,
+            428,
+            447
+          ],
+          "legible": "clear",
+          "text": "ESSENTIAL"
+        },
+        {
+          "box": [
+            446,
+            419,
+            540,
+            447
+          ],
+          "legible": "clear",
+          "text": "WATER"
+        },
+        {
+          "box": [
+            180,
+            456,
+            262,
+            484
+          ],
+          "legible": "clear",
+          "text": "PUMP"
+        },
+        {
+          "box": [
+            282,
+            456,
+            353,
+            484
+          ],
+          "legible": "clear",
+          "text": "MAIN"
+        },
+        {
+          "box": [
+            372,
+            456,
+            467,
+            484
+          ],
+          "legible": "clear",
+          "text": "BOARD"
+        },
+        {
+          "box": [
+            788,
+            455,
+            820,
+            476
+          ],
+          "legible": "unsure",
+          "text": "\"N\""
+        },
+        {
+          "box": [
+            677,
+            576,
+            718,
+            600
+          ],
+          "legible": "clear",
+          "text": "LG1"
+        },
+        {
+          "box": [
+            740,
+            576,
+            784,
+            600
+          ],
+          "legible": "clear",
+          "text": "LG2"
+        },
+        {
+          "box": [
+            800,
+            575,
+            844,
+            599
+          ],
+          "legible": "clear",
+          "text": "LG3"
+        },
+        {
+          "box": [
+            203,
+            734,
+            270,
+            772
+          ],
+          "legible": "clear",
+          "text": "QG2"
+        },
+        {
+          "box": [
+            206,
+            802,
+            291,
+            832
+          ],
+          "legible": "clear",
+          "text": "4X125A"
+        },
+        {
+          "box": [
+            205,
+            838,
+            322,
+            868
+          ],
+          "legible": "clear",
+          "text": "ABB-XT1C"
+        },
+        {
+          "box": [
+            206,
+            877,
+            318,
+            907
+          ],
+          "legible": "clear",
+          "text": "INC=100A"
+        },
+        {
+          "box": [
+            825,
+            897,
+            898,
+            924
+          ],
+          "legible": "clear",
+          "text": "QLG2"
+        },
+        {
+          "box": [
+            807,
+            927,
+            897,
+            957
+          ],
+          "legible": "clear",
+          "text": "4-6.3A"
+        },
+        {
+          "box": [
+            780,
+            965,
+            917,
+            995
+          ],
+          "legible": "clear",
+          "text": "ABB-MS116"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

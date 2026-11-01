@@ -1,0 +1,73 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 190,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            571,
+            914,
+            666,
+            957
+          ],
+          "legible": "clear",
+          "text": "תוספת"
+        },
+        {
+          "box": [
+            479,
+            914,
+            562,
+            957
+          ],
+          "legible": "clear",
+          "text": "מפסק"
+        },
+        {
+          "box": [
+            389,
+            914,
+            458,
+            957
+          ],
+          "legible": "clear",
+          "text": "חדש"
+        },
+        {
+          "box": [
+            578,
+            983,
+            665,
+            1020
+          ],
+          "legible": "clear",
+          "text": "בפילר"
+        },
+        {
+          "box": [
+            485,
+            983,
+            568,
+            1022
+          ],
+          "legible": "clear",
+          "text": "חשמל"
+        },
+        {
+          "box": [
+            389,
+            983,
+            471,
+            1022
+          ],
+          "legible": "clear",
+          "text": "קיים"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

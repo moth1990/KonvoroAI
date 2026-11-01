@@ -384,6 +384,19 @@
           "title": "Dpi",
           "type": "integer"
         },
+        "dzi_uri": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The deep-zoom pyramid for the drawing viewer (12 §6, S10)",
+          "title": "Dzi Uri"
+        },
         "height_px": {
           "title": "Height Px",
           "type": "integer"
@@ -489,6 +502,19 @@
           ],
           "default": null,
           "title": "Block Id"
+        },
+        "color": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "#rrggbb when not black (02 §12 item 5, S10)",
+          "title": "Color"
         },
         "confidence": {
           "maximum": 1,
@@ -769,10 +795,11 @@
           "type": "integer"
         },
         "status": {
+          "description": "skipped: `vector_too_complex`; not_supported: a raster page (02 §7–8)",
           "enum": [
             "built",
-            "partial",
-            "unavailable"
+            "skipped",
+            "not_supported"
           ],
           "title": "Status",
           "type": "string"

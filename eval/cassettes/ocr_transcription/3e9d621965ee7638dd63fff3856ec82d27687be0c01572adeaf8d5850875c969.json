@@ -1,0 +1,194 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 546,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            48,
+            347,
+            103,
+            377
+          ],
+          "legible": "clear",
+          "text": "32A"
+        },
+        {
+          "box": [
+            49,
+            382,
+            123,
+            413
+          ],
+          "legible": "clear",
+          "text": "MCB"
+        },
+        {
+          "box": [
+            359,
+            354,
+            397,
+            384
+          ],
+          "legible": "clear",
+          "text": "6A"
+        },
+        {
+          "box": [
+            336,
+            391,
+            410,
+            422
+          ],
+          "legible": "clear",
+          "text": "MCB"
+        },
+        {
+          "box": [
+            539,
+            354,
+            595,
+            384
+          ],
+          "legible": "clear",
+          "text": "20A"
+        },
+        {
+          "box": [
+            522,
+            391,
+            596,
+            422
+          ],
+          "legible": "clear",
+          "text": "MCB"
+        },
+        {
+          "box": [
+            887,
+            354,
+            941,
+            384
+          ],
+          "legible": "clear",
+          "text": "16A"
+        },
+        {
+          "box": [
+            880,
+            391,
+            954,
+            422
+          ],
+          "legible": "clear",
+          "text": "MCB"
+        },
+        {
+          "box": [
+            36,
+            488,
+            204,
+            518
+          ],
+          "legible": "clear",
+          "text": "4x40A/0,03A"
+        },
+        {
+          "box": [
+            257,
+            608,
+            341,
+            650
+          ],
+          "legible": "clear",
+          "text": "לחצן"
+        },
+        {
+          "box": [
+            257,
+            658,
+            341,
+            693
+          ],
+          "legible": "clear",
+          "text": "בלוח"
+        },
+        {
+          "box": [
+            795,
+            608,
+            876,
+            650
+          ],
+          "legible": "clear",
+          "text": "לחצן"
+        },
+        {
+          "box": [
+            795,
+            658,
+            876,
+            693
+          ],
+          "legible": "clear",
+          "text": "בלוח"
+        },
+        {
+          "box": [
+            426,
+            713,
+            449,
+            746
+          ],
+          "legible": "clear",
+          "text": "C"
+        },
+        {
+          "box": [
+            48,
+            735,
+            87,
+            766
+          ],
+          "legible": "clear",
+          "text": "6A"
+        },
+        {
+          "box": [
+            27,
+            806,
+            97,
+            853
+          ],
+          "legible": "clear",
+          "text": "(x6)"
+        },
+        {
+          "box": [
+            636,
+            880,
+            691,
+            916
+          ],
+          "legible": "clear",
+          "text": "(x4)"
+        },
+        {
+          "box": [
+            22,
+            890,
+            58,
+            1000
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "N2XY"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

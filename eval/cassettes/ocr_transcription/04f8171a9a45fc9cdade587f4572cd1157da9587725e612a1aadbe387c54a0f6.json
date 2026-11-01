@@ -1,0 +1,93 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 242,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            597,
+            122,
+            668,
+            148
+          ],
+          "legible": "clear",
+          "text": "QLG1"
+        },
+        {
+          "box": [
+            578,
+            151,
+            668,
+            181
+          ],
+          "legible": "clear",
+          "text": "4-6.3A"
+        },
+        {
+          "box": [
+            551,
+            197,
+            690,
+            226
+          ],
+          "legible": "clear",
+          "text": "ABB-MS116"
+        },
+        {
+          "box": [
+            898,
+            77,
+            931,
+            100
+          ],
+          "legible": "clear",
+          "text": "T.C"
+        },
+        {
+          "box": [
+            936,
+            77,
+            961,
+            100
+          ],
+          "legible": "clear",
+          "text": "G1"
+        },
+        {
+          "box": [
+            21,
+            231,
+            47,
+            263
+          ],
+          "legible": "clear",
+          "text": "C"
+        },
+        {
+          "box": [
+            22,
+            500,
+            48,
+            534
+          ],
+          "legible": "clear",
+          "text": "D"
+        },
+        {
+          "box": [
+            26,
+            857,
+            49,
+            891
+          ],
+          "legible": "clear",
+          "text": "E"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

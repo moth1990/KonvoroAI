@@ -1,0 +1,53 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 127,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            686,
+            89,
+            768,
+            137
+          ],
+          "legible": "clear",
+          "text": "לוח"
+        },
+        {
+          "box": [
+            576,
+            89,
+            675,
+            137
+          ],
+          "legible": "clear",
+          "text": "מבנה"
+        },
+        {
+          "box": [
+            614,
+            148,
+            767,
+            196
+          ],
+          "legible": "clear",
+          "text": "משרדים"
+        },
+        {
+          "box": [
+            870,
+            89,
+            975,
+            137
+          ],
+          "legible": "clear",
+          "text": "סככת"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

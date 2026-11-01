@@ -1,0 +1,33 @@
+{
+  "answer": {
+    "input_tokens": 1089,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 66,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            125,
+            57,
+            323,
+            148
+          ],
+          "legible": "clear",
+          "text": "כנית"
+        },
+        {
+          "box": [
+            15,
+            55,
+            66,
+            150
+          ],
+          "legible": "unsure",
+          "text": "0"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

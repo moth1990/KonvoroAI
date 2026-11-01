@@ -1,0 +1,35 @@
+{
+  "answer": {
+    "input_tokens": 1002,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 80,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            28,
+            36,
+            57,
+            60
+          ],
+          "legible": "unsure",
+          "rotation": 0,
+          "text": "I2"
+        },
+        {
+          "box": [
+            31,
+            63,
+            52,
+            80
+          ],
+          "legible": "unsure",
+          "rotation": 0,
+          "text": "K"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

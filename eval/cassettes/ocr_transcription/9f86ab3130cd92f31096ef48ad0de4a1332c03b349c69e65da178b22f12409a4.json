@@ -1,0 +1,223 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 618,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            228,
+            56,
+            244,
+            83
+          ],
+          "legible": "clear",
+          "text": "1"
+        },
+        {
+          "box": [
+            514,
+            56,
+            537,
+            85
+          ],
+          "legible": "clear",
+          "text": "2"
+        },
+        {
+          "box": [
+            823,
+            53,
+            846,
+            83
+          ],
+          "legible": "clear",
+          "text": "3"
+        },
+        {
+          "box": [
+            22,
+            348,
+            46,
+            378
+          ],
+          "legible": "clear",
+          "text": "A"
+        },
+        {
+          "box": [
+            21,
+            608,
+            45,
+            640
+          ],
+          "legible": "clear",
+          "text": "B"
+        },
+        {
+          "box": [
+            22,
+            858,
+            46,
+            889
+          ],
+          "legible": "clear",
+          "text": "C"
+        },
+        {
+          "box": [
+            242,
+            259,
+            290,
+            300
+          ],
+          "legible": "clear",
+          "text": "WO"
+        },
+        {
+          "box": [
+            315,
+            259,
+            466,
+            300
+          ],
+          "legible": "clear",
+          "text": "L1,L2,L3"
+        },
+        {
+          "box": [
+            493,
+            257,
+            557,
+            299
+          ],
+          "legible": "clear",
+          "text": "\"N\""
+        },
+        {
+          "box": [
+            364,
+            480,
+            422,
+            507
+          ],
+          "legible": "clear",
+          "text": "F22"
+        },
+        {
+          "box": [
+            733,
+            480,
+            791,
+            507
+          ],
+          "legible": "clear",
+          "text": "F23"
+        },
+        {
+          "box": [
+            384,
+            547,
+            452,
+            573
+          ],
+          "legible": "clear",
+          "text": "3X16A"
+        },
+        {
+          "box": [
+            374,
+            576,
+            488,
+            605
+          ],
+          "legible": "clear",
+          "text": "INC=12.8A"
+        },
+        {
+          "box": [
+            374,
+            604,
+            444,
+            631
+          ],
+          "legible": "clear",
+          "text": "S203M"
+        },
+        {
+          "box": [
+            376,
+            636,
+            418,
+            661
+          ],
+          "legible": "clear",
+          "text": "ABB"
+        },
+        {
+          "box": [
+            753,
+            547,
+            821,
+            573
+          ],
+          "legible": "clear",
+          "text": "3X16A"
+        },
+        {
+          "box": [
+            743,
+            576,
+            857,
+            605
+          ],
+          "legible": "clear",
+          "text": "INC=12.8A"
+        },
+        {
+          "box": [
+            743,
+            604,
+            813,
+            631
+          ],
+          "legible": "clear",
+          "text": "S203M"
+        },
+        {
+          "box": [
+            745,
+            636,
+            787,
+            661
+          ],
+          "legible": "clear",
+          "text": "ABB"
+        },
+        {
+          "box": [
+            467,
+            820,
+            499,
+            853
+          ],
+          "legible": "clear",
+          "text": "C1"
+        },
+        {
+          "box": [
+            842,
+            820,
+            875,
+            853
+          ],
+          "legible": "clear",
+          "text": "C2"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

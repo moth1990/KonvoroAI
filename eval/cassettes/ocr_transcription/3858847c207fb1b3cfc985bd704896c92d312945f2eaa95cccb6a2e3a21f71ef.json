@@ -1,0 +1,101 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 299,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            0,
+            87,
+            22,
+            232
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "BRAUN"
+        },
+        {
+          "box": [
+            0,
+            87,
+            22,
+            150
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "PUMP"
+        },
+        {
+          "box": [
+            250,
+            180,
+            277,
+            232
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "SAVE"
+        },
+        {
+          "box": [
+            586,
+            173,
+            613,
+            225
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "SAVE"
+        },
+        {
+          "box": [
+            979,
+            178,
+            1006,
+            230
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "SAVE"
+        },
+        {
+          "box": [
+            237,
+            291,
+            274,
+            319
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "10"
+        },
+        {
+          "box": [
+            573,
+            285,
+            609,
+            312
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "11"
+        },
+        {
+          "box": [
+            965,
+            289,
+            1003,
+            316
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "12"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

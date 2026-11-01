@@ -2,10 +2,12 @@
 
     replay: the answer comes from `<root>/<stage>/<key>.json`; a missing cassette is an error, never a live call.
     record: the wrapped provider answers, and the answer is written to that file.
+    fill:   replay what is recorded, record only what is missing (S10: a new stage's calls are recorded without
+            calling the model again for the stages before it, whose answers would change).
 
 The key is a hash of everything that can change the answer: stage, model, system prompt, user text, image bytes
-(or the image's stable `key`, when the caller gives one),
-few-shot examples, the output schema and the retry hint. Change any of them and the cassette must be recorded again.
+(or the image's stable `key`, when the caller gives one), few-shot examples, the output schema, the retry hint and
+the effort, when one is set. Change any of them and the cassette must be recorded again.
 """
 
 from __future__ import annotations
@@ -18,7 +20,7 @@ from typing import Any, Literal
 from ..base import LLMProvider, RawAnswer
 from ..types import LLMError, LLMRequest
 
-CassetteMode = Literal["replay", "record"]
+CassetteMode = Literal["replay", "record", "fill"]
 
 
 class CassetteMissingError(LLMError):
@@ -40,13 +42,15 @@ def cassette_key(request: LLMRequest[Any], model: str, retry_hint: str | None) -
         "schema": request.output_schema.model_json_schema(),
         "retry_hint": retry_hint,
     }
+    if request.effort is not None:  # only when set, so recordings made before `effort` existed keep their keys
+        material["effort"] = request.effort
     return _sha256(json.dumps(material, sort_keys=True, ensure_ascii=False).encode())
 
 
 class CassetteProvider:
     def __init__(self, root: Path, mode: CassetteMode = "replay", wrapped: LLMProvider | None = None):
-        if mode == "record" and wrapped is None:
-            raise ValueError("record mode needs a provider to record from")
+        if mode in ("record", "fill") and wrapped is None:
+            raise ValueError(f"{mode} mode needs a provider to record from")
         self.root = root
         self.mode = mode
         self.wrapped = wrapped
@@ -57,6 +61,8 @@ class CassetteProvider:
 
     def complete_structured(self, request: LLMRequest[Any], model: str, retry_hint: str | None = None) -> RawAnswer:
         path = self.path(request, model, retry_hint)
+        if self.mode == "fill" and path.exists():
+            return RawAnswer.model_validate(json.loads(path.read_text(encoding="utf-8"))["answer"])
         if self.mode == "replay":
             if not path.exists():
                 raise CassetteMissingError(

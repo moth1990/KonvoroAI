@@ -1,0 +1,146 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 419,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            208,
+            341,
+            238,
+            497
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3X1.5N2XY"
+        },
+        {
+          "box": [
+            608,
+            341,
+            638,
+            497
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3X1.5N2XY"
+        },
+        {
+          "box": [
+            963,
+            341,
+            991,
+            497
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3X1.5N2XY"
+        },
+        {
+          "box": [
+            177,
+            606,
+            204,
+            622
+          ],
+          "legible": "clear",
+          "text": "N10"
+        },
+        {
+          "box": [
+            263,
+            608,
+            287,
+            625
+          ],
+          "legible": "clear",
+          "text": "L10"
+        },
+        {
+          "box": [
+            575,
+            606,
+            602,
+            622
+          ],
+          "legible": "clear",
+          "text": "N11"
+        },
+        {
+          "box": [
+            662,
+            608,
+            686,
+            625
+          ],
+          "legible": "clear",
+          "text": "L11"
+        },
+        {
+          "box": [
+            930,
+            606,
+            957,
+            622
+          ],
+          "legible": "clear",
+          "text": "N12"
+        },
+        {
+          "box": [
+            154,
+            678,
+            233,
+            712
+          ],
+          "legible": "unsure",
+          "text": "B□M"
+        },
+        {
+          "box": [
+            260,
+            679,
+            298,
+            711
+          ],
+          "legible": "clear",
+          "text": "10"
+        },
+        {
+          "box": [
+            553,
+            678,
+            632,
+            712
+          ],
+          "legible": "unsure",
+          "text": "B□M"
+        },
+        {
+          "box": [
+            659,
+            679,
+            692,
+            711
+          ],
+          "legible": "clear",
+          "text": "11"
+        },
+        {
+          "box": [
+            907,
+            678,
+            986,
+            712
+          ],
+          "legible": "unsure",
+          "text": "B□M"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

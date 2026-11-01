@@ -30,6 +30,7 @@ def test_llm_gateway_has_a_route_for_every_stage_key() -> None:
         "page_classification",
         "context_extraction",
         "table_transcription",
+        "ocr_transcription",  # stage 2, interim until S31 (S10 decision)
         "symbol_disambiguation",
         "text_association",
         "catalog_disambiguation",

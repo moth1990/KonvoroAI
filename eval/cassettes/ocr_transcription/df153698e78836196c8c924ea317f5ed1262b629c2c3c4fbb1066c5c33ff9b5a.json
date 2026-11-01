@@ -1,0 +1,237 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 701,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            43,
+            353,
+            97,
+            385
+          ],
+          "legible": "clear",
+          "text": "16A"
+        },
+        {
+          "box": [
+            137,
+            393,
+            187,
+            427
+          ],
+          "legible": "clear",
+          "text": "עם"
+        },
+        {
+          "box": [
+            22,
+            393,
+            122,
+            427
+          ],
+          "legible": "clear",
+          "text": "נעילה"
+        },
+        {
+          "box": [
+            51,
+            436,
+            125,
+            466
+          ],
+          "legible": "clear",
+          "text": "MCB"
+        },
+        {
+          "box": [
+            291,
+            350,
+            344,
+            382
+          ],
+          "legible": "clear",
+          "text": "16A"
+        },
+        {
+          "box": [
+            291,
+            395,
+            365,
+            425
+          ],
+          "legible": "clear",
+          "text": "MCB"
+        },
+        {
+          "box": [
+            520,
+            346,
+            577,
+            376
+          ],
+          "legible": "clear",
+          "text": "32A"
+        },
+        {
+          "box": [
+            520,
+            388,
+            593,
+            418
+          ],
+          "legible": "clear",
+          "text": "MCB"
+        },
+        {
+          "box": [
+            816,
+            346,
+            872,
+            376
+          ],
+          "legible": "clear",
+          "text": "32A"
+        },
+        {
+          "box": [
+            817,
+            382,
+            890,
+            412
+          ],
+          "legible": "clear",
+          "text": "MCB"
+        },
+        {
+          "box": [
+            456,
+            433,
+            518,
+            463
+          ],
+          "legible": "unsure",
+          "text": "מ.פ."
+        },
+        {
+          "box": [
+            752,
+            433,
+            814,
+            463
+          ],
+          "legible": "unsure",
+          "text": "מ.פ."
+        },
+        {
+          "box": [
+            508,
+            488,
+            677,
+            517
+          ],
+          "legible": "clear",
+          "text": "4x40A/0,03A"
+        },
+        {
+          "box": [
+            804,
+            488,
+            972,
+            517
+          ],
+          "legible": "clear",
+          "text": "4x40A/0,03A"
+        },
+        {
+          "box": [
+            521,
+            737,
+            559,
+            766
+          ],
+          "legible": "clear",
+          "text": "6A"
+        },
+        {
+          "box": [
+            817,
+            737,
+            855,
+            766
+          ],
+          "legible": "clear",
+          "text": "6A"
+        },
+        {
+          "box": [
+            499,
+            805,
+            570,
+            853
+          ],
+          "legible": "clear",
+          "text": "(x6)"
+        },
+        {
+          "box": [
+            795,
+            805,
+            866,
+            853
+          ],
+          "legible": "clear",
+          "text": "(x6)"
+        },
+        {
+          "box": [
+            204,
+            830,
+            243,
+            953
+          ],
+          "legible": "unsure",
+          "rotation": 270,
+          "text": "הדנה"
+        },
+        {
+          "box": [
+            204,
+            933,
+            243,
+            1024
+          ],
+          "legible": "unsure",
+          "rotation": 270,
+          "text": "מגבה"
+        },
+        {
+          "box": [
+            22,
+            927,
+            64,
+            1024
+          ],
+          "legible": "unsure",
+          "rotation": 270,
+          "text": "רכזת"
+        },
+        {
+          "box": [
+            788,
+            893,
+            825,
+            988
+          ],
+          "legible": "unsure",
+          "rotation": 270,
+          "text": "N2XY"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

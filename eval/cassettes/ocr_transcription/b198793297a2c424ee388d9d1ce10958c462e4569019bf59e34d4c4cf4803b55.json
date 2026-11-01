@@ -1,0 +1,149 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 420,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            22,
+            90,
+            46,
+            121
+          ],
+          "legible": "clear",
+          "text": "C"
+        },
+        {
+          "box": [
+            22,
+            349,
+            47,
+            382
+          ],
+          "legible": "clear",
+          "text": "D"
+        },
+        {
+          "box": [
+            26,
+            694,
+            48,
+            726
+          ],
+          "legible": "clear",
+          "text": "E"
+        },
+        {
+          "box": [
+            467,
+            54,
+            498,
+            85
+          ],
+          "legible": "clear",
+          "text": "C1"
+        },
+        {
+          "box": [
+            842,
+            54,
+            875,
+            85
+          ],
+          "legible": "clear",
+          "text": "C2"
+        },
+        {
+          "box": [
+            346,
+            430,
+            384,
+            458
+          ],
+          "legible": "clear",
+          "text": "22"
+        },
+        {
+          "box": [
+            715,
+            430,
+            753,
+            458
+          ],
+          "legible": "clear",
+          "text": "23"
+        },
+        {
+          "box": [
+            345,
+            620,
+            380,
+            776
+          ],
+          "legible": "clear",
+          "rotation": 270,
+          "text": "SCREEN"
+        },
+        {
+          "box": [
+            389,
+            646,
+            425,
+            776
+          ],
+          "legible": "clear",
+          "rotation": 270,
+          "text": "MOTOR"
+        },
+        {
+          "box": [
+            403,
+            601,
+            425,
+            620
+          ],
+          "legible": "clear",
+          "rotation": 270,
+          "text": "1"
+        },
+        {
+          "box": [
+            722,
+            616,
+            757,
+            774
+          ],
+          "legible": "clear",
+          "rotation": 270,
+          "text": "SCREEN"
+        },
+        {
+          "box": [
+            767,
+            645,
+            803,
+            774
+          ],
+          "legible": "clear",
+          "rotation": 270,
+          "text": "MOTOR"
+        },
+        {
+          "box": [
+            781,
+            592,
+            803,
+            613
+          ],
+          "legible": "clear",
+          "rotation": 270,
+          "text": "2"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

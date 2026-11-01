@@ -1,0 +1,33 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 70,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            0,
+            868,
+            70,
+            917
+          ],
+          "legible": "unsure",
+          "text": "מבנ"
+        },
+        {
+          "box": [
+            0,
+            938,
+            72,
+            988
+          ],
+          "legible": "unsure",
+          "text": "פולי"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

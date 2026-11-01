@@ -1,0 +1,233 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 636,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            82,
+            55,
+            106,
+            87
+          ],
+          "legible": "clear",
+          "text": "3"
+        },
+        {
+          "box": [
+            392,
+            55,
+            416,
+            87
+          ],
+          "legible": "clear",
+          "text": "4"
+        },
+        {
+          "box": [
+            721,
+            55,
+            745,
+            87
+          ],
+          "legible": "clear",
+          "text": "5"
+        },
+        {
+          "box": [
+            893,
+            200,
+            924,
+            220
+          ],
+          "legible": "clear",
+          "text": "\"N\""
+        },
+        {
+          "box": [
+            785,
+            321,
+            810,
+            341
+          ],
+          "legible": "clear",
+          "text": "L1"
+        },
+        {
+          "box": [
+            842,
+            321,
+            871,
+            341
+          ],
+          "legible": "clear",
+          "text": "L2"
+        },
+        {
+          "box": [
+            902,
+            321,
+            930,
+            341
+          ],
+          "legible": "clear",
+          "text": "L3"
+        },
+        {
+          "box": [
+            555,
+            393,
+            630,
+            430
+          ],
+          "legible": "clear",
+          "text": "NVR"
+        },
+        {
+          "box": [
+            99,
+            516,
+            141,
+            551
+          ],
+          "legible": "clear",
+          "text": "10"
+        },
+        {
+          "box": [
+            239,
+            543,
+            313,
+            581
+          ],
+          "legible": "clear",
+          "text": "RNV"
+        },
+        {
+          "box": [
+            117,
+            584,
+            138,
+            618
+          ],
+          "legible": "clear",
+          "text": "6"
+        },
+        {
+          "box": [
+            617,
+            553,
+            668,
+            583
+          ],
+          "legible": "clear",
+          "text": "FNV"
+        },
+        {
+          "box": [
+            620,
+            596,
+            677,
+            623
+          ],
+          "legible": "clear",
+          "text": "3X6A"
+        },
+        {
+          "box": [
+            620,
+            628,
+            703,
+            656
+          ],
+          "legible": "clear",
+          "text": "INC=4A"
+        },
+        {
+          "box": [
+            620,
+            654,
+            694,
+            681
+          ],
+          "legible": "clear",
+          "text": "S204M"
+        },
+        {
+          "box": [
+            616,
+            685,
+            659,
+            710
+          ],
+          "legible": "clear",
+          "text": "ABB"
+        },
+        {
+          "box": [
+            678,
+            850,
+            709,
+            868
+          ],
+          "legible": "clear",
+          "text": "\"N\""
+        },
+        {
+          "box": [
+            8,
+            937,
+            45,
+            968
+          ],
+          "legible": "clear",
+          "text": "21"
+        },
+        {
+          "box": [
+            188,
+            944,
+            228,
+            974
+          ],
+          "legible": "clear",
+          "text": "F2"
+        },
+        {
+          "box": [
+            522,
+            929,
+            558,
+            959
+          ],
+          "legible": "clear",
+          "text": "21"
+        },
+        {
+          "box": [
+            798,
+            932,
+            831,
+            962
+          ],
+          "legible": "clear",
+          "text": "F3"
+        },
+        {
+          "box": [
+            812,
+            981,
+            874,
+            1008
+          ],
+          "legible": "clear",
+          "text": "16+N"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}
