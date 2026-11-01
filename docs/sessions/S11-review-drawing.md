@@ -6,7 +6,7 @@
 | **Branch** | `s11-review-drawing` |
 | **Depends on** | S09, S10 |
 | **Status** | in review |
-| **PR** | (link) |
+| **PR** | [moth1990/KonvoroAI#12](https://github.com/moth1990/KonvoroAI/pull/12) |
 
 ## Goal
 
