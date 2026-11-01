@@ -1,0 +1,126 @@
+{
+  "answer": {
+    "input_tokens": 5618,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 596,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "evidence": null,
+              "name": "current_a",
+              "value": null
+            },
+            {
+              "evidence": null,
+              "name": "poles",
+              "value": null
+            },
+            {
+              "evidence": null,
+              "name": "neutral",
+              "value": null
+            },
+            {
+              "evidence": null,
+              "name": "socket_standard",
+              "value": null
+            }
+          ],
+          "brand_hint": null,
+          "det": "d1",
+          "explicit_texts": [
+            "s13"
+          ],
+          "multiplicity": {
+            "count": 1
+          },
+          "uses_shared_label": false
+        }
+      ],
+      "possible_missed": [],
+      "shared_labels": [],
+      "unassigned_spans": [
+        {
+          "reason": "breaker rating label for another device",
+          "span_id": "s1"
+        },
+        {
+          "reason": "breaker rating label for another device",
+          "span_id": "s2"
+        },
+        {
+          "reason": "contactor tag",
+          "span_id": "s3"
+        },
+        {
+          "reason": "contactor tag",
+          "span_id": "s4"
+        },
+        {
+          "reason": "timer tag",
+          "span_id": "s5"
+        },
+        {
+          "reason": "belongs to contactor",
+          "span_id": "s6"
+        },
+        {
+          "reason": "belongs to contactor",
+          "span_id": "s7"
+        },
+        {
+          "reason": "cable",
+          "span_id": "s8"
+        },
+        {
+          "reason": "cable",
+          "span_id": "s9"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s10"
+        },
+        {
+          "reason": "belongs to neighbour socket c4",
+          "span_id": "s11"
+        },
+        {
+          "reason": "belongs to neighbour socket c5",
+          "span_id": "s12"
+        },
+        {
+          "reason": "belongs to neighbour socket c4",
+          "span_id": "s14"
+        },
+        {
+          "reason": "belongs to neighbour socket c5",
+          "span_id": "s15"
+        },
+        {
+          "reason": "group description",
+          "span_id": "s16"
+        },
+        {
+          "reason": "circuit number",
+          "span_id": "s17"
+        },
+        {
+          "reason": "group description",
+          "span_id": "s18"
+        },
+        {
+          "reason": "group description",
+          "span_id": "s19"
+        },
+        {
+          "reason": "group description",
+          "span_id": "s20"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

@@ -1,0 +1,155 @@
+{
+  "answer": {
+    "input_tokens": 6121,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 658,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "confidence": 0.95,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s3"
+              ],
+              "value": 16
+            }
+          ],
+          "det": "d1",
+          "explicit_texts": [
+            "s3",
+            "s5"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.95,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s4"
+              ],
+              "value": 16
+            }
+          ],
+          "det": "d2",
+          "explicit_texts": [
+            "s4",
+            "s6"
+          ]
+        },
+        {
+          "attributes": [],
+          "det": "d3"
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.95,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s8"
+              ],
+              "value": 10
+            }
+          ],
+          "det": "d4",
+          "explicit_texts": [
+            "s2",
+            "s8"
+          ]
+        },
+        {
+          "attributes": [],
+          "det": "d5"
+        },
+        {
+          "attributes": [
+            {
+              "evidence": null,
+              "name": "color",
+              "value": null
+            }
+          ],
+          "det": "d6",
+          "explicit_texts": [
+            "s14",
+            "s15"
+          ]
+        },
+        {
+          "attributes": [],
+          "det": "d7"
+        }
+      ],
+      "unassigned_spans": [
+        {
+          "reason": "MCB label of neighbour at right",
+          "span_id": "s1"
+        },
+        {
+          "reason": "(x4) on outgoing line, not a device multiplier",
+          "span_id": "s7"
+        },
+        {
+          "reason": "(x4) on outgoing line",
+          "span_id": "s11"
+        },
+        {
+          "reason": "belongs to a symbol outside tile",
+          "span_id": "s9"
+        },
+        {
+          "reason": "outside symbols",
+          "span_id": "s10"
+        },
+        {
+          "reason": "label of c6/c7 button",
+          "span_id": "s12"
+        },
+        {
+          "reason": "label of c6/c7 button",
+          "span_id": "s13"
+        },
+        {
+          "reason": "cable",
+          "span_id": "s16"
+        },
+        {
+          "reason": "cable",
+          "span_id": "s17"
+        },
+        {
+          "reason": "cable",
+          "span_id": "s18"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s19"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s20"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s21"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s22"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s23"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

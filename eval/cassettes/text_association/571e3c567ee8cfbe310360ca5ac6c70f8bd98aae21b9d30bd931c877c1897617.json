@@ -1,0 +1,98 @@
+{
+  "answer": {
+    "input_tokens": 6050,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 412,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [],
+          "det": "d1",
+          "explicit_texts": [
+            "s7"
+          ],
+          "multiplicity": {
+            "count": 1
+          }
+        },
+        {
+          "attributes": [],
+          "det": "d2",
+          "explicit_texts": [],
+          "multiplicity": {
+            "count": 1
+          }
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.85,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s9"
+              ],
+              "value": 80
+            },
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "poles",
+              "span_ids": [
+                "s9"
+              ],
+              "value": 4
+            }
+          ],
+          "brand_hint": "ABB",
+          "det": "d3",
+          "explicit_texts": [
+            "s8",
+            "s9",
+            "s10",
+            "s11",
+            "s13",
+            "s14"
+          ],
+          "multiplicity": {
+            "count": 1
+          }
+        }
+      ],
+      "possible_missed": [],
+      "shared_labels": [],
+      "unassigned_spans": [
+        {
+          "reason": "column number",
+          "span_id": "s1"
+        },
+        {
+          "reason": "column number",
+          "span_id": "s2"
+        },
+        {
+          "reason": "column number",
+          "span_id": "s3"
+        },
+        {
+          "reason": "neutral bus label",
+          "span_id": "s4"
+        },
+        {
+          "reason": "tag of neighbour c1",
+          "span_id": "s5"
+        },
+        {
+          "reason": "tag of neighbour c2",
+          "span_id": "s6"
+        },
+        {
+          "reason": "neutral bus label",
+          "span_id": "s20"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

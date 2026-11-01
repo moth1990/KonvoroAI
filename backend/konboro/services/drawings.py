@@ -13,7 +13,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from konboro.db.ids import new_id
-from konboro.db.models import Customer, Drawing, DrawingFile, Page, Panel, Project, Quote, StageRun
+from konboro.db.models import Component, Customer, Drawing, DrawingFile, Page, Panel, Project, Quote, StageRun
 from konboro.services import plan, quota
 from konboro.services.intake import CheckedFile, Limits, UploadCheck, check_upload
 
@@ -151,6 +151,8 @@ class Progress:
     pages: list[tuple[Page, str]]  # with the file's original name
     panels: list[str]
     quote_id: str | None
+    # stage 4's components in the panel: (devices, products, whether any has a tag); None before stage 4 ran
+    components: tuple[int, int, bool] | None = None
 
 
 def progress(session: Session, tenant_id: str, drawing_id: str) -> Progress | None:
@@ -169,15 +171,25 @@ def progress(session: Session, tenant_id: str, drawing_id: str) -> Progress | No
     quote_id = session.scalar(select(Quote.id).where(Quote.drawing_id == drawing_id))
     project = session.get(Project, drawing.project_id) if drawing.project_id else None
     name = (project.name if project else "") or (files[0].original_name if files else drawing_id)
-    return Progress(drawing, name, files, runs, [(p, names.get(p.file_id, "")) for p in pages], panels, quote_id)
+    rows = session.execute(
+        select(Component.quantity, Component.designators).where(
+            Component.drawing_id == drawing_id, Component.supply_scope == "in_panel"
+        )
+    ).all()
+    components = (int(sum(q for q, _ in rows)), len(rows), any(t for _, t in rows))
+    return Progress(
+        drawing, name, files, runs, [(p, names.get(p.file_id, "")) for p in pages], panels, quote_id, components
+    )
 
 
 def stage_summary(p: Progress, stage: int) -> str | None:
-    """Stages 1 to 3 are the real ones so far (prototype STAGES, lines 761–763)."""
+    """Stages 1 to 4 are the real ones so far (prototype STAGES, lines 761–764)."""
     if stage == 2:
         return _extraction_summary(p)
     if stage == 3:
         return _symbols_summary(p)
+    if stage == 4:
+        return _merge_summary(p)
     if stage != 1:
         return None
     # "9 עמודים · 2 תבניות של המפעל · לוח אחד"; the templates part only when there are any
@@ -211,6 +223,17 @@ def _symbols_summary(p: Progress) -> str:
     if not decided:
         return symbols
     return f"{symbols} · {total - decided} בזיהוי ישיר, {decided} בהכרעת מודל"
+
+
+def _merge_summary(p: Progress) -> str | None:
+    """ "איחוד לפי תגים: 44 מכשירים ב-13 מוצרים" (prototype line 764): the devices in the panel and the components
+    they merged into; the tags part only when the drawing has tags (04 §5.8)."""
+    if p.components is None:
+        return None
+    devices, products, tagged = p.components
+    where = "במוצר אחד" if products == 1 else f"ב-{products} מוצרים"
+    text = f"{_count_text(devices, 'מכשיר אחד', 'מכשירים')} {where}"
+    return f"איחוד לפי תגים: {text}" if tagged else text
 
 
 def revisable(session: Session, tenant_id: str, limit: int = 50) -> list[tuple[Drawing, Quote]]:

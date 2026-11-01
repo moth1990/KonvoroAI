@@ -119,8 +119,8 @@ System limits (20 MB per file, 20 files, 200 pages per drawing, 2 m² per page) 
 | `source`, `source_tenant_id`, `approved_by`, `approved_at` | Where the record came from. `source` is one of `curated`, `pilot_engineer`, `import` (00 §14.2) |
 
 The remaining global tables:
-- **`attribute_schemas`** (05 §4.4): `family text pk`, `version int`, `attributes jsonb`. `attributes` is a list of `{name, required, match_mode, default_allowed}`. For `current_a` and `poles`, `default_allowed` is always false.
-- **`symbol_classes`** (03 §4.3): `id text pk` (e.g. `mcb`), `family`, `display_name_he`, `billable bool`, `standard_ref`, `attribute_schema → attribute_schemas.family`, plus the source columns. Seeded by `seed_global` from `konboro/pipeline/detection/library.py` (S12); a row already there is kept.
+- **`attribute_schemas`** (05 §4.4): `family text pk`, `version int`, `attributes jsonb`. `attributes` is a list of `{name, required, match_mode, default_allowed}`. For `current_a` and `poles`, `default_allowed` is always false. Seeded by `seed_global` from `konboro/pipeline/association/schemas.py` (S13), one row per billable family; a row already there is kept. Stage 4 reads them back.
+- **`symbol_classes`** (03 §4.3): `id text pk` (e.g. `mcb`), `family`, `display_name_he`, `billable bool`, `standard_ref`, `attribute_schema → attribute_schemas.family`, plus the source columns. Seeded by `seed_global` from `konboro/pipeline/detection/library.py` (S12); a row already there is kept, and gets its family's `attribute_schema` when it has none (S13).
 - **`reference_crops`** (03 §4.3), global scope only: `id` (`ref_`), `symbol_class → symbol_classes`, `image_key`, `source`, `approved_count`. The `embedding vector` column is added with the similarity index in phase 4. The `vector` extension is enabled now. The curated rows (S12) have `image_key` = `reference/<file>.png`, a file in `konboro/pipeline/detection/reference/`, not an S3 key.
 - **`abbreviations`** (03 §4.6), global: `id` (`abr_`), `text`, `symbol_class`, `family`, `display_he`, plus the source columns. Seeded from the same module (S12).
 - **`validator_rules`** (06 §6.2): PK `(rule_id, version)`, `category` (A–E), `applies_to text[]`, `requires text null`, `severity`, `params jsonb`, `message_he`, `enabled bool`.
@@ -241,13 +241,13 @@ This table answers the customer's question "why was this counted?".
 - `sent_at`: when the stage's message was last sent. Stage 1's is set by the upload, every other stage's by the stage before it, and the worker's sweep updates it when it sends one again.
 - All seven rows are created with the upload, as `queued`. A cancel marks the unfinished ones `skipped`.
 
-**`components`** (`cmp_`, 04 §6.3) is the stage 4 output, kept in the DB because quote lines and audits point at it.
+**`components`** (`cmp_`, 04 §6.3) is the stage 4 output, kept in the DB because quote lines and audits point at it. Stage 4 writes them (S13), and replaces the drawing's rows when it runs again. The id is the contract's `component_id`, `cmp_<drawing ulid>_<n>`: stable across reruns of the same input.
 - `drawing_id`, `panel_id`, `family`.
 - `attributes jsonb`: per attribute, `{value, source, confidence, span_ids}`.
 - `quantity numeric(12,3)`, `designators text[]`.
 - `instances jsonb`: a list of `{instance_id, page_id, bbox, role}`, used for highlighting on the drawing.
 - `confidence`, `brand_hint`, `explicit_texts jsonb`.
-- `supply_scope`: `in_panel`, `outside_panel`, `prep_only` or `not_in_scope` (04 §5.1.2).
+- `supply_scope`: `in_panel`, `other_location`, `prepare_only` or `by_others` (04 §5.1.2). The values were `outside_panel`, `prep_only` and `not_in_scope` until migration 0009 (S13): the spec's names won.
 
 ## 6. Tenant layer: quotes, price list, learning
 

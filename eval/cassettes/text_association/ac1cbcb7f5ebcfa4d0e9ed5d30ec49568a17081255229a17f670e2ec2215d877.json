@@ -1,0 +1,150 @@
+{
+  "answer": {
+    "input_tokens": 6022,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 582,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "confidence": 0.7,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s16"
+              ],
+              "value": 10
+            },
+            {
+              "confidence": 0.8,
+              "evidence": "text",
+              "name": "poles",
+              "span_ids": [
+                "s16"
+              ],
+              "value": 1
+            },
+            {
+              "confidence": 0.85,
+              "evidence": "text",
+              "name": "neutral",
+              "span_ids": [
+                "s16"
+              ],
+              "value": true
+            }
+          ],
+          "det": "d1",
+          "explicit_texts": [
+            "s12",
+            "s16",
+            "s20",
+            "s24"
+          ],
+          "multiplicity": {
+            "count": 1
+          }
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.7,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s17"
+              ],
+              "value": 10
+            },
+            {
+              "confidence": 0.8,
+              "evidence": "text",
+              "name": "poles",
+              "span_ids": [
+                "s17"
+              ],
+              "value": 1
+            },
+            {
+              "confidence": 0.85,
+              "evidence": "text",
+              "name": "neutral",
+              "span_ids": [
+                "s17"
+              ],
+              "value": true
+            }
+          ],
+          "det": "d2",
+          "explicit_texts": [
+            "s13",
+            "s17",
+            "s21",
+            "s25"
+          ],
+          "multiplicity": {
+            "count": 1
+          }
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.7,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s18"
+              ],
+              "value": 10
+            },
+            {
+              "confidence": 0.8,
+              "evidence": "text",
+              "name": "poles",
+              "span_ids": [
+                "s18"
+              ],
+              "value": 1
+            },
+            {
+              "confidence": 0.85,
+              "evidence": "text",
+              "name": "neutral",
+              "span_ids": [
+                "s18"
+              ],
+              "value": true
+            }
+          ],
+          "det": "d3",
+          "explicit_texts": [
+            "s14",
+            "s18",
+            "s22",
+            "s26"
+          ],
+          "multiplicity": {
+            "count": 1
+          }
+        }
+      ],
+      "unassigned_spans": [
+        {
+          "reason": "cable",
+          "span_id": "s27"
+        },
+        {
+          "reason": "cable",
+          "span_id": "s28"
+        },
+        {
+          "reason": "cable",
+          "span_id": "s29"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

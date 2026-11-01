@@ -1,0 +1,175 @@
+{
+  "answer": {
+    "input_tokens": 5827,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 749,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "evidence": null,
+              "name": "coil_voltage_v",
+              "value": null
+            }
+          ],
+          "det": "d1",
+          "explicit_texts": [
+            "s4"
+          ]
+        },
+        {
+          "attributes": [],
+          "det": "d2",
+          "explicit_texts": [
+            "s2",
+            "s6"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "evidence": null,
+              "name": "coil_voltage_v",
+              "value": null
+            }
+          ],
+          "det": "d3",
+          "explicit_texts": [
+            "s7"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.8,
+              "evidence": "text",
+              "name": "positions",
+              "span_ids": [
+                "s10",
+                "s11",
+                "s12"
+              ],
+              "value": "1-0-2"
+            }
+          ],
+          "det": "d4",
+          "explicit_texts": [
+            "s8",
+            "s10",
+            "s11",
+            "s12"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "evidence": null,
+              "name": "current_a",
+              "value": null
+            },
+            {
+              "evidence": null,
+              "name": "poles",
+              "value": null
+            },
+            {
+              "evidence": null,
+              "name": "coil_voltage_v",
+              "value": null
+            }
+          ],
+          "det": "d5",
+          "explicit_texts": [
+            "s13"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "evidence": null,
+              "name": "cross_section_mm2",
+              "value": null
+            }
+          ],
+          "det": "d6",
+          "explicit_texts": [
+            "s15"
+          ]
+        }
+      ],
+      "unassigned_spans": [
+        {
+          "reason": "label of neighbouring device",
+          "span_id": "s1"
+        },
+        {
+          "reason": "label of neighbouring device",
+          "span_id": "s3"
+        },
+        {
+          "reason": "output name of neighbouring device",
+          "span_id": "s5"
+        },
+        {
+          "reason": "label of off-tile device",
+          "span_id": "s9"
+        },
+        {
+          "reason": "belongs to neighbour c1",
+          "span_id": "s14"
+        },
+        {
+          "reason": "off-tile terminal",
+          "span_id": "s16"
+        },
+        {
+          "reason": "Hebrew description",
+          "span_id": "s17"
+        },
+        {
+          "reason": "Hebrew description",
+          "span_id": "s18"
+        },
+        {
+          "reason": "Hebrew description",
+          "span_id": "s19"
+        },
+        {
+          "reason": "Hebrew description",
+          "span_id": "s20"
+        },
+        {
+          "reason": "panel label",
+          "span_id": "s21"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s22"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s23"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s24"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s25"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s26"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s27"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

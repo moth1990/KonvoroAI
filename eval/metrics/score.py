@@ -8,7 +8,16 @@ Kind = Literal["ratio", "count", "mean"]
 
 # Every other metric is better when higher.
 LOWER_IS_BETTER = frozenset(
-    {"missed_process_pages", "backtest_deviation", "confirmation_rate", "duplicates_left", "llm_share"}
+    {
+        "missed_process_pages",
+        "backtest_deviation",
+        "confirmation_rate",
+        "duplicates_left",
+        "llm_share",
+        "values_without_evidence",
+        "citation_mismatch_rate",
+        "agent_tile_share",
+    }
 )
 
 

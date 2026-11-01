@@ -46,6 +46,8 @@ class LLMRequest(Generic[T]):
     # How hard the model thinks (low | medium | high | xhigh | max); None leaves the model's default. Transcribing
     # what is written needs little (S10, `ocr_transcription`).
     effort: str | None = None
+    # Go straight to the route's fallback model: the stage's own check refused the first model's answers (04 §5.5)
+    start_at_fallback: bool = False
 
 
 @dataclass

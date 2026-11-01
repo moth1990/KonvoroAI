@@ -1,0 +1,186 @@
+{
+  "answer": {
+    "input_tokens": 5958,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 794,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "confidence": 0.85,
+              "evidence": "text",
+              "name": "positions",
+              "span_ids": [
+                "s5",
+                "s6",
+                "s7"
+              ],
+              "value": "1-0-2"
+            }
+          ],
+          "det": "d1",
+          "explicit_texts": [
+            "s3",
+            "s5",
+            "s6",
+            "s7"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "evidence": null,
+              "name": "current_a",
+              "value": null
+            },
+            {
+              "evidence": null,
+              "name": "poles",
+              "value": null
+            },
+            {
+              "evidence": null,
+              "name": "coil_voltage_v",
+              "value": null
+            }
+          ],
+          "det": "d2",
+          "explicit_texts": [
+            "s8"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "evidence": null,
+              "name": "cross_section_mm2",
+              "value": null
+            }
+          ],
+          "det": "d3",
+          "explicit_texts": [
+            "s12"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "evidence": null,
+              "name": "cross_section_mm2",
+              "value": null
+            }
+          ],
+          "det": "d4",
+          "explicit_texts": [
+            "s9"
+          ]
+        }
+      ],
+      "unassigned_spans": [
+        {
+          "reason": "relay R6 tag",
+          "span_id": "s1"
+        },
+        {
+          "reason": "relay R5 tag",
+          "span_id": "s2"
+        },
+        {
+          "reason": "relay R6 tag",
+          "span_id": "s4"
+        },
+        {
+          "reason": "neighbour terminal c4 voltage",
+          "span_id": "s10"
+        },
+        {
+          "reason": "neighbour terminal c5 voltage",
+          "span_id": "s11"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s13"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s14"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s15"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s16"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s17"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s18"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s19"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s20"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s21"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s22"
+        },
+        {
+          "reason": "load rating",
+          "span_id": "s23"
+        },
+        {
+          "reason": "load rating",
+          "span_id": "s24"
+        },
+        {
+          "reason": "title block",
+          "span_id": "s25"
+        },
+        {
+          "reason": "title block",
+          "span_id": "s26"
+        },
+        {
+          "reason": "title block",
+          "span_id": "s27"
+        },
+        {
+          "reason": "title block",
+          "span_id": "s28"
+        },
+        {
+          "reason": "title block",
+          "span_id": "s29"
+        },
+        {
+          "reason": "title block",
+          "span_id": "s30"
+        },
+        {
+          "reason": "title block",
+          "span_id": "s31"
+        },
+        {
+          "reason": "title block",
+          "span_id": "s32"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

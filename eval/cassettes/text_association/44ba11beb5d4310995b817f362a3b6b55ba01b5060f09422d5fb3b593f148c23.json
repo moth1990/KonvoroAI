@@ -1,0 +1,158 @@
+{
+  "answer": {
+    "input_tokens": 6291,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 643,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "contacts",
+              "span_ids": [
+                "s15",
+                "s23"
+              ],
+              "value": "21/22"
+            }
+          ],
+          "det": "d1",
+          "explicit_texts": [
+            "s15",
+            "s23"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s19"
+              ],
+              "value": 10
+            },
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "poles",
+              "span_ids": [
+                "s19"
+              ],
+              "value": 1
+            },
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "neutral",
+              "span_ids": [
+                "s19"
+              ],
+              "value": true
+            }
+          ],
+          "det": "d2",
+          "explicit_texts": [
+            "s17",
+            "s19",
+            "s21",
+            "s25"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "evidence": null,
+              "name": "coil_voltage_v",
+              "value": null
+            }
+          ],
+          "det": "d3",
+          "explicit_texts": []
+        },
+        {
+          "attributes": [
+            {
+              "evidence": null,
+              "name": "coil_voltage_v",
+              "value": null
+            }
+          ],
+          "det": "d4",
+          "explicit_texts": [
+            "s27"
+          ],
+          "uses_shared_label": false
+        },
+        {
+          "attributes": [
+            {
+              "evidence": null,
+              "name": "coil_voltage_v",
+              "value": null
+            }
+          ],
+          "det": "d5",
+          "explicit_texts": [
+            "s27"
+          ]
+        },
+        {
+          "attributes": [],
+          "det": "d6",
+          "explicit_texts": [
+            "s35"
+          ]
+        },
+        {
+          "attributes": [],
+          "det": "d7",
+          "explicit_texts": [
+            "s37"
+          ]
+        }
+      ],
+      "possible_missed": [],
+      "shared_labels": [],
+      "unassigned_spans": [
+        {
+          "reason": "load name",
+          "span_id": "s28"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s31"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s30"
+        },
+        {
+          "reason": "load description",
+          "span_id": "s32"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s38"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s39"
+        },
+        {
+          "reason": "neutral bar label",
+          "span_id": "s13"
+        },
+        {
+          "reason": "load current INC",
+          "span_id": "s21"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

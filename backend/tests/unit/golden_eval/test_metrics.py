@@ -16,7 +16,7 @@ from eval.canonical import (
     Prediction,
 )
 from eval.metrics import audit, pricing, score_drawing, stage1, stage4
-from eval.metrics.score import Score, total
+from eval.metrics.score import LOWER_IS_BETTER, Score, total
 
 
 def comp(family: str, qty: int = 1, *des: str, **attrs: Any) -> CanonComponent:
@@ -386,3 +386,43 @@ def test_stage_3_counts_families_on_a_plan_without_designators() -> None:
     bom = drawing(CanonPanel(name="P", components=(comp("rcd"),)))  # no pages: a photographed BOM
     assert stage3.score(bom, predicted(detections=()))[0]["designator_recall"].value is None
     assert values(scores)["llm_share"] is None  # no detection counts: n/a
+
+
+def test_stage4_values_without_evidence_citations_and_agent_tiles() -> None:
+    """04 §10: 0 values without evidence, ≤ 2% citation mismatches, the share of tiles that needed the agent."""
+    merge = {"values_without_evidence": 0, "citation_mismatches": 1, "cited_values": 50, "agent_tiles": 6, "tiles": 30}
+    out = values(stage4.evidence(predicted(merge=merge)))
+    assert out == {"values_without_evidence": 0, "citation_mismatch_rate": 0.02, "agent_tile_share": 0.2}
+    assert stage4.evidence(predicted()) == {}
+    assert {"values_without_evidence", "citation_mismatch_rate", "agent_tile_share"} <= LOWER_IS_BETTER
+
+
+def test_a_value_with_no_span_or_no_source_has_no_evidence() -> None:
+    from eval.predict import merge_counts
+    from konboro.contracts.merge import AttributeValue, Instance, MergeResult
+
+    def inst(**attrs: AttributeValue) -> Instance:
+        return Instance(
+            instance_id="ins_1",
+            det_id="det_1",
+            page_id="pg_1",
+            panel_id=None,
+            bbox=(0, 0, 1, 1),
+            family="circuit_breaker",
+            symbol_class="mcb",
+            attributes=attrs,
+            method="agent",
+            status="accepted",
+            confidence=0.9,
+        )
+
+    ok = AttributeValue(value=16, source="drawing", confidence=0.9, span_ids=["ts_1"])
+    drawn = AttributeValue(value=3, source="graphic", confidence=0.85, span_ids=[])
+    empty = AttributeValue(value=None, source=None, confidence=None, span_ids=[])
+    bare = AttributeValue(value=16, source="drawing", confidence=0.9, span_ids=[])
+    nowhere = AttributeValue(value=10, source=None, confidence=None, span_ids=[])
+    good = MergeResult(drawing_id="drw_1", instances=[inst(current_a=ok, poles=drawn, curve=empty)], trace_id="trc_1")
+    assert merge_counts(good)["values_without_evidence"] == 0
+    assert merge_counts(good)["cited_values"] == 1
+    bad = MergeResult(drawing_id="drw_1", instances=[inst(current_a=bare, poles=nowhere)], trace_id="trc_1")
+    assert merge_counts(bad)["values_without_evidence"] == 2

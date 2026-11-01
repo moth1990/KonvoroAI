@@ -100,6 +100,18 @@ test("the run step counts the symbols stage 3 found", async ({ page }) => {
   await expect(page.getByRole("status")).toHaveText("הפענוח בוטל. המקום במכסה שוחרר");
 });
 
+test("the run step counts the devices stage 4 merged", async ({ page }) => {
+  await page.getByLabel("פרויקט / שם הלוח").fill(SLOW_PROJECT);
+  await page.locator("#file-in").setInputFiles(NURSERY);
+  await page.getByTestId("start").click();
+  const stage4 = page.getByTestId("stage-4");
+  await expect(stage4).toHaveAttribute("data-state", "done", { timeout: 90_000 });
+  // the stand-in tags every breaker "Q1": one device per panel, merged by its tag (04 §5.8, prototype line 764)
+  await expect(stage4).toContainText(/איחוד לפי תגים: (מכשיר אחד|\d+ מכשירים) (במוצר אחד|ב-\d+ מוצרים)/);
+  await page.getByTestId("cancelrun").click();
+  await expect(page.getByRole("status")).toHaveText("הפענוח בוטל. המקום במכסה שוחרר");
+});
+
 test("a CAD file and an oversized file are rejected before upload", async ({ page }) => {
   await page.locator("#file-in").setInputFiles([
     { name: "MAIN_BOARD.dwg", mimeType: "application/octet-stream", buffer: Buffer.from("AC1027") },

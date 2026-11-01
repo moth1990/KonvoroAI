@@ -1,0 +1,146 @@
+{
+  "answer": {
+    "input_tokens": 6306,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 609,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "evidence": null,
+              "name": "color",
+              "value": null
+            }
+          ],
+          "det": "d1",
+          "explicit_texts": [
+            "s8"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "evidence": null,
+              "name": "color",
+              "value": null
+            }
+          ],
+          "det": "d2",
+          "explicit_texts": [
+            "s9"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "evidence": null,
+              "name": "cross_section_mm2",
+              "value": null
+            }
+          ],
+          "det": "d3",
+          "explicit_texts": [
+            "s31"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "evidence": null,
+              "name": "cross_section_mm2",
+              "value": null
+            }
+          ],
+          "det": "d4",
+          "explicit_texts": [
+            "s26"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.85,
+              "evidence": "text",
+              "name": "range_min_a",
+              "span_ids": [
+                "s40"
+              ],
+              "value": 4
+            },
+            {
+              "confidence": 0.85,
+              "evidence": "text",
+              "name": "range_max_a",
+              "span_ids": [
+                "s40"
+              ],
+              "value": 6.3
+            },
+            {
+              "confidence": 0.6,
+              "evidence": "graphic",
+              "graphic_note": "three slanted strokes across the line",
+              "name": "poles",
+              "span_ids": [],
+              "value": 3
+            }
+          ],
+          "det": "d5",
+          "explicit_texts": [
+            "s39",
+            "s40"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.85,
+              "evidence": "text",
+              "name": "range_min_a",
+              "span_ids": [
+                "s40"
+              ],
+              "value": 4
+            },
+            {
+              "confidence": 0.85,
+              "evidence": "text",
+              "name": "range_max_a",
+              "span_ids": [
+                "s40"
+              ],
+              "value": 6.3
+            }
+          ],
+          "det": "d6",
+          "explicit_texts": [
+            "s40"
+          ]
+        }
+      ],
+      "possible_missed": [],
+      "shared_labels": [],
+      "unassigned_spans": [
+        {
+          "reason": "tag of neighbour c1",
+          "span_id": "s5"
+        },
+        {
+          "reason": "callout note",
+          "span_id": "s20"
+        },
+        {
+          "reason": "callout note",
+          "span_id": "s33"
+        },
+        {
+          "reason": "busbar label",
+          "span_id": "s42"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

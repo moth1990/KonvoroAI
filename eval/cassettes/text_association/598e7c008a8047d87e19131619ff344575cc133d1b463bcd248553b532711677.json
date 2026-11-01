@@ -1,0 +1,176 @@
+{
+  "answer": {
+    "input_tokens": 6159,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 734,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "confidence": 0.95,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s6"
+              ],
+              "value": 40
+            },
+            {
+              "confidence": 0.95,
+              "evidence": "text",
+              "name": "poles",
+              "span_ids": [
+                "s6"
+              ],
+              "value": 4
+            },
+            {
+              "confidence": 0.95,
+              "evidence": "text",
+              "name": "residual_ma",
+              "span_ids": [
+                "s6"
+              ],
+              "value": 30
+            }
+          ],
+          "det": "d1",
+          "explicit_texts": [
+            "s5",
+            "s6"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.95,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s9"
+              ],
+              "value": 16
+            }
+          ],
+          "det": "d2",
+          "explicit_texts": [
+            "s9",
+            "s12",
+            "s16"
+          ],
+          "multiplicity": {
+            "count": 6,
+            "span_ids": [
+              "s16"
+            ]
+          }
+        },
+        {
+          "attributes": [],
+          "det": "d3",
+          "explicit_texts": [
+            "s8",
+            "s15"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.95,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s17"
+              ],
+              "value": 10
+            }
+          ],
+          "det": "d4",
+          "explicit_texts": [
+            "s17"
+          ]
+        },
+        {
+          "attributes": [],
+          "det": "d5",
+          "explicit_texts": [
+            "s13"
+          ]
+        },
+        {
+          "attributes": [],
+          "det": "d6",
+          "explicit_texts": [
+            "s13"
+          ]
+        },
+        {
+          "attributes": [],
+          "det": "d7",
+          "explicit_texts": [
+            "s18",
+            "s19"
+          ]
+        },
+        {
+          "attributes": [],
+          "det": "d8",
+          "explicit_texts": [
+            "s20"
+          ]
+        },
+        {
+          "attributes": [],
+          "det": "d9",
+          "explicit_texts": [
+            "s21",
+            "s22"
+          ]
+        }
+      ],
+      "possible_missed": [],
+      "shared_labels": [],
+      "unassigned_spans": [
+        {
+          "reason": "tag of neighbour c3",
+          "span_id": "s1"
+        },
+        {
+          "reason": "belongs to neighbour c2",
+          "span_id": "s2"
+        },
+        {
+          "reason": "neutral label of c3",
+          "span_id": "s3"
+        },
+        {
+          "reason": "neighbour",
+          "span_id": "s4"
+        },
+        {
+          "reason": "label for c5",
+          "span_id": "s7"
+        },
+        {
+          "reason": "neighbour",
+          "span_id": "s10"
+        },
+        {
+          "reason": "belongs to neighbour c5",
+          "span_id": "s11"
+        },
+        {
+          "reason": "neighbour label",
+          "span_id": "s14"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s23"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

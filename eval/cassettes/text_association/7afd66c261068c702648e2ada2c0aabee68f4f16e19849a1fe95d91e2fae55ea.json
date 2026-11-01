@@ -1,0 +1,204 @@
+{
+  "answer": {
+    "input_tokens": 5635,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 849,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "socket_standard",
+              "span_ids": [
+                "s1"
+              ],
+              "value": "CEE"
+            },
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "poles",
+              "span_ids": [
+                "s5"
+              ],
+              "value": 3
+            },
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "neutral",
+              "span_ids": [
+                "s5"
+              ],
+              "value": true
+            },
+            {
+              "confidence": 0.95,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s5"
+              ],
+              "value": 16
+            }
+          ],
+          "det": "d1",
+          "explicit_texts": [
+            "s1",
+            "s5"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "socket_standard",
+              "span_ids": [
+                "s2"
+              ],
+              "value": "CEE"
+            },
+            {
+              "confidence": 0.8,
+              "evidence": null,
+              "name": "poles",
+              "value": null
+            },
+            {
+              "confidence": 0.8,
+              "evidence": null,
+              "name": "neutral",
+              "value": null
+            },
+            {
+              "confidence": 0.95,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s6"
+              ],
+              "value": 16
+            }
+          ],
+          "det": "d2",
+          "explicit_texts": [
+            "s2",
+            "s6"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.7,
+              "evidence": null,
+              "name": "socket_standard",
+              "value": null
+            },
+            {
+              "confidence": 0.9,
+              "evidence": null,
+              "name": "current_a",
+              "value": null
+            }
+          ],
+          "det": "d3",
+          "explicit_texts": [
+            "s3"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "socket_standard",
+              "span_ids": [
+                "s4"
+              ],
+              "value": "CEE"
+            },
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "poles",
+              "span_ids": [
+                "s7"
+              ],
+              "value": 3
+            },
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "neutral",
+              "span_ids": [
+                "s7"
+              ],
+              "value": true
+            },
+            {
+              "confidence": 0.95,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s7"
+              ],
+              "value": 32
+            }
+          ],
+          "det": "d4",
+          "explicit_texts": [
+            "s4",
+            "s7"
+          ]
+        }
+      ],
+      "unassigned_spans": [
+        {
+          "reason": "general note",
+          "span_id": "s8"
+        },
+        {
+          "reason": "general note",
+          "span_id": "s9"
+        },
+        {
+          "reason": "general note",
+          "span_id": "s10"
+        },
+        {
+          "reason": "general note",
+          "span_id": "s11"
+        },
+        {
+          "reason": "general note",
+          "span_id": "s12"
+        },
+        {
+          "reason": "general note",
+          "span_id": "s13"
+        },
+        {
+          "reason": "general note",
+          "span_id": "s14"
+        },
+        {
+          "reason": "general note",
+          "span_id": "s15"
+        },
+        {
+          "reason": "general note",
+          "span_id": "s16"
+        },
+        {
+          "reason": "general note",
+          "span_id": "s17"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

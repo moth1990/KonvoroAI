@@ -54,6 +54,7 @@ def build(results: list[tuple[GoldenDrawing, Prediction]]) -> Report:
             "confirmed_value_at_risk": str(sum(at_risk, Decimal(0))) if label.audit else None,
             "extraction": pred.extraction,
             "detection": pred.detection,
+            "merge": pred.merge,
             "scores": _dump(scores),
             "panels": _dump(panel_scores(label, pred)),
         }
@@ -124,12 +125,14 @@ def markdown(report: Report) -> str:
         rows = [(kind, sections[section]) for kind, sections in by_kind.items() if sections[section]]
         if rows:
             out += [f"**{section}**", "", *_table(rows, "Input kind"), ""]
-    counted = [(d, v["detection"]) for d, v in report["drawings"].items() if v.get("detection")]
-    if counted:
-        keys = list(counted[0][1])
-        out += ["## Stage 3 counts", "", "| Drawing | " + " | ".join(keys) + " |", "| --- " * (len(keys) + 1) + "|"]
-        out += [f"| {d} | " + " | ".join(str(c.get(k, "")) for k in keys) + " |" for d, c in counted]
-        out.append("")
+    for stage, field in (("3", "detection"), ("4", "merge")):
+        counted = [(d, v[field]) for d, v in report["drawings"].items() if v.get(field)]
+        if counted:
+            keys = list(counted[0][1])
+            out += [f"## Stage {stage} counts", "", "| Drawing | " + " | ".join(keys) + " |"]
+            out += ["| --- " * (len(keys) + 1) + "|"]
+            out += [f"| {d} | " + " | ".join(str(c.get(k, "")) for k in keys) + " |" for d, c in counted]
+            out.append("")
     out += [
         "## Counts",
         "",
