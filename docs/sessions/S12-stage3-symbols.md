@@ -6,7 +6,7 @@
 | **Branch** | `s12-stage3-symbols` |
 | **Depends on** | S10 |
 | **Status** | in review |
-| **PR** | (link) |
+| **PR** | [moth1990/KonvoroAI#13](https://github.com/moth1990/KonvoroAI/pull/13) |
 
 ## Goal
 
