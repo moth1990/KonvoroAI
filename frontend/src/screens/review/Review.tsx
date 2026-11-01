@@ -18,6 +18,8 @@ import { MOBILE_MAX_PX } from "../../theme/tokens";
 import { Icon } from "../../ui/Icon";
 import { Modal } from "../../ui/Modal";
 import { INPUT_KINDS } from "../newQuote/model";
+import { DrawingPane } from "./Drawing";
+import { boxOnPage, findingBox, firstPage, pageForLine, stepPage } from "./drawingModel";
 import { LineDetail } from "./LineDetail";
 import {
   buildRows,
@@ -37,7 +39,10 @@ import {
   type Filter,
   type Row,
   type Shape,
+  matches,
 } from "./model";
+import { isUndoKey, useUndo } from "./undo";
+import type { FocusRequest } from "./Viewer";
 
 type Tab = "lines" | "drawing" | "chat";
 const MARGIN_KEY = "konboro:review:margin"; // 09 §6.3: the margin column is remembered per user (this browser)
@@ -63,8 +68,8 @@ function readMarginPref(): boolean {
 }
 
 /**
- * The review screen, S09 part (09 §5–6.4, §8, prototype `vReview`): header, filters, findings, the grouped lines
- * table and line detail. The drawing pane is S11, actions S23, chat S25.
+ * The review screen (09 §5–6.5, §8, prototype `vReview`): header, filters, findings, the grouped lines table and
+ * line detail (S09), the drawing pane and undo (S11). Actions are S23, chat S25.
  */
 export function ReviewScreen() {
   const { quoteId = "" } = useParams();
@@ -95,6 +100,11 @@ function Review({ quote }: { quote: Quote }) {
   const [open, setOpen] = useState<string | null>(null);
   const [tab, setTab] = useState<Tab>("lines");
   const [showMargin, setShowMargin] = useState(readMarginPref);
+  const [pageId, setPageId] = useState<string | null>(() => firstPage(quote.pages));
+  const [focus, setFocus] = useState<FocusRequest | null>(null);
+  const [shownFinding, setShownFinding] = useState<{ pageId: string; bbox: number[] } | null>(null);
+  const focusCount = useRef(0);
+  const undo = useUndo(quote.quote_id);
 
   const panel = quote.panels[Math.min(panelIdx, quote.panels.length - 1)];
   const allLines = useMemo(() => quote.panels.flatMap((p) => p.lines), [quote]);
@@ -142,28 +152,119 @@ function Review({ quote }: { quote: Quote }) {
     scrollMargin: listTop,
   });
 
+  const requestFocus = useCallback((target: string, bbox: number[], mode: FocusRequest["mode"]) => {
+    focusCount.current += 1;
+    setFocus({ pageId: target, bbox, mode, nonce: focusCount.current });
+  }, []);
+
+  // 09 §7.1: a selected line moves the drawing to its page (the current one if the line is on it), and when the
+  // drawing is zoomed in, centres it.
+  const follow = useCallback(
+    (id: string) => {
+      const line = allLines.find((l) => l.line_id === id);
+      const target = line ? pageForLine(line, pageId, quote.pages) : null;
+      setShownFinding(null);
+      if (!line || !target) return;
+      if (target !== pageId) setPageId(target);
+      else {
+        const bbox = boxOnPage(line, target);
+        if (bbox) requestFocus(target, bbox, "center");
+      }
+    },
+    [allLines, pageId, quote.pages, requestFocus],
+  );
+
   const select = useCallback(
-    (id: string | null, focus = false) => {
+    (id: string | null, focusRow = false) => {
       setSelected(id);
       if (!id) return;
+      follow(id);
       const index = rows.findIndex((r) => r.key === id);
       if (index >= 0) virtual.scrollToIndex(index, { align: "auto" });
-      if (focus) requestAnimationFrame(() => document.querySelector<HTMLElement>(`[data-line="${id}"]`)?.focus());
+      if (focusRow) requestAnimationFrame(() => document.querySelector<HTMLElement>(`[data-line="${id}"]`)?.focus());
     },
-    [rows, virtual],
+    [rows, virtual, follow],
   );
   const toggle = (id: string) => {
     setSelected(id);
+    follow(id);
     setOpen((o) => (o === id ? null : id));
   };
 
+  // "הצג בשרטוט" (09 §5.2, §6.4; prototype `showOnDrawing`): the line's page, framed on its component. On the phone
+  // it also moves to the drawing tab and closes the sheet.
+  const showOnDrawing = (line: QuoteLine) => {
+    const target = pageForLine(line, pageId, quote.pages);
+    const bbox = target ? boxOnPage(line, target) : null;
+    if (!target || !bbox) return;
+    setSelected(line.line_id);
+    setShownFinding(null);
+    setPageId(target);
+    requestFocus(target, bbox, "frame");
+    if (phone) {
+      setOpen(null);
+      setTab("drawing");
+    }
+  };
+
+  const showFinding = (f: Finding) => {
+    const box = findingBox(f);
+    if (!box) return;
+    setSelected(null);
+    setShownFinding(box);
+    setPageId(box.pageId);
+    requestFocus(box.pageId, box.bbox, "frame");
+    if (phone) setTab("drawing");
+  };
+
+  // A click on a box in the drawing selects its line (09 §7.1): in its panel, with the filter widened if it hid the
+  // line, and the table scrolled to it. On the phone the line's sheet opens over the drawing.
+  const pendingScroll = useRef<string | null>(null);
+  const selectFromDrawing = (id: string) => {
+    const idx = quote.panels.findIndex((p) => p.lines.some((l) => l.line_id === id));
+    const line = allLines.find((l) => l.line_id === id);
+    if (idx >= 0 && idx !== panelIdx) setPanelIdx(idx);
+    if (line && !matches(line, filter)) setFilter("all");
+    setSelected(id);
+    setShownFinding(null);
+    if (phone) setOpen(id);
+    else pendingScroll.current = id;
+  };
+  useEffect(() => {
+    const id = pendingScroll.current;
+    if (!id) return;
+    const index = rows.findIndex((r) => r.key === id);
+    if (index < 0) return;
+    pendingScroll.current = null;
+    virtual.scrollToIndex(index, { align: "auto" });
+  }, [rows, virtual, selected]);
+
+  const selectPanel = (panelId: string) => {
+    const idx = quote.panels.findIndex((p) => p.panel_id === panelId);
+    if (idx < 0) return;
+    setPanelIdx(idx);
+    setOpen(null);
+    setSelected(null);
+  };
+
   // 09 §8, on the desktop, when the focus is not in a text field. Enter waits for "approve" (S23, decision 9).
+  // Undo (Ctrl+Z / ⌘Z) works on any keyboard, the phone's too (09 §7.11).
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
-      if (phone || e.defaultPrevented) return;
+      if (e.defaultPrevented) return;
       const target = e.target as HTMLElement | null;
       if (target?.closest("input, textarea, select, [contenteditable='true']")) return;
-      if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+      if (isUndoKey(e)) {
+        e.preventDefault();
+        void undo.undo();
+        return;
+      }
+      if (phone) return;
+      if (e.key === "PageDown" || e.key === "PageUp") {
+        e.preventDefault();
+        const next = stepPage(quote.pages, pageId, e.key === "PageDown" ? 1 : -1);
+        if (next) setPageId(next);
+      } else if (e.key === "ArrowDown" || e.key === "ArrowUp") {
         e.preventDefault();
         select(stepLine(lineIds, selected, e.key === "ArrowDown" ? 1 : -1), true);
       } else if (e.key === " " && selected) {
@@ -171,12 +272,15 @@ function Review({ quote }: { quote: Quote }) {
         setOpen((o) => (o === selected ? null : selected));
       } else if (e.key === "Escape") {
         if (open) setOpen(null);
-        else setSelected(null);
+        else {
+          setSelected(null);
+          setShownFinding(null);
+        }
       }
     }
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  }, [phone, lineIds, selected, open, select]);
+  }, [phone, lineIds, selected, open, select, undo, quote.pages, pageId]);
 
   const kind = quote.input_kind ? INPUT_KINDS[quote.input_kind]?.[0] : null;
   const sub = [quote.drawing_number, kind, `גרסה ${quote.version}`, quote.status === "sent" ? "נשלחה" : "טיוטה"];
@@ -205,6 +309,17 @@ function Review({ quote }: { quote: Quote }) {
           {t.margin_pct != null ? <span className="chip ok">רווח {percent(t.margin_pct)}</span> : null}
           {t.unpriced_count ? <span className="chip bad">{t.unpriced_count} חסרים</span> : null}
         </div>
+        <button
+          type="button"
+          className="btn sm"
+          title="בטל (Ctrl+Z)"
+          aria-label="בטל את הפעולה האחרונה"
+          data-testid="undo-last"
+          disabled={!undo.canUndo}
+          onClick={() => void undo.undo()}
+        >
+          <Icon name="undo" />
+        </button>
       </div>
       <div className="rv-tabs" role="tablist" aria-label="תצוגה">
         {(
@@ -288,7 +403,7 @@ function Review({ quote }: { quote: Quote }) {
             </div>
           </div>
           <div className="lines-scroll" ref={scrollRef} data-testid="lines-scroll">
-            <Findings findings={quote.findings} />
+            <Findings findings={quote.findings} onShow={showFinding} />
             <div className="lh" aria-hidden="true">
               <span />
               <span />
@@ -324,6 +439,7 @@ function Review({ quote }: { quote: Quote }) {
                       showMargin={showMargin}
                       onToggle={toggle}
                       onShowAll={() => setFilter("all")}
+                      onShowOnDrawing={showOnDrawing}
                     />
                   </div>
                 );
@@ -351,15 +467,26 @@ function Review({ quote }: { quote: Quote }) {
             <span className="spacer" />
             <span className="small muted kbd-hint">
               <span className="kbd">↑</span> <span className="kbd">↓</span> ניווט · <span className="kbd">Space</span>{" "}
-              פרטים · <span className="kbd">Esc</span> סגירה
+              פרטים · <span className="kbd">PgDn</span> עמוד · <span className="kbd">Esc</span> סגירה
             </span>
           </div>
         </section>
         <section className="pane drawing-pane" aria-label="שרטוט">
-          <div className="drawing-soon">
-            <b>השרטוט יוצג כאן</b>
-            <span className="small">סימון השורות על השרטוט יגיע בקרוב</span>
-          </div>
+          <DrawingPane
+            quote={quote}
+            pageId={pageId}
+            onPage={(id: string) => {
+              setPageId(id);
+              setShownFinding(null);
+            }}
+            selected={selected}
+            filter={filter}
+            activePanelId={panel?.panel_id ?? null}
+            focus={focus}
+            finding={shownFinding}
+            onSelectLine={selectFromDrawing}
+            onSelectPanel={selectPanel}
+          />
         </section>
         <section className="pane chat-pane" aria-label="צ'אט">
           <div className="drawing-soon">
@@ -377,16 +504,16 @@ function Review({ quote }: { quote: Quote }) {
               <Icon name="x" />
             </button>
           </div>
-          <LineDetail line={sheetLine} findings={quote.findings} />
+          <LineDetail line={sheetLine} findings={quote.findings} onShowOnDrawing={showOnDrawing} />
         </Modal>
       ) : null}
     </div>
   );
 }
 
-function Findings({ findings }: { findings: Finding[] }) {
+function Findings({ findings, onShow }: { findings: Finding[]; onShow: (f: Finding) => void }) {
   if (!findings.length) return null;
-  // Read-only until S23 (dismiss) and S11 (show on drawing), S09 decision 11.
+  // Read-only until S23 (dismiss), S09 decision 11. "בשרטוט" frames the finding's box (S11).
   return (
     <details className="findings" open data-testid="findings">
       <summary>
@@ -401,6 +528,14 @@ function Findings({ findings }: { findings: Finding[] }) {
             <b>{f.title ?? f.message}</b>
             {f.title ? <span className="small muted">{f.message}</span> : null}
           </div>
+          {findingBox(f) ? (
+            <div className="acts">
+              <button type="button" className="btn ghost sm" data-testid="f-show" onClick={() => onShow(f)}>
+                <Icon name="eye" />
+                בשרטוט
+              </button>
+            </div>
+          ) : null}
         </div>
       ))}
     </details>
@@ -415,6 +550,7 @@ function RowView(props: {
   showMargin: boolean;
   onToggle: (id: string) => void;
   onShowAll: () => void;
+  onShowOnDrawing: (line: QuoteLine) => void;
 }) {
   const { row } = props;
   if (row.kind === "group") return <div className="grp">{row.label}</div>;
@@ -443,6 +579,7 @@ function RowView(props: {
       open={props.open === row.line.line_id}
       showMargin={props.showMargin}
       onToggle={props.onToggle}
+      onShowOnDrawing={props.onShowOnDrawing}
     />
   );
 }
@@ -455,6 +592,7 @@ function LineRow(props: {
   open: boolean;
   showMargin: boolean;
   onToggle: (id: string) => void;
+  onShowOnDrawing: (line: QuoteLine) => void;
 }) {
   const { line } = props;
   const mark = statusMark(line);
@@ -503,7 +641,7 @@ function LineRow(props: {
       </div>
       {props.open ? (
         <div style={{ padding: "0 14px 8px" }}>
-          <LineDetail line={line} findings={props.findings} />
+          <LineDetail line={line} findings={props.findings} onShowOnDrawing={props.onShowOnDrawing} />
         </div>
       ) : null}
     </>

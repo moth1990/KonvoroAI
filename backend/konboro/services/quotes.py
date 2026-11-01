@@ -22,6 +22,7 @@ from konboro.contracts.pricing import Discount, LineCounts, QuoteTotals
 from konboro.db import models as m
 from konboro.db.ids import new_id
 from konboro.domain import totals as t
+from konboro.services.storage import drawing_key
 
 # 09 §6.3: component lines by group (db-schema `line_group`), then missing lines, then accessories and labor.
 GROUP_ORDER = ("feed", "outputs", "control", "enclosure")
@@ -160,6 +161,14 @@ class SourceView:
 
 
 @dataclass(frozen=True)
+class BoxView:
+    """One instance on the drawing (04 §6.2): its page and bbox in PDF points, origin top left (00 §6.2)."""
+
+    page_id: str
+    bbox: list[float]
+
+
+@dataclass(frozen=True)
 class LineView:
     line_id: str
     line_type: str
@@ -192,6 +201,7 @@ class LineView:
     alternatives: list[dict[str, Any]]
     derived: dict[str, Any] | None
     approved: bool
+    boxes: list[BoxView]  # every instance of the line's component, for the drawing pane (09 §6.5)
 
 
 @dataclass(frozen=True)
@@ -211,6 +221,37 @@ class FindingView:
     message: str
     line_ids: list[str]
     page_no: int | None
+    page_id: str | None
+    bbox: list[float] | None  # "בשרטוט" (prototype `f-show`)
+
+
+@dataclass(frozen=True)
+class PagePanelView:
+    panel_id: str
+    name: str
+    bbox: list[float] | None  # the panel's area on the page, when the page holds more than one (09 §6.5)
+
+
+@dataclass(frozen=True)
+class PageView:
+    """One page of the drawing for the drawing pane's strip and viewer (09 §6.5, 01 §6)."""
+
+    page_id: str
+    page_no: int
+    sheet: str | None  # the page's own drawing number, when its title block has one ("E-104")
+    page_kind: str | None
+    page_kind_confidence: float | None
+    classified_by: str | None
+    route: str | None
+    quality: str | None
+    geometry_source: str | None
+    width_pt: float | None
+    height_pt: float | None
+    panels: list[PagePanelView]
+    thumbnail_key: str | None  # stage 1's thumbnail, once the page was read
+    has_viewer: bool  # stage 2 wrote the page's pyramid
+    red_count: int  # lines with an instance on the page (09 §6.5, the strip's counter)
+    yellow_count: int
 
 
 @dataclass(frozen=True)
@@ -229,6 +270,7 @@ class QuoteView:
     panels: list[PanelView]
     findings: list[FindingView]
     totals: t.QuoteSums
+    pages: list[PageView]
 
 
 def read_quote(session: Session, tenant_id: str, quote_id: str) -> QuoteView | None:
@@ -282,6 +324,7 @@ def read_quote(session: Session, tenant_id: str, quote_id: str) -> QuoteView | N
         panels=panel_views,
         findings=_findings(session, version),
         totals=sums,
+        pages=_pages(session, drawing, [ln for p in panel_views for ln in p.lines]) if drawing else [],
     )
 
 
@@ -398,6 +441,7 @@ def _line_view(ln: m.QuoteLine, cmp: m.Component | None) -> LineView:
         alternatives=list(ln.alternatives),
         derived=ln.derived,
         approved=ln.approved_at is not None,
+        boxes=[BoxView(i["page_id"], list(i["bbox"])) for i in (cmp.instances if cmp else []) if i.get("bbox")],
     )
 
 
@@ -415,6 +459,58 @@ def _findings(session: Session, version: m.QuoteVersion) -> list[FindingView]:
     # random bits (it did, between two E2E databases).
     rows = sorted(rows, key=lambda r: (SEVERITY_ORDER.index(r[0].severity), r[0].created_at, r[0].code, r[0].id))
     return [
-        FindingView(f.id, f.severity, f.code, f.values.get("title"), f.message, list(f.line_ids), page_no)
+        FindingView(
+            f.id,
+            f.severity,
+            f.code,
+            f.values.get("title"),
+            f.message,
+            list(f.line_ids),
+            page_no,
+            f.page_id,
+            list(f.bbox) if f.bbox else None,
+        )
         for f, page_no in rows
+    ]
+
+
+def _pages(session: Session, drawing: m.Drawing, lines: Sequence[LineView]) -> list[PageView]:
+    pages = session.scalars(
+        select(m.Page)
+        .where(m.Page.tenant_id == drawing.tenant_id, m.Page.drawing_id == drawing.id)
+        .order_by(m.Page.page_no)
+    ).all()
+    panels = session.scalars(
+        select(m.Panel)
+        .where(m.Panel.tenant_id == drawing.tenant_id, m.Panel.drawing_id == drawing.id)
+        .order_by(m.Panel.name)
+    ).all()
+    counts: dict[tuple[str, str], int] = {}
+    for ln in lines:
+        if ln.status != "green":
+            for page_id in {b.page_id for b in ln.boxes}:
+                counts[page_id, ln.status] = counts.get((page_id, ln.status), 0) + 1
+    return [
+        PageView(
+            page_id=p.id,
+            page_no=p.page_no,
+            sheet=(p.title_block or {}).get("drawing_number"),
+            page_kind=p.page_kind,
+            page_kind_confidence=p.page_kind_confidence,
+            classified_by=p.classified_by,
+            route=p.route,
+            quality=p.quality,
+            geometry_source=p.geometry_source,
+            width_pt=p.width_pt,
+            height_pt=p.height_pt,
+            panels=[PagePanelView(pn.id, pn.name, pn.bboxes.get(p.id)) for pn in panels if p.id in (pn.page_ids or [])],
+            # Stage 1 points `render_key` at its thumbnail and stage 2 at the full render; the thumbnail stays.
+            thumbnail_key=drawing_key(drawing.tenant_id, drawing.id, "pages", p.id, "thumb.png")
+            if p.render_key
+            else None,
+            has_viewer=p.tiles_prefix is not None,
+            red_count=counts.get((p.id, "red"), 0),
+            yellow_count=counts.get((p.id, "yellow"), 0),
+        )
+        for p in pages
     ]

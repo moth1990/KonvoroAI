@@ -116,6 +116,31 @@
         "title": "Body_upload_drawings_post",
         "type": "object"
       },
+      "BoxOut": {
+        "description": "One instance on the drawing: PDF points, origin top left (00 §6.2).",
+        "properties": {
+          "bbox": {
+            "description": "x0, y0, x1, y1",
+            "items": {
+              "type": "number"
+            },
+            "maxItems": 4,
+            "minItems": 4,
+            "title": "Bbox",
+            "type": "array"
+          },
+          "page_id": {
+            "title": "Page Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "page_id",
+          "bbox"
+        ],
+        "title": "BoxOut",
+        "type": "object"
+      },
       "CostSourceOut": {
         "properties": {
           "price_date": {
@@ -224,6 +249,21 @@
       },
       "FindingOut": {
         "properties": {
+          "bbox": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Where the finding is on the page, for \"בשרטוט\"",
+            "title": "Bbox"
+          },
           "code": {
             "title": "Code",
             "type": "string"
@@ -242,6 +282,17 @@
           "message": {
             "title": "Message",
             "type": "string"
+          },
+          "page_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Page Id"
           },
           "page_no": {
             "anyOf": [
@@ -282,7 +333,9 @@
           "title",
           "message",
           "line_ids",
-          "page_no"
+          "page_no",
+          "page_id",
+          "bbox"
         ],
         "title": "FindingOut",
         "type": "object"
@@ -366,6 +419,14 @@
           "approved": {
             "title": "Approved",
             "type": "boolean"
+          },
+          "boxes": {
+            "description": "Every instance of the line's component, for the drawing (09 §6.5)",
+            "items": {
+              "$ref": "#/components/schemas/BoxOut"
+            },
+            "title": "Boxes",
+            "type": "array"
           },
           "cost_source": {
             "anyOf": [
@@ -697,7 +758,8 @@
           "explanation",
           "alternatives",
           "derived",
-          "approved"
+          "approved",
+          "boxes"
         ],
         "title": "LineOut",
         "type": "object"
@@ -846,6 +908,217 @@
           "page_kind"
         ],
         "title": "PageKindIn",
+        "type": "object"
+      },
+      "PageOut": {
+        "description": "One page of the quote's drawing, for the drawing pane (09 §6.5).",
+        "properties": {
+          "classified_by": {
+            "anyOf": [
+              {
+                "enum": [
+                  "model",
+                  "user",
+                  "reused",
+                  "template"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Classified By"
+          },
+          "geometry_source": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "vector or raster",
+            "title": "Geometry Source"
+          },
+          "has_viewer": {
+            "description": "GET /pages/{page_id}/dz/page.dzi serves the page's pyramid",
+            "title": "Has Viewer",
+            "type": "boolean"
+          },
+          "height_pt": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Height Pt"
+          },
+          "page_id": {
+            "title": "Page Id",
+            "type": "string"
+          },
+          "page_kind": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Page Kind"
+          },
+          "page_kind_confidence": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Page Kind Confidence"
+          },
+          "page_no": {
+            "title": "Page No",
+            "type": "integer"
+          },
+          "panels": {
+            "items": {
+              "$ref": "#/components/schemas/PagePanelOut"
+            },
+            "title": "Panels",
+            "type": "array"
+          },
+          "quality": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quality"
+          },
+          "red_count": {
+            "description": "Red lines with an instance on the page",
+            "title": "Red Count",
+            "type": "integer"
+          },
+          "route": {
+            "anyOf": [
+              {
+                "enum": [
+                  "process",
+                  "context",
+                  "skip"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Route"
+          },
+          "sheet": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The page's own drawing number, e.g. E-104",
+            "title": "Sheet"
+          },
+          "thumbnail_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Short-lived; load it, don't store it",
+            "title": "Thumbnail Url"
+          },
+          "width_pt": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Width Pt"
+          },
+          "yellow_count": {
+            "title": "Yellow Count",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "page_id",
+          "page_no",
+          "sheet",
+          "page_kind",
+          "page_kind_confidence",
+          "classified_by",
+          "route",
+          "quality",
+          "geometry_source",
+          "width_pt",
+          "height_pt",
+          "panels",
+          "has_viewer",
+          "red_count",
+          "yellow_count"
+        ],
+        "title": "PageOut",
+        "type": "object"
+      },
+      "PagePanelOut": {
+        "properties": {
+          "bbox": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The panel's area on this page, if the classifier boxed it",
+            "title": "Bbox"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "panel_id": {
+            "title": "Panel Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "panel_id",
+          "name",
+          "bbox"
+        ],
+        "title": "PagePanelOut",
         "type": "object"
       },
       "PanelOut": {
@@ -1607,6 +1880,14 @@
             "title": "Name",
             "type": "string"
           },
+          "pages": {
+            "description": "The drawing's pages, in order",
+            "items": {
+              "$ref": "#/components/schemas/PageOut"
+            },
+            "title": "Pages",
+            "type": "array"
+          },
           "panels": {
             "items": {
               "$ref": "#/components/schemas/PanelOut"
@@ -1664,7 +1945,8 @@
           "coverage_pct",
           "panels",
           "findings",
-          "totals"
+          "totals",
+          "pages"
         ],
         "title": "QuoteOut",
         "type": "object"
@@ -2900,6 +3182,125 @@
         "summary": "Me",
         "tags": [
           "account"
+        ]
+      }
+    },
+    "/pages/{page_id}/dz/page.dzi": {
+      "get": {
+        "operationId": "page_dzi_pages__page_id__dz_page_dzi_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "page_id",
+            "required": true,
+            "schema": {
+              "pattern": "^pg_[0-9A-Z]{26}$",
+              "title": "Page Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/xml": {}
+            },
+            "description": "The Deep Zoom descriptor"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Page Dzi",
+        "tags": [
+          "pages"
+        ]
+      }
+    },
+    "/pages/{page_id}/dz/page_files/{level}/{col}_{row}.png": {
+      "get": {
+        "operationId": "page_tile_pages__page_id__dz_page_files__level___col___row__png_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "page_id",
+            "required": true,
+            "schema": {
+              "pattern": "^pg_[0-9A-Z]{26}$",
+              "title": "Page Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "level",
+            "required": true,
+            "schema": {
+              "maximum": 30,
+              "minimum": 0,
+              "title": "Level",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "path",
+            "name": "col",
+            "required": true,
+            "schema": {
+              "minimum": 0,
+              "title": "Col",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "path",
+            "name": "row",
+            "required": true,
+            "schema": {
+              "minimum": 0,
+              "title": "Row",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "image/png": {}
+            },
+            "description": "One tile"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Page Tile",
+        "tags": [
+          "pages"
         ]
       }
     },

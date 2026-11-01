@@ -32,7 +32,7 @@ To view it, serve the folder (`python -m http.server -d prototype`) and set `loc
 **Porting a screen:** the prototype's CSS moves to `frontend/src/theme/app.css` with the same class names, and the
 React screens render those classes; MUI is for behaviour, not looks. The app routes are paths (`/home`, `/review/:quoteId`…),
 not hashes. The phone layout starts at **860px** everywhere (09 §5.2; the prototype uses 820px), kept in `MOBILE_MAX_PX`.
-Built so far: login, shell, classic and chat home (S04); new quote: pick, run, done (S05); confirm pages and page-kind change (S08); review lines, filters and line detail on the NURSERY-1 fixture, behind `review_screen` (S09).
+Built so far: login, shell, classic and chat home (S04); new quote: pick, run, done (S05); confirm pages and page-kind change (S08); review lines, filters and line detail on the NURSERY-1 fixture, behind `review_screen` (S09); the review drawing pane (OpenSeadragon, boxes, page strip, "הצג בשרטוט"), toast and undo stack (S11).
 
 | Screen | Route | Function | Lines |
 | --- | --- | --- | --- |
@@ -99,7 +99,7 @@ Schema changes are Alembic migrations in `backend/alembic/versions/`. Update `do
 | --- | --- |
 | `make install` | uv sync, pnpm install, and the Playwright Chromium |
 | `make migrate` | Create the `konboro_app` role, then `alembic upgrade head` |
-| `make seed` | Migrate, then load the demo tenant (made-up names, the prototype's price list). Safe to rerun |
+| `make seed` | Migrate, then load the demo tenant (made-up names, the prototype's price list) and the NURSERY-1 review fixture with its page images in S3. Needs `make up`. Safe to rerun |
 | `make up` / `make down` | Start or stop local services: Postgres + pgvector (host port 5433), S3Mock as S3 (9000), ElasticMQ as SQS (9324) |
 | `make dev` | API on port 8000 (uvicorn, reload), the pipeline worker (`python -m konboro.pipeline.worker`) and the Vite dev server on port 5180. Needs `make up`. Dev login: `demo@konboro.local` with `KONBORO_DEV_PASSWORD` from `.env`. Stage 1 calls Claude with `ANTHROPIC_API_KEY`; without a key the local worker uses the stand-in model (`devtools/fake_llm.py`) and logs a warning |
 | `make test-unit` | pytest unit tests + Vitest |

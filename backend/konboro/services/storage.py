@@ -69,6 +69,25 @@ class Storage:
         body: bytes = self.s3.get_object(Bucket=self.bucket, Key=key)["Body"].read()
         return body
 
+    def exists(self, tenant_id: str, key: str) -> bool:
+        self._check(tenant_id, key)
+        try:
+            self.s3.head_object(Bucket=self.bucket, Key=key)
+        except self.s3.exceptions.ClientError as e:
+            if e.response.get("Error", {}).get("Code") in ("404", "NoSuchKey", "NotFound"):
+                return False
+            raise
+        return True
+
+    def get_range(self, tenant_id: str, key: str, offset: int, length: int) -> bytes:
+        """`length` bytes from `offset`: one tile out of the viewer's pack (S11)."""
+        self._check(tenant_id, key)
+        if offset < 0 or length <= 0:
+            raise ValueError(f"bad range {offset}+{length}")
+        rng = f"bytes={offset}-{offset + length - 1}"
+        body: bytes = self.s3.get_object(Bucket=self.bucket, Key=key, Range=rng)["Body"].read()
+        return body
+
     def presigned_get(self, tenant_id: str, key: str, expires_s: int = 300) -> str:
         """A short-lived URL the browser can load directly (thumbnails)."""
         self._check(tenant_id, key)

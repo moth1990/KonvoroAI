@@ -27,7 +27,7 @@ migrate: ## Create the app DB role, then apply migrations (docs/db-schema.md)
 	$(BACKEND) uv run python -m konboro.db.bootstrap
 	$(BACKEND) uv run alembic upgrade head
 
-seed: migrate ## Demo data: tenant "לוחות דמו", price list from the prototype. Safe to rerun
+seed: migrate ## Demo data: tenant "לוחות דמו", price list from the prototype, review fixture (needs `make up`). Safe to rerun
 	$(BACKEND) uv run python -m konboro.db.seed
 
 dev: ## Run the API (port 8000), the pipeline worker and the web app (port 5180). Needs `make up`

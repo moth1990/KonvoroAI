@@ -1,7 +1,7 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { TOAST_MS, ToastProvider, useToast } from "./Toast";
+import { TOAST_MS, ToastProvider, UNDO_TOAST_MS, useToast } from "./Toast";
 
 function Trigger({ text, onUndo }: { text: string; onUndo?: () => void }) {
   const toast = useToast();
@@ -58,6 +58,20 @@ describe("Toast", () => {
     fireEvent.click(screen.getByRole("button", { name: "בטל" }));
     expect(undo).toHaveBeenCalledOnce();
     expect(screen.queryByRole("status")).toBeNull();
+  });
+
+  it("a toast that offers undo stays 5 s (09 §7.11)", () => {
+    render(
+      <ToastProvider>
+        <Trigger text="אושר" onUndo={vi.fn()} />
+      </ToastProvider>,
+    );
+    fireEvent.click(screen.getByText("show אושר"));
+    act(() => vi.advanceTimersByTime(UNDO_TOAST_MS - 1));
+    expect(screen.queryByRole("button", { name: "בטל" })).not.toBeNull();
+    act(() => vi.advanceTimersByTime(1));
+    expect(screen.queryByRole("status")).toBeNull();
+    expect(UNDO_TOAST_MS).toBe(5000);
   });
 
   it("no undo button without a callback", () => {

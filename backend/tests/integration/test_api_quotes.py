@@ -9,7 +9,8 @@ from sqlalchemy.orm import Session
 
 from konboro.db.seed import seed_global
 from konboro.db.session import tenant_session
-from konboro.devtools.fixtures.nursery import seed_nursery
+from konboro.devtools.fixtures.nursery import PX_TO_PT, seed_nursery, seed_nursery_pages
+from konboro.services.storage import Storage
 
 from .api import Api, set_tenant_flag
 
@@ -17,11 +18,12 @@ FLAG = "review_screen"
 
 
 @pytest.fixture(scope="module")
-def quote_id(api: Api, migrated_db: dict[str, Engine]) -> Iterator[str]:
+def quote_id(api: Api, migrated_db: dict[str, Engine], storage: Storage) -> Iterator[str]:
     with Session(migrated_db["owner"]) as s, s.begin():
         seed_global(s)
     with tenant_session(api.a.tenant_id, api.engine) as s:
         qid = seed_nursery(s, api.a.tenant_id)
+        seed_nursery_pages(s, storage, api.a.tenant_id)
     assert qid is not None
     for t in (api.a, api.b):
         set_tenant_flag(api.engine, t.tenant_id, FLAG, True)
@@ -52,6 +54,41 @@ def test_the_fixture_comes_back_with_money_as_strings(api: Api, quote_id: str) -
     assert f1["price_source"] == {"kind": "fixed", "source": "quote_import", "quotes": ["10288"], "value": None}
     assert f1["cost_source"]["supplier"] == "ספק א׳ · מפיץ ABB"
     assert body["findings"][0]["code"] == "MISSING_PRICE"
+
+
+def test_the_drawing_pane_gets_pages_boxes_and_counts(api: Api, quote_id: str) -> None:
+    """09 §6.5: the strip's pages with their counts, each line's instances, and a finding's box (S11)."""
+    body = api.client.get(f"/quotes/{quote_id}", headers=api.as_(api.a)).json()
+    pages = body["pages"]
+    assert [p["page_no"] for p in pages] == list(range(1, 10))
+    assert [p["route"] for p in pages] == ["context", "skip", "skip", "context", *["process"] * 5]
+    assert all(p["has_viewer"] and p["thumbnail_url"] for p in pages)
+    assert (pages[4]["width_pt"], pages[4]["height_pt"]) == (842.0, 595.0)
+    assert [pn["name"] for pn in pages[4]["panels"]] == ["NURSERY"]
+    assert pages[0]["panels"] == []
+
+    lines = body["panels"][0]["lines"]
+    by_id = {p["page_id"]: p["page_no"] for p in pages}
+    q0 = next(ln for ln in lines if ln["designators"] == ["Q0"])
+    assert [(by_id[b["page_id"]], b["bbox"]) for b in q0["boxes"]] == [
+        (5, [round(v * PX_TO_PT, 1) for v in (1030, 90, 1265, 345)])
+    ]
+    rnv = next(ln for ln in lines if ln["designators"] == ["RNV"])
+    assert sorted(by_id[b["page_id"]] for b in rnv["boxes"]) == [5, 8]  # one line, two pages
+    kit = next(ln for ln in lines if ln["parent_line_id"] == q0["line_id"])
+    assert kit["boxes"] == []  # a kit add-on has no component of its own
+
+    # a page's count is its lines of that color with an instance on it, each line once
+    for p in pages:
+        for color in ("red", "yellow"):
+            expected = sum(
+                1 for ln in lines if ln["status"] == color and any(b["page_id"] == p["page_id"] for b in ln["boxes"])
+            )
+            assert p[f"{color}_count"] == expected, (p["page_no"], color)
+    assert [p["red_count"] for p in pages[4:]] == [2, 0, 1, 2, 0]
+
+    boxed = [f for f in body["findings"] if f["bbox"]]
+    assert boxed and all(by_id[f["page_id"]] == f["page_no"] for f in boxed)
 
 
 def test_another_tenants_quote_is_not_found(api: Api, quote_id: str) -> None:

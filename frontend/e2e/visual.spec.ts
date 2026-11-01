@@ -1,7 +1,7 @@
 /**
  * Screenshot baselines for the screens the user accepted in the fidelity review (docs/dev-strategy.md §5):
  * login, home classic with the shell, home chat, the new-quote steps (S05) and the review screen's lines, line
- * detail and red filter (S09); light and dark; desktop and mobile projects.
+ * detail and red filter (S09) and its drawing (S11); light and dark; desktop and mobile projects.
  *
  * They run only inside Playwright's pinned Linux image (e2e/visual/update.sh sets KONBORO_VISUAL), locally and in
  * CI, so fonts and rasterization never differ between the baseline and the check:
@@ -13,6 +13,7 @@ import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
 import { isMobile, signIn, SLOW_PROJECT, TENANTS } from "./fixtures";
+import { lineWith } from "./review-helpers";
 
 test.skip(!process.env.KONBORO_VISUAL, "runs in Playwright's Linux image: `make check-screenshots`");
 
@@ -106,25 +107,69 @@ const NEW_QUOTE = [
   },
 ] as const;
 
-/** The review states the user accepted in S09, on the NURSERY-1 fixture quote (a read-only tenant of its own). */
+/** The review states the user accepted in S09 and S11, on the NURSERY-1 fixture quote (a read-only tenant of its
+ * own). The drawing is waited for wherever it is on screen: its tiles load after the quote. */
+async function drawingReady(page: Page) {
+  await page.locator("[data-testid=viewer][data-state=ready]").waitFor({ timeout: 30_000 });
+  // "ready" can be the page's earlier view: a zoom asks for finer tiles a frame later. Let those arrive too.
+  await page.waitForLoadState("networkidle");
+  await page.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))));
+}
+
 const REVIEW = [
-  { name: "review-lines", setup: async () => {} },
+  {
+    name: "review-lines",
+    setup: async (page: Page) => {
+      if (!isMobile(page)) await drawingReady(page);
+    },
+  },
   {
     name: "review-detail",
     setup: async (page: Page) => {
       await page.getByTestId("line").filter({ hasText: "SN201M" }).click();
       await page.getByTestId("line-detail").waitFor();
+      if (!isMobile(page)) await drawingReady(page);
     },
   },
-  { name: "review-red", setup: (page: Page) => page.getByTestId("filter-red").click() },
+  {
+    name: "review-red",
+    setup: async (page: Page) => {
+      await page.getByTestId("filter-red").click();
+      if (!isMobile(page)) await drawingReady(page);
+    },
+  },
+  {
+    name: "review-drawing", // the phone's drawing tab; on the desktop the drawing is in every shot
+    phoneOnly: true,
+    setup: async (page: Page) => {
+      await page.getByRole("tab", { name: "שרטוט" }).click();
+      await drawingReady(page);
+    },
+  },
+  {
+    name: "review-showdraw",
+    setup: async (page: Page) => {
+      await (await lineWith(page, "ממסר עזר")).click();
+      await page.getByRole("button", { name: "הצג בשרטוט" }).click();
+      await drawingReady(page);
+    },
+  },
+  {
+    name: "review-finding",
+    setup: async (page: Page) => {
+      await page.getByTestId("f-show").click();
+      await drawingReady(page);
+    },
+  },
 ] as const;
 
 for (const scheme of ["light", "dark"] as const) {
   test.describe(`${scheme} review`, () => {
-    test.use({ colorScheme: scheme });
+    test.use({ colorScheme: scheme, reducedMotion: "reduce" }); // the drawing jumps straight to where it goes
 
     for (const screen of REVIEW) {
       test(screen.name, async ({ page, request }) => {
+        test.skip("phoneOnly" in screen && !isMobile(page), "the phone layout only");
         await signIn(page, request, TENANTS.review);
         await page.goto("/home");
         await meLoaded(page);

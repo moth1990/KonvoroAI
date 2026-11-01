@@ -224,6 +224,8 @@ describe("status shape and chips (09 §6.3, §9, §13)", () => {
       message: "…",
       line_ids: [],
       page_no: null,
+      page_id: null,
+      bbox: null,
     };
     const warn = line({
       status: "yellow",

@@ -22,6 +22,7 @@ export type UploadedFile = Schemas["UploadedFileOut"];
 export type Quote = Schemas["QuoteOut"];
 export type QuoteLine = Schemas["LineOut"];
 export type Finding = Schemas["FindingOut"];
+export type QuotePage = Schemas["PageOut"];
 
 const FALLBACK_MESSAGE = "משהו השתבש אצלנו. נסו שוב בעוד רגע";
 const LOGIN_PATH = "/auth/login";
@@ -65,9 +66,12 @@ const auth: Middleware = {
   },
 };
 
+/** Where the API is. The drawing viewer loads its tiles from here too, outside openapi-fetch (S11). */
+export const API_BASE: string = import.meta.env.VITE_API_URL ?? "http://localhost:8000";
+
 export function createApiClient(options: { baseUrl?: string; fetch?: typeof fetch } = {}) {
   const client = createClient<paths>({
-    baseUrl: options.baseUrl ?? import.meta.env.VITE_API_URL ?? "http://localhost:8000",
+    baseUrl: options.baseUrl ?? API_BASE,
     fetch: options.fetch,
   });
   client.use(auth);

@@ -38,10 +38,11 @@ from konboro.db.models import (
 )
 from konboro.db.seed import FLAGS, seed_global
 from konboro.db.session import app_engine
-from konboro.devtools.fixtures.nursery import seed_nursery
+from konboro.devtools.fixtures.nursery import seed_nursery, seed_nursery_pages
 from konboro.pipeline.context import StageContext
 from konboro.pipeline.extraction.config import ExtractionConfig
 from konboro.pipeline.stages import Stage, s2_extraction
+from konboro.services.storage import Storage
 from konboro.settings import Settings
 
 DATABASE = "konboro_e2e"
@@ -175,8 +176,9 @@ def _sample_data(s: Session, t: E2eTenant) -> None:
     s.flush()
 
 
-def seed_e2e(owner: Engine) -> None:
-    """Plans and flags, then each E2E tenant. A tenant that already exists is left alone, like the demo seed."""
+def seed_e2e(owner: Engine, storage: Storage | None = None) -> None:
+    """Plans and flags, then each E2E tenant. A tenant that already exists is left alone, like the demo seed.
+    With `storage`, the review tenant's fixture pages get their images and viewer pyramids too (S11)."""
     with Session(owner) as s, s.begin():
         seed_global(s)
     month = datetime.now(ZoneInfo("Asia/Jerusalem")).date().replace(day=1)
@@ -198,6 +200,8 @@ def seed_e2e(owner: Engine) -> None:
                 _sample_data(s, t)
             if t.nursery:
                 seed_nursery(s, t.tenant_id)
+                if storage is not None:
+                    seed_nursery_pages(s, storage, t.tenant_id)
 
 
 def e2e_settings(web_port: int) -> Settings:
@@ -217,10 +221,10 @@ def e2e_settings(web_port: int) -> Settings:
     )
 
 
-def prepare() -> Engine:
+def prepare(storage: Storage | None = None) -> Engine:
     """A fresh, seeded konboro_e2e. Returns the app-role engine (the API never connects as the owner)."""
     owner = create_engine(fresh_database(DATABASE))
-    seed_e2e(owner)
+    seed_e2e(owner, storage)
     owner.dispose()
     return app_engine(database_dsn(DATABASE, role="app"))
 
@@ -233,13 +237,13 @@ def main() -> None:
     from konboro.pipeline.stages import STAGES
     from konboro.pipeline.worker import start_in_thread
     from konboro.services.queue import DLQ, STAGE_QUEUES, Queue
-    from konboro.services.storage import Storage
 
     api_port = int(os.environ.get("KONBORO_E2E_API_PORT", "8001"))
     web_port = int(os.environ.get("KONBORO_E2E_WEB_PORT", "5181"))
     settings = e2e_settings(web_port)
-    engine = prepare()
-    Storage(settings).reset_local_bucket()
+    storage = Storage(settings)
+    storage.reset_local_bucket()  # before the seed, which puts the fixture's page images in it
+    engine = prepare(storage)
     queue = Queue(settings)
     queue.ensure()
     for base in [*STAGE_QUEUES.values(), DLQ]:  # nothing left over from an earlier run

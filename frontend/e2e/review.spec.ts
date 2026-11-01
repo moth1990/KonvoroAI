@@ -1,45 +1,13 @@
 /**
  * The review screen, S09 part (09 §5–6.4, §8): the NURSERY-1 fixture quote, filters, line detail, keyboard and
- * the phone's bottom sheet. States the fixture lacks, and a 150-line quote, come from a mocked API answer.
+ * the phone's bottom sheet. The drawing pane (S11) is in drawing.spec.ts. States the fixture lacks, and a 150-line quote, come from a mocked API answer.
  */
 import { expect, test, type Page } from "@playwright/test";
 
 import type { Quote } from "../src/api/client";
 import { line, panel, quote } from "../src/screens/review/fixtures";
 import { isMobile, signIn, TENANTS } from "./fixtures";
-
-/** From home's recent work to the quote, the way a user gets there. */
-async function openNursery(page: Page) {
-  await page.goto("/home");
-  await page
-    .getByTestId("recent")
-    .getByRole("link", { name: /NURSERY/ })
-    .click();
-  await expect(page).toHaveURL(/\/review\/quo_[0-9A-Z]{26}$/);
-  await expect(page.getByRole("heading", { name: "NURSERY" })).toBeVisible();
-}
-
-const lines = (page: Page) => page.getByTestId("line");
-
-/** The list is virtualized: scroll it, a screen at a time, until the line whose name has `text` is rendered. */
-async function lineWith(page: Page, text: string) {
-  await page.getByTestId("lines-scroll").evaluate(async (el, wanted) => {
-    const frame = () => new Promise((r) => requestAnimationFrame(() => r(null)));
-    const find = () =>
-      [...el.querySelectorAll<HTMLElement>("[data-testid=line]")].find((row) =>
-        row.querySelector(".name")?.textContent?.includes(wanted),
-      );
-    el.scrollTo(0, 0);
-    for (let i = 0; i < 60 && !find(); i++) {
-      el.scrollBy(0, el.clientHeight * 0.8);
-      await frame();
-    }
-    find()?.scrollIntoView({ block: "center" });
-    await frame();
-    await frame();
-  }, text);
-  return lines(page).filter({ has: page.locator(".name", { hasText: text }) });
-}
+import { lines, lineWith, openNursery } from "./review-helpers";
 
 /** Scrolls the list to its end, frame by frame, as a finger would; returns how long it took. */
 async function scrollToEnd(page: Page): Promise<number> {
@@ -163,7 +131,7 @@ test.describe("the NURSERY-1 fixture", () => {
     test.skip(!isMobile(page), "tabs are the phone layout (09 §5.2)");
     await openNursery(page);
     await page.getByRole("tab", { name: "שרטוט" }).click();
-    await expect(page.getByText("השרטוט יוצג כאן")).toBeVisible();
+    await expect(page.getByTestId("strip")).toBeVisible();
     await expect(page.getByTestId("lines-scroll")).toBeHidden();
     await page.getByRole("tab", { name: "שורות" }).click();
     await expect(page.getByTestId("lines-scroll")).toBeVisible();

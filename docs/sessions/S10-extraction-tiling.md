@@ -5,7 +5,7 @@
 | **Track** | P |
 | **Branch** | `s10-extraction-tiling` |
 | **Depends on** | S08 |
-| **Status** | in review |
+| **Status** | done |
 | **PR** | [moth1990/KonvoroAI#11](https://github.com/moth1990/KonvoroAI/pull/11) |
 
 ## Goal

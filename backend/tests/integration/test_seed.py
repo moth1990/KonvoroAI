@@ -3,11 +3,12 @@ from sqlalchemy import Engine, func, select
 from konboro.db import models as m
 from konboro.db.seed import DEMO_TENANT, FLAGS, PRODUCTS, seed
 from konboro.db.session import tenant_session
+from konboro.services.storage import Storage
 
 
-def test_seed_is_idempotent_and_visible_to_the_app(migrated_db: dict[str, Engine]) -> None:
-    assert seed(migrated_db["owner"]) is True
-    assert seed(migrated_db["owner"]) is False  # second run changes nothing
+def test_seed_is_idempotent_and_visible_to_the_app(migrated_db: dict[str, Engine], storage: Storage) -> None:
+    assert seed(migrated_db["owner"], storage) is True
+    assert seed(migrated_db["owner"], storage) is False  # second run changes nothing
 
     with tenant_session(DEMO_TENANT, migrated_db["app"]) as s:
         products = s.execute(select(func.count()).select_from(m.Product)).scalar_one()
@@ -23,8 +24,8 @@ def test_seed_is_idempotent_and_visible_to_the_app(migrated_db: dict[str, Engine
     assert flags == len(FLAGS)
 
 
-def test_seeded_prices_are_exact(migrated_db: dict[str, Engine]) -> None:
-    seed(migrated_db["owner"])
+def test_seeded_prices_are_exact(migrated_db: dict[str, Engine], storage: Storage) -> None:
+    seed(migrated_db["owner"], storage)
     with tenant_session(DEMO_TENANT, migrated_db["app"]) as s:
         price = s.execute(select(m.Product.fixed_price).where(m.Product.manufacturer_sku == "S203M-C16")).scalar_one()
         costs = sorted(
@@ -38,9 +39,9 @@ def test_seeded_prices_are_exact(migrated_db: dict[str, Engine]) -> None:
     assert [str(c) for c in costs] == ["131.0000", "138.0000"]
 
 
-def test_the_demo_tenant_gets_the_review_fixture_once(migrated_db: dict[str, Engine]) -> None:
-    seed(migrated_db["owner"])
-    seed(migrated_db["owner"])
+def test_the_demo_tenant_gets_the_review_fixture_once(migrated_db: dict[str, Engine], storage: Storage) -> None:
+    seed(migrated_db["owner"], storage)
+    seed(migrated_db["owner"], storage)
     with tenant_session(DEMO_TENANT, migrated_db["app"]) as s:
         quotes = s.execute(select(func.count()).select_from(m.Quote).where(m.Quote.name == "NURSERY")).scalar_one()
         enabled = s.execute(
