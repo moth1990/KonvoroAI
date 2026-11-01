@@ -106,6 +106,11 @@ class Page(Base, TenantScoped, Timestamps):
         CheckConstraint("geometry_source IS NULL OR geometry_source IN ('vector', 'raster', 'mixed')", name="geom"),
         CheckConstraint("text_source IS NULL OR text_source IN ('pdf_text', 'ocr', 'mixed')", name="text_source"),
         CheckConstraint(
+            "component_labels IS NULL"
+            " OR component_labels IN ('tags_and_models', 'tags_only', 'none', 'not_applicable')",
+            name="component_labels",
+        ),
+        CheckConstraint(
             "quality IS NULL OR quality IN ('ok', 'low_resolution', 'blurry', 'cropped')",
             name="quality",
         ),
@@ -133,6 +138,7 @@ class Page(Base, TenantScoped, Timestamps):
     route: Mapped[str | None]
     classified_by: Mapped[str | None]
     model: Mapped[str | None]
+    component_labels: Mapped[str | None]  # the classifier's, for input_kind on reuse (BUG-015)
     title_block: Mapped[dict[str, Any] | None]
     regions: Mapped[list[Any]] = mapped_column(server_default="[]")
     render_key: Mapped[str | None]

@@ -71,6 +71,12 @@ TENANTS = (
     # Uploads change the quota, and the desktop and mobile projects run at the same time: one tenant each.
     E2eTenant(5, "upload-desktop@e2e.konboro.local", home_chat=False, used=12, sample_data=False),
     E2eTenant(6, "upload-mobile@e2e.konboro.local", home_chat=False, used=12, sample_data=False),
+    # The done-step screenshots: one tenant per scheme and project, so each shot is the tenant's only upload, a fresh
+    # decode with a fixed count. In a shared tenant it was a reuse or not by test order (BUG-016).
+    E2eTenant(7, "done-light-desktop@e2e.konboro.local", home_chat=False, used=12, sample_data=False),
+    E2eTenant(8, "done-dark-desktop@e2e.konboro.local", home_chat=False, used=12, sample_data=False),
+    E2eTenant(9, "done-light-mobile@e2e.konboro.local", home_chat=False, used=12, sample_data=False),
+    E2eTenant(10, "done-dark-mobile@e2e.konboro.local", home_chat=False, used=12, sample_data=False),
 )
 
 # A project with this name runs slowly, so a test can cancel it mid-run; every other upload runs at full speed.

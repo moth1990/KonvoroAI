@@ -215,6 +215,7 @@ This table answers the customer's question "why was this counted?".
 | `geometry_source`, `text_source`, `quality` | |
 | `page_kind`, `page_kind_confidence`, `route` | `route` is `process`, `context` or `skip` |
 | `classified_by`, `model` | `classified_by` is `model`, `user`, `reused` or `template` (01 §5.7) |
+| `component_labels` | The classifier's reading of the device tags: `tags_and_models`, `tags_only`, `none` or `not_applicable` (01 §5.4). `input_kind` counts them on the diagram pages (01 §4.4), so a page reused by hash keeps them. Null for a page classified by a template or the user (migration 0006, BUG-015) |
 | `title_block jsonb`, `regions jsonb` | `regions`: everything the classifier found, `[{region_kind, bbox, panel_name, confidence}]`, panels included (`panel`) whatever the page's route, so a page-kind change can rebuild the panels (S08) |
 | `render_key`, `tiles_prefix` | S3 keys |
 

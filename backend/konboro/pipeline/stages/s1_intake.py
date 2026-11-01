@@ -176,6 +176,7 @@ def _reuse(ctx: StageContext, works: list[Work]) -> None:
         w.kind, w.confidence = prev.page_kind, prev.page_kind_confidence or 0.0  # type: ignore[assignment]
         w.classified_by, w.model, w.reused_from = "reused", prev.model, prev.id
         w.title_block = TitleBlock.model_validate(prev.title_block) if prev.title_block else None
+        w.labels = prev.component_labels or "not_applicable"
         w.panels, w.regions = classify.from_stored(prev.regions)
         for art in s.scalars(select(m.ContextArtifact).where(m.ContextArtifact.page_id == prev.id)):
             w.artifacts.append(
@@ -536,6 +537,7 @@ def _result(
                 route=routes[w.page_id],
                 classified_by=w.classified_by,
                 model=w.model,
+                component_labels=w.labels if w.classified_by in ("model", "reused") else None,
                 title_block=w.title_block.model_dump(mode="json") if w.title_block else None,
                 regions=classify.stored(w.panels, w.regions),
                 render_key=thumbnail_key(ctx.tenant_id, d.id, w.page_id) if w.read is not None else None,

@@ -12,6 +12,11 @@ export const TENANTS = {
   // Uploads change the quota: one tenant per Playwright project, since the projects run at the same time.
   uploadDesktop: "upload-desktop@e2e.konboro.local",
   uploadMobile: "upload-mobile@e2e.konboro.local",
+  // The done-step screenshots: each one the only upload in its tenant, so it is always a fresh decode (BUG-016).
+  doneLightDesktop: "done-light-desktop@e2e.konboro.local",
+  doneDarkDesktop: "done-dark-desktop@e2e.konboro.local",
+  doneLightMobile: "done-light-mobile@e2e.konboro.local",
+  doneDarkMobile: "done-dark-mobile@e2e.konboro.local",
 } as const;
 
 /** The E2E worker runs this project's stages slowly, so a test can cancel mid-run (devtools/e2e.py). */

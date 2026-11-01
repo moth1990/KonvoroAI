@@ -61,6 +61,17 @@ async function startUpload(page: Page, project: string) {
   await page.getByTestId("start").click();
 }
 
+/** The done step shows whether pages were reused and the count after the upload, so it gets a tenant of its own
+ * per scheme and project: always a fresh decode (BUG-016). The other steps share the project's upload tenant. */
+function tenantFor(screen: string, scheme: "light" | "dark", mobile: boolean): string {
+  if (screen !== "new-done") return mobile ? TENANTS.uploadMobile : TENANTS.uploadDesktop;
+  const done = {
+    light: { desktop: TENANTS.doneLightDesktop, mobile: TENANTS.doneLightMobile },
+    dark: { desktop: TENANTS.doneDarkDesktop, mobile: TENANTS.doneDarkMobile },
+  } as const;
+  return done[scheme][mobile ? "mobile" : "desktop"];
+}
+
 /** The new-quote steps the user accepted in S05: the setup brings each into the state that was reviewed. */
 const NEW_QUOTE = [
   {
@@ -101,7 +112,7 @@ for (const scheme of ["light", "dark"] as const) {
 
     for (const screen of NEW_QUOTE) {
       test(screen.name, async ({ page, request }) => {
-        await signIn(page, request, isMobile(page) ? TENANTS.uploadMobile : TENANTS.uploadDesktop);
+        await signIn(page, request, tenantFor(screen.name, scheme, isMobile(page)));
         await page.goto("/new");
         await meLoaded(page);
         await page.evaluate(() => document.fonts.ready);

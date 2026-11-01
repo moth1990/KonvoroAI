@@ -63,7 +63,7 @@ The `page_classification` agent gives each page a kind and a route, with confide
 
 ### UI tests (Playwright)
 - [x] Desktop and mobile: change a page kind on the done step, and confirm pages when asked.
-- [x] Fidelity report for the done step and the confirmation step reviewed by the user (`make fidelity`, `new-done` and `new-confirm`). Accepted 2026-11-01; `make screenshots` rewrote the four `new-done` baselines and the two mobile `new-run` ones (the stage-1 summary now names the factory templates and wraps onto a second line at 375 px).
+- [x] Fidelity report for the done step and the confirmation step reviewed by the user (`make fidelity`, `new-done` and `new-confirm`). Accepted 2026-11-01; `make screenshots` rewrote the four `new-done` baselines and the two mobile `new-run` ones (the stage-1 summary now names the factory templates and wraps onto a second line at 375 px). After BUG-016 the four `new-done` baselines were rewritten again: each shot is now a fresh decode in its own tenant, the state that was reviewed.
 
 ### Eval (pipeline sessions)
 - [x] Record the first cassettes: `EVAL_MODE=live EVAL_RECORD=1 make eval`. Commit the cassettes and the new baseline (`make eval-baseline`).
@@ -119,6 +119,7 @@ All answered at session start (2026-11-01); see Decisions made.
     - the quota outcomes `reuse` and `revision` at stage 1;
     - the visibility heartbeat (BUG-009).
   - Migration 0005: `page_templates`, `drawings.title_block`, and correction source `new_quote`.
+  - Migration 0006: `pages.component_labels`, so a page reused by hash keeps what `input_kind` counts (BUG-015).
   - `konboro_llm`:
     - `page_classification` and `context_extraction` stages;
     - stable image keys for cassettes;
@@ -181,5 +182,5 @@ All answered at session start (2026-11-01); see Decisions made.
   - 26-993 waits for confirmation: page 5 at 0.80, below 0.85.
 
   Live answers vary between runs. The run after the recorded one lost 6199-2-50's whole title block (BUG-014, fixed) and scored 75% or less on four title-block fields; panel count stayed at 60%.
-- **Bugs logged:** BUG-009 (closed), BUG-011, BUG-012, BUG-013 (P0, found in the live recording) and BUG-014 (P1, found comparing two live runs), all fixed in S08.
+- **Bugs logged:** BUG-009 (closed), BUG-011, BUG-012, BUG-013 (P0, found in the live recording), BUG-014 (P1, found comparing two live runs), BUG-015 (P1, reuse lost the input kind) and BUG-016 (P2, the `new-done` screenshot depended on test order; found in CI on the PR), all fixed in S08.
 - **Follow-ups:** panel count on 26-993 (feed sources counted as panels) and the confirmation rate, in the roadmap backlog. BOM-HW-1's panel comes with S14.

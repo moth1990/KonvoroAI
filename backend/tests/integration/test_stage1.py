@@ -83,6 +83,10 @@ def test_reuse_by_hash_never_crosses_tenants(api: Api, migrated_db: dict[str, En
     reused = pages_of(engine, a, again)
     assert {p.classified_by for p in reused} == {"reused"}
     assert [p.reused_from for p in reused] == [first_pages[p.sha256] for p in reused]
+    with tenant_session(a.tenant_id, engine) as s:
+        kinds = [s.get_one(m.Drawing, d).input_kind for d in (first, again)]
+    assert kinds == ["factory_drawing", "factory_drawing"]  # the page's tag reading is reused too (BUG-015)
+    assert {p.component_labels for p in reused if p.route == "process"} == {"tags_and_models"}
     assert quota_state(engine, b)[0] == 1  # counted in b: nothing of a's was reused there
 
 
