@@ -33,8 +33,8 @@ P and R sessions alternate. R sessions use a fixture quote seeded through the re
 
 | # | Track | Session | Main contents | Specs | Prototype | Depends on | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| [S08](sessions/S08-stage1-intake.md) | P | Stage 1: intake and page classification | pypdfium2 rendering, rotation and quality, geometry and text source, sha256 reuse, `page_classification`, `input_kind`, context extraction, page confirmation and page-kind change, visibility heartbeat for long stages (BUG-009) | 01 (all) | 840–855 | S07 | in review |
-| [S09](sessions/S09-review-lines.md) | R | Review I: lines | Quote read API and fixture seed, split layout, virtualized grouped lines table, colors and filters, line detail (raw text, sources, why), keyboard | 09 §5–6.4, §8–9 | 872–941, 942–995 | S07 | todo |
+| [S08](sessions/S08-stage1-intake.md) | P | Stage 1: intake and page classification | pypdfium2 rendering, rotation and quality, geometry and text source, sha256 reuse, `page_classification`, `input_kind`, context extraction, page confirmation and page-kind change, visibility heartbeat for long stages (BUG-009) | 01 (all) | 840–855 | S07 | done |
+| [S09](sessions/S09-review-lines.md) | R | Review I: lines | Quote read API and fixture seed, split layout, virtualized grouped lines table, colors and filters, line detail (raw text, sources, why), keyboard | 09 §5–6.4, §8–9 | 872–941, 942–995 | S07 | in review |
 | S10 | P | Stage 2: extraction and tiling | pdfplumber vector text, `OcrEngine` interface + `ClaudeVisionOcr`, normalization with `raw_text`, low-confidence re-read, 1024/256 tiles, deep-zoom tiles in S3 | 02 (all); 12 §5 | — | S08 | todo |
 | S11 | R | Review II: drawing | OpenSeadragon viewer, SVG highlight boxes, page strip, "show on drawing", mobile tabs, toast, undo (5 s, 30 actions) | 09 §5.2, §6.5, §7.11 | 942–1004 | S09, S10 | todo |
 | S12 | P | Stage 3 v1: symbols | LLM-vision detection with library examples and the abbreviation dictionary, cross-tile de-duplication and owner tile, orphan text, designator linking | 03 §3.4–3.7, §6, §10 | — | S10 | todo |
@@ -99,5 +99,10 @@ Ideas and out-of-scope findings from sessions. Each one is scheduled into a sess
 - **PDFium in a process pool** (from S07, BUG-010). Every PDFium call in a process takes one lock, because PDFium is not thread-safe. Thumbnails are cheap; S10's tiling and deep-zoom renders are not. If rendering becomes the bottleneck, move it to a process pool.
 - **Panel count: feed sources are not panels** (from S08). On 26-993 the classifier counts QEN1 and QEN2, the boards that feed MAIN ELECTRICAL BOARD, as panels: panel count accuracy is 60% against a 95% target (01 §10). One prompt rule made no difference in one live run. Candidates: the feed diagram from stage 3 (S12), or a code rule that uses the title block's panel name. Re-record the classification cassettes with whatever lands.
 - **Confirmation rate and `page_kind` below target** (from S08). 25% of drawings needed the confirmation screen (target ≤ 15%) and `page_kind` is 95.8% (target ≥ 97%). Calibrate the classifier's confidence, or the 0.85 threshold, against more labelled drawings (01 §12 item 5).
+
+- **Remove `review_screen`** (from S09). The flag gates the review screen while it is built (S09 decision 2); take it out, and its 404 test, when S23 completes the screen.
+- **Review row sub line: spec vs prototype** (from S09). 09 §6.3 lists the catalog number, "×2 בשרטוט" and "עמ׳ 4, 5" in a line's sub line; the prototype row shows tags, chips and the circuit's load. S09 follows the prototype; ask the user at S23.
+- **Review pricing details** (from S09, for S22). Price hints for unpriced lines ("קרובים במחירון: …"), the "פריטים נלווים: …" footnote, "מחיר חדש במחירון" and "רווח נמוך X%" chips against the tenant's margin floors.
+- **Costs by permission** (from S09, 09 §12). A user without cost permission must not receive costs from the server. 1.0 has one owner role, so `GET /quotes/{id}` sends them to everyone; add a cost permission when a second role arrives.
 
 <a id="s00"></a>**S00** is the planning session that produced this roadmap. It has no session file; its PR is the record.

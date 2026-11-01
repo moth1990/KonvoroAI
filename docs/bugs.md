@@ -19,12 +19,14 @@ Every bug found during development goes here, including bugs fixed in the same s
 
 | ID | Found in | Sev | Area | Summary | Repro | Status | Fixed in |
 | --- | --- | --- | --- | --- | --- | --- | --- |
+| BUG-018 | S09 | P2 | Tests / IDs | Rows created in the same millisecond are ordered by the random part of their ULID: `new_id` is not monotonic. `tests/integration/test_quota.py::test_refund_gives_a_counted_upload_back_once` orders quota events by `id` and failed on `main` (CI run for 8ea3343: `['confirm', 'reserve', 'refund']`). The review screen's findings had the same tie and broke the S09 PR's screenshots in CI; S09 orders them by code after `created_at`. Fix: order by an explicit sequence or timestamp, or make `new_id` monotonic within a millisecond | Rerun the quota integration test until it fails; it depends on the ids drawn | open, for S17 | |
 | BUG-008 | S05 | P2 | Pipeline | No per-tenant concurrency limit (00 §4.3): one tenant's large drawings can fill every worker. One local worker has nothing to share yet; it matters when workers scale out | — | open, scheduled for S29 | |
 
 ## Closed
 
 | ID | Found in | Sev | Area | Summary | Fixed in |
 | --- | --- | --- | --- | --- | --- |
+| BUG-017 | S09 | P2 | Frontend / CSS | The review screen's status icon used the class `.st`, which the new-quote screen already uses for its stage label (`.stage .st`). The global `.st { width: 16px }` squeezed that label, and the accepted `new-run` and `new-done` phone screenshots wrapped differently. The icon is now `.ln-st`. Found by `make check-screenshots` | S09 |
 | BUG-009 | S07 | P2 | Pipeline / queue | A stage that runs longer than the queue's visibility timeout (30 s by default) is delivered again while it still runs, and the copy runs it twice. A heartbeat thread now pushes the message's visibility out every `stage_heartbeat_seconds` while the stage runs; `tests/integration/test_stage1.py::test_a_long_stage_is_not_delivered_twice` (with its control) | S08 |
 | BUG-011 | S08 | P3 | Spec / golden | 01 §5.7 said NURSERY-1 repeats NEVIS-1's template pages 2–3. Page 3 is the same page; page 2 holds the same tables in another layout, so no fingerprint can match it and it goes to the model. The spec now says so | S08 |
 | BUG-016 | S08 | P2 | E2E / screenshots | The `new-done` screenshot failed in CI (light desktop, 1% of pixels) though it passed locally in the same image. Every new-quote shot uploaded NURSERY-1 into one shared tenant per project, so whether the done step showed a fresh decode or "reused" pages, and which upload count, depended on test order across the two workers: the committed light and dark baselines showed different states. Each `new-done` shot now has a tenant of its own per scheme and project (`devtools/e2e.py`, `e2e/fixtures.ts`), so it is always a fresh decode with a fixed count. Found in CI on the S08 PR | S08 |

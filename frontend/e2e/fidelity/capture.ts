@@ -188,7 +188,75 @@ const SCREENS: Screen[] = [
       'The chip reads "ממתין לאישור" (warning) where the done step reads "הפענוח הסתיים".',
     ],
   },
+  ...reviewScreens(),
 ];
+
+/** From the app's home to the NURSERY-1 fixture quote (S09), the way a user gets there. */
+async function appReview(page: Page) {
+  await page
+    .getByTestId("recent")
+    .getByRole("link", { name: /NURSERY/ })
+    .click();
+  await page.getByTestId("rv-totals").waitFor();
+}
+
+function reviewScreens(): Screen[] {
+  const notes = [
+    'Header: undo, export, chat and "אשר ושלח" are left out until their sessions (S23, S25); the drawing pane is a ' +
+      "placeholder until S11.",
+    "S09 decision 3: a shape icon beside each stripe (check, triangle, X, box), so color is never the only signal.",
+    'S09 decision 4: the spec\'s filter row (הכל · רק לבדיקה · ירוק · צהוב · אדום) and the "X מתוך Y שורות מוכנות" bar.',
+    "S09 decision 5: after the groups, a panel total row (09 §6.3). The prototype's footnote about accessories " +
+      "included in the enclosure comes back with accessory lines (S22).",
+    'S09 decision 6: on the phone a row keeps its total, and "qty × unit price" moves to the sub line.',
+    "Read-only until S23: no price inputs (an unpriced line shows —), no price hints, no finding buttons.",
+    "Findings are listed errors first. Runs of 3+ tags are one chip: F18–F21 here, four chips in the prototype.",
+    'The prototype marks the lamps "מחיר חדש במחירון: ₪23" (its markup rule against its own fixed price); the app ' +
+      "has no such state until pricing (S22).",
+    "Foot totals keep agorot (₪841.32, ₪5,515.32): the prototype rounds VAT to whole shekels in the browser.",
+    "Data differs by design in the rail: the E2E tenant has no approval-queue items.",
+  ];
+  const review = { path: "/home", tenant: TENANTS.review };
+  return [
+    {
+      id: "review-lines",
+      title: "Review: lines (NURSERY-1 fixture)",
+      prototype: { hash: "#review", authed: true },
+      app: { ...review, setup: appReview },
+      notes,
+    },
+    {
+      id: "review-detail",
+      title: "Review: line detail (F1–F17)",
+      prototype: { hash: "#review", authed: true, setup: (p) => p.locator('[data-line="f1"]').click() },
+      app: {
+        ...review,
+        setup: async (page) => {
+          await appReview(page);
+          await page.getByTestId("line").filter({ hasText: "SN201M" }).click();
+          await page.getByTestId("line-detail").waitFor();
+        },
+      },
+      notes: [
+        "S09 decision 7: read-only. No price and cost inputs, no supplier select, no החלף / מחק / הצג בשרטוט.",
+        "On the phone the detail opens in a bottom sheet (09 §5.2); the prototype expands the row.",
+      ],
+    },
+    {
+      id: "review-red",
+      title: "Review: the red filter",
+      prototype: { hash: "#review", authed: true, setup: (p) => p.locator('[data-act="filter"][data-f="r"]').click() },
+      app: {
+        ...review,
+        setup: async (page) => {
+          await appReview(page);
+          await page.getByTestId("filter-red").click();
+        },
+      },
+      notes: ['Every red line says why: here, "אין מחיר" on all five.'],
+    },
+  ];
+}
 
 // `FIDELITY_ONLY=new-pick,new-run` captures just those screens.
 const ONLY = process.env.FIDELITY_ONLY?.split(",").filter(Boolean);

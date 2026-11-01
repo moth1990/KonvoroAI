@@ -36,6 +36,7 @@ def test_e2e_tenants_have_their_states(migrated_db: dict[str, Engine]) -> None:
         "done-dark-desktop@e2e.konboro.local": (False, 12, "ok"),
         "done-light-mobile@e2e.konboro.local": (False, 12, "ok"),
         "done-dark-mobile@e2e.konboro.local": (False, 12, "ok"),
+        "review@e2e.konboro.local": (False, 12, "ok"),
     }
     sample = states["classic@e2e.konboro.local"][3]
     assert sample.queue_pending == 3
@@ -46,6 +47,11 @@ def test_e2e_tenants_have_their_states(migrated_db: dict[str, Engine]) -> None:
     assert states["classic@e2e.konboro.local"][4] == 3
     assert states["near@e2e.konboro.local"][3].queue_pending == 0
     assert states["near@e2e.konboro.local"][4] == 0
+    # the review screen's fixture (S09), once, however often the seed runs
+    review = next(t for t in e2e.TENANTS if t.nursery)
+    with tenant_session(review.tenant_id, migrated_db["app"]) as s:
+        assert [q.name for q in home.recent_quotes(s, review.tenant_id, 10)] == ["NURSERY"]
+        assert flags.tenant_flags(s, review.tenant_id)["review_screen"] is True
 
 
 def test_every_e2e_tenant_can_log_in(migrated_db: dict[str, Engine]) -> None:

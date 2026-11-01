@@ -30,7 +30,7 @@ export function navItems(queuePending: number): NavItem[] {
  * The app frame (prototype `shell()`, lines 691–714): the rail on desktop, the tab bar under 860px,
  * the quota banner (01 §4.5) and the page's top bar.
  */
-export function Shell({ title, children }: { title?: string; children: ReactNode }) {
+export function Shell({ title, bare = false, children }: { title?: string; bare?: boolean; children: ReactNode }) {
   const me = useMe();
   const summary = useHomeSummary();
   const signOut = useSignOut();
@@ -121,7 +121,8 @@ export function Shell({ title, children }: { title?: string; children: ReactNode
             <span className="spacer" />
           </header>
         )}
-        <div className="content">{children}</div>
+        {/* bare: the screen fills the main area itself (prototype `shell(…, {bare:true})`, the review screen) */}
+        {bare ? children : <div className="content">{children}</div>}
       </div>
       <nav className="tabbar" aria-label="ניווט">
         {nav.map((item) => (

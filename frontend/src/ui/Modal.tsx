@@ -12,11 +12,14 @@ export function Modal({
   onClose,
   labelledBy,
   className = "",
+  backdropClassName = "",
   children,
 }: {
   onClose: () => void;
   labelledBy: string;
   className?: string;
+  /** `sheet-bg` turns the dialog into the phone's bottom sheet (09 §5.2). */
+  backdropClassName?: string;
   children: ReactNode;
 }) {
   const box = useRef<HTMLDivElement>(null);
@@ -61,7 +64,7 @@ export function Modal({
 
   return createPortal(
     <div
-      className="modal-bg"
+      className={`modal-bg ${backdropClassName}`.trim()}
       data-testid="modal-bg"
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) close.current();

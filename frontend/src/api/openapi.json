@@ -1,6 +1,19 @@
 {
   "components": {
     "schemas": {
+      "AlternativeOut": {
+        "properties": {
+          "description": {
+            "title": "Description",
+            "type": "string"
+          }
+        },
+        "required": [
+          "description"
+        ],
+        "title": "AlternativeOut",
+        "type": "object"
+      },
       "AuditOmissionsItem": {
         "properties": {
           "amount_at_risk": {
@@ -103,6 +116,67 @@
         "title": "Body_upload_drawings_post",
         "type": "object"
       },
+      "CostSourceOut": {
+        "properties": {
+          "price_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price Date"
+          },
+          "supplier": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Supplier"
+          },
+          "type": {
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "title": "CostSourceOut",
+        "type": "object"
+      },
+      "DerivedOut": {
+        "description": "How an accessory line was worked out (07 §7.4): \"איך חושב\".",
+        "properties": {
+          "explanation": {
+            "title": "Explanation",
+            "type": "string"
+          },
+          "rule_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rule Id"
+          }
+        },
+        "required": [
+          "explanation"
+        ],
+        "title": "DerivedOut",
+        "type": "object"
+      },
       "ErrorBody": {
         "properties": {
           "code": {
@@ -148,6 +222,71 @@
         "title": "ErrorResponse",
         "type": "object"
       },
+      "FindingOut": {
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "finding_id": {
+            "title": "Finding Id",
+            "type": "string"
+          },
+          "line_ids": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Line Ids",
+            "type": "array"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "page_no": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Page No"
+          },
+          "severity": {
+            "enum": [
+              "error",
+              "warning",
+              "info"
+            ],
+            "title": "Severity",
+            "type": "string"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          }
+        },
+        "required": [
+          "finding_id",
+          "severity",
+          "code",
+          "title",
+          "message",
+          "line_ids",
+          "page_no"
+        ],
+        "title": "FindingOut",
+        "type": "object"
+      },
       "HealthOut": {
         "properties": {
           "status": {
@@ -189,6 +328,378 @@
           "audit_omissions"
         ],
         "title": "HomeSummaryOut",
+        "type": "object"
+      },
+      "LineCountsOut": {
+        "properties": {
+          "green": {
+            "title": "Green",
+            "type": "integer"
+          },
+          "red": {
+            "title": "Red",
+            "type": "integer"
+          },
+          "yellow": {
+            "title": "Yellow",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "green",
+          "yellow",
+          "red"
+        ],
+        "title": "LineCountsOut",
+        "type": "object"
+      },
+      "LineOut": {
+        "description": "A quote line (07 §6.2) with what the review screen shows of its component (09 §6.3–6.4).",
+        "properties": {
+          "alternatives": {
+            "items": {
+              "$ref": "#/components/schemas/AlternativeOut"
+            },
+            "title": "Alternatives",
+            "type": "array"
+          },
+          "approved": {
+            "title": "Approved",
+            "type": "boolean"
+          },
+          "cost_source": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CostSourceOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "derived": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DerivedOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "designators": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Designators",
+            "type": "array"
+          },
+          "explanation": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Why this product, when it needs saying",
+            "title": "Explanation"
+          },
+          "included": {
+            "description": "A kit add-on whose price is in its parent line's",
+            "title": "Included",
+            "type": "boolean"
+          },
+          "issue_ids": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Issue Ids",
+            "type": "array"
+          },
+          "line_cost": {
+            "anyOf": [
+              {
+                "examples": [
+                  "0.15"
+                ],
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Line Cost"
+          },
+          "line_group": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "feed, outputs, control or enclosure (db-schema `line_group`)",
+            "title": "Line Group"
+          },
+          "line_id": {
+            "title": "Line Id",
+            "type": "string"
+          },
+          "line_total": {
+            "anyOf": [
+              {
+                "examples": [
+                  "0.15"
+                ],
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Line Total"
+          },
+          "line_type": {
+            "enum": [
+              "component",
+              "derived",
+              "labor",
+              "manual",
+              "missing"
+            ],
+            "title": "Line Type",
+            "type": "string"
+          },
+          "manufacturer": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Manufacturer"
+          },
+          "margin_pct": {
+            "anyOf": [
+              {
+                "examples": [
+                  "0.15"
+                ],
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Margin Pct"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The circuit's load, as written in the drawing",
+            "title": "Note"
+          },
+          "parent_line_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Parent Line Id"
+          },
+          "price_source": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PriceSourceOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "price_status": {
+            "anyOf": [
+              {
+                "enum": [
+                  "ok",
+                  "stale",
+                  "discount_based",
+                  "missing"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price Status"
+          },
+          "qty": {
+            "examples": [
+              "0.15"
+            ],
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Qty",
+            "type": "string"
+          },
+          "raw_text": {
+            "description": "The text read beside the component, line by line",
+            "items": {
+              "type": "string"
+            },
+            "title": "Raw Text",
+            "type": "array"
+          },
+          "section": {
+            "description": "09 §6.3: lines, missing lines, accessories",
+            "enum": [
+              "items",
+              "missing",
+              "extras"
+            ],
+            "title": "Section",
+            "type": "string"
+          },
+          "sku": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sku"
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/SourceOut"
+            },
+            "title": "Sources",
+            "type": "array"
+          },
+          "status": {
+            "enum": [
+              "green",
+              "yellow",
+              "red"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "status_reasons": {
+            "items": {
+              "$ref": "#/components/schemas/StatusReasonOut"
+            },
+            "title": "Status Reasons",
+            "type": "array"
+          },
+          "unit": {
+            "title": "Unit",
+            "type": "string"
+          },
+          "unit_cost": {
+            "anyOf": [
+              {
+                "examples": [
+                  "0.15"
+                ],
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit Cost"
+          },
+          "unit_margin": {
+            "anyOf": [
+              {
+                "examples": [
+                  "0.15"
+                ],
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Unit price minus unit cost, in shekels",
+            "title": "Unit Margin"
+          },
+          "unit_price": {
+            "anyOf": [
+              {
+                "examples": [
+                  "0.15"
+                ],
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit Price"
+          }
+        },
+        "required": [
+          "line_id",
+          "line_type",
+          "section",
+          "line_group",
+          "parent_line_id",
+          "included",
+          "sku",
+          "description",
+          "manufacturer",
+          "qty",
+          "unit",
+          "unit_price",
+          "unit_cost",
+          "line_total",
+          "line_cost",
+          "margin_pct",
+          "unit_margin",
+          "price_status",
+          "price_source",
+          "cost_source",
+          "status",
+          "status_reasons",
+          "issue_ids",
+          "designators",
+          "raw_text",
+          "sources",
+          "note",
+          "explanation",
+          "alternatives",
+          "derived",
+          "approved"
+        ],
+        "title": "LineOut",
         "type": "object"
       },
       "LoginIn": {
@@ -337,6 +848,85 @@
         "title": "PageKindIn",
         "type": "object"
       },
+      "PanelOut": {
+        "properties": {
+          "lines": {
+            "description": "In the review screen's order (09 §6.3); a child follows its parent",
+            "items": {
+              "$ref": "#/components/schemas/LineOut"
+            },
+            "title": "Lines",
+            "type": "array"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "panel_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Panel Id"
+          },
+          "totals": {
+            "$ref": "#/components/schemas/PanelTotalsOut"
+          }
+        },
+        "required": [
+          "panel_id",
+          "name",
+          "lines",
+          "totals"
+        ],
+        "title": "PanelOut",
+        "type": "object"
+      },
+      "PanelTotalsOut": {
+        "properties": {
+          "cost_total": {
+            "examples": [
+              "0.15"
+            ],
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Cost Total",
+            "type": "string"
+          },
+          "line_counts": {
+            "$ref": "#/components/schemas/LineCountsOut"
+          },
+          "price_total": {
+            "examples": [
+              "0.15"
+            ],
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Price Total",
+            "type": "string"
+          },
+          "uncosted_count": {
+            "description": "Priced lines with no cost, left out of the margin (09 §6.3)",
+            "title": "Uncosted Count",
+            "type": "integer"
+          },
+          "unpriced_count": {
+            "title": "Unpriced Count",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "cost_total",
+          "price_total",
+          "line_counts",
+          "unpriced_count",
+          "uncosted_count"
+        ],
+        "title": "PanelTotalsOut",
+        "type": "object"
+      },
       "PasswordResetIn": {
         "additionalProperties": false,
         "properties": {
@@ -402,6 +992,54 @@
           "max_pages_per_file"
         ],
         "title": "PlanOut",
+        "type": "object"
+      },
+      "PriceSourceOut": {
+        "description": "Where the sale price comes from: a fixed price (and the quotes it was imported from) or a margin rule.",
+        "properties": {
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "quotes": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Quotes",
+            "type": "array"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "examples": [
+                  "0.15"
+                ],
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value"
+          }
+        },
+        "required": [
+          "kind"
+        ],
+        "title": "PriceSourceOut",
         "type": "object"
       },
       "ProgressFileOut": {
@@ -899,6 +1537,274 @@
         "title": "QuoteListItem",
         "type": "object"
       },
+      "QuoteOut": {
+        "description": "The review screen's quote (09 §4): its current version, panels, lines, findings and totals.",
+        "properties": {
+          "coverage_pct": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Share of the lines that have a price (09 §6.1, 10 §7)",
+            "title": "Coverage Pct"
+          },
+          "currency": {
+            "title": "Currency",
+            "type": "string"
+          },
+          "drawing_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Drawing Id"
+          },
+          "drawing_number": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Drawing Number"
+          },
+          "findings": {
+            "description": "Open findings, errors first",
+            "items": {
+              "$ref": "#/components/schemas/FindingOut"
+            },
+            "title": "Findings",
+            "type": "array"
+          },
+          "input_kind": {
+            "anyOf": [
+              {
+                "enum": [
+                  "factory_drawing",
+                  "designer_plan",
+                  "bom_only",
+                  "mixed"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Input Kind"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "panels": {
+            "items": {
+              "$ref": "#/components/schemas/PanelOut"
+            },
+            "title": "Panels",
+            "type": "array"
+          },
+          "quote_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quote Date"
+          },
+          "quote_id": {
+            "title": "Quote Id",
+            "type": "string"
+          },
+          "revision": {
+            "title": "Revision",
+            "type": "integer"
+          },
+          "status": {
+            "enum": [
+              "draft",
+              "sent"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "totals": {
+            "$ref": "#/components/schemas/QuoteTotalsOut"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "quote_id",
+          "name",
+          "drawing_id",
+          "drawing_number",
+          "input_kind",
+          "version",
+          "status",
+          "revision",
+          "quote_date",
+          "currency",
+          "coverage_pct",
+          "panels",
+          "findings",
+          "totals"
+        ],
+        "title": "QuoteOut",
+        "type": "object"
+      },
+      "QuoteTotalsOut": {
+        "description": "07 §7.6, summed on the server from the live lines.",
+        "properties": {
+          "cost_total": {
+            "examples": [
+              "0.15"
+            ],
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Cost Total",
+            "type": "string"
+          },
+          "discount": {
+            "anyOf": [
+              {
+                "examples": [
+                  "0.15"
+                ],
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Discount"
+          },
+          "discount_pct": {
+            "anyOf": [
+              {
+                "examples": [
+                  "0.15"
+                ],
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Discount Pct"
+          },
+          "gross_total": {
+            "examples": [
+              "0.15"
+            ],
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Gross Total",
+            "type": "string"
+          },
+          "line_counts": {
+            "$ref": "#/components/schemas/LineCountsOut"
+          },
+          "margin_abs": {
+            "examples": [
+              "0.15"
+            ],
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Margin Abs",
+            "type": "string"
+          },
+          "margin_pct": {
+            "anyOf": [
+              {
+                "examples": [
+                  "0.15"
+                ],
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Margin Pct"
+          },
+          "net_total": {
+            "description": "Before VAT",
+            "examples": [
+              "0.15"
+            ],
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Net Total",
+            "type": "string"
+          },
+          "price_total": {
+            "examples": [
+              "0.15"
+            ],
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Price Total",
+            "type": "string"
+          },
+          "uncosted_count": {
+            "description": "Priced lines with no cost, left out of the margin (09 §6.3)",
+            "title": "Uncosted Count",
+            "type": "integer"
+          },
+          "unpriced_count": {
+            "title": "Unpriced Count",
+            "type": "integer"
+          },
+          "vat": {
+            "examples": [
+              "0.15"
+            ],
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Vat",
+            "type": "string"
+          },
+          "vat_rate": {
+            "examples": [
+              "0.15"
+            ],
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Vat Rate",
+            "type": "string"
+          }
+        },
+        "required": [
+          "cost_total",
+          "price_total",
+          "line_counts",
+          "unpriced_count",
+          "uncosted_count",
+          "discount_pct",
+          "discount",
+          "net_total",
+          "margin_abs",
+          "margin_pct",
+          "vat_rate",
+          "vat",
+          "gross_total"
+        ],
+        "title": "QuoteTotalsOut",
+        "type": "object"
+      },
       "RevisableOut": {
         "description": "A finished drawing a new version can follow (01 §4.6 item 1).",
         "properties": {
@@ -1146,6 +2052,62 @@
         "title": "SettingsPatch",
         "type": "object"
       },
+      "SourceOut": {
+        "description": "Where one attribute's value came from (09 §6.4). `source` is 04 §6.2 / 05 §6.2's, plus `series`, `memory`,\n`circuit` (inferred from the circuit) and `missing`; the screen words each one.",
+        "properties": {
+          "attribute": {
+            "title": "Attribute",
+            "type": "string"
+          },
+          "confidence": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Confidence"
+          },
+          "detail": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "What the source points at, e.g. 'עמוד 1' or 'F22–F25 (3X16A)'",
+            "title": "Detail"
+          },
+          "source": {
+            "title": "Source",
+            "type": "string"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value"
+          }
+        },
+        "required": [
+          "attribute",
+          "value",
+          "source",
+          "detail",
+          "confidence"
+        ],
+        "title": "SourceOut",
+        "type": "object"
+      },
       "StageOut": {
         "properties": {
           "name": {
@@ -1187,6 +2149,44 @@
           "status"
         ],
         "title": "StageOut",
+        "type": "object"
+      },
+      "StatusReasonOut": {
+        "description": "One reason for the line's color (07 §7.5). Every reason is shown, not only the worst (09 §9).",
+        "properties": {
+          "issue_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Issue Id"
+          },
+          "source": {
+            "title": "Source",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "green",
+              "yellow",
+              "red"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "value": {
+            "title": "Value"
+          }
+        },
+        "required": [
+          "source",
+          "status"
+        ],
+        "title": "StatusReasonOut",
         "type": "object"
       },
       "TenantOut": {
@@ -1988,6 +2988,55 @@
         "summary": "List Quotes",
         "tags": [
           "home"
+        ]
+      }
+    },
+    "/quotes/{quote_id}": {
+      "get": {
+        "description": "The quote's current version. Another tenant's quote is 404, the same as one that does not exist.",
+        "operationId": "get_quote_quotes__quote_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "quote_id",
+            "required": true,
+            "schema": {
+              "pattern": "^quo_[0-9A-Z]{26}$",
+              "title": "Quote Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuoteOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Quote",
+        "tags": [
+          "quotes"
         ]
       }
     },

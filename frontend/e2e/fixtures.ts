@@ -17,6 +17,8 @@ export const TENANTS = {
   doneDarkDesktop: "done-dark-desktop@e2e.konboro.local",
   doneLightMobile: "done-light-mobile@e2e.konboro.local",
   doneDarkMobile: "done-dark-mobile@e2e.konboro.local",
+  // The NURSERY-1 fixture quote for the review screen (S09); nothing writes to it, so both projects share it.
+  review: "review@e2e.konboro.local",
 } as const;
 
 /** The E2E worker runs this project's stages slowly, so a test can cancel mid-run (devtools/e2e.py). */
