@@ -9,6 +9,7 @@ from typing import Annotated, Any, Literal
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from konboro.contracts.common import DecimalStr
+from konboro.contracts.intake import PageKind
 from konboro.domain.quota import QuotaState
 
 Email = Annotated[str, Field(min_length=3, max_length=254, pattern=r"^[^@\s]+@[^@\s]+\.[^@\s]+$")]
@@ -163,8 +164,24 @@ class ProgressPageOut(BaseModel):
     page_no: int
     file_name: str
     route: Literal["process", "context", "skip"] | None
-    page_kind: str | None
+    page_kind: PageKind | None
+    page_kind_confidence: float | None = None
+    classified_by: Literal["model", "user", "reused", "template"] | None = None
+    unsure: bool = Field(False, description="Below the confirmation threshold and not settled by the user (01 §5.6)")
     thumbnail_url: str | None = Field(None, description="Short-lived; load it, don't store it")
+
+
+class NoticeOut(BaseModel):
+    """A stage-1 issue for the user (01 §6.5, §8): Hebrew, ready to show."""
+
+    code: str
+    severity: Literal["info", "warning", "error"]
+    page_id: str | None = None
+    message: str
+
+
+class PageKindIn(BaseModel):
+    page_kind: PageKind
 
 
 class ProgressSummaryOut(BaseModel):
@@ -185,14 +202,18 @@ class ProgressOut(BaseModel):
     status: Literal["uploaded", "processing", "awaiting_confirmation", "ready", "failed", "cancelled"]
     current_stage: int | None
     progress: float = Field(ge=0, le=1)
-    counted_as: Literal["new_drawing", "revision"]
+    counted_as: Literal["new_drawing", "revision", "reuse"]
     counted: bool = Field(description="Whether this upload is counted in the quota right now")
     files: list[ProgressFileOut]
     stages: list[StageOut]
     quote_id: str | None
     error: str | None = Field(None, description="Hebrew, when the pipeline failed")
     summary: ProgressSummaryOut | None = None
-    pages: list[ProgressPageOut] = []
+    pages: list[ProgressPageOut] = Field([], description="Once stage 1 is done: when ready, or awaiting confirmation")
+    confirmation_reasons: list[Literal["low_confidence", "no_diagram_pages", "panel_count_mismatch"]] = Field(
+        [], description="Why the pages need the user's confirmation (01 §5.6); empty when they don't"
+    )
+    notices: list[NoticeOut] = []
 
 
 class RevisableOut(BaseModel):

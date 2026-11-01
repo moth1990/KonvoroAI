@@ -68,7 +68,27 @@ def test_stage1_perfect() -> None:
         "missed_process_pages": 0,
         "input_kind_accuracy": 1.0,
         "panel_count_accuracy": 1.0,
+        "confirmation_rate": None,  # the prediction didn't say
     }
+
+
+def test_stage1_title_block_per_field_and_confirmation() -> None:
+    """01 §10: title-block accuracy per field, on the fields the label states; spacing and separators don't count."""
+    label = drawing(
+        pages=LABEL_PAGES, title_block={"drawing_number": "26/952-5", "date": "2026-10-05", "panel_name": "KARWANI"}
+    )
+    pred = predicted(
+        pages=LABEL_PAGES,
+        title_block={"drawing_number": "26 / 952-5", "date": "2026-05-10", "panel_name": "karwani", "revision": "C"},
+        needs_confirmation=True,
+    )
+    scores = values(stage1.score(label, pred))
+    assert {k: v for k, v in scores.items() if k.startswith("title_block_")} == {
+        "title_block_drawing_number": 1.0,
+        "title_block_date": 0.0,  # day and month swapped is wrong
+        "title_block_panel_name": 1.0,
+    }
+    assert scores["confirmation_rate"] == 1.0
 
 
 def test_stage1_skipped_and_missing_process_pages() -> None:
@@ -86,6 +106,7 @@ def test_stage1_skipped_and_missing_process_pages() -> None:
         "missed_process_pages": 2,
         "input_kind_accuracy": 0.0,
         "panel_count_accuracy": 0.0,
+        "confirmation_rate": None,
     }
     assert scores["missed_process_pages"].den == 2
 

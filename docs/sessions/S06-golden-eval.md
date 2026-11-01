@@ -5,7 +5,7 @@
 | **Track** | P |
 | **Branch** | `s06-golden-eval` |
 | **Depends on** | S05 |
-| **Status** | in review |
+| **Status** | done |
 | **PR** | [#7](https://github.com/moth1990/KonvoroAI/pull/7) |
 
 ## Goal

@@ -196,9 +196,10 @@ This table answers the customer's question "why was this counted?".
 | `status` | `uploaded`, `processing`, `awaiting_confirmation`, `ready`, `failed`, `cancelled` |
 | `input_kind null` | `factory_drawing`, `designer_plan`, `bom_only`, `mixed`. Set by stage 1 |
 | `current_stage smallint null`, `progress real` | What the "run" screen shows |
-| `needs_confirmation bool` | |
-| `quota jsonb` | `{counted, reason, reservation_id, quota_event_id}`. `reason` is `new_drawing` or `revision`; `quota_event_id` is the `confirm` |
-| `issues jsonb` | Stage-level issues `{code, severity, page_id, message}`. A run that ends in the DLQ adds `pipeline_failed` |
+| `needs_confirmation bool` | Stage 1 asks the user to confirm the pages (01 §5.6); the drawing waits in `awaiting_confirmation` |
+| `title_block jsonb null` | The drawing's title block, read once by stage 1 (S08): `{project_name, designer, panel_name, drawing_number, revision, date, status}`. The revision check (01 §4.5) compares `drawing_number` |
+| `quota jsonb` | `{counted, reason, reservation_id, quota_event_id}`. `reason` is `new_drawing`, `revision` or `reuse` (the same files again, 01 §4.5); `quota_event_id` is the `confirm` |
+| `issues jsonb` | Stage-level issues `{code, severity, page_id, message, stage}`. A run that ends in the DLQ adds `pipeline_failed`; stage 1 adds its 01 §8 notices, and `needs_confirmation` with `reasons` |
 | `trace_id`, `created_by → users` | |
 
 **`drawing_files`** (`fil_`): `original_name`, `detected_format`, `sha256`, `size_bytes`, `page_count`, `storage_key`. An index on `(tenant_id, sha256)` supports reuse (01 §5.1). A file inside a ZIP is its own row, named `archive.zip/inner.pdf`.
@@ -214,12 +215,18 @@ This table answers the customer's question "why was this counted?".
 | `geometry_source`, `text_source`, `quality` | |
 | `page_kind`, `page_kind_confidence`, `route` | `route` is `process`, `context` or `skip` |
 | `classified_by`, `model` | `classified_by` is `model`, `user`, `reused` or `template` (01 §5.7) |
-| `title_block jsonb`, `regions jsonb` | |
+| `title_block jsonb`, `regions jsonb` | `regions`: everything the classifier found, `[{region_kind, bbox, panel_name, confidence}]`, panels included (`panel`) whatever the page's route, so a page-kind change can rebuild the panels (S08) |
 | `render_key`, `tiles_prefix` | S3 keys |
 
 **`panels`** (`pnl_`): `drawing_id`, `name`, `page_ids text[]`, `bboxes jsonb` (page → bbox), and `confidence`.
 
 **`context_artifacts`** (`ctx_`): `drawing_id`, `page_id`, `kind` (e.g. `general_notes`, `bom_table`, `legend`), `format`, `content text`.
+
+**`page_templates`** (`tpl_`, 01 §5.7): a factory's fixed page, so the next drawing from the same producer classifies it without a model.
+- `producer`: the title block's `designer`, normalized; `page_kind` (`factory_template`).
+- `fingerprint`: a 64 × 64 ink map as hex (`pipeline/intake/templates.py`); `mask real[]`: the title block, as page fractions, left out of the comparison.
+- `source_page_id`: the page it came from, for the audit trail. No foreign key: a template outlives its drawing.
+- Index on `(tenant_id, producer)`. Matching never leaves the tenant (RLS) or the producer.
 
 **`stage_runs`** has PK `(tenant_id, drawing_id, stage)`. It records progress, retries and where each stage's output lives.
 - `stage`: 1–7.
@@ -287,7 +294,7 @@ This table answers the customer's question "why was this counted?".
 
 **`correction_events`** (`evt_`, 09 §10) is append-only. The app may update only `undone`, and a trigger enforces this.
 - `quote_id`, `quote_version`, `user_id`.
-- `source`: `review_screen`, `chat` or `price_list`.
+- `source`: `review_screen`, `chat`, `price_list`, or `new_quote` (a page kind changed on the new-quote screen, S08).
 - `type`: the 09 §10 list, plus `price_changed` and `supplier_selected` from 09 §7.14–7.15.
 - `line_id`, `component_id`, `instance_ids`, `page_id`.
 - `before jsonb`, `after jsonb`, `reason`, `undone bool`.
@@ -373,6 +380,7 @@ Added here:
 | `cnv_` | conversation | `msg_` | chat message |
 | `prp_` | chat proposal | `aud_` | audit |
 | `dif_` | audit difference | `kc_` | knowledge candidate |
+| `tpl_` | factory page template | | |
 | `cat_` | catalog item | `ref_` | reference crop (global) |
 | `trf_` | reference crop (tenant) | `abr_` | abbreviation (global) |
 | `tab_` | abbreviation (tenant) | `vat_` | VAT rate |

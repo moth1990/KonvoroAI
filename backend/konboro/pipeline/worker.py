@@ -16,6 +16,7 @@ from konboro.services.llm import live_providers
 from konboro.services.queue import DLQ, STAGE_QUEUES, Queue
 from konboro.services.storage import Storage
 from konboro.settings import Settings, get_settings
+from konboro_llm.base import LLMProvider
 
 from .coordinator import Pipeline
 from .stages import Stage
@@ -68,21 +69,40 @@ class Worker:
         log.info("worker stopped")
 
 
-def build(settings: Settings, engine: Engine | None = None, stages: dict[int, Stage] | None = None) -> Worker:
-    pipeline = Pipeline(
-        settings, engine or app_engine(), Storage(settings), Queue(settings), llm_providers=live_providers()
-    )
+def providers_for(settings: Settings) -> dict[str, LLMProvider]:
+    """Real Claude when there is a key. A local worker without one (`make dev`) falls back to the stand-in model,
+    loudly: its page kinds are made up. Anywhere else, no key means stage 1 fails, as it should."""
+    live = live_providers()
+    if live or settings.env != "local":
+        return live
+    from konboro.devtools.fake_llm import fake_providers
+
+    log.warning("no ANTHROPIC_API_KEY: stage 1 uses the stand-in model, and its page kinds are made up")
+    return fake_providers()
+
+
+def build(
+    settings: Settings,
+    engine: Engine | None = None,
+    stages: dict[int, Stage] | None = None,
+    llm_providers: dict[str, LLMProvider] | None = None,
+) -> Worker:
+    providers = llm_providers if llm_providers is not None else providers_for(settings)
+    pipeline = Pipeline(settings, engine or app_engine(), Storage(settings), Queue(settings), llm_providers=providers)
     if stages is not None:
         pipeline.stages = stages
     return Worker(pipeline)
 
 
 def start_in_thread(
-    settings: Settings, engine: Engine | None = None, stages: dict[int, Stage] | None = None
+    settings: Settings,
+    engine: Engine | None = None,
+    stages: dict[int, Stage] | None = None,
+    llm_providers: dict[str, LLMProvider] | None = None,
 ) -> tuple[threading.Thread, threading.Event]:
     """For the E2E API, which runs a worker beside itself."""
     stop = threading.Event()
-    worker = build(settings, engine, stages)
+    worker = build(settings, engine, stages, llm_providers)
     thread = threading.Thread(target=worker.run_forever, args=(stop,), daemon=True, name="worker")
     thread.start()
     return thread, stop

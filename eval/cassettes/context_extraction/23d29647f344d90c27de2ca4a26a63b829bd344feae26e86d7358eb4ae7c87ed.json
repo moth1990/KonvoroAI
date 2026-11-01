@@ -1,0 +1,18 @@
+{
+  "answer": {
+    "input_tokens": 1585,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 71,
+    "payload": {
+      "date": "2026-10-05",
+      "designer": "S.S Electr",
+      "drawing_number": "26/952-5",
+      "panel_name": "KARWANI",
+      "project_name": "NEVIS",
+      "revision": null,
+      "status": null
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "context_extraction"
+}

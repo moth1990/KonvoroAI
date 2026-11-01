@@ -2,6 +2,10 @@ import { describe, expect, it } from "vitest";
 
 import type { Progress } from "../../api/client";
 import {
+  CONFIRM_REASONS,
+  countedText,
+  gridHint,
+  pageNote,
   applyServerCheck,
   clientCheck,
   MESSAGES,
@@ -139,8 +143,59 @@ function progress(statuses: string[], status = "processing"): Progress {
     stages: statuses.map((s, i) => ({ stage: i + 1, name: `s${i + 1}`, status: s as never, summary: null })),
     quote_id: null,
     pages: [],
+    confirmation_reasons: [],
+    notices: [],
   };
 }
+
+type Page = Progress["pages"][number];
+
+function page(changes: Partial<Page> = {}): Page {
+  return {
+    page_id: "pg_1",
+    page_no: 1,
+    file_name: "a.pdf",
+    route: "process",
+    page_kind: "single_line_diagram",
+    page_kind_confidence: 0.95,
+    classified_by: "model",
+    unsure: false,
+    ...changes,
+  };
+}
+
+describe("pageNote", () => {
+  it("says how the page was classified, the user's word first", () => {
+    expect(pageNote(page({ classified_by: "user", unsure: false }))).toBe("סווג על ידיכם");
+    expect(pageNote(page({ classified_by: "template", route: "skip" }))).toBe("זוהה לפי תבנית המפעל");
+    expect(pageNote(page({ classified_by: "reused" }))).toBe("כמו בשרטוט שכבר פוענח");
+    expect(pageNote(page({ unsure: true, page_kind_confidence: 0.6 }))).toBe("ביטחון נמוך. בדקו את הסוג");
+    expect(pageNote(page({ unsure: true, classified_by: "reused" }))).toBe("ביטחון נמוך. בדקו את הסוג");
+    expect(pageNote(page({ route: "context", page_kind: "legend" }))).toBe("נקרא להקשר, לא נספר");
+    expect(pageNote(page())).toBe("ביטחון גבוה");
+  });
+});
+
+describe("the done step's lines", () => {
+  it("the grid hint follows the pages' confidence", () => {
+    const sure = { ...progress([], "ready"), pages: [page()] };
+    const unsure = { ...sure, pages: [page({ unsure: true })] };
+    expect(gridHint(sure)).toContain("כל העמודים סווגו בביטחון גבוה");
+    expect(gridHint(unsure)).toContain("ביטחון נמוך");
+  });
+
+  it("the quota line says why a drawing did not count", () => {
+    const p = progress([], "ready");
+    expect(countedText(p, "13 מתוך 50")).toBe("נספרה במכסה: 13 מתוך 50");
+    expect(countedText({ ...p, counted_as: "revision" }, "")).toContain("לא נספרה במכסה");
+    expect(countedText({ ...p, counted_as: "reuse" }, "")).toBe("אותם קבצים כבר פוענחו. לא נספרה במכסה.");
+  });
+
+  it("every confirmation reason has a sentence", () => {
+    for (const reason of ["low_confidence", "no_diagram_pages", "panel_count_mismatch"])
+      expect(CONFIRM_REASONS[reason]).toBeTruthy();
+  });
+});
 
 describe("stageRows", () => {
   it("done, the one being worked on, and the ones waiting", () => {

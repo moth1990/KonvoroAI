@@ -5,10 +5,13 @@ import { Link, useNavigate, useSearchParams } from "react-router";
 import {
   ApiError,
   cancelDrawing,
+  changePageKind,
+  confirmDrawing,
   fetchProgress,
   fetchRevisable,
   uploadDrawing,
   type Me,
+  type PageKind,
   type Progress,
   type UploadedFile,
 } from "../../api/client";
@@ -20,8 +23,12 @@ import { useToast } from "../../ui/Toast";
 import {
   applyServerCheck,
   clientCheck,
+  CONFIRM_REASONS,
+  countedText,
+  gridHint,
   INPUT_KINDS,
   PAGE_KINDS,
+  pageNote,
   ROUTES,
   sizeText,
   stageCounter,
@@ -63,6 +70,8 @@ export function NewQuoteScreen() {
   let body;
   if (!me.data) body = null;
   else if (drawingId && !p) body = progress.isError ? <LoadError /> : null;
+  else if (p && p.status === "awaiting_confirmation")
+    body = <ConfirmStep progress={p} onCancelled={() => setParams({})} />;
   else if (p && isActive(p)) body = <RunStep progress={p} onCancelled={() => setParams({})} />;
   else if (p && p.status === "ready") body = <DoneStep progress={p} me={me.data} />;
   else if (p && p.status === "failed") body = <FailedStep progress={p} onBack={() => setParams({})} />;
@@ -88,7 +97,7 @@ export function NewQuoteScreen() {
 }
 
 function isActive(p: Progress | undefined): boolean {
-  return p !== undefined && ["uploaded", "processing", "awaiting_confirmation"].includes(p.status);
+  return p !== undefined && ["uploaded", "processing"].includes(p.status);
 }
 
 function LoadError() {
@@ -490,47 +499,15 @@ function DoneStep({ progress: p, me }: { progress: Progress; me: Me }) {
           </div>
         </div>
       )}
+      <Notices progress={p} />
       <div style={{ display: "grid", gap: 4 }}>
         <h3 style={{ margin: 0 }}>סיווג העמודים</h3>
-        <span className="small muted">אפשר לשנות סוג עמוד ממסך הבדיקה.</span>
+        <span className="small muted">{gridHint(p)}</span>
       </div>
-      <div className="thumbs">
-        {p.pages.map((page) => {
-          const route = ROUTES[page.route ?? "process"] ?? ROUTES.process;
-          return (
-            <div className="thumb" key={page.page_id} data-testid="thumb">
-              {page.thumbnail_url ? (
-                <img src={page.thumbnail_url} alt={`עמוד ${page.page_no}`} />
-              ) : (
-                <img className="placeholder" alt={`עמוד ${page.page_no}, בלי תמונה`} />
-              )}
-              <div className="row small">
-                <b>{`עמוד ${page.page_no}`}</b>
-                <span className="spacer" />
-                <span className={`chip ${route?.chip ?? ""}`}>{route?.label}</span>
-              </div>
-              {/* Read-only until page classification lands (S08). */}
-              <select
-                className="input"
-                aria-label={`סוג עמוד ${page.page_no}`}
-                value={page.page_kind ?? "other"}
-                disabled
-                onChange={() => undefined}
-              >
-                {Object.entries(PAGE_KINDS).map(([value, label]) => (
-                  <option key={value} value={value}>
-                    {label}
-                  </option>
-                ))}
-              </select>
-              <span className="tnote">{route?.note}</span>
-            </div>
-          );
-        })}
-      </div>
+      <PageGrid progress={p} />
       <div className="row">
         <span className="small muted" style={{ flex: 1, minWidth: 200 }}>
-          {p.counted_as === "revision" ? "גרסה חדשה של הצעה קיימת. לא נספרה במכסה." : `נספרה במכסה: ${quota.label}`}
+          {countedText(p, quota.label)}
         </span>
         <button
           type="button"
@@ -542,6 +519,158 @@ function DoneStep({ progress: p, me }: { progress: Progress; me: Me }) {
           המשך לבדיקה
         </button>
       </div>
+    </div>
+  );
+}
+
+/**
+ * The pages wait for the user (01 §5.6; S08 decision: the done step's grid, a line saying why, the unsure pages
+ * marked, and "אשר והמשך"). Changing a kind here re-runs nothing: decoding hasn't gone past stage 1.
+ */
+function ConfirmStep({ progress: p, onCancelled }: { progress: Progress; onCancelled: () => void }) {
+  const queries = useQueryClient();
+  const toast = useToast();
+  const [busy, setBusy] = useState(false);
+
+  async function confirm() {
+    setBusy(true);
+    try {
+      queries.setQueryData(["progress", p.drawing_id], await confirmDrawing(p.drawing_id));
+    } catch (err) {
+      toast(err instanceof ApiError ? err.message : FALLBACK);
+      void queries.invalidateQueries({ queryKey: ["progress", p.drawing_id] });
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function cancel() {
+    setBusy(true);
+    try {
+      await cancelDrawing(p.drawing_id);
+      void queries.invalidateQueries({ queryKey: ["me"] });
+      toast("הפענוח בוטל. המקום במכסה שוחרר");
+      onCancelled();
+    } catch (err) {
+      toast(err instanceof ApiError ? err.message : FALLBACK);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  const reasons = p.confirmation_reasons.map((r) => CONFIRM_REASONS[r]).filter(Boolean);
+  return (
+    <div className="card pad" style={{ display: "grid", gap: 14 }} data-testid="confirm-pages">
+      <div className="row">
+        <span className="chip warn">ממתין לאישור</span>
+        <h2 className="wrap-any" style={{ flex: 1, minWidth: 0 }}>
+          {p.name}
+        </h2>
+      </div>
+      <div style={{ display: "grid", gap: 4 }}>
+        <h3 style={{ margin: 0 }}>בדקו את סיווג העמודים</h3>
+        <span className="small muted" data-testid="confirm-reasons">
+          {reasons.length ? reasons.join(" ") : "הסיווג תוקן. אשרו כדי להמשיך בפענוח."}
+        </span>
+      </div>
+      <Notices progress={p} />
+      <PageGrid progress={p} />
+      <div className="row">
+        <span className="small muted" style={{ flex: 1, minWidth: 200 }}>
+          הפענוח ימשיך אחרי האישור. אפשר לסגור את המסך, וההצעה תחכה ברשימה.
+        </span>
+        <button type="button" className="btn ghost sm danger" disabled={busy} onClick={() => void cancel()}>
+          בטל פענוח
+        </button>
+        <button
+          type="button"
+          className="btn primary"
+          data-testid="confirm"
+          disabled={busy}
+          onClick={() => void confirm()}
+        >
+          אשר והמשך
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/** Stage 1's notices for the user (01 §8): low resolution, a drawing marked "לעיון", a version counted as new. */
+function Notices({ progress: p }: { progress: Progress }) {
+  if (!p.notices.length) return null;
+  return (
+    <ul className="small" style={{ margin: 0, paddingInlineStart: 18 }} data-testid="notices">
+      {p.notices.map((n, i) => (
+        <li key={`${n.code}-${i}`} className={n.severity === "warning" ? "warn-msg" : "muted"}>
+          {n.message}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+/**
+ * A card per page (prototype lines 847–852): picture, number, route, kind, and a short note. The kind can be
+ * changed (01 §5.6). On a finished drawing a change of route runs decoding again from stage 2.
+ */
+function PageGrid({ progress: p }: { progress: Progress }) {
+  const queries = useQueryClient();
+  const toast = useToast();
+  const [saving, setSaving] = useState<string | null>(null);
+
+  async function change(pageId: string, kind: PageKind) {
+    setSaving(pageId);
+    try {
+      const next = await changePageKind(p.drawing_id, pageId, kind);
+      queries.setQueryData(["progress", p.drawing_id], next);
+      toast(next.status === "processing" ? "סוג העמוד עודכן. הפענוח רץ שוב משלב 2" : "סוג העמוד עודכן");
+    } catch (err) {
+      toast(err instanceof ApiError ? err.message : FALLBACK);
+      void queries.invalidateQueries({ queryKey: ["progress", p.drawing_id] });
+    } finally {
+      setSaving(null);
+    }
+  }
+
+  return (
+    <div className="thumbs">
+      {p.pages.map((page) => {
+        const route = ROUTES[page.route ?? "process"] ?? ROUTES.process;
+        return (
+          <div
+            className={`thumb${page.unsure ? " unsure" : ""}`}
+            key={page.page_id}
+            data-testid="thumb"
+            data-unsure={page.unsure ? "true" : undefined}
+          >
+            {page.thumbnail_url ? (
+              <img src={page.thumbnail_url} alt={`עמוד ${page.page_no}`} />
+            ) : (
+              <img className="placeholder" alt={`עמוד ${page.page_no}, בלי תמונה`} />
+            )}
+            <div className="row small">
+              <b>{`עמוד ${page.page_no}`}</b>
+              <span className="spacer" />
+              <span className={`chip ${route?.chip ?? ""}`}>{route?.label}</span>
+            </div>
+            <select
+              className="input"
+              aria-label={`סוג עמוד ${page.page_no}`}
+              value={page.page_kind ?? "other"}
+              disabled={saving !== null}
+              onChange={(e) => void change(page.page_id, e.target.value as PageKind)}
+            >
+              {Object.entries(PAGE_KINDS).map(([value, label]) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
+            </select>
+            <span className="tnote">{pageNote(page)}</span>
+          </div>
+        );
+      })}
     </div>
   );
 }

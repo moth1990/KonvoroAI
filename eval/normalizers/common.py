@@ -30,6 +30,22 @@ def pages(raw: list[dict[str, Any]]) -> tuple[CanonPage, ...]:
     return tuple(out)
 
 
+# The labels' title-block keys, to the contract's (01 §6.3). The designer, the producer and people's names are left
+# out: the labels describe them ("(שם בטבלת הכותרת)", "names are not stored") rather than spell them.
+TITLE_BLOCK_KEYS = {
+    "drawing_number": "drawing_number",
+    "date": "date",
+    "project": "project_name",
+    "panel": "panel_name",
+    "revision": "revision",
+    "status": "status",
+}
+
+
+def title_block(raw: dict[str, Any] | None) -> dict[str, str]:
+    return {ours: str(raw[theirs]) for theirs, ours in TITLE_BLOCK_KEYS.items() if raw and raw.get(theirs) is not None}
+
+
 _RANGE = re.compile(r"^([A-Z]+)(\d+)\s*[–-]\s*\1?(\d+)$")  # "F1–F17", "C1-C5"
 
 

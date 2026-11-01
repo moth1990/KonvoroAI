@@ -1,0 +1,50 @@
+{
+  "answer": {
+    "input_tokens": 4364,
+    "model": "claude-haiku-5-5",
+    "output_tokens": 1138,
+    "payload": {
+      "component_labels": "tags_only",
+      "language": "he",
+      "orientation": 0,
+      "page_kind": "control_diagram",
+      "page_kind_confidence": 0.9,
+      "panels": [
+        {
+          "bbox": [
+            59,
+            98,
+            938,
+            787
+          ],
+          "confidence": 0.8,
+          "name": null
+        }
+      ],
+      "reasoning": "The page shows relay and switch wiring with contactor-style tags C3, C4, C5 and relay coils R5, R6, R7 on a 24VDC control circuit, so it is a control diagram.",
+      "regions": [
+        {
+          "bbox": [
+            24,
+            822,
+            869,
+            969
+          ],
+          "confidence": 0.9,
+          "region_kind": "title_block"
+        }
+      ],
+      "title_block": {
+        "date": "2026-10-05",
+        "designer": "S.S Electrical and control panels",
+        "drawing_number": "26/952-5",
+        "panel_name": "KARWANI",
+        "project_name": "NEVIS",
+        "revision": null,
+        "status": null
+      }
+    }
+  },
+  "model": "claude-haiku-5-5",
+  "stage": "page_classification"
+}

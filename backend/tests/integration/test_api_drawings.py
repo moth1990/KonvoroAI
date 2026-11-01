@@ -39,18 +39,25 @@ def test_progress_from_upload_to_ready(api: Api, migrated_db: dict[str, Engine],
     body = progress(api, tenant, drawing_id).json()
     assert (body["status"], body["progress"], body["current_stage"], body["counted"]) == ("ready", 1, 7, True)
     assert [s["status"] for s in body["stages"]] == ["done"] * 7
-    assert body["stages"][0]["summary"] == "9 עמודים · לוח אחד"
+    assert body["stages"][0]["summary"] == "9 עמודים · 2 תבניות של המפעל · לוח אחד"
     assert body["quote_id"].startswith("quo_")
     assert body["summary"] == {
-        "input_kind": "designer_plan",
-        "panels": ["גן ילדים"],
+        "input_kind": "factory_drawing",
+        "panels": ["לוח ראשי"],
         "page_count": 9,
-        "pages_by_route": {"process": 9, "context": 0, "skip": 0},
+        "pages_by_route": {"process": 5, "context": 2, "skip": 2},
         "products": 0,
         "priced": 0,
         "findings": 0,
     }
     assert [p["page_no"] for p in body["pages"]] == list(range(1, 10))
+    assert [p["page_kind"] for p in body["pages"]][:4] == [
+        "technical_data",
+        "factory_template",
+        "factory_template",
+        "panel_front_view",
+    ]
+    assert (body["confirmation_reasons"], body["notices"]) == ([], [])
     with urllib.request.urlopen(body["pages"][0]["thumbnail_url"]) as response:  # noqa: S310 (local S3Mock)
         assert response.read().startswith(b"\x89PNG")
 

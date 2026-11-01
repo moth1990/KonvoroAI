@@ -1,20 +1,21 @@
 """Anthropic implementation, using the official Python SDK (pip install anthropic).
 
-Structured output is done by forcing a single tool whose input_schema is the stage's
-pydantic schema. The model must "call" that tool, so the answer is always a JSON object.
+Structured output is the API's JSON output (`output_config.format`) with the stage's pydantic schema, made strict by
+the SDK's `transform_schema` (constraints it can't enforce move into descriptions; the client still validates the
+answer against the full schema). Not a forced tool call: Claude Sonnet 5.5 and Opus 5.5 reject `tool_choice`
+`tool`/`any` with a 400 (BUG-013).
 """
 
 from __future__ import annotations
 
 import base64
+import json
 from typing import Any
 
 import anthropic
 
 from ..base import RawAnswer
 from ..types import ImageInput, LLMError, LLMRequest
-
-TOOL_NAME = "submit_result"
 
 
 class AnthropicProvider:
@@ -49,30 +50,31 @@ class AnthropicProvider:
         return model if model.startswith(self._model_prefix) else f"{self._model_prefix}{model}"
 
     def complete_structured(self, request: LLMRequest[Any], model: str, retry_hint: str | None = None) -> RawAnswer:
-        tool = {
-            "name": TOOL_NAME,
-            "description": "Return the extraction result. Always call this tool exactly once.",
-            "input_schema": request.output_schema.model_json_schema(),
-        }
-
         try:
             response = self._client.messages.create(
                 model=self.model_id(model),
                 max_tokens=request.max_tokens,
                 system=request.system,
                 messages=self._build_messages(request, retry_hint),
-                tools=[tool],
-                tool_choice={"type": "tool", "name": TOOL_NAME},
+                output_config={
+                    "format": {"type": "json_schema", "schema": anthropic.transform_schema(request.output_schema)}
+                },
             )
         except anthropic.APIError as exc:
             raise LLMError(f"anthropic call failed: {exc}") from exc
 
-        tool_block = next((b for b in response.content if b.type == "tool_use"), None)
-        if tool_block is None:
-            raise LLMError("model did not return a tool_use block")
+        if response.stop_reason in ("refusal", "max_tokens"):
+            raise LLMError(f"model stopped before answering: {response.stop_reason}")
+        text = next((b.text for b in response.content if b.type == "text"), None)
+        if text is None:
+            raise LLMError("model returned no text block")
+        try:
+            payload = json.loads(text)
+        except json.JSONDecodeError as exc:
+            raise LLMError(f"model answer is not JSON: {exc}") from exc
 
         return RawAnswer(
-            payload=tool_block.input,
+            payload=payload,
             model=response.model,
             input_tokens=response.usage.input_tokens,
             output_tokens=response.usage.output_tokens,

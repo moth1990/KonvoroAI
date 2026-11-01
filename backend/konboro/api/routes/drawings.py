@@ -1,11 +1,13 @@
 """Uploads and their pipeline runs: the new-quote screen (01 §4.6, prototype `vNew`)."""
 
-from typing import Annotated
+from typing import Annotated, Any
 
 from fastapi import APIRouter, BackgroundTasks, Depends, File, Form, Path, Request, UploadFile, status
 
 from konboro.domain.permissions import Permission
 from konboro.pipeline import coordinator
+from konboro.pipeline.intake import corrections
+from konboro.pipeline.intake.routing import CONFIRM_THRESHOLD
 from konboro.pipeline.stages import NAMES
 from konboro.services import drawings, quota
 from konboro.services.intake import MB, Limits
@@ -15,6 +17,8 @@ from konboro.services.storage import Storage
 from ..deps import Actor, require
 from ..errors import ERROR_RESPONSES, ApiError
 from ..schemas import (
+    NoticeOut,
+    PageKindIn,
     ProgressFileOut,
     ProgressOut,
     ProgressPageOut,
@@ -116,6 +120,47 @@ def cancel(request: Request, actor: Writer, drawing_id: DrawingId) -> ProgressOu
     return _progress_out(actor, request.app.state.storage, drawing_id)
 
 
+@router.post("/drawings/{drawing_id}/confirm")
+def confirm(request: Request, background: BackgroundTasks, actor: Writer, drawing_id: DrawingId) -> ProgressOut:
+    """The user confirmed the pages (01 §5.6, "אשר והמשך"): decoding goes on from stage 2."""
+    try:
+        message = coordinator.confirm(actor.session, actor.tenant_id, drawing_id)
+    except LookupError as e:
+        raise ApiError(404, "not_found") from e
+    except coordinator.NotAwaitingError as e:
+        raise ApiError(409, "not_awaiting_confirmation") from e
+    actor.session.flush()
+    background.add_task(request.app.state.queue.send, message)  # after the commit
+    return _progress_out(actor, request.app.state.storage, drawing_id)
+
+
+@router.patch("/drawings/{drawing_id}/pages/{page_id}")
+def change_page_kind(
+    request: Request,
+    background: BackgroundTasks,
+    actor: Writer,
+    drawing_id: DrawingId,
+    page_id: Annotated[str, Path(pattern=r"^pg_[0-9A-Z]{26}$")],
+    body: PageKindIn,
+) -> ProgressOut:
+    """The user changes a page's kind (01 §5.6). A changed route on a finished drawing runs stages 2–7 again."""
+    storage: Storage = request.app.state.storage
+    try:
+        change = corrections.change_page_kind(
+            actor.session, storage, actor.tenant_id, actor.user_id, drawing_id, page_id, body.page_kind
+        )
+    except LookupError as e:
+        raise ApiError(404, "not_found") from e
+    except coordinator.DrawingFinishedError as e:
+        raise ApiError(409, "drawing_finished") from e
+    except coordinator.DrawingBusyError as e:
+        raise ApiError(409, "drawing_busy") from e
+    actor.session.flush()
+    if change.message is not None:
+        background.add_task(request.app.state.queue.send, change.message)  # after the commit
+    return _progress_out(actor, storage, drawing_id)
+
+
 def _progress_out(actor: Actor, storage: Storage, drawing_id: str) -> ProgressOut:
     p = drawings.progress(actor.session, actor.tenant_id, drawing_id)
     if p is None:
@@ -124,7 +169,11 @@ def _progress_out(actor: Actor, storage: Storage, drawing_id: str) -> ProgressOu
     q = d.quota or {}
     statuses = {r.stage: r.status for r in p.runs}
     ready = d.status == "ready"
-    failed = next((i["message"] for i in d.issues if i.get("code") == "pipeline_failed"), None)
+    classified = d.status in ("ready", "awaiting_confirmation")
+    errors = [i for i in d.issues if i.get("severity") == "error" and i.get("message")]
+    failed = errors[0]["message"] if errors else None
+    stage_1 = [i for i in d.issues if i.get("stage") == 1 and i.get("message") and i.get("severity") != "error"]
+    reasons: list[Any] = next((i["reasons"] for i in d.issues if i.get("code") == "needs_confirmation"), [])
     routes = [page.route or "process" for page, _ in p.pages]
     return ProgressOut(
         drawing_id=d.id,
@@ -163,11 +212,21 @@ def _progress_out(actor: Actor, storage: Storage, drawing_id: str) -> ProgressOu
                 page_no=page.page_no,
                 file_name=file_name,
                 route=page.route,  # type: ignore[arg-type]
-                page_kind=page.page_kind,
+                page_kind=page.page_kind,  # type: ignore[arg-type]
+                page_kind_confidence=page.page_kind_confidence,
+                classified_by=page.classified_by,  # type: ignore[arg-type]
+                unsure=page.classified_by != "user" and (page.page_kind_confidence or 0) < CONFIRM_THRESHOLD,
                 thumbnail_url=storage.presigned_get(actor.tenant_id, page.render_key) if page.render_key else None,
             )
             for page, file_name in p.pages
         ]
-        if ready
+        if classified
+        else [],
+        confirmation_reasons=reasons if d.status == "awaiting_confirmation" else [],
+        notices=[
+            NoticeOut(code=i["code"], severity=i["severity"], page_id=i.get("page_id"), message=i["message"])
+            for i in stage_1
+        ]
+        if classified
         else [],
     )

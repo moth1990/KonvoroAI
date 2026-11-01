@@ -1,0 +1,50 @@
+{
+  "answer": {
+    "input_tokens": 4364,
+    "model": "claude-haiku-5-5",
+    "output_tokens": 1312,
+    "payload": {
+      "component_labels": "tags_and_models",
+      "language": "he",
+      "orientation": 0,
+      "page_kind": "control_diagram",
+      "page_kind_confidence": 0.85,
+      "panels": [
+        {
+          "bbox": [
+            60,
+            110,
+            870,
+            800
+          ],
+          "confidence": 0.6,
+          "name": null
+        }
+      ],
+      "reasoning": "Relay, switch and contactor coil symbols wired between a 24VDC supply and outputs form a control schematic, with model numbers such as S201M and DTB4848RR printed beside the tags.",
+      "regions": [
+        {
+          "bbox": [
+            25,
+            815,
+            975,
+            970
+          ],
+          "confidence": 0.9,
+          "region_kind": "title_block"
+        }
+      ],
+      "title_block": {
+        "date": "2026-10-05",
+        "designer": "S.S Electrical and control panels",
+        "drawing_number": "26/952-5",
+        "panel_name": "KARWANI",
+        "project_name": "NEVIS",
+        "revision": null,
+        "status": null
+      }
+    }
+  },
+  "model": "claude-haiku-5-5",
+  "stage": "page_classification"
+}

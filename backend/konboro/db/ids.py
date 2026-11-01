@@ -14,7 +14,7 @@ PREFIXES = frozenset(
     {"drw", "fil", "pg", "pnl", "ts", "blk", "tl", "det", "ins", "cmp", "iss", "quo", "ln", "trc"}
     # docs/db-schema.md §7
     | {"tnt", "usr", "cus", "prj", "ctx", "qv", "evt", "prd", "sup", "psp", "prh", "mr", "dr", "mm", "qev", "llm"}
-    | {"cnv", "msg", "prp", "aud", "dif", "kc", "cat", "ref", "trf", "abr", "tab", "vat"}
+    | {"cnv", "msg", "prp", "aud", "dif", "kc", "cat", "ref", "trf", "abr", "tab", "vat", "tpl"}
 )
 
 _ID = re.compile(r"^([a-z]+)_([0-9A-HJKMNP-TV-Z]{26})$")

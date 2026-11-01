@@ -19,6 +19,9 @@ class ImageInput:
 
     data: bytes
     media_type: str = "image/png"  # image/png | image/jpeg | image/webp
+    # What the pixels are, independent of how they were rendered: e.g. the page's content hash plus the render
+    # settings. Cassettes key on it when set, so a recording replays on any platform's PDFium build.
+    key: str | None = None
 
 
 @dataclass(frozen=True)

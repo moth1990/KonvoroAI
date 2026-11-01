@@ -150,6 +150,26 @@ export async function cancelDrawing(drawingId: string, client = api): Promise<Pr
   return unwrap(await client.POST("/drawings/{drawing_id}/cancel", { params: { path: { drawing_id: drawingId } } }));
 }
 
+export async function confirmDrawing(drawingId: string, client = api): Promise<Progress> {
+  return unwrap(await client.POST("/drawings/{drawing_id}/confirm", { params: { path: { drawing_id: drawingId } } }));
+}
+
+export type PageKind = Schemas["PageKindIn"]["page_kind"];
+
+export async function changePageKind(
+  drawingId: string,
+  pageId: string,
+  pageKind: PageKind,
+  client = api,
+): Promise<Progress> {
+  return unwrap(
+    await client.PATCH("/drawings/{drawing_id}/pages/{page_id}", {
+      params: { path: { drawing_id: drawingId, page_id: pageId } },
+      body: { page_kind: pageKind },
+    }),
+  );
+}
+
 export async function fetchRevisable(client = api): Promise<Revisable[]> {
   return unwrap(await client.GET("/drawings/revisable"));
 }

@@ -65,11 +65,17 @@
           }
         },
         "s1": {
+          "confirmation_rate": {
+            "den": 1,
+            "kind": "ratio",
+            "num": 1.0,
+            "value": 1.0
+          },
           "input_kind_accuracy": {
             "den": 1,
             "kind": "ratio",
-            "num": 0.0,
-            "value": 0.0
+            "num": 1.0,
+            "value": 1.0
           },
           "missed_process_pages": {
             "den": 3,
@@ -80,20 +86,38 @@
           "page_kind_accuracy": {
             "den": 5,
             "kind": "ratio",
+            "num": 5.0,
+            "value": 1.0
+          },
+          "panel_count_accuracy": {
+            "den": 1,
+            "kind": "ratio",
             "num": 0.0,
             "value": 0.0
           },
-          "panel_count_accuracy": {
+          "route_accuracy": {
+            "den": 5,
+            "kind": "ratio",
+            "num": 5.0,
+            "value": 1.0
+          },
+          "title_block_date": {
             "den": 1,
             "kind": "ratio",
             "num": 1.0,
             "value": 1.0
           },
-          "route_accuracy": {
-            "den": 5,
+          "title_block_drawing_number": {
+            "den": 1,
             "kind": "ratio",
-            "num": 3.0,
-            "value": 0.6
+            "num": 1.0,
+            "value": 1.0
+          },
+          "title_block_panel_name": {
+            "den": 1,
+            "kind": "ratio",
+            "num": 1.0,
+            "value": 1.0
           }
         },
         "s4": {
@@ -197,6 +221,12 @@
         "audit": {},
         "pricing": {},
         "s1": {
+          "confirmation_rate": {
+            "den": 1,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": 0.0
+          },
           "input_kind_accuracy": {
             "den": 1,
             "kind": "ratio",
@@ -212,16 +242,46 @@
           "page_kind_accuracy": {
             "den": 1,
             "kind": "ratio",
-            "num": 0.0,
-            "value": 0.0
+            "num": 1.0,
+            "value": 1.0
           },
           "panel_count_accuracy": {
             "den": 1,
             "kind": "ratio",
-            "num": 0.0,
-            "value": 0.0
+            "num": 1.0,
+            "value": 1.0
           },
           "route_accuracy": {
+            "den": 1,
+            "kind": "ratio",
+            "num": 1.0,
+            "value": 1.0
+          },
+          "title_block_date": {
+            "den": 1,
+            "kind": "ratio",
+            "num": 1.0,
+            "value": 1.0
+          },
+          "title_block_drawing_number": {
+            "den": 1,
+            "kind": "ratio",
+            "num": 1.0,
+            "value": 1.0
+          },
+          "title_block_project_name": {
+            "den": 1,
+            "kind": "ratio",
+            "num": 1.0,
+            "value": 1.0
+          },
+          "title_block_revision": {
+            "den": 1,
+            "kind": "ratio",
+            "num": 1.0,
+            "value": 1.0
+          },
+          "title_block_status": {
             "den": 1,
             "kind": "ratio",
             "num": 1.0,
@@ -301,11 +361,17 @@
         "audit": {},
         "pricing": {},
         "s1": {
+          "confirmation_rate": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          },
           "input_kind_accuracy": {
             "den": 1,
             "kind": "ratio",
-            "num": 0.0,
-            "value": 0.0
+            "num": 1.0,
+            "value": 1.0
           },
           "missed_process_pages": {
             "den": 0,
@@ -322,8 +388,8 @@
           "panel_count_accuracy": {
             "den": 1,
             "kind": "ratio",
-            "num": 1.0,
-            "value": 1.0
+            "num": 0.0,
+            "value": 0.0
           },
           "route_accuracy": {
             "den": 0,
@@ -437,11 +503,17 @@
           }
         },
         "s1": {
-          "input_kind_accuracy": {
+          "confirmation_rate": {
             "den": 1,
             "kind": "ratio",
             "num": 0.0,
             "value": 0.0
+          },
+          "input_kind_accuracy": {
+            "den": 1,
+            "kind": "ratio",
+            "num": 1.0,
+            "value": 1.0
           },
           "missed_process_pages": {
             "den": 5,
@@ -452,8 +524,8 @@
           "page_kind_accuracy": {
             "den": 9,
             "kind": "ratio",
-            "num": 0.0,
-            "value": 0.0
+            "num": 8.0,
+            "value": 0.888889
           },
           "panel_count_accuracy": {
             "den": 1,
@@ -464,8 +536,32 @@
           "route_accuracy": {
             "den": 9,
             "kind": "ratio",
-            "num": 5.0,
-            "value": 0.555556
+            "num": 9.0,
+            "value": 1.0
+          },
+          "title_block_date": {
+            "den": 1,
+            "kind": "ratio",
+            "num": 1.0,
+            "value": 1.0
+          },
+          "title_block_drawing_number": {
+            "den": 1,
+            "kind": "ratio",
+            "num": 1.0,
+            "value": 1.0
+          },
+          "title_block_panel_name": {
+            "den": 1,
+            "kind": "ratio",
+            "num": 1.0,
+            "value": 1.0
+          },
+          "title_block_project_name": {
+            "den": 1,
+            "kind": "ratio",
+            "num": 1.0,
+            "value": 1.0
           }
         },
         "s4": {
@@ -573,11 +669,17 @@
           }
         },
         "s1": {
-          "input_kind_accuracy": {
+          "confirmation_rate": {
             "den": 1,
             "kind": "ratio",
             "num": 0.0,
             "value": 0.0
+          },
+          "input_kind_accuracy": {
+            "den": 1,
+            "kind": "ratio",
+            "num": 1.0,
+            "value": 1.0
           },
           "missed_process_pages": {
             "den": 5,
@@ -588,8 +690,8 @@
           "page_kind_accuracy": {
             "den": 9,
             "kind": "ratio",
-            "num": 0.0,
-            "value": 0.0
+            "num": 9.0,
+            "value": 1.0
           },
           "panel_count_accuracy": {
             "den": 1,
@@ -600,8 +702,32 @@
           "route_accuracy": {
             "den": 9,
             "kind": "ratio",
-            "num": 5.0,
-            "value": 0.555556
+            "num": 9.0,
+            "value": 1.0
+          },
+          "title_block_date": {
+            "den": 1,
+            "kind": "ratio",
+            "num": 1.0,
+            "value": 1.0
+          },
+          "title_block_drawing_number": {
+            "den": 1,
+            "kind": "ratio",
+            "num": 1.0,
+            "value": 1.0
+          },
+          "title_block_panel_name": {
+            "den": 1,
+            "kind": "ratio",
+            "num": 1.0,
+            "value": 1.0
+          },
+          "title_block_project_name": {
+            "den": 1,
+            "kind": "ratio",
+            "num": 1.0,
+            "value": 1.0
           }
         },
         "s4": {
@@ -686,11 +812,17 @@
         }
       },
       "s1": {
+        "confirmation_rate": {
+          "den": 4,
+          "kind": "ratio",
+          "num": 1.0,
+          "value": 0.25
+        },
         "input_kind_accuracy": {
           "den": 5,
           "kind": "ratio",
-          "num": 1.0,
-          "value": 0.2
+          "num": 5.0,
+          "value": 1.0
         },
         "missed_process_pages": {
           "den": 14,
@@ -701,20 +833,56 @@
         "page_kind_accuracy": {
           "den": 24,
           "kind": "ratio",
-          "num": 0.0,
-          "value": 0.0
+          "num": 23.0,
+          "value": 0.958333
         },
         "panel_count_accuracy": {
           "den": 5,
           "kind": "ratio",
-          "num": 4.0,
-          "value": 0.8
+          "num": 3.0,
+          "value": 0.6
         },
         "route_accuracy": {
           "den": 24,
           "kind": "ratio",
-          "num": 14.0,
-          "value": 0.583333
+          "num": 24.0,
+          "value": 1.0
+        },
+        "title_block_date": {
+          "den": 4,
+          "kind": "ratio",
+          "num": 4.0,
+          "value": 1.0
+        },
+        "title_block_drawing_number": {
+          "den": 4,
+          "kind": "ratio",
+          "num": 4.0,
+          "value": 1.0
+        },
+        "title_block_panel_name": {
+          "den": 3,
+          "kind": "ratio",
+          "num": 3.0,
+          "value": 1.0
+        },
+        "title_block_project_name": {
+          "den": 3,
+          "kind": "ratio",
+          "num": 3.0,
+          "value": 1.0
+        },
+        "title_block_revision": {
+          "den": 1,
+          "kind": "ratio",
+          "num": 1.0,
+          "value": 1.0
+        },
+        "title_block_status": {
+          "den": 1,
+          "kind": "ratio",
+          "num": 1.0,
+          "value": 1.0
         }
       },
       "s4": {
@@ -761,11 +929,17 @@
         "audit": {},
         "pricing": {},
         "s1": {
+          "confirmation_rate": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          },
           "input_kind_accuracy": {
             "den": 1,
             "kind": "ratio",
-            "num": 0.0,
-            "value": 0.0
+            "num": 1.0,
+            "value": 1.0
           },
           "missed_process_pages": {
             "den": 0,
@@ -782,8 +956,8 @@
           "panel_count_accuracy": {
             "den": 1,
             "kind": "ratio",
-            "num": 1.0,
-            "value": 1.0
+            "num": 0.0,
+            "value": 0.0
           },
           "route_accuracy": {
             "den": 0,
@@ -835,6 +1009,12 @@
         "audit": {},
         "pricing": {},
         "s1": {
+          "confirmation_rate": {
+            "den": 1,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": 0.0
+          },
           "input_kind_accuracy": {
             "den": 1,
             "kind": "ratio",
@@ -850,16 +1030,46 @@
           "page_kind_accuracy": {
             "den": 1,
             "kind": "ratio",
-            "num": 0.0,
-            "value": 0.0
+            "num": 1.0,
+            "value": 1.0
           },
           "panel_count_accuracy": {
             "den": 1,
             "kind": "ratio",
-            "num": 0.0,
-            "value": 0.0
+            "num": 1.0,
+            "value": 1.0
           },
           "route_accuracy": {
+            "den": 1,
+            "kind": "ratio",
+            "num": 1.0,
+            "value": 1.0
+          },
+          "title_block_date": {
+            "den": 1,
+            "kind": "ratio",
+            "num": 1.0,
+            "value": 1.0
+          },
+          "title_block_drawing_number": {
+            "den": 1,
+            "kind": "ratio",
+            "num": 1.0,
+            "value": 1.0
+          },
+          "title_block_project_name": {
+            "den": 1,
+            "kind": "ratio",
+            "num": 1.0,
+            "value": 1.0
+          },
+          "title_block_revision": {
+            "den": 1,
+            "kind": "ratio",
+            "num": 1.0,
+            "value": 1.0
+          },
+          "title_block_status": {
             "den": 1,
             "kind": "ratio",
             "num": 1.0,
@@ -941,11 +1151,17 @@
           }
         },
         "s1": {
+          "confirmation_rate": {
+            "den": 3,
+            "kind": "ratio",
+            "num": 1.0,
+            "value": 0.333333
+          },
           "input_kind_accuracy": {
             "den": 3,
             "kind": "ratio",
-            "num": 0.0,
-            "value": 0.0
+            "num": 3.0,
+            "value": 1.0
           },
           "missed_process_pages": {
             "den": 13,
@@ -956,20 +1172,44 @@
           "page_kind_accuracy": {
             "den": 23,
             "kind": "ratio",
-            "num": 0.0,
-            "value": 0.0
+            "num": 22.0,
+            "value": 0.956522
           },
           "panel_count_accuracy": {
+            "den": 3,
+            "kind": "ratio",
+            "num": 2.0,
+            "value": 0.666667
+          },
+          "route_accuracy": {
+            "den": 23,
+            "kind": "ratio",
+            "num": 23.0,
+            "value": 1.0
+          },
+          "title_block_date": {
             "den": 3,
             "kind": "ratio",
             "num": 3.0,
             "value": 1.0
           },
-          "route_accuracy": {
-            "den": 23,
+          "title_block_drawing_number": {
+            "den": 3,
             "kind": "ratio",
-            "num": 13.0,
-            "value": 0.565217
+            "num": 3.0,
+            "value": 1.0
+          },
+          "title_block_panel_name": {
+            "den": 3,
+            "kind": "ratio",
+            "num": 3.0,
+            "value": 1.0
+          },
+          "title_block_project_name": {
+            "den": 2,
+            "kind": "ratio",
+            "num": 2.0,
+            "value": 1.0
           }
         },
         "s4": {

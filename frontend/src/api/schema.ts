@@ -121,6 +121,46 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/drawings/{drawing_id}/confirm": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Confirm
+         * @description The user confirmed the pages (01 §5.6, "אשר והמשך"): decoding goes on from stage 2.
+         */
+        post: operations["confirm_drawings__drawing_id__confirm_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/drawings/{drawing_id}/pages/{page_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Change Page Kind
+         * @description The user changes a page's kind (01 §5.6). A changed route on a finished drawing runs stages 2–7 again.
+         */
+        patch: operations["change_page_kind_drawings__drawing_id__pages__page_id__patch"];
+        trace?: never;
+    };
     "/drawings/{drawing_id}/progress": {
         parameters: {
             query?: never;
@@ -354,6 +394,31 @@ export interface components {
             /** Quote Name */
             quote_name: string;
         };
+        /**
+         * NoticeOut
+         * @description A stage-1 issue for the user (01 §6.5, §8): Hebrew, ready to show.
+         */
+        NoticeOut: {
+            /** Code */
+            code: string;
+            /** Message */
+            message: string;
+            /** Page Id */
+            page_id?: string | null;
+            /**
+             * Severity
+             * @enum {string}
+             */
+            severity: "info" | "warning" | "error";
+        };
+        /** PageKindIn */
+        PageKindIn: {
+            /**
+             * Page Kind
+             * @enum {string}
+             */
+            page_kind: "single_line_diagram" | "control_diagram" | "panel_front_view" | "legend" | "bom_table" | "general_notes" | "technical_data" | "terminal_diagram" | "title_cover" | "factory_template" | "other";
+        };
         /** PasswordResetIn */
         PasswordResetIn: {
             /** Email */
@@ -391,6 +456,12 @@ export interface components {
         /** ProgressOut */
         ProgressOut: {
             /**
+             * Confirmation Reasons
+             * @description Why the pages need the user's confirmation (01 §5.6); empty when they don't
+             * @default []
+             */
+            confirmation_reasons: ("low_confidence" | "no_diagram_pages" | "panel_count_mismatch")[];
+            /**
              * Counted
              * @description Whether this upload is counted in the quota right now
              */
@@ -399,7 +470,7 @@ export interface components {
              * Counted As
              * @enum {string}
              */
-            counted_as: "new_drawing" | "revision";
+            counted_as: "new_drawing" | "revision" | "reuse";
             /** Current Stage */
             current_stage: number | null;
             /** Drawing Id */
@@ -417,7 +488,13 @@ export interface components {
              */
             name: string;
             /**
+             * Notices
+             * @default []
+             */
+            notices: components["schemas"]["NoticeOut"][];
+            /**
              * Pages
+             * @description Once stage 1 is done: when ready, or awaiting confirmation
              * @default []
              */
             pages: components["schemas"]["ProgressPageOut"][];
@@ -436,12 +513,16 @@ export interface components {
         };
         /** ProgressPageOut */
         ProgressPageOut: {
+            /** Classified By */
+            classified_by?: ("model" | "user" | "reused" | "template") | null;
             /** File Name */
             file_name: string;
             /** Page Id */
             page_id: string;
             /** Page Kind */
-            page_kind: string | null;
+            page_kind: ("single_line_diagram" | "control_diagram" | "panel_front_view" | "legend" | "bom_table" | "general_notes" | "technical_data" | "terminal_diagram" | "title_cover" | "factory_template" | "other") | null;
+            /** Page Kind Confidence */
+            page_kind_confidence?: number | null;
             /** Page No */
             page_no: number;
             /** Route */
@@ -451,6 +532,12 @@ export interface components {
              * @description Short-lived; load it, don't store it
              */
             thumbnail_url?: string | null;
+            /**
+             * Unsure
+             * @description Below the confirmation threshold and not settled by the user (01 §5.6)
+             * @default false
+             */
+            unsure: boolean;
         };
         /**
          * ProgressSummaryOut
@@ -889,6 +976,73 @@ export interface operations {
             cookie?: never;
         };
         requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProgressOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    confirm_drawings__drawing_id__confirm_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                drawing_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProgressOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    change_page_kind_drawings__drawing_id__pages__page_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                drawing_id: string;
+                page_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PageKindIn"];
+            };
+        };
         responses: {
             /** @description Successful Response */
             200: {

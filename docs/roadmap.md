@@ -23,7 +23,7 @@ Prototype references are line ranges in [prototype/konboro-app.html](../prototyp
 | [S04](sessions/S04-app-shell.md) | R | App shell, login, home | Shell, rail and tab bar, login, classic home and `home_chat` home, quota meter, first fidelity report | 09 §5, §13; 13 §4.3 | 660–751, 1253–1284 | S03 | done |
 | [S05](sessions/S05-upload-pipeline-skeleton.md) | X | Upload and pipeline skeleton | Upload checks, atomic quota, S3 (S3Mock), ElasticMQ, coordinator with 7 stub stages emitting the contracts, progress and cancel, new-quote screen wired end to end | 00 §4–5; 01 §4.3–4.6; 12 §3 | 754–869 | S04 | done |
 | [S06](sessions/S06-golden-eval.md) | P | Golden eval harness | Normalizers for 5 formats, per-stage metrics, reports, `make eval`, cassette record and replay, CI job | 00 §10; 01 §10; 04 §10; 11 §10 | — | S05 | done |
-| [S07](sessions/S07-gate-0.md) | G | **Gate 0** | Full suite, fix bugs, docs. Tag `phase-0` | dev-strategy §7 | all built screens | S06 | in review |
+| [S07](sessions/S07-gate-0.md) | G | **Gate 0** | Full suite, fix bugs, docs. Tag `phase-0` | dev-strategy §7 | all built screens | S06 | done |
 
 **Exit:** eval runs automatically on the golden set, the skeleton E2E is green, and the RLS tests are green.
 
@@ -33,7 +33,7 @@ P and R sessions alternate. R sessions use a fixture quote seeded through the re
 
 | # | Track | Session | Main contents | Specs | Prototype | Depends on | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| [S08](sessions/S08-stage1-intake.md) | P | Stage 1: intake and page classification | pypdfium2 rendering, rotation and quality, geometry and text source, sha256 reuse, `page_classification`, `input_kind`, context extraction, page confirmation and page-kind change, visibility heartbeat for long stages (BUG-009) | 01 (all) | 840–855 | S07 | todo |
+| [S08](sessions/S08-stage1-intake.md) | P | Stage 1: intake and page classification | pypdfium2 rendering, rotation and quality, geometry and text source, sha256 reuse, `page_classification`, `input_kind`, context extraction, page confirmation and page-kind change, visibility heartbeat for long stages (BUG-009) | 01 (all) | 840–855 | S07 | in review |
 | [S09](sessions/S09-review-lines.md) | R | Review I: lines | Quote read API and fixture seed, split layout, virtualized grouped lines table, colors and filters, line detail (raw text, sources, why), keyboard | 09 §5–6.4, §8–9 | 872–941, 942–995 | S07 | todo |
 | S10 | P | Stage 2: extraction and tiling | pdfplumber vector text, `OcrEngine` interface + `ClaudeVisionOcr`, normalization with `raw_text`, low-confidence re-read, 1024/256 tiles, deep-zoom tiles in S3 | 02 (all); 12 §5 | — | S08 | todo |
 | S11 | R | Review II: drawing | OpenSeadragon viewer, SVG highlight boxes, page strip, "show on drawing", mobile tabs, toast, undo (5 s, 30 actions) | 09 §5.2, §6.5, §7.11 | 942–1004 | S09, S10 | todo |
@@ -97,6 +97,7 @@ Ideas and out-of-scope findings from sessions. Each one is scheduled into a sess
 - **Eval each stage on labelled input (00 §10.1)** (from S06). Today `make eval` runs the pipeline end to end, so a stage-1 miss also costs stage 4. Stage 4 can be fed the labelled detections once stage 3 has box labels; due with the stage 2–3 labeling work (S10/S12).
 - **Audit metrics read the audit output** (from S06). `eval/predict.py` sets `Prediction.audit = None` until the audit flow exists; S15 maps its differences into `CanonDifference` so `difference_precision` / `difference_recall` stop being n/a.
 - **PDFium in a process pool** (from S07, BUG-010). Every PDFium call in a process takes one lock, because PDFium is not thread-safe. Thumbnails are cheap; S10's tiling and deep-zoom renders are not. If rendering becomes the bottleneck, move it to a process pool.
-- **Record cassettes when the first model-calling stage lands** (from S06). Stubs make no calls, so `eval/cassettes/` is empty. The session that adds the first real call (S08) runs `EVAL_MODE=live EVAL_RECORD=1 make eval`, commits the cassettes and the new baseline.
+- **Panel count: feed sources are not panels** (from S08). On 26-993 the classifier counts QEN1 and QEN2, the boards that feed MAIN ELECTRICAL BOARD, as panels: panel count accuracy is 60% against a 95% target (01 §10). One prompt rule made no difference in one live run. Candidates: the feed diagram from stage 3 (S12), or a code rule that uses the title block's panel name. Re-record the classification cassettes with whatever lands.
+- **Confirmation rate and `page_kind` below target** (from S08). 25% of drawings needed the confirmation screen (target ≤ 15%) and `page_kind` is 95.8% (target ≥ 97%). Calibrate the classifier's confidence, or the 0.85 threshold, against more labelled drawings (01 §12 item 5).
 
 <a id="s00"></a>**S00** is the planning session that produced this roadmap. It has no session file; its PR is the record.

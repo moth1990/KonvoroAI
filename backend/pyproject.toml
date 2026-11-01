@@ -8,6 +8,7 @@ dependencies = [
     "anthropic>=0.70",
     "boto3>=1.35",
     "fastapi>=0.115",
+    "pi-heif>=1.4.0",
     "pillow>=11",
     "psycopg[binary]>=3.2",
     "pydantic>=2.9",
@@ -81,6 +82,7 @@ module = ["konboro_llm.*", "konboro.contracts.*", "konboro.domain.*"]
 strict = true
 
 [[tool.mypy.overrides]]
-# boto3 and pypdfium2 ship without type stubs; they are wrapped in konboro.services (aws, storage, queue, intake)
-module = ["boto3", "botocore.*", "pypdfium2"]
+# boto3, pypdfium2 and pi_heif ship without type stubs; they are wrapped in konboro.services (aws, storage, queue,
+# intake) and konboro.pipeline.intake.pages
+module = ["boto3", "botocore.*", "pypdfium2", "pi_heif"]
 ignore_missing_imports = true

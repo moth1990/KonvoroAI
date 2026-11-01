@@ -1,0 +1,18 @@
+{
+  "answer": {
+    "input_tokens": 1361,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 95,
+    "payload": {
+      "date": "2026-10-05",
+      "designer": "ס.ס לוחות חשמל ובקרה S.S Electrical and control panels",
+      "drawing_number": "26/952",
+      "panel_name": "NURSERY",
+      "project_name": "joyech ethiopia",
+      "revision": null,
+      "status": null
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "context_extraction"
+}

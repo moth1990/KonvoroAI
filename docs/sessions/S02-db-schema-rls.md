@@ -5,7 +5,7 @@
 | **Track** | P |
 | **Branch** | `s02-db-schema-rls` |
 | **Depends on** | S01 |
-| **Status** | in review |
+| **Status** | done |
 | **PR** | |
 
 ## Goal

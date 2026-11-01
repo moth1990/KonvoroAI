@@ -1,0 +1,37 @@
+{
+  "answer": {
+    "input_tokens": 3065,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 473,
+    "payload": {
+      "designators": [
+        "L1",
+        "L2",
+        "L3",
+        "HNV",
+        "Q0",
+        "C1",
+        "C2",
+        "C3",
+        "C4",
+        "F1-F17",
+        "F30",
+        "F18-F21",
+        "F22-F25",
+        "Q01",
+        "FNV",
+        "F26-F29"
+      ],
+      "panels": [
+        {
+          "depth_mm": 300,
+          "height_mm": 1200,
+          "name": null,
+          "width_mm": 800
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "context_extraction"
+}

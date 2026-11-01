@@ -92,6 +92,12 @@ class Queue:
     def delete(self, received: Received) -> None:
         self.sqs.delete_message(QueueUrl=self.url(received.queue), ReceiptHandle=received.receipt)
 
+    def extend(self, received: Received, seconds: int) -> None:
+        """Keep a message that is still being worked on invisible for `seconds` more (the stage heartbeat)."""
+        self.sqs.change_message_visibility(
+            QueueUrl=self.url(received.queue), ReceiptHandle=received.receipt, VisibilityTimeout=seconds
+        )
+
     def retry_later(self, received: Received, delay_s: int) -> None:
         """Leave the message on its queue and make it visible again after `delay_s`; SQS counts the receive,
         and the redrive policy moves it to the DLQ after the third."""

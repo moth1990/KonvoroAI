@@ -8,11 +8,11 @@ import pytest
 from pydantic import BaseModel
 from sqlalchemy import Engine, select
 
+from konboro.contracts.intake import IntakeResult
 from konboro.db import models as m
 from konboro.db.session import tenant_session
 from konboro.pipeline.context import StageContext
 from konboro.pipeline.coordinator import Pipeline
-from konboro.pipeline.stages import STAGES
 from konboro.services import drawings
 from konboro.services.queue import Queue, StageMessage
 from konboro.services.storage import Storage
@@ -27,6 +27,22 @@ NURSERY = Path(__file__).resolve().parents[3] / "golden" / "NURSERY-1" / "NURSER
 
 class Kind(BaseModel):
     page_kind: str
+
+
+def no_pages(ctx: StageContext) -> IntakeResult:
+    """Stage 1 without its own model calls, so the test's one call is the only one."""
+    d = ctx.drawing
+    return IntakeResult(
+        drawing_id=d.id,
+        tenant_id=ctx.tenant_id,
+        project_id=d.project_id,
+        status="ready",
+        created_at=d.created_at,
+        source_files=[],
+        pages=[],
+        panels=[],
+        trace_id=ctx.trace_id,
+    )
 
 
 def ask(ctx: StageContext) -> Kind:
@@ -73,7 +89,7 @@ def test_a_call_from_a_stage_is_logged(migrated_db: dict[str, Engine], pipeline:
 
     def stage_1(ctx: StageContext) -> BaseModel:
         assert ask(ctx).page_kind == "single_line_diagram"
-        return STAGES[1](ctx)
+        return no_pages(ctx)
 
     pipeline.stages[1] = stage_1
     msg = upload(pipeline, tenant)
@@ -107,7 +123,7 @@ def test_a_cassette_replays_through_the_pipeline(
 
     def stage_1(ctx: StageContext) -> BaseModel:
         seen.append(ask(ctx).page_kind)
-        return STAGES[1](ctx)
+        return no_pages(ctx)
 
     pipeline.stages[1] = stage_1
     pipeline.llm_providers = {"anthropic": recorder}

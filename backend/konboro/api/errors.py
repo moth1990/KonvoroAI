@@ -23,6 +23,8 @@ MESSAGES: dict[str, str] = {
     "quota_reached": "הגעתם למכסת ההצעות של החודש",
     "upload_rejected": "חלק מהקבצים לא תקינים, ולכן ההעלאה לא בוצעה. הפרטים ליד כל קובץ",
     "drawing_finished": "הפענוח כבר הסתיים",
+    "drawing_busy": "הפענוח עדיין רץ. אפשר לשנות סוג עמוד כשהוא מסתיים",
+    "not_awaiting_confirmation": "העמודים כבר אושרו",
     "internal_error": "משהו השתבש אצלנו. נסו שוב בעוד רגע",
 }
 

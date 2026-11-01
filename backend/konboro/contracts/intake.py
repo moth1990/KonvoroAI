@@ -51,7 +51,8 @@ class Region(Contract):
 
 class TitleBlock(Contract):
     project_name: str | None = None
-    designer: str | None = None
+    designer: str | None = Field(None, description="The company or office that made the drawing, never a person")
+    panel_name: str | None = Field(None, description="When the title block names the panel (S08)")
     drawing_number: str | None = None
     revision: str | None = None
     date: str | None = None
@@ -110,6 +111,7 @@ class IntakeResult(Contract):
     created_at: datetime
     revision_of: DrawingId | None = None
     input_kind: InputKind | None = Field(None, description="A hint, set after classification (01 §4.4)")
+    title_block: TitleBlock | None = Field(None, description="The drawing's, read once from its title block (S08)")
     source_files: list[SourceFile]
     pages: list[Page]
     panels: list[Panel]

@@ -1,0 +1,50 @@
+{
+  "answer": {
+    "input_tokens": 4471,
+    "model": "claude-haiku-5-5",
+    "output_tokens": 1102,
+    "payload": {
+      "component_labels": "tags_and_models",
+      "language": "en",
+      "orientation": 0,
+      "page_kind": "single_line_diagram",
+      "page_kind_confidence": 0.95,
+      "panels": [
+        {
+          "bbox": [
+            55,
+            110,
+            950,
+            750
+          ],
+          "confidence": 0.85,
+          "name": "MAIN ELECTRICAL BOARD"
+        }
+      ],
+      "reasoning": "A single-line diagram with main breaker, RCDs, and outgoing circuits feeding a busbar, with device tags and ABB model numbers.",
+      "regions": [
+        {
+          "bbox": [
+            24,
+            783,
+            875,
+            912
+          ],
+          "confidence": 0.9,
+          "region_kind": "title_block"
+        }
+      ],
+      "title_block": {
+        "date": "2026-10-02",
+        "designer": "S.S Electrical and control panels",
+        "drawing_number": "26/993",
+        "panel_name": "MAIN ELECTRICAL BOARD",
+        "project_name": null,
+        "revision": null,
+        "status": null
+      }
+    }
+  },
+  "model": "claude-haiku-5-5",
+  "stage": "page_classification"
+}

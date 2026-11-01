@@ -1,0 +1,50 @@
+{
+  "answer": {
+    "input_tokens": 4364,
+    "model": "claude-haiku-5-5",
+    "output_tokens": 1185,
+    "payload": {
+      "component_labels": "tags_and_models",
+      "language": "he",
+      "orientation": 0,
+      "page_kind": "single_line_diagram",
+      "page_kind_confidence": 0.93,
+      "panels": [
+        {
+          "bbox": [
+            60,
+            80,
+            890,
+            790
+          ],
+          "confidence": 0.8,
+          "name": null
+        }
+      ],
+      "reasoning": "The page shows a single-line diagram with breakers, RCDs, contactors and outgoing circuits feeding fan and pump loads, with tags and model numbers.",
+      "regions": [
+        {
+          "bbox": [
+            24,
+            820,
+            665,
+            970
+          ],
+          "confidence": 0.9,
+          "region_kind": "title_block"
+        }
+      ],
+      "title_block": {
+        "date": "2026-10-05",
+        "designer": "S.S לוחות חשמל ובקרה",
+        "drawing_number": "26/952-5",
+        "panel_name": "KARWANI",
+        "project_name": "NEVIS",
+        "revision": null,
+        "status": null
+      }
+    }
+  },
+  "model": "claude-haiku-5-5",
+  "stage": "page_classification"
+}

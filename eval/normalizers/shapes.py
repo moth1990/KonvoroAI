@@ -22,6 +22,7 @@ def _drawing(
         audit=common.audit(quote),
         quote_total=common.quote_total(quote),
         checksums=checksums,
+        title_block=common.title_block(labels.get("title_block")),
     )
 
 

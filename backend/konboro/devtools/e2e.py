@@ -204,6 +204,7 @@ def main() -> None:
     import uvicorn
 
     from konboro.api.app import create_app
+    from konboro.devtools.fake_llm import fake_providers
     from konboro.pipeline.stages import STAGES
     from konboro.pipeline.worker import start_in_thread
     from konboro.services.queue import DLQ, STAGE_QUEUES, Queue
@@ -216,7 +217,8 @@ def main() -> None:
     queue.ensure()
     for base in [*STAGE_QUEUES.values(), DLQ]:  # nothing left over from an earlier run
         queue.purge(base)
-    start_in_thread(settings, engine, stages=slowed(STAGES))  # the pipeline worker, beside the API
+    # The pipeline worker, beside the API, with the stand-in model: E2E never calls a real one (CLAUDE.md, testing)
+    start_in_thread(settings, engine, stages=slowed(STAGES), llm_providers=fake_providers())
     uvicorn.run(create_app(settings, engine=engine), host="127.0.0.1", port=api_port, log_level="warning")
 
 

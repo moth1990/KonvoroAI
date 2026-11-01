@@ -1,0 +1,39 @@
+{
+  "answer": {
+    "input_tokens": 4364,
+    "model": "claude-haiku-5-5",
+    "output_tokens": 1195,
+    "payload": {
+      "component_labels": "tags_and_models",
+      "language": "he",
+      "orientation": 0,
+      "page_kind": "single_line_diagram",
+      "page_kind_confidence": 0.92,
+      "panels": [
+        {
+          "bbox": [
+            150,
+            100,
+            480,
+            630
+          ],
+          "confidence": 0.85,
+          "name": null
+        }
+      ],
+      "reasoning": "Single-line diagram showing main supply W0 with breakers Q01, F30 and F31 feeding outgoing circuits, with ABB device models written beside them.",
+      "regions": [],
+      "title_block": {
+        "date": "2026-10-05",
+        "designer": "ס.ס לוחות חשמל ובקרה",
+        "drawing_number": "26/952",
+        "panel_name": "NURSERY",
+        "project_name": "joyech ethiopia",
+        "revision": null,
+        "status": null
+      }
+    }
+  },
+  "model": "claude-haiku-5-5",
+  "stage": "page_classification"
+}

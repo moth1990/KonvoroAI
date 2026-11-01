@@ -1,0 +1,36 @@
+{
+  "answer": {
+    "input_tokens": 3065,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 105,
+    "payload": {
+      "designators": [
+        "L1",
+        "L2",
+        "L3",
+        "HNV",
+        "TH1",
+        "HT1",
+        "HT2",
+        "HT3",
+        "HT4",
+        "HT5",
+        "SW1",
+        "SW2",
+        "SW3",
+        "SW4",
+        "SW5"
+      ],
+      "panels": [
+        {
+          "depth_mm": 300,
+          "height_mm": 1000,
+          "name": null,
+          "width_mm": 800
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "context_extraction"
+}

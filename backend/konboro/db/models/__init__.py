@@ -35,7 +35,18 @@ from .learning import (
     TenantReferenceCrop,
     TenantRuleOverride,
 )
-from .pipeline import Component, ContextArtifact, Customer, Drawing, DrawingFile, Page, Panel, Project, StageRun
+from .pipeline import (
+    Component,
+    ContextArtifact,
+    Customer,
+    Drawing,
+    DrawingFile,
+    Page,
+    PageTemplate,
+    Panel,
+    Project,
+    StageRun,
+)
 from .pricing import BrandDiscount, DerivedItemRule, MarginRule, PriceHistory, Product, ProductSupplier, Supplier
 from .quotes import CorrectionEvent, Finding, Quote, QuoteLine, QuoteVersion
 
@@ -64,6 +75,7 @@ __all__ = [
     "MarginRule",
     "MatchMemory",
     "Page",
+    "PageTemplate",
     "Panel",
     "Plan",
     "PlanFeatureFlag",

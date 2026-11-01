@@ -16,7 +16,7 @@ NURSERY = BACKEND.parent / "golden" / "NURSERY-1" / "NURSERY-1.pdf"
 RACE = textwrap.dedent(f"""
     import threading
     from pathlib import Path
-    from konboro.pipeline.stages.s1_intake import _pages_of
+    from konboro.pipeline.intake.pages import read_pages, render as render_page
     from konboro.services.intake import count_pages
 
     data = Path({str(NURSERY)!r}).read_bytes()
@@ -29,7 +29,9 @@ RACE = textwrap.dedent(f"""
 
     def render() -> None:
         for _ in range(3):
-            assert len(_pages_of("pdf", data)) == 9
+            pages = read_pages("fil", "pdf", data)
+            assert len(pages) == 9
+            render_page(pages[4], data, 300)
         finished.append("render")
 
     threads = [threading.Thread(target=f, daemon=True) for f in (check, render) * 3]

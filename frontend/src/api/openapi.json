@@ -271,6 +271,72 @@
         "title": "MissingPricesItem",
         "type": "object"
       },
+      "NoticeOut": {
+        "description": "A stage-1 issue for the user (01 §6.5, §8): Hebrew, ready to show.",
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "page_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Page Id"
+          },
+          "severity": {
+            "enum": [
+              "info",
+              "warning",
+              "error"
+            ],
+            "title": "Severity",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "severity",
+          "message"
+        ],
+        "title": "NoticeOut",
+        "type": "object"
+      },
+      "PageKindIn": {
+        "properties": {
+          "page_kind": {
+            "enum": [
+              "single_line_diagram",
+              "control_diagram",
+              "panel_front_view",
+              "legend",
+              "bom_table",
+              "general_notes",
+              "technical_data",
+              "terminal_diagram",
+              "title_cover",
+              "factory_template",
+              "other"
+            ],
+            "title": "Page Kind",
+            "type": "string"
+          }
+        },
+        "required": [
+          "page_kind"
+        ],
+        "title": "PageKindIn",
+        "type": "object"
+      },
       "PasswordResetIn": {
         "additionalProperties": false,
         "properties": {
@@ -365,6 +431,20 @@
       },
       "ProgressOut": {
         "properties": {
+          "confirmation_reasons": {
+            "default": [],
+            "description": "Why the pages need the user's confirmation (01 §5.6); empty when they don't",
+            "items": {
+              "enum": [
+                "low_confidence",
+                "no_diagram_pages",
+                "panel_count_mismatch"
+              ],
+              "type": "string"
+            },
+            "title": "Confirmation Reasons",
+            "type": "array"
+          },
           "counted": {
             "description": "Whether this upload is counted in the quota right now",
             "title": "Counted",
@@ -373,7 +453,8 @@
           "counted_as": {
             "enum": [
               "new_drawing",
-              "revision"
+              "revision",
+              "reuse"
             ],
             "title": "Counted As",
             "type": "string"
@@ -417,8 +498,17 @@
             "title": "Name",
             "type": "string"
           },
+          "notices": {
+            "default": [],
+            "items": {
+              "$ref": "#/components/schemas/NoticeOut"
+            },
+            "title": "Notices",
+            "type": "array"
+          },
           "pages": {
             "default": [],
+            "description": "Once stage 1 is done: when ready, or awaiting confirmation",
             "items": {
               "$ref": "#/components/schemas/ProgressPageOut"
             },
@@ -489,6 +579,23 @@
       },
       "ProgressPageOut": {
         "properties": {
+          "classified_by": {
+            "anyOf": [
+              {
+                "enum": [
+                  "model",
+                  "user",
+                  "reused",
+                  "template"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Classified By"
+          },
           "file_name": {
             "title": "File Name",
             "type": "string"
@@ -500,6 +607,19 @@
           "page_kind": {
             "anyOf": [
               {
+                "enum": [
+                  "single_line_diagram",
+                  "control_diagram",
+                  "panel_front_view",
+                  "legend",
+                  "bom_table",
+                  "general_notes",
+                  "technical_data",
+                  "terminal_diagram",
+                  "title_cover",
+                  "factory_template",
+                  "other"
+                ],
                 "type": "string"
               },
               {
@@ -507,6 +627,17 @@
               }
             ],
             "title": "Page Kind"
+          },
+          "page_kind_confidence": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Page Kind Confidence"
           },
           "page_no": {
             "title": "Page No",
@@ -539,6 +670,12 @@
             ],
             "description": "Short-lived; load it, don't store it",
             "title": "Thumbnail Url"
+          },
+          "unsure": {
+            "default": false,
+            "description": "Below the confirmation threshold and not settled by the user (01 §5.6)",
+            "title": "Unsure",
+            "type": "boolean"
           }
         },
         "required": [
@@ -1501,6 +1638,124 @@
           }
         ],
         "summary": "Cancel",
+        "tags": [
+          "drawings"
+        ]
+      }
+    },
+    "/drawings/{drawing_id}/confirm": {
+      "post": {
+        "description": "The user confirmed the pages (01 §5.6, \"אשר והמשך\"): decoding goes on from stage 2.",
+        "operationId": "confirm_drawings__drawing_id__confirm_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "drawing_id",
+            "required": true,
+            "schema": {
+              "pattern": "^drw_[0-9A-Z]{26}$",
+              "title": "Drawing Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgressOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Confirm",
+        "tags": [
+          "drawings"
+        ]
+      }
+    },
+    "/drawings/{drawing_id}/pages/{page_id}": {
+      "patch": {
+        "description": "The user changes a page's kind (01 §5.6). A changed route on a finished drawing runs stages 2–7 again.",
+        "operationId": "change_page_kind_drawings__drawing_id__pages__page_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "drawing_id",
+            "required": true,
+            "schema": {
+              "pattern": "^drw_[0-9A-Z]{26}$",
+              "title": "Drawing Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "page_id",
+            "required": true,
+            "schema": {
+              "pattern": "^pg_[0-9A-Z]{26}$",
+              "title": "Page Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PageKindIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgressOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Change Page Kind",
         "tags": [
           "drawings"
         ]
