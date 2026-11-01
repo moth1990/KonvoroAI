@@ -67,8 +67,11 @@ export const Viewer = forwardRef<ViewerHandle, ViewerProps>(function Viewer(prop
   const [ready, setReady] = useState(false);
   const callbacks = useRef(props);
   const pendingFocus = useRef<FocusRequest | null>(null);
-  const lastFocus = useRef<FocusRequest | null>(null); // applied, for a viewer that was hidden and appears
+  // The focus last applied, until the user pans or zooms: a resize (the phone's tab opening, a layout settling)
+  // frames it again at the final size, so where it lands never depends on timing.
+  const lastFocus = useRef<FocusRequest | null>(null);
   const openPage = useRef<string | null>(null); // the page whose pyramid is open, once its "open" fired
+  const scheduleRef = useRef<() => void>(() => {});
   useEffect(() => {
     callbacks.current = props;
   });
@@ -109,6 +112,12 @@ export const Viewer = forwardRef<ViewerHandle, ViewerProps>(function Viewer(prop
       if (lineId) callbacks.current.onSelectLine(lineId);
       else if (panelId) callbacks.current.onSelectPanel(panelId);
     });
+    const userMoved = () => {
+      lastFocus.current = null;
+    };
+    viewer.addHandler("canvas-drag", userMoved);
+    viewer.addHandler("canvas-scroll", userMoved);
+    viewer.addHandler("canvas-pinch", userMoved);
     viewer.addHandler("open", () => {
       const item = viewer.world.getItemAt(0);
       if (!item) return;
@@ -120,43 +129,49 @@ export const Viewer = forwardRef<ViewerHandle, ViewerProps>(function Viewer(prop
       viewer.addOverlay({ element: layer, location: new OpenSeadragon.Rect(0, 0, 1, content.y / content.x) });
       item.addHandler("fully-loaded-change", (ev) => setReady(ev.fullyLoaded));
       setReady(item.getFullyLoaded());
-      const focus = pendingFocus.current;
-      const container = viewer.viewport.getContainerSize();
-      if (focus && focus.pageId === page.page_id && container.x && container.y) {
-        pendingFocus.current = null;
-        lastFocus.current = focus;
-        apply(viewer, focus, w, true);
-      }
+      jump = true;
+      schedule();
     });
     osd.current = viewer;
 
-    // On the phone the drawing is a tab: a viewer made or focused while hidden has no size. When it appears, fit
-    // the page, or do the focus that was waiting for a size.
+    // Every focus goes through `settle`, one animation frame later: after layout, and after OpenSeadragon has the
+    // page open, whichever of the three asked (a focus request, the page opening, the viewer resizing). Done at
+    // once from each, the order varied with timing and so did where the view landed (the phone's tab opening on
+    // another page). On the phone the drawing is a tab: a viewer that was hidden fits the page when it appears,
+    // unless a focus waits; on any later resize the last focus is framed again, until the user pans or zooms.
     let hidden = element.clientWidth === 0 || element.clientHeight === 0;
+    let jump = false; // the page just opened or the viewer just appeared: no animation from the old view
     let frame = 0;
-    const sized = new ResizeObserver(() => {
+    function schedule() {
       cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(appeared); // after layout: resizing inside the callback loops the observer
-    });
-    function appeared() {
-      if (!element) return;
-      const now = element.clientWidth === 0 || element.clientHeight === 0;
-      if (hidden && !now && viewer.world.getItemAt(0) && openPage.current) {
-        viewer.forceResize();
-        const focus = pendingFocus.current ?? lastFocus.current;
-        const w = callbacks.current.page.width_pt;
-        if (focus && focus.pageId === openPage.current && w) {
-          pendingFocus.current = null;
-          lastFocus.current = focus;
-          apply(viewer, focus, w, true);
-        } else viewer.viewport.goHome(true);
-      }
-      hidden = now;
+      frame = requestAnimationFrame(settle);
     }
+    scheduleRef.current = schedule;
+    function settle() {
+      if (!element) return;
+      const gone = element.clientWidth === 0 || element.clientHeight === 0;
+      const appeared = hidden && !gone;
+      hidden = gone;
+      if (gone || !viewer.world.getItemAt(0) || !openPage.current) return;
+      const focus = pendingFocus.current ?? lastFocus.current;
+      const w = callbacks.current.page.width_pt ?? viewer.world.getItemAt(0)?.getContentSize().x;
+      const now = jump || appeared;
+      jump = false;
+      if (focus && focus.pageId === openPage.current && w) {
+        pendingFocus.current = null;
+        lastFocus.current = focus;
+        apply(viewer, focus, w, now);
+      } else if (appeared) {
+        syncSize(viewer);
+        viewer.viewport.goHome(true);
+      }
+    }
+    const sized = new ResizeObserver(schedule); // resizing inside the observer's callback would loop it
     sized.observe(element);
     return () => {
       cancelAnimationFrame(frame);
       sized.disconnect();
+      scheduleRef.current = () => {};
       viewer.destroy();
       osd.current = null;
     };
@@ -180,26 +195,29 @@ export const Viewer = forwardRef<ViewerHandle, ViewerProps>(function Viewer(prop
     viewer.open({ tileSource: `${API_BASE}/pages/${pageId}/dz/page.dzi` });
   }, [pageId, hasViewer]);
 
-  // A focus request: now if its page is open, otherwise once it opens.
+  // A focus request: framed on the next frame, once its page is open (`settle`).
   const focus = props.focus;
   useEffect(() => {
-    const viewer = osd.current;
-    if (!viewer || !focus) return;
-    const container = viewer.viewport.getContainerSize();
-    if (openPage.current !== focus.pageId || focus.pageId !== pageId || !size || !container.x || !container.y) {
-      pendingFocus.current = focus;
-      return;
-    }
-    lastFocus.current = focus;
-    apply(viewer, focus, size.w, false);
-  }, [focus, pageId, size]);
+    if (!focus) return;
+    pendingFocus.current = focus;
+    scheduleRef.current();
+  }, [focus]);
 
   useImperativeHandle(
     ref,
     () => ({
-      zoomIn: () => zoomBy(osd.current, ZOOM_STEP),
-      zoomOut: () => zoomBy(osd.current, 1 / ZOOM_STEP),
-      fit: () => osd.current?.viewport.goHome(),
+      zoomIn: () => {
+        lastFocus.current = null;
+        zoomBy(osd.current, ZOOM_STEP);
+      },
+      zoomOut: () => {
+        lastFocus.current = null;
+        zoomBy(osd.current, 1 / ZOOM_STEP);
+      },
+      fit: () => {
+        lastFocus.current = null;
+        osd.current?.viewport.goHome();
+      },
     }),
     [],
   );
@@ -235,7 +253,18 @@ function zoomBy(viewer: OpenSeadragon.Viewer | null, factor: number): void {
   viewer.viewport.applyConstraints();
 }
 
+/** The viewport takes the container's size now: OpenSeadragon notices a resize only on its next frame, and a fit
+ * computed on the old size lands elsewhere. */
+function syncSize(viewer: OpenSeadragon.Viewer): void {
+  const el = viewer.container;
+  const vp = viewer.viewport;
+  const old = vp.getContainerSize();
+  if (el.clientWidth && el.clientHeight && (old.x !== el.clientWidth || old.y !== el.clientHeight))
+    vp.resize(new OpenSeadragon.Point(el.clientWidth, el.clientHeight), true);
+}
+
 function apply(viewer: OpenSeadragon.Viewer, f: FocusRequest, widthPt: number, now: boolean): void {
+  syncSize(viewer);
   const vp = viewer.viewport;
   if (f.mode === "center") {
     // 09 §6.5: selecting a line centres its component only when the drawing is zoomed in.

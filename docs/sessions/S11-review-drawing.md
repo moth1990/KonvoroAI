@@ -129,6 +129,8 @@ Filled in at `/session-close`.
   - **Viewport margins** (16 px at the sides, room for the chips above and the tools below), like the prototype's fit at 96%.
 - **Eval / metrics:** not a pipeline session; `make eval` (replay) shows no change against `eval/baseline.json`.
 - **Bugs logged:** BUG-023 (P2, fixed in S11): since S10 the done step's thumbnails were stage 2's full render.
-- **Notes:** `make screenshots` timed out on 8 shots under a load average of 38 (other work on the machine), including screens S11 doesn't touch; with `--workers=2` all 46 passed, and `SCREENSHOTS_CHECK=1` passed 46 of 46. The fidelity capture of an open line detail logs a harmless "ResizeObserver loop" warning, not reproduced in the app.
+- **Notes:**
+  - `make check` passed everything but the screenshot check: 6 shots timed out under a load average of about 35 (other work on the machine), and one was a real difference. The phone's `review-finding` framed the finding at a different zoom from run to run: a focus was applied from three places (the request, the page opening, the viewer resizing), in an order that varied. Every focus now goes through one step on the next animation frame, after layout and after the page opened, with the viewport sized from its element first (`Viewer.tsx`, `settle`). Re-recorded that one baseline; then `SCREENSHOTS_CHECK=1` with `--workers=2` passed 46 of 46, twice in a row. Lint, unit, the full E2E suite (107 passed) were run again after the change.
+  - `make screenshots` and the check use `--workers=2` on this machine while it is that loaded; CI is not affected. The fidelity capture of an open line detail logs a harmless "ResizeObserver loop" warning, not reproduced in the app.
 - **Follow-ups (in the roadmap backlog):**
   - Draw mode, marking a missed component (09 §6.6).
