@@ -19,6 +19,9 @@ export type HomeSummary = Schemas["HomeSummaryOut"];
 export type Progress = Schemas["ProgressOut"];
 export type Revisable = Schemas["RevisableOut"];
 export type UploadedFile = Schemas["UploadedFileOut"];
+export type Quote = Schemas["QuoteOut"];
+export type QuoteLine = Schemas["LineOut"];
+export type Finding = Schemas["FindingOut"];
 
 const FALLBACK_MESSAGE = "משהו השתבש אצלנו. נסו שוב בעוד רגע";
 const LOGIN_PATH = "/auth/login";
@@ -172,4 +175,9 @@ export async function changePageKind(
 
 export async function fetchRevisable(client = api): Promise<Revisable[]> {
   return unwrap(await client.GET("/drawings/revisable"));
+}
+
+/** The review screen's quote (09 §4). 404 when it is another tenant's, does not exist, or `review_screen` is off. */
+export async function fetchQuote(quoteId: string, client = api): Promise<Quote> {
+  return unwrap(await client.GET("/quotes/{quote_id}", { params: { path: { quote_id: quoteId } } }));
 }

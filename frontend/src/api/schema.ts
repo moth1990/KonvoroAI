@@ -272,6 +272,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/quotes/{quote_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Quote
+         * @description The quote's current version. Another tenant's quote is 404, the same as one that does not exist.
+         */
+        get: operations["get_quote_quotes__quote_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/settings": {
         parameters: {
             query?: never;
@@ -294,6 +314,11 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** AlternativeOut */
+        AlternativeOut: {
+            /** Description */
+            description: string;
+        };
         /** AuditOmissionsItem */
         AuditOmissionsItem: {
             /**
@@ -325,6 +350,25 @@ export interface components {
             /** Revision Of */
             revision_of?: string | null;
         };
+        /** CostSourceOut */
+        CostSourceOut: {
+            /** Price Date */
+            price_date?: string | null;
+            /** Supplier */
+            supplier?: string | null;
+            /** Type */
+            type: string;
+        };
+        /**
+         * DerivedOut
+         * @description How an accessory line was worked out (07 §7.4): "איך חושב".
+         */
+        DerivedOut: {
+            /** Explanation */
+            explanation: string;
+            /** Rule Id */
+            rule_id?: string | null;
+        };
         /** ErrorBody */
         ErrorBody: {
             /** Code */
@@ -339,6 +383,26 @@ export interface components {
         /** ErrorResponse */
         ErrorResponse: {
             error: components["schemas"]["ErrorBody"];
+        };
+        /** FindingOut */
+        FindingOut: {
+            /** Code */
+            code: string;
+            /** Finding Id */
+            finding_id: string;
+            /** Line Ids */
+            line_ids: string[];
+            /** Message */
+            message: string;
+            /** Page No */
+            page_no: number | null;
+            /**
+             * Severity
+             * @enum {string}
+             */
+            severity: "error" | "warning" | "info";
+            /** Title */
+            title: string | null;
         };
         /** HealthOut */
         HealthOut: {
@@ -363,6 +427,111 @@ export interface components {
              * @description Approval-queue items waiting for a decision
              */
             queue_pending: number;
+        };
+        /** LineCountsOut */
+        LineCountsOut: {
+            /** Green */
+            green: number;
+            /** Red */
+            red: number;
+            /** Yellow */
+            yellow: number;
+        };
+        /**
+         * LineOut
+         * @description A quote line (07 §6.2) with what the review screen shows of its component (09 §6.3–6.4).
+         */
+        LineOut: {
+            /** Alternatives */
+            alternatives: components["schemas"]["AlternativeOut"][];
+            /** Approved */
+            approved: boolean;
+            cost_source: components["schemas"]["CostSourceOut"] | null;
+            derived: components["schemas"]["DerivedOut"] | null;
+            /** Description */
+            description: string;
+            /** Designators */
+            designators: string[];
+            /**
+             * Explanation
+             * @description Why this product, when it needs saying
+             */
+            explanation: string | null;
+            /**
+             * Included
+             * @description A kit add-on whose price is in its parent line's
+             */
+            included: boolean;
+            /** Issue Ids */
+            issue_ids: string[];
+            /** Line Cost */
+            line_cost: string | null;
+            /**
+             * Line Group
+             * @description feed, outputs, control or enclosure (db-schema `line_group`)
+             */
+            line_group: string | null;
+            /** Line Id */
+            line_id: string;
+            /** Line Total */
+            line_total: string | null;
+            /**
+             * Line Type
+             * @enum {string}
+             */
+            line_type: "component" | "derived" | "labor" | "manual" | "missing";
+            /** Manufacturer */
+            manufacturer: string | null;
+            /** Margin Pct */
+            margin_pct: string | null;
+            /**
+             * Note
+             * @description The circuit's load, as written in the drawing
+             */
+            note: string | null;
+            /** Parent Line Id */
+            parent_line_id: string | null;
+            price_source: components["schemas"]["PriceSourceOut"] | null;
+            /** Price Status */
+            price_status: ("ok" | "stale" | "discount_based" | "missing") | null;
+            /**
+             * Qty
+             * @example 0.15
+             */
+            qty: string;
+            /**
+             * Raw Text
+             * @description The text read beside the component, line by line
+             */
+            raw_text: string[];
+            /**
+             * Section
+             * @description 09 §6.3: lines, missing lines, accessories
+             * @enum {string}
+             */
+            section: "items" | "missing" | "extras";
+            /** Sku */
+            sku: string | null;
+            /** Sources */
+            sources: components["schemas"]["SourceOut"][];
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "green" | "yellow" | "red";
+            /** Status Reasons */
+            status_reasons: components["schemas"]["StatusReasonOut"][];
+            /** Unit */
+            unit: string;
+            /** Unit Cost */
+            unit_cost: string | null;
+            /**
+             * Unit Margin
+             * @description Unit price minus unit cost, in shekels
+             */
+            unit_margin: string | null;
+            /** Unit Price */
+            unit_price: string | null;
         };
         /** LoginIn */
         LoginIn: {
@@ -419,6 +588,40 @@ export interface components {
              */
             page_kind: "single_line_diagram" | "control_diagram" | "panel_front_view" | "legend" | "bom_table" | "general_notes" | "technical_data" | "terminal_diagram" | "title_cover" | "factory_template" | "other";
         };
+        /** PanelOut */
+        PanelOut: {
+            /**
+             * Lines
+             * @description In the review screen's order (09 §6.3); a child follows its parent
+             */
+            lines: components["schemas"]["LineOut"][];
+            /** Name */
+            name: string;
+            /** Panel Id */
+            panel_id: string | null;
+            totals: components["schemas"]["PanelTotalsOut"];
+        };
+        /** PanelTotalsOut */
+        PanelTotalsOut: {
+            /**
+             * Cost Total
+             * @example 0.15
+             */
+            cost_total: string;
+            line_counts: components["schemas"]["LineCountsOut"];
+            /**
+             * Price Total
+             * @example 0.15
+             */
+            price_total: string;
+            /**
+             * Uncosted Count
+             * @description Priced lines with no cost, left out of the margin (09 §6.3)
+             */
+            uncosted_count: number;
+            /** Unpriced Count */
+            unpriced_count: number;
+        };
         /** PasswordResetIn */
         PasswordResetIn: {
             /** Email */
@@ -445,6 +648,23 @@ export interface components {
             monthly_quote_limit: number | null;
             /** Name He */
             name_he: string;
+        };
+        /**
+         * PriceSourceOut
+         * @description Where the sale price comes from: a fixed price (and the quotes it was imported from) or a margin rule.
+         */
+        PriceSourceOut: {
+            /** Kind */
+            kind: string;
+            /**
+             * Quotes
+             * @default []
+             */
+            quotes: string[];
+            /** Source */
+            source?: string | null;
+            /** Value */
+            value?: string | null;
         };
         /** ProgressFileOut */
         ProgressFileOut: {
@@ -632,6 +852,104 @@ export interface components {
             version_status: "draft" | "sent";
         };
         /**
+         * QuoteOut
+         * @description The review screen's quote (09 §4): its current version, panels, lines, findings and totals.
+         */
+        QuoteOut: {
+            /**
+             * Coverage Pct
+             * @description Share of the lines that have a price (09 §6.1, 10 §7)
+             */
+            coverage_pct: number | null;
+            /** Currency */
+            currency: string;
+            /** Drawing Id */
+            drawing_id: string | null;
+            /** Drawing Number */
+            drawing_number: string | null;
+            /**
+             * Findings
+             * @description Open findings, errors first
+             */
+            findings: components["schemas"]["FindingOut"][];
+            /** Input Kind */
+            input_kind: ("factory_drawing" | "designer_plan" | "bom_only" | "mixed") | null;
+            /** Name */
+            name: string;
+            /** Panels */
+            panels: components["schemas"]["PanelOut"][];
+            /** Quote Date */
+            quote_date: string | null;
+            /** Quote Id */
+            quote_id: string;
+            /** Revision */
+            revision: number;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "draft" | "sent";
+            totals: components["schemas"]["QuoteTotalsOut"];
+            /** Version */
+            version: number;
+        };
+        /**
+         * QuoteTotalsOut
+         * @description 07 §7.6, summed on the server from the live lines.
+         */
+        QuoteTotalsOut: {
+            /**
+             * Cost Total
+             * @example 0.15
+             */
+            cost_total: string;
+            /** Discount */
+            discount: string | null;
+            /** Discount Pct */
+            discount_pct: string | null;
+            /**
+             * Gross Total
+             * @example 0.15
+             */
+            gross_total: string;
+            line_counts: components["schemas"]["LineCountsOut"];
+            /**
+             * Margin Abs
+             * @example 0.15
+             */
+            margin_abs: string;
+            /** Margin Pct */
+            margin_pct: string | null;
+            /**
+             * Net Total
+             * @description Before VAT
+             * @example 0.15
+             */
+            net_total: string;
+            /**
+             * Price Total
+             * @example 0.15
+             */
+            price_total: string;
+            /**
+             * Uncosted Count
+             * @description Priced lines with no cost, left out of the margin (09 §6.3)
+             */
+            uncosted_count: number;
+            /** Unpriced Count */
+            unpriced_count: number;
+            /**
+             * Vat
+             * @example 0.15
+             */
+            vat: string;
+            /**
+             * Vat Rate
+             * @example 0.15
+             */
+            vat_rate: string;
+        };
+        /**
          * RevisableOut
          * @description A finished drawing a new version can follow (01 §4.6 item 1).
          */
@@ -705,6 +1023,26 @@ export interface components {
             /** Stale Days */
             stale_days?: number | null;
         };
+        /**
+         * SourceOut
+         * @description Where one attribute's value came from (09 §6.4). `source` is 04 §6.2 / 05 §6.2's, plus `series`, `memory`,
+         *     `circuit` (inferred from the circuit) and `missing`; the screen words each one.
+         */
+        SourceOut: {
+            /** Attribute */
+            attribute: string;
+            /** Confidence */
+            confidence: number | null;
+            /**
+             * Detail
+             * @description What the source points at, e.g. 'עמוד 1' or 'F22–F25 (3X16A)'
+             */
+            detail: string | null;
+            /** Source */
+            source: string;
+            /** Value */
+            value: string | null;
+        };
         /** StageOut */
         StageOut: {
             /**
@@ -724,6 +1062,23 @@ export interface components {
              * @description A short Hebrew summary once the stage is done
              */
             summary?: string | null;
+        };
+        /**
+         * StatusReasonOut
+         * @description One reason for the line's color (07 §7.5). Every reason is shown, not only the worst (09 §9).
+         */
+        StatusReasonOut: {
+            /** Issue Id */
+            issue_id?: string | null;
+            /** Source */
+            source: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "green" | "yellow" | "red";
+            /** Value */
+            value?: unknown;
         };
         /** TenantOut */
         TenantOut: {
@@ -1220,6 +1575,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["QuoteList"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_quote_quotes__quote_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                quote_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QuoteOut"];
                 };
             };
             /** @description Error */

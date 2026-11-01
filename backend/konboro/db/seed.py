@@ -49,6 +49,8 @@ FLAGS = [
     {"key": "chat_quote_builder", "description": "בניית הצעה בצ'אט (13 §4.2)", "depends_on": []},
     {"key": "home_chat", "description": "מסך בית כשיחה (13 §4.3)", "depends_on": []},
     {"key": "voice_input", "description": "הקלטה קולית (13 §4.2)", "depends_on": ["chat_quote_builder"]},
+    # S09 decision 2: on while the screen is being built, removed when it is complete (S23).
+    {"key": "review_screen", "description": "מסך הבדיקה, בבנייה (09). יוסר ב-S23", "depends_on": []},
 ]
 
 SUPPLIERS = {
@@ -207,13 +209,25 @@ def seed_demo_tenant(session: Session) -> bool:
     return True
 
 
+def seed_demo_fixtures(session: Session) -> None:
+    """The review screen's fixture quote (S09). Runs every time, so a demo tenant from before S09 gets it too."""
+    from konboro.devtools.fixtures.nursery import enable_flag, seed_nursery  # it reads this module's price list
+
+    session.execute(text("SELECT set_config('app.tenant_id', :t, true)"), {"t": DEMO_TENANT})
+    enable_flag(session, DEMO_TENANT)
+    seed_nursery(session, DEMO_TENANT)
+
+
 def seed(engine: Engine | None = None) -> bool:
     """Runs as the owner role, inside the demo tenant's context for tenant rows."""
     engine = engine or create_engine(migration_dsn())
     with Session(engine) as session, session.begin():
         seed_global(session)
     with Session(engine) as session, session.begin():
-        return seed_demo_tenant(session)
+        created = seed_demo_tenant(session)
+    with Session(engine) as session, session.begin():
+        seed_demo_fixtures(session)
+    return created
 
 
 if __name__ == "__main__":

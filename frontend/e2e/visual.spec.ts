@@ -1,6 +1,7 @@
 /**
  * Screenshot baselines for the screens the user accepted in the fidelity review (docs/dev-strategy.md §5):
- * login, home classic with the shell, home chat; light and dark; desktop and mobile projects.
+ * login, home classic with the shell, home chat, the new-quote steps (S05) and the review screen's lines, line
+ * detail and red filter (S09); light and dark; desktop and mobile projects.
  *
  * They run only inside Playwright's pinned Linux image (e2e/visual/update.sh sets KONBORO_VISUAL), locally and in
  * CI, so fonts and rasterization never differ between the baseline and the check:
@@ -105,8 +106,46 @@ const NEW_QUOTE = [
   },
 ] as const;
 
+/** The review states the user accepted in S09, on the NURSERY-1 fixture quote (a read-only tenant of its own). */
+const REVIEW = [
+  { name: "review-lines", setup: async () => {} },
+  {
+    name: "review-detail",
+    setup: async (page: Page) => {
+      await page.getByTestId("line").filter({ hasText: "SN201M" }).click();
+      await page.getByTestId("line-detail").waitFor();
+    },
+  },
+  { name: "review-red", setup: (page: Page) => page.getByTestId("filter-red").click() },
+] as const;
+
 for (const scheme of ["light", "dark"] as const) {
   test.describe(`${scheme} new quote`, () => {
+    test.describe(`${scheme} review`, () => {
+      test.use({ colorScheme: scheme });
+
+      for (const screen of REVIEW) {
+        test(screen.name, async ({ page, request }) => {
+          await signIn(page, request, TENANTS.review);
+          await page.goto("/home");
+          await meLoaded(page);
+          await page
+            .getByTestId("recent")
+            .getByRole("link", { name: /NURSERY/ })
+            .click();
+          await page.getByTestId("rv-totals").waitFor({ timeout: 60_000 });
+          await page.evaluate(() => document.fonts.ready);
+          await screen.setup(page);
+          await page.mouse.move(0, 0);
+          await expect(page).toHaveScreenshot(`${screen.name}-${scheme}.png`, {
+            animations: "disabled",
+            mask: volatile(page),
+            maxDiffPixelRatio: 0.002,
+          });
+        });
+      }
+    });
+
     test.use({ colorScheme: scheme });
     test.setTimeout(120_000); // a whole pipeline run, under amd64 emulation on a Mac
 

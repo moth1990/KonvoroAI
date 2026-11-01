@@ -38,6 +38,7 @@ from konboro.db.models import (
 )
 from konboro.db.seed import FLAGS, seed_global
 from konboro.db.session import app_engine
+from konboro.devtools.fixtures.nursery import seed_nursery
 from konboro.pipeline.context import StageContext
 from konboro.pipeline.stages import Stage
 from konboro.settings import Settings
@@ -53,6 +54,7 @@ class E2eTenant:
     home_chat: bool
     used: int  # of the trial plan's 50
     sample_data: bool
+    nursery: bool = False  # the review screen's fixture quote (S09); read-only, so one tenant serves both projects
 
     @property
     def tenant_id(self) -> str:
@@ -77,6 +79,7 @@ TENANTS = (
     E2eTenant(8, "done-dark-desktop@e2e.konboro.local", home_chat=False, used=12, sample_data=False),
     E2eTenant(9, "done-light-mobile@e2e.konboro.local", home_chat=False, used=12, sample_data=False),
     E2eTenant(10, "done-dark-mobile@e2e.konboro.local", home_chat=False, used=12, sample_data=False),
+    E2eTenant(11, "review@e2e.konboro.local", home_chat=False, used=12, sample_data=False, nursery=True),
 )
 
 # A project with this name runs slowly, so a test can cancel it mid-run; every other upload runs at full speed.
@@ -180,6 +183,8 @@ def seed_e2e(owner: Engine) -> None:
             s.flush()
             if t.sample_data:
                 _sample_data(s, t)
+            if t.nursery:
+                seed_nursery(s, t.tenant_id)
 
 
 def e2e_settings(web_port: int) -> Settings:

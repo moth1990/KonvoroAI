@@ -99,6 +99,7 @@ System limits (20 MB per file, 20 files, 200 pages per drawing, 2 m² per page) 
 - `default_on bool not null default false`. A new flag is always off.
 - `depends_on text[]`.
 - `owner`, `created_at`, `remove_by date`.
+- Seeded keys: spec 13's five, plus `review_screen` (S09), which gates the review screen while it is built and goes away in S23.
 
 **`plan_feature_flags`** holds the plan-level flag setting: `plan_id → plans`, `flag_key → feature_flags`, `enabled bool`, with PK `(plan_id, flag_key)`.
 
@@ -278,7 +279,7 @@ This table answers the customer's question "why was this counted?".
 | `catalog_item_id null`, `product_id null` | |
 | `sku`, `description`, `manufacturer`, `qty numeric(12,3)`, `unit` | |
 | `unit_cost null`, `cost_source jsonb`, `price_status` | `price_status` is `ok`, `stale`, `discount_based` or `missing` |
-| `margin_rule jsonb` | |
+| `margin_rule jsonb` | Where the sale price comes from: 07 §6.1's rule `{rule_id, level, kind, value}`, or for a fixed product price `{kind: "fixed", source, quotes}`, e.g. imported from earlier quotes (S09). The review screen shows it as the price's source |
 | `unit_price_raw`, `unit_price`, `rounding`, `line_cost`, `line_total`, `margin_pct` | All `null` while the line has no price |
 | `derived jsonb`, `alternatives jsonb`, `explanation` | |
 | `status`, `status_reasons jsonb`, `issue_ids text[]` | `status` is `green`, `yellow` or `red`, and only stage 7 writes it |

@@ -124,6 +124,154 @@ class HomeSummaryOut(BaseModel):
     audit_omissions: list[AuditOmissionsItem]
 
 
+# --- quote review (09 §6, 07 §6) ------------------------------------------------------------------
+
+
+class SourceOut(BaseModel):
+    """Where one attribute's value came from (09 §6.4). `source` is 04 §6.2 / 05 §6.2's, plus `series`, `memory`,
+    `circuit` (inferred from the circuit) and `missing`; the screen words each one."""
+
+    attribute: str
+    value: str | None
+    source: str
+    detail: str | None = Field(description="What the source points at, e.g. 'עמוד 1' or 'F22–F25 (3X16A)'")
+    confidence: float | None
+
+
+class StatusReasonOut(BaseModel):
+    """One reason for the line's color (07 §7.5). Every reason is shown, not only the worst (09 §9)."""
+
+    source: str
+    status: Literal["green", "yellow", "red"]
+    value: Any = None
+    issue_id: str | None = None
+
+
+class PriceSourceOut(BaseModel):
+    """Where the sale price comes from: a fixed price (and the quotes it was imported from) or a margin rule."""
+
+    kind: str
+    source: str | None = None
+    quotes: list[str] = []
+    value: DecimalStr | None = None
+
+
+class CostSourceOut(BaseModel):
+    type: str
+    supplier: str | None = None
+    price_date: date | None = None
+
+
+class AlternativeOut(BaseModel):
+    description: str
+
+
+class DerivedOut(BaseModel):
+    """How an accessory line was worked out (07 §7.4): "איך חושב"."""
+
+    rule_id: str | None = None
+    explanation: str
+
+
+class LineOut(BaseModel):
+    """A quote line (07 §6.2) with what the review screen shows of its component (09 §6.3–6.4)."""
+
+    line_id: str
+    line_type: Literal["component", "derived", "labor", "manual", "missing"]
+    section: Literal["items", "missing", "extras"] = Field(description="09 §6.3: lines, missing lines, accessories")
+    line_group: str | None = Field(description="feed, outputs, control or enclosure (db-schema `line_group`)")
+    parent_line_id: str | None
+    included: bool = Field(description="A kit add-on whose price is in its parent line's")
+    sku: str | None
+    description: str
+    manufacturer: str | None
+    qty: DecimalStr
+    unit: str
+    unit_price: DecimalStr | None
+    unit_cost: DecimalStr | None
+    line_total: DecimalStr | None
+    line_cost: DecimalStr | None
+    margin_pct: DecimalStr | None
+    unit_margin: DecimalStr | None = Field(description="Unit price minus unit cost, in shekels")
+    price_status: Literal["ok", "stale", "discount_based", "missing"] | None
+    price_source: PriceSourceOut | None
+    cost_source: CostSourceOut | None
+    status: Literal["green", "yellow", "red"]
+    status_reasons: list[StatusReasonOut]
+    issue_ids: list[str]
+    designators: list[str]
+    raw_text: list[str] = Field(description="The text read beside the component, line by line")
+    sources: list[SourceOut]
+    note: str | None = Field(description="The circuit's load, as written in the drawing")
+    explanation: str | None = Field(description="Why this product, when it needs saying")
+    alternatives: list[AlternativeOut]
+    derived: DerivedOut | None
+    approved: bool
+
+
+class LineCountsOut(BaseModel):
+    green: int
+    yellow: int
+    red: int
+
+
+class PanelTotalsOut(BaseModel):
+    cost_total: DecimalStr
+    price_total: DecimalStr
+    line_counts: LineCountsOut
+    unpriced_count: int
+    uncosted_count: int = Field(description="Priced lines with no cost, left out of the margin (09 §6.3)")
+
+
+class PanelOut(BaseModel):
+    panel_id: str | None
+    name: str
+    lines: list[LineOut] = Field(description="In the review screen's order (09 §6.3); a child follows its parent")
+    totals: PanelTotalsOut
+
+
+class QuoteTotalsOut(PanelTotalsOut):
+    """07 §7.6, summed on the server from the live lines."""
+
+    discount_pct: DecimalStr | None
+    discount: DecimalStr | None
+    net_total: DecimalStr = Field(description="Before VAT")
+    margin_abs: DecimalStr
+    margin_pct: DecimalStr | None
+    vat_rate: DecimalStr
+    vat: DecimalStr
+    gross_total: DecimalStr
+
+
+class FindingOut(BaseModel):
+    finding_id: str
+    severity: Literal["error", "warning", "info"]
+    code: str
+    title: str | None
+    message: str
+    line_ids: list[str]
+    page_no: int | None
+
+
+class QuoteOut(BaseModel):
+    """The review screen's quote (09 §4): its current version, panels, lines, findings and totals."""
+
+    quote_id: str
+    name: str
+    drawing_id: str | None
+    drawing_number: str | None
+    input_kind: Literal["factory_drawing", "designer_plan", "bom_only", "mixed"] | None
+    version: int
+    status: Literal["draft", "sent"]
+    revision: int
+    quote_date: date | None
+    currency: str
+    coverage_pct: int | None = Field(description="Share of the lines that have a price (09 §6.1, 10 §7)")
+    panels: list[PanelOut]
+    findings: list[FindingOut] = Field(description="Open findings, errors first")
+    totals: QuoteTotalsOut
+
+
 # --- drawings (01 §4, §4.6) ----------------------------------------------------------------------------
 
 

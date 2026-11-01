@@ -32,7 +32,7 @@ To view it, serve the folder (`python -m http.server -d prototype`) and set `loc
 **Porting a screen:** the prototype's CSS moves to `frontend/src/theme/app.css` with the same class names, and the
 React screens render those classes; MUI is for behaviour, not looks. The app routes are paths (`/home`, `/review/:quoteId`…),
 not hashes. The phone layout starts at **860px** everywhere (09 §5.2; the prototype uses 820px), kept in `MOBILE_MAX_PX`.
-Built so far: login, shell, classic and chat home (S04); new quote: pick, run, done (S05); confirm pages and page-kind change (S08).
+Built so far: login, shell, classic and chat home (S04); new quote: pick, run, done (S05); confirm pages and page-kind change (S08); review lines, filters and line detail on the NURSERY-1 fixture, behind `review_screen` (S09).
 
 | Screen | Route | Function | Lines |
 | --- | --- | --- | --- |
