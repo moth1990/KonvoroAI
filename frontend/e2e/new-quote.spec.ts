@@ -13,7 +13,9 @@ const NURSERY = fileURLToPath(new URL("../../golden/NURSERY-1/NURSERY-1.pdf", im
 const NEVIS = fileURLToPath(new URL("../../golden/NEVIS-1/NEVIS-1.pdf", import.meta.url));
 const MB = 1024 * 1024;
 
-test.describe.configure({ mode: "serial" });
+// These tests wait on the real pipeline worker, and since S10 stage 2 really renders, tiles and reads every page:
+// a test that decodes twice (a page kind change runs stages 2–7 again) needs more than Playwright's 30 s on CI.
+test.describe.configure({ mode: "serial", timeout: 90_000 });
 
 function tenant(page: Page): string {
   return isMobile(page) ? TENANTS.uploadMobile : TENANTS.uploadDesktop;

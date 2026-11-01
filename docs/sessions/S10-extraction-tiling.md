@@ -149,5 +149,5 @@ All answered at session start (2026-11-01); see Decisions made.
   | **Total** | | | | | **99.2% (118/119)** |
 
   The one miss, 26-993's RF, is not written on the plan (its label says "בתוכנית בלי תג"). Two replays gave identical reports, equal to the live run; `eval/baseline.json` rewritten with `make eval-baseline`, every earlier metric unchanged. One tile takes about 9 s live; 8 run at a time.
-- **Bugs logged:** BUG-019 (P1, tiles missed what stage 1's panel boxes missed), BUG-020 (P2, S3Mock slows with every object; own buckets, packed pyramid), BUG-021 (P2, a keyboard E2E test raced the home page), all fixed in S10.
+- **Bugs logged:** BUG-019 (P1, tiles missed what stage 1's panel boxes missed), BUG-020 (P2, S3Mock slows with every object; own buckets, packed pyramid), BUG-021 (P2, a keyboard E2E test raced the home page), BUG-022 (P2, a new-quote E2E test that decodes twice outran 30 s on CI), all fixed in S10.
 - **Follow-ups:** in the roadmap backlog: serve the packed pyramid (S11); reuse stage 2 for a page reused by hash; calibrate OCR confidence and the blank threshold with the chosen engine (S31). The interim engine reads an A4 page in about 20 s, over 02 §9's 15 s target for the real engine (S31).
