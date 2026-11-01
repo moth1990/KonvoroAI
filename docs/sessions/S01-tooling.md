@@ -5,7 +5,7 @@
 | **Track** | X |
 | **Branch** | `s01-tooling` |
 | **Depends on** | S00 |
-| **Status** | in review |
+| **Status** | done |
 | **PR** | [#2](https://github.com/moth1990/KonvoroAI/pull/2) |
 
 ## Goal

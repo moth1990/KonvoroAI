@@ -27,6 +27,7 @@ interface Screen {
 }
 
 const NURSERY = fileURLToPath(new URL("../../../golden/NURSERY-1/NURSERY-1.pdf", import.meta.url));
+const NEVIS = fileURLToPath(new URL("../../../golden/NEVIS-1/NEVIS-1.pdf", import.meta.url));
 const PROJECT = "גן ילדים, לוח ראשי";
 
 /** The prototype's new-quote screen with NURSERY-1 and a DWG picked (its built-in sample files). */
@@ -150,9 +151,41 @@ const SCREENS: Screen[] = [
       },
     },
     notes: [
-      "The result tile reads 0 products until stages 4–7 are real; every page is routed to processing by the stage-1 stub.",
-      "Page kinds are read-only until page classification (S08).",
-      "Thumbnails are the real pages, rendered by the stage-1 stub (S05 decision).",
+      "The result tile reads 0 products until stages 4–7 are real.",
+      "Page kinds come from stage 1 (S08). In E2E the model is a stand-in that classifies like NURSERY-1's labels, so " +
+        "the routes match the prototype's: 5 process, 2 context, 2 skip.",
+      "The kind select lists the 11 kinds of 01 §5.4 (spec keys win); the prototype lists 7 Hebrew labels, one of them " +
+        '"חד-קווי ופיקוד", which is not a kind.',
+      "The note under each card follows how the page was classified (template, reused, low confidence, by the user).",
+    ],
+  },
+  {
+    id: "new-confirm",
+    title: "New quote: confirm pages (no prototype screen; compared with the done step)",
+    prototype: {
+      hash: "#new",
+      authed: true,
+      setup: async (page) => {
+        await prototypeStart(page);
+        await page.locator('[data-act="toreview"]').waitFor({ timeout: 15_000 });
+      },
+    },
+    app: {
+      path: "/new",
+      tenant: TENANTS.uploadDesktop,
+      setup: async (page) => {
+        await page
+          .locator("#file-in")
+          .setInputFiles({ name: "unsure-NEVIS-1.pdf", mimeType: "application/pdf", buffer: readFileSync(NEVIS) });
+        await page.getByTestId("start").click();
+        await page.getByTestId("confirm-pages").waitFor({ timeout: 30_000 });
+        await page.waitForFunction(() => [...document.images].every((img) => img.complete));
+      },
+    },
+    notes: [
+      "01 §5.6 asks for a confirmation screen; the prototype has none. S08 decision: the done step's page grid, a line " +
+        'saying why, the unsure pages marked in the warning colour, and "אשר והמשך".',
+      'The chip reads "ממתין לאישור" (warning) where the done step reads "הפענוח הסתיים".',
     ],
   },
 ];

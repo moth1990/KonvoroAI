@@ -1,0 +1,18 @@
+{
+  "answer": {
+    "input_tokens": 1809,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 300,
+    "payload": {
+      "date": "2026-02-12",
+      "designer": "רמאור בע\"מ",
+      "drawing_number": "6199-2-50",
+      "panel_name": null,
+      "project_name": "חצרים",
+      "revision": "6",
+      "status": "for_execution"
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "context_extraction"
+}

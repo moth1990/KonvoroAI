@@ -1,0 +1,49 @@
+{
+  "answer": {
+    "input_tokens": 4364,
+    "model": "claude-haiku-5-5",
+    "output_tokens": 1302,
+    "payload": {
+      "component_labels": "tags_only",
+      "language": "he",
+      "orientation": 0,
+      "page_kind": "panel_front_view",
+      "page_kind_confidence": 0.85,
+      "panels": [
+        {
+          "bbox": [
+            105,
+            157,
+            383,
+            667
+          ],
+          "confidence": 0.8,
+          "name": null
+        },
+        {
+          "bbox": [
+            566,
+            302,
+            811,
+            772
+          ],
+          "confidence": 0.85,
+          "name": null
+        }
+      ],
+      "reasoning": "Two drawings of a panel: a layout view of devices inside the enclosure and a front view of the enclosure with pilot lamps and push-buttons, with tags like HT1 and SW1 but no model numbers.",
+      "regions": [],
+      "title_block": {
+        "date": "2026-10-05",
+        "designer": "ס.ס לוחות חשמל ובקרה",
+        "drawing_number": "26/952-5",
+        "panel_name": "KARWANI",
+        "project_name": "NEVIS",
+        "revision": "1",
+        "status": null
+      }
+    }
+  },
+  "model": "claude-haiku-5-5",
+  "stage": "page_classification"
+}

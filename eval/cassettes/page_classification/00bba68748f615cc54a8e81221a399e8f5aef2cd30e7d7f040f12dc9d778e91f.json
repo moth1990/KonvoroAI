@@ -1,0 +1,39 @@
+{
+  "answer": {
+    "input_tokens": 4364,
+    "model": "claude-haiku-5-5",
+    "output_tokens": 1239,
+    "payload": {
+      "component_labels": "tags_and_models",
+      "language": "he",
+      "orientation": 0,
+      "page_kind": "single_line_diagram",
+      "page_kind_confidence": 0.85,
+      "panels": [
+        {
+          "bbox": [
+            44,
+            110,
+            932,
+            670
+          ],
+          "confidence": 0.7,
+          "name": null
+        }
+      ],
+      "reasoning": "The page shows a single-line diagram of breakers F8 to F14 (SN201M) feeding outgoing cables to BOM 8 to 14 from busbar W0.",
+      "regions": [],
+      "title_block": {
+        "date": "2026-10-05",
+        "designer": "ס.ס לוחות חשמל ובקרה",
+        "drawing_number": "26/952",
+        "panel_name": "NURSERY",
+        "project_name": "joyech ethiopia",
+        "revision": null,
+        "status": null
+      }
+    }
+  },
+  "model": "claude-haiku-5-5",
+  "stage": "page_classification"
+}

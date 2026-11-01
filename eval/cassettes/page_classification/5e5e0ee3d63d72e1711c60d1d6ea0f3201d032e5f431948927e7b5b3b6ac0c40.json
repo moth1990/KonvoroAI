@@ -1,0 +1,39 @@
+{
+  "answer": {
+    "input_tokens": 4364,
+    "model": "claude-haiku-5-5",
+    "output_tokens": 1077,
+    "payload": {
+      "component_labels": "tags_and_models",
+      "language": "he",
+      "orientation": 0,
+      "page_kind": "single_line_diagram",
+      "page_kind_confidence": 0.96,
+      "panels": [
+        {
+          "bbox": [
+            65,
+            55,
+            960,
+            770
+          ],
+          "confidence": 0.85,
+          "name": null
+        }
+      ],
+      "reasoning": "The page shows a single-line diagram with main busbar W0, main breaker Q0 and outgoing breakers F1 to F7 feeding BOM loads, with tagged devices and ABB model numbers.",
+      "regions": [],
+      "title_block": {
+        "date": "2026-10-05",
+        "designer": "S.S Electrical and control panels",
+        "drawing_number": "26/952",
+        "panel_name": null,
+        "project_name": "joyech ethiopia",
+        "revision": null,
+        "status": null
+      }
+    }
+  },
+  "model": "claude-haiku-5-5",
+  "stage": "page_classification"
+}

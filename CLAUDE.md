@@ -32,7 +32,7 @@ To view it, serve the folder (`python -m http.server -d prototype`) and set `loc
 **Porting a screen:** the prototype's CSS moves to `frontend/src/theme/app.css` with the same class names, and the
 React screens render those classes; MUI is for behaviour, not looks. The app routes are paths (`/home`, `/review/:quoteId`…),
 not hashes. The phone layout starts at **860px** everywhere (09 §5.2; the prototype uses 820px), kept in `MOBILE_MAX_PX`.
-Built so far: login, shell, classic and chat home (S04); new quote: pick, run, done (S05).
+Built so far: login, shell, classic and chat home (S04); new quote: pick, run, done (S05); confirm pages and page-kind change (S08).
 
 | Screen | Route | Function | Lines |
 | --- | --- | --- | --- |
@@ -90,7 +90,7 @@ Schema changes are Alembic migrations in `backend/alembic/versions/`. Update `do
 
 **The pipeline** (00 §4–5, 12 §3):
 - **Contracts.** `konboro/contracts/` holds one Pydantic model per stage boundary, taken from each spec's §6. `tests/unit/test_contracts.py` validates every spec example against its model and pins each schema. A contract change is a change to the spec that defines it and to every spec that consumes it.
-- **Stages.** `konboro/pipeline/stages/sN_*.py` are stubs since S05. A later session replaces one by writing a function `run(ctx) -> Contract` that reads earlier outputs through `ctx.output(n, Model)` and calls the model only through `ctx.llm`, which writes each call to `llm_calls`. The coordinator (`pipeline/coordinator.py`) doesn't change.
+- **Stages.** `konboro/pipeline/stages/sN_*.py` are stubs since S05; stage 1 is real since S08 (its parts are in `pipeline/intake/`). A later session replaces one by writing a function `run(ctx) -> Contract` that reads earlier outputs through `ctx.output(n, Model)` and calls the model only through `ctx.llm`, which writes each call to `llm_calls`. The coordinator (`pipeline/coordinator.py`) doesn't change.
 - **Queues.** One SQS queue per stage (`konboro-s1-intake` … `-s7-pricing`), each sending to `konboro-dlq` after 3 failed receives. Messages carry IDs only (`StageMessage`). Files and stage outputs live in S3 under `tenants/{tenant_id}/`, through `services/storage.py`, which refuses another tenant's key.
 
 ## Commands
@@ -101,7 +101,7 @@ Schema changes are Alembic migrations in `backend/alembic/versions/`. Update `do
 | `make migrate` | Create the `konboro_app` role, then `alembic upgrade head` |
 | `make seed` | Migrate, then load the demo tenant (made-up names, the prototype's price list). Safe to rerun |
 | `make up` / `make down` | Start or stop local services: Postgres + pgvector (host port 5433), S3Mock as S3 (9000), ElasticMQ as SQS (9324) |
-| `make dev` | API on port 8000 (uvicorn, reload), the pipeline worker (`python -m konboro.pipeline.worker`) and the Vite dev server on port 5180. Needs `make up`. Dev login: `demo@konboro.local` with `KONBORO_DEV_PASSWORD` from `.env` |
+| `make dev` | API on port 8000 (uvicorn, reload), the pipeline worker (`python -m konboro.pipeline.worker`) and the Vite dev server on port 5180. Needs `make up`. Dev login: `demo@konboro.local` with `KONBORO_DEV_PASSWORD` from `.env`. Stage 1 calls Claude with `ANTHROPIC_API_KEY`; without a key the local worker uses the stand-in model (`devtools/fake_llm.py`) and logs a warning |
 | `make test-unit` | pytest unit tests + Vitest |
 | `make test-int` | pytest integration tests against the compose services |
 | `make e2e` | Playwright, desktop and mobile projects. Needs `make up`: it starts its own API and pipeline worker on 8001 over a fresh `konboro_e2e` database with fixed E2E tenants (`konboro/devtools/e2e.py`, `frontend/e2e/fixtures.ts`), on its own `e2e-` queues, and Vite on 5181 |
@@ -124,7 +124,7 @@ Tooling: uv for Python 3.12 (`backend/.python-version`), pnpm with Node 22 (`.nv
   - Unit tests for logic.
   - Integration tests for API, DB, queue or storage work.
   - Playwright tests for any UI work.
-- Tests never call real LLM or OCR services. Use `FakeProvider`, or the replay cassettes under `eval/cassettes/`.
+- Tests never call real LLM or OCR services. Use `FakeProvider`, the stand-in model (`konboro.devtools.fake_llm`, which the E2E worker and the integration fixtures use), or the replay cassettes under `eval/cassettes/`.
 - Pricing code needs 100% branch coverage (07 §10.1).
 - Playwright selectors, in order of preference:
   1. Role and accessible name.
@@ -161,7 +161,6 @@ Each phase ends with a **gate session** that fixes the open bug list and checks 
 
 Resolve each one with the user when its session arrives, then fix the spec in the same PR.
 
-- 01 §7, the routing table, lacks `technical_data` and `factory_template`. Due in S08.
 - 02 §2.6 says duplicates are removed after stage 4, but 03 §3.5 moved that into stage 3. Due in S12.
 - Flag keys differ between the two references. The prototype uses `chat_builder`, `voice` and `unresolved`; spec 13 uses `chat_quote_builder`, `voice_input` and `unresolved_overlay`. **The spec's keys win** everywhere in code.
 - `golden/NEVIS-1/labels.json` uses page kind `single_line` where the other files use `single_line_diagram`. The eval normalizer maps it; the file stays as is.

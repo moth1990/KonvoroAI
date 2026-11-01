@@ -1,0 +1,49 @@
+{
+  "answer": {
+    "input_tokens": 4364,
+    "model": "claude-haiku-5-5",
+    "output_tokens": 1431,
+    "payload": {
+      "component_labels": "not_applicable",
+      "language": "he",
+      "orientation": 0,
+      "page_kind": "factory_template",
+      "page_kind_confidence": 0.85,
+      "panels": [],
+      "reasoning": "A fixed factory sheet of conductor and terminal colour tables, a DIN nut torque table and circuit-label sign tables, with no devices of this project drawn.",
+      "regions": [
+        {
+          "bbox": [
+            610,
+            218,
+            942,
+            590
+          ],
+          "confidence": 0.8,
+          "region_kind": "legend"
+        },
+        {
+          "bbox": [
+            24,
+            822,
+            581,
+            962
+          ],
+          "confidence": 0.85,
+          "region_kind": "title_block"
+        }
+      ],
+      "title_block": {
+        "date": "2026-10-05",
+        "designer": "ס.ס לוחות חשמל ובקרה",
+        "drawing_number": "26/952-5",
+        "panel_name": null,
+        "project_name": "NEVIS",
+        "revision": null,
+        "status": null
+      }
+    }
+  },
+  "model": "claude-haiku-5-5",
+  "stage": "page_classification"
+}

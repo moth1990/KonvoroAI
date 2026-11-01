@@ -187,7 +187,7 @@ class CorrectionEvent(Base, TenantScoped, Created):
         tenant_unique(),
         tenant_fk("quote_id", "quotes"),
         tenant_fk("user_id", "users"),
-        one_of("source", ("review_screen", "chat", "price_list")),
+        one_of("source", ("review_screen", "chat", "price_list", "new_quote")),
         one_of("type", CORRECTION_TYPES),
         Index(None, "tenant_id", "quote_id", "created_at"),
     )

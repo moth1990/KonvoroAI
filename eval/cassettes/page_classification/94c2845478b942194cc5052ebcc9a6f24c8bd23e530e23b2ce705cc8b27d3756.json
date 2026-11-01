@@ -1,0 +1,50 @@
+{
+  "answer": {
+    "input_tokens": 4364,
+    "model": "claude-haiku-5-5",
+    "output_tokens": 1349,
+    "payload": {
+      "component_labels": "tags_and_models",
+      "language": "he",
+      "orientation": 0,
+      "page_kind": "single_line_diagram",
+      "page_kind_confidence": 0.93,
+      "panels": [
+        {
+          "bbox": [
+            55,
+            110,
+            950,
+            500
+          ],
+          "confidence": 0.85,
+          "name": null
+        }
+      ],
+      "reasoning": "A single-line diagram of breakers F6 to F12 on a busbar with ABB model numbers, plus a title block.",
+      "regions": [
+        {
+          "bbox": [
+            24,
+            821,
+            977,
+            969
+          ],
+          "confidence": 0.95,
+          "region_kind": "title_block"
+        }
+      ],
+      "title_block": {
+        "date": "2026-10-05",
+        "designer": "S.S Electrical and control panels",
+        "drawing_number": "26/952-5",
+        "panel_name": "KARWANI",
+        "project_name": "NEVIS",
+        "revision": null,
+        "status": null
+      }
+    }
+  },
+  "model": "claude-haiku-5-5",
+  "stage": "page_classification"
+}

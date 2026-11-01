@@ -4,7 +4,17 @@ from datetime import datetime
 from decimal import Decimal
 from typing import Any
 
-from sqlalchemy import ARRAY, BigInteger, CheckConstraint, ForeignKey, Index, SmallInteger, Text, UniqueConstraint
+from sqlalchemy import (
+    ARRAY,
+    BigInteger,
+    CheckConstraint,
+    Float,
+    ForeignKey,
+    Index,
+    SmallInteger,
+    Text,
+    UniqueConstraint,
+)
 from sqlalchemy.orm import Mapped, mapped_column
 
 from ..base import Base, Created, Qty, Rate, TenantScoped, Timestamps, one_of, pk, tenant_fk, tenant_unique
@@ -57,6 +67,7 @@ class Drawing(Base, TenantScoped, Timestamps):
     current_stage: Mapped[int | None] = mapped_column(SmallInteger)
     progress: Mapped[float] = mapped_column(server_default="0")
     needs_confirmation: Mapped[bool] = mapped_column(server_default="false")
+    title_block: Mapped[dict[str, Any] | None]  # read once per drawing (S08 decision), 01 §5.4
     quota: Mapped[dict[str, Any] | None]
     issues: Mapped[list[Any]] = mapped_column(server_default="[]")
     trace_id: Mapped[str | None]
@@ -95,6 +106,11 @@ class Page(Base, TenantScoped, Timestamps):
         CheckConstraint("geometry_source IS NULL OR geometry_source IN ('vector', 'raster', 'mixed')", name="geom"),
         CheckConstraint("text_source IS NULL OR text_source IN ('pdf_text', 'ocr', 'mixed')", name="text_source"),
         CheckConstraint(
+            "component_labels IS NULL"
+            " OR component_labels IN ('tags_and_models', 'tags_only', 'none', 'not_applicable')",
+            name="component_labels",
+        ),
+        CheckConstraint(
             "quality IS NULL OR quality IN ('ok', 'low_resolution', 'blurry', 'cropped')",
             name="quality",
         ),
@@ -122,6 +138,7 @@ class Page(Base, TenantScoped, Timestamps):
     route: Mapped[str | None]
     classified_by: Mapped[str | None]
     model: Mapped[str | None]
+    component_labels: Mapped[str | None]  # the classifier's, for input_kind on reuse (BUG-015)
     title_block: Mapped[dict[str, Any] | None]
     regions: Mapped[list[Any]] = mapped_column(server_default="[]")
     render_key: Mapped[str | None]
@@ -156,6 +173,24 @@ class ContextArtifact(Base, TenantScoped, Created):
     kind: Mapped[str]
     format: Mapped[str]
     content: Mapped[str]
+
+
+class PageTemplate(Base, TenantScoped, Created):
+    """A factory's fixed page (01 §5.7): a fingerprint with the title block masked. A new page that matches it is
+    classified without a model call, but only for the same producer as the page it came from."""
+
+    __tablename__ = "page_templates"
+    __table_args__ = (
+        tenant_unique(),
+        Index(None, "tenant_id", "producer"),
+    )
+
+    id: Mapped[str] = pk()
+    producer: Mapped[str | None]  # normalized title-block `designer`; None when the page had none
+    page_kind: Mapped[str]
+    fingerprint: Mapped[str]  # hex, see pipeline/intake/templates.py
+    mask: Mapped[list[float] | None] = mapped_column(ARRAY(Float))  # title block, [x0, y0, x1, y1] as 0..1
+    source_page_id: Mapped[str | None]  # for the audit trail only: no FK, the template outlives its drawing
 
 
 class StageRun(Base, TenantScoped):
@@ -213,6 +248,7 @@ __all__ = [
     "Drawing",
     "DrawingFile",
     "Page",
+    "PageTemplate",
     "Panel",
     "Project",
     "StageRun",

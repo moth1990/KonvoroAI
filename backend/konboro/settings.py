@@ -43,6 +43,9 @@ class Settings(BaseSettings):
     # A stage whose message nobody claimed this long after it was sent is sent again; the worker looks this often.
     requeue_after_seconds: int = 120
     requeue_check_seconds: int = 60
+    # BUG-009: a running stage's message stays invisible this long past each heartbeat (the queue default is 30 s)
+    stage_visibility_seconds: int = 60
+    stage_heartbeat_seconds: float = 10
 
     @model_validator(mode="after")
     def _safe(self) -> "Settings":

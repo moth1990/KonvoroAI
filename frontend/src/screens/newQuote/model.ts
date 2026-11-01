@@ -151,6 +151,40 @@ export const ROUTES: Record<string, { label: string; chip: string; note: string 
   skip: { label: "דילוג", chip: "", note: "לא נקרא" },
 };
 
+type ProgressPage = Progress["pages"][number];
+
+/** The line under each page card (prototype line 851): how the page was classified, and what happens to it. */
+export function pageNote(page: ProgressPage): string {
+  if (page.classified_by === "user") return "סווג על ידיכם";
+  if (page.unsure) return "ביטחון נמוך. בדקו את הסוג"; // what the user must act on, even on a reused page
+  if (page.classified_by === "template") return "זוהה לפי תבנית המפעל";
+  if (page.classified_by === "reused") return "כמו בשרטוט שכבר פוענח";
+  if (page.route === "context") return "נקרא להקשר, לא נספר";
+  return "ביטחון גבוה";
+}
+
+/** Why stage 1 asks the user to look (01 §5.6), as the confirmation step says it. */
+export const CONFIRM_REASONS: Record<string, string> = {
+  low_confidence: "חלק מהעמודים סווגו בביטחון נמוך. הם מסומנים, ואפשר לשנות להם את הסוג.",
+  no_diagram_pages: "לא מצאנו תוכנית חד-קווית. בדקו את הסיווג.",
+  panel_count_mismatch: "מספר הלוחות שמצאנו שונה ממה שציינתם.",
+};
+
+/** The line above the page grid on the done step (prototype line 846). */
+export function gridHint(p: Progress): string {
+  const low = p.pages.some((page) => page.unsure);
+  return low
+    ? "חלק מהעמודים סווגו בביטחון נמוך. אפשר לשנות סוג עמוד כאן או ממסך הבדיקה."
+    : "כל העמודים סווגו בביטחון גבוה. אפשר לשנות סוג עמוד כאן או ממסך הבדיקה.";
+}
+
+/** The quota line at the bottom of the done step. */
+export function countedText(p: Progress, quotaLabel: string): string {
+  if (p.counted_as === "revision") return "גרסה חדשה של הצעה קיימת. לא נספרה במכסה.";
+  if (p.counted_as === "reuse") return "אותם קבצים כבר פוענחו. לא נספרה במכסה.";
+  return `נספרה במכסה: ${quotaLabel}`;
+}
+
 export const INPUT_KINDS: Record<string, [string, string]> = {
   factory_drawing: ["שרטוט ייצור", "של מפעל לוחות"],
   designer_plan: ["תוכנית מתכנן", "של מתכנן חשמל"],

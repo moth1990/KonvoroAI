@@ -12,9 +12,11 @@ from konboro.contracts import STAGE_OUTPUTS
 from konboro.db import models as m
 from konboro.db.ids import new_id
 from konboro.db.session import tenant_session
+from konboro.devtools.fake_llm import fake_providers
 from konboro.pipeline import coordinator
 from konboro.pipeline.context import StageContext
 from konboro.pipeline.coordinator import Pipeline
+from konboro.pipeline.intake.pages import read_pages
 from konboro.pipeline.stages import STAGES
 from konboro.pipeline.worker import Worker
 from konboro.services.queue import STAGE_QUEUES, Queue, StageMessage
@@ -29,7 +31,7 @@ NURSERY = Path(__file__).resolve().parents[3] / "golden" / "NURSERY-1" / "NURSER
 
 @pytest.fixture
 def pipeline(migrated_db: dict[str, Engine], clean_queue: Queue, storage: Storage) -> Pipeline:
-    return Pipeline(aws_settings(), migrated_db["app"], storage, clean_queue)
+    return Pipeline(aws_settings(), migrated_db["app"], storage, clean_queue, llm_providers=fake_providers())
 
 
 def start(api: Api, tenant: ApiTenant, **form: str) -> str:
@@ -67,13 +69,19 @@ def test_a_drawing_runs_through_all_seven_stages(
         (quote,) = s.scalars(select(m.Quote)).all()
         (version,) = s.scalars(select(m.QuoteVersion)).all()
         assert (drawing.status, drawing.progress, drawing.current_stage) == ("ready", 1.0, 7)
-        assert drawing.input_kind == "designer_plan"
+        assert drawing.input_kind == "factory_drawing"  # the stand-in model reads tags and models on the diagrams
         assert drawing.quota is not None and drawing.quota["counted"] is True and drawing.quota["quota_event_id"]
         assert [(r.stage, r.status, r.attempts) for r in runs] == [(n, "done", 1) for n in range(1, 8)]
         assert [p.page_no for p in pages] == list(range(1, 10))
-        assert {p.route for p in pages} == {"process"} and all(p.render_key for p in pages)
+        routes = ["context", "skip", "skip", "context", *["process"] * 5]  # 01 §7, as in NURSERY-1's labels
+        assert [p.route for p in pages] == routes and all(p.render_key for p in pages)
         assert (pages[0].width_pt, pages[0].height_pt) == (842.0, 595.0)  # from the PDF, in points
-        assert (panel.name, len(panel.page_ids)) == ("גן ילדים, לוח ראשי", 9)
+        assert {(p.rotation_applied, p.geometry_source, p.text_source) for p in pages} == {(270, "vector", "ocr")}
+        assert len({p.sha256 for p in pages}) == 9
+        assert drawing.title_block is not None and drawing.title_block["drawing_number"] == "D-100"
+        assert (panel.name, panel.page_ids) == ("לוח ראשי", [p.id for p in pages[4:]])  # named by the title block
+        artifacts = s.scalars(select(m.ContextArtifact.kind).order_by(m.ContextArtifact.kind)).all()
+        assert artifacts == ["panel_front_view", "technical_data"]
         assert (quote.drawing_id, quote.name, version.version, version.status) == (
             drawing_id,
             "גן ילדים, לוח ראשי",
@@ -184,18 +192,119 @@ def test_a_crashing_stage_ends_in_the_dlq_failed_and_refunded(
     assert quota_state(engine, tenant) == (2, 0, ["reserve", "confirm", "refund"])
 
 
-def test_a_new_version_never_counts(api: Api, migrated_db: dict[str, Engine], pipeline: Pipeline) -> None:
-    engine = migrated_db["app"]
-    tenant = add_tenant(engine, limit=10, used=10)
+def previous_drawing(engine: Engine, tenant: ApiTenant, number: str | None, page_hashes: list[str] = ()) -> str:  # type: ignore[assignment]
+    """A finished drawing to mark the upload as a new version of: its title block and its pages' hashes."""
     with tenant_session(tenant.tenant_id, engine) as s:
-        s.add(m.Drawing(id=(first := new_id("drw")), tenant_id=tenant.tenant_id, status="ready"))
+        drawing_id = new_id("drw")
+        s.add(
+            m.Drawing(id=drawing_id, tenant_id=tenant.tenant_id, status="ready", title_block={"drawing_number": number})
+        )
+        s.flush()
+        if page_hashes:
+            fil = new_id("fil")
+            s.add(
+                m.DrawingFile(
+                    id=fil,
+                    tenant_id=tenant.tenant_id,
+                    drawing_id=drawing_id,
+                    original_name="old.pdf",
+                    detected_format="pdf",
+                    sha256="00" * 32,
+                    size_bytes=1,
+                    storage_key="k",
+                )
+            )
+            s.flush()
+            for n, h in enumerate(page_hashes, start=1):
+                s.add(
+                    m.Page(
+                        id=new_id("pg"),
+                        tenant_id=tenant.tenant_id,
+                        drawing_id=drawing_id,
+                        file_id=fil,
+                        page_no=n,
+                        sha256=h,
+                    )
+                )
+    return drawing_id
+
+
+def nursery_hashes() -> list[str]:
+    return [p.sha256 for p in read_pages("fil", "pdf", NURSERY.read_bytes())]
+
+
+@pytest.mark.parametrize(
+    ("number", "shared_pages"),
+    [("D-100", 0), ("d 100", 0), ("OTHER", 5), ("OTHER", 9)],
+    ids=["same-number", "same-number-spelled-otherwise", "half-the-pages", "all-the-pages"],
+)
+def test_a_new_version_does_not_count(
+    api: Api, migrated_db: dict[str, Engine], pipeline: Pipeline, number: str, shared_pages: int
+) -> None:
+    """01 §4.5 (S08 decision): the same drawing number, or at least half the pages identical, is enough."""
+    engine = migrated_db["app"]
+    tenant = add_tenant(engine, limit=10, used=10)  # a full month: a new version must not need a slot
+    first = previous_drawing(engine, tenant, number, nursery_hashes()[:shared_pages])
     drawing_id = start(api, tenant, revision_of=first)
     Worker(pipeline).run_until_idle()
     with tenant_session(tenant.tenant_id, engine) as s:
         drawing = s.get_one(m.Drawing, drawing_id)
         assert drawing.status == "ready"
-        assert drawing.quota is not None and drawing.quota["counted"] is False
+        assert drawing.quota is not None and (drawing.quota["counted"], drawing.quota["reason"]) == (False, "revision")
+        assert not [i for i in drawing.issues if i["code"] == "revision_counted_as_new"]
     assert quota_state(engine, tenant) == (10, 0, [])
+
+
+def test_a_new_version_that_is_not_one_counts_as_new(
+    api: Api, migrated_db: dict[str, Engine], pipeline: Pipeline
+) -> None:
+    engine = migrated_db["app"]
+    tenant = add_tenant(engine, limit=10, used=3)
+    first = previous_drawing(engine, tenant, "OTHER", nursery_hashes()[:4])  # 4 of 9 pages: under half
+    drawing_id = start(api, tenant, revision_of=first)
+    Worker(pipeline).run_until_idle()
+    with tenant_session(tenant.tenant_id, engine) as s:
+        drawing = s.get_one(m.Drawing, drawing_id)
+        assert drawing.status == "ready"
+        assert drawing.quota is not None and (drawing.quota["counted"], drawing.quota["reason"]) == (
+            True,
+            "new_drawing",
+        )
+        (notice,) = [i for i in drawing.issues if i["code"] == "revision_counted_as_new"]
+        assert notice["severity"] == "info" and "ייספר כהצעה חדשה" in notice["message"]
+    assert quota_state(engine, tenant) == (4, 0, ["reserve", "confirm"])
+
+
+def test_a_new_version_that_is_not_one_stops_when_the_month_is_used_up(
+    api: Api, migrated_db: dict[str, Engine], pipeline: Pipeline
+) -> None:
+    engine = migrated_db["app"]
+    tenant = add_tenant(engine, limit=10, used=10)
+    first = previous_drawing(engine, tenant, "OTHER")
+    drawing_id = start(api, tenant, revision_of=first)
+    Worker(pipeline).run_until_idle()
+    with tenant_session(tenant.tenant_id, engine) as s:
+        drawing = s.get_one(m.Drawing, drawing_id)
+        assert drawing.status == "failed"
+        assert [i["code"] for i in drawing.issues if i["severity"] == "error"] == ["quota_reached"]
+        assert s.get_one(m.StageRun, (tenant.tenant_id, drawing_id, 2)).status == "skipped"
+    assert quota_state(engine, tenant) == (10, 0, [])
+
+
+def test_the_same_files_again_do_not_count(api: Api, migrated_db: dict[str, Engine], pipeline: Pipeline) -> None:
+    """01 §4.5: the same sha256 already decoded in this tenant is reused, not counted."""
+    engine = migrated_db["app"]
+    tenant = add_tenant(engine, limit=10, used=0)
+    start(api, tenant)
+    Worker(pipeline).run_until_idle()
+    again = start(api, tenant)
+    Worker(pipeline).run_until_idle()
+    with tenant_session(tenant.tenant_id, engine) as s:
+        drawing = s.get_one(m.Drawing, again)
+        pages = s.scalars(select(m.Page).where(m.Page.drawing_id == again).order_by(m.Page.page_no)).all()
+        assert drawing.status == "ready" and drawing.quota is not None and drawing.quota["reason"] == "reuse"
+        assert {p.classified_by for p in pages} == {"reused"} and all(p.reused_from for p in pages)
+    assert quota_state(engine, tenant) == (1, 0, ["reserve", "confirm", "reserve", "release"])
 
 
 # --- messages that never arrive, and copies (BUG-006, BUG-007) --------------------------------------------------

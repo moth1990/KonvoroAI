@@ -5,7 +5,7 @@
 | **Track** | G |
 | **Branch** | `s07-gate-0` |
 | **Depends on** | S06 |
-| **Status** | in review |
+| **Status** | done |
 | **PR** | [moth1990/KonvoroAI#8](https://github.com/moth1990/KonvoroAI/pull/8) |
 
 ## Goal
@@ -52,7 +52,7 @@ Phase 1 starts from a tagged, stable `phase-0`.
 - [x] Update README §6 readiness checkboxes for the items phase 0 completed.
 
 ### Close
-- [ ] Merge, tag `phase-0`, and set the S01–S07 status to `done`. After the user merges the PR.
+- [x] Merge, tag `phase-0`, and set the S01–S07 status to `done`. After the user merges the PR. PR #8 merged 2026-10-31; `phase-0` tagged on its merge commit `2fac0be` and pushed 2026-11-01, on the user's word (during S08).
 - [x] Prepare the phase 1 session files S08 and S09 from the template, so the next session starts immediately.
 
 ## Acceptance criteria (phase 0 exit)

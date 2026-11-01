@@ -1,6 +1,7 @@
 """Stage 7 stub (07): a quote with zero lines, version 1, draft, linked to the drawing. Pricing arrives in S22.
 
 The quote is named after the project, or else the first file, so home's recent work and the review link work.
+When stages 2–7 run again (a page moved to another route, S08), the drawing keeps its quote and version 1.
 """
 
 from datetime import UTC, datetime
@@ -25,11 +26,13 @@ def run(ctx: StageContext) -> QuoteVersionResult:
     s, d = ctx.session, ctx.drawing
     project = s.get(m.Project, d.project_id) if d.project_id else None
     name = (project.name if project else "") or (intake.source_files[0].original_name if intake.source_files else "")
-    quote_id = new_id("quo")
-    s.add(m.Quote(id=quote_id, tenant_id=ctx.tenant_id, drawing_id=d.id, name=name or quote_id))
-    s.flush()
     today = datetime.now(UTC).date()
-    s.add(m.QuoteVersion(id=new_id("qv"), tenant_id=ctx.tenant_id, quote_id=quote_id, version=1, quote_date=today))
+    existing = s.scalar(select(m.Quote.id).where(m.Quote.drawing_id == d.id))
+    quote_id = existing or new_id("quo")
+    if existing is None:
+        s.add(m.Quote(id=quote_id, tenant_id=ctx.tenant_id, drawing_id=d.id, name=name or quote_id))
+        s.flush()
+        s.add(m.QuoteVersion(id=new_id("qv"), tenant_id=ctx.tenant_id, quote_id=quote_id, version=1, quote_date=today))
     vat = s.scalar(select(m.VatRate.rate).where(m.VatRate.valid_from <= today).order_by(m.VatRate.valid_from.desc()))
     zero_panel = PanelTotals(cost_total=ZERO, price_total=ZERO)
     return QuoteVersionResult(

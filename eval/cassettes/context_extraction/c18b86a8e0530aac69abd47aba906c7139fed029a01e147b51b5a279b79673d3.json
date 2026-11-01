@@ -1,0 +1,43 @@
+{
+  "answer": {
+    "input_tokens": 2263,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 311,
+    "payload": {
+      "feeds": [
+        {
+          "cable": null,
+          "fed_from": null,
+          "length_m": null,
+          "panel": "פילר הזנה למתחם"
+        },
+        {
+          "cable": "2X(4x240^2-NA2XY)+2X150CU2X",
+          "fed_from": "פילר הזנה למתחם",
+          "length_m": 29,
+          "panel": "לוח חשמל ראשי מתחם רכב"
+        },
+        {
+          "cable": "5x25N2XY",
+          "fed_from": "לוח חשמל ראשי מתחם רכב",
+          "length_m": 135,
+          "panel": "לוח מבנה משרדים"
+        },
+        {
+          "cable": "4x240NA2XY+150CU",
+          "fed_from": "לוח חשמל ראשי מתחם רכב",
+          "length_m": 129,
+          "panel": "לוח סככת רכב"
+        },
+        {
+          "cable": "5x10N2XY",
+          "fed_from": "לוח חשמל ראשי מתחם רכב",
+          "length_m": 112,
+          "panel": "לוח ביתן שומר"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "context_extraction"
+}

@@ -1,0 +1,33 @@
+{
+  "answer": {
+    "input_tokens": 4247,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 778,
+    "payload": {
+      "ambient_c": 35,
+      "cable_entry": "כניסה כבלים מלמטה; יציאת כבלים מלמעלה",
+      "control_voltage": null,
+      "enclosure": {
+        "color": null,
+        "depth_mm": 500,
+        "height_mm": 2100,
+        "ik": "IK10",
+        "installation": null,
+        "ip": null,
+        "material": "פח",
+        "width_mm": 1200
+      },
+      "form": "2B",
+      "icc_ka": null,
+      "min_breaking_capacity_ka": 10,
+      "rated_current_a": null,
+      "required_services": [
+        "חישוב חום ע\"י יצרן הלוח בהתאם לציוד המותקן"
+      ],
+      "spare_space_pct": 30,
+      "standard": "61439-2"
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "context_extraction"
+}

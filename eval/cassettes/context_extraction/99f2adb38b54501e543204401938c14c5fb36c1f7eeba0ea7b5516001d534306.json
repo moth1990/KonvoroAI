@@ -1,0 +1,29 @@
+{
+  "answer": {
+    "input_tokens": 3289,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 544,
+    "payload": {
+      "designators": [
+        "L1",
+        "L2",
+        "L3",
+        "LG1",
+        "LG2",
+        "LG3",
+        "PM",
+        "EMS"
+      ],
+      "panels": [
+        {
+          "depth_mm": 300,
+          "height_mm": 1000,
+          "name": "MAIN ELECTRICAL BOARD",
+          "width_mm": 800
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "context_extraction"
+}

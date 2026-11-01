@@ -71,6 +71,12 @@ TENANTS = (
     # Uploads change the quota, and the desktop and mobile projects run at the same time: one tenant each.
     E2eTenant(5, "upload-desktop@e2e.konboro.local", home_chat=False, used=12, sample_data=False),
     E2eTenant(6, "upload-mobile@e2e.konboro.local", home_chat=False, used=12, sample_data=False),
+    # The done-step screenshots: one tenant per scheme and project, so each shot is the tenant's only upload, a fresh
+    # decode with a fixed count. In a shared tenant it was a reuse or not by test order (BUG-016).
+    E2eTenant(7, "done-light-desktop@e2e.konboro.local", home_chat=False, used=12, sample_data=False),
+    E2eTenant(8, "done-dark-desktop@e2e.konboro.local", home_chat=False, used=12, sample_data=False),
+    E2eTenant(9, "done-light-mobile@e2e.konboro.local", home_chat=False, used=12, sample_data=False),
+    E2eTenant(10, "done-dark-mobile@e2e.konboro.local", home_chat=False, used=12, sample_data=False),
 )
 
 # A project with this name runs slowly, so a test can cancel it mid-run; every other upload runs at full speed.
@@ -204,6 +210,7 @@ def main() -> None:
     import uvicorn
 
     from konboro.api.app import create_app
+    from konboro.devtools.fake_llm import fake_providers
     from konboro.pipeline.stages import STAGES
     from konboro.pipeline.worker import start_in_thread
     from konboro.services.queue import DLQ, STAGE_QUEUES, Queue
@@ -216,7 +223,8 @@ def main() -> None:
     queue.ensure()
     for base in [*STAGE_QUEUES.values(), DLQ]:  # nothing left over from an earlier run
         queue.purge(base)
-    start_in_thread(settings, engine, stages=slowed(STAGES))  # the pipeline worker, beside the API
+    # The pipeline worker, beside the API, with the stand-in model: E2E never calls a real one (CLAUDE.md, testing)
+    start_in_thread(settings, engine, stages=slowed(STAGES), llm_providers=fake_providers())
     uvicorn.run(create_app(settings, engine=engine), host="127.0.0.1", port=api_port, log_level="warning")
 
 

@@ -1,0 +1,20 @@
+{
+  "answer": {
+    "input_tokens": 4217,
+    "model": "claude-haiku-5-5",
+    "output_tokens": 547,
+    "payload": {
+      "component_labels": "none",
+      "language": "he",
+      "orientation": 0,
+      "page_kind": "bom_table",
+      "page_kind_confidence": 0.95,
+      "panels": [],
+      "reasoning": "A handwritten supplier quote table lists parts (פרטים) with quantities (כמות) and no drawn panel, so it is a bill of materials.",
+      "regions": [],
+      "title_block": null
+    }
+  },
+  "model": "claude-haiku-5-5",
+  "stage": "page_classification"
+}

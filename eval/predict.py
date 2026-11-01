@@ -27,4 +27,6 @@ def prediction(intake: IntakeResult, merge: MergeResult, quote: QuoteVersionResu
         panels=tuple(CanonPanel(name=names.get(pid, pid), components=tuple(cs)) for pid, cs in by_panel.items()),
         audit=None,  # the audit flow (11) arrives with its own session
         quote_total=quote.totals.net_total,
+        title_block=intake.title_block.model_dump(exclude={"designer"}) if intake.title_block else {},
+        needs_confirmation=intake.needs_confirmation,
     )

@@ -1,0 +1,28 @@
+{
+  "answer": {
+    "input_tokens": 4364,
+    "model": "claude-haiku-5-5",
+    "output_tokens": 996,
+    "payload": {
+      "component_labels": "not_applicable",
+      "language": "he",
+      "orientation": 0,
+      "page_kind": "factory_template",
+      "page_kind_confidence": 0.85,
+      "panels": [],
+      "reasoning": "The page holds only the factory's standard colour tables, DIN torque table and warning note, with no devices or panel drawing of this project.",
+      "regions": [],
+      "title_block": {
+        "date": "2026-10-05",
+        "designer": "ס.ס לוחות חשמל ובקרה",
+        "drawing_number": "26/952",
+        "panel_name": "NURSERY",
+        "project_name": "Joyech ethiopia",
+        "revision": null,
+        "status": null
+      }
+    }
+  },
+  "model": "claude-haiku-5-5",
+  "stage": "page_classification"
+}

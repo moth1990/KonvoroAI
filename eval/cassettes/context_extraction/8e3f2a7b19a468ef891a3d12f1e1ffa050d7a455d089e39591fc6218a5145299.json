@@ -1,0 +1,31 @@
+{
+  "answer": {
+    "input_tokens": 2963,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 651,
+    "payload": {
+      "ambient_c": null,
+      "cable_entry": null,
+      "control_voltage": null,
+      "enclosure": {
+        "color": null,
+        "depth_mm": null,
+        "height_mm": null,
+        "ik": null,
+        "installation": null,
+        "ip": null,
+        "material": "פולקרבונט",
+        "width_mm": null
+      },
+      "form": null,
+      "icc_ka": null,
+      "min_breaking_capacity_ka": 10,
+      "rated_current_a": null,
+      "required_services": [],
+      "spare_space_pct": null,
+      "standard": null
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "context_extraction"
+}

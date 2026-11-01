@@ -1,0 +1,18 @@
+{
+  "answer": {
+    "input_tokens": 1417,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 190,
+    "payload": {
+      "date": "2026-10-02",
+      "designer": "S.S Electrical and control panels",
+      "drawing_number": "26/993",
+      "panel_name": "MAIN ELECTRICAL BOARD",
+      "project_name": null,
+      "revision": null,
+      "status": null
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "context_extraction"
+}

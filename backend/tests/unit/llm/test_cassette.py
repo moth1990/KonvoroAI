@@ -105,3 +105,10 @@ def test_on_call_sees_every_answered_call() -> None:
     )
     client.run(request())
     assert [(stage, r.attempts) for stage, r in seen] == [("page_classification", 2)]
+
+
+def test_a_stable_image_key_replaces_the_pixels() -> None:
+    """A page rendered by another platform's PDFium gives other bytes; the content key keeps the cassette valid."""
+    keyed = cassette_key(request(images=[ImageInput(b"mac pixels", key="pg-sha:1024")]), "m", None)
+    assert cassette_key(request(images=[ImageInput(b"linux pixels", key="pg-sha:1024")]), "m", None) == keyed
+    assert cassette_key(request(images=[ImageInput(b"mac pixels", key="pg-sha:1568")]), "m", None) != keyed

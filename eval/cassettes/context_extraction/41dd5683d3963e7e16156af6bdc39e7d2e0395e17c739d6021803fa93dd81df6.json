@@ -1,0 +1,31 @@
+{
+  "answer": {
+    "input_tokens": 4190,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 688,
+    "payload": {
+      "ambient_c": 35,
+      "cable_entry": "מלמטה",
+      "control_voltage": "230V-AC",
+      "enclosure": {
+        "color": "RAL-7035",
+        "depth_mm": 300,
+        "height_mm": 1200,
+        "ik": "IK10",
+        "installation": "העמדה על הרצפה",
+        "ip": "IP55",
+        "material": null,
+        "width_mm": 800
+      },
+      "form": "FORM-1",
+      "icc_ka": 10,
+      "min_breaking_capacity_ka": null,
+      "rated_current_a": 160,
+      "required_services": [],
+      "spare_space_pct": null,
+      "standard": "61439-2"
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "context_extraction"
+}

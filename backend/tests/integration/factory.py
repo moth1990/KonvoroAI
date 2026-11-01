@@ -83,6 +83,17 @@ def build_tenant_graph(s: Session, tenant_id: str) -> dict[str, str]:
             content="הערות",
         )
     )
+    add(
+        m.PageTemplate(
+            id=new_id("tpl"),
+            tenant_id=tenant_id,
+            producer="ס.ס לוחות חשמל ובקרה",
+            page_kind="factory_template",
+            fingerprint="00" * 32,
+            mask=[0.0, 0.8, 1.0, 1.0],
+            source_page_id=pg.id,
+        )
+    )
     add(m.StageRun(tenant_id=tenant_id, drawing_id=drw.id, stage=1, status="done"))
     add(
         cmp := m.Component(

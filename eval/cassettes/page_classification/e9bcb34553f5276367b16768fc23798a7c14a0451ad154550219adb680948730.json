@@ -1,0 +1,39 @@
+{
+  "answer": {
+    "input_tokens": 4364,
+    "model": "claude-haiku-5-5",
+    "output_tokens": 1179,
+    "payload": {
+      "component_labels": "tags_and_models",
+      "language": "he",
+      "orientation": 0,
+      "page_kind": "single_line_diagram",
+      "page_kind_confidence": 0.93,
+      "panels": [
+        {
+          "bbox": [
+            44,
+            119,
+            938,
+            738
+          ],
+          "confidence": 0.85,
+          "name": "NURSERY"
+        }
+      ],
+      "reasoning": "The page shows a single-line diagram with breakers F22-F25 and FP1, an RNV, and contactors C1-C4 feeding screen motors, so it is a single_line_diagram.",
+      "regions": [],
+      "title_block": {
+        "date": "2026-10-05",
+        "designer": "S.S Electrical and control panels",
+        "drawing_number": "26/952",
+        "panel_name": "NURSERY",
+        "project_name": "joyech ethiopia",
+        "revision": null,
+        "status": null
+      }
+    }
+  },
+  "model": "claude-haiku-5-5",
+  "stage": "page_classification"
+}

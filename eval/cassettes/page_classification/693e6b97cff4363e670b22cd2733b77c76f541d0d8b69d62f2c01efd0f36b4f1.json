@@ -1,0 +1,50 @@
+{
+  "answer": {
+    "input_tokens": 4364,
+    "model": "claude-haiku-5-5",
+    "output_tokens": 1327,
+    "payload": {
+      "component_labels": "tags_only",
+      "language": "he",
+      "orientation": 0,
+      "page_kind": "panel_front_view",
+      "page_kind_confidence": 0.85,
+      "panels": [
+        {
+          "bbox": [
+            103,
+            140,
+            745,
+            745
+          ],
+          "confidence": 0.8,
+          "name": "NURSERY"
+        }
+      ],
+      "reasoning": "The page shows the device layout of the panel inside its enclosure, with dimensions and pilot lamps drawn as they sit on the door, so it is a panel front view.",
+      "regions": [
+        {
+          "bbox": [
+            26,
+            822,
+            975,
+            969
+          ],
+          "confidence": 0.95,
+          "region_kind": "title_block"
+        }
+      ],
+      "title_block": {
+        "date": "2026-10-05",
+        "designer": "ס.ס לוחות חשמל ובקרה",
+        "drawing_number": "26/952",
+        "panel_name": "NURSERY",
+        "project_name": "joyech ethiopia",
+        "revision": null,
+        "status": null
+      }
+    }
+  },
+  "model": "claude-haiku-5-5",
+  "stage": "page_classification"
+}

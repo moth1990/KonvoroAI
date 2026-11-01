@@ -1,0 +1,50 @@
+{
+  "answer": {
+    "input_tokens": 4364,
+    "model": "claude-haiku-5-5",
+    "output_tokens": 1252,
+    "payload": {
+      "component_labels": "tags_and_models",
+      "language": "he",
+      "orientation": 0,
+      "page_kind": "single_line_diagram",
+      "page_kind_confidence": 0.93,
+      "panels": [
+        {
+          "bbox": [
+            200,
+            110,
+            800,
+            790
+          ],
+          "confidence": 0.85,
+          "name": null
+        }
+      ],
+      "reasoning": "The page shows one incoming feeder with breaker FP1 (S201M) feeding five outgoing circuits HT1-HT5 with pilot lamps, which is a single-line diagram.",
+      "regions": [
+        {
+          "bbox": [
+            24,
+            820,
+            900,
+            970
+          ],
+          "confidence": 0.95,
+          "region_kind": "title_block"
+        }
+      ],
+      "title_block": {
+        "date": "2026-10-05",
+        "designer": "S.S Electrical and control panels",
+        "drawing_number": "26/952-5",
+        "panel_name": "KARWANI",
+        "project_name": "NEVIS",
+        "revision": null,
+        "status": null
+      }
+    }
+  },
+  "model": "claude-haiku-5-5",
+  "stage": "page_classification"
+}

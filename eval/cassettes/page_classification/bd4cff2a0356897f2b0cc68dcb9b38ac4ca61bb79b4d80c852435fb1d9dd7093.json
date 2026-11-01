@@ -1,0 +1,28 @@
+{
+  "answer": {
+    "input_tokens": 4364,
+    "model": "claude-haiku-5-5",
+    "output_tokens": 795,
+    "payload": {
+      "component_labels": "not_applicable",
+      "language": "he",
+      "orientation": 0,
+      "page_kind": "factory_template",
+      "page_kind_confidence": 0.9,
+      "panels": [],
+      "reasoning": "A fixed wire-colour table (conductor colours for AC, DC and PE circuits) with no devices of this project, so it is a factory template page.",
+      "regions": [],
+      "title_block": {
+        "date": "2026-10-05",
+        "designer": "S.S Electrical and control panels",
+        "drawing_number": "26/952-5",
+        "panel_name": "KARWANI",
+        "project_name": "NEVIS",
+        "revision": null,
+        "status": null
+      }
+    }
+  },
+  "model": "claude-haiku-5-5",
+  "stage": "page_classification"
+}

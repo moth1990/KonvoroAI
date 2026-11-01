@@ -550,6 +550,7 @@
             }
           ],
           "default": null,
+          "description": "The company or office that made the drawing, never a person",
           "title": "Designer"
         },
         "drawing_number": {
@@ -563,6 +564,19 @@
           ],
           "default": null,
           "title": "Drawing Number"
+        },
+        "panel_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When the title block names the panel (S08)",
+          "title": "Panel Name"
         },
         "project_name": {
           "anyOf": [
@@ -730,6 +744,18 @@
     "tenant_id": {
       "title": "Tenant Id",
       "type": "string"
+    },
+    "title_block": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TitleBlock"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "The drawing's, read once from its title block (S08)"
     },
     "trace_id": {
       "pattern": "^trc_[0-9A-Za-z_]+$",

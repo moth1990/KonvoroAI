@@ -173,12 +173,16 @@ def progress(session: Session, tenant_id: str, drawing_id: str) -> Progress | No
 
 
 def stage_summary(p: Progress, stage: int) -> str | None:
-    """Stage 1 is the only real one so far (prototype STAGES second column: "9 עמודים · לוח אחד")."""
+    """Stage 1 is the only real one so far (prototype STAGES, line 761: "9 עמודים · 2 תבניות של המפעל · לוח אחד").
+    The templates part shows only when there are any."""
     if stage != 1:
         return None
-    pages = _count_text(len(p.pages), "עמוד אחד", "עמודים")
-    panels = _count_text(len(p.panels), "לוח אחד", "לוחות")
-    return f"{pages} · {panels}"
+    parts = [_count_text(len(p.pages), "עמוד אחד", "עמודים")]
+    factory = sum(1 for page, _ in p.pages if page.page_kind == "factory_template")
+    if factory:
+        parts.append(_count_text(factory, "תבנית אחת של המפעל", "תבניות של המפעל"))
+    parts.append(_count_text(len(p.panels), "לוח אחד", "לוחות"))
+    return " · ".join(parts)
 
 
 def revisable(session: Session, tenant_id: str, limit: int = 50) -> list[tuple[Drawing, Quote]]:

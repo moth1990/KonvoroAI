@@ -1,0 +1,105 @@
+{
+  "answer": {
+    "input_tokens": 3993,
+    "model": "claude-haiku-5-5",
+    "output_tokens": 1302,
+    "payload": {
+      "component_labels": "tags_only",
+      "language": "he",
+      "orientation": 0,
+      "page_kind": "single_line_diagram",
+      "page_kind_confidence": 0.9,
+      "panels": [
+        {
+          "bbox": [
+            54,
+            227,
+            342,
+            773
+          ],
+          "confidence": 0.85,
+          "name": "לוח ראשי"
+        },
+        {
+          "bbox": [
+            344,
+            227,
+            760,
+            773
+          ],
+          "confidence": 0.85,
+          "name": "לוח סככה"
+        },
+        {
+          "bbox": [
+            762,
+            227,
+            884,
+            773
+          ],
+          "confidence": 0.8,
+          "name": "לוח ביתן שומר"
+        }
+      ],
+      "reasoning": "The sheet shows several single-line diagrams with breakers and outgoing circuits, titled לוח ראשי, לוח סככה and לוח ביתן שומר, plus a feed scheme block.",
+      "regions": [
+        {
+          "bbox": [
+            889,
+            227,
+            996,
+            773
+          ],
+          "confidence": 0.8,
+          "region_kind": "feed_diagram"
+        },
+        {
+          "bbox": [
+            0,
+            227,
+            51,
+            773
+          ],
+          "confidence": 0.6,
+          "region_kind": "title_block"
+        },
+        {
+          "bbox": [
+            291,
+            398,
+            342,
+            489
+          ],
+          "confidence": 0.6,
+          "panel_ref": "לוח ראשי",
+          "region_kind": "notes_block"
+        },
+        {
+          "bbox": [
+            620,
+            277,
+            703,
+            432
+          ],
+          "confidence": 0.6,
+          "panel_ref": "לוח סככה",
+          "region_kind": "notes_block"
+        },
+        {
+          "bbox": [
+            801,
+            330,
+            855,
+            398
+          ],
+          "confidence": 0.6,
+          "panel_ref": "לוח ביתן שומר",
+          "region_kind": "notes_block"
+        }
+      ],
+      "title_block": null
+    }
+  },
+  "model": "claude-haiku-5-5",
+  "stage": "page_classification"
+}

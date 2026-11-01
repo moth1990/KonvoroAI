@@ -742,6 +742,17 @@ a.list-item:hover {
 .thumb select {
   width: 100%;
 }
+/* Not in the prototype (S08, the confirmation step): a page the classifier is unsure of, and a stage-1 warning. */
+.thumb.unsure {
+  border-color: var(--warn);
+  background: var(--warn-soft);
+}
+.thumb.unsure .tnote {
+  color: var(--warn);
+}
+.warn-msg {
+  color: var(--warn);
+}
 .modal.wide {
   width: min(760px, 100%);
   max-height: calc(100vh - 32px);

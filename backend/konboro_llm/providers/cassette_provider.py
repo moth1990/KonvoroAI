@@ -3,7 +3,8 @@
     replay: the answer comes from `<root>/<stage>/<key>.json`; a missing cassette is an error, never a live call.
     record: the wrapped provider answers, and the answer is written to that file.
 
-The key is a hash of everything that can change the answer: stage, model, system prompt, user text, image bytes,
+The key is a hash of everything that can change the answer: stage, model, system prompt, user text, image bytes
+(or the image's stable `key`, when the caller gives one),
 few-shot examples, the output schema and the retry hint. Change any of them and the cassette must be recorded again.
 """
 
@@ -34,7 +35,7 @@ def cassette_key(request: LLMRequest[Any], model: str, retry_hint: str | None) -
         "model": model,
         "system": request.system,
         "user_text": request.user_text,
-        "images": [[i.media_type, _sha256(i.data)] for i in request.images],
+        "images": [[i.media_type, i.key or _sha256(i.data)] for i in request.images],
         "examples": [[e.text, e.expected_json, _sha256(e.image.data) if e.image else None] for e in request.examples],
         "schema": request.output_schema.model_json_schema(),
         "retry_hint": retry_hint,

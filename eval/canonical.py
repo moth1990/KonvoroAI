@@ -82,6 +82,7 @@ class GoldenDrawing(Canon):
     audit: CanonAudit | None = None
     quote_total: Decimal | None = None
     checksums: Checksums | None = None  # when the label file documents its own counts
+    title_block: dict[str, str] = {}  # only the fields the label states (01 §10: accuracy per field)
 
     @property
     def products(self) -> int:
@@ -100,3 +101,5 @@ class Prediction(Canon):
     panels: tuple[CanonPanel, ...]
     audit: tuple[CanonDifference, ...] | None = None  # the audit flow (11) isn't built yet
     quote_total: Decimal | None = None
+    title_block: dict[str, str | None] = {}
+    needs_confirmation: bool | None = None
