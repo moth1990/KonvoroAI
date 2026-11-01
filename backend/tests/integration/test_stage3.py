@@ -18,7 +18,7 @@ from konboro.pipeline.worker import Worker
 from konboro.services.storage import Storage, TenantKeyError
 from konboro_llm.stages.symbol_detection import STAGE as DETECT
 
-from .api import Api, add_tenant
+from .api import Api, add_tenant, set_tenant_flag
 from .test_api_drawings import progress
 from .test_pipeline import pipeline  # noqa: F401  (fixture)
 from .test_stage1 import NURSERY, send
@@ -106,3 +106,22 @@ def test_the_run_step_shows_the_stage_3_line(api: Api, seeded: dict[str, Engine]
     stage_3 = progress(api, tenant, drawing_id).json()["stages"][2]
     assert stage_3["status"] == "done"
     assert stage_3["summary"].endswith(" סימנים")  # the stand-in is always sure: nothing for the disambiguation call
+
+
+def test_a_drawing_from_the_pipeline_opens_for_review(
+    api: Api,
+    seeded: dict[str, Engine],
+    pipeline: Pipeline,  # noqa: F811
+) -> None:
+    """Stage 1 keeps each panel's boxes per page as a list (`panels.bboxes`); the quote API sends one box per page.
+    The review fixture has no boxes, so only a drawing from the pipeline reaches that path (BUG-026)."""
+    engine = seeded["app"]
+    tenant = add_tenant(engine)
+    set_tenant_flag(engine, tenant.tenant_id, "review_screen", True)
+    drawing_id = send(api, tenant, NURSERY)
+    Worker(pipeline).run_until_idle()
+    quote_id = progress(api, tenant, drawing_id).json()["quote_id"]
+    r = api.client.get(f"/quotes/{quote_id}", headers=api.as_(tenant))
+    assert r.status_code == 200, r.text
+    boxes = [pn["bbox"] for page in r.json()["pages"] for pn in page["panels"]]
+    assert boxes and all(b is None or (len(b) == 4 and all(isinstance(v, float) for v in b)) for b in boxes)

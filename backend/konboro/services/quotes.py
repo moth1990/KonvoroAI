@@ -225,6 +225,14 @@ class FindingView:
     bbox: list[float] | None  # "בשרטוט" (prototype `f-show`)
 
 
+def _panel_box(boxes: list[list[float]] | None) -> list[float] | None:
+    """Stage 1 keeps a panel's boxes on a page as a list (`panels.bboxes`, S08); the review screen draws one, around
+    them all (BUG-026)."""
+    if not boxes:
+        return None
+    return [min(b[0] for b in boxes), min(b[1] for b in boxes), max(b[2] for b in boxes), max(b[3] for b in boxes)]
+
+
 @dataclass(frozen=True)
 class PagePanelView:
     panel_id: str
@@ -503,7 +511,11 @@ def _pages(session: Session, drawing: m.Drawing, lines: Sequence[LineView]) -> l
             geometry_source=p.geometry_source,
             width_pt=p.width_pt,
             height_pt=p.height_pt,
-            panels=[PagePanelView(pn.id, pn.name, pn.bboxes.get(p.id)) for pn in panels if p.id in (pn.page_ids or [])],
+            panels=[
+                PagePanelView(pn.id, pn.name, _panel_box(pn.bboxes.get(p.id)))
+                for pn in panels
+                if p.id in (pn.page_ids or [])
+            ],
             # Stage 1 points `render_key` at its thumbnail and stage 2 at the full render; the thumbnail stays.
             thumbnail_key=drawing_key(drawing.tenant_id, drawing.id, "pages", p.id, "thumb.png")
             if p.render_key
