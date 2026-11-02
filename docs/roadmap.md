@@ -42,7 +42,7 @@ P and R sessions alternate. R sessions use a fixture quote seeded through the re
 | [S14](sessions/S14-bom-only.md) | P | BOM-only path | Excel and CSV import, photographed BOM through `table_transcription` (BOM-HW-1) | 01 §5.8 | — | S08 | done |
 | [S15](sessions/S15-quote-audit.md) | P | Quote audit backend | Read the existing quote, arithmetic check, matching, 8 difference types, money at risk, API | 11 §4–6, §8 | — | S13, S14 | done |
 | [S16](sessions/S16-audit-screen.md) | R | Audit screen | Audit flow and results screen, "create corrected quote" entry point, E2E on 26-993 (replay) | 11 §7–8 | 1066–1096 | S15 | done |
-| [S17](sessions/S17-gate-1.md) | G | **Gate 1** | Live eval, full E2E regression, fix bugs. Tag `phase-1` | dev-strategy §7 | all built screens | S16 | in review |
+| [S17](sessions/S17-gate-1.md) | G | **Gate 1** | Live eval, full E2E regression, fix bugs. Tag `phase-1` | dev-strategy §7 | all built screens | S16 | done |
 
 **Exit:** ≥80% difference accuracy on golden drawings that have actual quotes; audit and review E2E green.
 
@@ -50,7 +50,7 @@ P and R sessions alternate. R sessions use a fixture quote seeded through the re
 
 | # | Track | Session | Main contents | Specs | Prototype | Depends on | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| [S18](sessions/S18-price-list-backend.md) | P | Price list backend | Products with several suppliers, preferred or else cheapest, margin rules, history, consumables, cabinet "includes", bulk brand discount, master-catalog import format | 07 §7.2–7.3; 10 §9.2 | 484–511 | S17 | todo |
+| [S18](sessions/S18-price-list-backend.md) | P | Price list backend | Products with several suppliers, preferred or else cheapest, margin rules, history, consumables, cabinet "includes", bulk brand discount, master-catalog import format | 07 §7.2–7.3; 10 §9.2 | 484–511 | S17 | in review |
 | [S19](sessions/S19-price-list-screen.md) | R | Price list screen | Price list table, filters, search, product editor modal, brand discount | 07 §7.2.1–7.2.3; 10 §8 | 1098–1208 | S18 | todo |
 | S20 | P | Stage 5: catalog matching | Signature, explicit SKU and series, match memory, brand, fill-in, circuit inference, candidate query, decision rules, `catalog_disambiguation`, bundles | 05 (all) | — | S18 | todo |
 | S21 | P | Stage 6: validation | Panel model, rules stored as data, starter rule pack, BOM cross-check, `validator_review`, re-run after edits in under 1 s | 06 (all) | 460–472 | S20 | todo |
@@ -118,6 +118,10 @@ Ideas and out-of-scope findings from sessions. Each one is scheduled into a sess
 - **A misread BOM word** (from S14). On BOM-HW-1 Opus read "מגן מתח יתר" as "מגן מתח ותדר", so the row stayed `unknown` (red, the user picks). A word one letter off a known term, at a lower confidence, would catch it; measure the false matches on more BOMs first.
 - **BOM tables in a vector PDF** (from S14). A `bom_table` page in a PDF is transcribed from its picture, like a photo. Its text layer could be read in code (pdfplumber's tables), with the model only for scans.
 - **The done step's product count** (from S05, S14). `ProgressSummaryOut.products` is still 0; stage 4's components exist since S13, and for a BOM they are the products. Show them once stage 7 writes lines (S22), or the components before that.
+- **Undo a line's price change** (from S18, 09 §7.14). Both choices are undoable, including the price-list change. `POST /quotes/{id}/lines/{line_id}/price` writes the `price_changed` event, but nothing reverts the line's override or the product's history yet. Due with the review screen's editing (S23).
+- **The product editor's rules** (from S18, for S19). The API has no delete or archive for a product, because quote lines point at it. Decide that in S19. The prototype also refuses "לפי חוק הרווח" without a supplier, which 07 §7.2.1 allows (no cost means no price): ask the user at S19.
+- **Similar-products check without the catalog** (from S18, 10 §8). The 3-times check compares products of the same family, brand and current, and the current comes only from a linked catalog item. A product the factory typed with no catalog link gets no comparison.
+- **Exchange rates in production** (from S18, S18 decision 4). Locally they are fixed seeded rates. Before the pilot, a daily feed (07 §4.3 "ממקור מוגדר") writes `fx_rates`, and `fx_rate_missing` alerts the operations team (07 §8).
 - **A model for quote lines code can't sign** (from S15, decision 3). A line no BOM word names has no family and matches nothing; it caps every missing item's confidence at 0.55. A closed-list `table_transcription`-style call (pick a family and values, no price in the request) would sign it; measure how many real lines need it first.
 - **The price list in the audit's money** (from S15, 11 §5.5 priority 3). A missing item with no similar line in the quote is "ללא מחיר" even when the factory's price list has it: searching the price list needs stage 5's matching (S20).
 - **The audit's learning loop** (from S15, 11 §9). S15 stores the verdicts and reject reasons only: the quote's prices into the price list ("מחיר מהצעה קיימת"), confirmed differences as golden labels (with the factory's consent), "טעות של המערכת" as negative examples for stages 3–4.

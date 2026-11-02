@@ -1,4 +1,4 @@
-from sqlalchemy import Engine, func, select
+from sqlalchemy import Engine, func, select, update
 
 from konboro.db import models as m
 from konboro.db.seed import DEMO_TENANT, FLAGS, PRODUCTS, seed
@@ -54,3 +54,29 @@ def test_the_demo_tenant_gets_the_review_fixture_once(migrated_db: dict[str, Eng
     assert quotes == 1
     assert enabled is True
     assert linked == 8
+
+
+def test_seed_links_the_demo_price_list(migrated_db: dict[str, Engine], storage: Storage) -> None:
+    """BUG-039: demo products take the catalog's family; a tenant seeded before S18 has its families renamed."""
+    seed(migrated_db["owner"], storage)
+    with tenant_session(DEMO_TENANT, migrated_db["owner"]) as s:
+        s.execute(update(m.Product).where(m.Product.manufacturer_sku == "AD22-22DS").values(family="pilot_light"))
+        s.execute(
+            update(m.Product)
+            .where(m.Product.manufacturer_sku == "S203M-C16")
+            .values(family="mcb", catalog_item_id=None)
+        )
+    seed(migrated_db["owner"], storage)
+    with tenant_session(DEMO_TENANT, migrated_db["app"]) as s:
+        rows = {
+            p.manufacturer_sku: (p.family, p.catalog_item_id is not None)
+            for p in s.scalars(select(m.Product).where(m.Product.manufacturer_sku.is_not(None)))
+        }
+        flag = s.scalar(select(m.TenantFeatureOverride.enabled).where(m.TenantFeatureOverride.flag_key == "price_list"))
+        usd = s.scalar(select(m.FxRate.rate).where(m.FxRate.currency == "USD").limit(1))
+    assert rows["S203M-C16"] == ("circuit_breaker", True)
+    assert rows["F204A-40/0.03"] == ("rcd", True)
+    assert rows["AD22-22DS"] == ("indicator_lamp", False)  # not ABB: no catalog item, the family renamed
+    assert rows["SIRCO M 4P 125A"] == ("switch_disconnector", False)
+    assert flag is True
+    assert str(usd) == "3.700000"

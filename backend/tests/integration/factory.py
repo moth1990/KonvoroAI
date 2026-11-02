@@ -184,6 +184,7 @@ def build_tenant_graph(s: Session, tenant_id: str) -> dict[str, str]:
             changed_by=user.id,
         )
     )
+    add(m.SupplierPreference(id=new_id("spf"), tenant_id=tenant_id, scope="brand", key="ABB", supplier_id=sup.id))
     add(m.BrandDiscount(tenant_id=tenant_id, brand="ABB", discount_pct=Decimal("0.32")))
     add(m.MarginRule(id=new_id("mr"), tenant_id=tenant_id, level="default", kind="markup", value=Decimal("0.25")))
     add(

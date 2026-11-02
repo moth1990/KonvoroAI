@@ -116,7 +116,7 @@ System limits (20 MB per file, 20 files, 200 pages per drawing, 2 m² per page) 
 | `list_price numeric(14,4)`, `list_currency` | The manufacturer's list price, when known |
 | `status` | `active` or `discontinued`; `replaced_by → catalog_items` |
 | `includes jsonb` | For enclosures and kits (07 §7.4) |
-| `source`, `source_tenant_id`, `approved_by`, `approved_at` | Where the record came from. `source` is one of `curated`, `pilot_engineer`, `import` (00 §14.2) |
+| `source`, `source_tenant_id`, `approved_by`, `approved_at` | Where the record came from. `source` is one of `curated`, `pilot_engineer`, `import` (00 §14.2). The CSV loader writes `import` rows ([catalog-import.md](catalog-import.md), S18) |
 
 The remaining global tables:
 - **`attribute_schemas`** (05 §4.4): `family text pk`, `version int`, `attributes jsonb`. `attributes` is a list of `{name, required, match_mode, default_allowed}`. For `current_a` and `poles`, `default_allowed` is always false. Seeded by `seed_global` from `konboro/pipeline/association/schemas.py` (S13), one row per billable family; a row already there is kept. Stage 4 reads them back.
@@ -125,7 +125,7 @@ The remaining global tables:
 - **`abbreviations`** (03 §4.6), global: `id` (`abr_`), `text`, `symbol_class`, `family`, `display_he`, plus the source columns. Seeded from the same module (S12).
 - **`validator_rules`** (06 §6.2): PK `(rule_id, version)`, `category` (A–E), `applies_to text[]`, `requires text null`, `severity`, `params jsonb`, `message_he`, `enabled bool`.
 - **`vat_rates`** (07 §4.3): `id` (`vat_`), `rate numeric(7,4)`, `valid_from date`. The VAT rate is data, never a constant in code.
-- **`fx_rates`**: `currency`, `rate_date`, `rate numeric(14,6)`, `source`, with PK `(currency, rate_date)`.
+- **`fx_rates`**: `currency`, `rate_date`, `rate numeric(14,6)`, `source`, with PK `(currency, rate_date)`. The rate is how many ILS one unit costs. A quote uses the latest rate on or before its date, at most 7 days old (S18 decision 4). Locally, `make seed` writes fixed USD and EUR rates, one a week through 2027 (`source` = `seed`).
 
 ## 4. Tenant layer: account, quota, settings
 
@@ -321,13 +321,18 @@ This table answers the customer's question "why was this counted?".
 The rest of the price-list tables:
 - **`suppliers`** (`sup_`): the tenant's supplier list, with `name` unique per tenant.
 - **`product_suppliers`** (`psp_`, 07 §7.2.2):
-  - `product_id`, `supplier_id`, `supplier_sku`, `unit_cost`, `currency`, `lead_days`, `price_date`, `valid_until`, `preferred bool`, `source`.
+  - `product_id`, `supplier_id null`, `supplier_sku`, `unit_cost`, `currency`, `lead_days`, `price_date`, `valid_until`, `preferred bool`, `source`.
   - A partial unique index allows at most one preferred supplier per product.
-- **`price_history`** (`prh_`): `product_id`, `field`, `old jsonb`, `new jsonb`, `quote_id null`, `changed_by`.
+  - `supplier_id` is null for a cost typed in a quote with no supplier (07 §7.2). A second partial unique index allows at most one such row per product (migration 0012, S18 decision 7).
+- **`supplier_preferences`** (`spf_`, 07 §7.2.2 item 3; migration 0012, S18 decision 3): `scope` (`brand` or `family`), `key`, `supplier_id`, unique `(tenant_id, scope, key)`. The family's preference applies before the brand's.
+- **`price_history`** (`prh_`): `product_id null`, `subject null`, `field`, `old jsonb`, `new jsonb`, `quote_id null`, `changed_by`, `created_at`.
+  - A change to a product sets `product_id`. A change to anything else names it in `subject`, and a check requires one of the two (07 §12; migration 0012). Subjects: `brand_discount:<brand>`, a margin rule's id, `supplier_preference:<scope>:<key>`.
+  - `old` and `new` are `{"value": …}` for one field, or a whole supplier row or rule. Amounts are strings.
 - **`brand_discounts`**: `brand`, `discount_pct`, with PK `(tenant_id, brand)`.
 - **`margin_rules`** (`mr_`, 07 §7.3):
   - `level` is `customer_sku`, `customer`, `sku`, `family`, `brand` or `default`.
-  - `target`, `customer_id null`.
+  - `target`: the product's id for `sku` and `customer_sku`, the family or the brand for those levels, and null for `customer` and `default`. `customer_id null`: set for the two customer levels.
+  - A product's fixed price is not a rule row: it is `products.fixed_price`, which counts as the `sku`-level rule when a rule is picked (S18 decision 6).
   - `kind` is `markup` or `margin`; `value`, `fixed_price null`.
   - `valid_from`, `valid_to`, `version int`.
   - Checks: `margin < 1`, and exactly one of `value` or `fixed_price`.
@@ -397,6 +402,7 @@ Added here:
 | `cat_` | catalog item | `ref_` | reference crop (global) |
 | `trf_` | reference crop (tenant) | `abr_` | abbreviation (global) |
 | `tab_` | abbreviation (tenant) | `vat_` | VAT rate |
+| `spf_` | supplier preference | | |
 
 ## 8. Indexes beyond keys
 

@@ -48,7 +48,16 @@ from .pipeline import (
     Project,
     StageRun,
 )
-from .pricing import BrandDiscount, DerivedItemRule, MarginRule, PriceHistory, Product, ProductSupplier, Supplier
+from .pricing import (
+    BrandDiscount,
+    DerivedItemRule,
+    MarginRule,
+    PriceHistory,
+    Product,
+    ProductSupplier,
+    Supplier,
+    SupplierPreference,
+)
 from .quotes import CorrectionEvent, Finding, Quote, QuoteLine, QuoteVersion
 
 __all__ = [
@@ -93,6 +102,7 @@ __all__ = [
     "ReferenceCrop",
     "StageRun",
     "Supplier",
+    "SupplierPreference",
     "SymbolClass",
     "Tenant",
     "TenantAbbreviation",

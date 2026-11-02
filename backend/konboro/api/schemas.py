@@ -631,3 +631,189 @@ class AuditDecisionIn(Strict):
 class CorrectedQuoteOut(BaseModel):
     quote_id: str
     created: bool = Field(description="false: the audit already had its corrected quote")
+
+
+# --- price list (07 §7.2–7.3; S18) --------------------------------------------------------------------------------
+
+PriceSource = Literal["supplier_price_list", "manual_entry", "quote_import", "brand_discount"]
+RowSource = Literal["supplier_price_list", "manual_entry", "quote_import"]
+Currency = Annotated[str, Field(pattern=r"^[A-Z]{3}$")]
+ShortText = Annotated[str, Field(min_length=1, max_length=200)]
+
+
+class SupplierPriceOut(BaseModel):
+    id: str
+    supplier_id: str | None = Field(description="null: a cost typed in a quote with no supplier")
+    supplier_name: str | None
+    supplier_sku: str | None
+    unit_cost: DecimalStr
+    currency: str
+    lead_days: int | None
+    price_date: date
+    valid_until: date | None
+    preferred: bool
+    source: str
+    in_force: bool = Field(description="Not past `valid_until` today (07 §7.2)")
+
+
+class PriceHistoryOut(BaseModel):
+    id: str
+    field: str
+    old: dict[str, Any] | None = Field(description='`{"value": …}`, or a whole supplier row; amounts as strings')
+    new: dict[str, Any] | None
+    quote_id: str | None = Field(description="The quote the change was made from, if any")
+    changed_by: str | None
+    changed_at: datetime
+
+
+class ProductOut(BaseModel):
+    """A price-list product (07 §7.2.1), with its cost and price today by the tenant's rules (07 §7.2.2, §7.3)."""
+
+    id: str
+    display_name: str
+    manufacturer_sku: str | None
+    brand: str | None
+    family: str
+    unit: str
+    sale_mode: Literal["rule", "fixed"]
+    fixed_price: DecimalStr | None
+    includes: dict[str, Any] | None
+    consumable: bool
+    source: str
+    catalog_item_id: str | None
+    list_price: DecimalStr | None = Field(description="The master catalog's manufacturer list price")
+    list_currency: str | None
+    entered_in_quote: str | None
+    entered_by: str | None
+    entered_at: datetime | None
+    sanity: dict[str, Any] | None = Field(description="10 §8's checks on the last cost typed by hand (10 §9.2)")
+    suppliers: list[SupplierPriceOut]
+    unit_cost: DecimalStr | None
+    price_status: Literal["ok", "stale", "discount_based", "missing"]
+    cost_source: dict[str, Any] | None
+    unit_price: DecimalStr | None = Field(description="Before 07 §7.6's rounding")
+    margin_rule: dict[str, Any] | None
+    margin_pct: DecimalStr | None
+    below_margin_floor: bool
+    history: list[PriceHistoryOut] = Field(description="Newest first; only on GET of one product")
+
+
+class SupplierPriceIn(Strict):
+    id: str | None = Field(default=None, description="Keep and update this row; without it, a new row")
+    supplier_id: str | None = None
+    supplier_name: ShortText | None = Field(default=None, description="Finds the supplier by name, or adds it")
+    supplier_sku: Annotated[str, Field(max_length=100)] | None = None
+    unit_cost: DecimalStr
+    currency: Currency = "ILS"
+    lead_days: Annotated[int, Field(ge=0, le=3650)] | None = None
+    price_date: date
+    valid_until: date | None = None
+    preferred: bool = False
+    source: RowSource = "supplier_price_list"
+
+
+class ProductIn(Strict):
+    display_name: ShortText
+    family: Annotated[str, Field(min_length=1, max_length=64)]
+    source: PriceSource = "manual_entry"
+    manufacturer_sku: Annotated[str, Field(max_length=100)] | None = None
+    brand: Annotated[str, Field(max_length=100)] | None = None
+    unit: Annotated[str, Field(min_length=1, max_length=20)] = "unit"
+    sale_mode: Literal["rule", "fixed"] = "rule"
+    fixed_price: DecimalStr | None = None
+    includes: dict[str, Any] | None = None
+    consumable: bool = False
+    catalog_item_id: str | None = None
+    suppliers: list[SupplierPriceIn] = Field(default_factory=list, max_length=50)
+    quote_id: str | None = Field(default=None, description="The quote the product was entered from (07 §7.2)")
+
+
+class ProductPatch(Strict):
+    """Only the fields sent change. `suppliers`, when sent, is the whole list: rows left out are removed."""
+
+    display_name: ShortText | None = None
+    family: Annotated[str, Field(min_length=1, max_length=64)] | None = None
+    manufacturer_sku: Annotated[str, Field(max_length=100)] | None = None
+    brand: Annotated[str, Field(max_length=100)] | None = None
+    unit: Annotated[str, Field(min_length=1, max_length=20)] | None = None
+    sale_mode: Literal["rule", "fixed"] | None = None
+    fixed_price: DecimalStr | None = None
+    includes: dict[str, Any] | None = None
+    consumable: bool | None = None
+    catalog_item_id: str | None = None
+    suppliers: list[SupplierPriceIn] | None = Field(default=None, max_length=50)
+    quote_id: str | None = None
+
+
+class SupplierOut(BaseModel):
+    id: str
+    name: str
+    product_count: int
+
+
+class SupplierIn(Strict):
+    name: ShortText
+
+
+class BrandDiscountOut(BaseModel):
+    brand: str
+    discount_pct: DecimalStr = Field(description="Off the manufacturer's list price: 0.32 is 32%")
+    priced_products: int = Field(description="The brand's products this discount prices today")
+
+
+class BrandDiscountIn(Strict):
+    discount_pct: DecimalStr
+    quote_id: str | None = Field(default=None, description="The quote it was entered from (09 §7.13)")
+
+
+RuleLevel = Literal["customer_sku", "customer", "sku", "family", "brand", "default"]
+
+
+class MarginRuleOut(BaseModel):
+    id: str
+    level: RuleLevel
+    target: str | None = Field(description="The product id (sku levels), the family or the brand")
+    customer_id: str | None
+    kind: Literal["markup", "margin"]
+    value: DecimalStr | None
+    fixed_price: DecimalStr | None
+    valid_from: date | None
+    valid_to: date | None
+    version: int
+
+
+class MarginRuleIn(Strict):
+    level: RuleLevel
+    kind: Literal["markup", "margin"] = Field(description="Required: a markup and a margin give different prices")
+    value: DecimalStr | None = None
+    fixed_price: DecimalStr | None = None
+    target: str | None = None
+    customer_id: str | None = None
+    valid_from: date | None = None
+    valid_to: date | None = None
+
+
+class MarginRulePatch(Strict):
+    kind: Literal["markup", "margin"] | None = None
+    value: DecimalStr | None = None
+    fixed_price: DecimalStr | None = None
+    valid_from: date | None = None
+    valid_to: date | None = None
+
+
+class SupplierPreferenceOut(BaseModel):
+    scope: Literal["brand", "family"]
+    key: str
+    supplier_id: str
+    supplier_name: str
+
+
+class SupplierPreferenceIn(Strict):
+    supplier_id: str
+
+
+class LinePriceIn(Strict):
+    """09 §7.14: the new sale price per unit, and "רק בהצעה הזו" (`quote`) or "עדכן גם במחירון" (`catalog`)."""
+
+    unit_price: DecimalStr
+    scope: Literal["quote", "catalog"]
