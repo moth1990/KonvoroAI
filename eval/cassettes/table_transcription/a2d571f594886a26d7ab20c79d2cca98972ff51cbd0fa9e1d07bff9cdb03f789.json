@@ -1,0 +1,466 @@
+{
+  "answer": {
+    "input_tokens": 4059,
+    "model": "claude-opus-5-5",
+    "output_tokens": 2443,
+    "payload": {
+      "columns": [
+        {
+          "header": "מוצר",
+          "role": "item"
+        },
+        {
+          "header": "כמות",
+          "role": "quantity"
+        },
+        {
+          "header": "מחיר ליחידה",
+          "role": "unit_price"
+        },
+        {
+          "header": "סה\"כ",
+          "role": "line_total"
+        }
+      ],
+      "quote_date": "13/10/2026",
+      "quote_number": "10288",
+      "rows": [
+        {
+          "box": [
+            65,
+            323,
+            950,
+            346
+          ],
+          "cells": [
+            {
+              "confidence": 0.9,
+              "text": "מפסק משולב פחת עד 4X100A"
+            },
+            {
+              "confidence": 0.98,
+              "text": "1"
+            },
+            {
+              "confidence": 0.97,
+              "text": "₪ 3200.00"
+            },
+            {
+              "confidence": 0.97,
+              "text": "₪ 3200.00"
+            }
+          ]
+        },
+        {
+          "box": [
+            65,
+            346,
+            950,
+            369
+          ],
+          "cells": [
+            {
+              "confidence": 0.93,
+              "text": "מא\"ז 3X6A"
+            },
+            {
+              "confidence": 0.98,
+              "text": "1"
+            },
+            {
+              "confidence": 0.97,
+              "text": "₪ 185.00"
+            },
+            {
+              "confidence": 0.97,
+              "text": "₪ 185.00"
+            }
+          ]
+        },
+        {
+          "box": [
+            65,
+            370,
+            950,
+            393
+          ],
+          "cells": [
+            {
+              "confidence": 0.92,
+              "text": "ממסר חוסר מתח"
+            },
+            {
+              "confidence": 0.98,
+              "text": "1"
+            },
+            {
+              "confidence": 0.97,
+              "text": "₪ 340.00"
+            },
+            {
+              "confidence": 0.97,
+              "text": "₪ 340.00"
+            }
+          ]
+        },
+        {
+          "box": [
+            65,
+            393,
+            950,
+            416
+          ],
+          "cells": [
+            {
+              "confidence": 0.92,
+              "text": "מנורה קוטר 22"
+            },
+            {
+              "confidence": 0.97,
+              "text": "9"
+            },
+            {
+              "confidence": 0.97,
+              "text": "₪ 45.00"
+            },
+            {
+              "confidence": 0.97,
+              "text": "₪ 405.00"
+            }
+          ]
+        },
+        {
+          "box": [
+            65,
+            416,
+            950,
+            440
+          ],
+          "cells": [
+            {
+              "confidence": 0.93,
+              "text": "מא\"ז 3X16A"
+            },
+            {
+              "confidence": 0.97,
+              "text": "3"
+            },
+            {
+              "confidence": 0.97,
+              "text": "₪ 185.00"
+            },
+            {
+              "confidence": 0.97,
+              "text": "₪ 555.00"
+            }
+          ]
+        },
+        {
+          "box": [
+            65,
+            440,
+            950,
+            463
+          ],
+          "cells": [
+            {
+              "confidence": 0.9,
+              "text": "מא\"ז N+16"
+            },
+            {
+              "confidence": 0.97,
+              "text": "2"
+            },
+            {
+              "confidence": 0.97,
+              "text": "₪ 130.00"
+            },
+            {
+              "confidence": 0.97,
+              "text": "₪ 260.00"
+            }
+          ]
+        },
+        {
+          "box": [
+            65,
+            463,
+            950,
+            486
+          ],
+          "cells": [
+            {
+              "confidence": 0.9,
+              "text": "מא\"ז N+10"
+            },
+            {
+              "confidence": 0.98,
+              "text": "1"
+            },
+            {
+              "confidence": 0.97,
+              "text": "₪ 130.00"
+            },
+            {
+              "confidence": 0.97,
+              "text": "₪ 130.00"
+            }
+          ]
+        },
+        {
+          "box": [
+            65,
+            487,
+            950,
+            510
+          ],
+          "cells": [
+            {
+              "confidence": 0.92,
+              "text": "מגע עזר"
+            },
+            {
+              "confidence": 0.97,
+              "text": "5"
+            },
+            {
+              "confidence": 0.97,
+              "text": "₪ 70.00"
+            },
+            {
+              "confidence": 0.97,
+              "text": "₪ 350.00"
+            }
+          ]
+        },
+        {
+          "box": [
+            65,
+            510,
+            950,
+            533
+          ],
+          "cells": [
+            {
+              "confidence": 0.93,
+              "text": "מא\"ז 3X10A"
+            },
+            {
+              "confidence": 0.97,
+              "text": "2"
+            },
+            {
+              "confidence": 0.97,
+              "text": "₪ 185.00"
+            },
+            {
+              "confidence": 0.97,
+              "text": "₪ 370.00"
+            }
+          ]
+        },
+        {
+          "box": [
+            65,
+            534,
+            950,
+            557
+          ],
+          "cells": [
+            {
+              "confidence": 0.93,
+              "text": "מא\"ז 1X10A"
+            },
+            {
+              "confidence": 0.98,
+              "text": "1"
+            },
+            {
+              "confidence": 0.97,
+              "text": "₪ 42.00"
+            },
+            {
+              "confidence": 0.97,
+              "text": "₪ 42.00"
+            }
+          ]
+        },
+        {
+          "box": [
+            65,
+            557,
+            950,
+            580
+          ],
+          "cells": [
+            {
+              "confidence": 0.93,
+              "text": "מא\"ז 2X10A"
+            },
+            {
+              "confidence": 0.98,
+              "text": "1"
+            },
+            {
+              "confidence": 0.97,
+              "text": "₪ 140.00"
+            },
+            {
+              "confidence": 0.97,
+              "text": "₪ 140.00"
+            }
+          ]
+        },
+        {
+          "box": [
+            65,
+            580,
+            950,
+            604
+          ],
+          "cells": [
+            {
+              "confidence": 0.93,
+              "text": "מא\"ז 1X16A"
+            },
+            {
+              "confidence": 0.98,
+              "text": "1"
+            },
+            {
+              "confidence": 0.97,
+              "text": "₪ 42.00"
+            },
+            {
+              "confidence": 0.97,
+              "text": "₪ 42.00"
+            }
+          ]
+        },
+        {
+          "box": [
+            65,
+            604,
+            950,
+            627
+          ],
+          "cells": [
+            {
+              "confidence": 0.93,
+              "text": "מא\"ז 1X6A"
+            },
+            {
+              "confidence": 0.97,
+              "text": "2"
+            },
+            {
+              "confidence": 0.97,
+              "text": "₪ 42.00"
+            },
+            {
+              "confidence": 0.97,
+              "text": "₪ 84.00"
+            }
+          ]
+        },
+        {
+          "box": [
+            65,
+            627,
+            950,
+            651
+          ],
+          "cells": [
+            {
+              "confidence": 0.9,
+              "text": "בורר 0-1-2"
+            },
+            {
+              "confidence": 0.97,
+              "text": "5"
+            },
+            {
+              "confidence": 0.97,
+              "text": "₪ 130.00"
+            },
+            {
+              "confidence": 0.97,
+              "text": "₪ 650.00"
+            }
+          ]
+        },
+        {
+          "box": [
+            65,
+            651,
+            950,
+            674
+          ],
+          "cells": [
+            {
+              "confidence": 0.85,
+              "text": "בקר טמפרטורה RELAY OUTPUT & RELAY OUTPUT כולל גשש טמפרטורה PT100"
+            },
+            {
+              "confidence": 0.98,
+              "text": "1"
+            },
+            {
+              "confidence": 0.97,
+              "text": "₪ 650.00"
+            },
+            {
+              "confidence": 0.97,
+              "text": "₪ 650.00"
+            }
+          ]
+        },
+        {
+          "box": [
+            65,
+            674,
+            950,
+            697
+          ],
+          "cells": [
+            {
+              "confidence": 0.85,
+              "text": "ארון 1000/800/300 כולל פסי צבירה אפס ארקה פנלים ודלתות"
+            },
+            {
+              "confidence": 0.98,
+              "text": "1"
+            },
+            {
+              "confidence": 0.97,
+              "text": "₪ 4200.00"
+            },
+            {
+              "confidence": 0.97,
+              "text": "₪ 4200.00"
+            }
+          ]
+        }
+      ],
+      "totals": [
+        {
+          "amount": "₪ 11603.00",
+          "confidence": 0.97,
+          "label": "סה\"כ"
+        },
+        {
+          "amount": "₪ 2088.54",
+          "confidence": 0.97,
+          "label": "מע\"מ 18%"
+        },
+        {
+          "amount": "₪ 13691.54",
+          "confidence": 0.97,
+          "label": "סה\"כ כולל מע\"מ"
+        }
+      ]
+    }
+  },
+  "model": "claude-opus-5-5",
+  "stage": "table_transcription"
+}

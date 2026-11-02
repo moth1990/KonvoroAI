@@ -39,8 +39,8 @@ P and R sessions alternate. R sessions use a fixture quote seeded through the re
 | [S11](sessions/S11-review-drawing.md) | R | Review II: drawing | OpenSeadragon viewer, SVG highlight boxes, page strip, "show on drawing", mobile tabs, toast, undo (5 s, 30 actions) | 09 §5.2, §6.5, §7.11 | 942–1004 | S09, S10 | done |
 | [S12](sessions/S12-stage3-symbols.md) | P | Stage 3 v1: symbols | LLM-vision detection with library examples and the abbreviation dictionary, cross-tile de-duplication and owner tile, orphan text, designator linking | 03 §3.4–3.7, §6, §10 | — | S10 | done |
 | [S13](sessions/S13-stage4-association.md) | P | Stage 4: association and merge | Spelling grammar as data, multiplicity, supply scope, geometric association, tile agent with citation check, merge by designator and then signature | 04 (all) | — | S12 | done |
-| [S14](sessions/S14-bom-only.md) | P | BOM-only path | Excel and CSV import, photographed BOM through `table_transcription` (BOM-HW-1) | 01 §5.8 | — | S08 | in review |
-| S15 | P | Quote audit backend | Read the existing quote, arithmetic check, matching, 8 difference types, money at risk, API | 11 §4–6, §8 | — | S13, S14 | todo |
+| [S14](sessions/S14-bom-only.md) | P | BOM-only path | Excel and CSV import, photographed BOM through `table_transcription` (BOM-HW-1) | 01 §5.8 | — | S08 | done |
+| [S15](sessions/S15-quote-audit.md) | P | Quote audit backend | Read the existing quote, arithmetic check, matching, 8 difference types, money at risk, API | 11 §4–6, §8 | — | S13, S14 | in review |
 | S16 | R | Audit screen | Audit flow and results screen, "create corrected quote" entry point, E2E on 26-993 (replay) | 11 §7–8 | 1066–1096 | S15 | todo |
 | S17 | G | **Gate 1** | Live eval, full E2E regression, fix bugs. Tag `phase-1` | dev-strategy §7 | all built screens | S16 | todo |
 
@@ -95,7 +95,6 @@ These items are owned outside the code. They do not stop sessions from starting,
 Ideas and out-of-scope findings from sessions. Each one is scheduled into a session, or dropped, at the next gate.
 
 - **Eval each stage on labelled input (00 §10.1)** (from S06). Today `make eval` runs the pipeline end to end, so a stage-1 miss also costs stage 4. Stage 4 can be fed the labelled detections once stage 3 has box labels; due with the stage 2–3 labeling work (S10/S12).
-- **Audit metrics read the audit output** (from S06). `eval/predict.py` sets `Prediction.audit = None` until the audit flow exists; S15 maps its differences into `CanonDifference` so `difference_precision` / `difference_recall` stop being n/a.
 - **PDFium in a process pool** (from S07, BUG-010). Every PDFium call in a process takes one lock, because PDFium is not thread-safe. Thumbnails are cheap; S10's tiling and deep-zoom renders are not. If rendering becomes the bottleneck, move it to a process pool.
 - **Panel count: feed sources are not panels** (from S08). On 26-993 the classifier counts QEN1 and QEN2, the boards that feed MAIN ELECTRICAL BOARD, as panels: panel count accuracy is 60% against a 95% target (01 §10). One prompt rule made no difference in one live run. Candidates: the feed diagram from stage 3 (S12), or a code rule that uses the title block's panel name. Re-record the classification cassettes with whatever lands.
 - **Confirmation rate and `page_kind` below target** (from S08). 25% of drawings needed the confirmation screen (target ≤ 15%) and `page_kind` is 95.8% (target ≥ 97%). Calibrate the classifier's confidence, or the 0.85 threshold, against more labelled drawings (01 §12 item 5).
@@ -119,6 +118,11 @@ Ideas and out-of-scope findings from sessions. Each one is scheduled into a sess
 - **A misread BOM word** (from S14). On BOM-HW-1 Opus read "מגן מתח יתר" as "מגן מתח ותדר", so the row stayed `unknown` (red, the user picks). A word one letter off a known term, at a lower confidence, would catch it; measure the false matches on more BOMs first.
 - **BOM tables in a vector PDF** (from S14). A `bom_table` page in a PDF is transcribed from its picture, like a photo. Its text layer could be read in code (pdfplumber's tables), with the model only for scans.
 - **The done step's product count** (from S05, S14). `ProgressSummaryOut.products` is still 0; stage 4's components exist since S13, and for a BOM they are the products. Show them once stage 7 writes lines (S22), or the components before that.
+- **A model for quote lines code can't sign** (from S15, decision 3). A line no BOM word names has no family and matches nothing; it caps every missing item's confidence at 0.55. A closed-list `table_transcription`-style call (pick a family and values, no price in the request) would sign it; measure how many real lines need it first.
+- **The price list in the audit's money** (from S15, 11 §5.5 priority 3). A missing item with no similar line in the quote is "ללא מחיר" even when the factory's price list has it: searching the price list needs stage 5's matching (S20).
+- **The audit's learning loop** (from S15, 11 §9). S15 stores the verdicts and reject reasons only: the quote's prices into the price list ("מחיר מהצעה קיימת"), confirmed differences as golden labels (with the factory's consent), "טעות של המערכת" as negative examples for stages 3–4.
+- **What the home card counts as an omission** (from S15, for S16). The home card counts `missing_in_quote` only (S04, `services/home.py`); the audit's own summary counts a short quantity as missing units too (11 §6 `missing_items`), and the prototype's audit screen shows 26-993's second QG as one of 3 omissions. Decide with the user when the screen is built.
+- **The audit's progress for the screen** (from S15, for S16). `GET /drawings/{id}/progress` lists stages 1–7; an audit drawing's step is stage 8 in `stage_runs` and has no line there yet.
 - **Costs by permission** (from S09, 09 §12). A user without cost permission must not receive costs from the server. 1.0 has one owner role, so `GET /quotes/{id}` sends them to everyone; add a cost permission when a second role arrives.
 
 <a id="s00"></a>**S00** is the planning session that produced this roadmap. It has no session file; its PR is the record.

@@ -88,7 +88,10 @@ def build(
     llm_providers: dict[str, LLMProvider] | None = None,
 ) -> Worker:
     providers = llm_providers if llm_providers is not None else providers_for(settings)
-    pipeline = Pipeline(settings, engine or app_engine(), Storage(settings), Queue(settings), llm_providers=providers)
+    queue = Queue(settings)
+    if settings.env == "local":
+        queue.ensure()  # an ElasticMQ started before a queue was added (S15: `konboro-audit`) still gets it
+    pipeline = Pipeline(settings, engine or app_engine(), Storage(settings), queue, llm_providers=providers)
     if stages is not None:
         pipeline.stages = stages
     return Worker(pipeline)

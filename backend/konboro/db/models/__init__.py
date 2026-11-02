@@ -26,6 +26,7 @@ from .global_ import (
 from .learning import (
     Audit,
     AuditDifference,
+    AuditQuoteLine,
     ChatConversation,
     ChatMessage,
     ChatProposal,
@@ -55,6 +56,7 @@ __all__ = [
     "AttributeSchema",
     "Audit",
     "AuditDifference",
+    "AuditQuoteLine",
     "BrandDiscount",
     "CatalogItem",
     "ChatConversation",

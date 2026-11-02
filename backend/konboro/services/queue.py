@@ -20,6 +20,7 @@ STAGE_QUEUES = {
     5: "konboro-s5-matching",
     6: "konboro-s6-validation",
     7: "konboro-s7-pricing",
+    8: "konboro-audit",  # the audit step, after stage 4 of an audit drawing (11 §5, S15 decision 2)
 }
 DLQ = "konboro-dlq"
 MAX_RECEIVES = 3  # then the redrive policy moves the message to the DLQ (infra/elasticmq.conf)
@@ -32,7 +33,7 @@ class StageMessage(BaseModel):
 
     drawing_id: str = Field(pattern=r"^drw_[0-9A-Z]{26}$")
     tenant_id: str = Field(pattern=r"^tnt_[0-9A-Z]{26}$")
-    stage: int = Field(ge=1, le=7)
+    stage: int = Field(ge=1, le=8)
     trace_id: str = Field(pattern=r"^trc_[0-9A-Z]{26}$")
 
 
@@ -60,12 +61,16 @@ class Queue:
 
     def ensure(self) -> None:
         """Create the stage queues and the DLQ if missing, with the same redrive policy as infra/elasticmq.conf.
-        Tests and E2E use this for their prefixed queues; in AWS the queues come from infrastructure (S29)."""
+        Tests and E2E use this for their prefixed queues, and the local worker for a queue added since its ElasticMQ
+        started (S15); a queue that exists is left as it is. In AWS the queues come from infrastructure (S29)."""
         dlq_url = self.sqs.create_queue(QueueName=self.name(DLQ))["QueueUrl"]
         dlq_arn = self.sqs.get_queue_attributes(QueueUrl=dlq_url, AttributeNames=["QueueArn"])["Attributes"]["QueueArn"]
         redrive = json.dumps({"deadLetterTargetArn": dlq_arn, "maxReceiveCount": str(MAX_RECEIVES)})
         for base in STAGE_QUEUES.values():
-            self.sqs.create_queue(QueueName=self.name(base), Attributes={"RedrivePolicy": redrive})
+            try:
+                self.url(base)
+            except self.sqs.exceptions.QueueDoesNotExist:
+                self.sqs.create_queue(QueueName=self.name(base), Attributes={"RedrivePolicy": redrive})
 
     def send(self, message: StageMessage) -> None:
         body = message.model_dump_json()

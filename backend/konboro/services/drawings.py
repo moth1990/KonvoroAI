@@ -14,6 +14,7 @@ from sqlalchemy.orm import Session
 
 from konboro.db.ids import new_id
 from konboro.db.models import (
+    Audit,
     Component,
     ContextArtifact,
     Customer,
@@ -25,9 +26,10 @@ from konboro.db.models import (
     Quote,
     StageRun,
 )
+from konboro.db.models.pipeline import AUDIT_STAGE
 from konboro.pipeline.bom.table import BomTable, items
 from konboro.services import plan, quota
-from konboro.services.intake import CheckedFile, Limits, UploadCheck, check_upload
+from konboro.services.intake import CheckedFile, Limits, UploadCheck, check_quote, check_upload
 
 __all__ = ["CheckedFile", "NewUpload", "RevisionNotFoundError", "UploadRejectedError", "create_upload"]
 from konboro.services.storage import Storage, drawing_key
@@ -51,7 +53,9 @@ class RevisionNotFoundError(LookupError):
 class NewUpload:
     drawing: Drawing
     files: list[CheckedFile]
-    reason: Literal["new_drawing", "revision"]
+    reason: Literal["new_drawing", "revision", "audit"]
+    audit: Audit | None = None
+    quote_file: CheckedFile | None = None
 
 
 def _project(session: Session, tenant_id: str, customer_name: str | None, project_name: str | None) -> str | None:
@@ -84,8 +88,16 @@ def create_upload(
     customer_name: str | None = None,
     project_name: str | None = None,
     revision_of: str | None = None,
+    audited_quote: tuple[str, bytes] | None = None,
 ) -> NewUpload:
-    """Raises `quota.QuotaReachedError`, `UploadRejectedError` or `RevisionNotFoundError`; the caller rolls back."""
+    """Raises `quota.QuotaReachedError`, `UploadRejectedError` or `RevisionNotFoundError`; the caller rolls back.
+
+    With `audited_quote`, the upload is an audit (11 §4): the drawing's purpose is `audit`, the quota is reserved on
+    the audit counter (the quote counter when the plan has no separate one), the quote is stored as the drawing's
+    `audited_quote` file, and an `audits` row waits for the audit step."""
+    purpose: Literal["quote", "audit"] = "audit" if audited_quote is not None else "quote"
+    if purpose == "audit":
+        revision_of = None  # an audit is never a new version of a quote's drawing
     drawing_id, trace_id = new_id("drw"), new_id("trc")
     previous = None
     if revision_of:
@@ -105,23 +117,34 @@ def create_upload(
         progress=0,
         trace_id=trace_id,
         created_by=user_id,
+        purpose=purpose,
     )
     session.add(drawing)
     session.flush()
 
     # 01 §4.3 check 1, the quota, before the files. A new version is trusted not to count until S08 can compare
     # title blocks and page hashes (S05 decision), so it reserves nothing.
-    reason: Literal["new_drawing", "revision"] = "revision" if previous else "new_drawing"
+    reason: Literal["new_drawing", "revision", "audit"] = (
+        "audit" if purpose == "audit" else "revision" if previous else "new_drawing"
+    )
     reservation_id = None
     if previous is None:
-        reservation_id = quota.reserve(session, tenant_id, created_by=user_id, drawing_id=drawing_id)
+        reservation_id = quota.reserve(session, tenant_id, purpose, created_by=user_id, drawing_id=drawing_id)
 
-    check = check_upload(files, Limits(max_pages_per_file=plan.max_pages_per_file(session, tenant_id)))
+    limits = Limits(max_pages_per_file=plan.max_pages_per_file(session, tenant_id))
+    check = check_upload(files, limits)
+    quote_file = check_quote(*audited_quote, limits) if audited_quote is not None else None
+    if quote_file is not None and quote_file.error is not None:
+        check.files.append(quote_file)
     if not check.ok:
         raise UploadRejectedError(check)
 
-    for f in check.files:
+    stored = [(f, "drawing") for f in check.files] + ([(quote_file, "audited_quote")] if quote_file else [])
+    quote_file_id = None
+    for f, role in stored:
         file_id = new_id("fil")
+        if role == "audited_quote":
+            quote_file_id = file_id
         # Stored under its id, never the uploaded name, so a crafted name can't shape the S3 key.
         key = drawing_key(tenant_id, drawing_id, "files", f"{file_id}.{EXTENSIONS.get(f.detected_format or '', 'bin')}")
         storage.put(tenant_id, key, f.data)
@@ -136,15 +159,22 @@ def create_upload(
                 size_bytes=f.size_bytes,
                 page_count=f.page_count,
                 storage_key=key,
+                role=role,
             )
         )
-    for stage in range(1, 8):
+    session.flush()
+    stages = [*range(1, 8), *([AUDIT_STAGE] if purpose == "audit" else [])]
+    for stage in stages:
         # Stage 1's message is sent once this transaction commits; the others when the stage before them ends.
         sent_at = datetime.now(UTC) if stage == 1 else None
         session.add(StageRun(tenant_id=tenant_id, drawing_id=drawing_id, stage=stage, status="queued", sent_at=sent_at))
     drawing.quota = {"counted": False, "reason": reason, "reservation_id": reservation_id, "quota_event_id": None}
+    audit = None
+    if purpose == "audit":
+        audit = Audit(id=new_id("aud"), tenant_id=tenant_id, drawing_id=drawing_id, quote_file_id=quote_file_id)
+        session.add(audit)
     session.flush()
-    return NewUpload(drawing, check.files, reason)
+    return NewUpload(drawing, check.files, reason, audit, quote_file)
 
 
 # --- reading a run back (GET /drawings/{id}/progress) -----------------------------------------------------------
@@ -173,7 +203,11 @@ def progress(session: Session, tenant_id: str, drawing_id: str) -> Progress | No
     if drawing is None:
         return None
     files = list(
-        session.scalars(select(DrawingFile).where(DrawingFile.drawing_id == drawing_id).order_by(DrawingFile.id))
+        session.scalars(
+            select(DrawingFile)
+            .where(DrawingFile.drawing_id == drawing_id, DrawingFile.role == "drawing")
+            .order_by(DrawingFile.id)
+        )
     )
     names = {f.id: f.original_name for f in files}
     runs = list(session.scalars(select(StageRun).where(StageRun.drawing_id == drawing_id).order_by(StageRun.stage)))

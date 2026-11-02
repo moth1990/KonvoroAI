@@ -14,6 +14,409 @@
         "title": "AlternativeOut",
         "type": "object"
       },
+      "AuditDecisionIn": {
+        "additionalProperties": false,
+        "description": "11 §7: \"נכון, זה הבדל\" / \"לא נכון\" with a reason, or back to open.",
+        "properties": {
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          },
+          "reject_reason": {
+            "anyOf": [
+              {
+                "enum": [
+                  "included_elsewhere",
+                  "customer_supplies",
+                  "system_error",
+                  "other"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reject Reason"
+          },
+          "status": {
+            "enum": [
+              "open",
+              "confirmed",
+              "rejected"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "title": "AuditDecisionIn",
+        "type": "object"
+      },
+      "AuditDifferenceOut": {
+        "properties": {
+          "amount": {
+            "anyOf": [
+              {
+                "examples": [
+                  "0.15"
+                ],
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Money at risk; negative for an over-charge",
+            "title": "Amount"
+          },
+          "component_ids": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Component Ids",
+            "type": "array"
+          },
+          "confidence": {
+            "title": "Confidence",
+            "type": "number"
+          },
+          "designators": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Designators",
+            "type": "array"
+          },
+          "diff_id": {
+            "title": "Diff Id",
+            "type": "string"
+          },
+          "drawing_qty": {
+            "anyOf": [
+              {
+                "examples": [
+                  "0.15"
+                ],
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Drawing Qty"
+          },
+          "evidence": {
+            "items": {
+              "$ref": "#/components/schemas/AuditEvidenceOut"
+            },
+            "title": "Evidence",
+            "type": "array"
+          },
+          "family": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Family"
+          },
+          "message": {
+            "description": "Hebrew, ready to show",
+            "title": "Message",
+            "type": "string"
+          },
+          "quote_line_index": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quote Line Index"
+          },
+          "quote_qty": {
+            "anyOf": [
+              {
+                "examples": [
+                  "0.15"
+                ],
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quote Qty"
+          },
+          "reject_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reject Note"
+          },
+          "reject_reason": {
+            "anyOf": [
+              {
+                "enum": [
+                  "included_elsewhere",
+                  "customer_supplies",
+                  "system_error",
+                  "other"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reject Reason"
+          },
+          "severity": {
+            "enum": [
+              "high",
+              "medium",
+              "low",
+              "info"
+            ],
+            "title": "Severity",
+            "type": "string"
+          },
+          "shown": {
+            "description": "confidence ≥ 0.6; the rest are shown apart, as maybe the system's mistake",
+            "title": "Shown",
+            "type": "boolean"
+          },
+          "status": {
+            "enum": [
+              "open",
+              "confirmed",
+              "rejected"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "suggested_line": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AuditSuggestedLineOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "type": {
+            "enum": [
+              "missing_in_quote",
+              "qty_short",
+              "qty_over",
+              "possible_double_count",
+              "attribute_mismatch",
+              "extra_in_quote",
+              "arithmetic",
+              "drawing_conflict",
+              "not_a_difference"
+            ],
+            "title": "Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "diff_id",
+          "type",
+          "severity",
+          "confidence",
+          "shown",
+          "family",
+          "designators",
+          "drawing_qty",
+          "quote_qty",
+          "quote_line_index",
+          "evidence",
+          "suggested_line",
+          "message",
+          "amount",
+          "status",
+          "reject_reason",
+          "reject_note",
+          "component_ids"
+        ],
+        "title": "AuditDifferenceOut",
+        "type": "object"
+      },
+      "AuditEvidenceOut": {
+        "properties": {
+          "instance_ids": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Instance Ids",
+            "type": "array"
+          },
+          "page_no": {
+            "title": "Page No",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "page_no",
+          "instance_ids"
+        ],
+        "title": "AuditEvidenceOut",
+        "type": "object"
+      },
+      "AuditLineOut": {
+        "properties": {
+          "component_ids": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Component Ids",
+            "type": "array"
+          },
+          "confidence": {
+            "title": "Confidence",
+            "type": "number"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "includes": {
+            "description": "What the line says it includes (\"כולל\", \"+\"), 11 §5.2 item 6",
+            "items": {
+              "type": "string"
+            },
+            "title": "Includes",
+            "type": "array"
+          },
+          "index": {
+            "title": "Index",
+            "type": "integer"
+          },
+          "matched_qty": {
+            "anyOf": [
+              {
+                "examples": [
+                  "0.15"
+                ],
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Matched Qty"
+          },
+          "page_no": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Page No"
+          },
+          "qty": {
+            "anyOf": [
+              {
+                "examples": [
+                  "0.15"
+                ],
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Qty"
+          },
+          "status": {
+            "enum": [
+              "matched",
+              "quantity_differs",
+              "attribute_differs",
+              "not_in_drawing",
+              "arithmetic"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "total": {
+            "anyOf": [
+              {
+                "examples": [
+                  "0.15"
+                ],
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Total"
+          },
+          "unit_price": {
+            "anyOf": [
+              {
+                "examples": [
+                  "0.15"
+                ],
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit Price"
+          }
+        },
+        "required": [
+          "index",
+          "description",
+          "qty",
+          "unit_price",
+          "total",
+          "confidence",
+          "page_no",
+          "status",
+          "includes",
+          "component_ids",
+          "matched_qty"
+        ],
+        "title": "AuditLineOut",
+        "type": "object"
+      },
       "AuditOmissionsItem": {
         "properties": {
           "amount_at_risk": {
@@ -60,6 +463,409 @@
           "amount_at_risk"
         ],
         "title": "AuditOmissionsItem",
+        "type": "object"
+      },
+      "AuditOut": {
+        "properties": {
+          "audit_id": {
+            "title": "Audit Id",
+            "type": "string"
+          },
+          "corrected_quote_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Corrected Quote Id"
+          },
+          "differences": {
+            "items": {
+              "$ref": "#/components/schemas/AuditDifferenceOut"
+            },
+            "title": "Differences",
+            "type": "array"
+          },
+          "drawing_id": {
+            "title": "Drawing Id",
+            "type": "string"
+          },
+          "drawing_name": {
+            "title": "Drawing Name",
+            "type": "string"
+          },
+          "drawing_status": {
+            "title": "Drawing Status",
+            "type": "string"
+          },
+          "input_kind": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Input Kind"
+          },
+          "issues": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Issues",
+            "type": "array"
+          },
+          "lines": {
+            "items": {
+              "$ref": "#/components/schemas/AuditLineOut"
+            },
+            "title": "Lines",
+            "type": "array"
+          },
+          "quote_file_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quote File Name"
+          },
+          "quote_ref": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AuditQuoteRefOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "status": {
+            "enum": [
+              "processing",
+              "ready",
+              "failed"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "summary": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AuditSummaryOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "audit_id",
+          "drawing_id",
+          "status",
+          "drawing_status",
+          "drawing_name",
+          "quote_file_name",
+          "input_kind",
+          "quote_ref",
+          "summary",
+          "issues",
+          "lines",
+          "differences",
+          "corrected_quote_id"
+        ],
+        "title": "AuditOut",
+        "type": "object"
+      },
+      "AuditPriceSourceOut": {
+        "properties": {
+          "kind": {
+            "enum": [
+              "same_signature",
+              "same_family_poles",
+              "this_line"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "line_index": {
+            "title": "Line Index",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "kind",
+          "line_index"
+        ],
+        "title": "AuditPriceSourceOut",
+        "type": "object"
+      },
+      "AuditQuoteRefOut": {
+        "properties": {
+          "date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Date"
+          },
+          "number": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Number"
+          },
+          "total_before_vat": {
+            "anyOf": [
+              {
+                "examples": [
+                  "0.15"
+                ],
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Total Before Vat"
+          }
+        },
+        "required": [
+          "number",
+          "date",
+          "total_before_vat"
+        ],
+        "title": "AuditQuoteRefOut",
+        "type": "object"
+      },
+      "AuditSuggestedLineOut": {
+        "properties": {
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "price_source": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AuditPriceSourceOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "qty": {
+            "examples": [
+              "0.15"
+            ],
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Qty",
+            "type": "string"
+          },
+          "unit_price": {
+            "anyOf": [
+              {
+                "examples": [
+                  "0.15"
+                ],
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit Price"
+          }
+        },
+        "required": [
+          "description",
+          "qty",
+          "unit_price",
+          "price_source"
+        ],
+        "title": "AuditSuggestedLineOut",
+        "type": "object"
+      },
+      "AuditSummaryOut": {
+        "properties": {
+          "differences": {
+            "title": "Differences",
+            "type": "integer"
+          },
+          "drawing_components": {
+            "title": "Drawing Components",
+            "type": "integer"
+          },
+          "info_notes": {
+            "title": "Info Notes",
+            "type": "integer"
+          },
+          "lines_matched": {
+            "title": "Lines Matched",
+            "type": "integer"
+          },
+          "missing_items": {
+            "title": "Missing Items",
+            "type": "integer"
+          },
+          "missing_items_without_price": {
+            "title": "Missing Items Without Price",
+            "type": "integer"
+          },
+          "not_differences": {
+            "title": "Not Differences",
+            "type": "integer"
+          },
+          "over_charged": {
+            "examples": [
+              "0.15"
+            ],
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Over Charged",
+            "type": "string"
+          },
+          "quote_lines": {
+            "title": "Quote Lines",
+            "type": "integer"
+          },
+          "to_check": {
+            "description": "Differences below 0.6 confidence, shown apart (11 §5.4)",
+            "title": "To Check",
+            "type": "integer"
+          },
+          "value_at_risk": {
+            "examples": [
+              "0.15"
+            ],
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Value At Risk",
+            "type": "string"
+          }
+        },
+        "required": [
+          "quote_lines",
+          "lines_matched",
+          "drawing_components",
+          "differences",
+          "info_notes",
+          "missing_items",
+          "value_at_risk",
+          "missing_items_without_price",
+          "over_charged",
+          "not_differences",
+          "to_check"
+        ],
+        "title": "AuditSummaryOut",
+        "type": "object"
+      },
+      "AuditUploadOut": {
+        "properties": {
+          "audit_id": {
+            "title": "Audit Id",
+            "type": "string"
+          },
+          "counted_as": {
+            "const": "audit",
+            "description": "An audit counts once stage 1 succeeds, on the audit counter when the plan has one (11 §4)",
+            "title": "Counted As",
+            "type": "string"
+          },
+          "drawing_id": {
+            "title": "Drawing Id",
+            "type": "string"
+          },
+          "files": {
+            "items": {
+              "$ref": "#/components/schemas/UploadedFileOut"
+            },
+            "title": "Files",
+            "type": "array"
+          },
+          "quote_file": {
+            "$ref": "#/components/schemas/UploadedFileOut"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "audit_id",
+          "drawing_id",
+          "status",
+          "files",
+          "quote_file",
+          "counted_as"
+        ],
+        "title": "AuditUploadOut",
+        "type": "object"
+      },
+      "Body_upload_audit_audits_post": {
+        "properties": {
+          "customer": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Customer"
+          },
+          "files": {
+            "description": "The drawing: PDF, images, XLSX, CSV or ZIP",
+            "items": {
+              "contentMediaType": "application/octet-stream",
+              "type": "string"
+            },
+            "title": "Files",
+            "type": "array"
+          },
+          "project": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Project"
+          },
+          "quote": {
+            "contentMediaType": "application/octet-stream",
+            "description": "The existing quote: PDF, image, XLSX or CSV (11 §4)",
+            "title": "Quote",
+            "type": "string"
+          }
+        },
+        "required": [
+          "files",
+          "quote"
+        ],
+        "title": "Body_upload_audit_audits_post",
         "type": "object"
       },
       "Body_upload_drawings_post": {
@@ -303,6 +1109,25 @@
           "bbox"
         ],
         "title": "BoxOut",
+        "type": "object"
+      },
+      "CorrectedQuoteOut": {
+        "properties": {
+          "created": {
+            "description": "false: the audit already had its corrected quote",
+            "title": "Created",
+            "type": "boolean"
+          },
+          "quote_id": {
+            "title": "Quote Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "quote_id",
+          "created"
+        ],
+        "title": "CorrectedQuoteOut",
         "type": "object"
       },
       "CostSourceOut": {
@@ -1530,7 +2355,8 @@
             "enum": [
               "new_drawing",
               "revision",
-              "reuse"
+              "reuse",
+              "audit"
             ],
             "title": "Counted As",
             "type": "string"
@@ -2315,6 +3141,14 @@
             "title": "Attribute Defaults",
             "type": "object"
           },
+          "auxiliary_families": {
+            "description": "The audit shows these as not a difference (11 §5.4, S15)",
+            "items": {
+              "type": "string"
+            },
+            "title": "Auxiliary Families",
+            "type": "array"
+          },
           "brand_preferences": {
             "additionalProperties": {
               "type": "string"
@@ -2390,7 +3224,8 @@
           "min_quote_margin",
           "stale_days",
           "labor",
-          "rounding"
+          "rounding",
+          "auxiliary_families"
         ],
         "title": "SettingsOut",
         "type": "object"
@@ -2425,6 +3260,22 @@
               }
             ],
             "title": "Attribute Defaults"
+          },
+          "auxiliary_families": {
+            "anyOf": [
+              {
+                "items": {
+                  "pattern": "^[a-z_]{2,40}$",
+                  "type": "string"
+                },
+                "maxItems": 40,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Auxiliary Families"
           },
           "brand_preferences": {
             "anyOf": [
@@ -2703,10 +3554,11 @@
       "UploadOut": {
         "properties": {
           "counted_as": {
-            "description": "new_drawing: counts once stage 1 succeeds; revision: never counts (S05)",
+            "description": "new_drawing: counts once stage 1 succeeds; revision: never counts (S05); audit: POST /audits",
             "enum": [
               "new_drawing",
-              "revision"
+              "revision",
+              "audit"
             ],
             "title": "Counted As",
             "type": "string"
@@ -2853,6 +3705,219 @@
   },
   "openapi": "3.1.0",
   "paths": {
+    "/audits": {
+      "post": {
+        "description": "The drawing is checked as any upload is (01 §4.3), the quote as one more file. Stages 1–4 run, then the\naudit step (S15 decision 2).",
+        "operationId": "upload_audit_audits_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_audit_audits_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditUploadOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Upload Audit",
+        "tags": [
+          "audits"
+        ]
+      }
+    },
+    "/audits/{audit_id}": {
+      "get": {
+        "description": "Another tenant's audit is 404, the same as one that does not exist.",
+        "operationId": "get_audit_audits__audit_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "audit_id",
+            "required": true,
+            "schema": {
+              "pattern": "^aud_[0-9A-Z]{26}$",
+              "title": "Audit Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Audit",
+        "tags": [
+          "audits"
+        ]
+      }
+    },
+    "/audits/{audit_id}/corrected-quote": {
+      "post": {
+        "description": "11 §8: the quote's lines and the confirmed differences, as a quote in the system. Asked again, the same one.",
+        "operationId": "corrected_quote_audits__audit_id__corrected_quote_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "audit_id",
+            "required": true,
+            "schema": {
+              "pattern": "^aud_[0-9A-Z]{26}$",
+              "title": "Audit Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CorrectedQuoteOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Corrected Quote",
+        "tags": [
+          "audits"
+        ]
+      }
+    },
+    "/audits/{audit_id}/differences/{diff_id}": {
+      "patch": {
+        "operationId": "decide_audits__audit_id__differences__diff_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "audit_id",
+            "required": true,
+            "schema": {
+              "pattern": "^aud_[0-9A-Z]{26}$",
+              "title": "Audit Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "diff_id",
+            "required": true,
+            "schema": {
+              "pattern": "^dif_[0-9A-Z]{26}$",
+              "title": "Diff Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuditDecisionIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditDifferenceOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Decide",
+        "tags": [
+          "audits"
+        ]
+      }
+    },
     "/auth/login": {
       "post": {
         "operationId": "login_auth_login_post",

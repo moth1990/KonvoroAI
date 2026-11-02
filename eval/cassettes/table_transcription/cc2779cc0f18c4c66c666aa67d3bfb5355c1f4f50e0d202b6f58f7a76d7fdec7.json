@@ -1,0 +1,492 @@
+{
+  "answer": {
+    "input_tokens": 4003,
+    "model": "claude-opus-5-5",
+    "output_tokens": 2003,
+    "payload": {
+      "columns": [
+        {
+          "header": "מוצר",
+          "role": "item"
+        },
+        {
+          "header": "כמות",
+          "role": "quantity"
+        },
+        {
+          "header": "מחיר ליחידה",
+          "role": "unit_price"
+        },
+        {
+          "header": "סה\"כ",
+          "role": "line_total"
+        }
+      ],
+      "quote_date": "04/10/2026",
+      "quote_number": "10271",
+      "rows": [
+        {
+          "box": [
+            64,
+            329,
+            935,
+            351
+          ],
+          "cells": [
+            {
+              "confidence": 0.95,
+              "text": "הגנת מנוע 4-6.3A"
+            },
+            {
+              "confidence": 0.98,
+              "text": "4"
+            },
+            {
+              "confidence": 0.98,
+              "text": "₪ 260.00"
+            },
+            {
+              "confidence": 0.98,
+              "text": "₪ 1040.00"
+            }
+          ]
+        },
+        {
+          "box": [
+            64,
+            351,
+            935,
+            374
+          ],
+          "cells": [
+            {
+              "confidence": 0.95,
+              "text": "מנורה קוטר 22"
+            },
+            {
+              "confidence": 0.98,
+              "text": "6"
+            },
+            {
+              "confidence": 0.98,
+              "text": "₪ 45.00"
+            },
+            {
+              "confidence": 0.98,
+              "text": "₪ 270.00"
+            }
+          ]
+        },
+        {
+          "box": [
+            64,
+            374,
+            935,
+            396
+          ],
+          "cells": [
+            {
+              "confidence": 0.95,
+              "text": "רב מודד SATEC"
+            },
+            {
+              "confidence": 0.98,
+              "text": "1"
+            },
+            {
+              "confidence": 0.98,
+              "text": "₪ 1800.00"
+            },
+            {
+              "confidence": 0.98,
+              "text": "₪ 1800.00"
+            }
+          ]
+        },
+        {
+          "box": [
+            64,
+            396,
+            935,
+            419
+          ],
+          "cells": [
+            {
+              "confidence": 0.95,
+              "text": "מגן מתח יתר"
+            },
+            {
+              "confidence": 0.98,
+              "text": "1"
+            },
+            {
+              "confidence": 0.98,
+              "text": "₪ 855.00"
+            },
+            {
+              "confidence": 0.98,
+              "text": "₪ 855.00"
+            }
+          ]
+        },
+        {
+          "box": [
+            64,
+            419,
+            935,
+            441
+          ],
+          "cells": [
+            {
+              "confidence": 0.93,
+              "text": "מנתק נתיך גלילי +נתיכים"
+            },
+            {
+              "confidence": 0.98,
+              "text": "1"
+            },
+            {
+              "confidence": 0.98,
+              "text": "₪ 275.00"
+            },
+            {
+              "confidence": 0.98,
+              "text": "₪ 275.00"
+            }
+          ]
+        },
+        {
+          "box": [
+            64,
+            441,
+            935,
+            464
+          ],
+          "cells": [
+            {
+              "confidence": 0.95,
+              "text": "מפסק 3X80A"
+            },
+            {
+              "confidence": 0.98,
+              "text": "1"
+            },
+            {
+              "confidence": 0.98,
+              "text": "₪ 750.00"
+            },
+            {
+              "confidence": 0.98,
+              "text": "₪ 750.00"
+            }
+          ]
+        },
+        {
+          "box": [
+            64,
+            464,
+            935,
+            486
+          ],
+          "cells": [
+            {
+              "confidence": 0.95,
+              "text": "מא\"ז 3X16A"
+            },
+            {
+              "confidence": 0.98,
+              "text": "1"
+            },
+            {
+              "confidence": 0.98,
+              "text": "₪ 185.00"
+            },
+            {
+              "confidence": 0.98,
+              "text": "₪ 185.00"
+            }
+          ]
+        },
+        {
+          "box": [
+            64,
+            486,
+            935,
+            509
+          ],
+          "cells": [
+            {
+              "confidence": 0.95,
+              "text": "מא\"ז 3X40A"
+            },
+            {
+              "confidence": 0.98,
+              "text": "1"
+            },
+            {
+              "confidence": 0.98,
+              "text": "₪ 195.00"
+            },
+            {
+              "confidence": 0.98,
+              "text": "₪ 195.00"
+            }
+          ]
+        },
+        {
+          "box": [
+            64,
+            509,
+            935,
+            531
+          ],
+          "cells": [
+            {
+              "confidence": 0.95,
+              "text": "פחת 4X40A"
+            },
+            {
+              "confidence": 0.98,
+              "text": "2"
+            },
+            {
+              "confidence": 0.98,
+              "text": "₪ 300.00"
+            },
+            {
+              "confidence": 0.98,
+              "text": "₪ 600.00"
+            }
+          ]
+        },
+        {
+          "box": [
+            64,
+            531,
+            935,
+            554
+          ],
+          "cells": [
+            {
+              "confidence": 0.95,
+              "text": "מא\"ז 1X10A"
+            },
+            {
+              "confidence": 0.98,
+              "text": "4"
+            },
+            {
+              "confidence": 0.98,
+              "text": "₪ 42.00"
+            },
+            {
+              "confidence": 0.98,
+              "text": "₪ 168.00"
+            }
+          ]
+        },
+        {
+          "box": [
+            64,
+            554,
+            935,
+            576
+          ],
+          "cells": [
+            {
+              "confidence": 0.95,
+              "text": "מא\"ז 3X25A"
+            },
+            {
+              "confidence": 0.98,
+              "text": "2"
+            },
+            {
+              "confidence": 0.98,
+              "text": "₪ 195.00"
+            },
+            {
+              "confidence": 0.98,
+              "text": "₪ 390.00"
+            }
+          ]
+        },
+        {
+          "box": [
+            64,
+            576,
+            935,
+            599
+          ],
+          "cells": [
+            {
+              "confidence": 0.95,
+              "text": "מא\"ז 1X16A"
+            },
+            {
+              "confidence": 0.98,
+              "text": "2"
+            },
+            {
+              "confidence": 0.98,
+              "text": "₪ 42.00"
+            },
+            {
+              "confidence": 0.98,
+              "text": "₪ 84.00"
+            }
+          ]
+        },
+        {
+          "box": [
+            64,
+            599,
+            935,
+            621
+          ],
+          "cells": [
+            {
+              "confidence": 0.95,
+              "text": "לחצן חירום לדלת"
+            },
+            {
+              "confidence": 0.98,
+              "text": "1"
+            },
+            {
+              "confidence": 0.98,
+              "text": "₪ 160.00"
+            },
+            {
+              "confidence": 0.98,
+              "text": "₪ 160.00"
+            }
+          ]
+        },
+        {
+          "box": [
+            64,
+            621,
+            935,
+            644
+          ],
+          "cells": [
+            {
+              "confidence": 0.94,
+              "text": "ממסר מבודד 1 ערוץ"
+            },
+            {
+              "confidence": 0.98,
+              "text": "1"
+            },
+            {
+              "confidence": 0.98,
+              "text": "₪ 130.00"
+            },
+            {
+              "confidence": 0.98,
+              "text": "₪ 130.00"
+            }
+          ]
+        },
+        {
+          "box": [
+            64,
+            644,
+            935,
+            666
+          ],
+          "cells": [
+            {
+              "confidence": 0.92,
+              "text": "ארון 1000/800/300 כולל פסי צבירה אפס ארקה פנילים ודלתות"
+            },
+            {
+              "confidence": 0.98,
+              "text": "1"
+            },
+            {
+              "confidence": 0.98,
+              "text": "₪ 4200.00"
+            },
+            {
+              "confidence": 0.98,
+              "text": "₪ 4200.00"
+            }
+          ]
+        },
+        {
+          "box": [
+            64,
+            666,
+            935,
+            689
+          ],
+          "cells": [
+            {
+              "confidence": 0.95,
+              "text": "מפסק 4X125A"
+            },
+            {
+              "confidence": 0.98,
+              "text": "1"
+            },
+            {
+              "confidence": 0.98,
+              "text": "₪ 1250.00"
+            },
+            {
+              "confidence": 0.98,
+              "text": "₪ 1250.00"
+            }
+          ]
+        },
+        {
+          "box": [
+            64,
+            689,
+            935,
+            711
+          ],
+          "cells": [
+            {
+              "confidence": 0.95,
+              "text": "מנתק 4X125A"
+            },
+            {
+              "confidence": 0.98,
+              "text": "1"
+            },
+            {
+              "confidence": 0.98,
+              "text": "₪ 1670.00"
+            },
+            {
+              "confidence": 0.98,
+              "text": "₪ 1670.00"
+            }
+          ]
+        }
+      ],
+      "totals": [
+        {
+          "amount": "₪ 14022.00",
+          "confidence": 0.98,
+          "label": "סה\"כ"
+        },
+        {
+          "amount": "₪ 2523.96",
+          "confidence": 0.98,
+          "label": "מע\"מ 18%"
+        },
+        {
+          "amount": "₪ 16545.96",
+          "confidence": 0.98,
+          "label": "סה\"כ כולל מע\"מ"
+        }
+      ]
+    }
+  },
+  "model": "claude-opus-5-5",
+  "stage": "table_transcription"
+}

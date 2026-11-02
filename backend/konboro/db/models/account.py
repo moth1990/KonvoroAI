@@ -4,7 +4,7 @@ from datetime import date
 from decimal import Decimal
 from typing import Any
 
-from sqlalchemy import CheckConstraint, ForeignKey, Index, SmallInteger, UniqueConstraint, text
+from sqlalchemy import ARRAY, CheckConstraint, ForeignKey, Index, SmallInteger, Text, UniqueConstraint, text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from ..base import Base, Created, Rate, TenantScoped, Timestamps, one_of, pk, tenant_fk, tenant_unique
@@ -58,6 +58,9 @@ class TenantSettings(Base, TenantScoped):
     rounding: Mapped[str] = mapped_column(server_default="agora")
     data_terms_accepted: Mapped[dict[str, Any] | None]
     onboarding: Mapped[dict[str, Any]] = mapped_column(server_default="{}")
+    # Families the factory counts as auxiliary material, never a quote line of their own: the audit shows such a
+    # component as "not a difference" (S15 decision 4).
+    auxiliary_families: Mapped[list[str]] = mapped_column(ARRAY(Text), server_default="{terminal}")
 
 
 class TenantPlanOverride(Base, TenantScoped, Timestamps):

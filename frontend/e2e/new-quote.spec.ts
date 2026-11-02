@@ -13,9 +13,10 @@ const NURSERY = fileURLToPath(new URL("../../golden/NURSERY-1/NURSERY-1.pdf", im
 const NEVIS = fileURLToPath(new URL("../../golden/NEVIS-1/NEVIS-1.pdf", import.meta.url));
 const MB = 1024 * 1024;
 
-// These tests wait on the real pipeline worker, and since S10 stage 2 really renders, tiles and reads every page:
-// a test that decodes twice (a page kind change runs stages 2–7 again) needs more than Playwright's 30 s on CI.
-test.describe.configure({ mode: "serial", timeout: 90_000 });
+// These tests wait on the real pipeline worker, and since S10 stage 2 really renders, tiles and reads every page.
+// On a busy CI runner one run can take most of a minute (BUG-022, BUG-033): each done step gets 75 s, and a test that
+// decodes twice (a page kind change runs stages 2–7 again) fits in 180 s.
+test.describe.configure({ mode: "serial", timeout: 180_000 });
 
 function tenant(page: Page): string {
   return isMobile(page) ? TENANTS.uploadMobile : TENANTS.uploadDesktop;
@@ -37,7 +38,7 @@ test("a drawing goes through all 7 stages and opens for review", async ({ page }
   await page.getByTestId("start").click();
   await expect(page).toHaveURL(/\/new\?drawing=drw_/);
   const done = page.getByTestId("done");
-  await expect(done).toBeVisible({ timeout: 30_000 });
+  await expect(done).toBeVisible({ timeout: 75_000 });
   await expect(done.getByRole("heading", { name: "גן ילדים, לוח ראשי" })).toBeVisible();
   await expect(done.getByTestId("thumb")).toHaveCount(9);
   await expect(done.getByRole("img", { name: "עמוד 1" })).toHaveJSProperty("complete", true);
@@ -155,7 +156,7 @@ test("a new version does not count against the quota", async ({ page }) => {
   await expect(page.getByTestId("start-note")).toHaveText("קובץ אחד · גרסה חדשה, לא נספרת במכסה");
   await page.getByTestId("start").click();
   const done = page.getByTestId("done");
-  await expect(done).toBeVisible({ timeout: 30_000 });
+  await expect(done).toBeVisible({ timeout: 75_000 });
   await expect(done).toContainText("גרסה חדשה של הצעה קיימת. לא נספרה במכסה.");
   if (!isMobile(page)) await expect(page.getByTestId("quota-meter")).toContainText("13 מתוך 50");
 });
@@ -186,7 +187,7 @@ test("the pages wait for confirmation when the classifier is unsure", async ({ p
 
   await page.getByTestId("confirm").click();
   const done = page.getByTestId("done");
-  await expect(done).toBeVisible({ timeout: 30_000 });
+  await expect(done).toBeVisible({ timeout: 75_000 });
   await expect(done.locator(".sumgrid")).toContainText("6 פענוח · 1 הקשר · 2 דילוג");
 });
 
@@ -194,13 +195,13 @@ test("a page kind changed on the done step decodes again from stage 2", async ({
   await page.locator("#file-in").setInputFiles(NURSERY); // decoded before in this tenant: reused, not counted
   await page.getByTestId("start").click();
   const done = page.getByTestId("done");
-  await expect(done).toBeVisible({ timeout: 30_000 });
+  await expect(done).toBeVisible({ timeout: 75_000 });
   await expect(done).toContainText("אותם קבצים כבר פוענחו. לא נספרה במכסה.");
   await expect(done.getByTestId("thumb").nth(1)).toContainText("כמו בשרטוט שכבר פוענח");
 
   await page.getByRole("combobox", { name: "סוג עמוד 2" }).selectOption({ label: "תוכנית פיקוד" });
   await expect(page.getByText("סוג העמוד עודכן. הפענוח רץ שוב משלב 2")).toBeVisible();
-  await expect(page.getByTestId("done")).toBeVisible({ timeout: 30_000 });
+  await expect(page.getByTestId("done")).toBeVisible({ timeout: 75_000 });
   await expect(page.getByTestId("done").locator(".sumgrid")).toContainText("6 פענוח · 2 הקשר · 1 דילוג");
   await expect(page.getByTestId("done").getByTestId("thumb").nth(1)).toContainText("סווג על ידיכם");
 });

@@ -5,6 +5,7 @@ from collections.abc import Callable
 
 from pydantic import BaseModel
 
+from ..audit import step as audit_step
 from ..context import StageContext
 from . import s1_intake, s2_extraction, s3_symbols, s4_association, s5_matching, s6_validation, s7_pricing
 
@@ -18,6 +19,7 @@ STAGES: dict[int, Stage] = {
     5: s5_matching.run,
     6: s6_validation.run,
     7: s7_pricing.run,
+    8: audit_step.run,  # an audit drawing goes here after stage 4 (11 §5, S15 decision 2)
 }
 
 # For the new-quote screen's stage list (prototype STAGES, line 761).
@@ -29,4 +31,5 @@ NAMES = {
     5: "התאמה לקטלוג",
     6: "בדיקה",
     7: "תמחור",
+    8: "בדיקת ההצעה",
 }

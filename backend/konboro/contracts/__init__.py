@@ -1,11 +1,13 @@
 """Stage contracts (00 §5): what each stage hands the next, field for field from the specs' §6.
 
-Each stage writes one of these as JSON to S3 (`stage_runs.output_key`) and the next stage reads it back. A change
-to a model is a change to the spec that defines it and to every spec that consumes it (00 §5).
+Each stage, and the audit step (8, S15), writes one of these as JSON to S3 (`stage_runs.output_key`) and the next
+stage reads it back. A change to a model is a change to the spec that defines it and to every spec that consumes it
+(00 §5).
 """
 
 from pydantic import BaseModel
 
+from .audit import AuditResult
 from .detection import DetectionResult
 from .extraction import ExtractionResult
 from .intake import IntakeResult
@@ -22,10 +24,12 @@ STAGE_OUTPUTS: dict[int, type[BaseModel]] = {
     5: MatchingResult,
     6: ValidationResult,
     7: QuoteVersionResult,
+    8: AuditResult,  # the audit step, after stage 4 of an audit drawing (11 §6, S15 decision 2)
 }
 
 __all__ = [
     "STAGE_OUTPUTS",
+    "AuditResult",
     "DetectionResult",
     "ExtractionResult",
     "IntakeResult",

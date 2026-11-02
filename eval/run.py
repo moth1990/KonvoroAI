@@ -11,6 +11,7 @@ queue. Needs `make up`.
 """
 
 import argparse
+import hashlib
 import json
 import os
 import subprocess
@@ -22,6 +23,7 @@ from typing import Literal
 from sqlalchemy import Engine, create_engine, select
 from sqlalchemy.orm import Session
 
+from konboro.contracts.audit import Difference
 from konboro.contracts.detection import DetectionResult
 from konboro.contracts.extraction import ExtractionResult
 from konboro.contracts.intake import IntakeResult
@@ -32,13 +34,17 @@ from konboro.db.admin import database_dsn, fresh_database
 from konboro.db.ids import new_id
 from konboro.db.seed import seed_global
 from konboro.db.session import app_engine, tenant_session
+from konboro.pipeline.audit.differences import audit
+from konboro.pipeline.audit.step import drawn_components, read_quote_bytes
 from konboro.pipeline.context import M
 from konboro.pipeline.coordinator import Pipeline
 from konboro.services import drawings
-from konboro.services.llm import EvalMode, eval_providers
+from konboro.services.intake import detect_format
+from konboro.services.llm import EvalMode, eval_providers, usage_recorder
 from konboro.services.queue import Queue, StageMessage
 from konboro.services.storage import Storage
 from konboro.settings import Settings
+from konboro_llm import LLMClient
 
 from . import compare, report
 from .canonical import GoldenDrawing, Prediction
@@ -99,13 +105,37 @@ def run_drawing(pipeline: Pipeline, tenant_id: str, user_id: str, label: GoldenD
         assert key is not None, f"stage {stage} of {label.id} wrote nothing"  # noqa: S101
         return model.model_validate_json(pipeline.storage.get(tenant_id, key))
 
+    intake, merge = output(1, IntakeResult), output(4, MergeResult)
+    folder = golden / label.id
+    differences = audit_golden(pipeline, tenant_id, drawing_id, intake, merge, folder) if label.audit else None
     return prediction(
-        output(1, IntakeResult),
-        output(4, MergeResult),
+        intake,
+        merge,
         output(7, QuoteVersionResult),
         output(2, ExtractionResult),
         output(3, DetectionResult),
+        differences,
     )
+
+
+AUXILIARY = frozenset({"terminal"})  # a new tenant's default (S15 decision 4)
+
+
+def audit_golden(
+    pipeline: Pipeline, tenant_id: str, drawing_id: str, intake: IntakeResult, merge: MergeResult, folder: Path
+) -> list[Difference] | None:
+    """The audit of the factory's real quote (11 §10), on this run's own stage 1 and 4: the same code as the audit
+    step, without a second run of stages 1–4. The quote is read as the step reads it, through the cassettes."""
+    quote = next(iter(sorted(folder.glob("actual_quote_*.*"))), None)
+    if quote is None:
+        return None
+    data = quote.read_bytes()
+    fmt = detect_format(data)
+    assert fmt is not None and fmt not in ("dwg", "dxf", "zip"), quote  # noqa: S101
+    llm = LLMClient(pipeline.llm_providers, on_call=usage_recorder(pipeline.engine, tenant_id, drawing_id))
+    read = read_quote_bytes(llm, tenant_id, fmt, data, new_id("fil"), hashlib.sha256(data).hexdigest())
+    pages = {p.page_id: p.page_no for p in intake.pages}
+    return audit(read, drawn_components(pages, merge), AUXILIARY).differences
 
 
 def evaluate(

@@ -1,6 +1,6 @@
-"""Pipeline step 1, the BOM-only path (01 §5.8), and later the quote audit (11 §4): reading a table.
+"""Pipeline step 1, the BOM-only path (01 §5.8), and the quote audit (11 §4, §5.2): reading a table.
 
-Two calls on one route:
+Three calls on one route:
 - `transcribe`: a photographed, scanned or handwritten table (a BOM page as an image). Every column with its role
   from a closed list, every row's cells as written with a confidence for each, and each row's box on a 0–1000 grid
   over the image. The form's heading gives the panel's and the project's names. There is no field for the customer
@@ -9,8 +9,12 @@ Two calls on one route:
   cells, with every number replaced by its shape (`<int>`, `<decimal>`) by the caller: no numeric value ever leaves,
   since a price column can't be told from a quantity column before the mapping (CLAUDE.md non-negotiable 6, S14
   decision 2).
+- `transcribe_quote`: a picture or a scan of the factory's own quote, for the audit (11 §5.2). The same reading, with
+  the money kept: unit price and line total as written, and the quote's number, date and total rows. This is the one
+  request in which a model copies prices (S15 decision 1): they are the audited quote's own selling prices, code
+  checks every one arithmetically, and no other request ever carries them. Still no field for the customer.
 
-Code checks both answers afterwards (konboro.pipeline.bom).
+Code checks every answer afterwards (konboro.pipeline.bom, konboro.pipeline.audit.quote).
 """
 
 from __future__ import annotations
@@ -68,6 +72,38 @@ fraction. Give each column its role.
 {columns}"""
 
 
+QuoteRole = Literal[
+    "item", "quantity", "unit_price", "line_total", "discount", "model", "brand", "unit", "row_number", "panel", "other"
+]
+
+QUOTE_ROLES = """\
+Column roles (pick one per column):
+- item: what the product is, as written.
+- quantity: how many.
+- unit_price: the price of one unit.
+- line_total: the line's amount (quantity × unit price).
+- discount: a discount column.
+- model, brand, unit, row_number, panel: as their names say.
+- other: anything else."""
+
+QUOTE = f"""\
+The image is a price quote a panel-building factory wrote for one of its own panels. Transcribe its table of lines, \
+with the money exactly as written.
+
+{QUOTE_ROLES}
+
+- columns: the table's columns from right to left as they appear in a Hebrew table, each with its header as written \
+(null if none) and its role.
+- rows: every line of the table, top to bottom. cells: one per column, in the columns' order, each with its text \
+exactly as written (null when the cell is empty) and your confidence (0 to 1) that you read it right. Copy amounts \
+as written, with their separators ("1,250", "42.00"); never compute, round or correct one.
+- box: the row's box [x0, y0, x1, y1] on a 0–1000 grid over the whole image, origin top left.
+- totals: the rows under the table that sum it (סה"כ, הנחה, מע"מ, סה"כ כולל מע"מ…), each with its label as written \
+and its amount as written. They are not rows.
+- quote_number and quote_date: as the quote's heading writes them; else null.
+- Leave out the customer's name, addresses, phone numbers, e-mails, terms and signatures."""
+
+
 class Column(BaseModel):
     header: str | None
     role: Role
@@ -99,6 +135,25 @@ class MappingAnswer(BaseModel):
     columns: list[ColumnRole]
 
 
+class QuoteColumn(BaseModel):
+    header: str | None
+    role: QuoteRole
+
+
+class QuoteTotal(BaseModel):
+    label: str
+    amount: str | None
+    confidence: float = Field(description="0 to 1")
+
+
+class QuoteAnswer(BaseModel):
+    quote_number: str | None
+    quote_date: str | None
+    columns: list[QuoteColumn]
+    rows: list[Row]
+    totals: list[QuoteTotal]
+
+
 def transcribe(client: LLMClient, image: ImageInput, tenant_id: str | None = None) -> LLMResult[TableAnswer]:
     return client.run(
         LLMRequest(
@@ -123,5 +178,20 @@ def map_columns(client: LLMClient, columns: str, tenant_id: str | None = None) -
             output_schema=MappingAnswer,
             tenant_id=tenant_id,
             max_tokens=1024,
+        )
+    )
+
+
+def transcribe_quote(client: LLMClient, image: ImageInput, tenant_id: str | None = None) -> LLMResult[QuoteAnswer]:
+    """The audited quote's own page (11 §5.2, S15 decision 1): the only request whose answer carries prices."""
+    return client.run(
+        LLMRequest(
+            stage=STAGE,
+            system=SYSTEM,
+            user_text=QUOTE,
+            output_schema=QuoteAnswer,
+            images=[image],
+            tenant_id=tenant_id,
+            max_tokens=8192,
         )
     )

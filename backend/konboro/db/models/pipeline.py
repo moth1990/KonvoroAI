@@ -54,7 +54,7 @@ class Drawing(Base, TenantScoped, Timestamps):
             "input_kind IS NULL OR input_kind IN ('factory_drawing', 'designer_plan', 'bom_only', 'mixed')",
             name="input_kind",
         ),
-        CheckConstraint("current_stage IS NULL OR current_stage BETWEEN 1 AND 7", name="current_stage"),
+        CheckConstraint("current_stage IS NULL OR current_stage BETWEEN 1 AND 8", name="current_stage"),
         Index(None, "tenant_id", "created_at"),
     )
 
@@ -74,16 +74,24 @@ class Drawing(Base, TenantScoped, Timestamps):
     created_by: Mapped[str | None]
 
 
+FILE_ROLES = ("drawing", "audited_quote")
+# 1–7 are the stages; 8 is the audit step, after stage 4 of an audit drawing (S15 decision 2)
+AUDIT_STAGE = 8
+
+
 class DrawingFile(Base, TenantScoped, Created):
     __tablename__ = "drawing_files"
     __table_args__ = (
         tenant_unique(),
         tenant_fk("drawing_id", "drawings", ondelete="CASCADE"),
         Index(None, "tenant_id", "sha256"),
+        one_of("role", FILE_ROLES),
     )
 
     id: Mapped[str] = pk()
     drawing_id: Mapped[str]
+    # `audited_quote`: the factory's own quote uploaded with the drawing for an audit (11 §4). Stage 1 skips it.
+    role: Mapped[str] = mapped_column(server_default="drawing")
     original_name: Mapped[str]
     detected_format: Mapped[str]
     sha256: Mapped[str]
@@ -207,7 +215,7 @@ class StageRun(Base, TenantScoped):
     __tablename__ = "stage_runs"
     __table_args__ = (
         tenant_fk("drawing_id", "drawings", ondelete="CASCADE"),
-        CheckConstraint("stage BETWEEN 1 AND 7", name="stage"),
+        CheckConstraint("stage BETWEEN 1 AND 8", name="stage"),
         one_of("status", ("queued", "running", "done", "failed", "skipped")),
     )
 

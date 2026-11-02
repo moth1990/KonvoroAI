@@ -26,6 +26,7 @@ TERMS: tuple[tuple[str, str, str | None], ...] = (
     ("מפסק", "circuit_breaker", None),
     ("מנתק", "switch_disconnector", "switch_disconnector"),
     ("מגן מנוע", "circuit_breaker", "motor_protection"),
+    ("הגנת מנוע", "circuit_breaker", "motor_protection"),
     ("פחת", "rcd", "rcd"),
     ("מ.פ.", "rcd", "rcd"),
     ("מגען", "contactor", "contactor"),
@@ -51,8 +52,17 @@ TERMS: tuple[tuple[str, str, str | None], ...] = (
     ("לחצן", "push_button", "push_button"),
     ("נורית", "indicator_lamp", "indicator_lamp"),
     ("נורת סימון", "indicator_lamp", "indicator_lamp"),
+    ("מנורה", "indicator_lamp", "indicator_lamp"),
+    ("מנורת", "indicator_lamp", "indicator_lamp"),
+    ("מגע עזר", "aux_contact", "aux_contact"),
+    ("בקר טמפרטורה", "temperature_controller", "temperature_controller"),
+    ("פסי צבירה", "busbar", "busbar"),
+    ("פס צבירה", "busbar", "busbar"),
     ("בורר", "selector_switch", "selector_switch"),
+    ("מנתק נתיך", "fuse", "fuse_base"),
+    ("בסיס נתיך", "fuse", "fuse_base"),
     ("נתיך", "fuse", "fuse"),
+    ("נתיכים", "fuse", "fuse"),
     ("שקע", "socket_outlet", "socket_outlet"),
     ("מהדק", "terminal", "terminal"),
     ("מהדקים", "terminal", "terminal"),
@@ -83,6 +93,24 @@ _EDGE = r"[^\W\d_]|[\"']"  # a letter or a quote mark beside the term means it i
 _COMPILED = [
     (re.compile(rf"(?<!{_EDGE}){re.escape(norm(w))}(?!{_EDGE})"), len(norm(w)), family, cls) for w, family, cls in TERMS
 ]
+
+
+def families_in(text: str) -> list[tuple[str, str, int]]:
+    """Every term in the text, left to right, the longest at each place and none inside another: (family, class,
+    where it starts). For what a quote line includes ("כולל פסי צבירה", "+נתיכים", 11 §5.2 item 6)."""
+    t = norm(text)
+    found: list[tuple[int, int, str, str]] = []
+    for pattern, length, family, cls in _COMPILED:
+        for m in pattern.finditer(t):
+            found.append((m.start(), m.start() + length, family, cls or UNTYPED))
+    found.sort(key=lambda f: (f[0], -(f[1] - f[0])))
+    out: list[tuple[str, str, int]] = []
+    end = -1
+    for start, stop, family, cls in found:
+        if start >= end:
+            out.append((family, cls, start))
+            end = stop
+    return out
 
 
 def family_of(text: str) -> tuple[str, str] | None:

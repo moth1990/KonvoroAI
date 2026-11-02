@@ -7,7 +7,9 @@ One message = one stage of one drawing. For each:
 3. Hand off: stage 1 settles the quota (01 §4.5; S05 decision) in the same transaction, by the outcome it reports:
    counted, a revision, or the same files again. Then it either stops the drawing (a blurry page: `failed`), waits
    for the user (01 §5.6: `awaiting_confirmation`, until `confirm`), or queues stage 2. Stage 7 marks the drawing
-   `ready`; any other stage queues the next one.
+   `ready`; any other stage queues the next one. A drawing uploaded for an audit (11 §5.1, S15 decision 2) goes
+   from stage 4 to the audit step (`AUDIT_STAGE`, on its own queue), stages 5–7 skipped, and the audit step marks it
+   `ready`.
 
 While a stage runs, a heartbeat keeps its message invisible, so a long stage is never delivered to a second worker
 (BUG-009). A user's page-kind change that moves a page to another route runs stages 2–7 again (`rerun`, S08).
@@ -34,7 +36,8 @@ from sqlalchemy.orm import Session
 
 from konboro.contracts.intake import IntakeResult
 from konboro.db.ids import new_id
-from konboro.db.models import Drawing, QuotaEvent, StageRun
+from konboro.db.models import Audit, Drawing, QuotaEvent, StageRun
+from konboro.db.models.pipeline import AUDIT_STAGE
 from konboro.db.session import global_session, tenant_session
 from konboro.services import quota
 from konboro.services.llm import usage_recorder
@@ -105,12 +108,25 @@ def cancel(session: Session, tenant_id: str, drawing_id: str) -> str:
         raise DrawingFinishedError(drawing.status)
     drawing.status = "cancelled"
     outcome = _quota_back(session, drawing, "cancelled")
+    if drawing.purpose == "audit":
+        _audit_processing(session, drawing, "failed")
     session.execute(
         update(StageRun)
         .where(StageRun.drawing_id == drawing_id, StageRun.status.in_(("queued", "running")))
         .values(status="skipped", finished_at=_now())
     )
     return outcome
+
+
+def next_stage(drawing: Drawing, stage: int) -> int:
+    """An audit needs stages 1–4 only (11 §5.1): after stage 4 comes the audit step."""
+    return AUDIT_STAGE if drawing.purpose == "audit" and stage == 4 else stage + 1
+
+
+def progress_after(drawing: Drawing, stage: int) -> float:
+    if drawing.purpose == "audit":
+        return 1.0 if stage == AUDIT_STAGE else stage / 5
+    return stage / 7
 
 
 def _message(drawing: Drawing, stage: int) -> StageMessage:
@@ -132,8 +148,9 @@ def confirm(session: Session, tenant_id: str, drawing_id: str) -> StageMessage:
 
 
 def rerun(session: Session, tenant_id: str, drawing_id: str) -> StageMessage:
-    """Stages 2–7 again, after a page moved to another route (S08 decision). Not counted in the quota: it is work
-    on an existing quote (01 §4.5). The caller sends the message after its commit."""
+    """Stages 2–7 again (2–4 and the audit step for an audit), after a page moved to another route (S08 decision).
+    Not counted in the quota: it is work on an existing quote (01 §4.5). The caller sends the message after its
+    commit."""
     drawing = _lock(session, drawing_id)
     if drawing is None or drawing.tenant_id != tenant_id:
         raise LookupError(drawing_id)
@@ -145,9 +162,16 @@ def rerun(session: Session, tenant_id: str, drawing_id: str) -> StageMessage:
         .values(status="queued", attempts=0, started_at=None, finished_at=None, error=None, sent_at=None)
     )
     session.flush()
-    drawing.status, drawing.current_stage, drawing.progress, drawing.needs_confirmation = "processing", 2, 1 / 7, False
+    drawing.status, drawing.current_stage, drawing.needs_confirmation = "processing", 2, False
+    drawing.progress = progress_after(drawing, 1)
+    if drawing.purpose == "audit":
+        _audit_processing(session, drawing)
     session.get_one(StageRun, (tenant_id, drawing_id, 2)).sent_at = _now()
     return _message(drawing, 2)
+
+
+def _audit_processing(session: Session, drawing: Drawing, status: str = "processing") -> None:
+    session.execute(update(Audit).where(Audit.drawing_id == drawing.id).values(status=status))
 
 
 @dataclass
@@ -192,6 +216,8 @@ class Pipeline:
                 outcome = _quota_back(s, drawing, "stage_failed")
                 issue = {"code": "pipeline_failed", "severity": "error", "stage": msg.stage, "message": FAILED_MESSAGE}
                 drawing.issues = [*drawing.issues, issue]
+                if drawing.purpose == "audit":
+                    _audit_processing(s, drawing, "failed")
                 run = s.get(StageRun, (msg.tenant_id, msg.drawing_id, msg.stage))
                 if run is not None:
                     run.status, run.finished_at = "failed", _now()
@@ -294,17 +320,26 @@ class Pipeline:
                 raise CancelledError(msg.drawing_id)
             run = s.get_one(StageRun, (msg.tenant_id, msg.drawing_id, msg.stage))
             run.status, run.finished_at, run.output_key, run.error = "done", _now(), key, None
-            drawing.progress = msg.stage / 7
+            drawing.progress = progress_after(drawing, msg.stage)
             if msg.stage == 1:
                 assert isinstance(output, IntakeResult)  # noqa: S101
                 if not self._after_intake(s, drawing, output):
+                    if drawing.status == "failed" and drawing.purpose == "audit":
+                        _audit_processing(s, drawing, "failed")
                     return None
-            if msg.stage == 7:
+            if msg.stage in (7, AUDIT_STAGE):
                 drawing.status = "ready"
                 return None
-            s.get_one(StageRun, (msg.tenant_id, msg.drawing_id, msg.stage + 1)).sent_at = _now()
+            following = next_stage(drawing, msg.stage)
+            if following == AUDIT_STAGE:
+                s.execute(
+                    update(StageRun)
+                    .where(StageRun.drawing_id == drawing.id, StageRun.stage.between(5, 7))
+                    .values(status="skipped", finished_at=_now())
+                )
+            s.get_one(StageRun, (msg.tenant_id, msg.drawing_id, following)).sent_at = _now()
             return StageMessage(
-                drawing_id=msg.drawing_id, tenant_id=msg.tenant_id, stage=msg.stage + 1, trace_id=msg.trace_id
+                drawing_id=msg.drawing_id, tenant_id=msg.tenant_id, stage=following, trace_id=msg.trace_id
             )
 
     def _after_intake(self, session: Session, drawing: Drawing, intake: IntakeResult) -> bool:
