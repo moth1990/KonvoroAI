@@ -26,7 +26,11 @@ const SCREENS = [
     name: "home-classic",
     path: "/home",
     tenant: TENANTS.classic,
-    ready: (p: Page) => p.getByTestId("waiting").getByRole("link").last(),
+    // both lists: the recent-work list came in after the shot once (BUG-028, again in S17)
+    ready: (p: Page) => [
+      p.getByTestId("waiting").getByRole("link").last(),
+      p.getByTestId("recent").getByRole("link").last(),
+    ],
   },
   {
     name: "home-chat",
@@ -246,7 +250,7 @@ for (const scheme of ["light", "dark"] as const) {
         if (screen.tenant) await signIn(page, request, screen.tenant);
         await page.goto(screen.path);
         if (screen.tenant) await meLoaded(page);
-        await screen.ready(page).waitFor({ timeout: 60_000 });
+        for (const ready of [screen.ready(page)].flat()) await ready.waitFor({ timeout: 60_000 });
         await page.waitForLoadState("networkidle");
         await page.evaluate(() => document.fonts.ready);
         await expect(page).toHaveScreenshot(`${screen.name}-${scheme}.png`, {

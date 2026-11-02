@@ -4,6 +4,9 @@ import uuid
 
 import psycopg
 
+from konboro.services.queue import Queue
+
+from .aws import RUN_PREFIX
 from .conftest import BUCKET, PG_DSN
 
 STAGE_QUEUES = [
@@ -38,9 +41,11 @@ def test_every_stage_has_a_queue_and_a_dlq(sqs) -> None:  # type: ignore[no-unty
     assert set(STAGE_QUEUES) | {"konboro-dlq"} <= names
 
 
-def test_queue_round_trip(sqs) -> None:  # type: ignore[no-untyped-def]
-    # Messages carry ids only (specs/12-tech-stack.md §3).
-    url = sqs.get_queue_url(QueueName="konboro-s1-intake")["QueueUrl"]
+def test_queue_round_trip(sqs, clean_queue: Queue) -> None:  # type: ignore[no-untyped-def]
+    # Messages carry ids only (specs/12-tech-stack.md §3). The run's own stage-1 queue: a `make dev` worker polls
+    # `konboro-s1-intake` and could take the message first (BUG-025).
+    url = clean_queue.url("konboro-s1-intake")
+    assert url.rsplit("/", 1)[-1] == f"{RUN_PREFIX}konboro-s1-intake"
     sqs.send_message(QueueUrl=url, MessageBody='{"drawing_id": "drw_test"}')
     msgs = sqs.receive_message(QueueUrl=url, MaxNumberOfMessages=1, WaitTimeSeconds=2)["Messages"]
     assert msgs[0]["Body"] == '{"drawing_id": "drw_test"}'

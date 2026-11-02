@@ -50,9 +50,10 @@ _RANGE = re.compile(r"^([A-Z]+)(\d+)\s*[–-]\s*\1?(\d+)$")  # "F1–F17", "C1-C
 
 
 def designators(raw: list[str] | None) -> tuple[str, ...]:
-    """Ranges expanded, so "F1–F17" overlaps with a predicted "F3"."""
+    """Ranges expanded, so "F1–F17" overlaps with a predicted "F3"; a list on one symbol ("MS1/MS2/MS3", 03 §3.7
+    item 5) split."""
     out: list[str] = []
-    for d in raw or []:
+    for d in (part for item in raw or [] for part in item.split("/") if part.strip()):
         m = _RANGE.match(d.strip())
         if m and int(m[2]) < int(m[3]):
             out.extend(f"{m[1]}{n}" for n in range(int(m[2]), int(m[3]) + 1))

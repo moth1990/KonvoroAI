@@ -16,6 +16,23 @@ def test_ids_sort_by_creation_time() -> None:
     assert earlier < later
 
 
+def test_ids_made_in_one_millisecond_keep_their_order() -> None:
+    # BUG-018: rows created in the same millisecond were ordered by the random part.
+    same_ms = [ulid(1_700_000_000_000) for _ in range(1_000)]
+    assert same_ms == sorted(same_ms)
+    assert len(set(same_ms)) == len(same_ms)
+    made = [new_id("qev") for _ in range(10_000)]
+    assert made == sorted(made)
+
+
+def test_an_earlier_timestamp_still_sorts_by_its_own_time() -> None:
+    # Monotonic within a millisecond only: an explicit earlier time is not pushed past the last id.
+    later = ulid(1_700_000_000_005)
+    earlier = ulid(1_700_000_000_000)
+    assert earlier < later
+    assert earlier.startswith(ulid(1_700_000_000_000)[:10])
+
+
 def test_ids_are_unique() -> None:
     assert len({new_id("ln") for _ in range(10_000)}) == 10_000
 

@@ -72,6 +72,9 @@ def test_every_class_has_a_drawn_example_and_every_example_a_class() -> None:
         ("C12", "contactor"),
         ("NVR", "voltage_relay"),
         ("R5", "relay"),
+        ("TC-G1", "shunt_trip"),  # 26-993: the trip coil on QG1 (BUG-031)
+        ("KA-T2", "relay"),
+        ("TC-GG1", None),
         ("SATEC 135E", None),
         ("kwh", "energy_meter"),
         ("", None),
@@ -280,6 +283,31 @@ def test_reserved_words_and_ratings(family: str, text: str, tag: str | None, exp
     c = cand((100, 100, 110, 110), family=family, cls=family if family != "circuit_breaker" else "mcb", tag=tag)
     designators.link(c, [span(text, (113, 100, 121, 107))], DEFAULT)
     assert c.designator == expected
+
+
+@pytest.mark.parametrize(
+    ("family", "text", "read", "expected"),
+    [
+        ("current_transformer", "MS1/MS2/MS3", True, "MS1/MS2/MS3"),  # 26-993: one symbol for three CTs (BUG-031)
+        ("current_transformer", "ms1 / ms2", True, "MS1/MS2"),
+        ("terminal", "MS1/MS2/MS3", False, None),  # the terminal beside them: not by nearness alone
+        ("circuit_breaker", "L1/L2/L3", True, None),  # phases, not tags
+        ("circuit_breaker", "C16/C20", False, None),  # ratings
+        ("circuit_breaker", "F1/", True, None),
+        ("circuit_breaker", "F1/F2/F3/F4/F5/F6/F7", True, None),  # longer than a tag list on one symbol
+        ("circuit_breaker", "400/230V", True, None),
+    ],
+)
+def test_a_list_of_tags_on_one_symbol(family: str, text: str, read: bool, expected: str | None) -> None:
+    c = cand(
+        (100, 100, 110, 110),
+        family=family,
+        cls=family if family != "circuit_breaker" else "mcb",
+        tag=text if read else None,
+    )
+    designators.link(c, [span(text, (113, 100, 140, 107))], DEFAULT)
+    assert c.designator == expected
+    assert designators.tags(expected) == (expected.split("/") if expected else [])
 
 
 def test_a_box_labelled_with_letters_takes_them_and_an_aux_contact_takes_only_what_the_model_read() -> None:

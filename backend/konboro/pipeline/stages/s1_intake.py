@@ -74,6 +74,7 @@ ISSUE_MESSAGES = {
     "revision_counted_as_new": "השרטוט שונה מהגרסה הקודמת, ולכן ייספר כהצעה חדשה.",
     "bom_possibly_cropped": "ייתכן שהרשימה ממשיכה מתחת לתמונה. אם יש עוד שורות, צלמו גם אותן.",
     "bom_no_rows": "לא מצאנו שורות מוצרים בכתב הכמויות. בדקו את הקובץ.",
+    "bom_panel_name_from_picture": "שם הלוח נקרא מהכותרת שבתמונה: {panel}. בדקו אותו.",
 }
 
 
@@ -119,8 +120,8 @@ class Work:
         return png(render(self.read, self.data, long_side, crop))
 
 
-def _issue(code: str, severity: str, page: Work | None = None) -> StageIssue:
-    message = ISSUE_MESSAGES[code].format(page=page.page_no if page else "")
+def _issue(code: str, severity: str, page: Work | None = None, **fields: str) -> StageIssue:
+    message = ISSUE_MESSAGES[code].format(page=page.page_no if page else "", **fields)
     return StageIssue(code=code, severity=severity, page_id=page.page_id if page else None, message=message)  # type: ignore[arg-type]
 
 
@@ -419,6 +420,13 @@ def _bom_heading(block: TitleBlock | None, tables: dict[str, bom_table.BomTable]
     )
 
 
+def heading_panel_from_picture(tables: dict[str, bom_table.BomTable]) -> str | None:
+    """A panel name read from a photographed form's heading. `bom_table.panels` names the rows' panel by it, before
+    any title block, and the model gives no confidence for it: a handwritten heading is easy to misread (BUG-030,
+    S17 decision 5). The user checks it."""
+    return next((t.panel_name for t in tables.values() if t.source == "image" and t.panel_name), None)
+
+
 def _quota(
     ctx: StageContext, files: list[m.DrawingFile], works: list[Work], number: str | None
 ) -> tuple[QuotaOutcome, list[StageIssue]]:
@@ -504,7 +512,11 @@ def run(ctx: StageContext) -> IntakeResult:
     _auto_revision(ctx, block)
     tables = _bom(ctx, works)
     if tables and not any(routing.route(w.kind, w.confidence, bool(w.panels)) == "process" for w in works):
+        from_picture = heading_panel_from_picture(tables)
         block = _bom_heading(block, tables)
+        if from_picture:
+            page = next(w for w in works if w.page_id in tables and tables[w.page_id].panel_name == from_picture)
+            issues.append(_issue("bom_panel_name_from_picture", "warning", page, panel=from_picture))
     issues += [
         _issue("bom_possibly_cropped", "warning", w) for w in works if w.page_id in tables and tables[w.page_id].cropped
     ]

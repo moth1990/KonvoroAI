@@ -5,7 +5,7 @@
 | **Track** | R |
 | **Branch** | `s16-audit-screen` |
 | **Depends on** | S15 |
-| **Status** | in review |
+| **Status** | done |
 | **PR** | [moth1990/KonvoroAI#17](https://github.com/moth1990/KonvoroAI/pull/17) |
 
 ## Goal

@@ -5,6 +5,7 @@ ULIDs sort by creation time and are safe in URLs. Generated here to avoid a depe
 
 import os
 import re
+import threading
 import time
 
 _CROCKFORD = "0123456789ABCDEFGHJKMNPQRSTVWXYZ"
@@ -20,10 +21,27 @@ PREFIXES = frozenset(
 _ID = re.compile(r"^([a-z]+)_([0-9A-HJKMNP-TV-Z]{26})$")
 
 
+_RANDOM_MAX = (1 << 80) - 1
+_last = (-1, 0)  # (ms, random part) of the last id made in this process
+_lock = threading.Lock()
+
+
 def ulid(timestamp_ms: int | None = None) -> str:
-    """26 Crockford base32 chars: 48-bit millisecond timestamp, then 80 random bits."""
-    ms = int(time.time() * 1000) if timestamp_ms is None else timestamp_ms
-    value = (ms << 80) | int.from_bytes(os.urandom(10), "big")
+    """26 Crockford base32 chars: 48-bit millisecond timestamp, then 80 random bits.
+
+    Monotonic within a process (the ULID spec's monotonic mode): an id made in the same millisecond as the last one
+    takes the last one's random part plus one, so rows created together keep their order (BUG-018). A clock that
+    steps back reuses the last millisecond. Ids from different processes still order only by their millisecond."""
+    global _last
+    with _lock:
+        ms = int(time.time() * 1000) if timestamp_ms is None else timestamp_ms
+        last_ms, last_rand = _last
+        if timestamp_ms is None and ms < last_ms:
+            ms = last_ms
+        same_ms = ms == last_ms and last_rand < _RANDOM_MAX
+        rand = last_rand + 1 if same_ms else int.from_bytes(os.urandom(10), "big")
+        _last = (ms, rand)
+    value = (ms << 80) | rand
     chars = []
     for _ in range(26):
         value, rem = divmod(value, 32)

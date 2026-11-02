@@ -47,13 +47,14 @@ test("26-993: the headline, the numbers and the rows are the audit's own", async
   await expect(page.getByText("MAIN_ELECTRICAL_BOARD.pdf")).toBeVisible();
   await expect(page.getByText("26/993 · 5 עמודים · שרטוט ייצור")).toBeVisible();
   await expect(page.getByText('17 שורות · ₪14,022 לפני מע"מ')).toBeVisible();
-  // the pipeline finds QG2 short and the untagged CT missing; the rest is below 0.6 (BUG-031)
+  // the pipeline finds the factory's three omissions: QG2 short, TC-G1/TC-G2 and MS1–MS3 missing (BUG-031, S17);
+  // the headline counts their units. SG, EMS's line and the terminals are below 0.6 (BUG-036)
   await expect(page.getByTestId("audit-headline")).toHaveText(
-    "נמצאו 2 הבדלים: 2 רכיבים חסרים. כסף בסיכון: ₪1,250, ועוד רכיב אחד בלי מחיר. 6 הבדלים לבדוק.",
+    "נמצאו 3 הבדלים: 6 רכיבים חסרים. כסף בסיכון: ₪1,250, ועוד 5 רכיבים בלי מחיר. 6 הבדלים לבדוק.",
   );
   const kpis = page.getByTestId("kpis");
-  await expect(kpis.locator(".kpi b")).toHaveText(["13 / 17", "2", "₪1,250+", "1"]);
-  await expect(kpis).toContainText("2 יחידות");
+  await expect(kpis.locator(".kpi b")).toHaveText(["13 / 17", "3", "₪1,250+", "0"]);
+  await expect(kpis).toContainText("6 יחידות");
 
   const diffs = page.getByTestId("diffs");
   await expect(diffs.getByTestId("diff")).toHaveCount(3);
@@ -62,10 +63,12 @@ test("26-993: the headline, the numbers and the rows are the audit's own", async
   await expect(qg).toHaveClass(/diff-row/);
   await expect(qg.locator(".des")).toHaveText(["QG1", "QG2"]);
   await expect(qg.getByRole("cell").nth(3)).toHaveText("₪1,250");
-  await expect(row(page, "משנה זרם 125/5A").getByRole("cell").nth(3)).toHaveText("אין מחיר דומה");
-  const aux = diffs.getByTestId("diff").filter({ hasText: "חומר עזר" });
-  await expect(aux).toHaveAttribute("data-type", "not_a_difference");
-  await expect(aux.getByRole("button", { name: /^נכון/ })).toHaveCount(0); // information: nothing to decide
+  const ct = row(page, "משנה זרם 125/5A");
+  await expect(ct.locator(".des")).toHaveText(["MS1", "MS2", "MS3"]);
+  await expect(ct.getByRole("cell").nth(3)).toHaveText("אין מחיר דומה");
+  const trips = diffs.getByTestId("diff").filter({ hasText: "TC-G1" });
+  await expect(trips).toHaveAttribute("data-type", "missing_in_quote");
+  await expect(trips.locator(".des")).toHaveText(["TC-G1", "TC-G2"]);
 
   await expect(page.getByRole("heading", { name: "לבדוק" })).toBeVisible();
   await expect(page.getByTestId("to-check").getByTestId("diff")).toHaveCount(6);
