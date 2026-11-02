@@ -11,6 +11,7 @@ from typing import Any
 
 from .canonical import GoldenDrawing, Prediction
 from .metrics import NOT_LABELLED, SECTIONS, Scores, panel_scores, score_drawing, total
+from .metrics import audit as audit_metric
 
 Report = dict[str, Any]
 
@@ -33,6 +34,14 @@ def _totals(many: list[dict[str, Scores]]) -> dict[str, Scores]:
     return {section: total([m[section] for m in many]) for section in SECTIONS}
 
 
+def _predicted_at_risk(pred: Prediction) -> str | None:
+    """The audit's value at risk on its shown differences (11 §5.5), beside the factory-confirmed one."""
+    if pred.audit is None:
+        return None
+    shown = [d.value_at_risk for d in pred.audit if d.value_at_risk and (d.confidence or 0) >= audit_metric.SHOWN_FROM]
+    return str(sum(shown, Decimal(0)))
+
+
 def build(results: list[tuple[GoldenDrawing, Prediction]]) -> Report:
     drawings: dict[str, Any] = {}
     every: list[dict[str, Scores]] = []
@@ -52,6 +61,7 @@ def build(results: list[tuple[GoldenDrawing, Prediction]]) -> Report:
             "quote_total": str(label.quote_total) if label.quote_total is not None else None,
             "predicted_total": str(pred.quote_total) if pred.quote_total is not None else None,
             "confirmed_value_at_risk": str(sum(at_risk, Decimal(0))) if label.audit else None,
+            "predicted_value_at_risk": _predicted_at_risk(pred),
             "extraction": pred.extraction,
             "detection": pred.detection,
             "merge": pred.merge,

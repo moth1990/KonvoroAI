@@ -4,7 +4,7 @@ from datetime import datetime
 from decimal import Decimal
 from typing import Any
 
-from sqlalchemy import ARRAY, ForeignKey, Index, Text, text
+from sqlalchemy import ARRAY, CheckConstraint, ForeignKey, Index, Integer, Text, UniqueConstraint, text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from ..base import Base, Created, Money, Qty, TenantScoped, Timestamps, one_of, pk, tenant_fk, tenant_unique
@@ -190,6 +190,53 @@ class Audit(Base, TenantScoped, Timestamps):
     summary: Mapped[dict[str, Any]] = mapped_column(server_default="{}")
     status: Mapped[str] = mapped_column(server_default="processing")
     corrected_quote_id: Mapped[str | None]
+    issues: Mapped[list[Any]] = mapped_column(server_default="[]")  # reading the quote: `quote_no_lines`, …
+
+
+AUDIT_LINE_STATUS = ("matched", "quantity_differs", "attribute_differs", "not_in_drawing", "arithmetic")
+
+
+class AuditQuoteLine(Base, TenantScoped, Timestamps):
+    """A line of the audited quote, as read, signed and matched (11 §5.2–5.3). Only the line, its quantity and its
+    prices are kept: no customer detail (11 §11)."""
+
+    __tablename__ = "audit_quote_lines"
+    __table_args__ = (
+        tenant_unique(),
+        tenant_fk("audit_id", "audits", ondelete="CASCADE"),
+        UniqueConstraint("tenant_id", "audit_id", "line_index"),
+        one_of("status", AUDIT_LINE_STATUS),
+    )
+
+    id: Mapped[str] = pk()
+    audit_id: Mapped[str]
+    line_index: Mapped[int]
+    description: Mapped[str]
+    qty: Mapped[Decimal | None] = mapped_column(Qty)
+    unit_price: Mapped[Decimal | None] = mapped_column(Money)
+    line_total: Mapped[Decimal | None] = mapped_column(Money)
+    confidence: Mapped[float] = mapped_column(server_default="1")
+    page_no: Mapped[int | None]
+    rows: Mapped[list[int]] = mapped_column(ARRAY(Integer), server_default="{}")
+    bbox: Mapped[list[Any] | None]
+    signature: Mapped[dict[str, Any]] = mapped_column(server_default="{}")
+    status: Mapped[str]
+    component_ids: Mapped[list[str]] = mapped_column(ARRAY(Text), server_default="{}")
+    matched_qty: Mapped[Decimal | None] = mapped_column(Qty)
+
+
+DIFFERENCE_TYPES = (
+    "missing_in_quote",
+    "qty_short",
+    "qty_over",
+    "possible_double_count",
+    "attribute_mismatch",
+    "extra_in_quote",
+    "arithmetic",
+    "drawing_conflict",
+    "not_a_difference",
+)
+REJECT_REASONS = ("included_elsewhere", "customer_supplies", "system_error", "other")
 
 
 class AuditDifference(Base, TenantScoped, Timestamps):
@@ -197,8 +244,15 @@ class AuditDifference(Base, TenantScoped, Timestamps):
     __table_args__ = (
         tenant_unique(),
         tenant_fk("audit_id", "audits", ondelete="CASCADE"),
-        one_of("severity", ("high", "medium", "low")),
+        tenant_fk("decided_by", "users"),
+        one_of("type", DIFFERENCE_TYPES),
+        one_of("severity", ("high", "medium", "low", "info")),
         one_of("status", ("open", "confirmed", "rejected")),
+        CheckConstraint(
+            "reject_reason IS NULL OR reject_reason IN ('included_elsewhere', 'customer_supplies', 'system_error', "
+            "'other')",
+            name="reject_reason",
+        ),
     )
 
     id: Mapped[str] = pk()
@@ -216,12 +270,17 @@ class AuditDifference(Base, TenantScoped, Timestamps):
     message: Mapped[str]
     amount: Mapped[Decimal | None] = mapped_column(Money)
     status: Mapped[str] = mapped_column(server_default="open")
-    reject_reason: Mapped[str | None]
+    reject_reason: Mapped[str | None]  # 11 §7: כלול במחיר אחר · הלקוח מספק · טעות של המערכת · אחר
+    reject_note: Mapped[str | None]
+    component_ids: Mapped[list[str]] = mapped_column(ARRAY(Text), server_default="{}")
+    decided_by: Mapped[str | None]
+    decided_at: Mapped[datetime | None]
 
 
 __all__ = [
     "Audit",
     "AuditDifference",
+    "AuditQuoteLine",
     "ChatConversation",
     "ChatMessage",
     "ChatProposal",

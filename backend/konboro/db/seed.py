@@ -64,6 +64,8 @@ FLAGS = [
     {"key": "review_screen", "description": "מסך הבדיקה, בבנייה (09). יוסר ב-S23", "depends_on": []},
     # S14 decision 1: an unsure BOM column mapping stops for the user on the confirmation step.
     {"key": "bom_column_mapping", "description": "אישור מיפוי עמודות בכתב כמויות (01 §5.8)", "depends_on": []},
+    # S15: the quote audit's API (11); its screen is S16's.
+    {"key": "quote_audit", "description": "בדיקת הצעה קיימת (11)", "depends_on": []},
 ]
 
 SUPPLIERS = {

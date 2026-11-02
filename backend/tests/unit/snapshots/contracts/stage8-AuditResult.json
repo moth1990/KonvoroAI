@@ -1,0 +1,656 @@
+{
+  "$defs": {
+    "AuditSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "differences": {
+          "description": "Every type but drawing_conflict and not_a_difference",
+          "title": "Differences",
+          "type": "integer"
+        },
+        "drawing_components": {
+          "title": "Drawing Components",
+          "type": "integer"
+        },
+        "info_notes": {
+          "description": "drawing_conflict",
+          "title": "Info Notes",
+          "type": "integer"
+        },
+        "lines_matched": {
+          "title": "Lines Matched",
+          "type": "integer"
+        },
+        "missing_items": {
+          "description": "Units the quote leaves out: missing_in_quote and qty_short",
+          "title": "Missing Items",
+          "type": "integer"
+        },
+        "missing_items_without_price": {
+          "title": "Missing Items Without Price",
+          "type": "integer"
+        },
+        "not_differences": {
+          "default": 0,
+          "title": "Not Differences",
+          "type": "integer"
+        },
+        "over_charged": {
+          "description": "qty_over and possible_double_count, not in the value at risk",
+          "examples": [
+            "0.15"
+          ],
+          "pattern": "^-?\\d+(\\.\\d+)?$",
+          "title": "Over Charged",
+          "type": "string"
+        },
+        "quote_lines": {
+          "title": "Quote Lines",
+          "type": "integer"
+        },
+        "to_check": {
+          "default": 0,
+          "description": "Differences below 0.6: shown apart (11 §5.4)",
+          "title": "To Check",
+          "type": "integer"
+        },
+        "value_at_risk": {
+          "description": "Shown differences (confidence ≥ 0.6) with a price (11 §5.5)",
+          "examples": [
+            "0.15"
+          ],
+          "pattern": "^-?\\d+(\\.\\d+)?$",
+          "title": "Value At Risk",
+          "type": "string"
+        }
+      },
+      "required": [
+        "quote_lines",
+        "lines_matched",
+        "drawing_components",
+        "differences",
+        "info_notes",
+        "missing_items",
+        "value_at_risk",
+        "missing_items_without_price",
+        "over_charged"
+      ],
+      "title": "AuditSummary",
+      "type": "object"
+    },
+    "AuditedLine": {
+      "additionalProperties": false,
+      "description": "A quote line as the audit read it, signed and matched (11 §7: matched / quantity / attribute / not drawn).",
+      "properties": {
+        "bbox": {
+          "anyOf": [
+            {
+              "maxItems": 4,
+              "minItems": 4,
+              "prefixItems": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                }
+              ],
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Bbox"
+        },
+        "component_ids": {
+          "default": [],
+          "items": {
+            "pattern": "^cmp_[0-9A-Za-z_]+$",
+            "type": "string"
+          },
+          "title": "Component Ids",
+          "type": "array"
+        },
+        "confidence": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "index": {
+          "title": "Index",
+          "type": "integer"
+        },
+        "matched_qty": {
+          "anyOf": [
+            {
+              "examples": [
+                "4",
+                "2.5"
+              ],
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Matched Qty"
+        },
+        "page_no": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page No"
+        },
+        "qty": {
+          "anyOf": [
+            {
+              "examples": [
+                "4",
+                "2.5"
+              ],
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Qty"
+        },
+        "rows": {
+          "default": [],
+          "items": {
+            "type": "integer"
+          },
+          "title": "Rows",
+          "type": "array"
+        },
+        "signature": {
+          "additionalProperties": true,
+          "title": "Signature",
+          "type": "object"
+        },
+        "status": {
+          "enum": [
+            "matched",
+            "quantity_differs",
+            "attribute_differs",
+            "not_in_drawing",
+            "arithmetic"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "total": {
+          "anyOf": [
+            {
+              "examples": [
+                "0.15"
+              ],
+              "pattern": "^-?\\d+(\\.\\d+)?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Total"
+        },
+        "unit_price": {
+          "anyOf": [
+            {
+              "examples": [
+                "0.15"
+              ],
+              "pattern": "^-?\\d+(\\.\\d+)?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Unit Price"
+        }
+      },
+      "required": [
+        "index",
+        "text",
+        "qty",
+        "unit_price",
+        "total",
+        "confidence",
+        "signature",
+        "status"
+      ],
+      "title": "AuditedLine",
+      "type": "object"
+    },
+    "Difference": {
+      "additionalProperties": false,
+      "properties": {
+        "amount": {
+          "anyOf": [
+            {
+              "examples": [
+                "0.15"
+              ],
+              "pattern": "^-?\\d+(\\.\\d+)?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Amount"
+        },
+        "component_ids": {
+          "default": [],
+          "items": {
+            "pattern": "^cmp_[0-9A-Za-z_]+$",
+            "type": "string"
+          },
+          "title": "Component Ids",
+          "type": "array"
+        },
+        "confidence": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "designators": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Designators",
+          "type": "array"
+        },
+        "diff_id": {
+          "pattern": "^dif_[0-9A-Za-z_]+$",
+          "title": "Diff Id",
+          "type": "string"
+        },
+        "drawing_qty": {
+          "anyOf": [
+            {
+              "examples": [
+                "4",
+                "2.5"
+              ],
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Drawing Qty"
+        },
+        "evidence": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "family": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Family"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "quote_line_index": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Quote Line Index"
+        },
+        "quote_qty": {
+          "anyOf": [
+            {
+              "examples": [
+                "4",
+                "2.5"
+              ],
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Quote Qty"
+        },
+        "severity": {
+          "enum": [
+            "high",
+            "medium",
+            "low",
+            "info"
+          ],
+          "title": "Severity",
+          "type": "string"
+        },
+        "status": {
+          "default": "open",
+          "enum": [
+            "open",
+            "confirmed",
+            "rejected"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "suggested_line": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SuggestedLine"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "type": {
+          "enum": [
+            "missing_in_quote",
+            "qty_short",
+            "qty_over",
+            "possible_double_count",
+            "attribute_mismatch",
+            "extra_in_quote",
+            "arithmetic",
+            "drawing_conflict",
+            "not_a_difference"
+          ],
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "diff_id",
+        "type",
+        "severity",
+        "confidence",
+        "family",
+        "drawing_qty",
+        "quote_qty",
+        "quote_line_index",
+        "message"
+      ],
+      "title": "Difference",
+      "type": "object"
+    },
+    "Evidence": {
+      "additionalProperties": false,
+      "properties": {
+        "instance_ids": {
+          "default": [],
+          "items": {
+            "pattern": "^ins_[0-9A-Za-z_]+$",
+            "type": "string"
+          },
+          "title": "Instance Ids",
+          "type": "array"
+        },
+        "page_no": {
+          "title": "Page No",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "page_no"
+      ],
+      "title": "Evidence",
+      "type": "object"
+    },
+    "PriceSource": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "same_signature",
+            "same_family_poles",
+            "this_line"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "line_index": {
+          "title": "Line Index",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "kind",
+        "line_index"
+      ],
+      "title": "PriceSource",
+      "type": "object"
+    },
+    "QuoteRef": {
+      "additionalProperties": false,
+      "properties": {
+        "date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Date"
+        },
+        "number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Number"
+        },
+        "total_before_vat": {
+          "anyOf": [
+            {
+              "examples": [
+                "0.15"
+              ],
+              "pattern": "^-?\\d+(\\.\\d+)?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Total Before Vat"
+        }
+      },
+      "required": [
+        "number",
+        "date",
+        "total_before_vat"
+      ],
+      "title": "QuoteRef",
+      "type": "object"
+    },
+    "SuggestedLine": {
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "price_source": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PriceSource"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "qty": {
+          "examples": [
+            "4",
+            "2.5"
+          ],
+          "title": "Qty",
+          "type": [
+            "string",
+            "number"
+          ]
+        },
+        "unit_price": {
+          "anyOf": [
+            {
+              "examples": [
+                "0.15"
+              ],
+              "pattern": "^-?\\d+(\\.\\d+)?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Unit Price"
+        }
+      },
+      "required": [
+        "description",
+        "qty",
+        "unit_price",
+        "price_source"
+      ],
+      "title": "SuggestedLine",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "audit_id": {
+      "pattern": "^aud_[0-9A-Za-z_]+$",
+      "title": "Audit Id",
+      "type": "string"
+    },
+    "differences": {
+      "items": {
+        "$ref": "#/$defs/Difference"
+      },
+      "title": "Differences",
+      "type": "array"
+    },
+    "drawing_id": {
+      "pattern": "^drw_[0-9A-Za-z_]+$",
+      "title": "Drawing Id",
+      "type": "string"
+    },
+    "input_kind": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Input Kind"
+    },
+    "issues": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "title": "Issues",
+      "type": "array"
+    },
+    "lines": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/AuditedLine"
+      },
+      "title": "Lines",
+      "type": "array"
+    },
+    "quote_ref": {
+      "$ref": "#/$defs/QuoteRef"
+    },
+    "summary": {
+      "$ref": "#/$defs/AuditSummary"
+    },
+    "tenant_id": {
+      "pattern": "^tnt_[0-9A-Za-z_]+$",
+      "title": "Tenant Id",
+      "type": "string"
+    },
+    "trace_id": {
+      "pattern": "^trc_[0-9A-Za-z_]+$",
+      "title": "Trace Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "audit_id",
+    "tenant_id",
+    "drawing_id",
+    "quote_ref",
+    "input_kind",
+    "summary",
+    "differences",
+    "trace_id"
+  ],
+  "title": "AuditResult",
+  "type": "object"
+}

@@ -244,6 +244,19 @@ def build_tenant_graph(s: Session, tenant_id: str) -> dict[str, str]:
             quote_qty=Decimal(0),
         )
     )
+    add(
+        m.AuditQuoteLine(
+            id=new_id("aql"),
+            tenant_id=tenant_id,
+            audit_id=aud.id,
+            line_index=1,
+            description='מא"ז 3X16A',
+            qty=Decimal(3),
+            unit_price=Decimal(185),
+            line_total=Decimal(555),
+            status="matched",
+        )
+    )
 
     ids.update(users=user.id, drawings=drw.id, quotes=quo.id, quote_versions=qv.id, quote_lines=ln.id)
     return ids

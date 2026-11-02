@@ -328,8 +328,8 @@ class UploadOut(BaseModel):
     drawing_id: str
     status: str
     files: list[UploadedFileOut]
-    counted_as: Literal["new_drawing", "revision"] = Field(
-        description="new_drawing: counts once stage 1 succeeds; revision: never counts (S05)"
+    counted_as: Literal["new_drawing", "revision", "audit"] = Field(
+        description="new_drawing: counts once stage 1 succeeds; revision: never counts (S05); audit: POST /audits"
     )
 
 
@@ -423,7 +423,7 @@ class ProgressOut(BaseModel):
     status: Literal["uploaded", "processing", "awaiting_confirmation", "ready", "failed", "cancelled"]
     current_stage: int | None
     progress: float = Field(ge=0, le=1)
-    counted_as: Literal["new_drawing", "revision", "reuse"]
+    counted_as: Literal["new_drawing", "revision", "reuse", "audit"]
     counted: bool = Field(description="Whether this upload is counted in the quota right now")
     files: list[ProgressFileOut]
     stages: list[StageOut]
@@ -462,6 +462,7 @@ class SettingsOut(BaseModel):
     stale_days: int
     labor: dict[str, Any]
     rounding: str
+    auxiliary_families: list[str] = Field(description="The audit shows these as not a difference (11 §5.4, S15)")
 
 
 class SettingsPatch(Strict):
@@ -476,6 +477,9 @@ class SettingsPatch(Strict):
     min_line_margin: Margin | None = None
     min_quote_margin: Margin | None = None
     stale_days: Annotated[int, Field(ge=1, le=3650)] | None = None
+    auxiliary_families: (
+        Annotated[list[Annotated[str, Field(pattern=r"^[a-z_]{2,40}$")]], Field(max_length=40)] | None
+    ) = None
 
     @model_validator(mode="after")
     def _only_margins_may_be_null(self) -> "SettingsPatch":
@@ -487,3 +491,137 @@ class SettingsPatch(Strict):
 
 class HealthOut(BaseModel):
     status: Literal["ok"] = "ok"
+
+
+# --- quote audit (11 §6–8) ----------------------------------------------------------------------
+
+DifferenceType = Literal[
+    "missing_in_quote",
+    "qty_short",
+    "qty_over",
+    "possible_double_count",
+    "attribute_mismatch",
+    "extra_in_quote",
+    "arithmetic",
+    "drawing_conflict",
+    "not_a_difference",
+]
+RejectReason = Literal["included_elsewhere", "customer_supplies", "system_error", "other"]
+
+
+class AuditUploadOut(BaseModel):
+    audit_id: str
+    drawing_id: str
+    status: str
+    files: list[UploadedFileOut]
+    quote_file: UploadedFileOut
+    counted_as: Literal["audit"] = Field(
+        description="An audit counts once stage 1 succeeds, on the audit counter when the plan has one (11 §4)"
+    )
+
+
+class AuditQuoteRefOut(BaseModel):
+    number: str | None
+    date: str | None
+    total_before_vat: DecimalStr | None
+
+
+class AuditSummaryOut(BaseModel):
+    quote_lines: int
+    lines_matched: int
+    drawing_components: int
+    differences: int
+    info_notes: int
+    missing_items: int
+    value_at_risk: DecimalStr
+    missing_items_without_price: int
+    over_charged: DecimalStr
+    not_differences: int
+    to_check: int = Field(description="Differences below 0.6 confidence, shown apart (11 §5.4)")
+
+
+class AuditEvidenceOut(BaseModel):
+    page_no: int
+    instance_ids: list[str]
+
+
+class AuditPriceSourceOut(BaseModel):
+    kind: Literal["same_signature", "same_family_poles", "this_line"]
+    line_index: int
+
+
+class AuditSuggestedLineOut(BaseModel):
+    description: str
+    qty: DecimalStr
+    unit_price: DecimalStr | None
+    price_source: AuditPriceSourceOut | None
+
+
+class AuditDifferenceOut(BaseModel):
+    diff_id: str
+    type: DifferenceType
+    severity: Literal["high", "medium", "low", "info"]
+    confidence: float
+    shown: bool = Field(description="confidence ≥ 0.6; the rest are shown apart, as maybe the system's mistake")
+    family: str | None
+    designators: list[str]
+    drawing_qty: DecimalStr | None
+    quote_qty: DecimalStr | None
+    quote_line_index: int | None
+    evidence: list[AuditEvidenceOut]
+    suggested_line: AuditSuggestedLineOut | None
+    message: str = Field(description="Hebrew, ready to show")
+    amount: DecimalStr | None = Field(description="Money at risk; negative for an over-charge")
+    status: Literal["open", "confirmed", "rejected"]
+    reject_reason: RejectReason | None
+    reject_note: str | None
+    component_ids: list[str]
+
+
+class AuditLineOut(BaseModel):
+    index: int
+    description: str
+    qty: DecimalStr | None
+    unit_price: DecimalStr | None
+    total: DecimalStr | None
+    confidence: float
+    page_no: int | None
+    status: Literal["matched", "quantity_differs", "attribute_differs", "not_in_drawing", "arithmetic"]
+    includes: list[str] = Field(description='What the line says it includes ("כולל", "+"), 11 §5.2 item 6')
+    component_ids: list[str]
+    matched_qty: DecimalStr | None
+
+
+class AuditOut(BaseModel):
+    audit_id: str
+    drawing_id: str
+    status: Literal["processing", "ready", "failed"]
+    drawing_status: str
+    drawing_name: str
+    quote_file_name: str | None
+    input_kind: str | None
+    quote_ref: AuditQuoteRefOut | None
+    summary: AuditSummaryOut | None
+    issues: list[str]
+    lines: list[AuditLineOut]
+    differences: list[AuditDifferenceOut]
+    corrected_quote_id: str | None
+
+
+class AuditDecisionIn(Strict):
+    """11 §7: "נכון, זה הבדל" / "לא נכון" with a reason, or back to open."""
+
+    status: Literal["open", "confirmed", "rejected"]
+    reject_reason: RejectReason | None = None
+    note: Annotated[str, Field(max_length=500)] | None = None
+
+    @model_validator(mode="after")
+    def _reason_when_rejected(self) -> "AuditDecisionIn":
+        if self.status == "rejected" and self.reject_reason is None:
+            raise ValueError("a rejected difference needs a reason")
+        return self
+
+
+class CorrectedQuoteOut(BaseModel):
+    quote_id: str
+    created: bool = Field(description="false: the audit already had its corrected quote")

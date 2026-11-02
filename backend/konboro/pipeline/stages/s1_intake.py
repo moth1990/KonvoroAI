@@ -426,6 +426,8 @@ def _quota(
     s, d = ctx.session, ctx.drawing
     q = d.quota or {}
     issues: list[StageIssue] = []
+    if d.purpose == "audit":  # every audit counts, on the audit counter when the plan has one (11 §4)
+        return QuotaOutcome(counted=True, reason="audit"), issues
     if d.revision_of:
         prev = s.get(m.Drawing, d.revision_of)
         prev_pages = set(s.scalars(select(m.Page.sha256).where(m.Page.drawing_id == d.revision_of)).all()) - {None}
@@ -470,7 +472,13 @@ def _auto_revision(ctx: StageContext, block: TitleBlock | None) -> None:
 
 def run(ctx: StageContext) -> IntakeResult:
     s, d = ctx.session, ctx.drawing
-    files = list(s.scalars(select(m.DrawingFile).where(m.DrawingFile.drawing_id == d.id).order_by(m.DrawingFile.id)))
+    files = list(
+        s.scalars(
+            select(m.DrawingFile)
+            .where(m.DrawingFile.drawing_id == d.id, m.DrawingFile.role == "drawing")  # not an audited quote (11 §4)
+            .order_by(m.DrawingFile.id)
+        )
+    )
     works = _read(ctx, files)
     total = len(works)
     issues: list[StageIssue] = []

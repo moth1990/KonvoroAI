@@ -1,4 +1,5 @@
-"""Stage contracts (00 §5): each model accepts its spec's §6 example, and its JSON schema is pinned.
+"""Stage contracts (00 §5) and the audit step's (11 §6): each model accepts its spec's §6 example, and its JSON
+schema is pinned.
 
 A failing snapshot means a contract changed. If that was intended, update the spec that defines it and every spec
 that consumes it (00 §5), then rewrite the snapshots:
@@ -14,6 +15,7 @@ import pytest
 from pydantic import BaseModel, ValidationError
 
 from konboro.contracts import STAGE_OUTPUTS
+from konboro.contracts.audit import AuditResult
 from konboro.contracts.detection import PageDetections
 from konboro.contracts.extraction import PageExtraction
 from konboro.contracts.intake import IntakeResult
@@ -34,6 +36,7 @@ EXAMPLES: dict[str, type[BaseModel]] = {
     "05-catalog-matching.md": ComponentMatch,
     "06-validation.md": ValidationResult,
     "07-pricing.md": QuoteVersionResult,
+    "11-quote-audit.md": AuditResult,
 }
 
 
@@ -84,7 +87,7 @@ def test_ids_keep_their_prefix() -> None:
 
 
 def test_every_stage_has_an_output_contract() -> None:
-    assert sorted(STAGE_OUTPUTS) == [1, 2, 3, 4, 5, 6, 7]
+    assert sorted(STAGE_OUTPUTS) == [1, 2, 3, 4, 5, 6, 7, 8]  # 8: the audit step (S15 decision 2)
 
 
 @pytest.mark.parametrize("stage", sorted(STAGE_OUTPUTS))

@@ -34,7 +34,7 @@ from konboro_llm.stages.page_classification import TitleBlockAnswer
 from konboro_llm.stages.symbol_detection import STAGE as DETECT
 from konboro_llm.stages.symbol_disambiguation import STAGE as DISAMBIGUATE
 from konboro_llm.stages.table_transcription import STAGE as TABLE
-from konboro_llm.stages.table_transcription import MappingAnswer
+from konboro_llm.stages.table_transcription import MappingAnswer, QuoteAnswer
 from konboro_llm.stages.text_association import STAGE as ASSOCIATE
 
 UNSURE = "unsure"
@@ -110,7 +110,37 @@ BOM_ROWS = [("1", "מפסק 3X63"), ("12", 'מא"ז 1X16'), ("1", "רב מודד
 _LETTER = re.compile(r"^- ([A-Z]+):", re.M)
 
 
+# A made-up audited quote (11 §5.2): (item, quantity, unit price, line total). The last line's total is wrong on
+# purpose, so the arithmetic check has something to find.
+QUOTE_NUMBER = "10999"
+QUOTE_ROWS = [('מא"ז 1X16A', "2", "42", "84"), ("מגען 3X25A", "1", "180", "180"), ("שעון שבת", "1", "250", "260")]
+
+
+def quote_table() -> dict[str, Any]:
+    rows = [
+        {
+            "cells": [{"text": t, "confidence": 0.95} for t in row],
+            "box": [80, 300 + 60 * n, 920, 350 + 60 * n],
+        }
+        for n, row in enumerate(QUOTE_ROWS)
+    ]
+    return {
+        "quote_number": QUOTE_NUMBER,
+        "quote_date": "02/11/2026",
+        "columns": [
+            {"header": "תיאור", "role": "item"},
+            {"header": "כמות", "role": "quantity"},
+            {"header": "מחיר", "role": "unit_price"},
+            {"header": 'סה"כ', "role": "line_total"},
+        ],
+        "rows": rows,
+        "totals": [{"label": 'סה"כ', "amount": "524", "confidence": 0.95}],
+    }
+
+
 def bom_table(request: LLMRequest[Any]) -> dict[str, Any]:
+    if request.output_schema is QuoteAnswer:
+        return quote_table()
     if request.output_schema is MappingAnswer:
         letters = _LETTER.findall(request.user_text)
         roles = ["item", "quantity"]

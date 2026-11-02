@@ -44,6 +44,7 @@ ErrorCode = Literal[
     "too_many_files",
     "zip_too_large",
     "zip_nested",
+    "quote_not_one_file",
 ]
 
 # 01 §8. The last three are not in the spec's table yet; S05 adds them there.
@@ -61,6 +62,8 @@ MESSAGES: dict[ErrorCode, str] = {
     "too_many_files": "אפשר להעלות עד {max} קבצים בבת אחת.",
     "zip_too_large": "הקובץ {name} נפתח ליותר מ-{max}MB. העלו את הקבצים שבתוכו בנפרד.",
     "zip_nested": "בקובץ {name} יש קובץ ZIP בתוך ZIP. פתחו אותו והעלו את הקבצים עצמם.",
+    # 11 §4: the audited quote is one file, with the same limits as a drawing's
+    "quote_not_one_file": "את ההצעה הקיימת מעלים כקובץ אחד: PDF, תמונה, אקסל או CSV.",
 }
 
 
@@ -247,6 +250,14 @@ class UploadCheck:
     @property
     def total_pages(self) -> int:
         return sum(f.page_count or 0 for f in self.files)
+
+
+def check_quote(name: str, data: bytes, limits: Limits) -> CheckedFile:
+    """The quote uploaded for an audit (11 §4): one file, checked as a drawing's file is, and no ZIP."""
+    f = check_file(name, data, limits)
+    if f.error is None and f.detected_format == "zip":
+        return f.reject("quote_not_one_file")
+    return f
 
 
 def check_upload(files: list[tuple[str, bytes]], limits: Limits) -> UploadCheck:

@@ -155,6 +155,7 @@ The remaining global tables:
 | `rounding text default 'agora'` | |
 | `data_terms_accepted jsonb` | `{version, by, at}` |
 | `onboarding jsonb` | 10 §9.1 |
+| `auxiliary_families text[] default '{terminal}'` | Families the factory counts as auxiliary material: the audit shows them as `not_a_difference` (11 §5.4, S15 decision 4, migration 0011) |
 
 **`tenant_plan_overrides`** has `tenant_id` as PK. It holds `monthly_quote_limit`, `monthly_audit_limit` and `max_pages_per_file`, all nullable; `null` means use the plan's value.
 
@@ -203,7 +204,7 @@ This table answers the customer's question "why was this counted?".
 | `issues jsonb` | Stage-level issues `{code, severity, page_id, message, stage}`. A run that ends in the DLQ adds `pipeline_failed`; stage 1 adds its 01 §8 notices, and `needs_confirmation` with `reasons` |
 | `trace_id`, `created_by → users` | |
 
-**`drawing_files`** (`fil_`): `original_name`, `detected_format`, `sha256`, `size_bytes`, `page_count`, `storage_key`. An index on `(tenant_id, sha256)` supports reuse (01 §5.1). A file inside a ZIP is its own row, named `archive.zip/inner.pdf`.
+**`drawing_files`** (`fil_`): `original_name`, `detected_format`, `sha256`, `size_bytes`, `page_count`, `storage_key`, `role` (`drawing`, or `audited_quote` for the quote uploaded with an audit, 11 §4; stage 1 reads only `drawing` files; migration 0011). An index on `(tenant_id, sha256)` supports reuse (01 §5.1). A file inside a ZIP is its own row, named `archive.zip/inner.pdf`.
 
 **S3 keys** (`konboro.services.storage`): everything sits under `tenants/{tenant_id}/`, and every read checks the key is under the caller's tenant. Under it, `drawings/{drawing_id}/` holds `files/{file_id}.{ext}` (never the uploaded name), `pages/{page_id}/thumb.png`, and `stages/s{n}.json` (each stage's contract). Stage 2 adds, per page: `render.png`, `paths.json.gz` (lines and shapes), `wires.json.gz` (the wire graph), `tiles/r{row}c{col}.png` (detection tiles) and the viewer's pyramid (12 §6): `dz/page.dzi`, with every tile packed into `dz/tiles.bin` and their byte ranges in `dz/index.json`. The API serves `GET /pages/{page_id}/dz/page.dzi` and `…/dz/page_files/{level}/{col}_{row}.png` from the pack, inside the tenant check (S11). Stage 2 points `pages.render_key` at `render.png`; the thumbnail stays at `thumb.png`. The NURSERY-1 fixture writes the same keys from the prototype's page images (S11).
 
@@ -233,7 +234,7 @@ This table answers the customer's question "why was this counted?".
 - Index on `(tenant_id, producer)`. Matching never leaves the tenant (RLS) or the producer.
 
 **`stage_runs`** has PK `(tenant_id, drawing_id, stage)`. It records progress, retries and where each stage's output lives.
-- `stage`: 1–7.
+- `stage`: 1–7, and 8 for the audit step after stage 4 of an audit drawing (11 §5.1, S15 decision 2, migration 0011). An audit drawing has rows 1–8; 5–7 end `skipped`.
 - `status`: `queued`, `running`, `done`, `failed` or `skipped`.
 - `attempts`, `started_at`, `finished_at`.
 - `output_key`: the contract JSON in S3 (00 §5).
@@ -355,15 +356,22 @@ The rest of the price-list tables:
   - `quote_id`, `conversation_id`, `base_version`, `base_revision`, `summary_he`, `changes jsonb`, `diff jsonb`, `remember_default`.
   - `status`: `pending`, `applied`, `dismissed` or `expired`.
   - `resolved_at`.
-- **`audits`** (`aud_`, 11 §6):
-  - `drawing_id`, `quote_file_id → drawing_files`, `quote_ref jsonb`, `input_kind`, `summary jsonb`.
-  - `status`: `processing`, `ready` or `failed`.
+- **`audits`** (`aud_`, 11 §6): written by `POST /audits` (`processing`) and the audit step (S15).
+  - `drawing_id` (the drawing has `purpose` = `audit`), `quote_file_id → drawing_files`, `quote_ref jsonb` (`number`, `date`, `total_before_vat` as a string), `input_kind`, `summary jsonb` (11 §6), `issues jsonb` (reading the quote: `quote_no_lines`, `quote_unreadable`, `quote_mapping_unsure`).
+  - `status`: `processing`, `ready` or `failed` (the drawing failed, was cancelled, or its quota ran out).
   - `corrected_quote_id null` (11 §8).
+- **`audit_quote_lines`** (`aql_`, S15): the audited quote's lines as read, signed and matched (11 §5.2–5.3). Only the line, its quantity and its prices are kept, never a customer detail (11 §11).
+  - `audit_id`, `line_index` (unique per audit, from 1, the `quote_line_index` differences point at).
+  - `description`, `qty numeric(12,3) null`, `unit_price`, `line_total numeric(14,4) null`, `confidence`.
+  - `page_no null`, `rows int[]`, `bbox jsonb null` (from a picture: where the line is on the quote's page).
+  - `signature jsonb` (family, class, values, range, included items), `component_ids text[]`, `matched_qty`.
+  - `status`: `matched`, `quantity_differs`, `attribute_differs`, `not_in_drawing` or `arithmetic`.
 - **`audit_differences`** (`dif_`):
-  - `audit_id`, `type`, `severity`, `confidence`, `family`, `designators text[]`.
+  - `audit_id`, `type` (11 §5.4's eight and `not_a_difference`), `severity` (`high`, `medium`, `low`, `info`), `confidence`, `family`, `designators text[]`, `component_ids text[]`.
   - `drawing_qty`, `quote_qty`, `quote_line_index`.
-  - `evidence jsonb`, `suggested_line jsonb`, `message`, `amount null`.
-  - `status`: `open`, `confirmed` or `rejected`; `reject_reason`.
+  - `evidence jsonb`, `suggested_line jsonb`, `message`, `amount null` (negative for an over-charge).
+  - `status`: `open`, `confirmed` or `rejected`; `reject_reason` (`included_elsewhere`, `customer_supplies`, `system_error`, `other`), `reject_note`, `decided_by → users`, `decided_at`.
+  - The audit step replaces the rows when it runs again; a decided difference that comes back keeps its decision.
 
 ## 7. ID prefixes
 
@@ -384,6 +392,7 @@ Added here:
 | `cnv_` | conversation | `msg_` | chat message |
 | `prp_` | chat proposal | `aud_` | audit |
 | `dif_` | audit difference | `kc_` | knowledge candidate |
+| `aql_` | audited quote line | | |
 | `tpl_` | factory page template | | |
 | `cat_` | catalog item | `ref_` | reference crop (global) |
 | `trf_` | reference crop (tenant) | `abr_` | abbreviation (global) |

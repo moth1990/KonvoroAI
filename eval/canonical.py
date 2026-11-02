@@ -16,7 +16,14 @@ from pydantic import BaseModel, ConfigDict
 from konboro.contracts.intake import InputKind, PageKind, Route
 
 SupplyScope = Literal["in_panel", "other_location", "prepare_only", "by_others"]
-DifferenceType = Literal["missing_in_quote", "quantity_mismatch", "extra_in_quote", "possible_double_count"]
+DifferenceType = Literal[
+    "missing_in_quote",
+    "quantity_mismatch",
+    "extra_in_quote",
+    "possible_double_count",
+    "attribute_mismatch",
+    "arithmetic",
+]
 
 
 class Canon(BaseModel):
@@ -111,7 +118,7 @@ class Prediction(Canon):
     pages: tuple[CanonPage, ...]
     input_kind: InputKind | None
     panels: tuple[CanonPanel, ...]
-    audit: tuple[CanonDifference, ...] | None = None  # the audit flow (11) isn't built yet
+    audit: tuple[CanonDifference, ...] | None = None  # the audit's differences, when the drawing has a quote (S15)
     quote_total: Decimal | None = None
     title_block: dict[str, str | None] = {}
     needs_confirmation: bool | None = None

@@ -236,6 +236,24 @@ def test_audit_scores() -> None:
     }
 
 
+def test_a_confirmed_difference_split_by_component_is_right_twice() -> None:
+    """S15: the factory confirmed C1–C5 as one omission; the audit reports the 3-pole and the 2-pole ones apart."""
+    label = CanonAudit(
+        matched=None,
+        differences=(CanonDifference(type="missing_in_quote", item="מגען", designators=("C1", "C2", "C3", "C4")),),
+    )
+    pred = (
+        CanonDifference(type="missing_in_quote", item="x", designators=("C1", "C2"), confidence=0.9),
+        CanonDifference(type="missing_in_quote", item="x", designators=("C3", "C4"), confidence=0.9),
+        CanonDifference(type="arithmetic", item="x", designators=(), confidence=0.95),  # matches nothing
+    )
+    assert values(audit.score(label, pred)) == {
+        "difference_precision": pytest.approx(2 / 3, abs=1e-6),
+        "difference_recall": 1.0,
+        "type_agreement": 1.0,
+    }
+
+
 def test_audit_na_and_unlabelled() -> None:
     assert all(v is None for v in values(audit.score(CONFIRMED, None)).values())
     assert audit.score(None, ()) == {}

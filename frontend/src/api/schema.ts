@@ -4,6 +4,84 @@
  */
 
 export interface paths {
+    "/audits": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Upload Audit
+         * @description The drawing is checked as any upload is (01 §4.3), the quote as one more file. Stages 1–4 run, then the
+         *     audit step (S15 decision 2).
+         */
+        post: operations["upload_audit_audits_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/audits/{audit_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Audit
+         * @description Another tenant's audit is 404, the same as one that does not exist.
+         */
+        get: operations["get_audit_audits__audit_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/audits/{audit_id}/corrected-quote": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Corrected Quote
+         * @description 11 §8: the quote's lines and the confirmed differences, as a quote in the system. Asked again, the same one.
+         */
+        post: operations["corrected_quote_audits__audit_id__corrected_quote_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/audits/{audit_id}/differences/{diff_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Decide */
+        patch: operations["decide_audits__audit_id__differences__diff_id__patch"];
+        trace?: never;
+    };
     "/auth/login": {
         parameters: {
             query?: never;
@@ -375,6 +453,115 @@ export interface components {
             /** Description */
             description: string;
         };
+        /**
+         * AuditDecisionIn
+         * @description 11 §7: "נכון, זה הבדל" / "לא נכון" with a reason, or back to open.
+         */
+        AuditDecisionIn: {
+            /** Note */
+            note?: string | null;
+            /** Reject Reason */
+            reject_reason?: ("included_elsewhere" | "customer_supplies" | "system_error" | "other") | null;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "open" | "confirmed" | "rejected";
+        };
+        /** AuditDifferenceOut */
+        AuditDifferenceOut: {
+            /**
+             * Amount
+             * @description Money at risk; negative for an over-charge
+             */
+            amount: string | null;
+            /** Component Ids */
+            component_ids: string[];
+            /** Confidence */
+            confidence: number;
+            /** Designators */
+            designators: string[];
+            /** Diff Id */
+            diff_id: string;
+            /** Drawing Qty */
+            drawing_qty: string | null;
+            /** Evidence */
+            evidence: components["schemas"]["AuditEvidenceOut"][];
+            /** Family */
+            family: string | null;
+            /**
+             * Message
+             * @description Hebrew, ready to show
+             */
+            message: string;
+            /** Quote Line Index */
+            quote_line_index: number | null;
+            /** Quote Qty */
+            quote_qty: string | null;
+            /** Reject Note */
+            reject_note: string | null;
+            /** Reject Reason */
+            reject_reason: ("included_elsewhere" | "customer_supplies" | "system_error" | "other") | null;
+            /**
+             * Severity
+             * @enum {string}
+             */
+            severity: "high" | "medium" | "low" | "info";
+            /**
+             * Shown
+             * @description confidence ≥ 0.6; the rest are shown apart, as maybe the system's mistake
+             */
+            shown: boolean;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "open" | "confirmed" | "rejected";
+            suggested_line: components["schemas"]["AuditSuggestedLineOut"] | null;
+            /**
+             * Type
+             * @enum {string}
+             */
+            type: "missing_in_quote" | "qty_short" | "qty_over" | "possible_double_count" | "attribute_mismatch" | "extra_in_quote" | "arithmetic" | "drawing_conflict" | "not_a_difference";
+        };
+        /** AuditEvidenceOut */
+        AuditEvidenceOut: {
+            /** Instance Ids */
+            instance_ids: string[];
+            /** Page No */
+            page_no: number;
+        };
+        /** AuditLineOut */
+        AuditLineOut: {
+            /** Component Ids */
+            component_ids: string[];
+            /** Confidence */
+            confidence: number;
+            /** Description */
+            description: string;
+            /**
+             * Includes
+             * @description What the line says it includes ("כולל", "+"), 11 §5.2 item 6
+             */
+            includes: string[];
+            /** Index */
+            index: number;
+            /** Matched Qty */
+            matched_qty: string | null;
+            /** Page No */
+            page_no: number | null;
+            /** Qty */
+            qty: string | null;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "matched" | "quantity_differs" | "attribute_differs" | "not_in_drawing" | "arithmetic";
+            /** Total */
+            total: string | null;
+            /** Unit Price */
+            unit_price: string | null;
+        };
         /** AuditOmissionsItem */
         AuditOmissionsItem: {
             /**
@@ -391,6 +578,137 @@ export interface components {
              * @description The audited quote's number, from its header (11 §5)
              */
             quote_number: string | null;
+        };
+        /** AuditOut */
+        AuditOut: {
+            /** Audit Id */
+            audit_id: string;
+            /** Corrected Quote Id */
+            corrected_quote_id: string | null;
+            /** Differences */
+            differences: components["schemas"]["AuditDifferenceOut"][];
+            /** Drawing Id */
+            drawing_id: string;
+            /** Drawing Name */
+            drawing_name: string;
+            /** Drawing Status */
+            drawing_status: string;
+            /** Input Kind */
+            input_kind: string | null;
+            /** Issues */
+            issues: string[];
+            /** Lines */
+            lines: components["schemas"]["AuditLineOut"][];
+            /** Quote File Name */
+            quote_file_name: string | null;
+            quote_ref: components["schemas"]["AuditQuoteRefOut"] | null;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "processing" | "ready" | "failed";
+            summary: components["schemas"]["AuditSummaryOut"] | null;
+        };
+        /** AuditPriceSourceOut */
+        AuditPriceSourceOut: {
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "same_signature" | "same_family_poles" | "this_line";
+            /** Line Index */
+            line_index: number;
+        };
+        /** AuditQuoteRefOut */
+        AuditQuoteRefOut: {
+            /** Date */
+            date: string | null;
+            /** Number */
+            number: string | null;
+            /** Total Before Vat */
+            total_before_vat: string | null;
+        };
+        /** AuditSuggestedLineOut */
+        AuditSuggestedLineOut: {
+            /** Description */
+            description: string;
+            price_source: components["schemas"]["AuditPriceSourceOut"] | null;
+            /**
+             * Qty
+             * @example 0.15
+             */
+            qty: string;
+            /** Unit Price */
+            unit_price: string | null;
+        };
+        /** AuditSummaryOut */
+        AuditSummaryOut: {
+            /** Differences */
+            differences: number;
+            /** Drawing Components */
+            drawing_components: number;
+            /** Info Notes */
+            info_notes: number;
+            /** Lines Matched */
+            lines_matched: number;
+            /** Missing Items */
+            missing_items: number;
+            /** Missing Items Without Price */
+            missing_items_without_price: number;
+            /** Not Differences */
+            not_differences: number;
+            /**
+             * Over Charged
+             * @example 0.15
+             */
+            over_charged: string;
+            /** Quote Lines */
+            quote_lines: number;
+            /**
+             * To Check
+             * @description Differences below 0.6 confidence, shown apart (11 §5.4)
+             */
+            to_check: number;
+            /**
+             * Value At Risk
+             * @example 0.15
+             */
+            value_at_risk: string;
+        };
+        /** AuditUploadOut */
+        AuditUploadOut: {
+            /** Audit Id */
+            audit_id: string;
+            /**
+             * Counted As
+             * @description An audit counts once stage 1 succeeds, on the audit counter when the plan has one (11 §4)
+             * @constant
+             */
+            counted_as: "audit";
+            /** Drawing Id */
+            drawing_id: string;
+            /** Files */
+            files: components["schemas"]["UploadedFileOut"][];
+            quote_file: components["schemas"]["UploadedFileOut"];
+            /** Status */
+            status: string;
+        };
+        /** Body_upload_audit_audits_post */
+        Body_upload_audit_audits_post: {
+            /** Customer */
+            customer?: string | null;
+            /**
+             * Files
+             * @description The drawing: PDF, images, XLSX, CSV or ZIP
+             */
+            files: string[];
+            /** Project */
+            project?: string | null;
+            /**
+             * Quote
+             * @description The existing quote: PDF, image, XLSX or CSV (11 §4)
+             */
+            quote: string;
         };
         /** Body_upload_drawings_post */
         Body_upload_drawings_post: {
@@ -486,6 +804,16 @@ export interface components {
             bbox: number[];
             /** Page Id */
             page_id: string;
+        };
+        /** CorrectedQuoteOut */
+        CorrectedQuoteOut: {
+            /**
+             * Created
+             * @description false: the audit already had its corrected quote
+             */
+            created: boolean;
+            /** Quote Id */
+            quote_id: string;
         };
         /** CostSourceOut */
         CostSourceOut: {
@@ -904,7 +1232,7 @@ export interface components {
              * Counted As
              * @enum {string}
              */
-            counted_as: "new_drawing" | "revision" | "reuse";
+            counted_as: "new_drawing" | "revision" | "reuse" | "audit";
             /** Current Stage */
             current_stage: number | null;
             /** Drawing Id */
@@ -1195,6 +1523,11 @@ export interface components {
                     [key: string]: string | number | boolean;
                 };
             };
+            /**
+             * Auxiliary Families
+             * @description The audit shows these as not a difference (11 §5.4, S15)
+             */
+            auxiliary_families: string[];
             /** Brand Preferences */
             brand_preferences: {
                 [key: string]: string;
@@ -1229,6 +1562,8 @@ export interface components {
                     [key: string]: string | number | boolean;
                 };
             } | null;
+            /** Auxiliary Families */
+            auxiliary_families?: string[] | null;
             /** Brand Preferences */
             brand_preferences?: {
                 [key: string]: string;
@@ -1332,10 +1667,10 @@ export interface components {
         UploadOut: {
             /**
              * Counted As
-             * @description new_drawing: counts once stage 1 succeeds; revision: never counts (S05)
+             * @description new_drawing: counts once stage 1 succeeds; revision: never counts (S05); audit: POST /audits
              * @enum {string}
              */
-            counted_as: "new_drawing" | "revision";
+            counted_as: "new_drawing" | "revision" | "audit";
             /** Drawing Id */
             drawing_id: string;
             /** Files */
@@ -1387,6 +1722,137 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    upload_audit_audits_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_upload_audit_audits_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuditUploadOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_audit_audits__audit_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                audit_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuditOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    corrected_quote_audits__audit_id__corrected_quote_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                audit_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CorrectedQuoteOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    decide_audits__audit_id__differences__diff_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                audit_id: string;
+                diff_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AuditDecisionIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuditDifferenceOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     login_auth_login_post: {
         parameters: {
             query?: never;

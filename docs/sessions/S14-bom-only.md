@@ -5,7 +5,7 @@
 | **Track** | P |
 | **Branch** | `s14-bom-only` |
 | **Depends on** | S08 |
-| **Status** | in review |
+| **Status** | done |
 | **PR** | [moth1990/KonvoroAI#15](https://github.com/moth1990/KonvoroAI/pull/15) |
 
 ## Goal

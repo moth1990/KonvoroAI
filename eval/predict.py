@@ -1,12 +1,47 @@
 """The pipeline's own contracts, in the canonical shape the metrics read."""
 
+from konboro.contracts.audit import Difference
 from konboro.contracts.detection import DetectionResult
 from konboro.contracts.extraction import ExtractionResult
 from konboro.contracts.intake import IntakeResult
 from konboro.contracts.merge import MergeResult
 from konboro.contracts.pricing import QuoteVersionResult
 
-from .canonical import CanonComponent, CanonDetection, CanonPage, CanonPanel, Prediction
+from .canonical import (
+    CanonComponent,
+    CanonDetection,
+    CanonDifference,
+    CanonPage,
+    CanonPanel,
+    DifferenceType,
+    Prediction,
+)
+
+# The audit's types (11 §5.4) as the golden quotes name them: a short, an over or a double count is a quantity that
+# differs. A drawing conflict and auxiliary material are not differences, so they are left out.
+AUDIT_TYPES: dict[str, DifferenceType] = {
+    "missing_in_quote": "missing_in_quote",
+    "qty_short": "quantity_mismatch",
+    "qty_over": "quantity_mismatch",
+    "possible_double_count": "quantity_mismatch",
+    "attribute_mismatch": "attribute_mismatch",
+    "extra_in_quote": "extra_in_quote",
+    "arithmetic": "arithmetic",
+}
+
+
+def audit_differences(differences: list[Difference]) -> tuple[CanonDifference, ...]:
+    return tuple(
+        CanonDifference(
+            type=AUDIT_TYPES[d.type],
+            item=d.message,
+            designators=tuple(d.designators),
+            value_at_risk=d.amount if d.amount is not None and d.amount > 0 else None,
+            confidence=d.confidence,
+        )
+        for d in differences
+        if d.type in AUDIT_TYPES
+    )
 
 
 def prediction(
@@ -15,6 +50,7 @@ def prediction(
     quote: QuoteVersionResult,
     extraction: ExtractionResult | None = None,
     detection: DetectionResult | None = None,
+    audit: list[Difference] | None = None,
 ) -> Prediction:
     names = {p.panel_id: p.name for p in intake.panels}
     by_panel: dict[str, list[CanonComponent]] = {panel_id: [] for panel_id in names}
@@ -33,7 +69,7 @@ def prediction(
         pages=tuple(CanonPage(no=p.page_no, kind=p.page_kind, route=p.route) for p in intake.pages),
         input_kind=intake.input_kind,
         panels=tuple(CanonPanel(name=names.get(pid, pid), components=tuple(cs)) for pid, cs in by_panel.items()),
-        audit=None,  # the audit flow (11) arrives with its own session
+        audit=audit_differences(audit) if audit is not None else None,
         quote_total=quote.totals.net_total,
         title_block=intake.title_block.model_dump(exclude={"designer"}) if intake.title_block else {},
         needs_confirmation=intake.needs_confirmation,

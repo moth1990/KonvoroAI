@@ -127,6 +127,10 @@ def test_settings_get_and_patch(api: Api, migrated_db: dict[str, Engine]) -> Non
     cleared = api.client.patch("/settings", headers=headers, json={"min_line_margin": None})
     assert cleared.json()["min_line_margin"] is None
 
+    assert got["auxiliary_families"] == ["terminal"]  # S15 decision 4: the audit's auxiliary material
+    aux = api.client.patch("/settings", headers=headers, json={"auxiliary_families": ["terminal", "busbar"]})
+    assert aux.json()["auxiliary_families"] == ["terminal", "busbar"]
+
 
 @pytest.mark.parametrize(
     "body",
@@ -143,6 +147,8 @@ def test_settings_get_and_patch(api: Api, migrated_db: dict[str, Engine]) -> Non
         {"attribute_defaults": {"mcb": {"poles": 3}}},  # nor poles
         {"rounding": "shekel"},  # not patchable here
         {"flags": {"voice_input": True}},  # flags are read-only to the owner (S03 decision)
+        {"auxiliary_families": None},
+        {"auxiliary_families": ["Terminal!"]},
     ],
 )
 def test_settings_patch_rejects(api: Api, body: dict[str, object]) -> None:

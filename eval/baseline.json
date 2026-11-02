@@ -59,26 +59,27 @@
         "units": 55
       },
       "predicted_total": "0",
+      "predicted_value_at_risk": "1250.00",
       "quote_total": "14022.0",
       "scores": {
         "audit": {
           "difference_precision": {
-            "den": 0,
+            "den": 2,
             "kind": "ratio",
-            "num": 0.0,
-            "value": null
+            "num": 1.0,
+            "value": 0.5
           },
           "difference_recall": {
-            "den": 0,
+            "den": 3,
             "kind": "ratio",
-            "num": 0.0,
-            "value": null
+            "num": 1.0,
+            "value": 0.333333
           },
           "type_agreement": {
-            "den": 0,
+            "den": 1,
             "kind": "ratio",
-            "num": 0.0,
-            "value": null
+            "num": 1.0,
+            "value": 1.0
           }
         },
         "pricing": {
@@ -398,6 +399,7 @@
         "units": 245
       },
       "predicted_total": "0",
+      "predicted_value_at_risk": null,
       "quote_total": null,
       "scores": {
         "audit": {},
@@ -707,6 +709,7 @@
         "units": 91
       },
       "predicted_total": "0",
+      "predicted_value_at_risk": null,
       "quote_total": null,
       "scores": {
         "audit": {},
@@ -883,26 +886,27 @@
         "units": 80
       },
       "predicted_total": "0",
+      "predicted_value_at_risk": "140.00",
       "quote_total": "11603.0",
       "scores": {
         "audit": {
           "difference_precision": {
-            "den": 0,
+            "den": 4,
             "kind": "ratio",
-            "num": 0.0,
-            "value": null
+            "num": 4.0,
+            "value": 1.0
           },
           "difference_recall": {
-            "den": 0,
+            "den": 4,
             "kind": "ratio",
-            "num": 0.0,
-            "value": null
+            "num": 3.0,
+            "value": 0.75
           },
           "type_agreement": {
-            "den": 0,
+            "den": 3,
             "kind": "ratio",
-            "num": 0.0,
-            "value": null
+            "num": 3.0,
+            "value": 1.0
           }
         },
         "pricing": {
@@ -1176,26 +1180,27 @@
         "units": 83
       },
       "predicted_total": "0",
+      "predicted_value_at_risk": "185.00",
       "quote_total": "14109.0",
       "scores": {
         "audit": {
           "difference_precision": {
-            "den": 0,
+            "den": 2,
             "kind": "ratio",
-            "num": 0.0,
-            "value": null
+            "num": 2.0,
+            "value": 1.0
           },
           "difference_recall": {
-            "den": 0,
+            "den": 2,
             "kind": "ratio",
-            "num": 0.0,
-            "value": null
+            "num": 2.0,
+            "value": 1.0
           },
           "type_agreement": {
-            "den": 0,
+            "den": 2,
             "kind": "ratio",
-            "num": 0.0,
-            "value": null
+            "num": 2.0,
+            "value": 1.0
           }
         },
         "pricing": {
@@ -1408,22 +1413,22 @@
     "all": {
       "audit": {
         "difference_precision": {
-          "den": 0,
+          "den": 8,
           "kind": "ratio",
-          "num": 0.0,
-          "value": null
+          "num": 7.0,
+          "value": 0.875
         },
         "difference_recall": {
-          "den": 0,
+          "den": 9,
           "kind": "ratio",
-          "num": 0.0,
-          "value": null
+          "num": 6.0,
+          "value": 0.666667
         },
         "type_agreement": {
-          "den": 0,
+          "den": 6,
           "kind": "ratio",
-          "num": 0.0,
-          "value": null
+          "num": 6.0,
+          "value": 1.0
         }
       },
       "pricing": {
@@ -2088,22 +2093,22 @@
       "factory_drawing": {
         "audit": {
           "difference_precision": {
-            "den": 0,
+            "den": 8,
             "kind": "ratio",
-            "num": 0.0,
-            "value": null
+            "num": 7.0,
+            "value": 0.875
           },
           "difference_recall": {
-            "den": 0,
+            "den": 9,
             "kind": "ratio",
-            "num": 0.0,
-            "value": null
+            "num": 6.0,
+            "value": 0.666667
           },
           "type_agreement": {
-            "den": 0,
+            "den": 6,
             "kind": "ratio",
-            "num": 0.0,
-            "value": null
+            "num": 6.0,
+            "value": 1.0
           }
         },
         "pricing": {
