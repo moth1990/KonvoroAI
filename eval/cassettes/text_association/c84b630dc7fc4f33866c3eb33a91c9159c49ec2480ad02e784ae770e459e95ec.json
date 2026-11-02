@@ -1,0 +1,129 @@
+{
+  "answer": {
+    "input_tokens": 5952,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 510,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s13"
+              ],
+              "value": 20
+            },
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "poles",
+              "span_ids": [
+                "s13"
+              ],
+              "value": 3
+            }
+          ],
+          "brand_hint": "ABB",
+          "det": "d1",
+          "explicit_texts": [
+            "s8",
+            "s13",
+            "s18",
+            "s23",
+            "s27"
+          ],
+          "multiplicity": {
+            "count": 1
+          }
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s14"
+              ],
+              "value": 20
+            },
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "poles",
+              "span_ids": [
+                "s14"
+              ],
+              "value": 3
+            }
+          ],
+          "brand_hint": "ABB",
+          "det": "d2",
+          "explicit_texts": [
+            "s9",
+            "s14",
+            "s19",
+            "s24",
+            "s28"
+          ],
+          "multiplicity": {
+            "count": 1
+          }
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s12"
+              ],
+              "value": 20
+            },
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "poles",
+              "span_ids": [
+                "s12"
+              ],
+              "value": 3
+            }
+          ],
+          "brand_hint": "ABB",
+          "det": "d3",
+          "explicit_texts": [
+            "s7",
+            "s12",
+            "s17",
+            "s22",
+            "s26"
+          ],
+          "multiplicity": {
+            "count": 1
+          }
+        }
+      ],
+      "unassigned_spans": [
+        {
+          "reason": "circuit number",
+          "span_id": "s30"
+        },
+        {
+          "reason": "circuit number",
+          "span_id": "s31"
+        },
+        {
+          "reason": "circuit number",
+          "span_id": "s32"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

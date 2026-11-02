@@ -1,0 +1,147 @@
+{
+  "answer": {
+    "input_tokens": 5784,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 691,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s9"
+              ],
+              "value": 16
+            },
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "poles",
+              "span_ids": [
+                "s9"
+              ],
+              "value": 3
+            }
+          ],
+          "brand_hint": "ABB",
+          "det": "d1",
+          "explicit_texts": [
+            "s6",
+            "s9",
+            "s12",
+            "s15",
+            "s18"
+          ],
+          "multiplicity": {
+            "count": 1
+          }
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s10"
+              ],
+              "value": 16
+            },
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "poles",
+              "span_ids": [
+                "s10"
+              ],
+              "value": 3
+            }
+          ],
+          "brand_hint": "ABB",
+          "det": "d2",
+          "explicit_texts": [
+            "s7",
+            "s10",
+            "s13",
+            "s16",
+            "s19"
+          ],
+          "multiplicity": {
+            "count": 1
+          }
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.6,
+              "evidence": "graphic",
+              "graphic_note": "three slanted strokes across the line",
+              "name": "poles",
+              "span_ids": [],
+              "value": 3
+            }
+          ],
+          "det": "d3",
+          "explicit_texts": [
+            "s21"
+          ],
+          "multiplicity": {
+            "count": 1
+          }
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.6,
+              "evidence": "graphic",
+              "graphic_note": "three slanted strokes across the line",
+              "name": "poles",
+              "span_ids": [],
+              "value": 3
+            }
+          ],
+          "det": "d4",
+          "explicit_texts": [
+            "s22"
+          ],
+          "multiplicity": {
+            "count": 1
+          }
+        }
+      ],
+      "possible_missed": [],
+      "shared_labels": [],
+      "unassigned_spans": [
+        {
+          "reason": "tag of a neighbouring breaker F23",
+          "span_id": "s5"
+        },
+        {
+          "reason": "belongs to the F23 breaker",
+          "span_id": "s8"
+        },
+        {
+          "reason": "belongs to the F23 breaker",
+          "span_id": "s11"
+        },
+        {
+          "reason": "belongs to the F23 breaker",
+          "span_id": "s14"
+        },
+        {
+          "reason": "belongs to the F23 breaker",
+          "span_id": "s17"
+        },
+        {
+          "reason": "tag of a neighbouring contactor C2",
+          "span_id": "s20"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

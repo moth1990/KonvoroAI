@@ -1,0 +1,79 @@
+{
+  "answer": {
+    "input_tokens": 5578,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 350,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "imax_ka",
+              "span_ids": [
+                "s12"
+              ],
+              "value": 50
+            },
+            {
+              "confidence": 0.9,
+              "evidence": null,
+              "name": "spd_class",
+              "span_ids": [],
+              "value": null
+            },
+            {
+              "confidence": 0.5,
+              "evidence": null,
+              "name": "poles",
+              "span_ids": [],
+              "value": null
+            }
+          ],
+          "brand_hint": null,
+          "det": "d1",
+          "explicit_texts": [
+            "s7",
+            "s8",
+            "s9",
+            "s10",
+            "s11",
+            "s12"
+          ],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          },
+          "uses_shared_label": false
+        }
+      ],
+      "possible_missed": [],
+      "shared_labels": [],
+      "unassigned_spans": [
+        {
+          "reason": "Drawing border row letter, not a device class",
+          "span_id": "s5"
+        },
+        {
+          "reason": "border letter",
+          "span_id": "s1"
+        },
+        {
+          "reason": "border letter",
+          "span_id": "s6"
+        },
+        {
+          "reason": "border letter",
+          "span_id": "s13"
+        },
+        {
+          "reason": "load/panel name, not d1",
+          "span_id": "s20"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

@@ -1,0 +1,110 @@
+{
+  "answer": {
+    "input_tokens": 5504,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 524,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "evidence": null,
+              "name": "cross_section_mm2",
+              "value": null
+            }
+          ],
+          "det": "d1",
+          "explicit_texts": [],
+          "multiplicity": {
+            "count": 1
+          }
+        },
+        {
+          "attributes": [],
+          "det": "d2",
+          "explicit_texts": [],
+          "multiplicity": {
+            "count": 1
+          }
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s7"
+              ],
+              "value": 25
+            },
+            {
+              "confidence": 0.5,
+              "evidence": "graphic",
+              "graphic_note": "three short strokes across the line drawn on the breaker symbol suggest 3 poles",
+              "name": "poles",
+              "span_ids": [],
+              "value": 1
+            }
+          ],
+          "det": "d3",
+          "explicit_texts": [
+            "s5",
+            "s7"
+          ],
+          "multiplicity": {
+            "count": 1
+          }
+        },
+        {
+          "attributes": [],
+          "det": "d4",
+          "explicit_texts": [
+            "s6"
+          ],
+          "multiplicity": {
+            "count": 1
+          }
+        }
+      ],
+      "possible_missed": [],
+      "shared_labels": [],
+      "unassigned_spans": [
+        {
+          "reason": "cable text",
+          "span_id": "s1"
+        },
+        {
+          "reason": "cable type",
+          "span_id": "s2"
+        },
+        {
+          "reason": "circuit number",
+          "span_id": "s3"
+        },
+        {
+          "reason": "cable length",
+          "span_id": "s4"
+        },
+        {
+          "reason": "neutral label for shunt trip",
+          "span_id": "s8"
+        },
+        {
+          "reason": "belongs to neighbour c2",
+          "span_id": "s9"
+        },
+        {
+          "reason": "RCD label, neighbour c3",
+          "span_id": "s10"
+        },
+        {
+          "reason": "RCD rating, neighbour c3",
+          "span_id": "s11"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

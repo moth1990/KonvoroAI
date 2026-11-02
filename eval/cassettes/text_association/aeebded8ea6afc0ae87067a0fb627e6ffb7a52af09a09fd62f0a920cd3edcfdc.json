@@ -1,0 +1,137 @@
+{
+  "answer": {
+    "input_tokens": 6403,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 606,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "confidence": 0.95,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s7"
+              ],
+              "value": 6
+            },
+            {
+              "confidence": 0.6,
+              "evidence": "graphic",
+              "graphic_note": "single line with one stroke across it, no multiple strokes",
+              "name": "poles",
+              "span_ids": [],
+              "value": 1
+            }
+          ],
+          "det": "d1",
+          "explicit_texts": [
+            "s7",
+            "s12"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.95,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s8"
+              ],
+              "value": 6
+            },
+            {
+              "confidence": 0.6,
+              "evidence": "graphic",
+              "graphic_note": "single line with one stroke across it",
+              "name": "poles",
+              "span_ids": [],
+              "value": 1
+            }
+          ],
+          "det": "d2",
+          "explicit_texts": [
+            "s8",
+            "s11"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.95,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s9"
+              ],
+              "value": 16
+            },
+            {
+              "confidence": 0.8,
+              "evidence": "graphic",
+              "graphic_note": "three slanted strokes across the line",
+              "name": "poles",
+              "span_ids": [],
+              "value": 3
+            }
+          ],
+          "det": "d3",
+          "explicit_texts": [
+            "s9",
+            "s13"
+          ]
+        },
+        {
+          "attributes": [],
+          "det": "d4"
+        },
+        {
+          "attributes": [],
+          "det": "d5"
+        },
+        {
+          "attributes": [],
+          "det": "d6"
+        },
+        {
+          "attributes": [],
+          "det": "d7"
+        },
+        {
+          "attributes": [],
+          "det": "d8"
+        },
+        {
+          "attributes": [],
+          "det": "d9"
+        },
+        {
+          "attributes": [],
+          "det": "d10"
+        }
+      ],
+      "unassigned_spans": [
+        {
+          "reason": "residual current device rating belongs to a device outside the tile",
+          "span_id": "s16"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s17"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s18"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s19"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

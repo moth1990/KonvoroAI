@@ -1,0 +1,97 @@
+{
+  "answer": {
+    "input_tokens": 5700,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 418,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": null,
+              "name": "range_min_a",
+              "value": null
+            },
+            {
+              "confidence": 0.9,
+              "evidence": null,
+              "name": "range_max_a",
+              "value": null
+            }
+          ],
+          "brand_hint": null,
+          "det": "d1",
+          "explicit_texts": [
+            "s8",
+            "s9",
+            "s10",
+            "s11",
+            "s12"
+          ],
+          "multiplicity": {
+            "count": 1
+          },
+          "uses_shared_label": false
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": null,
+              "name": "range_min_a",
+              "value": null
+            },
+            {
+              "confidence": 0.9,
+              "evidence": null,
+              "name": "range_max_a",
+              "value": null
+            }
+          ],
+          "brand_hint": null,
+          "det": "d2",
+          "explicit_texts": [
+            "s21",
+            "s24",
+            "s26"
+          ],
+          "multiplicity": {
+            "count": 1
+          },
+          "uses_shared_label": false
+        }
+      ],
+      "possible_missed": [],
+      "shared_labels": [],
+      "unassigned_spans": [
+        {
+          "reason": "cable length",
+          "span_id": "s7"
+        },
+        {
+          "reason": "cable",
+          "span_id": "s5"
+        },
+        {
+          "reason": "cable type",
+          "span_id": "s13"
+        },
+        {
+          "reason": "cable length",
+          "span_id": "s17"
+        },
+        {
+          "reason": "cable of neighbour",
+          "span_id": "s14"
+        },
+        {
+          "reason": "cable length",
+          "span_id": "s18"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

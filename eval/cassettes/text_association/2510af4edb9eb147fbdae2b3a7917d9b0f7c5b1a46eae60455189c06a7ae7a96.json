@@ -1,0 +1,136 @@
+{
+  "answer": {
+    "input_tokens": 6239,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 694,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [],
+          "brand_hint": null,
+          "det": "d1",
+          "explicit_texts": [
+            "s16",
+            "s17",
+            "s20"
+          ],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          }
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.95,
+              "evidence": "text",
+              "name": "range_min_a",
+              "span_ids": [
+                "s27"
+              ],
+              "value": 4
+            },
+            {
+              "confidence": 0.95,
+              "evidence": "text",
+              "name": "range_max_a",
+              "span_ids": [
+                "s27"
+              ],
+              "value": 6.3
+            },
+            {
+              "confidence": 0.7,
+              "evidence": "graphic",
+              "graphic_note": "three slanted strokes across the line above the breaker",
+              "name": "poles",
+              "span_ids": [],
+              "value": 3
+            }
+          ],
+          "brand_hint": "ABB",
+          "det": "d2",
+          "explicit_texts": [
+            "s25",
+            "s27",
+            "s29"
+          ],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          }
+        }
+      ],
+      "possible_missed": [],
+      "shared_labels": [],
+      "unassigned_spans": [
+        {
+          "reason": "belongs to c1 (QG2)",
+          "span_id": "s1"
+        },
+        {
+          "reason": "belongs to c1",
+          "span_id": "s2"
+        },
+        {
+          "reason": "belongs to c1",
+          "span_id": "s3"
+        },
+        {
+          "reason": "circuit label of neighbour",
+          "span_id": "s4"
+        },
+        {
+          "reason": "belongs to c1",
+          "span_id": "s5"
+        },
+        {
+          "reason": "belongs to c2",
+          "span_id": "s6"
+        },
+        {
+          "reason": "belongs to c2",
+          "span_id": "s7"
+        },
+        {
+          "reason": "belongs to c2",
+          "span_id": "s8"
+        },
+        {
+          "reason": "other symbol outside tile",
+          "span_id": "s9"
+        },
+        {
+          "reason": "other symbol outside tile",
+          "span_id": "s10"
+        },
+        {
+          "reason": "other symbol outside tile",
+          "span_id": "s11"
+        },
+        {
+          "reason": "terminal label of c3",
+          "span_id": "s19"
+        },
+        {
+          "reason": "terminal label of c3",
+          "span_id": "s21"
+        },
+        {
+          "reason": "terminal label of c3",
+          "span_id": "s23"
+        },
+        {
+          "reason": "CT ratio of other symbol",
+          "span_id": "s22"
+        },
+        {
+          "reason": "label of other symbol",
+          "span_id": "s24"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

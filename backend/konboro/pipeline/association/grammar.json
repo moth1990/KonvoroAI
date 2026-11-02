@@ -1,0 +1,390 @@
+{
+  "version": "g2",
+  "about": "04 §5.1: how electrical drawings write a device's attributes. Data, not code: a pattern found from a user's correction is added here and checked on the golden set first (04 §11). Matched against stage 2's normalized span text (units in their usual case, × between numbers). `scope` token: each word on its own; text: anywhere in the span. `values`: a group's name is the key it fills; `set`: fixed values; `build`: one of the builders in grammar.py. `families`: only these families read it (04 §5.1 rule 2: one text, several meanings, the symbol's family picks).",
+  "patterns": [
+    {
+      "id": "curve_current",
+      "re": "^(?P<curve>[BCDKZ])(?P<current_a>\\d{1,3}(?:\\.\\d)?)A?$"
+    },
+    {
+      "id": "poles_current",
+      "re": "^(?P<poles>[1-4])×(?P<current_a>\\d{1,4}(?:\\.\\d)?)A$",
+      "not_families": [
+        "fuse",
+        "socket_outlet"
+      ]
+    },
+    {
+      "id": "poles_current_residual",
+      "re": "^(?P<poles>[1-4])×(?P<current_a>\\d{1,4})A?/(?P<residual_a>0[.,]\\d{1,3})A?$"
+    },
+    {
+      "id": "poles_by",
+      "re": "^(?P<poles>[1-4])×(?P<current_a>\\d{1,4})$",
+      "confidence": 0.9,
+      "not_families": [
+        "fuse",
+        "socket_outlet"
+      ]
+    },
+    {
+      "id": "fuses_current",
+      "re": "^(?P<count>[1-4])×(?P<current_a>\\d{1,4})A$",
+      "families": [
+        "fuse"
+      ]
+    },
+    {
+      "id": "current_neutral",
+      "re": "^(?P<current_a>\\d{1,3})\\+N$",
+      "set": {
+        "poles": 1,
+        "neutral": true
+      }
+    },
+    {
+      "id": "poles",
+      "re": "^(?P<poles>[1-4])P$"
+    },
+    {
+      "id": "poles_neutral",
+      "re": "^(?P<poles>[1-4])P\\+N$",
+      "set": {
+        "neutral": true
+      }
+    },
+    {
+      "id": "current",
+      "re": "^(?P<current_a>[1-9]\\d{0,3}(?:\\.\\d{1,2})?)A$"
+    },
+    {
+      "id": "rating_setting",
+      "re": "^(?P<a>\\d{2,4})A?/(?P<b>\\d{2,4})A$",
+      "build": "rating_pair",
+      "not_families": [
+        "current_transformer",
+        "energy_meter",
+        "measuring_instrument"
+      ]
+    },
+    {
+      "id": "current_residual",
+      "re": "^(?P<current_a>\\d{1,3})A?/(?P<residual_ma>\\d{2,3})mA$"
+    },
+    {
+      "id": "current_residual_a",
+      "re": "^(?P<current_a>\\d{1,3})A?/(?P<residual_a>0[.,]\\d{1,3})A?$"
+    },
+    {
+      "id": "breaking",
+      "re": "^(?P<breaking_capacity_ka>\\d{1,3}(?:\\.\\d)?)kA$",
+      "not_families": [
+        "surge_protector"
+      ]
+    },
+    {
+      "id": "breaking_framed",
+      "re": "^(?P<breaking_a>4500|6000|10000|15000|25000)$",
+      "confidence": 0.8,
+      "families": [
+        "circuit_breaker",
+        "rcbo"
+      ]
+    },
+    {
+      "id": "imax",
+      "re": "^(?P<imax_ka>\\d{1,3})kA$",
+      "families": [
+        "surge_protector"
+      ]
+    },
+    {
+      "id": "spd_class",
+      "re": "^(?P<spd_class>B\\+C|T1\\+T2|T2|T1|B|C)$",
+      "families": [
+        "surge_protector"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "id": "residual",
+      "re": "^(?P<residual_ma>\\d{2,3})mA$"
+    },
+    {
+      "id": "residual_amps",
+      "re": "^(?P<residual_a>0[.,]0\\d{1,2})A?$",
+      "families": [
+        "rcd",
+        "rcbo"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "id": "rcd_type",
+      "re": "(?:^|\\s)(?:Type|TYPE|type|סוג)\\s+(?P<rcd_type>AC|A|F|B)(?:\\s|$)",
+      "scope": "text"
+    },
+    {
+      "id": "rcd_type_si",
+      "re": "^(?P<rcd_type>A)-SI$",
+      "set": {
+        "rcd_type_si": true
+      }
+    },
+    {
+      "id": "ct_ratio_secondary_first",
+      "re": "^(?P<ratio_secondary_a>[15])/(?P<ratio_primary_a>\\d{2,5})A?$",
+      "families": [
+        "current_transformer",
+        "energy_meter",
+        "measuring_instrument"
+      ]
+    },
+    {
+      "id": "ct_ratio",
+      "re": "^(?P<ratio_primary_a>\\d{2,5})/(?P<ratio_secondary_a>[15])A?$",
+      "families": [
+        "current_transformer",
+        "energy_meter",
+        "measuring_instrument"
+      ]
+    },
+    {
+      "id": "trip_unit",
+      "re": "^(?P<trip_unit>LSIG|LSI|LI)$"
+    },
+    {
+      "id": "trip_unit_he",
+      "re": "^אלקטרוני$",
+      "set": {
+        "trip_unit": "electronic"
+      },
+      "confidence": 0.9
+    },
+    {
+      "id": "load_current",
+      "re": "^(?:INC|Inc|IB|Ib|IL)=(?P<load_current_a>\\d{1,4}(?:\\.\\d{1,2})?)A?$"
+    },
+    {
+      "id": "rated_current_prefixed",
+      "re": "^(?:IN|In)=(?P<current_a>\\d{1,4}(?:\\.\\d{1,2})?)A?$",
+      "confidence": 0.9
+    },
+    {
+      "id": "setting_prefixed",
+      "re": "^(?:IR|Ir)=(?P<setting_a>\\d{1,4}(?:\\.\\d{1,2})?)A?$"
+    },
+    {
+      "id": "short_circuit_prefixed",
+      "re": "^(?:IK|Ik|ICC|Icc)=(?P<ik_ka>\\d{1,3}(?:\\.\\d)?)(?:kA)?$"
+    },
+    {
+      "id": "unknown_prefix",
+      "re": "^(?P<unknown_prefixed>[A-Za-z]{1,4}=\\S+)$",
+      "fallback": true
+    },
+    {
+      "id": "motor_range",
+      "re": "^(?P<range_min_a>\\d{1,2}(?:\\.\\d{1,2})?)[-–](?P<range_max_a>\\d{1,3}(?:\\.\\d{1,2})?)A$",
+      "families": [
+        "circuit_breaker",
+        "overload_relay"
+      ]
+    },
+    {
+      "id": "model_motor_range",
+      "re": "(?:^|\\s)(?P<model_token>PKZM\\s?[0O]?|GV2|MS116|MS132)[\\s-]*(?P<range_min_a>\\d{1,2}(?:\\.\\d{1,2})?)[-–](?P<range_max_a>\\d{1,3}(?:\\.\\d{1,2})?)A?",
+      "scope": "text",
+      "families": [
+        "circuit_breaker",
+        "overload_relay"
+      ]
+    },
+    {
+      "id": "multiplicity",
+      "re": "^\\(?[xX×](?P<count>\\d{1,2})\\)?$"
+    },
+    {
+      "id": "multiplicity_units",
+      "re": "(?:^|\\s)(?P<count>\\d{1,2})\\s*(?:יח'|יח׳|יחידות|יציאות)(?:\\s|$)",
+      "scope": "text"
+    },
+    {
+      "id": "cable",
+      "re": "(?P<cores>[1-5])×(?P<cross_section_mm2>\\d{1,3}(?:[.,]\\d)?)(?:²|mm²|(?=\\s?[-–]?\\s?(?:N2X|NA2X|NY|XLPE|H07)))",
+      "scope": "text",
+      "build": "cable"
+    },
+    {
+      "id": "circuit_range",
+      "re": "^(?P<range_from>\\d{1,3})[-–](?P<range_to>\\d{1,3})$",
+      "build": "circuit_range",
+      "confidence": 0.8
+    },
+    {
+      "id": "spare",
+      "re": "^(?:שמור|SPARE|Spare|spare|SAVE|Save|רזרבה)$",
+      "set": {
+        "spare": true
+      }
+    },
+    {
+      "id": "lockable",
+      "re": "(?:^|\\s)עם\\s+נעילה(?:\\s|$)",
+      "scope": "text",
+      "set": {
+        "lockable": true
+      }
+    },
+    {
+      "id": "ip",
+      "re": "^(?P<ip_rating>IP\\d{2})$"
+    },
+    {
+      "id": "socket_cee",
+      "re": "(?:^|\\s)CEE\\s+(?P<poles_socket>[1-5])×(?P<current_a>\\d{2,3})A",
+      "scope": "text",
+      "families": [
+        "socket_outlet"
+      ]
+    },
+    {
+      "id": "socket_standard_il",
+      "re": "^ת\\.?י\\.?$",
+      "set": {
+        "socket_standard": "IL"
+      },
+      "families": [
+        "socket_outlet"
+      ]
+    },
+    {
+      "id": "socket_pins_current",
+      "re": "^(?P<poles_socket>[1-5])×(?P<current_a>\\d{2,3})A$",
+      "families": [
+        "socket_outlet"
+      ]
+    },
+    {
+      "id": "socket_cee_word",
+      "re": "^CEE$",
+      "set": {
+        "socket_standard": "CEE"
+      },
+      "families": [
+        "socket_outlet"
+      ]
+    },
+    {
+      "id": "aux_contacts",
+      "re": "^(?P<contacts>(?:1[34]|2[12]|3[34]|4[12])[/-](?:1[34]|2[12]|3[34]|4[12]))$",
+      "families": [
+        "aux_contact",
+        "relay",
+        "contactor",
+        "circuit_breaker"
+      ]
+    },
+    {
+      "id": "selector_positions",
+      "re": "^(?P<positions>[0-3](?:-[0-3]){2,3})$",
+      "families": [
+        "selector_switch"
+      ]
+    },
+    {
+      "id": "colour",
+      "re": "^(?P<color>ירוק|ירוקה|אדום|אדומה|צהוב|צהובה|כחול|כחולה|לבן|לבנה|GREEN|Green|green|RED|Red|red|YELLOW|Yellow|yellow|BLUE|Blue|blue|WHITE|White|white)$",
+      "families": [
+        "indicator_lamp",
+        "push_button"
+      ]
+    },
+    {
+      "id": "hint_mcb",
+      "re": "^MCB$",
+      "set": {
+        "symbol_class": "mcb"
+      }
+    },
+    {
+      "id": "hint_mccb",
+      "re": "^MCCB$",
+      "set": {
+        "symbol_class": "mccb"
+      }
+    },
+    {
+      "id": "hint_hrc",
+      "re": "^HRC$",
+      "set": {
+        "symbol_class": "fuse"
+      }
+    },
+    {
+      "id": "hint_breaker_he",
+      "re": "^(?:מא\"ז|מא״ז|מאמ\"ת|מאמ״ת|מ\"ז|מ״ז)$",
+      "set": {
+        "family": "circuit_breaker"
+      }
+    },
+    {
+      "id": "voltage",
+      "re": "^(?P<voltage_v>\\d{2,3})V(?:AC|DC)?$",
+      "families": [
+        "relay",
+        "timer",
+        "relay_coil",
+        "voltage_relay",
+        "impulse_relay",
+        "time_switch",
+        "shunt_trip",
+        "indicator_lamp"
+      ],
+      "build": "coil_voltage",
+      "confidence": 0.8
+    },
+    {
+      "id": "model_token",
+      "re": "^(?P<model_token>(?:ABB-)?(?:S20[1-4]M?|SN201M?|S80\\d|XT[1-7][A-Z]?|DTB\\d{4}[A-Z]{0,3}|PM135E|NSX\\d{3}|NZM\\d|Tmax|MS116|MS132|PKZM\\S*|GV2\\S*|[A-Z]{1,4}\\d{3,4}[A-Z]{0,3}))$",
+      "confidence": 0.9
+    },
+    {
+      "id": "model_satec",
+      "re": "(?:^|\\s)(?P<model_token>SATEC\\s+\\S+)",
+      "scope": "text"
+    },
+    {
+      "id": "brand",
+      "re": "^(?P<brand>ABB|SCHNEIDER|Schneider|HAGER|Hager|EATON|Eaton|SIEMENS|Siemens|LEGRAND|Legrand|DELTA|Delta|SATEC|MOELLER|Moeller)$"
+    }
+  ],
+  "scope_phrases": {
+    "about": "04 §5.1.2: words near a device that take it out of the panel. Checked in this order; a phrase matches a line of text (spans joined on one baseline), any case.",
+    "other_location": [
+      "בפילר חשמל קיים",
+      "בפילר קיים",
+      "בלוח קיים",
+      "בלוח חשמל קיים",
+      "in existing pillar",
+      "in existing panel",
+      "in the existing panel"
+    ],
+    "prepare_only": [
+      "הכנה בלבד",
+      "הכנה ל",
+      "preparation for",
+      "prepared for",
+      "provision for"
+    ],
+    "by_others": [
+      "ע\"י אחרים",
+      "ע״י אחרים",
+      "על ידי אחרים",
+      "לא בתכולה",
+      "by others",
+      "not in scope",
+      "existing"
+    ]
+  }
+}

@@ -42,6 +42,10 @@ class LLMClient:
         route = self.routes.get(request.stage)
         if route is None:
             raise LLMError(f"no route configured for stage '{request.stage}'")
+        if request.start_at_fallback:
+            if route.fallback is None:
+                raise LLMError(f"stage '{request.stage}' has no fallback model")
+            route = route.fallback
 
         last_error: Exception | None = None
         while route is not None:

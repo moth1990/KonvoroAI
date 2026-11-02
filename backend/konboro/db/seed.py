@@ -11,7 +11,7 @@ from decimal import Decimal
 from typing import TYPE_CHECKING
 from zoneinfo import ZoneInfo
 
-from sqlalchemy import Engine, create_engine, select, text
+from sqlalchemy import Engine, create_engine, select, text, update
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
@@ -25,6 +25,7 @@ if TYPE_CHECKING:
 
 from .models import (
     Abbreviation,
+    AttributeSchema,
     Customer,
     FeatureFlag,
     MarginRule,
@@ -145,14 +146,29 @@ def seed_global(session: Session) -> None:
 def seed_symbol_library(session: Session) -> None:
     """03 §4.3–4.6, global layer, from `konboro.pipeline.detection.library` (S12). Rows already there are kept: a
     curated row may have been approved or edited since."""
+    from konboro.pipeline.association import schemas
     from konboro.pipeline.detection import library
 
+    seed_attribute_schemas(session)
     for c in library.CLASSES:
+        schema = c.family if c.family in schemas.SCHEMAS else None
         session.execute(
             insert(SymbolClass)
-            .values(id=c.symbol_class, family=c.family, display_name_he=c.display_name_he, billable=c.billable)
+            .values(
+                id=c.symbol_class,
+                family=c.family,
+                display_name_he=c.display_name_he,
+                billable=c.billable,
+                attribute_schema=schema,
+            )
             .on_conflict_do_nothing(index_elements=["id"])
         )
+        if schema is not None:  # a row seeded before S13 has none yet
+            session.execute(
+                update(SymbolClass)
+                .where(SymbolClass.id == c.symbol_class, SymbolClass.attribute_schema.is_(None))
+                .values(attribute_schema=schema)
+            )
     session.flush()
     for written, symbol_class in library.ABBREVIATIONS:
         family = next(c.family for c in library.CLASSES if c.symbol_class == symbol_class)
@@ -169,6 +185,19 @@ def seed_symbol_library(session: Session) -> None:
                     id=new_id("ref"), symbol_class=ref.symbol_class, image_key=ref.image_key, source="curated"
                 )
             )
+    session.flush()
+
+
+def seed_attribute_schemas(session: Session) -> None:
+    """05 §4.4, global layer, from `konboro.pipeline.association.schemas` (S13). A row already there is kept."""
+    from konboro.pipeline.association import schemas
+
+    for family, attributes in schemas.SCHEMAS.items():
+        session.execute(
+            insert(AttributeSchema)
+            .values(family=family, version=1, attributes=[a.as_row() for a in attributes])
+            .on_conflict_do_nothing(index_elements=["family"])
+        )
     session.flush()
 
 

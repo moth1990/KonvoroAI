@@ -135,6 +135,19 @@ def pair_panels(
     return pairs
 
 
+def evidence(pred: Prediction) -> Scores:
+    """04 §10: no value without evidence (0), the agent's citation mismatches (≤ 2%), and the share of tiles that
+    needed the agent (≤ 20% on CAD drawings; scanned ones start near all). Lower is better for all three."""
+    m = pred.merge
+    if not m:
+        return {}
+    return {
+        "values_without_evidence": Score(num=m.get("values_without_evidence", 0), den=1, kind="count"),
+        "citation_mismatch_rate": Score(num=m.get("citation_mismatches", 0), den=m.get("cited_values", 0)),
+        "agent_tile_share": Score(num=m.get("agent_tiles", 0), den=m.get("tiles", 0)),
+    }
+
+
 def score(label: GoldenDrawing, pred: Prediction) -> tuple[Scores, dict[str, Scores]]:
     """The drawing's total, and each labelled panel's own scores."""
     per_panel: dict[str, Scores] = {}
@@ -144,4 +157,4 @@ def score(label: GoldenDrawing, pred: Prediction) -> tuple[Scores, dict[str, Sco
         if lab is not None:
             per_panel[lab.name] = {k: scores[k] for k in ("component_precision", "component_recall")}
         total = {k: total[k] + v if k in total else v for k, v in scores.items()}
-    return total, per_panel
+    return total | evidence(pred), per_panel

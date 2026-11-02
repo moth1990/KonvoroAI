@@ -1,0 +1,125 @@
+{
+  "answer": {
+    "input_tokens": 5626,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 591,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "confidence": 0.85,
+              "evidence": "text",
+              "name": "positions",
+              "span_ids": [
+                "s8",
+                "s9",
+                "s10"
+              ],
+              "value": "1-0-2"
+            }
+          ],
+          "brand_hint": null,
+          "det": "d1",
+          "explicit_texts": [
+            "s6",
+            "s8",
+            "s9",
+            "s10"
+          ],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          },
+          "uses_shared_label": false
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": null,
+              "name": "current_a",
+              "value": null
+            },
+            {
+              "confidence": 0.8,
+              "evidence": null,
+              "name": "poles",
+              "value": null
+            },
+            {
+              "confidence": 0.9,
+              "evidence": null,
+              "name": "coil_voltage_v",
+              "value": null
+            }
+          ],
+          "brand_hint": null,
+          "det": "d2",
+          "explicit_texts": [
+            "s12"
+          ],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          },
+          "uses_shared_label": false
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": null,
+              "name": "cross_section_mm2",
+              "value": null
+            }
+          ],
+          "brand_hint": null,
+          "det": "d3",
+          "explicit_texts": [
+            "s14"
+          ],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          },
+          "uses_shared_label": false
+        }
+      ],
+      "possible_missed": [],
+      "shared_labels": [],
+      "unassigned_spans": [
+        {
+          "reason": "outside symbols",
+          "span_id": "s1"
+        },
+        {
+          "reason": "Hebrew label 'external control' for the terminal group",
+          "span_id": "s16"
+        },
+        {
+          "reason": "Hebrew label 'control' for the terminal group",
+          "span_id": "s17"
+        },
+        {
+          "reason": "title block text",
+          "span_id": "s18"
+        },
+        {
+          "reason": "title block text",
+          "span_id": "s19"
+        },
+        {
+          "reason": "title block text",
+          "span_id": "s20"
+        },
+        {
+          "reason": "title block text",
+          "span_id": "s21"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

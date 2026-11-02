@@ -1,0 +1,187 @@
+{
+  "answer": {
+    "input_tokens": 6289,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 863,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "confidence": 0.95,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s2"
+              ],
+              "value": 63
+            },
+            {
+              "confidence": 0.6,
+              "evidence": "graphic",
+              "graphic_note": "three slanted strokes across the breaker line",
+              "name": "poles",
+              "span_ids": [],
+              "value": 3
+            }
+          ],
+          "det": "d1",
+          "explicit_texts": [
+            "s2",
+            "s6"
+          ],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          }
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.95,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s3"
+              ],
+              "value": 80
+            },
+            {
+              "confidence": 0.6,
+              "evidence": "graphic",
+              "graphic_note": "three slanted strokes across the breaker line",
+              "name": "poles",
+              "span_ids": [],
+              "value": 3
+            }
+          ],
+          "det": "d2",
+          "explicit_texts": [
+            "s3",
+            "s7",
+            "s9"
+          ],
+          "multiplicity": {
+            "count": 2,
+            "span_ids": [
+              "s7"
+            ]
+          }
+        },
+        {
+          "attributes": [],
+          "det": "d3",
+          "explicit_texts": [],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          }
+        },
+        {
+          "attributes": [],
+          "det": "d4",
+          "explicit_texts": [],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          }
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.95,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s14"
+              ],
+              "value": 25
+            },
+            {
+              "confidence": 0.6,
+              "evidence": "graphic",
+              "graphic_note": "three slanted strokes across the breaker line",
+              "name": "poles",
+              "span_ids": [],
+              "value": 3
+            }
+          ],
+          "det": "d5",
+          "explicit_texts": [
+            "s14",
+            "s17",
+            "s18"
+          ],
+          "multiplicity": {
+            "count": 3,
+            "span_ids": [
+              "s18"
+            ]
+          }
+        },
+        {
+          "attributes": [],
+          "det": "d6",
+          "explicit_texts": [],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          }
+        },
+        {
+          "attributes": [],
+          "det": "d7",
+          "explicit_texts": [],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          }
+        }
+      ],
+      "unassigned_spans": [
+        {
+          "reason": "load name",
+          "span_id": "s12"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s16"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s22"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s23"
+        },
+        {
+          "reason": "cable",
+          "span_id": "s25"
+        },
+        {
+          "reason": "cable",
+          "span_id": "s26"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s28"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s29"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s31"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s33"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

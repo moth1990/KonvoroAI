@@ -1,0 +1,160 @@
+{
+  "answer": {
+    "input_tokens": 5806,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 697,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [],
+          "det": "d1",
+          "explicit_texts": [
+            "s13"
+          ],
+          "multiplicity": {
+            "count": 1
+          }
+        },
+        {
+          "attributes": [],
+          "det": "d2",
+          "explicit_texts": [
+            "s14"
+          ],
+          "multiplicity": {
+            "count": 1
+          }
+        },
+        {
+          "attributes": [],
+          "det": "d3",
+          "explicit_texts": [
+            "s15"
+          ],
+          "multiplicity": {
+            "count": 1
+          }
+        },
+        {
+          "attributes": [
+            {
+              "evidence": null,
+              "name": "current_a",
+              "value": null
+            },
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "range_min_a",
+              "span_ids": [
+                "s22"
+              ],
+              "value": 4
+            },
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "range_max_a",
+              "span_ids": [
+                "s22"
+              ],
+              "value": 6.3
+            }
+          ],
+          "brand_hint": "ABB",
+          "det": "d4",
+          "explicit_texts": [
+            "s21",
+            "s22",
+            "s23"
+          ],
+          "multiplicity": {
+            "count": 1
+          }
+        }
+      ],
+      "possible_missed": [],
+      "shared_labels": [],
+      "unassigned_spans": [
+        {
+          "reason": "column marker",
+          "span_id": "s1"
+        },
+        {
+          "reason": "column marker",
+          "span_id": "s2"
+        },
+        {
+          "reason": "column marker",
+          "span_id": "s3"
+        },
+        {
+          "reason": "cable",
+          "span_id": "s4"
+        },
+        {
+          "reason": "cable",
+          "span_id": "s5"
+        },
+        {
+          "reason": "board name",
+          "span_id": "s6"
+        },
+        {
+          "reason": "board name",
+          "span_id": "s7"
+        },
+        {
+          "reason": "board name",
+          "span_id": "s8"
+        },
+        {
+          "reason": "board name",
+          "span_id": "s9"
+        },
+        {
+          "reason": "board name",
+          "span_id": "s10"
+        },
+        {
+          "reason": "board name",
+          "span_id": "s11"
+        },
+        {
+          "reason": "neutral bus label",
+          "span_id": "s12"
+        },
+        {
+          "reason": "belongs to c1",
+          "span_id": "s16"
+        },
+        {
+          "reason": "belongs to c1",
+          "span_id": "s17"
+        },
+        {
+          "reason": "belongs to c1",
+          "span_id": "s18"
+        },
+        {
+          "reason": "circuit label",
+          "span_id": "s19"
+        },
+        {
+          "reason": "belongs to c1",
+          "span_id": "s20"
+        },
+        {
+          "reason": "unrelated",
+          "span_id": "s24"
+        },
+        {
+          "reason": "unrelated",
+          "span_id": "s25"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

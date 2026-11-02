@@ -1,41 +1,48 @@
 from konboro_llm import ImageInput, LLMClient
 from konboro_llm.config import StageRoute
 from konboro_llm.providers import FakeProvider
-from konboro_llm.stages.text_association import associate_text
+from konboro_llm.stages.text_association import TileAnswer, associate
 
 GOOD = {
-    "symbols": [
+    "instances": [
         {
-            "symbol_id": "s1",
-            "family": "mcb",
-            "current_a": 16,
-            "poles": 3,
-            "curve": "C",
-            "breaking_capacity_ka": 10,
-            "raw_text": "C16 3P 10kA",
-            "confidence": 0.94,
+            "det": "d1",
+            "attributes": [
+                {"name": "current_a", "value": 16, "evidence": "text", "span_ids": ["s1"], "confidence": 0.97},
+                {"name": "poles", "value": 3, "evidence": "text", "span_ids": ["s1"], "confidence": 0.97},
+            ],
         }
     ]
 }
-BAD = {"symbols": [{"symbol_id": "s1", "family": "mcb"}]}  # missing raw_text and confidence
+BAD = {"instances": [{"attributes": []}]}  # no det
 
 TILE = ImageInput(b"png-bytes")
-DETECTIONS = [{"id": "s1", "family": "mcb", "box": [10, 20, 40, 60]}]
+
+
+def associate_text(llm: LLMClient, *, fallback: bool = False) -> TileAnswer:
+    own = "- d1: circuit_breaker / mcb, box [10, 20, 40, 60], read: current_a, poles"
+    return associate(
+        llm, TILE, (1024, 1024), own, "", '- s1: "3×16A" [45, 20, 80, 30]', "", tenant_id="factory-1", fallback=fallback
+    ).data
+
+
+def _value(answer: TileAnswer, name: str) -> object:
+    return next(a.value for a in answer.instances[0].attributes if a.name == name)
 
 
 def test_valid_answer_on_first_attempt():
     fake = FakeProvider([GOOD])
     llm = LLMClient({"fake": fake}, {"text_association": StageRoute("fake", "m1")})
-    result = associate_text(llm, TILE, DETECTIONS, [], tenant_id="factory-1")
-    assert result.symbols[0].current_a == 16
+    result = associate_text(llm)
+    assert _value(result, "current_a") == 16
     assert len(fake.calls) == 1
 
 
 def test_schema_mismatch_retries_with_hint():
     fake = FakeProvider([BAD, GOOD])
     llm = LLMClient({"fake": fake}, {"text_association": StageRoute("fake", "m1")})
-    result = associate_text(llm, TILE, DETECTIONS, [], tenant_id="factory-1")
-    assert result.symbols[0].poles == 3
+    result = associate_text(llm)
+    assert _value(result, "poles") == 3
     assert fake.calls[1][2] is not None  # second call carried the validation error
 
 
@@ -43,8 +50,23 @@ def test_falls_back_to_second_model():
     fake = FakeProvider([BAD, BAD, GOOD])
     route = StageRoute("fake", "small", max_attempts=2, fallback=StageRoute("fake", "big"))
     llm = LLMClient({"fake": fake}, {"text_association": route})
-    associate_text(llm, TILE, DETECTIONS, [], tenant_id="factory-1")
+    associate_text(llm)
     assert [c[1] for c in fake.calls] == ["small", "small", "big"]
+
+
+def test_a_stage_can_go_straight_to_the_fallback_model():
+    """04 §5.5: after two answers the stage's own check refused, the stronger model is asked."""
+    import pytest
+
+    from konboro_llm import LLMError
+
+    fake = FakeProvider([GOOD])
+    route = StageRoute("fake", "small", fallback=StageRoute("fake", "big"))
+    llm = LLMClient({"fake": fake}, {"text_association": route})
+    associate_text(llm, fallback=True)
+    assert [c[1] for c in fake.calls] == ["big"]
+    with pytest.raises(LLMError, match="no fallback"):
+        associate_text(LLMClient({"fake": fake}, {"text_association": StageRoute("fake", "small")}), fallback=True)
 
 
 def test_bedrock_model_ids_are_prefixed():
@@ -94,11 +116,17 @@ def test_the_answer_comes_back_as_json_output_not_a_forced_tool():
 
     provider, messages = _provider(_Answer(json.dumps(GOOD)))
     llm = LLMClient({"anthropic": provider}, {"text_association": StageRoute("anthropic", "claude-sonnet-5-5")})
-    result = associate_text(llm, TILE, DETECTIONS, [], tenant_id="factory-1")
-    assert result.symbols[0].current_a == 16
+    result = associate_text(llm)
+    assert _value(result, "current_a") == 16
     assert "tool_choice" not in messages.kwargs and "tools" not in messages.kwargs
     fmt = messages.kwargs["output_config"]["format"]
     assert fmt["type"] == "json_schema" and fmt["schema"]["additionalProperties"] is False
+    assert messages.kwargs["output_config"]["effort"] == "low"  # the tile agent sets it
+
+    from konboro_llm import LLMRequest
+
+    plain = LLMRequest(stage="text_association", system="s", user_text="u", output_schema=TileAnswer)
+    provider.complete_structured(plain, "claude-sonnet-5-5")
     assert "effort" not in messages.kwargs["output_config"]  # the model's default unless a stage sets one
 
 
@@ -116,14 +144,11 @@ def test_a_refusal_a_cut_answer_or_non_json_is_an_error():
     import pytest
 
     from konboro_llm import LLMError, LLMRequest
-    from konboro_llm.stages.text_association import TextAssociationResult
 
-    request = LLMRequest(
-        stage="text_association", system="s", user_text="u", output_schema=TextAssociationResult, tenant_id="t"
-    )
+    request = LLMRequest(stage="text_association", system="s", user_text="u", output_schema=TileAnswer, tenant_id="t")
     for answer, message in [
         (_Answer("{}", "refusal"), "refusal"),
-        (_Answer('{"symbols": [', "max_tokens"), "max_tokens"),
+        (_Answer('{"instances": [', "max_tokens"), "max_tokens"),
         (_Answer(None), "no text"),
         (_Answer("not json"), "not JSON"),
     ]:

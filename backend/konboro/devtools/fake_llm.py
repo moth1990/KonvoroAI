@@ -10,6 +10,9 @@ OCR (stage 2) reads one word, "Q1", at the top left of each tile's ink, so the s
 
 Symbol detection (stage 3) finds one breaker on each tile, at the same spot, tagged "Q1"; the search around text
 with no symbol finds nothing. The disambiguation call picks the first candidate.
+
+The tile agent (stage 4) answers once for every symbol it is asked about, with no values: nothing is written beside
+the stand-in breakers but their tag.
 """
 
 import io
@@ -26,6 +29,7 @@ from konboro_llm.stages.page_classification import STAGE as CLASSIFY
 from konboro_llm.stages.page_classification import TitleBlockAnswer
 from konboro_llm.stages.symbol_detection import STAGE as DETECT
 from konboro_llm.stages.symbol_disambiguation import STAGE as DISAMBIGUATE
+from konboro_llm.stages.text_association import STAGE as ASSOCIATE
 
 UNSURE = "unsure"
 LOW_CONFIDENCE = 0.6
@@ -87,6 +91,13 @@ def decision(request: LLMRequest[Any]) -> dict[str, Any]:
     return {"decision": "choose", "symbol_class": first[1] if first else None, "confidence": 0.9, "reason": "fake"}
 
 
+_OWN = re.compile(r"^- (d\d+):", re.M)
+
+
+def tile_agent(request: LLMRequest[Any]) -> dict[str, Any]:
+    return {"instances": [{"det": d} for d in _OWN.findall(request.user_text)]}
+
+
 def answer(request: LLMRequest[Any]) -> dict[str, Any]:
     if request.stage == CLASSIFY:
         return classification(request)
@@ -96,6 +107,8 @@ def answer(request: LLMRequest[Any]) -> dict[str, Any]:
         return symbols(request)
     if request.stage == DISAMBIGUATE:
         return decision(request)
+    if request.stage == ASSOCIATE:
+        return tile_agent(request)
     if request.output_schema is TitleBlockAnswer:
         return TITLE_BLOCK
     if request.output_schema is GeneralNotes:

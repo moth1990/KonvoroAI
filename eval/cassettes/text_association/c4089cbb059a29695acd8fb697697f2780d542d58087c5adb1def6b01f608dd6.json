@@ -1,0 +1,63 @@
+{
+  "answer": {
+    "input_tokens": 6385,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 260,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [],
+          "brand_hint": null,
+          "det": "d1",
+          "explicit_texts": [],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          }
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s7"
+              ],
+              "value": 160
+            },
+            {
+              "confidence": 0.95,
+              "evidence": "text",
+              "name": "poles",
+              "span_ids": [
+                "s7"
+              ],
+              "value": 4
+            }
+          ],
+          "brand_hint": "ABB",
+          "det": "d2",
+          "explicit_texts": [
+            "s5",
+            "s7",
+            "s8",
+            "s9",
+            "s11",
+            "s12"
+          ],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          },
+          "uses_shared_label": false
+        }
+      ],
+      "possible_missed": [],
+      "shared_labels": [],
+      "unassigned_spans": []
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

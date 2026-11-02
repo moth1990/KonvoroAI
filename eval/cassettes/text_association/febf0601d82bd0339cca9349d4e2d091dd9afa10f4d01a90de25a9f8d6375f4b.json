@@ -1,0 +1,188 @@
+{
+  "answer": {
+    "input_tokens": 6781,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 741,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "contacts",
+              "span_ids": [
+                "s13",
+                "s23"
+              ],
+              "value": "21/22"
+            }
+          ],
+          "det": "d1",
+          "explicit_texts": [
+            "s13",
+            "s23"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.95,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s22"
+              ],
+              "value": 16
+            },
+            {
+              "confidence": 0.95,
+              "evidence": "text",
+              "name": "poles",
+              "span_ids": [
+                "s22"
+              ],
+              "value": 3
+            }
+          ],
+          "brand_hint": "ABB",
+          "det": "d2",
+          "explicit_texts": [
+            "s18",
+            "s22",
+            "s28",
+            "s30",
+            "s32"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s19"
+              ],
+              "value": 16
+            },
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "poles",
+              "span_ids": [
+                "s19"
+              ],
+              "value": 1
+            },
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "neutral",
+              "span_ids": [
+                "s19"
+              ],
+              "value": true
+            }
+          ],
+          "det": "d3",
+          "explicit_texts": [
+            "s15",
+            "s19",
+            "s20",
+            "s26"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.5,
+              "evidence": "text",
+              "name": "poles",
+              "span_ids": [
+                "s42"
+              ],
+              "value": 3
+            }
+          ],
+          "det": "d4",
+          "explicit_texts": [
+            "s34"
+          ]
+        },
+        {
+          "det": "d5",
+          "explicit_texts": [
+            "s35"
+          ]
+        },
+        {
+          "det": "d6",
+          "explicit_texts": [
+            "s35"
+          ]
+        },
+        {
+          "det": "d7",
+          "explicit_texts": [
+            "s47"
+          ]
+        },
+        {
+          "det": "d8",
+          "explicit_texts": [
+            "s48"
+          ]
+        }
+      ],
+      "unassigned_spans": [
+        {
+          "reason": "load description",
+          "span_id": "s37"
+        },
+        {
+          "reason": "load description",
+          "span_id": "s39"
+        },
+        {
+          "reason": "cable/voltage",
+          "span_id": "s42"
+        },
+        {
+          "reason": "load description",
+          "span_id": "s45"
+        },
+        {
+          "reason": "load description",
+          "span_id": "s46"
+        },
+        {
+          "reason": "load description",
+          "span_id": "s40"
+        },
+        {
+          "reason": "voltage",
+          "span_id": "s43"
+        },
+        {
+          "reason": "load description",
+          "span_id": "s44"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s49"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s50"
+        },
+        {
+          "reason": "neutral bar label",
+          "span_id": "s12"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

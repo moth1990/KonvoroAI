@@ -100,7 +100,8 @@ const NEW_QUOTE = [
     name: "new-done",
     setup: async (page: Page) => {
       await startUpload(page, "גן ילדים, לוח ראשי");
-      await page.getByTestId("done").waitFor({ timeout: 90_000 });
+      // all seven stages, four of them real since S13 (BUG-028)
+      await page.getByTestId("done").waitFor({ timeout: 150_000 });
       await page.waitForFunction(() => [...document.images].every((img) => img.complete && img.naturalWidth > 0));
       await page.mouse.move(0, 0);
     },
@@ -192,7 +193,7 @@ for (const scheme of ["light", "dark"] as const) {
 
   test.describe(`${scheme} new quote`, () => {
     test.use({ colorScheme: scheme });
-    test.setTimeout(120_000); // a whole pipeline run, under amd64 emulation on a Mac
+    test.setTimeout(180_000); // a whole pipeline run, under amd64 emulation on a Mac (BUG-028)
 
     for (const screen of NEW_QUOTE) {
       test(screen.name, async ({ page, request }) => {

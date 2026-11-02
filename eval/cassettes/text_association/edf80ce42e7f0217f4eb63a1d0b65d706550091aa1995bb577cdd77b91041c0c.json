@@ -1,0 +1,111 @@
+{
+  "answer": {
+    "input_tokens": 5709,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 524,
+    "payload": {
+      "instances": [
+        {
+          "det": "d1"
+        },
+        {
+          "det": "d2"
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.95,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s8"
+              ],
+              "value": 10
+            },
+            {
+              "confidence": 0.6,
+              "evidence": "graphic",
+              "graphic_note": "single line with one slash stroke across it",
+              "name": "poles",
+              "span_ids": [],
+              "value": 1
+            }
+          ],
+          "det": "d3",
+          "explicit_texts": [
+            "s5",
+            "s8"
+          ],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          }
+        },
+        {
+          "det": "d4"
+        },
+        {
+          "det": "d5"
+        }
+      ],
+      "possible_missed": [],
+      "shared_labels": [],
+      "unassigned_spans": [
+        {
+          "reason": "Ik busbar rating label",
+          "span_id": "s1"
+        },
+        {
+          "reason": "busbar rating",
+          "span_id": "s2"
+        },
+        {
+          "reason": "In busbar rating label",
+          "span_id": "s3"
+        },
+        {
+          "reason": "busbar rating",
+          "span_id": "s4"
+        },
+        {
+          "reason": "belongs to c5",
+          "span_id": "s6"
+        },
+        {
+          "reason": "belongs to c5",
+          "span_id": "s7"
+        },
+        {
+          "reason": "belongs to c6",
+          "span_id": "s9"
+        },
+        {
+          "reason": "belongs to c6",
+          "span_id": "s10"
+        },
+        {
+          "reason": "(x5) on outgoing line, circuit designation, not device multiplicity",
+          "span_id": "s11"
+        },
+        {
+          "reason": "outgoing line note for c5",
+          "span_id": "s12"
+        },
+        {
+          "reason": "cable",
+          "span_id": "s13"
+        },
+        {
+          "reason": "cable",
+          "span_id": "s14"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s15"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

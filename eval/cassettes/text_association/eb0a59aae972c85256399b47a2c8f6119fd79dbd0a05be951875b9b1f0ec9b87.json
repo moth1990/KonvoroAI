@@ -1,0 +1,87 @@
+{
+  "answer": {
+    "input_tokens": 5336,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 397,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "confidence": 0.95,
+              "evidence": "text",
+              "name": "range_min_a",
+              "span_ids": [
+                "s5"
+              ],
+              "value": 4
+            },
+            {
+              "confidence": 0.95,
+              "evidence": "text",
+              "name": "range_max_a",
+              "span_ids": [
+                "s5"
+              ],
+              "value": 6.3
+            }
+          ],
+          "brand_hint": "ABB",
+          "det": "d1",
+          "explicit_texts": [
+            "s4",
+            "s5",
+            "s6"
+          ],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          },
+          "uses_shared_label": false
+        }
+      ],
+      "possible_missed": [],
+      "shared_labels": [],
+      "unassigned_spans": [
+        {
+          "reason": "grid row letter",
+          "span_id": "s1"
+        },
+        {
+          "reason": "belongs to shunt trip c3",
+          "span_id": "s2"
+        },
+        {
+          "reason": "belongs to shunt trip c3",
+          "span_id": "s3"
+        },
+        {
+          "reason": "grid row letter",
+          "span_id": "s7"
+        },
+        {
+          "reason": "grid row letter",
+          "span_id": "s8"
+        },
+        {
+          "reason": "grid row letter",
+          "span_id": "s9"
+        },
+        {
+          "reason": "bus label",
+          "span_id": "s10"
+        },
+        {
+          "reason": "bus label",
+          "span_id": "s11"
+        },
+        {
+          "reason": "bus label",
+          "span_id": "s12"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

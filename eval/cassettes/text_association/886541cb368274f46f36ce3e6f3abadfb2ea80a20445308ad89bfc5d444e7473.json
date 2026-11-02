@@ -1,0 +1,160 @@
+{
+  "answer": {
+    "input_tokens": 6916,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 640,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "confidence": 0.85,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s8"
+              ],
+              "value": 6
+            }
+          ],
+          "det": "d1",
+          "explicit_texts": [
+            "s8"
+          ]
+        },
+        {
+          "attributes": [],
+          "det": "d2"
+        },
+        {
+          "attributes": [],
+          "det": "d3"
+        },
+        {
+          "attributes": [],
+          "det": "d4"
+        },
+        {
+          "attributes": [],
+          "det": "d5"
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s15"
+              ],
+              "value": 16
+            }
+          ],
+          "det": "d6",
+          "explicit_texts": [
+            "s15",
+            "s22"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s16"
+              ],
+              "value": 20
+            }
+          ],
+          "det": "d7",
+          "explicit_texts": [
+            "s16",
+            "s23"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s17"
+              ],
+              "value": 16
+            }
+          ],
+          "det": "d8",
+          "explicit_texts": [
+            "s17",
+            "s24"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s19"
+              ],
+              "value": 16
+            }
+          ],
+          "det": "d9",
+          "explicit_texts": [
+            "s19",
+            "s13"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.85,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s18"
+              ],
+              "value": 10
+            },
+            {
+              "confidence": 0.7,
+              "evidence": null,
+              "name": "breaking_capacity_ka",
+              "value": null
+            }
+          ],
+          "det": "d10",
+          "explicit_texts": [
+            "s18",
+            "s21"
+          ]
+        },
+        {
+          "attributes": [],
+          "det": "d11"
+        }
+      ],
+      "unassigned_spans": [
+        {
+          "reason": "busbar/incomer rating, not d10",
+          "span_id": "s7"
+        },
+        {
+          "reason": "incomer rating on busbar",
+          "span_id": "s11"
+        },
+        {
+          "reason": "Hebrew label 'clock' for lamps",
+          "span_id": "s5"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

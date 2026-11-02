@@ -1,0 +1,242 @@
+{
+  "answer": {
+    "input_tokens": 6847,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 1101,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s6"
+              ],
+              "value": 100
+            },
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "trip_unit",
+              "span_ids": [
+                "s5"
+              ],
+              "value": "LSI"
+            },
+            {
+              "confidence": 0.7,
+              "evidence": "graphic",
+              "graphic_note": "three slanted strokes across the line",
+              "name": "poles",
+              "span_ids": [],
+              "value": 3
+            }
+          ],
+          "det": "d1",
+          "explicit_texts": [
+            "s4",
+            "s5",
+            "s6"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s15"
+              ],
+              "value": 16
+            },
+            {
+              "confidence": 0.6,
+              "evidence": "graphic",
+              "graphic_note": "three slanted strokes across the line",
+              "name": "poles",
+              "span_ids": [],
+              "value": 3
+            }
+          ],
+          "det": "d2",
+          "explicit_texts": [
+            "s8",
+            "s15"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s14"
+              ],
+              "value": 16
+            },
+            {
+              "confidence": 0.6,
+              "evidence": "graphic",
+              "graphic_note": "three slanted strokes across the line",
+              "name": "poles",
+              "span_ids": [],
+              "value": 3
+            }
+          ],
+          "det": "d3",
+          "explicit_texts": [
+            "s14",
+            "s21"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s9"
+              ],
+              "value": 20
+            },
+            {
+              "confidence": 0.6,
+              "evidence": "graphic",
+              "graphic_note": "single stroke across the line",
+              "name": "poles",
+              "span_ids": [],
+              "value": 1
+            }
+          ],
+          "det": "d4",
+          "explicit_texts": [
+            "s9",
+            "s22"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s10"
+              ],
+              "value": 10
+            },
+            {
+              "confidence": 0.6,
+              "evidence": "graphic",
+              "graphic_note": "single stroke across the line",
+              "name": "poles",
+              "span_ids": [],
+              "value": 1
+            }
+          ],
+          "det": "d5",
+          "explicit_texts": [
+            "s10",
+            "s23",
+            "s25"
+          ],
+          "multiplicity": {
+            "count": 4,
+            "span_ids": [
+              "s25"
+            ]
+          }
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s11"
+              ],
+              "value": 16
+            },
+            {
+              "confidence": 0.6,
+              "evidence": "graphic",
+              "graphic_note": "single stroke across the line",
+              "name": "poles",
+              "span_ids": [],
+              "value": 1
+            }
+          ],
+          "det": "d6",
+          "explicit_texts": [
+            "s11",
+            "s18",
+            "s26"
+          ],
+          "multiplicity": {
+            "count": 6,
+            "span_ids": [
+              "s26"
+            ]
+          }
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s27"
+              ],
+              "value": 10
+            },
+            {
+              "confidence": 0.6,
+              "evidence": "graphic",
+              "graphic_note": "single stroke across the line",
+              "name": "poles",
+              "span_ids": [],
+              "value": 1
+            }
+          ],
+          "det": "d7",
+          "explicit_texts": [
+            "s27"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.4,
+              "evidence": "text",
+              "name": "positions",
+              "span_ids": [
+                "s28"
+              ],
+              "value": "0"
+            }
+          ],
+          "det": "d8",
+          "explicit_texts": [
+            "s28",
+            "s30"
+          ]
+        }
+      ],
+      "unassigned_spans": [
+        {
+          "reason": "manual label",
+          "span_id": "s30"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

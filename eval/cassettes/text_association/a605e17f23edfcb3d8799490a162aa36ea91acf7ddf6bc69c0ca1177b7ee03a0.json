@@ -1,0 +1,210 @@
+{
+  "answer": {
+    "input_tokens": 6174,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 874,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s10"
+              ],
+              "value": 100
+            },
+            {
+              "confidence": 0.5,
+              "evidence": null,
+              "name": "poles",
+              "value": null
+            }
+          ],
+          "det": "d1",
+          "explicit_texts": [
+            "s10",
+            "s13"
+          ],
+          "multiplicity": {
+            "count": 3,
+            "span_ids": [
+              "s10"
+            ]
+          }
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "poles",
+              "span_ids": [
+                "s15"
+              ],
+              "value": 4
+            },
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "imax_ka",
+              "span_ids": [
+                "s16"
+              ],
+              "value": 100
+            },
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "spd_class",
+              "span_ids": [
+                "s17"
+              ],
+              "value": "B+C"
+            }
+          ],
+          "det": "d2",
+          "explicit_texts": [
+            "s15",
+            "s16",
+            "s17"
+          ],
+          "multiplicity": {
+            "count": 1
+          }
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s18"
+              ],
+              "value": 63
+            }
+          ],
+          "det": "d3",
+          "explicit_texts": [
+            "s18",
+            "s22"
+          ],
+          "multiplicity": {
+            "count": 1
+          }
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s25"
+              ],
+              "value": 63
+            },
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "poles",
+              "span_ids": [
+                "s25"
+              ],
+              "value": 4
+            },
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "residual_ma",
+              "span_ids": [
+                "s25"
+              ],
+              "value": 30
+            }
+          ],
+          "det": "d4",
+          "explicit_texts": [
+            "s23",
+            "s25"
+          ],
+          "multiplicity": {
+            "count": 1
+          }
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.85,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s26"
+              ],
+              "value": 63
+            },
+            {
+              "confidence": 0.85,
+              "evidence": "text",
+              "name": "poles",
+              "span_ids": [
+                "s26"
+              ],
+              "value": 4
+            },
+            {
+              "confidence": 0.8,
+              "evidence": "text",
+              "name": "residual_ma",
+              "span_ids": [
+                "s26"
+              ],
+              "value": 30
+            }
+          ],
+          "det": "d5",
+          "explicit_texts": [
+            "s24",
+            "s26"
+          ],
+          "multiplicity": {
+            "count": 1
+          }
+        }
+      ],
+      "possible_missed": [],
+      "shared_labels": [],
+      "unassigned_spans": [
+        {
+          "reason": "busbar Ik",
+          "span_id": "s2"
+        },
+        {
+          "reason": "busbar Ik",
+          "span_id": "s3"
+        },
+        {
+          "reason": "busbar",
+          "span_id": "s4"
+        },
+        {
+          "reason": "busbar",
+          "span_id": "s5"
+        },
+        {
+          "reason": "neighbour c7",
+          "span_id": "s19"
+        },
+        {
+          "reason": "neighbour c7",
+          "span_id": "s20"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

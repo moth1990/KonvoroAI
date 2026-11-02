@@ -41,7 +41,48 @@ def prediction(
         extraction=_extraction_counts(extraction) if extraction else {},
         detections=_detections(intake, detection) if detection else None,
         detection=_detection_counts(detection) if detection else {},
+        merge=merge_counts(merge),
     )
+
+
+EVIDENCE_SOURCES = frozenset({"drawing", "cad_attrib", "shared_label", "bom"})
+
+
+def merge_counts(merge: MergeResult) -> dict[str, int]:
+    """Stage 4's counts (04 §6.1, §10). A value with no evidence: one with no source, or read from text with no span
+    to show for it (graphic poles need none). 04 §10 wants 0."""
+    attrs = [a for i in merge.instances for a in i.attributes.values()]
+    attrs += [a for c in merge.components for a in c.attributes.values()]
+    attrs += [a for x in merge.missing for a in x.attributes.values()]
+    unproven = sum(
+        1
+        for a in attrs
+        if a.value is not None and (a.source is None or (a.source in EVIDENCE_SOURCES and not a.span_ids))
+    )
+    return {
+        "instances": merge.stats.instance_count,
+        "components": merge.stats.component_count,
+        "missing": merge.stats.missing_count,
+        "tiles": merge.stats.tiles_total,
+        "agent_tiles": merge.stats.tiles_with_agent,
+        "agent_instances": merge.stats.by_method.get("agent", 0),
+        "citation_mismatches": merge.stats.citation_mismatches,
+        "cited_values": _cited(merge),
+        "shared_labels": merge.stats.shared_labels,
+        "values_without_evidence": unproven,
+    }
+
+
+def _cited(merge: MergeResult) -> int:
+    """Values the agent cited a span for, kept or refused: the citation_mismatch rate's denominator (04 §10)."""
+    kept = sum(
+        1
+        for i in merge.instances
+        if i.method == "agent"
+        for a in i.attributes.values()
+        if a.value is not None and a.source != "graphic"
+    )
+    return kept + merge.stats.citation_mismatches
 
 
 def _detections(intake: IntakeResult, detection: DetectionResult) -> tuple[CanonDetection, ...]:

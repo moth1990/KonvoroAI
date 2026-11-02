@@ -1,0 +1,111 @@
+{
+  "answer": {
+    "input_tokens": 6577,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 438,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "evidence": null,
+              "name": "cross_section_mm2",
+              "value": null
+            }
+          ],
+          "det": "d1"
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s15"
+              ],
+              "value": 100
+            },
+            {
+              "confidence": 0.85,
+              "evidence": "text",
+              "name": "poles",
+              "span_ids": [
+                "s15"
+              ],
+              "value": 3
+            }
+          ],
+          "det": "d2",
+          "explicit_texts": [
+            "s15",
+            "s17"
+          ],
+          "multiplicity": {
+            "count": 1
+          }
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.95,
+              "evidence": "text",
+              "name": "poles",
+              "span_ids": [
+                "s21"
+              ],
+              "value": 4
+            },
+            {
+              "confidence": 0.85,
+              "evidence": "text",
+              "name": "imax_ka",
+              "span_ids": [
+                "s25"
+              ],
+              "value": 100
+            },
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "spd_class",
+              "span_ids": [
+                "s26"
+              ],
+              "value": "B+C"
+            }
+          ],
+          "det": "d3",
+          "explicit_texts": [
+            "s21",
+            "s25",
+            "s26"
+          ],
+          "multiplicity": {
+            "count": 1
+          }
+        }
+      ],
+      "unassigned_spans": [
+        {
+          "reason": "busbar rating",
+          "span_id": "s1"
+        },
+        {
+          "reason": "busbar rating",
+          "span_id": "s2"
+        },
+        {
+          "reason": "busbar rating",
+          "span_id": "s3"
+        },
+        {
+          "reason": "busbar label",
+          "span_id": "s4"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

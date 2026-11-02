@@ -1,0 +1,119 @@
+{
+  "answer": {
+    "input_tokens": 5908,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 485,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s11"
+              ],
+              "value": 16
+            },
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "poles",
+              "span_ids": [
+                "s11"
+              ],
+              "value": 3
+            }
+          ],
+          "brand_hint": "ABB",
+          "det": "d1",
+          "explicit_texts": [
+            "s8",
+            "s11",
+            "s14",
+            "s17",
+            "s21"
+          ],
+          "multiplicity": {
+            "count": 1
+          }
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s12"
+              ],
+              "value": 16
+            },
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "poles",
+              "span_ids": [
+                "s12"
+              ],
+              "value": 3
+            }
+          ],
+          "brand_hint": "ABB",
+          "det": "d2",
+          "explicit_texts": [
+            "s9",
+            "s12",
+            "s15",
+            "s18",
+            "s22"
+          ],
+          "multiplicity": {
+            "count": 1
+          }
+        },
+        {
+          "attributes": [],
+          "brand_hint": null,
+          "det": "d3",
+          "explicit_texts": [
+            "s24"
+          ],
+          "multiplicity": {
+            "count": 1
+          }
+        },
+        {
+          "attributes": [],
+          "brand_hint": null,
+          "det": "d4",
+          "explicit_texts": [
+            "s25"
+          ],
+          "multiplicity": {
+            "count": 1
+          }
+        }
+      ],
+      "possible_missed": [],
+      "shared_labels": [],
+      "unassigned_spans": [
+        {
+          "reason": "busbar label",
+          "span_id": "s4"
+        },
+        {
+          "reason": "busbar label",
+          "span_id": "s5"
+        },
+        {
+          "reason": "busbar label",
+          "span_id": "s6"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}
