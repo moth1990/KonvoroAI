@@ -6,7 +6,7 @@
 | **Branch** | `s17-gate-1` |
 | **Depends on** | S16 |
 | **Status** | in review |
-| **PR** | (link) |
+| **PR** | [moth1990/KonvoroAI#18](https://github.com/moth1990/KonvoroAI/pull/18) |
 
 ## Goal
 
