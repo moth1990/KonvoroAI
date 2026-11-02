@@ -176,6 +176,8 @@ CORRECTION_TYPES = (
     # 09 §7.14-7.15; missing from the 09 §10 table (CLAUDE.md, known inconsistencies)
     "price_changed",
     "supplier_selected",
+    # 01 §5.8: the user set a BOM spreadsheet's column roles (S14)
+    "bom_columns_mapped",
 )
 
 

@@ -62,6 +62,8 @@ FLAGS = [
     {"key": "voice_input", "description": "הקלטה קולית (13 §4.2)", "depends_on": ["chat_quote_builder"]},
     # S09 decision 2: on while the screen is being built, removed when it is complete (S23).
     {"key": "review_screen", "description": "מסך הבדיקה, בבנייה (09). יוסר ב-S23", "depends_on": []},
+    # S14 decision 1: an unsure BOM column mapping stops for the user on the confirmation step.
+    {"key": "bom_column_mapping", "description": "אישור מיפוי עמודות בכתב כמויות (01 §5.8)", "depends_on": []},
 ]
 
 SUPPLIERS = {

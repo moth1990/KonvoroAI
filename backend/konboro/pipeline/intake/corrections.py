@@ -6,6 +6,10 @@ drawing's panels are rebuilt from what the classifier found on every page, and s
 the stages after it read the corrected pages. If the route changed on a finished drawing, stages 2–7 run again
 (S08 decision); while the drawing waits for confirmation, the next stage hasn't run yet, so nothing re-runs.
 A page the user marks as a factory template becomes one (01 §5.7 item 1).
+
+The user also settles a BOM spreadsheet's column mapping (01 §5.8, S14 decision 1): a role they pick replaces the
+code's or the model's (`bom_columns_mapped` correction event), and confirming the pages settles every mapping they
+were shown. A BOM-only drawing's panels come from its tables, so a changed panel column rebuilds them.
 """
 
 from dataclasses import dataclass
@@ -14,18 +18,29 @@ from typing import Any
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from konboro.contracts.intake import IntakeResult, PageKind, PagePanel, Panel, Region
+from konboro.contracts.intake import ContextArtifact, IntakeResult, PageKind, PagePanel, Panel, Region
 from konboro.db import models as m
 from konboro.db.ids import new_id
 from konboro.services.queue import StageMessage
 from konboro.services.storage import Storage
+from konboro_llm.stages.table_transcription import Role
 
 from .. import coordinator
+from ..bom import review as bom_review
+from ..bom import table as bom_table
 from . import classify, routing, templates
-from .drawing import PagePanels, merge_panels, name_key
+from .drawing import MergedPanel, PagePanels, merge_panels, name_key
 from .pages import read_pages, render
 
 USER_CONFIDENCE = 1.0
+
+
+class BomMappingIncompleteError(Exception):
+    """Confirming a BOM whose mapping has no item or no quantity column: it would read no product."""
+
+    def __init__(self, page_ids: list[str]):
+        super().__init__(", ".join(page_ids))
+        self.page_ids = page_ids
 
 
 @dataclass(frozen=True)
@@ -109,6 +124,15 @@ def _rebuild_panels(session: Session, tenant_id: str, drawing: m.Drawing) -> lis
         for p in pages
     ]
     merged = merge_panels(found, (drawing.title_block or {}).get("panel_name"))
+    if not merged and drawing.input_kind == "bom_only":
+        artifacts = session.scalars(
+            select(m.ContextArtifact).where(
+                m.ContextArtifact.drawing_id == drawing.id, m.ContextArtifact.kind == "bom_table"
+            )
+        ).all()
+        tables = [(a.page_id, bom_table.BomTable.model_validate_json(a.content)) for a in artifacts if a.page_id]
+        named = bom_table.panels(sorted(tables), (drawing.title_block or {}).get("panel_name"))
+        merged = [MergedPanel(name=name, page_ids=pages) for name, pages in named]
     existing = {name_key(p.name): p for p in session.scalars(select(m.Panel).where(m.Panel.drawing_id == drawing.id))}
     out: list[tuple[str, Any]] = []
     for mp in merged:
@@ -168,10 +192,20 @@ def _rewrite_intake(
     reasons = routing.confirmation_reasons(
         [routing.RoutedPage(p.page_kind, p.page_kind_confidence, p.classified_by) for p in pages], len(panels)
     )
+    stored = {
+        a.id: a for a in session.scalars(select(m.ContextArtifact).where(m.ContextArtifact.drawing_id == drawing.id))
+    }
+    artifacts = [
+        a.model_copy(update={"content": stored[a.artifact_id].content}) if a.artifact_id in stored else a
+        for a in intake.context_artifacts
+    ]
+    if bom_review.needs_user(session, tenant_id, artifacts):
+        reasons.append("bom_mapping")
     updated = intake.model_copy(
         update={
             "pages": pages,
             "panels": [Panel(panel_id=pid, name=mp.name, page_ids=mp.page_ids) for pid, mp in panels],
+            "context_artifacts": artifacts,
             "needs_confirmation": bool(reasons),
         }
     )
@@ -180,3 +214,90 @@ def _rewrite_intake(
     if reasons:
         issues.append({"code": "needs_confirmation", "severity": "info", "stage": 1, "reasons": reasons})
     drawing.issues = issues
+
+
+def _bom_artifact(session: Session, drawing_id: str, page_id: str) -> m.ContextArtifact:
+    row = session.scalar(
+        select(m.ContextArtifact).where(
+            m.ContextArtifact.drawing_id == drawing_id,
+            m.ContextArtifact.page_id == page_id,
+            m.ContextArtifact.kind == "bom_table",
+        )
+    )
+    if row is None:
+        raise LookupError(page_id)
+    return row
+
+
+def set_bom_columns(
+    session: Session,
+    storage: Storage,
+    tenant_id: str,
+    user_id: str,
+    drawing_id: str,
+    page_id: str,
+    roles: dict[int, Role],
+) -> KindChange:
+    """The user's roles for a spreadsheet's columns. Settled when it has one item and one quantity column. On a
+    finished drawing stages 2–7 run again, as after a page-kind change."""
+    drawing = _lock(session, tenant_id, drawing_id)
+    row = _bom_artifact(session, drawing_id, page_id)
+    table = bom_table.BomTable.model_validate_json(row.content)
+    if table.source != "spreadsheet" or any(i not in {c.index for c in table.columns} for i in roles):
+        raise LookupError(page_id)
+    before = {c.letter: c.role for c in table.columns}
+    updated = bom_table.with_roles(table, roles)
+    updated = updated.model_copy(update={"mapping_sure": bom_table.mapping_complete(updated)})
+    row.content = updated.model_dump_json()
+    quote = session.scalar(select(m.Quote).where(m.Quote.drawing_id == drawing_id))
+    session.add(
+        m.CorrectionEvent(
+            id=new_id("evt"),
+            tenant_id=tenant_id,
+            quote_id=quote.id if quote else None,
+            quote_version=quote.current_version if quote else None,
+            user_id=user_id,
+            source="new_quote",
+            type="bom_columns_mapped",
+            page_id=page_id,
+            before=before,
+            after={c.letter: c.role for c in updated.columns},
+        )
+    )
+    session.flush()
+    panels = _rebuild_panels(session, tenant_id, drawing)
+    _rewrite_intake(session, storage, tenant_id, drawing, panels)
+    message = coordinator.rerun(session, tenant_id, drawing_id) if drawing.status == "ready" else None
+    return KindChange(False, message)
+
+
+def settle_bom_mappings(session: Session, storage: Storage, tenant_id: str, drawing_id: str) -> None:
+    """On "אשר והמשך": the user saw every unsure mapping, so they are settled, unless one would read no product
+    (`BomMappingIncompleteError`). With `bom_column_mapping` off the user was shown none, and nothing changes."""
+    if not bom_review.flag_on(session, tenant_id):
+        return
+    rows = session.scalars(
+        select(m.ContextArtifact).where(
+            m.ContextArtifact.drawing_id == drawing_id, m.ContextArtifact.kind == "bom_table"
+        )
+    ).all()
+    artifacts = [
+        ContextArtifact(artifact_id=r.id, page_id=r.page_id, kind=r.kind, format=r.format, content=r.content)  # type: ignore[arg-type]
+        for r in rows
+    ]
+    missing = bom_review.incomplete(artifacts)
+    if missing:
+        raise BomMappingIncompleteError(missing)
+    open_ = {a.artifact_id for a, _ in bom_review.unsure(artifacts)}
+    if not open_:
+        return
+    for r in rows:
+        if r.id in open_:
+            r.content = (
+                bom_table.BomTable.model_validate_json(r.content)
+                .model_copy(update={"mapping_sure": True})
+                .model_dump_json()
+            )
+    session.flush()
+    drawing = session.get_one(m.Drawing, drawing_id)
+    _rewrite_intake(session, storage, tenant_id, drawing, _rebuild_panels(session, tenant_id, drawing))

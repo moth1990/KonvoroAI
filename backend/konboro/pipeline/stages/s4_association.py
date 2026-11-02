@@ -39,13 +39,15 @@ from konboro.contracts.merge import (
 )
 from konboro.db import models as m
 
-from ..association import agent, assign, circuits, quantity, schemas
+from ..association import agent, assign, bom, circuits, quantity, schemas
 from ..association.assign import Value
 from ..association.config import DEFAULT, AssociationConfig
 from ..association.merge import Built, attribute, components, instance_confidence, issue, missing_instance, status
+from ..bom.table import BomTable
 from ..context import StageContext
 from ..detection import library
 from ..extraction.geometry import contains
+from ..intake.drawing import name_key
 
 log = logging.getLogger("konboro.pipeline.s4")
 
@@ -481,8 +483,54 @@ def chains(works: list[PageWork], cfg: AssociationConfig = DEFAULT) -> None:
                 )
 
 
+def run_bom(ctx: StageContext, intake: IntakeResult, cfg: AssociationConfig = DEFAULT) -> MergeResult:
+    """A BOM-only drawing (01 §5.8, S14 decision 3): the rows of stage 1's BOM tables, through the grammar, into
+    components. No tiles, no agent."""
+    sch = schemas.load(ctx.session)
+    tables = [
+        (a.page_id, BomTable.model_validate_json(a.content))
+        for a in intake.context_artifacts
+        if a.kind == "bom_table" and a.page_id
+    ]
+    panel_ids = {name_key(p.name): p.panel_id for p in intake.panels}
+    fallback = intake.title_block.panel_name if intake.title_block else None
+    found = bom.rows(tables, panel_ids, fallback, sch, cfg)
+    comps = bom.components(ctx.drawing.id, found, cfg)
+    owner = {i: c.component_id for c in comps for i in c.instance_ids}
+    instances = [r.instance.model_copy(update={"component_id": owner.get(r.instance.instance_id)}) for r in found]
+    _store(
+        ctx,
+        comps,
+        {
+            i.instance_id: {
+                "page_id": i.page_id,
+                "bbox": list(i.bbox) if i.bbox else None,
+                "role": "bom_row",
+                "rows": i.rows,
+            }
+            for i in instances
+        },
+    )
+    stats = MergeStats(
+        instance_count=len(instances),
+        component_count=len(comps),
+        by_method={"bom": len(instances)} if instances else {},
+    )
+    log.info("BOM: %d rows → %d components", stats.instance_count, stats.component_count)
+    return MergeResult(
+        drawing_id=ctx.drawing.id,
+        instances=instances,
+        components=comps,
+        stats=stats,
+        issues=[x for r in found for x in r.issues if x.severity != "info"],
+        trace_id=ctx.trace_id,
+    )
+
+
 def run(ctx: StageContext, cfg: AssociationConfig = DEFAULT) -> MergeResult:
     intake = ctx.output(1, IntakeResult)
+    if intake.input_kind == "bom_only":
+        return run_bom(ctx, intake, cfg)
     extraction = ctx.output(2, ExtractionResult)
     detection = ctx.output(3, DetectionResult)
     designer = intake.title_block.designer if intake.title_block else None
@@ -513,7 +561,18 @@ def run(ctx: StageContext, cfg: AssociationConfig = DEFAULT) -> MergeResult:
             c.circuit_context.upstream_component_id = by_tag.get((c.panel_id, c.circuit_context.upstream_designator))
     instances = [b.instance.model_copy(update={"component_id": owner.get(b.instance.instance_id)}) for b in built]
     missing = [x for w in works for x in w.missing]
-    _store(ctx, comps, built)
+    _store(
+        ctx,
+        comps,
+        {
+            b.instance.instance_id: {
+                "page_id": b.instance.page_id,
+                "bbox": list(b.instance.bbox) if b.instance.bbox else None,
+                "role": b.role,
+            }
+            for b in built
+        },
+    )
 
     by_method = Counter(i.method for i in instances)
     stats = MergeStats(
@@ -550,11 +609,11 @@ def run(ctx: StageContext, cfg: AssociationConfig = DEFAULT) -> MergeResult:
     )
 
 
-def _store(ctx: StageContext, comps: list[Any], built: list[Built]) -> None:
-    """The components, for quote lines and audits to point at (`components`, 04 §6.3). A rerun replaces them."""
+def _store(ctx: StageContext, comps: list[Any], places: dict[str, dict[str, Any]]) -> None:
+    """The components, for quote lines and audits to point at (`components`, 04 §6.3), each with where its
+    instances are (`places`: instance id → page, box, role, and a BOM row's numbers). A rerun replaces them."""
     s = ctx.session
     s.execute(delete(m.Component).where(m.Component.drawing_id == ctx.drawing.id))
-    by_instance = {b.instance.instance_id: b for b in built}
     for c in comps:
         s.add(
             m.Component(
@@ -566,15 +625,7 @@ def _store(ctx: StageContext, comps: list[Any], built: list[Built]) -> None:
                 attributes={k: v.model_dump(mode="json") for k, v in c.attributes.items()},
                 quantity=c.quantity,
                 designators=c.designators,
-                instances=[
-                    {
-                        "instance_id": i,
-                        "page_id": by_instance[i].instance.page_id,
-                        "bbox": list(by_instance[i].instance.bbox),
-                        "role": by_instance[i].role,
-                    }
-                    for i in c.instance_ids
-                ],
+                instances=[{"instance_id": i, **places[i]} for i in c.instance_ids],
                 confidence=c.confidence,
                 brand_hint=c.brand_hint,
                 explicit_texts=c.explicit_texts,

@@ -44,8 +44,10 @@ ROUTES: dict[str, StageRoute] = {
     "validator_review": StageRoute(provider="anthropic", model="claude-sonnet-5-5"),
     # Step 1: structured extraction from context pages (technical data, front view, legend).
     "context_extraction": StageRoute(provider="anthropic", model="claude-sonnet-5-5"),
-    # Step 1 (BOM-only path) and spec 11 (quote audit): transcribe tables from images or handwriting.
-    "table_transcription": StageRoute(provider="anthropic", model="claude-sonnet-5-5"),
+    # Step 1 (BOM-only path) and spec 11 (quote audit): transcribe tables from images or handwriting, and map a
+    # spreadsheet's unknown headers. Opus: on BOM-HW-1's handwriting Sonnet misread "מגען" and "1X16" (54 units), Opus
+    # read 90 of 91 units (S14 decision 7).
+    "table_transcription": StageRoute(provider="anthropic", model="claude-opus-5-5"),
     # Chat command layer: turn "replace all MCBs with Schneider" into a structured action.
     "chat_command": StageRoute(provider="anthropic", model="claude-sonnet-5-5"),
     # Chat layer: summarize old turns when the conversation exceeds its token budget (spec 08 §5.2.1).

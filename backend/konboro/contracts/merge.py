@@ -35,21 +35,25 @@ class AttributeValue(Contract):
 
 
 class Instance(Contract):
+    """One symbol and what was read for it, or one row of a BOM (01 §5.8, S14 decision 5): no detection, the row's
+    numbers in its table, and its box on the page when it came from a picture."""
+
     instance_id: InstanceId
-    det_id: DetId
+    det_id: DetId | None
     page_id: PageId
     panel_id: PanelId | None
-    bbox: Bbox
+    bbox: Bbox | None
     family: str
     symbol_class: str
     attributes: dict[str, AttributeValue] = {}
     multiplicity: int = Field(1, ge=1)
     explicit_texts: list[str] = []
     brand_hint: str | None = None
-    method: Literal["cad_attrib", "geometric", "agent", "fallback_geometric"]
+    method: Literal["cad_attrib", "geometric", "agent", "fallback_geometric", "bom"]
     status: Literal["accepted", "uncertain", "missing"]
     confidence: Confidence
     component_id: ComponentId | None = None
+    rows: list[int] = []
     issues: list[StageIssue] = []
 
 

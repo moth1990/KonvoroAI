@@ -8,8 +8,10 @@ For every page, in this order:
    template is matched without a model (01 §5.7); anything else goes to `page_classification` (01 §5.4), which
    code checks afterwards.
 Then for the drawing: the title block, read once from a crop of the region the classifier found (S08 decision);
-routing (01 §7); the panels; context from non-diagram pages and from notes and feed regions (01 §5.5); the input
-kind (01 §4.4); whether a marked new version is one (01 §4.5); and whether the user must confirm (01 §5.6).
+the BOM tables (01 §5.8: a spreadsheet's sheets read in code, a picture of a table through `table_transcription`);
+routing (01 §7); the panels (a BOM-only drawing's from its tables); context from non-diagram pages and from notes and
+feed regions (01 §5.5); the input kind (01 §4.4); whether a marked new version is one (01 §4.5); and whether the user
+must confirm (01 §5.6, and an unsure column mapping when `bom_column_mapping` is on, S14 decision 1).
 
 The thumbnail key is the one S05 introduced: `pages/{page_id}/thumb.png`.
 """
@@ -41,11 +43,15 @@ from konboro.db import models as m
 from konboro.db.ids import new_id
 from konboro.services.storage import drawing_key
 from konboro_llm import ImageInput
-from konboro_llm.stages import context_extraction, page_classification
+from konboro_llm.stages import context_extraction, page_classification, table_transcription
 
+from ..bom import mapping as bom_mapping
+from ..bom import review as bom_review
+from ..bom import sheets as bom_sheets
+from ..bom import table as bom_table
 from ..context import StageContext
 from ..intake import checks, classify, routing, templates
-from ..intake.drawing import PagePanels, input_kind, is_revision, merge_panels, name_key
+from ..intake.drawing import MergedPanel, PagePanels, input_kind, is_revision, merge_panels, name_key
 from ..intake.pages import PageRead, png, read_pages, render
 
 log = logging.getLogger("konboro.pipeline.s1")
@@ -66,6 +72,8 @@ ISSUE_MESSAGES = {
     "no_diagram_pages": "לא מצאנו תוכנית חד-קווית. בדקו את הסיווג.",
     "drawing_not_final": "השרטוט מסומן 'לעיון'. ייתכנו שינויים לפני הביצוע.",
     "revision_counted_as_new": "השרטוט שונה מהגרסה הקודמת, ולכן ייספר כהצעה חדשה.",
+    "bom_possibly_cropped": "ייתכן שהרשימה ממשיכה מתחת לתמונה. אם יש עוד שורות, צלמו גם אותן.",
+    "bom_no_rows": "לא מצאנו שורות מוצרים בכתב הכמויות. בדקו את הקובץ.",
 }
 
 
@@ -362,6 +370,55 @@ def _artifact(w: Work, kind: str, content: dict[str, Any]) -> ContextArtifact:
     return ContextArtifact(artifact_id=new_id("ctx"), page_id=w.page_id, kind=kind, format="json", content=text)
 
 
+def _bom(ctx: StageContext, works: list[Work]) -> dict[str, bom_table.BomTable]:
+    """01 §5.8: every `bom_table` page read into a table, kept as a `bom_table` artifact for every input kind (a
+    drawing's BOM is compared with the quote, 06 §6.3; S14 decision 3). A spreadsheet's sheet is read in code and its
+    columns mapped (`bom.mapping`); a picture is transcribed; a reused page keeps the table read before."""
+    tables: dict[str, bom_table.BomTable] = {}
+    read: dict[str, list[bom_sheets.Sheet]] = {}
+
+    def ask(columns: str) -> table_transcription.MappingAnswer:
+        return table_transcription.map_columns(ctx.llm, columns, tenant_id=ctx.tenant_id).data
+
+    for w in works:
+        if w.kind != "bom_table":
+            continue
+        kept = next((a for a in w.artifacts if a.kind == "bom_table"), None)
+        if kept is not None:  # reused (01 §5.1)
+            tables[w.page_id] = bom_table.BomTable.model_validate_json(kept.content)
+            continue
+        if w.read is None:
+            if w.file.id not in read:
+                data = ctx.storage.get(ctx.tenant_id, w.file.storage_key)
+                try:
+                    read[w.file.id] = bom_sheets.read(w.file.detected_format, data)
+                except bom_sheets.UnreadableSheetError:
+                    log.warning("file %s: the spreadsheet could not be read", w.file.id)
+                    read[w.file.id] = []
+            sheets = read[w.file.id]
+            sheet = sheets[w.page_no - 1] if w.page_no <= len(sheets) else bom_sheets.Sheet(None, [])
+            t = bom_table.from_sheet(sheet, bom_mapping.map_sheet(sheet.rows, ask))
+        else:
+            answer = table_transcription.transcribe(ctx.llm, _render_for(w, None), tenant_id=ctx.tenant_id)
+            t = bom_table.from_answer(answer.data, w.size_pt)
+        w.artifacts.append(_artifact(w, "bom_table", t.model_dump(mode="json")))
+        tables[w.page_id] = t
+    return tables
+
+
+def _bom_heading(block: TitleBlock | None, tables: dict[str, bom_table.BomTable]) -> TitleBlock | None:
+    """A BOM form's heading names the panel and the project (01 §5.8) where the drawing has no title block that
+    does. Customer details have no field to land in (00 §7.1)."""
+    panel = next((t.panel_name for t in tables.values() if t.panel_name), None)
+    project = next((t.project_name for t in tables.values() if t.project_name), None)
+    if panel is None and project is None:
+        return block
+    block = block or TitleBlock(designer=None, panel_name=None)
+    return block.model_copy(
+        update={"panel_name": block.panel_name or panel, "project_name": block.project_name or project}
+    )
+
+
 def _quota(
     ctx: StageContext, files: list[m.DrawingFile], works: list[Work], number: str | None
 ) -> tuple[QuotaOutcome, list[StageIssue]]:
@@ -437,9 +494,17 @@ def run(ctx: StageContext) -> IntakeResult:
     if block is not None and block.status == "for_info":
         issues.append(_issue("drawing_not_final", "warning"))
     _auto_revision(ctx, block)
+    tables = _bom(ctx, works)
+    if tables and not any(routing.route(w.kind, w.confidence, bool(w.panels)) == "process" for w in works):
+        block = _bom_heading(block, tables)
+    issues += [
+        _issue("bom_possibly_cropped", "warning", w) for w in works if w.page_id in tables and tables[w.page_id].cropped
+    ]
+    if tables and not any(bom_table.items(t) for t in tables.values()):
+        issues.append(_issue("bom_no_rows", "warning"))
     quota, quota_issues = _quota(ctx, files, works, block.drawing_number if block else None)
     issues += quota_issues
-    return _result(ctx, files, works, issues, [], status="ready", block=block, quota=quota)
+    return _result(ctx, files, works, issues, [], status="ready", block=block, quota=quota, tables=tables)
 
 
 def _result(
@@ -452,9 +517,11 @@ def _result(
     status: str,
     block: TitleBlock | None,
     quota: QuotaOutcome | None,
+    tables: dict[str, bom_table.BomTable] | None = None,
 ) -> IntakeResult:
     s, d = ctx.session, ctx.drawing
     issues = failed or issues
+    tables = tables or {}
     routes = {w.page_id: routing.route(w.kind, w.confidence, bool(w.panels)) for w in works}
     merged = (
         merge_panels(
@@ -467,6 +534,9 @@ def _result(
         if status != "failed"
         else []
     )
+    if not merged and tables and status != "failed":  # a BOM-only drawing: its panels are the tables' (01 §5.8)
+        found = bom_table.panels(list(tables.items()), block.panel_name if block else None)
+        merged = [MergedPanel(name=name, page_ids=pages) for name, pages in found]
     panel_ids = {name_key(p.name): new_id("pnl") for p in merged}
     if status != "failed":
         _context(ctx, works, panel_ids)
@@ -587,6 +657,8 @@ def _result(
         if status != "failed"
         else []
     )
+    if status != "failed" and bom_review.needs_user(s, ctx.tenant_id, [a for w in works for a in w.artifacts]):
+        reasons.append("bom_mapping")
     if "no_diagram_pages" in reasons:
         issues.append(_issue("no_diagram_pages", "warning"))
     needs_confirmation = bool(reasons)

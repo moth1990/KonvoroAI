@@ -2,6 +2,9 @@ import { describe, expect, it } from "vitest";
 
 import type { Progress } from "../../api/client";
 import {
+  BOM_ROLES,
+  bomPages,
+  bomProblem,
   CONFIRM_REASONS,
   countedText,
   gridHint,
@@ -226,5 +229,56 @@ describe("stageRows", () => {
 describe("sizeText", () => {
   it("one decimal, like the prototype", () => {
     expect([sizeText(0.8 * MB), sizeText(2 * MB), sizeText(10)]).toEqual(["0.8MB", "2MB", "0.1MB"]);
+  });
+});
+
+type Bom = NonNullable<Page["bom"]>;
+
+function bomPage(roles: string[], changes: Partial<Bom> = {}): Page {
+  const bom: Bom = {
+    source: "spreadsheet",
+    sheet: null,
+    mapping_sure: false,
+    rows: 3,
+    columns: roles.map((role, index) => ({
+      index,
+      letter: String.fromCharCode(65 + index),
+      header: null,
+      role: role as Bom["columns"][number]["role"],
+      by: "model",
+      samples: [],
+    })),
+    ...changes,
+  };
+  return page({ route: "context", page_kind: "bom_table", file_name: "bom.csv", bom });
+}
+
+describe("the BOM column mapping (01 §5.8, S14 decision 1)", () => {
+  it("shows only spreadsheets: a picture's columns come with its transcription", () => {
+    const p = {
+      ...progress([], "awaiting_confirmation"),
+      pages: [bomPage(["item"]), bomPage(["item"], { source: "image" }), page()],
+    };
+    expect(bomPages(p)).toHaveLength(1);
+  });
+
+  it("waits for one item column and one quantity column", () => {
+    const one = (roles: string[], sheet: string | null = null) => ({
+      ...progress([], "awaiting_confirmation"),
+      pages: [bomPage(roles, { sheet })],
+    });
+    expect(bomProblem(one(["item", "quantity", "price"]))).toBeNull();
+    expect(bomProblem(one(["item", "other"]))).toBe("בחרו עמודת פריט אחת ועמודת כמות אחת.");
+    expect(bomProblem(one(["item", "item", "quantity"], "לוח ראשי"))).toBe(
+      'בחרו עמודת פריט אחת ועמודת כמות אחת בגיליון "לוח ראשי".',
+    );
+    expect(bomProblem(progress([], "awaiting_confirmation"))).toBeNull();
+  });
+
+  it("names every role the server knows, and says why the drawing waits", () => {
+    expect(Object.keys(BOM_ROLES).sort()).toEqual(
+      ["brand", "item", "model", "other", "panel", "price", "quantity", "row_number", "unit"].sort(),
+    );
+    expect(CONFIRM_REASONS.bom_mapping).toContain("הפריט");
   });
 });

@@ -162,6 +162,22 @@ export async function confirmDrawing(drawingId: string, client = api): Promise<P
 }
 
 export type PageKind = Schemas["PageKindIn"]["page_kind"];
+export type BomRole = Schemas["BomColumnRoleIn"]["role"];
+
+/** A BOM spreadsheet's column roles (01 §5.8, behind `bom_column_mapping`). */
+export async function setBomColumns(
+  drawingId: string,
+  pageId: string,
+  columns: { index: number; role: BomRole }[],
+  client = api,
+): Promise<Progress> {
+  return unwrap(
+    await client.PUT("/drawings/{drawing_id}/pages/{page_id}/bom-columns", {
+      params: { path: { drawing_id: drawingId, page_id: pageId } },
+      body: { columns },
+    }),
+  );
+}
 
 export async function changePageKind(
   drawingId: string,

@@ -1,0 +1,403 @@
+{
+  "answer": {
+    "input_tokens": 3563,
+    "model": "claude-opus-5-5",
+    "output_tokens": 2348,
+    "payload": {
+      "columns": [
+        {
+          "header": "כמות",
+          "role": "quantity"
+        },
+        {
+          "header": "פרטים",
+          "role": "item"
+        }
+      ],
+      "panel_name": "לוח חשמל קומה ע",
+      "project_name": "פלבס",
+      "rows": [
+        {
+          "box": [
+            0,
+            389,
+            855,
+            413
+          ],
+          "cells": [
+            {
+              "confidence": 0.95,
+              "text": "1"
+            },
+            {
+              "confidence": 0.9,
+              "text": "מפסק 3X250"
+            }
+          ]
+        },
+        {
+          "box": [
+            0,
+            415,
+            855,
+            441
+          ],
+          "cells": [
+            {
+              "confidence": 0.95,
+              "text": "1"
+            },
+            {
+              "confidence": 0.9,
+              "text": "מפסק 3X40"
+            }
+          ]
+        },
+        {
+          "box": [
+            0,
+            443,
+            855,
+            470
+          ],
+          "cells": [
+            {
+              "confidence": 0.95,
+              "text": "1"
+            },
+            {
+              "confidence": 0.8,
+              "text": "מגן מתח ותדר 40KA"
+            }
+          ]
+        },
+        {
+          "box": [
+            0,
+            472,
+            855,
+            498
+          ],
+          "cells": [
+            {
+              "confidence": 0.9,
+              "text": "5"
+            },
+            {
+              "confidence": 0.85,
+              "text": "סליל הפסקה"
+            }
+          ]
+        },
+        {
+          "box": [
+            0,
+            500,
+            855,
+            527
+          ],
+          "cells": [
+            {
+              "confidence": 0.9,
+              "text": "3"
+            },
+            {
+              "confidence": 0.7,
+              "text": "משנה זרם 250/5"
+            }
+          ]
+        },
+        {
+          "box": [
+            0,
+            529,
+            855,
+            556
+          ],
+          "cells": [
+            {
+              "confidence": 0.95,
+              "text": "1"
+            },
+            {
+              "confidence": 0.85,
+              "text": "מא\"ז 3X6"
+            }
+          ]
+        },
+        {
+          "box": [
+            0,
+            558,
+            855,
+            585
+          ],
+          "cells": [
+            {
+              "confidence": 0.95,
+              "text": "1"
+            },
+            {
+              "confidence": 0.85,
+              "text": "מא\"ז 1X6"
+            }
+          ]
+        },
+        {
+          "box": [
+            0,
+            587,
+            855,
+            613
+          ],
+          "cells": [
+            {
+              "confidence": 0.9,
+              "text": "1"
+            },
+            {
+              "confidence": 0.55,
+              "text": "רב מודד SATEC PRO33 כולל"
+            }
+          ]
+        },
+        {
+          "box": [
+            0,
+            615,
+            855,
+            645
+          ],
+          "cells": [
+            {
+              "confidence": 0.9,
+              "text": null
+            },
+            {
+              "confidence": 0.55,
+              "text": "התראות צריכה להפעלת ממסר"
+            }
+          ]
+        },
+        {
+          "box": [
+            0,
+            647,
+            855,
+            674
+          ],
+          "cells": [
+            {
+              "confidence": 0.95,
+              "text": "1"
+            },
+            {
+              "confidence": 0.85,
+              "text": "לחצן חירום"
+            }
+          ]
+        },
+        {
+          "box": [
+            0,
+            676,
+            855,
+            703
+          ],
+          "cells": [
+            {
+              "confidence": 0.95,
+              "text": "1"
+            },
+            {
+              "confidence": 0.9,
+              "text": "מפסק 3X125"
+            }
+          ]
+        },
+        {
+          "box": [
+            0,
+            705,
+            855,
+            731
+          ],
+          "cells": [
+            {
+              "confidence": 0.95,
+              "text": "1"
+            },
+            {
+              "confidence": 0.8,
+              "text": "מא\"ז 16+N"
+            }
+          ]
+        },
+        {
+          "box": [
+            0,
+            733,
+            855,
+            760
+          ],
+          "cells": [
+            {
+              "confidence": 0.95,
+              "text": "1"
+            },
+            {
+              "confidence": 0.85,
+              "text": "מא\"ז 2X20"
+            }
+          ]
+        },
+        {
+          "box": [
+            0,
+            762,
+            855,
+            789
+          ],
+          "cells": [
+            {
+              "confidence": 0.95,
+              "text": "1"
+            },
+            {
+              "confidence": 0.85,
+              "text": "מא\"ז 2X10"
+            }
+          ]
+        },
+        {
+          "box": [
+            0,
+            791,
+            855,
+            817
+          ],
+          "cells": [
+            {
+              "confidence": 0.9,
+              "text": "5"
+            },
+            {
+              "confidence": 0.85,
+              "text": "מא\"ז 3X32"
+            }
+          ]
+        },
+        {
+          "box": [
+            0,
+            820,
+            855,
+            846
+          ],
+          "cells": [
+            {
+              "confidence": 0.9,
+              "text": "4"
+            },
+            {
+              "confidence": 0.85,
+              "text": "מא\"ז 3X40"
+            }
+          ]
+        },
+        {
+          "box": [
+            0,
+            848,
+            855,
+            875
+          ],
+          "cells": [
+            {
+              "confidence": 0.9,
+              "text": "6"
+            },
+            {
+              "confidence": 0.9,
+              "text": "פחת 4X40"
+            }
+          ]
+        },
+        {
+          "box": [
+            0,
+            877,
+            855,
+            903
+          ],
+          "cells": [
+            {
+              "confidence": 0.95,
+              "text": "1"
+            },
+            {
+              "confidence": 0.85,
+              "text": "מגען 3X50"
+            }
+          ]
+        },
+        {
+          "box": [
+            0,
+            906,
+            855,
+            932
+          ],
+          "cells": [
+            {
+              "confidence": 0.95,
+              "text": "1"
+            },
+            {
+              "confidence": 0.85,
+              "text": "מגען 2X25"
+            }
+          ]
+        },
+        {
+          "box": [
+            0,
+            934,
+            855,
+            961
+          ],
+          "cells": [
+            {
+              "confidence": 0.95,
+              "text": "1"
+            },
+            {
+              "confidence": 0.85,
+              "text": "שעון שבת"
+            }
+          ]
+        },
+        {
+          "box": [
+            0,
+            963,
+            855,
+            996
+          ],
+          "cells": [
+            {
+              "confidence": 0.85,
+              "text": "54"
+            },
+            {
+              "confidence": 0.85,
+              "text": "מא\"ז 1X16"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "model": "claude-opus-5-5",
+  "stage": "table_transcription"
+}

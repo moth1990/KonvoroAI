@@ -345,6 +345,37 @@ class ProgressFileOut(BaseModel):
     page_count: int | None
 
 
+BomRole = Literal["item", "quantity", "panel", "model", "brand", "unit", "row_number", "price", "other"]
+
+
+class BomColumnOut(BaseModel):
+    index: int
+    letter: str = Field(description="The column as Excel names it: A, B, …")
+    header: str | None
+    role: BomRole
+    by: Literal["code", "model", "user"] = Field(description="Who gave the role")
+    samples: list[str] = Field(description="The first cells below the header, for the user to recognise the column")
+
+
+class BomTableOut(BaseModel):
+    """A BOM page's table (01 §5.8): its columns and how they were mapped (S14 decision 1)."""
+
+    source: Literal["spreadsheet", "image"]
+    sheet: str | None
+    mapping_sure: bool = Field(description="False: the user should check the roles before decoding goes on")
+    columns: list[BomColumnOut]
+    rows: int = Field(description="Product rows, after the row rules")
+
+
+class BomColumnRoleIn(BaseModel):
+    index: int = Field(ge=0)
+    role: BomRole
+
+
+class BomColumnsIn(BaseModel):
+    columns: list[BomColumnRoleIn] = Field(min_length=1)
+
+
 class ProgressPageOut(BaseModel):
     page_id: str
     page_no: int
@@ -355,6 +386,7 @@ class ProgressPageOut(BaseModel):
     classified_by: Literal["model", "user", "reused", "template"] | None = None
     unsure: bool = Field(False, description="Below the confirmation threshold and not settled by the user (01 §5.6)")
     thumbnail_url: str | None = Field(None, description="Short-lived; load it, don't store it")
+    bom: BomTableOut | None = Field(None, description="A BOM page's table, once stage 1 read it")
 
 
 class NoticeOut(BaseModel):
@@ -382,6 +414,9 @@ class ProgressSummaryOut(BaseModel):
     findings: int
 
 
+ConfirmationReason = Literal["low_confidence", "no_diagram_pages", "panel_count_mismatch", "bom_mapping"]
+
+
 class ProgressOut(BaseModel):
     drawing_id: str
     name: str = Field(description="The project's name, or else the first file's")
@@ -396,7 +431,7 @@ class ProgressOut(BaseModel):
     error: str | None = Field(None, description="Hebrew, when the pipeline failed")
     summary: ProgressSummaryOut | None = None
     pages: list[ProgressPageOut] = Field([], description="Once stage 1 is done: when ready, or awaiting confirmation")
-    confirmation_reasons: list[Literal["low_confidence", "no_diagram_pages", "panel_count_mismatch"]] = Field(
+    confirmation_reasons: list[ConfirmationReason] = Field(
         [], description="Why the pages need the user's confirmation (01 §5.6); empty when they don't"
     )
     notices: list[NoticeOut] = []

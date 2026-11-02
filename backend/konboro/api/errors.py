@@ -25,6 +25,7 @@ MESSAGES: dict[str, str] = {
     "drawing_finished": "הפענוח כבר הסתיים",
     "drawing_busy": "הפענוח עדיין רץ. אפשר לשנות סוג עמוד כשהוא מסתיים",
     "not_awaiting_confirmation": "העמודים כבר אושרו",
+    "bom_mapping_incomplete": "בכתב הכמויות חסרה עמודת פריט או עמודת כמות. בחרו אותן ואז אשרו",
     "internal_error": "משהו השתבש אצלנו. נסו שוב בעוד רגע",
 }
 
