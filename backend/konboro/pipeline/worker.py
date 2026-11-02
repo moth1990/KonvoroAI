@@ -71,13 +71,21 @@ class Worker:
 
 def providers_for(settings: Settings) -> dict[str, LLMProvider]:
     """Real Claude when there is a key. A local worker without one (`make dev`) falls back to the stand-in model,
-    loudly: its page kinds are made up. Anywhere else, no key means stage 1 fails, as it should."""
-    live = live_providers()
-    if live or settings.env != "local":
+    loudly: its page kinds are made up. Anywhere else, no key means stage 1 fails, as it should.
+    The key comes from settings, so the repo's .env counts (BUG-040)."""
+    key = settings.anthropic_api_key.get_secret_value() if settings.anthropic_api_key else None
+    live = live_providers(key)
+    if live:
+        log.info("LLM: real Claude through the Anthropic API")
+        return live
+    if settings.env != "local":
         return live
     from konboro.devtools.fake_llm import fake_providers
 
-    log.warning("no ANTHROPIC_API_KEY: stage 1 uses the stand-in model, and its page kinds are made up")
+    log.warning(
+        "no ANTHROPIC_API_KEY in the environment or .env: every stage uses the stand-in model, "
+        "and its answers are made up"
+    )
     return fake_providers()
 
 

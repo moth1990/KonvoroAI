@@ -3,7 +3,7 @@
 from functools import lru_cache
 from typing import Literal
 
-from pydantic import SecretStr, model_validator
+from pydantic import AliasChoices, Field, SecretStr, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # The demo tenant's owner from `make seed` (konboro.db.seed). Kept here as text so settings import nothing.
@@ -27,6 +27,13 @@ class Settings(BaseSettings):
     jwt_ttl_minutes: int = 12 * 60
 
     flag_cache_seconds: float = 30.0
+
+    # Claude through the direct API (local and the pilot's dev boxes). Read under the SDK's own name,
+    # ANTHROPIC_API_KEY, from the environment or the .env above, like every other setting (BUG-040).
+    # Unset in AWS: Bedrock signs with the task's IAM role (12 §4). The eval reads only the environment (S17).
+    anthropic_api_key: SecretStr | None = Field(
+        default=None, validation_alias=AliasChoices("ANTHROPIC_API_KEY", "KONBORO_ANTHROPIC_API_KEY")
+    )
 
     # S3 and SQS (12 §3). Locally the endpoints point at S3Mock and ElasticMQ (docker-compose.yml), which accept
     # any credentials; in AWS the endpoints are unset and the IAM role signs requests.

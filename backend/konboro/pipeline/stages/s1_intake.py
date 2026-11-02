@@ -24,7 +24,7 @@ from datetime import UTC, datetime
 from typing import Any
 
 from PIL import Image
-from sqlalchemy import select
+from sqlalchemy import or_, select
 
 from konboro.contracts.common import StageIssue
 from konboro.contracts.intake import (
@@ -41,6 +41,7 @@ from konboro.contracts.intake import (
 )
 from konboro.db import models as m
 from konboro.db.ids import new_id
+from konboro.services.llm import STAND_IN_PREFIX, recorded_model, runs_on_stand_in
 from konboro.services.storage import drawing_key
 from konboro_llm import ImageInput
 from konboro_llm.stages import context_extraction, page_classification, table_transcription
@@ -164,22 +165,24 @@ def _store_thumbnail(ctx: StageContext, w: Work, image: Image.Image) -> None:
 
 def _reuse(ctx: StageContext, works: list[Work]) -> None:
     """The same page, classified before in this tenant, keeps that classification (01 §5.1). RLS limits the query
-    to this tenant, and the explicit filter says so too (01 §11)."""
+    to this tenant, and the explicit filter says so too (01 §11).
+
+    A run on the real model never reuses what the stand-in classified (BUG-041): those page kinds were made up.
+    Pages a person or a factory template classified carry no model name and stay reusable."""
     s = ctx.session
+    real = not runs_on_stand_in(ctx.llm, page_classification.STAGE)
     for w in works:
         if w.read is None or w.sha256 is None:
             continue
-        prev = s.scalars(
-            select(m.Page)
-            .where(
-                m.Page.tenant_id == ctx.tenant_id,
-                m.Page.sha256 == w.sha256,
-                m.Page.drawing_id != ctx.drawing.id,
-                m.Page.page_kind.is_not(None),
-            )
-            .order_by(m.Page.created_at.desc())
-            .limit(1)
-        ).first()
+        query = select(m.Page).where(
+            m.Page.tenant_id == ctx.tenant_id,
+            m.Page.sha256 == w.sha256,
+            m.Page.drawing_id != ctx.drawing.id,
+            m.Page.page_kind.is_not(None),
+        )
+        if real:
+            query = query.where(or_(m.Page.model.is_(None), m.Page.model.not_like(f"{STAND_IN_PREFIX}%")))
+        prev = s.scalars(query.order_by(m.Page.created_at.desc()).limit(1)).first()
         if prev is None:
             continue
         w.kind, w.confidence = prev.page_kind, prev.page_kind_confidence or 0.0  # type: ignore[assignment]
@@ -237,7 +240,7 @@ def _classify(ctx: StageContext, works: list[Work], total: int) -> None:
                 w.rotation = (w.read.rotation + w.read.extra_rotation) % 360
                 w.size_pt = classify.turned_size(w.size_pt, checked.orientation)
                 _store_thumbnail(ctx, w, render(w.read, w.data, THUMB_PX))
-            w.kind, w.confidence, w.model = checked.page_kind, checked.confidence, result.model
+            w.kind, w.confidence, w.model = checked.page_kind, checked.confidence, recorded_model(result)
             w.labels, w.panels, w.regions, w.title_block = (
                 checked.component_labels,
                 checked.panels,

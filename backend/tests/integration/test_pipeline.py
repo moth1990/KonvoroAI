@@ -12,6 +12,7 @@ from konboro.contracts import STAGE_OUTPUTS
 from konboro.db import models as m
 from konboro.db.ids import new_id
 from konboro.db.session import tenant_session
+from konboro.devtools import fake_llm
 from konboro.devtools.fake_llm import fake_providers
 from konboro.pipeline import coordinator
 from konboro.pipeline.context import StageContext
@@ -21,6 +22,7 @@ from konboro.pipeline.stages import STAGES
 from konboro.pipeline.worker import Worker
 from konboro.services.queue import STAGE_QUEUES, Queue, StageMessage
 from konboro.services.storage import Storage
+from konboro_llm.providers import FakeProvider
 
 from .api import Api, ApiTenant, add_tenant
 from .aws import aws_settings
@@ -305,6 +307,49 @@ def test_the_same_files_again_do_not_count(api: Api, migrated_db: dict[str, Engi
         assert drawing.status == "ready" and drawing.quota is not None and drawing.quota["reason"] == "reuse"
         assert {p.classified_by for p in pages} == {"reused"} and all(p.reused_from for p in pages)
     assert quota_state(engine, tenant) == (1, 0, ["reserve", "confirm", "reserve", "release"])
+
+
+class ClaudeLike(FakeProvider):
+    """The stand-in's answers under a real provider's name: what a worker with a key looks like to stage 1."""
+
+    name = "anthropic"
+
+
+def test_a_real_model_does_not_reuse_what_the_stand_in_classified(
+    api: Api, migrated_db: dict[str, Engine], pipeline: Pipeline
+) -> None:
+    """BUG-041: a page the stand-in classified (no key) is classified again once a real model runs."""
+    engine = migrated_db["app"]
+    tenant = add_tenant(engine, limit=10, used=0)
+    first = start(api, tenant)
+    Worker(pipeline).run_until_idle()  # the stand-in model
+    pipeline.llm_providers = {"anthropic": ClaudeLike(fake_llm.answer)}
+    again = start(api, tenant)
+    Worker(pipeline).run_until_idle()
+    with tenant_session(tenant.tenant_id, engine) as s:
+        before = s.scalars(select(m.Page).where(m.Page.drawing_id == first, m.Page.classified_by == "model")).all()
+        after = s.scalars(select(m.Page).where(m.Page.drawing_id == again)).all()
+        drawing = s.get_one(m.Drawing, again)
+        assert before and all(p.model and p.model.startswith("stand-in:") for p in before)
+        assert not any(p.classified_by == "reused" for p in after)
+        assert all(p.model is None or not p.model.startswith("stand-in:") for p in after)
+        # Still free: the same file was processed before (01 §4.5). The stand-in only runs locally, so this never
+        # reaches a bill.
+        assert drawing.quota is not None and drawing.quota["reason"] == "reuse"
+
+
+def test_the_stand_in_still_reuses_its_own_pages(api: Api, migrated_db: dict[str, Engine], pipeline: Pipeline) -> None:
+    """Without a key nothing better exists: the same file again reuses the stand-in's pages (E2E relies on it)."""
+    engine = migrated_db["app"]
+    tenant = add_tenant(engine, limit=10, used=0)
+    start(api, tenant)
+    Worker(pipeline).run_until_idle()
+    again = start(api, tenant)
+    Worker(pipeline).run_until_idle()
+    with tenant_session(tenant.tenant_id, engine) as s:
+        pages = s.scalars(select(m.Page).where(m.Page.drawing_id == again)).all()
+        assert {p.classified_by for p in pages} == {"reused"}
+        assert all(p.model is None or p.model.startswith("stand-in:") for p in pages)
 
 
 # --- messages that never arrive, and copies (BUG-006, BUG-007) --------------------------------------------------

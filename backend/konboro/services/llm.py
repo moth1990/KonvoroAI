@@ -1,7 +1,10 @@
 """The LLM client the pipeline hands each stage (`StageContext.llm`), and its cost log.
 
-- `live_providers`: Claude, when `ANTHROPIC_API_KEY` is set. Without a key there is no provider, and a stage that
-  calls the model fails with a clear "provider not registered" (stubs never call it).
+- `live_providers`: Claude, when there is a key (the worker passes its setting; otherwise `ANTHROPIC_API_KEY`).
+  Without a key there is no provider, and a stage that calls the model fails with a clear "provider not
+  registered" (stubs never call it).
+- `recorded_model`, `runs_on_stand_in`: the stand-in model's answers are marked where they are stored, so a run on
+  the real model never reuses them (BUG-041).
 - `eval_providers`: what `make eval` runs on (dev-strategy §6). `replay` reads `eval/cassettes/`; `live` calls
   Claude, and with `record` writes what it got back as cassettes.
 - `usage_recorder`: every answered call becomes an `llm_calls` row (00 §7.2), in its own transaction, so a stage
@@ -18,20 +21,41 @@ from sqlalchemy import Engine
 from konboro.db.ids import new_id
 from konboro.db.models import LlmCall
 from konboro.db.session import tenant_session
-from konboro_llm import LLMError, LLMRequest, LLMResult
+from konboro_llm import LLMClient, LLMError, LLMRequest, LLMResult
 from konboro_llm.base import LLMProvider, RawAnswer
 from konboro_llm.client import OnCall
-from konboro_llm.providers import CassetteProvider
+from konboro_llm.providers import CassetteProvider, FakeProvider
 
 EvalMode = Literal["replay", "live"]
 
+# Prefix on a stored model name whose answer came from the stand-in (konboro.devtools.fake_llm), e.g.
+# "stand-in:claude-haiku-5-5". A page reused from another copies the name, so the mark follows every reuse.
+STAND_IN_PREFIX = "stand-in:"
 
-def live_providers() -> dict[str, LLMProvider]:
-    if not os.environ.get("ANTHROPIC_API_KEY"):
+
+def live_providers(api_key: str | None = None) -> dict[str, LLMProvider]:
+    key = api_key or os.environ.get("ANTHROPIC_API_KEY")
+    if not key:
         return {}
     from konboro_llm.providers.anthropic_provider import AnthropicProvider
 
-    return {"anthropic": AnthropicProvider()}
+    return {"anthropic": AnthropicProvider(api_key=key)}
+
+
+def is_stand_in(provider_name: str) -> bool:
+    return provider_name == FakeProvider.name
+
+
+def recorded_model(result: LLMResult[Any]) -> str:
+    """The model name to store with a result: marked when the stand-in answered."""
+    return f"{STAND_IN_PREFIX}{result.model}" if is_stand_in(result.provider) else result.model
+
+
+def runs_on_stand_in(llm: LLMClient, stage: str) -> bool:
+    """Whether `stage` is answered by the stand-in in this run (no key, tests, E2E)."""
+    route = llm.routes.get(stage)
+    provider = llm.providers.get(route.provider) if route else None
+    return provider is not None and is_stand_in(provider.name)
 
 
 def eval_providers(
