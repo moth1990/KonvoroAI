@@ -104,5 +104,5 @@ Filled in at `/session-close`.
   8. **On the phone the difference's sentence is hidden** (in session, from the fidelity review). The table is six columns; the sentence made each row a column of single words, and the columns already say the same.
   9. **Screenshots accepted** (user, at close): the audit's results, its evidence dialog and the new-audit pick step, light and dark, desktop and mobile, are `visual.spec.ts` baselines.
 - **Eval / metrics:** not a pipeline session. `make eval` (replay): no change against the baseline. On the fixture, the screen shows what the pipeline finds on 26-993: 13 of 17 lines matched, 2 omissions (QG2 short at ₪1,250, an untagged CT with no price), 6 to check, 1 not a difference.
-- **Bugs logged:** none. The one failure on the way, `test_e2e_seed.py` not knowing the new E2E tenants, was this session's own and fixed before close.
+- **Bugs logged:** BUG-034 (fixed: the new audit shots, run first, starved the review screenshots under emulation; they now run last). The other failure on the way, `test_e2e_seed.py` not knowing the new E2E tenants, was this session's own and fixed before close.
 - **Follow-ups:** in the roadmap backlog: "הורד דוח" for an audit; audits in home's recent work; the audit summary counting the ones to check. Still open from S15: BUG-031 (stages 3–4 on 26-993) for S17.

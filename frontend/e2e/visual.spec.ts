@@ -192,27 +192,6 @@ const AUDIT = [
 ] as const;
 
 for (const scheme of ["light", "dark"] as const) {
-  test.describe(`${scheme} audit`, () => {
-    test.use({ colorScheme: scheme, reducedMotion: "reduce" });
-
-    for (const screen of AUDIT) {
-      test(screen.name, async ({ page, request }) => {
-        await signIn(page, request, TENANTS.auditShots);
-        await page.goto(screen.path);
-        await meLoaded(page);
-        await page.evaluate(() => document.fonts.ready);
-        await screen.setup(page);
-        await page.waitForLoadState("networkidle");
-        await page.mouse.move(0, 0);
-        await expect(page).toHaveScreenshot(`${screen.name}-${scheme}.png`, {
-          animations: "disabled",
-          mask: volatile(page),
-          maxDiffPixelRatio: 0.002,
-        });
-      });
-    }
-  });
-
   test.describe(`${scheme} review`, () => {
     test.use({ colorScheme: scheme, reducedMotion: "reduce" }); // the drawing jumps straight to where it goes
 
@@ -270,6 +249,31 @@ for (const scheme of ["light", "dark"] as const) {
         await screen.ready(page).waitFor({ timeout: 60_000 });
         await page.waitForLoadState("networkidle");
         await page.evaluate(() => document.fonts.ready);
+        await expect(page).toHaveScreenshot(`${screen.name}-${scheme}.png`, {
+          animations: "disabled",
+          mask: volatile(page),
+          maxDiffPixelRatio: 0.002,
+        });
+      });
+    }
+  });
+}
+
+// Last, so the earlier shots keep their order: run earlier, these moved the review shots onto the new-quote
+// pipeline runs, and under amd64 emulation the API (which shares its process with the worker) starved them.
+for (const scheme of ["light", "dark"] as const) {
+  test.describe(`${scheme} audit`, () => {
+    test.use({ colorScheme: scheme, reducedMotion: "reduce" });
+
+    for (const screen of AUDIT) {
+      test(screen.name, async ({ page, request }) => {
+        await signIn(page, request, TENANTS.auditShots);
+        await page.goto(screen.path);
+        await meLoaded(page);
+        await page.evaluate(() => document.fonts.ready);
+        await screen.setup(page);
+        await page.waitForLoadState("networkidle");
+        await page.mouse.move(0, 0);
         await expect(page).toHaveScreenshot(`${screen.name}-${scheme}.png`, {
           animations: "disabled",
           mask: volatile(page),
