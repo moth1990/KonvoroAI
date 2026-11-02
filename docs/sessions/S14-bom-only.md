@@ -73,7 +73,7 @@ A bill of materials with no drawing becomes components. An Excel or CSV file is 
 ## Acceptance criteria
 
 - [x] BOM-HW-1: component recall ≥ 0.85 and unit recall ≥ 0.85 against its 19 products / 91 units. Recall 0.944 (17/18), unit recall 0.989 (90/91), precision 0.944.
-- [ ] BOM-HW-1: panel named "לוח חשמל קומה י"א", project "פלבס", no customer name or contact detail stored anywhere. Project and privacy met. **The panel name is not**: Opus read the handwritten floor as "קומה ע" (Sonnet read "קומה ג'" and "קומה יג"). The eval pairs the drawing's one panel anyway.
+- [ ] BOM-HW-1: panel named "לוח חשמל קומה י"א", project "פלבס", no customer name or contact detail stored anywhere. Project and privacy met. **The panel name is not**: Opus read the handwritten floor as "קומה ע" (Sonnet read "קומה ג'" and "קומה יג"). The eval pairs the drawing's one panel anyway. Logged as BUG-030, for the gate (S17).
 - [x] Every component attribute on a BOM-only drawing has `source` = `bom`; `values_without_evidence` = 0 (the eval counts a BOM row as its value's evidence).
 - [x] No model request in the BOM path contains a price or a number from a spreadsheet (unit and integration tests).
 - [x] XLSX and CSV files go through the pipeline end to end; the four drawing goldens' eval numbers do not change.
@@ -110,5 +110,5 @@ Filled in at `/session-close`.
   7. **`table_transcription` runs on Opus** (in session, measured on the golden set). Sonnet read BOM-HW-1 with recall 0.83 and unit recall 0.37 ("מצען" for "מגען", "1X10" for "1X16" ×54), and its first answer broke the box schema, costing a retry. Opus: recall 0.94, unit recall 0.99, quantity accuracy 1.0, one call. About $0.06 a page at the repo's list prices (3.6k tokens in, 2.3k out). Boxes past the grid are now clamped in code, not retried.
   8. **No quantity is made up** (in session). A spreadsheet row with an empty quantity cell is a heading; a quantity cell with no whole positive number in it ("2.5", "x") keeps the product with quantity 0, uncertain, with an issue; it never merges with another row.
 - **Eval / metrics:** BOM-HW-1 (replay): component precision 0.944 (17/18), recall 0.944 (17/18), quantity accuracy 1.0 (17/17), unit recall 0.989 (90/91), values without evidence 0, panel count 1/1. The miss: "מגן מתח יתר 40KA" read as "מגן מתח ותדר", so the row is `unknown` (red). `bom_possibly_cropped` fires on BOM-HW-1: its last row sits on the photo's bottom edge (the owner says nothing follows; the warning is what 01 §5.8 asks for). Totals: stage-4 component recall 0.565 → 0.680, unit recall 0.470 → 0.689; the four drawings unchanged.
-- **Bugs logged:** BUG-029 (fixed).
+- **Bugs logged:** BUG-029 (fixed), BUG-030 (open, P2, for S17: BOM-HW-1's panel name misread).
 - **Follow-ups:** in the roadmap backlog: a tenant's own BOM words, a misread BOM word, BOM tables in a vector PDF read from the text layer, the done step's product count.
