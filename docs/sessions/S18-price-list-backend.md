@@ -6,7 +6,7 @@
 | **Branch** | `s18-price-list` |
 | **Depends on** | S17 |
 | **Status** | in review |
-| **PR** | (link) |
+| **PR** | [moth1990/KonvoroAI#19](https://github.com/moth1990/KonvoroAI/pull/19) |
 
 ## Goal
 
