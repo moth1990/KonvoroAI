@@ -1,5 +1,5 @@
 {
-  "version": "g2",
+  "version": "g3",
   "about": "04 §5.1: how electrical drawings write a device's attributes. Data, not code: a pattern found from a user's correction is added here and checked on the golden set first (04 §11). Matched against stage 2's normalized span text (units in their usual case, × between numbers). `scope` token: each word on its own; text: anywhere in the span. `values`: a group's name is the key it fills; `set`: fixed values; `build`: one of the builders in grammar.py. `families`: only these families read it (04 §5.1 rule 2: one text, several meanings, the symbol's family picks).",
   "patterns": [
     {
@@ -111,6 +111,11 @@
       "re": "^(?P<residual_ma>\\d{2,3})mA$"
     },
     {
+      "id": "residual_type",
+      "about": "BUG-044: sensitivity and type as one word, 30mA-TYPE\"A\" (S.S לוחות, 26/956-1)",
+      "re": "^(?P<residual_ma>\\d{2,3})mA[-–]?(?:TYPE|Type|type)(?:[-–]?[\"'״׳“”]?(?P<rcd_type>AC|A|F|B)[\"'״׳“”]?)?$"
+    },
+    {
       "id": "residual_amps",
       "re": "^(?P<residual_a>0[.,]0\\d{1,2})A?$",
       "families": [
@@ -121,7 +126,7 @@
     },
     {
       "id": "rcd_type",
-      "re": "(?:^|\\s)(?:Type|TYPE|type|סוג)\\s+(?P<rcd_type>AC|A|F|B)(?:\\s|$)",
+      "re": "(?:^|[\\s\\-–])(?:Type|TYPE|type|סוג)[\\s\\-–]*[\"'״׳“”]?(?P<rcd_type>AC|A|F|B)[\"'״׳“”]?(?=\\s|$)",
       "scope": "text"
     },
     {

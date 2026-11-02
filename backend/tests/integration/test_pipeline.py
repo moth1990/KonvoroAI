@@ -352,6 +352,58 @@ def test_the_stand_in_still_reuses_its_own_pages(api: Api, migrated_db: dict[str
         assert all(p.model is None or p.model.startswith("stand-in:") for p in pages)
 
 
+def test_a_person_fixing_a_stand_in_page_keeps_the_mark(
+    api: Api, migrated_db: dict[str, Engine], pipeline: Pipeline
+) -> None:
+    """BUG-042: a person changes the kind of a page the stand-in read. The kind is theirs, but the title block and
+    the tag reading on the page are still the stand-in's, so a run on the real model must not reuse the page."""
+    engine = migrated_db["app"]
+    tenant = add_tenant(engine, limit=10, used=0)
+    first = start(api, tenant)
+    Worker(pipeline).run_until_idle()  # the stand-in model
+    with tenant_session(tenant.tenant_id, engine) as s:
+        page = s.scalars(select(m.Page).where(m.Page.drawing_id == first).order_by(m.Page.page_no)).first()
+        assert page is not None
+        page_id, kind = page.id, "legend" if page.page_kind != "legend" else "general_notes"
+    response = api.client.patch(f"/drawings/{first}/pages/{page_id}", headers=api.as_(tenant), json={"page_kind": kind})
+    assert response.status_code == 200, response.text
+    Worker(pipeline).run_until_idle()
+    with tenant_session(tenant.tenant_id, engine) as s:
+        fixed = s.get_one(m.Page, page_id)
+        assert fixed.classified_by == "user" and fixed.page_kind == kind
+        assert fixed.model is not None and fixed.model.startswith("stand-in:")
+
+    pipeline.llm_providers = {"anthropic": ClaudeLike(fake_llm.answer)}
+    again = start(api, tenant)
+    Worker(pipeline).run_until_idle()
+    with tenant_session(tenant.tenant_id, engine) as s:
+        after = s.scalars(select(m.Page).where(m.Page.drawing_id == again)).all()
+        assert not any(p.classified_by == "reused" for p in after)
+
+
+def test_a_person_fixing_a_real_page_is_reused(api: Api, migrated_db: dict[str, Engine], pipeline: Pipeline) -> None:
+    """The other side of BUG-042: what a person set on a page the real model read is reused, as 01 §5.1 says."""
+    engine = migrated_db["app"]
+    tenant = add_tenant(engine, limit=10, used=0)
+    pipeline.llm_providers = {"anthropic": ClaudeLike(fake_llm.answer)}
+    first = start(api, tenant)
+    Worker(pipeline).run_until_idle()
+    with tenant_session(tenant.tenant_id, engine) as s:
+        page = s.scalars(select(m.Page).where(m.Page.drawing_id == first).order_by(m.Page.page_no)).first()
+        assert page is not None
+        page_id, kind = page.id, "legend" if page.page_kind != "legend" else "general_notes"
+    response = api.client.patch(f"/drawings/{first}/pages/{page_id}", headers=api.as_(tenant), json={"page_kind": kind})
+    assert response.status_code == 200, response.text
+    Worker(pipeline).run_until_idle()
+    again = start(api, tenant)
+    Worker(pipeline).run_until_idle()
+    with tenant_session(tenant.tenant_id, engine) as s:
+        fixed = s.get_one(m.Page, page_id)
+        assert fixed.model is None  # a person classified it, after a real model
+        reused = s.scalars(select(m.Page).where(m.Page.drawing_id == again, m.Page.reused_from == page_id)).all()
+        assert [p.page_kind for p in reused] == [kind]
+
+
 # --- messages that never arrive, and copies (BUG-006, BUG-007) --------------------------------------------------
 
 LONG_AGO = timedelta(hours=1)  # other tests' drawings are minutes old at most, so the sweep never sees them

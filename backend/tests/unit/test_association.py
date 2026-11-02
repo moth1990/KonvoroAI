@@ -108,6 +108,13 @@ def test_an_unknown_builder_or_a_repeated_id_is_refused() -> None:
         ("0,03", "rcd", {"residual_ma": [30]}),
         ("40/0.03", "rcd", {"current_a": [40], "residual_ma": [30]}),
         ("40A/30mA", "rcd", {"current_a": [40], "residual_ma": [30]}),
+        # BUG-044: S.S לוחות writes the sensitivity and the type as one word (26/956-1, FB0)
+        ('30mA-TYPE"A"', "rcd", {"residual_ma": [30], "rcd_type": ["A"]}),
+        ("30mA-TYPE״A״", "rcd", {"residual_ma": [30], "rcd_type": ["A"]}),
+        ("30mA-Type-AC", "rcd", {"residual_ma": [30], "rcd_type": ["AC"]}),
+        ('30mA TYPE "A"', "rcd", {"residual_ma": [30], "rcd_type": ["A"]}),
+        ('Type "B"', "rcd", {"rcd_type": ["B"]}),
+        ("30mA-type A", "rcd", {"residual_ma": [30], "rcd_type": ["A"]}),
         ("Type A", "rcd", {"rcd_type": ["A"]}),
         ("סוג A", "rcd", {"rcd_type": ["A"]}),
         ("(x4)", "circuit_breaker", {"multiplicity": [4]}),
@@ -136,6 +143,14 @@ def test_the_spellings_of_04_5_1(text: str, family: str, expected: dict[str, lis
     found = keys(text, family)
     for key, values in expected.items():
         assert found.get(key) == values, (text, found)
+
+
+def test_the_citation_check_accepts_a_one_word_rcd_rating() -> None:
+    """BUG-044: the tile agent cited 30mA and type A from FB0's span; the check (04 §5.5) refused both."""
+    span = '30mA-TYPE"A"'
+    assert grammar.contains(span, "rcd", "residual_ma", 30)
+    assert grammar.contains(span, "rcd", "rcd_type", "A")
+    assert not grammar.contains(span, "rcd", "residual_ma", 300)  # a misread number is still refused
 
 
 def test_one_text_several_meanings_the_family_picks() -> None:

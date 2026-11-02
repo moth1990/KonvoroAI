@@ -21,6 +21,7 @@ from sqlalchemy.orm import Session
 from konboro.contracts.intake import ContextArtifact, IntakeResult, PageKind, PagePanel, Panel, Region
 from konboro.db import models as m
 from konboro.db.ids import new_id
+from konboro.services.llm import STAND_IN_PREFIX
 from konboro.services.queue import StageMessage
 from konboro.services.storage import Storage
 from konboro_llm.stages.table_transcription import Role
@@ -72,7 +73,10 @@ def change_page_kind(
         return KindChange(False, None)
     route = routing.route(kind, USER_CONFIDENCE)
     page.page_kind, page.page_kind_confidence, page.route = kind, USER_CONFIDENCE, route
-    page.classified_by, page.model = "user", None
+    # The kind is now the person's, but the title block and the tag reading on the page are still the model's.
+    # If the stand-in read them, keep its mark, so a run on the real model reads the page again (BUG-042).
+    stand_in = page.model is not None and page.model.startswith(STAND_IN_PREFIX)
+    page.classified_by, page.model = "user", page.model if stand_in else None
     quote = session.scalar(select(m.Quote).where(m.Quote.drawing_id == drawing_id))
     session.add(
         m.CorrectionEvent(
