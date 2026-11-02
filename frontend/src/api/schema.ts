@@ -475,6 +475,11 @@ export interface components {
              * @description Money at risk; negative for an over-charge
              */
             amount: string | null;
+            /**
+             * Boxes
+             * @description The evidence on the drawing, for "הצג בשרטוט" (11 §7, S16)
+             */
+            boxes: components["schemas"]["BoxOut"][];
             /** Component Ids */
             component_ids: string[];
             /** Confidence */
@@ -540,6 +545,11 @@ export interface components {
             /** Description */
             description: string;
             /**
+             * Designators
+             * @description The matched components' tags on the drawing (S16)
+             */
+            designators: string[];
+            /**
              * Includes
              * @description What the line says it includes ("כולל", "+"), 11 §5.2 item 6
              */
@@ -587,10 +597,17 @@ export interface components {
             corrected_quote_id: string | null;
             /** Differences */
             differences: components["schemas"]["AuditDifferenceOut"][];
+            /** Drawing File Name */
+            drawing_file_name: string | null;
             /** Drawing Id */
             drawing_id: string;
             /** Drawing Name */
             drawing_name: string;
+            /**
+             * Drawing Number
+             * @description From the drawing's title block (01 §5.4)
+             */
+            drawing_number: string | null;
             /** Drawing Status */
             drawing_status: string;
             /** Input Kind */
@@ -599,6 +616,11 @@ export interface components {
             issues: string[];
             /** Lines */
             lines: components["schemas"]["AuditLineOut"][];
+            /**
+             * Pages
+             * @description The audit drawing's pages, for the drawing pane (S16 decision 1)
+             */
+            pages: components["schemas"]["PageOut"][];
             /** Quote File Name */
             quote_file_name: string | null;
             quote_ref: components["schemas"]["AuditQuoteRefOut"] | null;
@@ -1218,6 +1240,11 @@ export interface components {
         /** ProgressOut */
         ProgressOut: {
             /**
+             * Audit Id
+             * @description An audit drawing's audit (POST /audits); its results once ready
+             */
+            audit_id?: string | null;
+            /**
              * Confirmation Reasons
              * @description Why the pages need the user's confirmation (01 §5.6); empty when they don't
              * @default []
@@ -1264,7 +1291,10 @@ export interface components {
             progress: number;
             /** Quote Id */
             quote_id: string | null;
-            /** Stages */
+            /**
+             * Stages
+             * @description Stages 1–7; an audit drawing's are 1–4 and the audit step, 8 (11 §5.1)
+             */
             stages: components["schemas"]["StageOut"][];
             /**
              * Status

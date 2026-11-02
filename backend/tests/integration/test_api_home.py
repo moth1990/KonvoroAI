@@ -54,9 +54,16 @@ def add_quote(
 
 
 def add_audit(
-    engine: Engine, tenant: ApiTenant, number: str, amounts: list[Decimal | None], *, status: str = "ready"
+    engine: Engine,
+    tenant: ApiTenant,
+    number: str,
+    amounts: list[Decimal | None],
+    *,
+    status: str = "ready",
+    short: list[Decimal | None] | None = None,
 ) -> str:
-    """An audit with one `missing_in_quote` difference per amount, plus one rejected and one other-type difference."""
+    """An audit with one `missing_in_quote` difference per amount and one `qty_short` per `short` amount, plus three
+    that are no omission: a rejected one, an over-count, and one below 0.6 (shown apart, 11 §5.4)."""
     with tenant_session(tenant.tenant_id, engine) as s:
         drawing = m.Drawing(id=new_id("drw"), tenant_id=tenant.tenant_id, created_by=tenant.user_id)
         s.add(drawing)
@@ -70,9 +77,14 @@ def add_audit(
         )
         s.add(audit)
         s.flush()
-        rows = [("missing_in_quote", "open", a) for a in amounts]
-        rows += [("missing_in_quote", "rejected", Decimal("999")), ("qty_short", "open", Decimal("999"))]
-        for kind, state, amount in rows:
+        rows = [("missing_in_quote", "open", a, 0.9) for a in amounts]
+        rows += [("qty_short", "open", a, 0.9) for a in short or []]
+        rows += [
+            ("missing_in_quote", "rejected", Decimal("999"), 0.9),
+            ("qty_over", "open", Decimal("-42"), 0.9),
+            ("missing_in_quote", "open", Decimal("999"), 0.5),
+        ]
+        for kind, state, amount, confidence in rows:
             s.add(
                 m.AuditDifference(
                     id=new_id("dif"),
@@ -80,7 +92,7 @@ def add_audit(
                     audit_id=audit.id,
                     type=kind,
                     severity="high",
-                    confidence=0.9,
+                    confidence=confidence,
                     message="חסר",
                     amount=amount,
                     status=state,
@@ -137,7 +149,8 @@ def test_summary_counts(api: Api, migrated_db: dict[str, Engine]) -> None:
     draft = add_quote(engine, tenant, "NURSERY", [None, None, None, Decimal("1.00")])
     add_quote(engine, tenant, "SENT", [None], status="sent")  # sent versions are final: not waiting
     add_quote(engine, tenant, "PRICED", [Decimal("1.00")])
-    audit = add_audit(engine, tenant, "10271", [Decimal("1250.00"), None, Decimal("40.50")])
+    # an omission is a shown missing item or short quantity (S16 decision 3)
+    audit = add_audit(engine, tenant, "10271", [None, Decimal("40.50")], short=[Decimal("1250.00")])
     add_audit(engine, tenant, "10272", [None], status="processing")  # not finished: not waiting
     add_candidates(engine, tenant, ["pending", "pending", "approved", "rejected"])
 

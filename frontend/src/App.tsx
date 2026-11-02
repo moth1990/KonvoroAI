@@ -2,6 +2,8 @@ import { Navigate, Route, Routes } from "react-router";
 
 import { useMe } from "./api/QueryProvider";
 import { AuthBridge, RequireAuth } from "./auth/auth";
+import { AuditScreen } from "./screens/audit/Audit";
+import { NewAuditScreen } from "./screens/audit/NewAudit";
 import { HomeScreen } from "./screens/Home";
 import { LoginScreen } from "./screens/Login";
 import { NewQuoteScreen } from "./screens/newQuote/NewQuote";
@@ -22,6 +24,14 @@ function ReviewRoute() {
   return me.data.flags.review_screen ? <ReviewScreen /> : <Placeholder screen="review" />;
 }
 
+/** The audit (S16) is behind `quote_audit`, evaluated on the server (13 §3); off, `/audit` stays a placeholder. */
+function AuditRoute({ results = false }: { results?: boolean }) {
+  const me = useMe();
+  if (!me.data) return null;
+  if (!me.data.flags.quote_audit) return <Placeholder screen="audit" />;
+  return results ? <AuditScreen /> : <NewAuditScreen />;
+}
+
 /** The prototype's routes (`ROUTES`, line 647) as paths. Unknown paths go home, like its `route()`. */
 export default function App() {
   return (
@@ -33,7 +43,8 @@ export default function App() {
           <Route path="/home" element={<HomeScreen />} />
           <Route path="/new" element={<NewQuoteScreen />} />
           <Route path="/review/:quoteId?" element={<ReviewRoute />} />
-          <Route path="/audit" element={<Placeholder screen="audit" />} />
+          <Route path="/audit" element={<AuditRoute />} />
+          <Route path="/audit/:auditId" element={<AuditRoute results />} />
           <Route path="/prices" element={<Placeholder screen="prices" />} />
           <Route path="/queue" element={<Placeholder screen="queue" />} />
           <Route path="/prefs" element={<Placeholder screen="prefs" />} />

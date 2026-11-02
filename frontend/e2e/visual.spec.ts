@@ -1,7 +1,8 @@
 /**
  * Screenshot baselines for the screens the user accepted in the fidelity review (docs/dev-strategy.md §5):
  * login, home classic with the shell, home chat, the new-quote steps (S05) and the review screen's lines, line
- * detail and red filter (S09) and its drawing (S11); light and dark; desktop and mobile projects.
+ * detail and red filter (S09) and its drawing (S11), and the audit's results, evidence and pick step on the
+ * 26-993 fixture (S16); light and dark; desktop and mobile projects.
  *
  * They run only inside Playwright's pinned Linux image (e2e/visual/update.sh sets KONBORO_VISUAL), locally and in
  * CI, so fonts and rasterization never differ between the baseline and the check:
@@ -12,7 +13,7 @@ import { expect, test, type Page } from "@playwright/test";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
-import { isMobile, signIn, SLOW_PROJECT, TENANTS } from "./fixtures";
+import { AUDITS, isMobile, signIn, SLOW_PROJECT, TENANTS } from "./fixtures";
 import { lineWith } from "./review-helpers";
 
 test.skip(!process.env.KONBORO_VISUAL, "runs in Playwright's Linux image: `make check-screenshots`");
@@ -164,7 +165,54 @@ const REVIEW = [
   },
 ] as const;
 
+/** The 26-993 audit fixture (S16), in the tenant nothing changes. */
+const AUDIT = [
+  {
+    name: "audit-results",
+    path: `/audit/${AUDITS[TENANTS.auditShots]}`,
+    setup: async (page: Page) => {
+      await page.getByTestId("audit-headline").waitFor({ timeout: 60_000 });
+    },
+  },
+  {
+    name: "audit-evidence",
+    path: `/audit/${AUDITS[TENANTS.auditShots]}`,
+    setup: async (page: Page) => {
+      await page.getByRole("button", { name: "הצג בשרטוט: מפסק 4X125A" }).click({ timeout: 60_000 });
+      await drawingReady(page);
+    },
+  },
+  {
+    name: "audit-new",
+    path: "/audit",
+    setup: async (page: Page) => {
+      await page.getByTestId("drop-quote").waitFor({ timeout: 60_000 });
+    },
+  },
+] as const;
+
 for (const scheme of ["light", "dark"] as const) {
+  test.describe(`${scheme} audit`, () => {
+    test.use({ colorScheme: scheme, reducedMotion: "reduce" });
+
+    for (const screen of AUDIT) {
+      test(screen.name, async ({ page, request }) => {
+        await signIn(page, request, TENANTS.auditShots);
+        await page.goto(screen.path);
+        await meLoaded(page);
+        await page.evaluate(() => document.fonts.ready);
+        await screen.setup(page);
+        await page.waitForLoadState("networkidle");
+        await page.mouse.move(0, 0);
+        await expect(page).toHaveScreenshot(`${screen.name}-${scheme}.png`, {
+          animations: "disabled",
+          mask: volatile(page),
+          maxDiffPixelRatio: 0.002,
+        });
+      });
+    }
+  });
+
   test.describe(`${scheme} review`, () => {
     test.use({ colorScheme: scheme, reducedMotion: "reduce" }); // the drawing jumps straight to where it goes
 

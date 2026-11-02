@@ -122,7 +122,7 @@ function waitingItems(summary: HomeSummary) {
       : []),
     ...summary.audit_omissions.map((a) => ({
       key: `a-${a.audit_id}`,
-      to: "/audit",
+      to: `/audit/${a.audit_id}`,
       icon: "audit" as const,
       color: "var(--warn)",
       title: countText(a.count, "השמטה אחת", (n) => `${n} השמטות`) + (a.quote_number ? ` בהצעה ${a.quote_number}` : ""),

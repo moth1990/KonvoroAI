@@ -196,6 +196,12 @@ class Progress:
     # stage 4's components in the panel: (devices, products, whether any has a tag); None before stage 4 ran
     components: tuple[int, int, bool] | None = None
     bom: dict[str, BomTable] = field(default_factory=dict)  # page id → the BOM table stage 1 read (01 §5.8)
+    audit: Audit | None = None  # an audit drawing's audit (11 §5, S15 decision 2)
+
+
+def stage_numbers(p: Progress) -> list[int]:
+    """The run's stages: an audit drawing goes from stage 4 to the audit step, and 5–7 never run (11 §5.1)."""
+    return [1, 2, 3, 4, AUDIT_STAGE] if p.audit is not None else [*range(1, 8)]
 
 
 def progress(session: Session, tenant_id: str, drawing_id: str) -> Progress | None:
@@ -231,13 +237,25 @@ def progress(session: Session, tenant_id: str, drawing_id: str) -> Progress | No
         )
         if a.page_id
     }
+    audit = session.scalar(select(Audit).where(Audit.drawing_id == drawing_id)) if drawing.purpose == "audit" else None
     return Progress(
-        drawing, name, files, runs, [(p, names.get(p.file_id, "")) for p in pages], panels, quote_id, components, bom
+        drawing,
+        name,
+        files,
+        runs,
+        [(p, names.get(p.file_id, "")) for p in pages],
+        panels,
+        quote_id,
+        components,
+        bom,
+        audit,
     )
 
 
 def stage_summary(p: Progress, stage: int) -> str | None:
-    """Stages 1 to 4 are the real ones so far (prototype STAGES, lines 761–764)."""
+    """Stages 1 to 4 are the real ones so far (prototype STAGES, lines 761–764), and the audit step."""
+    if stage == AUDIT_STAGE:
+        return _audit_summary(p)
     if p.bom and not any(page.route == "process" for page, _ in p.pages):  # BOM only (01 §4.4)
         return _bom_summary(p, stage)
     if stage == 2:
@@ -272,6 +290,17 @@ def _bom_summary(p: Progress, stage: int) -> str | None:
         where = "במוצר אחד" if products == 1 else f"ב-{products} מוצרים"
         return f"{_count_text(rows, 'שורה אחת', 'שורות')} {where}"
     return None
+
+
+def _audit_summary(p: Progress) -> str | None:
+    """ "17 שורות בהצעה · 3 הבדלים": the quote as read, and the differences shown, without the ones to check
+    (11 §5.4, §6 `summary`)."""
+    if p.audit is None or p.audit.status != "ready":
+        return None
+    s = p.audit.summary
+    lines = _count_text(int(s.get("quote_lines", 0)), "שורה אחת בהצעה", "שורות בהצעה")
+    differences = int(s.get("differences", 0)) - int(s.get("to_check", 0))
+    return f"{lines} · {_count_text(differences, 'הבדל אחד', 'הבדלים') if differences else 'אין הבדלים'}"
 
 
 def _extraction_summary(p: Progress) -> str:

@@ -254,9 +254,10 @@ def _progress_out(actor: Actor, storage: Storage, drawing_id: str) -> ProgressOu
                 status=statuses.get(n, "queued"),  # type: ignore[arg-type]
                 summary=drawings.stage_summary(p, n) if statuses.get(n) == "done" else None,
             )
-            for n in range(1, 8)
+            for n in drawings.stage_numbers(p)
         ],
         quote_id=p.quote_id if ready else None,
+        audit_id=p.audit.id if p.audit else None,
         error=failed if d.status == "failed" else None,
         summary=ProgressSummaryOut(
             input_kind=d.input_kind,

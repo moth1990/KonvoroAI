@@ -23,6 +23,10 @@ export type Quote = Schemas["QuoteOut"];
 export type QuoteLine = Schemas["LineOut"];
 export type Finding = Schemas["FindingOut"];
 export type QuotePage = Schemas["PageOut"];
+export type Audit = Schemas["AuditOut"];
+export type AuditDifference = Schemas["AuditDifferenceOut"];
+export type AuditLine = Schemas["AuditLineOut"];
+export type RejectReason = NonNullable<Schemas["AuditDecisionIn"]["reject_reason"]>;
 
 const FALLBACK_MESSAGE = "משהו השתבש אצלנו. נסו שוב בעוד רגע";
 const LOGIN_PATH = "/auth/login";
@@ -200,4 +204,44 @@ export async function fetchRevisable(client = api): Promise<Revisable[]> {
 /** The review screen's quote (09 §4). 404 when it is another tenant's, does not exist, or `review_screen` is off. */
 export async function fetchQuote(quoteId: string, client = api): Promise<Quote> {
   return unwrap(await client.GET("/quotes/{quote_id}", { params: { path: { quote_id: quoteId } } }));
+}
+
+/** The audit of an existing quote (11 §6, S15). 404 when it is another tenant's, or `quote_audit` is off. */
+export async function fetchAudit(auditId: string, client = api): Promise<Audit> {
+  return unwrap(await client.GET("/audits/{audit_id}", { params: { path: { audit_id: auditId } } }));
+}
+
+/** POST /audits as multipart: the drawing's files and the existing quote (11 §4). Rejected like an upload. */
+export async function uploadAudit(form: { files: File[]; quote: File; project?: string }, client = api) {
+  const data = new FormData();
+  for (const f of form.files) data.append("files", f, f.name);
+  data.append("quote", form.quote, form.quote.name);
+  if (form.project?.trim()) data.append("project", form.project.trim());
+  return unwrap(
+    await client.POST("/audits", {
+      body: data as unknown as Schemas["Body_upload_audit_audits_post"],
+      bodySerializer: (body) => body as unknown as FormData,
+    }),
+  );
+}
+
+/** 11 §7: "נכון, זה הבדל" (`confirmed`), "לא נכון" with a reason (`rejected`), or back to `open`. */
+export async function decideDifference(
+  auditId: string,
+  diffId: string,
+  decision: { status: AuditDifference["status"]; reject_reason?: RejectReason; note?: string },
+  client = api,
+): Promise<AuditDifference> {
+  return unwrap(
+    await client.PATCH("/audits/{audit_id}/differences/{diff_id}", {
+      params: { path: { audit_id: auditId, diff_id: diffId } },
+      body: decision,
+    }),
+  );
+}
+
+/** 11 §8: the quote's lines and the confirmed differences as a quote in the system; asked again, the same one. */
+export async function createCorrectedQuote(auditId: string, client = api): Promise<string> {
+  return unwrap(await client.POST("/audits/{audit_id}/corrected-quote", { params: { path: { audit_id: auditId } } }))
+    .quote_id;
 }

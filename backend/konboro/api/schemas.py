@@ -426,8 +426,9 @@ class ProgressOut(BaseModel):
     counted_as: Literal["new_drawing", "revision", "reuse", "audit"]
     counted: bool = Field(description="Whether this upload is counted in the quota right now")
     files: list[ProgressFileOut]
-    stages: list[StageOut]
+    stages: list[StageOut] = Field(description="Stages 1–7; an audit drawing's are 1–4 and the audit step, 8 (11 §5.1)")
     quote_id: str | None
+    audit_id: str | None = Field(None, description="An audit drawing's audit (POST /audits); its results once ready")
     error: str | None = Field(None, description="Hebrew, when the pipeline failed")
     summary: ProgressSummaryOut | None = None
     pages: list[ProgressPageOut] = Field([], description="Once stage 1 is done: when ready, or awaiting confirmation")
@@ -576,6 +577,7 @@ class AuditDifferenceOut(BaseModel):
     reject_reason: RejectReason | None
     reject_note: str | None
     component_ids: list[str]
+    boxes: list[BoxOut] = Field(description='The evidence on the drawing, for "הצג בשרטוט" (11 §7, S16)')
 
 
 class AuditLineOut(BaseModel):
@@ -589,6 +591,7 @@ class AuditLineOut(BaseModel):
     status: Literal["matched", "quantity_differs", "attribute_differs", "not_in_drawing", "arithmetic"]
     includes: list[str] = Field(description='What the line says it includes ("כולל", "+"), 11 §5.2 item 6')
     component_ids: list[str]
+    designators: list[str] = Field(description="The matched components' tags on the drawing (S16)")
     matched_qty: DecimalStr | None
 
 
@@ -598,6 +601,8 @@ class AuditOut(BaseModel):
     status: Literal["processing", "ready", "failed"]
     drawing_status: str
     drawing_name: str
+    drawing_file_name: str | None
+    drawing_number: str | None = Field(description="From the drawing's title block (01 §5.4)")
     quote_file_name: str | None
     input_kind: str | None
     quote_ref: AuditQuoteRefOut | None
@@ -606,6 +611,7 @@ class AuditOut(BaseModel):
     lines: list[AuditLineOut]
     differences: list[AuditDifferenceOut]
     corrected_quote_id: str | None
+    pages: list[PageOut] = Field(description="The audit drawing's pages, for the drawing pane (S16 decision 1)")
 
 
 class AuditDecisionIn(Strict):

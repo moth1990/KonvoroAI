@@ -15,6 +15,7 @@ from openpyxl import Workbook
 from eval.normalizers import load
 from konboro.contracts.common import StageIssue
 from konboro.contracts.merge import AttributeValue, Component, Instance, MergeResult
+from konboro.db import models as m
 from konboro.devtools import fake_llm
 from konboro.pipeline.audit import quote as q
 from konboro.pipeline.audit.differences import audit, describe, find_price
@@ -22,6 +23,7 @@ from konboro.pipeline.audit.match import DrawnComponent, assign, compare
 from konboro.pipeline.audit.signature import sign, split_included
 from konboro.pipeline.audit.step import drawn_components
 from konboro.pipeline.bom import sheets
+from konboro.services.audits import evidence_boxes
 from konboro_llm import ImageInput, LLMClient
 from konboro_llm.providers import FakeProvider
 from konboro_llm.stages import table_transcription
@@ -742,3 +744,20 @@ def test_odd_cells_and_headings() -> None:
     a.lines[0].bbox = None
     assert q.join([a]).lines[0].text == "מגען המשך"
     assert q.join([q.QuoteRead(source="image")]).issues == ["quote_no_lines"]
+
+
+def test_a_difference_is_boxed_on_every_page_its_evidence_names() -> None:
+    """S16: "הצג בשרטוט" shows the evidence's instances, on each page they are on; a difference whose evidence names
+    no instance shows every instance of its components."""
+    cmp = m.Component(
+        id="cmp_1",
+        instances=[
+            {"instance_id": "ins_a", "page_id": "pg_3", "bbox": [1, 2, 3, 4]},
+            {"instance_id": "ins_b", "page_id": "pg_5", "bbox": [5, 6, 7, 8]},
+            {"instance_id": "ins_c", "page_id": "pg_5", "bbox": None},  # stage 4 found no box: nothing to draw
+        ],
+    )
+    named = m.AuditDifference(component_ids=["cmp_1", "cmp_gone"], evidence=[{"page_no": 5, "instance_ids": ["ins_b"]}])
+    assert [(b.page_id, b.bbox) for b in evidence_boxes(named, {"cmp_1": cmp})] == [("pg_5", [5, 6, 7, 8])]
+    unnamed = m.AuditDifference(component_ids=["cmp_1"], evidence=[])
+    assert [b.page_id for b in evidence_boxes(unnamed, {"cmp_1": cmp})] == ["pg_3", "pg_5"]

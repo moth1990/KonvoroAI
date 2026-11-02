@@ -332,7 +332,7 @@ def read_quote(session: Session, tenant_id: str, quote_id: str) -> QuoteView | N
         panels=panel_views,
         findings=_findings(session, version),
         totals=sums,
-        pages=_pages(session, drawing, [ln for p in panel_views for ln in p.lines]) if drawing else [],
+        pages=drawing_pages(session, drawing, [ln for p in panel_views for ln in p.lines]) if drawing else [],
     )
 
 
@@ -482,7 +482,8 @@ def _findings(session: Session, version: m.QuoteVersion) -> list[FindingView]:
     ]
 
 
-def _pages(session: Session, drawing: m.Drawing, lines: Sequence[LineView]) -> list[PageView]:
+def drawing_pages(session: Session, drawing: m.Drawing, lines: Sequence[LineView] = ()) -> list[PageView]:
+    """The drawing pane's pages (09 §6.5); `lines` give the strip's red and yellow counts. The audit screen has none."""
     pages = session.scalars(
         select(m.Page)
         .where(m.Page.tenant_id == drawing.tenant_id, m.Page.drawing_id == drawing.id)

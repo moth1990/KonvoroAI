@@ -10,7 +10,7 @@ import { fileURLToPath } from "node:url";
 
 import { test, type Page } from "@playwright/test";
 
-import { signIn, SLOW_PROJECT, TENANTS } from "../fixtures";
+import { AUDITS, signIn, SLOW_PROJECT, TENANTS } from "../fixtures";
 import { lineWith } from "../review-helpers";
 import { prototypePort } from "./fidelity.config";
 
@@ -192,7 +192,58 @@ const SCREENS: Screen[] = [
     ],
   },
   ...reviewScreens(),
+  ...auditScreens(),
 ];
+
+/** The 26-993 audit fixture (S16), in a tenant nothing changes. */
+function auditScreens(): Screen[] {
+  const audit = { path: `/audit/${AUDITS[TENANTS.auditShots]}`, tenant: TENANTS.auditShots };
+  return [
+    {
+      id: "audit",
+      title: "Audit: results (26-993, quote 10271)",
+      prototype: { hash: "#audit", authed: true },
+      app: { ...audit, setup: (page) => page.getByTestId("audit-headline").waitFor() },
+      notes: [
+        "Data differs by design (S16 decision 2): the app shows what the pipeline finds on replay, not the factory's " +
+          "confirmed list. QG2 short (₪1,250) and an untagged CT are shown; the shunt trips and 4 more are under " +
+          '"לבדוק" below 0.6 (BUG-031). So "15 / 17" is "13 / 17", 3 omissions are 2, and 6 units are 2.',
+        "Added from 11 §7 in the prototype's style (S16 decision 1): the headline sentence above the KPIs, a " +
+          '"החלטה" column ("נכון, זה הבדל" / "לא נכון" with a reason), each difference\'s message under its chip, ' +
+          '"הצג בשרטוט" in the evidence cell, and the "לבדוק" section. No "הורד דוח".',
+        'The not-a-difference rows are named by their family ("מהדק"); the prototype\'s "מהדק בדיקה למשנה זרם" ' +
+          "needs a name stage 4 doesn't give.",
+      ],
+    },
+    {
+      id: "audit-evidence",
+      title: "Audit: show on drawing",
+      prototype: { hash: "#review", authed: true },
+      app: {
+        ...audit,
+        setup: async (page) => {
+          await page.getByRole("button", { name: "הצג בשרטוט: מפסק 4X125A" }).click();
+          await page.getByTestId("evidence-drawing").locator(".hl").first().waitFor();
+        },
+      },
+      window: true,
+      notes: [
+        "No prototype screen: the review screen's drawing pane (prototype `vReview`) in a dialog, QG1 and QG2 " +
+          "framed in red on page 3. Compare the pane, not the page around it.",
+      ],
+    },
+    {
+      id: "audit-new",
+      title: "Audit: new audit (pick)",
+      prototype: { hash: "#new", authed: true },
+      app: { path: "/audit", tenant: TENANTS.auditShots },
+      notes: [
+        "No prototype screen (S16 decision 4): the new-quote screen's pick step in its look, with two drop zones, " +
+          'the drawing and the existing quote. The prototype\'s #audit has only a "בדיקה חדשה" toast.',
+      ],
+    },
+  ];
+}
 
 /** From the app's home to the NURSERY-1 fixture quote (S09), the way a user gets there. */
 async function appReview(page: Page) {

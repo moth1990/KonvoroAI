@@ -19,7 +19,7 @@ import { Icon } from "../../ui/Icon";
 import { Modal } from "../../ui/Modal";
 import { INPUT_KINDS } from "../newQuote/model";
 import { DrawingPane } from "./Drawing";
-import { boxOnPage, findingBox, firstPage, pageForLine, stepPage } from "./drawingModel";
+import { boxOnPage, findingBox, firstPage, overlays, pageForLine, stepPage } from "./drawingModel";
 import { LineDetail } from "./LineDetail";
 import {
   buildRows,
@@ -473,14 +473,13 @@ function Review({ quote }: { quote: Quote }) {
         </section>
         <section className="pane drawing-pane" aria-label="שרטוט">
           <DrawingPane
-            quote={quote}
+            pages={quote.pages}
+            overlays={(page) => overlays(quote, page, { selected, filter, activePanelId: panel?.panel_id ?? null })}
             pageId={pageId}
             onPage={(id: string) => {
               setPageId(id);
               setShownFinding(null);
             }}
-            selected={selected}
-            filter={filter}
             activePanelId={panel?.panel_id ?? null}
             focus={focus}
             finding={shownFinding}

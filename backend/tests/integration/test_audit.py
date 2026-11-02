@@ -125,6 +125,9 @@ def test_a_spreadsheet_quote_is_audited_with_no_model_call(
     )
     assert [ln["status"] for ln in body["lines"]] == ["matched", "quantity_differs", "not_in_drawing"]
     assert dec(body["lines"][0]["unit_price"]) == dec("185")
+    # the drawing side for the screen (S16): a BOM drawing has its sheet as a page, no viewer and nothing to box
+    assert [(p["page_kind"], p["has_viewer"]) for p in body["pages"]] == [("bom_table", False)]
+    assert all(d["boxes"] == [] for d in body["differences"])
 
     # the pipeline: stages 5–7 skipped, the audit step done, its contract in S3
     with tenant_session(tenant.tenant_id, engine) as ses:
@@ -144,7 +147,12 @@ def test_a_spreadsheet_quote_is_audited_with_no_model_call(
     assert key is not None
     result = AuditResult.model_validate_json(storage.get(tenant.tenant_id, key))
     assert result.audit_id == upload["audit_id"] and result.summary.value_at_risk == Decimal("180.00")
-    assert progress(api, tenant, upload["drawing_id"]).json()["counted_as"] == "audit"
+    run = progress(api, tenant, upload["drawing_id"]).json()
+    assert run["counted_as"] == "audit" and run["audit_id"] == upload["audit_id"] and run["quote_id"] is None
+    # the run step's rows: stages 1–4 and the audit step, never the skipped 5–7 (S16)
+    assert [(st["stage"], st["status"]) for st in run["stages"]] == [(n, "done") for n in (1, 2, 3, 4, 8)]
+    assert run["stages"][-1]["name"] == "בדיקת ההצעה"
+    assert run["stages"][-1]["summary"] == "3 שורות בהצעה · 2 הבדלים"
     assert quota_row(engine, tenant)[0] == 1  # counted, on the quote counter: the plan has no audit limit
 
     # another tenant sees nothing (RLS, and 404 from the API)
