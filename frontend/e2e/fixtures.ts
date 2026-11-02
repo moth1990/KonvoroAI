@@ -22,6 +22,18 @@ export const TENANTS = {
   // BOM uploads (S14), apart from the drawing uploads' quota counts.
   bomDesktop: "bom-desktop@e2e.konboro.local",
   bomMobile: "bom-mobile@e2e.konboro.local",
+  // The 26-993 audit fixture (S16): decisions and uploads change it, so one tenant per project; the shots read a
+  // third. Each tenant's audit has a fixed id (`AUDITS`).
+  auditDesktop: "audit-desktop@e2e.konboro.local",
+  auditMobile: "audit-mobile@e2e.konboro.local",
+  auditShots: "audit-shots@e2e.konboro.local",
+} as const;
+
+/** The fixture audit's id in each audit tenant (`E2eTenant.audit_id` in devtools/e2e.py). */
+export const AUDITS = {
+  [TENANTS.auditDesktop]: "aud_01JD0E2E000000000000000014",
+  [TENANTS.auditMobile]: "aud_01JD0E2E000000000000000015",
+  [TENANTS.auditShots]: "aud_01JD0E2E000000000000000016",
 } as const;
 
 /** The E2E worker runs this project's stages slowly, so a test can cancel mid-run (devtools/e2e.py). */

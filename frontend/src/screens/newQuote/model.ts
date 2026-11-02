@@ -104,7 +104,7 @@ export interface StageRow {
   summary: string | null;
 }
 
-/** The run step's 7 rows. While the drawing waits in the queue, its next stage already shows as working. */
+/** The run step's rows: 7, or an audit's 5 (stages 1–4 and the audit step, S16). While the drawing waits in the queue, its next stage already shows as working. */
 export function stageRows(p: Progress): StageRow[] {
   const active = p.status === "uploaded" || p.status === "processing";
   const next = p.stages.find((s) => s.status !== "done")?.stage ?? null;
@@ -128,7 +128,7 @@ export function stageRows(p: Progress): StageRow[] {
 /** "שלב 3 מתוך 7": the stage being worked on, or the last one when finished. */
 export function stageCounter(p: Progress): number {
   const done = p.stages.filter((s) => s.status === "done").length;
-  return Math.min(done + 1, 7);
+  return Math.min(done + 1, p.stages.length);
 }
 
 export const PAGE_KINDS: Record<string, string> = {

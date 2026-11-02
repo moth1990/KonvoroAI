@@ -5,7 +5,7 @@
 | **Track** | P |
 | **Branch** | `s15-quote-audit` |
 | **Depends on** | S13, S14 |
-| **Status** | in review |
+| **Status** | done |
 | **PR** | [moth1990/KonvoroAI#16](https://github.com/moth1990/KonvoroAI/pull/16) |
 
 ## Goal

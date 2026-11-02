@@ -12,9 +12,11 @@ from sqlalchemy import Subquery, and_, func, select
 from sqlalchemy.orm import Session
 
 from konboro.db.models import Audit, AuditDifference, KnowledgeCandidate, Quote, QuoteLine, QuoteVersion
+from konboro.pipeline.audit.differences import SHOWN_FROM
 
-# 11 §5.2: the difference types the home card counts as omissions.
-OMISSION_TYPES = ("missing_in_quote",)
+# The difference types the home card counts as omissions: a missing item and a short quantity (11 §5.4, S16
+# decision 3), as the prototype counts 10271's three.
+OMISSION_TYPES = ("missing_in_quote", "qty_short")
 
 
 @dataclass(frozen=True)
@@ -111,6 +113,7 @@ def summary(session: Session, tenant_id: str) -> Summary:
             Audit.tenant_id == tenant_id,
             Audit.status == "ready",
             AuditDifference.type.in_(OMISSION_TYPES),
+            AuditDifference.confidence >= SHOWN_FROM,  # below it, maybe the system's mistake (11 §5.4)
             AuditDifference.status != "rejected",
         )
         .group_by(Audit.id)

@@ -32,7 +32,7 @@ To view it, serve the folder (`python -m http.server -d prototype`) and set `loc
 **Porting a screen:** the prototype's CSS moves to `frontend/src/theme/app.css` with the same class names, and the
 React screens render those classes; MUI is for behaviour, not looks. The app routes are paths (`/home`, `/review/:quoteId`…),
 not hashes. The phone layout starts at **860px** everywhere (09 §5.2; the prototype uses 820px), kept in `MOBILE_MAX_PX`.
-Built so far: login, shell, classic and chat home (S04); new quote: pick, run, done (S05); confirm pages and page-kind change (S08); review lines, filters and line detail on the NURSERY-1 fixture, behind `review_screen` (S09); the review drawing pane (OpenSeadragon, boxes, page strip, "הצג בשרטוט"), toast and undo stack (S11); a BOM spreadsheet's column mapping on the confirm step, behind `bom_column_mapping` (S14, no prototype screen). The audit's API is behind `quote_audit` (S15); its screen is S16's.
+Built so far: login, shell, classic and chat home (S04); new quote: pick, run, done (S05); confirm pages and page-kind change (S08); review lines, filters and line detail on the NURSERY-1 fixture, behind `review_screen` (S09); the review drawing pane (OpenSeadragon, boxes, page strip, "הצג בשרטוט"), toast and undo stack (S11); a BOM spreadsheet's column mapping on the confirm step, behind `bom_column_mapping` (S14, no prototype screen). the audit's upload, results, decisions, "הצג בשרטוט" and corrected quote on the 26-993 fixture, behind `quote_audit` (S15 API, S16 screen; the upload has no prototype screen).
 
 | Screen | Route | Function | Lines |
 | --- | --- | --- | --- |
@@ -99,7 +99,7 @@ Schema changes are Alembic migrations in `backend/alembic/versions/`. Update `do
 | --- | --- |
 | `make install` | uv sync, pnpm install, and the Playwright Chromium |
 | `make migrate` | Create the `konboro_app` role, then `alembic upgrade head` |
-| `make seed` | Migrate, then load the demo tenant (made-up names, the prototype's price list) and the NURSERY-1 review fixture with its page images in S3. Needs `make up`. Safe to rerun |
+| `make seed` | Migrate, then load the demo tenant (made-up names, the prototype's price list) , the NURSERY-1 review fixture and the 26-993 audit fixture, with their page images in S3. Needs `make up`. Safe to rerun |
 | `make up` / `make down` | Start or stop local services: Postgres + pgvector (host port 5433), S3Mock as S3 (9000), ElasticMQ as SQS (9324) |
 | `make dev` | API on port 8000 (uvicorn, reload), the pipeline worker (`python -m konboro.pipeline.worker`) and the Vite dev server on port 5180. Needs `make up`. Dev login: `demo@konboro.local` with `KONBORO_DEV_PASSWORD` from `.env`. Stage 1 calls Claude with `ANTHROPIC_API_KEY`; without a key the local worker uses the stand-in model (`devtools/fake_llm.py`) and logs a warning |
 | `make test-unit` | pytest unit tests + Vitest |
@@ -109,6 +109,7 @@ Schema changes are Alembic migrations in `backend/alembic/versions/`. Update `do
 | `make check-screenshots` | Compare the accepted screens with their baselines, in Playwright's Linux Docker image (the same check runs in CI) |
 | `make screenshots` | Rewrite those baselines, only after the user accepts a visual change |
 | `make eval` | Golden-set evaluation against `eval/baseline.json`, which fails on any drop. Replay by default; `EVAL_MODE=live` uses real Claude, and `EVAL_RECORD=1` saves its answers as cassettes (`=missing`: only calls with none yet; `EVAL_MAX_USD` caps the spend). Needs `make up` ([eval/README.md](eval/README.md)) |
+| `make fixture-audit` | Write the 26-993 audit fixture (`devtools/fixtures/audit_993.json` and its page images, title block blanked) from a replay run, after a change that moves 26-993's audit. Needs `make up` |
 | `make eval-baseline` | Make this run's metrics the committed baseline, after a change that moves a score on purpose |
 | `make gen-client` | Regenerate the TS API client from FastAPI's OpenAPI (`frontend/src/api/openapi.json` → `schema.ts`). Run it after any API change and commit both files |
 | `make check-client` | Fail if the committed client is stale. CI runs the same check |

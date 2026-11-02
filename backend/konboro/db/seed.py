@@ -284,15 +284,18 @@ def seed_demo_tenant(session: Session) -> bool:
 
 
 def seed_demo_fixtures(session: Session, storage: "Storage") -> None:
-    """The review screen's fixture quote (S09) and its page images (S11). Runs every time, so a demo tenant from
-    before S09 gets it too, and a bucket that lost the images gets them again."""
-    # it reads this module's price list
-    from konboro.devtools.fixtures.nursery import enable_flag, seed_nursery, seed_nursery_pages
+    """The review screen's fixture quote (S09) and its page images (S11), and the 26-993 audit (S16). Runs every
+    time, so a demo tenant from before them gets them too, and a bucket that lost the images gets them again."""
+    # they read this module's price list
+    from konboro.devtools.fixtures import audit_993, nursery
 
     session.execute(text("SELECT set_config('app.tenant_id', :t, true)"), {"t": DEMO_TENANT})
-    enable_flag(session, DEMO_TENANT)
-    seed_nursery(session, DEMO_TENANT)
-    seed_nursery_pages(session, storage, DEMO_TENANT)
+    nursery.enable_flag(session, DEMO_TENANT)
+    nursery.seed_nursery(session, DEMO_TENANT)
+    nursery.seed_nursery_pages(session, storage, DEMO_TENANT)
+    audit_993.enable_flag(session, DEMO_TENANT)
+    audit_993.seed_audit_993(session, DEMO_TENANT, DEMO_USER)
+    audit_993.seed_audit_993_pages(session, storage, DEMO_TENANT)
 
 
 def seed(engine: Engine | None = None, storage: "Storage | None" = None) -> bool:

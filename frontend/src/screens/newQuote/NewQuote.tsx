@@ -44,7 +44,7 @@ import {
   type PickedFile,
 } from "./model";
 
-const POLL_MS = 1000; // S05 decision: polling, not SSE
+export const POLL_MS = 1000; // S05 decision: polling, not SSE
 const FALLBACK = "משהו השתבש אצלנו. נסו שוב בעוד רגע";
 
 type Mode = "new" | "rev";
@@ -103,7 +103,7 @@ export function NewQuoteScreen() {
   return <Shell title={title}>{body}</Shell>;
 }
 
-function isActive(p: Progress | undefined): boolean {
+export function isActive(p: Progress | undefined): boolean {
   return p !== undefined && ["uploaded", "processing"].includes(p.status);
 }
 
@@ -365,7 +365,7 @@ function dayMonth(iso: string): string {
   return `${d.getDate()}.${d.getMonth() + 1}`;
 }
 
-function RunStep({ progress: p, onCancelled }: { progress: Progress; onCancelled: () => void }) {
+export function RunStep({ progress: p, onCancelled }: { progress: Progress; onCancelled: () => void }) {
   const queries = useQueryClient();
   const toast = useToast();
   const [cancelling, setCancelling] = useState(false);
@@ -393,7 +393,7 @@ function RunStep({ progress: p, onCancelled }: { progress: Progress; onCancelled
         <h2 className="wrap-any" style={{ flex: 1, minWidth: 0 }}>
           מפענח את <span className="mono">{fileName}</span>
         </h2>
-        <span className="small muted num">{`שלב ${stageCounter(p)} מתוך 7`}</span>
+        <span className="small muted num">{`שלב ${stageCounter(p)} מתוך ${p.stages.length}`}</span>
       </div>
       <div
         className="meter"
@@ -406,7 +406,7 @@ function RunStep({ progress: p, onCancelled }: { progress: Progress; onCancelled
         <i style={{ width: `${Math.round(p.progress * 100)}%` }} />
       </div>
       <ol className="stages" style={{ listStyle: "none", margin: 0, padding: 0 }}>
-        {rows.map((r) => (
+        {rows.map((r, i) => (
           <li
             key={r.stage}
             className={`stage ${r.state === "done" ? "done" : r.state === "run" ? "run" : ""}`}
@@ -414,7 +414,7 @@ function RunStep({ progress: p, onCancelled }: { progress: Progress; onCancelled
             data-state={r.state}
           >
             <span className="dot" aria-hidden="true">
-              {r.state === "done" ? "✓" : r.stage}
+              {r.state === "done" ? "✓" : i + 1}
             </span>
             <span style={{ minWidth: 0 }}>
               <b>{r.name}</b>
@@ -534,7 +534,7 @@ function DoneStep({ progress: p, me }: { progress: Progress; me: Me }) {
  * The pages wait for the user (01 §5.6; S08 decision: the done step's grid, a line saying why, the unsure pages
  * marked, and "אשר והמשך"). Changing a kind here re-runs nothing: decoding hasn't gone past stage 1.
  */
-function ConfirmStep({ progress: p, me, onCancelled }: { progress: Progress; me: Me; onCancelled: () => void }) {
+export function ConfirmStep({ progress: p, me, onCancelled }: { progress: Progress; me: Me; onCancelled: () => void }) {
   const queries = useQueryClient();
   const toast = useToast();
   const [busy, setBusy] = useState(false);
@@ -797,7 +797,7 @@ function PageGrid({ progress: p }: { progress: Progress }) {
   );
 }
 
-function FailedStep({ progress: p, onBack }: { progress: Progress; onBack: () => void }) {
+export function FailedStep({ progress: p, onBack }: { progress: Progress; onBack: () => void }) {
   return (
     <div className="card pad" style={{ display: "grid", gap: 14 }} data-testid="failed">
       <div className="row">

@@ -43,6 +43,23 @@ class AuditView:
     quote_file: m.DrawingFile | None
     lines: list[m.AuditQuoteLine]
     differences: list[m.AuditDifference]
+    pages: list[quotes.PageView]  # the audit drawing's pages, for "הצג בשרטוט" (S16 decision 1)
+    boxes: dict[str, list[quotes.BoxView]]  # difference id → its evidence instances on the drawing
+    designators: dict[str, list[str]]  # component id → its tags, for the matched lines ("בשרטוט")
+    drawing_file: m.DrawingFile | None  # the drawing's first file, for the header
+
+
+def evidence_boxes(d: m.AuditDifference, components: dict[str, m.Component]) -> list[quotes.BoxView]:
+    """Where a difference's components are drawn (11 §7: on every page they are on). The evidence's instance ids
+    when it names any, else every instance of its components."""
+    named = {i for e in d.evidence for i in e.get("instance_ids", [])}
+    out: list[quotes.BoxView] = []
+    for cid in d.component_ids:
+        c = components.get(cid)
+        for i in c.instances if c else []:
+            if i.get("bbox") and i.get("page_id") and (not named or i.get("instance_id") in named):
+                out.append(quotes.BoxView(i["page_id"], list(i["bbox"])))
+    return out
 
 
 TYPE_ORDER = (
@@ -88,7 +105,37 @@ def read_audit(session: Session, tenant_id: str, audit_id: str) -> AuditView | N
     )
     # 11 §7: what the quote leaves out first, then by confidence; below 0.6 apart (the screen groups them)
     differences.sort(key=lambda d: (TYPE_ORDER.index(d.type), -d.confidence, d.quote_line_index or 0, d.id))
-    return AuditView(audit, drawing, quote_file, lines, differences)
+    ids = {c for ln in lines for c in ln.component_ids} | {c for d in differences for c in d.component_ids}
+    components = _components(session, tenant_id, ids)
+    drawing_file = session.scalar(
+        select(m.DrawingFile)
+        .where(m.DrawingFile.tenant_id == tenant_id, m.DrawingFile.drawing_id == drawing.id)
+        .where(m.DrawingFile.role == "drawing")
+        .order_by(m.DrawingFile.id)
+    )
+    return AuditView(
+        audit,
+        drawing,
+        quote_file,
+        lines,
+        differences,
+        quotes.drawing_pages(session, drawing),
+        {d.id: evidence_boxes(d, components) for d in differences},
+        {c.id: list(c.designators) for c in components.values()},
+        drawing_file,
+    )
+
+
+def _components(session: Session, tenant_id: str, ids: set[str]) -> dict[str, m.Component]:
+    q = select(m.Component).where(m.Component.tenant_id == tenant_id, m.Component.id.in_(ids))
+    return {c.id: c for c in session.scalars(q)}
+
+
+def difference_boxes(
+    session: Session, tenant_id: str, differences: list[m.AuditDifference]
+) -> dict[str, list[quotes.BoxView]]:
+    components = _components(session, tenant_id, {c for d in differences for c in d.component_ids})
+    return {d.id: evidence_boxes(d, components) for d in differences}
 
 
 def decide(

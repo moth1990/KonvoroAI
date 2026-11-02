@@ -8,7 +8,7 @@ from fastapi import APIRouter, BackgroundTasks, Depends, File, Form, Path, Reque
 from konboro.db import models as m
 from konboro.domain.permissions import Permission
 from konboro.pipeline.audit.differences import SHOWN_FROM
-from konboro.services import audits, drawings, quota
+from konboro.services import audits, drawings, quota, quotes
 from konboro.services.queue import Queue, StageMessage
 
 from ..deps import Actor, require, require_flag
@@ -19,9 +19,12 @@ from ..schemas import (
     AuditLineOut,
     AuditOut,
     AuditUploadOut,
+    BoxOut,
     CorrectedQuoteOut,
+    PageOut,
 )
 from .drawings import _READ_LIMIT, _file_out
+from .quotes import _page
 
 FLAG = "quote_audit"
 
@@ -83,7 +86,7 @@ def upload_audit(
 
 
 @router.get("/audits/{audit_id}")
-def get_audit(actor: Reader, audit_id: AuditId) -> AuditOut:
+def get_audit(request: Request, actor: Reader, audit_id: AuditId) -> AuditOut:
     """Another tenant's audit is 404, the same as one that does not exist."""
     view = audits.read_audit(actor.session, actor.tenant_id, audit_id)
     if view is None:
@@ -98,14 +101,17 @@ def get_audit(actor: Reader, audit_id: AuditId) -> AuditOut:
         status=a.status,  # type: ignore[arg-type]
         drawing_status=view.drawing.status,
         drawing_name=name,
+        drawing_file_name=view.drawing_file.original_name if view.drawing_file else None,
+        drawing_number=(view.drawing.title_block or {}).get("drawing_number"),
         quote_file_name=view.quote_file.original_name if view.quote_file else None,
         input_kind=a.input_kind,
         quote_ref=a.quote_ref if ready else None,  # type: ignore[arg-type]
         summary=a.summary if ready else None,  # type: ignore[arg-type]
         issues=[str(i) for i in a.issues],
-        lines=[_line(ln) for ln in view.lines],
-        differences=[_difference(d) for d in view.differences],
+        lines=[_line(ln, view.designators) for ln in view.lines],
+        differences=[_difference(d, view.boxes.get(d.id, [])) for d in view.differences],
         corrected_quote_id=a.corrected_quote_id,
+        pages=[PageOut.model_validate(_page(p, request.app.state.storage, actor.tenant_id)) for p in view.pages],
     )
 
 
@@ -123,7 +129,7 @@ def decide(actor: Writer, audit_id: AuditId, diff_id: DiffId, body: AuditDecisio
     )
     if diff is None:
         raise ApiError(404, "not_found")
-    return _difference(diff)
+    return _difference(diff, audits.difference_boxes(actor.session, actor.tenant_id, [diff])[diff.id])
 
 
 @router.post("/audits/{audit_id}/corrected-quote")
@@ -139,7 +145,7 @@ def corrected_quote(actor: Writer, audit_id: AuditId) -> CorrectedQuoteOut:
     return CorrectedQuoteOut(quote_id=quote_id, created=created)
 
 
-def _line(ln: m.AuditQuoteLine) -> AuditLineOut:
+def _line(ln: m.AuditQuoteLine, designators: dict[str, list[str]]) -> AuditLineOut:
     sig: dict[str, Any] = ln.signature or {}
     return AuditLineOut(
         index=ln.line_index,
@@ -152,11 +158,12 @@ def _line(ln: m.AuditQuoteLine) -> AuditLineOut:
         status=ln.status,  # type: ignore[arg-type]
         includes=[i["text"] for i in sig.get("included", [])],
         component_ids=list(ln.component_ids),
+        designators=[t for cid in ln.component_ids for t in designators.get(cid, [])],
         matched_qty=ln.matched_qty,
     )
 
 
-def _difference(d: m.AuditDifference) -> AuditDifferenceOut:
+def _difference(d: m.AuditDifference, boxes: list[quotes.BoxView]) -> AuditDifferenceOut:
     return AuditDifferenceOut(
         diff_id=d.id,
         type=d.type,  # type: ignore[arg-type]
@@ -176,4 +183,5 @@ def _difference(d: m.AuditDifference) -> AuditDifferenceOut:
         reject_reason=d.reject_reason,  # type: ignore[arg-type]
         reject_note=d.reject_note,
         component_ids=list(d.component_ids),
+        boxes=[BoxOut(page_id=b.page_id, bbox=b.bbox) for b in boxes],
     )

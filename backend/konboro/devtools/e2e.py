@@ -38,6 +38,7 @@ from konboro.db.models import (
 )
 from konboro.db.seed import FLAGS, seed_global
 from konboro.db.session import app_engine
+from konboro.devtools.fixtures.audit_993 import seed_audit_993, seed_audit_993_pages
 from konboro.devtools.fixtures.nursery import seed_nursery, seed_nursery_pages
 from konboro.pipeline.context import StageContext
 from konboro.pipeline.extraction.config import ExtractionConfig
@@ -57,6 +58,7 @@ class E2eTenant:
     used: int  # of the trial plan's 50
     sample_data: bool
     nursery: bool = False  # the review screen's fixture quote (S09); read-only, so one tenant serves both projects
+    audit: bool = False  # the 26-993 audit fixture (S16), under `audit_id`
 
     @property
     def tenant_id(self) -> str:
@@ -65,6 +67,10 @@ class E2eTenant:
     @property
     def user_id(self) -> str:
         return f"usr_01JD0E2E{self.number:018d}"
+
+    @property
+    def audit_id(self) -> str:
+        return f"aud_01JD0E2E{self.number:018d}"
 
 
 TENANTS = (
@@ -85,6 +91,11 @@ TENANTS = (
     # BOM uploads (S14), apart from the drawing uploads so neither changes the other's quota counts.
     E2eTenant(12, "bom-desktop@e2e.konboro.local", home_chat=False, used=12, sample_data=False),
     E2eTenant(13, "bom-mobile@e2e.konboro.local", home_chat=False, used=12, sample_data=False),
+    # The audit (S16): decisions change the fixture audit and uploads the quota, so one tenant per project; the
+    # screenshots read a third that nothing changes.
+    E2eTenant(14, "audit-desktop@e2e.konboro.local", home_chat=False, used=12, sample_data=False, audit=True),
+    E2eTenant(15, "audit-mobile@e2e.konboro.local", home_chat=False, used=12, sample_data=False, audit=True),
+    E2eTenant(16, "audit-shots@e2e.konboro.local", home_chat=False, used=12, sample_data=False, audit=True),
 )
 
 # A project with this name runs slowly, so a test can cancel it mid-run; every other upload runs at full speed.
@@ -205,6 +216,10 @@ def seed_e2e(owner: Engine, storage: Storage | None = None) -> None:
                 seed_nursery(s, t.tenant_id)
                 if storage is not None:
                     seed_nursery_pages(s, storage, t.tenant_id)
+            if t.audit:
+                seed_audit_993(s, t.tenant_id, t.user_id, t.audit_id)
+                if storage is not None:
+                    seed_audit_993_pages(s, storage, t.tenant_id)
 
 
 def e2e_settings(web_port: int) -> Settings:

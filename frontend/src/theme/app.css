@@ -1632,3 +1632,92 @@ table.tbl {
     flex-wrap: wrap;
   }
 }
+
+/* ---------- audit (prototype lines 290–295, `vAudit` 1066–1096; S16) ---------- */
+.tbl tr.diff-row td {
+  background: var(--bad-soft);
+}
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+@media (max-width: 860px) {
+  .kpis {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+.kpi {
+  padding: 14px 16px;
+  display: grid;
+  gap: 4px;
+}
+.kpi b {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 600;
+}
+.kpi.bad b {
+  color: var(--bad);
+}
+/* Not in the prototype: 11 §7's heading, the evidence cell, the decision and the "show on drawing" dialog. */
+.audit-headline {
+  margin: 0;
+  font-weight: 500;
+}
+.diff-msg {
+  margin-top: 4px;
+  max-width: 46ch;
+}
+.diff-ev {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 6px;
+  align-items: center;
+}
+.diff-ev + .btn {
+  margin-top: 6px;
+}
+.reasons {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+.reason {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.modal.evidence {
+  width: min(1100px, 100%);
+}
+.evidence-pane {
+  display: flex;
+  flex-direction: column;
+  height: min(70vh, 720px);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  border: 1px solid var(--line);
+}
+.audit-picks {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+@media (max-width: 860px) {
+  .audit-picks {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.card.startbar {
+  border-top: 1px solid var(--line);
+  border-radius: var(--r-lg);
+}
+@media (max-width: 860px) {
+  /* the phone has no room for the sentence: the columns say the same */
+  .diff-msg {
+    display: none;
+  }
+}

@@ -7,7 +7,7 @@ GITLEAKS_IMAGE := ghcr.io/gitleaks/gitleaks:v8.21.2@sha256:0e99e8821643ea5b23571
 BACKEND := cd backend &&
 FRONTEND := cd frontend &&
 
-.PHONY: help install up down migrate seed dev lint licenses secrets test-unit test-int e2e fidelity screenshots check-screenshots eval eval-baseline gen-client check-client check
+.PHONY: help install up down migrate seed dev lint licenses secrets test-unit test-int e2e fidelity screenshots check-screenshots eval eval-baseline fixture-audit gen-client check-client check
 
 help:
 	@grep -E '^[a-z-]+:.*?## ' $(MAKEFILE_LIST) | awk -F':.*?## ' '{printf "  %-12s %s\n", $$1, $$2}'
@@ -27,7 +27,7 @@ migrate: ## Create the app DB role, then apply migrations (docs/db-schema.md)
 	$(BACKEND) uv run python -m konboro.db.bootstrap
 	$(BACKEND) uv run alembic upgrade head
 
-seed: migrate ## Demo data: tenant "לוחות דמו", price list from the prototype, review fixture (needs `make up`). Safe to rerun
+seed: migrate ## Demo data: tenant "לוחות דמו", price list from the prototype, review and audit fixtures (needs `make up`). Safe to rerun
 	$(BACKEND) uv run python -m konboro.db.seed
 
 dev: ## Run the API (port 8000), the pipeline worker and the web app (port 5180). Needs `make up`
@@ -71,6 +71,9 @@ check-screenshots: ## Compare the screens against the baselines, in the same ima
 
 eval: ## Golden-set eval vs eval/baseline.json. Replay by default; EVAL_MODE=live, EVAL_RECORD=1 re-records, =missing records only new calls (needs `make up`)
 	$(BACKEND) PYTHONPATH=.. uv run python -m eval.run
+
+fixture-audit: ## Write the 26-993 audit fixture from a replay run (S16; needs `make up`)
+	$(BACKEND) PYTHONPATH=.. uv run python -m eval.audit_fixture
 
 eval-baseline: ## Make this run's metrics the committed baseline, after an intended change (needs `make up`)
 	$(BACKEND) PYTHONPATH=.. uv run python -m eval.run --write-baseline --allow-regression

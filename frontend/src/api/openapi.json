@@ -81,6 +81,14 @@
             "description": "Money at risk; negative for an over-charge",
             "title": "Amount"
           },
+          "boxes": {
+            "description": "The evidence on the drawing, for \"הצג בשרטוט\" (11 §7, S16)",
+            "items": {
+              "$ref": "#/components/schemas/BoxOut"
+            },
+            "title": "Boxes",
+            "type": "array"
+          },
           "component_ids": {
             "items": {
               "type": "string"
@@ -263,7 +271,8 @@
           "status",
           "reject_reason",
           "reject_note",
-          "component_ids"
+          "component_ids",
+          "boxes"
         ],
         "title": "AuditDifferenceOut",
         "type": "object"
@@ -305,6 +314,14 @@
           "description": {
             "title": "Description",
             "type": "string"
+          },
+          "designators": {
+            "description": "The matched components' tags on the drawing (S16)",
+            "items": {
+              "type": "string"
+            },
+            "title": "Designators",
+            "type": "array"
           },
           "includes": {
             "description": "What the line says it includes (\"כולל\", \"+\"), 11 §5.2 item 6",
@@ -412,6 +429,7 @@
           "status",
           "includes",
           "component_ids",
+          "designators",
           "matched_qty"
         ],
         "title": "AuditLineOut",
@@ -489,6 +507,17 @@
             "title": "Differences",
             "type": "array"
           },
+          "drawing_file_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Drawing File Name"
+          },
           "drawing_id": {
             "title": "Drawing Id",
             "type": "string"
@@ -496,6 +525,18 @@
           "drawing_name": {
             "title": "Drawing Name",
             "type": "string"
+          },
+          "drawing_number": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "From the drawing's title block (01 §5.4)",
+            "title": "Drawing Number"
           },
           "drawing_status": {
             "title": "Drawing Status",
@@ -524,6 +565,14 @@
               "$ref": "#/components/schemas/AuditLineOut"
             },
             "title": "Lines",
+            "type": "array"
+          },
+          "pages": {
+            "description": "The audit drawing's pages, for the drawing pane (S16 decision 1)",
+            "items": {
+              "$ref": "#/components/schemas/PageOut"
+            },
+            "title": "Pages",
             "type": "array"
           },
           "quote_file_name": {
@@ -573,6 +622,8 @@
           "status",
           "drawing_status",
           "drawing_name",
+          "drawing_file_name",
+          "drawing_number",
           "quote_file_name",
           "input_kind",
           "quote_ref",
@@ -580,7 +631,8 @@
           "issues",
           "lines",
           "differences",
-          "corrected_quote_id"
+          "corrected_quote_id",
+          "pages"
         ],
         "title": "AuditOut",
         "type": "object"
@@ -2331,6 +2383,18 @@
       },
       "ProgressOut": {
         "properties": {
+          "audit_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "An audit drawing's audit (POST /audits); its results once ready",
+            "title": "Audit Id"
+          },
           "confirmation_reasons": {
             "default": [],
             "description": "Why the pages need the user's confirmation (01 §5.6); empty when they don't",
@@ -2435,6 +2499,7 @@
             "title": "Quote Id"
           },
           "stages": {
+            "description": "Stages 1–7; an audit drawing's are 1–4 and the audit step, 8 (11 §5.1)",
             "items": {
               "$ref": "#/components/schemas/StageOut"
             },

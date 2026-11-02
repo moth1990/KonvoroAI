@@ -1,13 +1,11 @@
 import { useEffect, useRef } from "react";
 
-import type { Quote } from "../../api/client";
 import { Icon } from "../../ui/Icon";
 import { ROUTES } from "../newQuote/model";
 import {
   confidenceText,
   geometryText,
   kindLabel,
-  overlays,
   pageNote,
   pageTitle,
   pageWarnings,
@@ -17,31 +15,32 @@ import {
   stripCount,
   stripLabel,
   stripTag,
+  type Overlay,
   type Page,
 } from "./drawingModel";
-import type { Filter } from "./model";
 import { Viewer, type FocusRequest, type ViewerHandle } from "./Viewer";
 
 /**
  * The drawing pane (09 §6.5, prototype `vReview` drawing-pane and `setupViewer`): the page strip, the page in the
  * viewer with its boxes, the page's chips and the zoom tools. The layout and classes are the prototype's; the
  * spec's extras sit in its style (S11 decision 4): "עמוד x מתוך y" with previous / next, each thumbnail's count and
- * tag, and the classification row, read-only until S23.
+ * tag, and the classification row, read-only until S23. The caller gives each page's boxes: the review screen its
+ * lines', the audit screen a difference's evidence (S16).
  */
 export function DrawingPane(props: {
-  quote: Quote;
+  pages: Page[];
+  overlays: (page: Page) => Overlay[];
   pageId: string | null;
   onPage: (pageId: string) => void;
-  selected: string | null;
-  filter: Filter;
   activePanelId: string | null;
+  /** The page's panel frames and veils (09 §6.5); the audit shows a difference's boxes only. */
+  showPanels?: boolean;
   focus: FocusRequest | null;
   finding: { pageId: string; bbox: number[] } | null;
   onSelectLine: (lineId: string) => void;
   onSelectPanel: (panelId: string) => void;
 }) {
-  const { quote } = props;
-  const pages = quote.pages;
+  const { pages } = props;
   const page = pages.find((p) => p.page_id === props.pageId) ?? pages[0];
   const viewer = useRef<ViewerHandle>(null);
 
@@ -52,11 +51,7 @@ export function DrawingPane(props: {
       </div>
     );
 
-  const boxes = overlays(quote, page, {
-    selected: props.selected,
-    filter: props.filter,
-    activePanelId: props.activePanelId,
-  });
+  const boxes = props.overlays(page);
   const note = pageNote(page);
   const warnings = pageWarnings(page);
   const conf = confidenceText(page);
@@ -76,7 +71,7 @@ export function DrawingPane(props: {
             ref={viewer}
             page={page}
             overlays={boxes}
-            frames={panelFrames(page, props.activePanelId)}
+            frames={props.showPanels === false ? [] : panelFrames(page, props.activePanelId)}
             findingBox={props.finding && props.finding.pageId === page.page_id ? props.finding.bbox : null}
             focus={props.focus}
             onSelectLine={props.onSelectLine}
