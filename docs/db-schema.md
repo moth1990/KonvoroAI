@@ -224,7 +224,7 @@ This table answers the customer's question "why was this counted?".
 
 **`panels`** (`pnl_`): `drawing_id`, `name`, `page_ids text[]`, `bboxes jsonb` (page → bbox), and `confidence`.
 
-**`context_artifacts`** (`ctx_`): `drawing_id`, `page_id`, `kind` (e.g. `general_notes`, `bom_table`, `legend`), `format`, `content text`.
+**`context_artifacts`** (`ctx_`): `drawing_id`, `page_id`, `kind` (e.g. `general_notes`, `bom_table`, `legend`), `format`, `content text`. A `bom_table` (S14, 01 §5.8) is JSON (`pipeline/bom/table.py`, `BomTable`): the source (`spreadsheet` or `image`), the sheet, the heading's panel and project, each column with its role and who gave it (`code`, `model`, `user`), the rows' cells, a confidence per cell and a box per row from a picture, `mapping_sure` and `cropped`. A picture's price cells are never kept. The user's column roles rewrite it.
 
 **`page_templates`** (`tpl_`, 01 §5.7): a factory's fixed page, so the next drawing from the same producer classifies it without a model.
 - `producer`: the title block's `designer`, normalized; `page_kind` (`factory_template`).
@@ -245,7 +245,7 @@ This table answers the customer's question "why was this counted?".
 - `drawing_id`, `panel_id`, `family`.
 - `attributes jsonb`: per attribute, `{value, source, confidence, span_ids}`.
 - `quantity numeric(12,3)`, `designators text[]`.
-- `instances jsonb`: a list of `{instance_id, page_id, bbox, role}`, used for highlighting on the drawing.
+- `instances jsonb`: a list of `{instance_id, page_id, bbox, role}`, used for highlighting on the drawing. A BOM row (S14) has role `bom_row`, its `rows` in the table, and `bbox` null when it came from a spreadsheet.
 - `confidence`, `brand_hint`, `explicit_texts jsonb`.
 - `supply_scope`: `in_panel`, `other_location`, `prepare_only` or `by_others` (04 §5.1.2). The values were `outside_panel`, `prep_only` and `not_in_scope` until migration 0009 (S13): the spec's names won.
 
@@ -299,7 +299,7 @@ This table answers the customer's question "why was this counted?".
 **`correction_events`** (`evt_`, 09 §10) is append-only. The app may update only `undone`, and a trigger enforces this.
 - `quote_id`, `quote_version`, `user_id`.
 - `source`: `review_screen`, `chat`, `price_list`, or `new_quote` (a page kind changed on the new-quote screen, S08).
-- `type`: the 09 §10 list, plus `price_changed` and `supplier_selected` from 09 §7.14–7.15.
+- `type`: the 09 §10 list, plus `price_changed` and `supplier_selected` from 09 §7.14–7.15, and `bom_columns_mapped` (the user set a BOM spreadsheet's column roles, 01 §5.8; migration 0010, S14).
 - `line_id`, `component_id`, `instance_ids`, `page_id`.
 - `before jsonb`, `after jsonb`, `reason`, `undone bool`.
 

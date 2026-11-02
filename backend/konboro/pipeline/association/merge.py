@@ -251,7 +251,7 @@ def components(
             texts += [t for t in b.instance.explicit_texts if t not in texts]
         det_ids: list[str] = []
         for b in members:
-            det_ids += [x for x in (b.instance.det_id, *b.extra_det_ids) if x not in det_ids]
+            det_ids += [x for x in (b.instance.det_id, *b.extra_det_ids) if x and x not in det_ids]
         out.append(
             Component(
                 component_id=component_id,

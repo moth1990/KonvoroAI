@@ -4,7 +4,7 @@ Never used by the product's workers when a key is set, and never in the eval (ca
 
 Pages are classified like NURSERY-1 (01 §5.7 example): page 1 technical data, pages 2–3 factory templates, page 4 the
 front view, the rest single-line diagrams. A file whose name contains "unsure" gets a low-confidence first page, so
-stage 1 asks the user to confirm (01 §5.6).
+stage 1 asks the user to confirm (01 §5.6); one whose name contains "bom" is a BOM table.
 
 OCR (stage 2) reads one word, "Q1", at the top left of each tile's ink, so the stage's ink check keeps it.
 
@@ -13,6 +13,10 @@ with no symbol finds nothing. The disambiguation call picks the first candidate.
 
 The tile agent (stage 4) answers once for every symbol it is asked about, with no values: nothing is written beside
 the stand-in breakers but their tag.
+
+A picture of a BOM (01 §5.8) reads as a short handwritten form for "לוח קומה 1": quantity and item columns, three
+items, the third continued on the next row, and the last row clear of the image's edge. A spreadsheet's unknown
+headers map by position: the first column is the item, the second the quantity.
 """
 
 import io
@@ -29,9 +33,12 @@ from konboro_llm.stages.page_classification import STAGE as CLASSIFY
 from konboro_llm.stages.page_classification import TitleBlockAnswer
 from konboro_llm.stages.symbol_detection import STAGE as DETECT
 from konboro_llm.stages.symbol_disambiguation import STAGE as DISAMBIGUATE
+from konboro_llm.stages.table_transcription import STAGE as TABLE
+from konboro_llm.stages.table_transcription import MappingAnswer
 from konboro_llm.stages.text_association import STAGE as ASSOCIATE
 
 UNSURE = "unsure"
+BOM = "bom"  # a picture whose file name has this is a BOM page
 LOW_CONFIDENCE = 0.6
 TITLE_BLOCK = {"designer": "מפעל הדגמה", "drawing_number": "D-100", "date": "2026-10-05", "panel_name": "לוח ראשי"}
 KINDS = {1: "technical_data", 2: "factory_template", 3: "factory_template", 4: "panel_front_view"}
@@ -41,7 +48,7 @@ _PAGE = re.compile(r'^Page (\d+) of (\d+), file "(.*)"\.', re.M)
 def classification(request: LLMRequest[Any]) -> dict[str, Any]:
     found = _PAGE.search(request.user_text)
     page, file_name = (int(found[1]), found[3]) if found else (1, "")
-    kind = KINDS.get(page, "single_line_diagram")
+    kind = "bom_table" if BOM in file_name.lower() else KINDS.get(page, "single_line_diagram")
     confidence = LOW_CONFIDENCE if page == 1 and UNSURE in file_name.lower() else 0.95
     diagram = kind == "single_line_diagram"
     return {
@@ -98,6 +105,31 @@ def tile_agent(request: LLMRequest[Any]) -> dict[str, Any]:
     return {"instances": [{"det": d} for d in _OWN.findall(request.user_text)]}
 
 
+BOM_PANEL = "לוח קומה 1"
+BOM_ROWS = [("1", "מפסק 3X63"), ("12", 'מא"ז 1X16'), ("1", "רב מודד SATEC"), (None, "כולל יציאת ממסר")]
+_LETTER = re.compile(r"^- ([A-Z]+):", re.M)
+
+
+def bom_table(request: LLMRequest[Any]) -> dict[str, Any]:
+    if request.output_schema is MappingAnswer:
+        letters = _LETTER.findall(request.user_text)
+        roles = ["item", "quantity"]
+        return {"columns": [{"column": x, "role": roles[i] if i < 2 else "other"} for i, x in enumerate(letters)]}
+    rows = [
+        {
+            "cells": [{"text": qty, "confidence": 0.95}, {"text": item, "confidence": 0.9}],
+            "box": [100, 300 + 60 * n, 900, 350 + 60 * n],
+        }
+        for n, (qty, item) in enumerate(BOM_ROWS)
+    ]
+    return {
+        "panel_name": BOM_PANEL,
+        "project_name": "פרויקט הדגמה",
+        "columns": [{"header": "כמות", "role": "quantity"}, {"header": "פרטים", "role": "item"}],
+        "rows": rows,
+    }
+
+
 def answer(request: LLMRequest[Any]) -> dict[str, Any]:
     if request.stage == CLASSIFY:
         return classification(request)
@@ -109,6 +141,8 @@ def answer(request: LLMRequest[Any]) -> dict[str, Any]:
         return decision(request)
     if request.stage == ASSOCIATE:
         return tile_agent(request)
+    if request.stage == TABLE:
+        return bom_table(request)
     if request.output_schema is TitleBlockAnswer:
         return TITLE_BLOCK
     if request.output_schema is GeneralNotes:

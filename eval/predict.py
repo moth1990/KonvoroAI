@@ -48,17 +48,27 @@ def prediction(
 EVIDENCE_SOURCES = frozenset({"drawing", "cad_attrib", "shared_label", "bom"})
 
 
+def _evidenced(source: str | None, span_ids: list[str], has_row: bool) -> bool:
+    if source is None:
+        return False
+    if source not in EVIDENCE_SOURCES:
+        return True  # graphic poles need no span
+    return bool(span_ids) or (source == "bom" and has_row)
+
+
 def merge_counts(merge: MergeResult) -> dict[str, int]:
     """Stage 4's counts (04 §6.1, §10). A value with no evidence: one with no source, or read from text with no span
-    to show for it (graphic poles need none). 04 §10 wants 0."""
-    attrs = [a for i in merge.instances for a in i.attributes.values()]
-    attrs += [a for c in merge.components for a in c.attributes.values()]
-    attrs += [a for x in merge.missing for a in x.attributes.values()]
-    unproven = sum(
-        1
-        for a in attrs
-        if a.value is not None and (a.source is None or (a.source in EVIDENCE_SOURCES and not a.span_ids))
-    )
+    to show for it (graphic poles need none). A BOM row's value has its row for evidence, not a span (01 §5.8). 04 §10
+    wants 0."""
+    rows = {i.instance_id for i in merge.instances if i.method == "bom" and i.rows}
+    attrs = [(a, i.instance_id in rows) for i in merge.instances for a in i.attributes.values()]
+    attrs += [
+        (a, bool(c.instance_ids) and all(i in rows for i in c.instance_ids))
+        for c in merge.components
+        for a in c.attributes.values()
+    ]
+    attrs += [(a, False) for x in merge.missing for a in x.attributes.values()]
+    unproven = sum(1 for a, has_row in attrs if a.value is not None and not _evidenced(a.source, a.span_ids, has_row))
     return {
         "instances": merge.stats.instance_count,
         "components": merge.stats.component_count,

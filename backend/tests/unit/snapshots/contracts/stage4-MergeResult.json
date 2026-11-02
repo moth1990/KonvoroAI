@@ -373,6 +373,7 @@
     },
     "Instance": {
       "additionalProperties": false,
+      "description": "One symbol and what was read for it, or one row of a BOM (01 §5.8, S14 decision 5): no detection, the row's\nnumbers in its table, and its box on the page when it came from a picture.",
       "properties": {
         "attributes": {
           "additionalProperties": {
@@ -383,24 +384,31 @@
           "type": "object"
         },
         "bbox": {
-          "maxItems": 4,
-          "minItems": 4,
-          "prefixItems": [
+          "anyOf": [
             {
-              "type": "number"
+              "maxItems": 4,
+              "minItems": 4,
+              "prefixItems": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                }
+              ],
+              "type": "array"
             },
             {
-              "type": "number"
-            },
-            {
-              "type": "number"
-            },
-            {
-              "type": "number"
+              "type": "null"
             }
           ],
-          "title": "Bbox",
-          "type": "array"
+          "title": "Bbox"
         },
         "brand_hint": {
           "anyOf": [
@@ -434,9 +442,16 @@
           "type": "number"
         },
         "det_id": {
-          "pattern": "^det_[0-9A-Za-z_]+$",
-          "title": "Det Id",
-          "type": "string"
+          "anyOf": [
+            {
+              "pattern": "^det_[0-9A-Za-z_]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Det Id"
         },
         "explicit_texts": {
           "default": [],
@@ -468,7 +483,8 @@
             "cad_attrib",
             "geometric",
             "agent",
-            "fallback_geometric"
+            "fallback_geometric",
+            "bom"
           ],
           "title": "Method",
           "type": "string"
@@ -495,6 +511,14 @@
             }
           ],
           "title": "Panel Id"
+        },
+        "rows": {
+          "default": [],
+          "items": {
+            "type": "integer"
+          },
+          "title": "Rows",
+          "type": "array"
         },
         "status": {
           "enum": [

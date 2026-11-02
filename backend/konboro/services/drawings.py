@@ -5,7 +5,7 @@ rolls back: the reservation, the drawing and the file rows never existed, so a r
 trace (01 §4.5: "not counted"). Stage 1 is queued only after the commit, by the caller.
 """
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from typing import Literal
 
@@ -13,7 +13,19 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from konboro.db.ids import new_id
-from konboro.db.models import Component, Customer, Drawing, DrawingFile, Page, Panel, Project, Quote, StageRun
+from konboro.db.models import (
+    Component,
+    ContextArtifact,
+    Customer,
+    Drawing,
+    DrawingFile,
+    Page,
+    Panel,
+    Project,
+    Quote,
+    StageRun,
+)
+from konboro.pipeline.bom.table import BomTable, items
 from konboro.services import plan, quota
 from konboro.services.intake import CheckedFile, Limits, UploadCheck, check_upload
 
@@ -153,6 +165,7 @@ class Progress:
     quote_id: str | None
     # stage 4's components in the panel: (devices, products, whether any has a tag); None before stage 4 ran
     components: tuple[int, int, bool] | None = None
+    bom: dict[str, BomTable] = field(default_factory=dict)  # page id → the BOM table stage 1 read (01 §5.8)
 
 
 def progress(session: Session, tenant_id: str, drawing_id: str) -> Progress | None:
@@ -177,13 +190,22 @@ def progress(session: Session, tenant_id: str, drawing_id: str) -> Progress | No
         )
     ).all()
     components = (int(sum(q for q, _ in rows)), len(rows), any(t for _, t in rows))
+    bom = {
+        a.page_id: BomTable.model_validate_json(a.content)
+        for a in session.scalars(
+            select(ContextArtifact).where(ContextArtifact.drawing_id == drawing_id, ContextArtifact.kind == "bom_table")
+        )
+        if a.page_id
+    }
     return Progress(
-        drawing, name, files, runs, [(p, names.get(p.file_id, "")) for p in pages], panels, quote_id, components
+        drawing, name, files, runs, [(p, names.get(p.file_id, "")) for p in pages], panels, quote_id, components, bom
     )
 
 
 def stage_summary(p: Progress, stage: int) -> str | None:
     """Stages 1 to 4 are the real ones so far (prototype STAGES, lines 761–764)."""
+    if p.bom and not any(page.route == "process" for page, _ in p.pages):  # BOM only (01 §4.4)
+        return _bom_summary(p, stage)
     if stage == 2:
         return _extraction_summary(p)
     if stage == 3:
@@ -199,6 +221,23 @@ def stage_summary(p: Progress, stage: int) -> str | None:
         parts.append(_count_text(factory, "תבנית אחת של המפעל", "תבניות של המפעל"))
     parts.append(_count_text(len(p.panels), "לוח אחד", "לוחות"))
     return " · ".join(parts)
+
+
+def _bom_summary(p: Progress, stage: int) -> str | None:
+    """A BOM-only drawing (01 §5.8): stage 1 reads the table, stages 2 and 3 have no drawing, stage 4 merges the
+    rows into products. "כתב כמויות · 20 שורות · לוח אחד" · "אין שרטוט, רק כתב כמויות" · "20 שורות ב-19 מוצרים"."""
+    rows = sum(len(items(t)) for t in p.bom.values())
+    if stage == 1:
+        return " · ".join(
+            ["כתב כמויות", _count_text(rows, "שורה אחת", "שורות"), _count_text(len(p.panels), "לוח אחד", "לוחות")]
+        )
+    if stage in (2, 3):
+        return "אין שרטוט, רק כתב כמויות"
+    if stage == 4 and p.components is not None:
+        _, products, _ = p.components
+        where = "במוצר אחד" if products == 1 else f"ב-{products} מוצרים"
+        return f"{_count_text(rows, 'שורה אחת', 'שורות')} {where}"
+    return None
 
 
 def _extraction_summary(p: Progress) -> str:

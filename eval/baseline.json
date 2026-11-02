@@ -679,8 +679,8 @@
         "agent_tiles": 0,
         "citation_mismatches": 0,
         "cited_values": 0,
-        "components": 0,
-        "instances": 0,
+        "components": 20,
+        "instances": 20,
         "missing": 0,
         "shared_labels": 0,
         "tiles": 0,
@@ -689,22 +689,22 @@
       "panels": {
         "לוח חשמל קומה י\"א": {
           "component_precision": {
-            "den": 0,
+            "den": 18,
             "kind": "ratio",
-            "num": 0.0,
-            "value": null
+            "num": 17.0,
+            "value": 0.944444
           },
           "component_recall": {
             "den": 18,
             "kind": "ratio",
-            "num": 0.0,
-            "value": 0.0
+            "num": 17.0,
+            "value": 0.944444
           }
         }
       },
       "predicted": {
-        "products": 0,
-        "units": 0
+        "products": 20,
+        "units": 91
       },
       "predicted_total": "0",
       "quote_total": null,
@@ -739,8 +739,8 @@
           "panel_count_accuracy": {
             "den": 1,
             "kind": "ratio",
-            "num": 0.0,
-            "value": 0.0
+            "num": 1.0,
+            "value": 1.0
           },
           "route_accuracy": {
             "den": 0,
@@ -780,16 +780,16 @@
             "value": null
           },
           "component_precision": {
-            "den": 0,
+            "den": 18,
             "kind": "ratio",
-            "num": 0.0,
-            "value": null
+            "num": 17.0,
+            "value": 0.944444
           },
           "component_recall": {
             "den": 18,
             "kind": "ratio",
-            "num": 0.0,
-            "value": 0.0
+            "num": 17.0,
+            "value": 0.944444
           },
           "current_a_accuracy": {
             "den": 0,
@@ -804,16 +804,16 @@
             "value": null
           },
           "quantity_accuracy": {
-            "den": 0,
+            "den": 17,
             "kind": "ratio",
-            "num": 0.0,
-            "value": null
+            "num": 17.0,
+            "value": 1.0
           },
           "unit_recall": {
             "den": 91,
             "kind": "ratio",
-            "num": 0.0,
-            "value": 0.0
+            "num": 90.0,
+            "value": 0.989011
           },
           "values_without_evidence": {
             "den": 1,
@@ -1468,8 +1468,8 @@
         "panel_count_accuracy": {
           "den": 5,
           "kind": "ratio",
-          "num": 3.0,
-          "value": 0.6
+          "num": 4.0,
+          "value": 0.8
         },
         "route_accuracy": {
           "den": 24,
@@ -1678,16 +1678,16 @@
           "value": 0.044199
         },
         "component_precision": {
-          "den": 145,
+          "den": 163,
           "kind": "ratio",
-          "num": 83.0,
-          "value": 0.572414
+          "num": 100.0,
+          "value": 0.613497
         },
         "component_recall": {
           "den": 147,
           "kind": "ratio",
-          "num": 83.0,
-          "value": 0.564626
+          "num": 100.0,
+          "value": 0.680272
         },
         "current_a_accuracy": {
           "den": 26,
@@ -1702,16 +1702,16 @@
           "value": 0.928571
         },
         "quantity_accuracy": {
-          "den": 83,
+          "den": 100,
           "kind": "ratio",
-          "num": 56.0,
-          "value": 0.674699
+          "num": 73.0,
+          "value": 0.73
         },
         "unit_recall": {
           "den": 411,
           "kind": "ratio",
-          "num": 193.0,
-          "value": 0.469586
+          "num": 283.0,
+          "value": 0.688564
         },
         "values_without_evidence": {
           "den": 5,
@@ -1753,8 +1753,8 @@
           "panel_count_accuracy": {
             "den": 1,
             "kind": "ratio",
-            "num": 0.0,
-            "value": 0.0
+            "num": 1.0,
+            "value": 1.0
           },
           "route_accuracy": {
             "den": 0,
@@ -1794,16 +1794,16 @@
             "value": null
           },
           "component_precision": {
-            "den": 0,
+            "den": 18,
             "kind": "ratio",
-            "num": 0.0,
-            "value": null
+            "num": 17.0,
+            "value": 0.944444
           },
           "component_recall": {
             "den": 18,
             "kind": "ratio",
-            "num": 0.0,
-            "value": 0.0
+            "num": 17.0,
+            "value": 0.944444
           },
           "current_a_accuracy": {
             "den": 0,
@@ -1818,16 +1818,16 @@
             "value": null
           },
           "quantity_accuracy": {
-            "den": 0,
+            "den": 17,
             "kind": "ratio",
-            "num": 0.0,
-            "value": null
+            "num": 17.0,
+            "value": 1.0
           },
           "unit_recall": {
             "den": 91,
             "kind": "ratio",
-            "num": 0.0,
-            "value": 0.0
+            "num": 90.0,
+            "value": 0.989011
           },
           "values_without_evidence": {
             "den": 1,

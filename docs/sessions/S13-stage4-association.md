@@ -5,7 +5,7 @@
 | **Track** | P |
 | **Branch** | `s13-stage4-association` |
 | **Depends on** | S12 |
-| **Status** | in review |
+| **Status** | done |
 | **PR** | [moth1990/KonvoroAI#14](https://github.com/moth1990/KonvoroAI/pull/14) |
 
 ## Goal

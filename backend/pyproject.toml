@@ -8,6 +8,7 @@ dependencies = [
     "anthropic>=0.70",
     "boto3>=1.35",
     "fastapi>=0.115",
+    "openpyxl>=3.1.5",
     "pdfplumber>=0.11",
     "pi-heif>=1.4.0",
     "pillow>=11",
@@ -29,6 +30,7 @@ dev = [
     "pytest>=8.3",
     "pytest-cov>=6.0",
     "ruff>=0.8",
+    "types-openpyxl>=3.1.5.20261017",
 ]
 
 [build-system]

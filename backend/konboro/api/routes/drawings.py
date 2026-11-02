@@ -6,6 +6,7 @@ from fastapi import APIRouter, BackgroundTasks, Depends, File, Form, Path, Reque
 
 from konboro.domain.permissions import Permission
 from konboro.pipeline import coordinator
+from konboro.pipeline.bom.table import BomTable, items
 from konboro.pipeline.intake import corrections
 from konboro.pipeline.intake.routing import CONFIRM_THRESHOLD
 from konboro.pipeline.stages import NAMES
@@ -15,9 +16,12 @@ from konboro.services.intake import MB, Limits
 from konboro.services.queue import Queue, StageMessage
 from konboro.services.storage import Storage
 
-from ..deps import Actor, require
+from ..deps import Actor, require, require_flag
 from ..errors import ERROR_RESPONSES, ApiError
 from ..schemas import (
+    BomColumnOut,
+    BomColumnsIn,
+    BomTableOut,
     NoticeOut,
     PageKindIn,
     ProgressFileOut,
@@ -123,13 +127,17 @@ def cancel(request: Request, actor: Writer, drawing_id: DrawingId) -> ProgressOu
 
 @router.post("/drawings/{drawing_id}/confirm")
 def confirm(request: Request, background: BackgroundTasks, actor: Writer, drawing_id: DrawingId) -> ProgressOut:
-    """The user confirmed the pages (01 §5.6, "אשר והמשך"): decoding goes on from stage 2."""
+    """The user confirmed the pages (01 §5.6, "אשר והמשך"): decoding goes on from stage 2. A BOM column mapping they
+    were shown is settled with it, and one with no item or no quantity column is refused (S14 decision 1)."""
     try:
+        corrections.settle_bom_mappings(actor.session, request.app.state.storage, actor.tenant_id, drawing_id)
         message = coordinator.confirm(actor.session, actor.tenant_id, drawing_id)
     except LookupError as e:
         raise ApiError(404, "not_found") from e
     except coordinator.NotAwaitingError as e:
         raise ApiError(409, "not_awaiting_confirmation") from e
+    except corrections.BomMappingIncompleteError as e:
+        raise ApiError(409, "bom_mapping_incomplete") from e
     actor.session.flush()
     background.add_task(request.app.state.queue.send, message)  # after the commit
     return _progress_out(actor, request.app.state.storage, drawing_id)
@@ -160,6 +168,60 @@ def change_page_kind(
     if change.message is not None:
         background.add_task(request.app.state.queue.send, change.message)  # after the commit
     return _progress_out(actor, storage, drawing_id)
+
+
+@router.put(
+    "/drawings/{drawing_id}/pages/{page_id}/bom-columns", dependencies=[Depends(require_flag("bom_column_mapping"))]
+)
+def set_bom_columns(
+    request: Request,
+    background: BackgroundTasks,
+    actor: Writer,
+    drawing_id: DrawingId,
+    page_id: Annotated[str, Path(pattern=r"^pg_[0-9A-Z]{26}$")],
+    body: BomColumnsIn,
+) -> ProgressOut:
+    """The user sets the roles of a BOM spreadsheet's columns (01 §5.8, S14 decision 1). On a finished drawing
+    stages 2–7 run again."""
+    storage: Storage = request.app.state.storage
+    roles = {c.index: c.role for c in body.columns}
+    try:
+        change = corrections.set_bom_columns(
+            actor.session, storage, actor.tenant_id, actor.user_id, drawing_id, page_id, roles
+        )
+    except LookupError as e:
+        raise ApiError(404, "not_found") from e
+    except coordinator.DrawingFinishedError as e:
+        raise ApiError(409, "drawing_finished") from e
+    except coordinator.DrawingBusyError as e:
+        raise ApiError(409, "drawing_busy") from e
+    actor.session.flush()
+    if change.message is not None:
+        background.add_task(request.app.state.queue.send, change.message)  # after the commit
+    return _progress_out(actor, storage, drawing_id)
+
+
+SAMPLES = 2
+
+
+def _bom_out(table: BomTable) -> BomTableOut:
+    return BomTableOut(
+        source=table.source,
+        sheet=table.sheet,
+        mapping_sure=table.mapping_sure,
+        columns=[
+            BomColumnOut(
+                index=c.index,
+                letter=c.letter,
+                header=c.header,
+                role=c.role,
+                by=c.by,
+                samples=[x for r in table.rows if c.index < len(r.cells) and (x := r.cells[c.index])][:SAMPLES],
+            )
+            for c in table.columns
+        ],
+        rows=len(items(table)),
+    )
 
 
 def _progress_out(actor: Actor, storage: Storage, drawing_id: str) -> ProgressOut:
@@ -223,6 +285,7 @@ def _progress_out(actor: Actor, storage: Storage, drawing_id: str) -> ProgressOu
                 )
                 if page.render_key
                 else None,
+                bom=_bom_out(p.bom[page.id]) if page.id in p.bom else None,
             )
             for page, file_name in p.pages
         ]

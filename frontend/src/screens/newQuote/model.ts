@@ -168,7 +168,45 @@ export const CONFIRM_REASONS: Record<string, string> = {
   low_confidence: "חלק מהעמודים סווגו בביטחון נמוך. הם מסומנים, ואפשר לשנות להם את הסוג.",
   no_diagram_pages: "לא מצאנו תוכנית חד-קווית. בדקו את הסיווג.",
   panel_count_mismatch: "מספר הלוחות שמצאנו שונה ממה שציינתם.",
+  bom_mapping: "לא זיהינו בוודאות את העמודות בכתב הכמויות. בחרו איזו עמודה היא הפריט ואיזו הכמות.",
 };
+
+/** A BOM column's role, as the confirmation step names it (01 §5.8, S14). */
+export const BOM_ROLES: Record<string, string> = {
+  item: "פריט",
+  quantity: "כמות",
+  panel: "לוח",
+  model: 'דגם / מק"ט',
+  brand: "יצרן",
+  unit: "יחידה",
+  row_number: "מספר שורה",
+  price: "מחיר (לא נקרא)",
+  other: "לא בשימוש",
+};
+
+/** Who gave a column its role. */
+export const BOM_BY: Record<string, { label: string; chip: string }> = {
+  code: { label: "לפי הכותרת", chip: "" },
+  model: { label: "הצעה, לבדיקה", chip: "warn" },
+  user: { label: "נבחר על ידיכם", chip: "ok" },
+};
+
+/** The spreadsheet pages whose column mapping the confirmation step shows. */
+export function bomPages(p: Progress): ProgressPage[] {
+  return p.pages.filter((page) => page.bom?.source === "spreadsheet");
+}
+
+/** Why "אשר והמשך" waits, or null: every BOM table needs one item column and one quantity column. */
+export function bomProblem(p: Progress): string | null {
+  for (const page of bomPages(p)) {
+    const roles = page.bom?.columns.map((c) => c.role) ?? [];
+    const items = roles.filter((r) => r === "item").length;
+    const quantities = roles.filter((r) => r === "quantity").length;
+    const sheet = page.bom?.sheet ? ` בגיליון "${page.bom.sheet}"` : "";
+    if (items !== 1 || quantities !== 1) return `בחרו עמודת פריט אחת ועמודת כמות אחת${sheet}.`;
+  }
+  return null;
+}
 
 /** The line above the page grid on the done step (prototype line 846). */
 export function gridHint(p: Progress): string {

@@ -132,7 +132,8 @@ export interface paths {
         put?: never;
         /**
          * Confirm
-         * @description The user confirmed the pages (01 §5.6, "אשר והמשך"): decoding goes on from stage 2.
+         * @description The user confirmed the pages (01 §5.6, "אשר והמשך"): decoding goes on from stage 2. A BOM column mapping they
+         *     were shown is settled with it, and one with no item or no quantity column is refused (S14 decision 1).
          */
         post: operations["confirm_drawings__drawing_id__confirm_post"];
         delete?: never;
@@ -159,6 +160,27 @@ export interface paths {
          * @description The user changes a page's kind (01 §5.6). A changed route on a finished drawing runs stages 2–7 again.
          */
         patch: operations["change_page_kind_drawings__drawing_id__pages__page_id__patch"];
+        trace?: never;
+    };
+    "/drawings/{drawing_id}/pages/{page_id}/bom-columns": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Set Bom Columns
+         * @description The user sets the roles of a BOM spreadsheet's columns (01 §5.8, S14 decision 1). On a finished drawing
+         *     stages 2–7 run again.
+         */
+        put: operations["set_bom_columns_drawings__drawing_id__pages__page_id__bom_columns_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/drawings/{drawing_id}/progress": {
@@ -383,6 +405,74 @@ export interface components {
             project?: string | null;
             /** Revision Of */
             revision_of?: string | null;
+        };
+        /** BomColumnOut */
+        BomColumnOut: {
+            /**
+             * By
+             * @description Who gave the role
+             * @enum {string}
+             */
+            by: "code" | "model" | "user";
+            /** Header */
+            header: string | null;
+            /** Index */
+            index: number;
+            /**
+             * Letter
+             * @description The column as Excel names it: A, B, …
+             */
+            letter: string;
+            /**
+             * Role
+             * @enum {string}
+             */
+            role: "item" | "quantity" | "panel" | "model" | "brand" | "unit" | "row_number" | "price" | "other";
+            /**
+             * Samples
+             * @description The first cells below the header, for the user to recognise the column
+             */
+            samples: string[];
+        };
+        /** BomColumnRoleIn */
+        BomColumnRoleIn: {
+            /** Index */
+            index: number;
+            /**
+             * Role
+             * @enum {string}
+             */
+            role: "item" | "quantity" | "panel" | "model" | "brand" | "unit" | "row_number" | "price" | "other";
+        };
+        /** BomColumnsIn */
+        BomColumnsIn: {
+            /** Columns */
+            columns: components["schemas"]["BomColumnRoleIn"][];
+        };
+        /**
+         * BomTableOut
+         * @description A BOM page's table (01 §5.8): its columns and how they were mapped (S14 decision 1).
+         */
+        BomTableOut: {
+            /** Columns */
+            columns: components["schemas"]["BomColumnOut"][];
+            /**
+             * Mapping Sure
+             * @description False: the user should check the roles before decoding goes on
+             */
+            mapping_sure: boolean;
+            /**
+             * Rows
+             * @description Product rows, after the row rules
+             */
+            rows: number;
+            /** Sheet */
+            sheet: string | null;
+            /**
+             * Source
+             * @enum {string}
+             */
+            source: "spreadsheet" | "image";
         };
         /**
          * BoxOut
@@ -804,7 +894,7 @@ export interface components {
              * @description Why the pages need the user's confirmation (01 §5.6); empty when they don't
              * @default []
              */
-            confirmation_reasons: ("low_confidence" | "no_diagram_pages" | "panel_count_mismatch")[];
+            confirmation_reasons: ("low_confidence" | "no_diagram_pages" | "panel_count_mismatch" | "bom_mapping")[];
             /**
              * Counted
              * @description Whether this upload is counted in the quota right now
@@ -857,6 +947,8 @@ export interface components {
         };
         /** ProgressPageOut */
         ProgressPageOut: {
+            /** @description A BOM page's table, once stage 1 read it */
+            bom?: components["schemas"]["BomTableOut"] | null;
             /** Classified By */
             classified_by?: ("model" | "user" | "reused" | "template") | null;
             /** File Name */
@@ -1525,6 +1617,42 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": components["schemas"]["PageKindIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProgressOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    set_bom_columns_drawings__drawing_id__pages__page_id__bom_columns_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                drawing_id: string;
+                page_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BomColumnsIn"];
             };
         };
         responses: {

@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useRef, useState, type DragEvent } from "react";
+import { Fragment, useEffect, useRef, useState, type DragEvent } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router";
 
 import {
@@ -9,19 +9,26 @@ import {
   confirmDrawing,
   fetchProgress,
   fetchRevisable,
+  setBomColumns,
   uploadDrawing,
+  type BomRole,
   type Me,
   type PageKind,
   type Progress,
   type UploadedFile,
 } from "../../api/client";
 import { useMe } from "../../api/QueryProvider";
+import { countText } from "../../format";
 import { quotaView } from "../../shell/quota";
 import { Shell } from "../../shell/Shell";
 import { Icon } from "../../ui/Icon";
 import { useToast } from "../../ui/Toast";
 import {
   applyServerCheck,
+  BOM_BY,
+  BOM_ROLES,
+  bomPages,
+  bomProblem,
   clientCheck,
   CONFIRM_REASONS,
   countedText,
@@ -71,7 +78,7 @@ export function NewQuoteScreen() {
   if (!me.data) body = null;
   else if (drawingId && !p) body = progress.isError ? <LoadError /> : null;
   else if (p && p.status === "awaiting_confirmation")
-    body = <ConfirmStep progress={p} onCancelled={() => setParams({})} />;
+    body = <ConfirmStep progress={p} me={me.data} onCancelled={() => setParams({})} />;
   else if (p && isActive(p)) body = <RunStep progress={p} onCancelled={() => setParams({})} />;
   else if (p && p.status === "ready") body = <DoneStep progress={p} me={me.data} />;
   else if (p && p.status === "failed") body = <FailedStep progress={p} onBack={() => setParams({})} />;
@@ -527,7 +534,7 @@ function DoneStep({ progress: p, me }: { progress: Progress; me: Me }) {
  * The pages wait for the user (01 §5.6; S08 decision: the done step's grid, a line saying why, the unsure pages
  * marked, and "אשר והמשך"). Changing a kind here re-runs nothing: decoding hasn't gone past stage 1.
  */
-function ConfirmStep({ progress: p, onCancelled }: { progress: Progress; onCancelled: () => void }) {
+function ConfirmStep({ progress: p, me, onCancelled }: { progress: Progress; me: Me; onCancelled: () => void }) {
   const queries = useQueryClient();
   const toast = useToast();
   const [busy, setBusy] = useState(false);
@@ -559,6 +566,8 @@ function ConfirmStep({ progress: p, onCancelled }: { progress: Progress; onCance
   }
 
   const reasons = p.confirmation_reasons.map((r) => CONFIRM_REASONS[r]).filter(Boolean);
+  const mapping = Boolean(me.flags.bom_column_mapping) && bomPages(p).length > 0;
+  const problem = mapping ? bomProblem(p) : null;
   return (
     <div className="card pad" style={{ display: "grid", gap: 14 }} data-testid="confirm-pages">
       <div className="row">
@@ -575,9 +584,14 @@ function ConfirmStep({ progress: p, onCancelled }: { progress: Progress; onCance
       </div>
       <Notices progress={p} />
       <PageGrid progress={p} />
+      {mapping && <BomMapping progress={p} />}
       <div className="row">
-        <span className="small muted" style={{ flex: 1, minWidth: 200 }}>
-          הפענוח ימשיך אחרי האישור. אפשר לסגור את המסך, וההצעה תחכה ברשימה.
+        <span
+          className={`small ${problem ? "warn-msg" : "muted"}`}
+          style={{ flex: 1, minWidth: 200 }}
+          data-testid="confirm-note"
+        >
+          {problem ?? "הפענוח ימשיך אחרי האישור. אפשר לסגור את המסך, וההצעה תחכה ברשימה."}
         </span>
         <button type="button" className="btn ghost sm danger" disabled={busy} onClick={() => void cancel()}>
           בטל פענוח
@@ -586,13 +600,119 @@ function ConfirmStep({ progress: p, onCancelled }: { progress: Progress; onCance
           type="button"
           className="btn primary"
           data-testid="confirm"
-          disabled={busy}
+          disabled={busy || problem !== null}
           onClick={() => void confirm()}
         >
           אשר והמשך
         </button>
       </div>
     </div>
+  );
+}
+
+/**
+ * A BOM spreadsheet's columns and their roles (01 §5.8; S14 decision 1, behind `bom_column_mapping`): the header,
+ * the first cells below it, and a role the user can change. Not in the prototype: built in the confirmation
+ * step's style. A role the model suggested is marked for checking; "אשר והמשך" waits for one item and one quantity.
+ */
+function BomMapping({ progress: p }: { progress: Progress }) {
+  const queries = useQueryClient();
+  const toast = useToast();
+  const [saving, setSaving] = useState(false);
+
+  async function change(pageId: string, index: number, role: BomRole) {
+    setSaving(true);
+    try {
+      queries.setQueryData(["progress", p.drawing_id], await setBomColumns(p.drawing_id, pageId, [{ index, role }]));
+    } catch (err) {
+      toast(err instanceof ApiError ? err.message : FALLBACK);
+      void queries.invalidateQueries({ queryKey: ["progress", p.drawing_id] });
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <div style={{ display: "grid", gap: 10 }} data-testid="bom-mapping">
+      {bomPages(p).map((page) => {
+        const bom = page.bom;
+        if (!bom) return null;
+        const title = bom.sheet ? `עמודות כתב הכמויות · ${bom.sheet}` : "עמודות כתב הכמויות";
+        return (
+          <section key={page.page_id} style={{ display: "grid", gap: 6 }} aria-label={title}>
+            <div className="row">
+              <h3 style={{ margin: 0, flex: 1 }}>{title}</h3>
+              <span className="small muted">{countText(bom.rows, "שורה אחת", (n) => `${n} שורות`)}</span>
+            </div>
+            <div className="tbl-wrap card">
+              <table className="tbl bommap">
+                <thead>
+                  <tr>
+                    <th>עמודה</th>
+                    <th>כותרת</th>
+                    <th>דוגמאות</th>
+                    <th>תפקיד</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {bom.columns.map((c) => {
+                    const by = BOM_BY[c.by] ?? BOM_BY.code;
+                    return (
+                      <tr key={c.index}>
+                        <td className="mono" dir="ltr">
+                          {c.letter}
+                        </td>
+                        <td>
+                          {c.header ?? <span className="muted">—</span>}
+                          <Samples samples={c.samples} inline />
+                        </td>
+                        <td className="samples">
+                          <Samples samples={c.samples} />
+                        </td>
+                        <td>
+                          <div className="row bomrole">
+                            <select
+                              className="input"
+                              aria-label={`תפקיד עמודה ${c.letter}`}
+                              value={c.role}
+                              disabled={saving}
+                              onChange={(e) => void change(page.page_id, c.index, e.target.value as BomRole)}
+                            >
+                              {Object.entries(BOM_ROLES).map(([value, label]) => (
+                                <option key={value} value={value}>
+                                  {label}
+                                </option>
+                              ))}
+                            </select>
+                            <span className={`chip ${by?.chip ?? ""}`}>{by?.label}</span>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        );
+      })}
+    </div>
+  );
+}
+
+/** A column's first cells, each kept in its own direction ("מגען 3X25", "120.50"), so they don't run together. */
+function Samples({ samples, inline = false }: { samples: string[]; inline?: boolean }) {
+  return (
+    <span className={inline ? "samples-inline" : undefined}>
+      {samples.length
+        ? samples.map((x, i) => (
+            <Fragment key={i}>
+              {i > 0 && " · "}
+              <bdi>{x}</bdi>
+            </Fragment>
+          ))
+        : "—"}
+    </span>
   );
 }
 
@@ -647,7 +767,9 @@ function PageGrid({ progress: p }: { progress: Progress }) {
             {page.thumbnail_url ? (
               <img src={page.thumbnail_url} alt={`עמוד ${page.page_no}`} />
             ) : (
-              <img className="placeholder" alt={`עמוד ${page.page_no}, בלי תמונה`} />
+              <div className="thumb-ph" role="img" aria-label={`עמוד ${page.page_no}, בלי תמונה`}>
+                {page.bom?.source === "spreadsheet" ? "גיליון, בלי תמונה" : "בלי תמונה"}
+              </div>
             )}
             <div className="row small">
               <b>{`עמוד ${page.page_no}`}</b>

@@ -470,18 +470,19 @@
 | שדה | סוג | תיאור |
 | --- | --- | --- |
 | `instance_id` | string | מזהה ייחודי |
-| `det_id` | string | הזיהוי משלב 3 |
+| `det_id` | string \| null | הזיהוי משלב 3. `null` לשורה בכתב כמויות ([01 §5.8](01-intake-page-classification.md)) |
 | `page_id`, `panel_id` | string | מיקום |
-| `bbox` | [x0, y0, x1, y1] | בנקודות, בקואורדינטות העמוד |
+| `bbox` | [x0, y0, x1, y1] \| null | בנקודות, בקואורדינטות העמוד. לשורה בכתב כמויות: המיקום שלה בצילום, ו-`null` באקסל |
 | `family`, `symbol_class` | string | משלב 3 |
 | `attributes` | object | לכל תכונה בסכמה: `value`, `source`, `confidence`, `span_ids` |
 | `multiplicity` | int | ברירת מחדל 1 |
 | `explicit_texts` | string[] | כל הטקסט ששויך למופע |
 | `brand_hint` | string \| null | מותג שכתוב ליד הסימן |
-| `method` | enum | `cad_attrib`, `geometric`, `agent`, `fallback_geometric` |
+| `method` | enum | `cad_attrib`, `geometric`, `agent`, `fallback_geometric`, `bom` (שורה בכתב כמויות) |
 | `status` | enum | `accepted`, `uncertain`, `missing` |
 | `confidence` | float 0-1 | ראו 6.4 |
 | `component_id` | string \| null | הרכיב שהמופע אוחד אליו |
+| `rows` | int[] | לשורה בכתב כמויות: מספרי השורות בטבלה (שורה שנמשכת נותנת שניים) |
 
 **ערכי `source` לתכונה:**
 

@@ -116,6 +116,170 @@
         "title": "Body_upload_drawings_post",
         "type": "object"
       },
+      "BomColumnOut": {
+        "properties": {
+          "by": {
+            "description": "Who gave the role",
+            "enum": [
+              "code",
+              "model",
+              "user"
+            ],
+            "title": "By",
+            "type": "string"
+          },
+          "header": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Header"
+          },
+          "index": {
+            "title": "Index",
+            "type": "integer"
+          },
+          "letter": {
+            "description": "The column as Excel names it: A, B, …",
+            "title": "Letter",
+            "type": "string"
+          },
+          "role": {
+            "enum": [
+              "item",
+              "quantity",
+              "panel",
+              "model",
+              "brand",
+              "unit",
+              "row_number",
+              "price",
+              "other"
+            ],
+            "title": "Role",
+            "type": "string"
+          },
+          "samples": {
+            "description": "The first cells below the header, for the user to recognise the column",
+            "items": {
+              "type": "string"
+            },
+            "title": "Samples",
+            "type": "array"
+          }
+        },
+        "required": [
+          "index",
+          "letter",
+          "header",
+          "role",
+          "by",
+          "samples"
+        ],
+        "title": "BomColumnOut",
+        "type": "object"
+      },
+      "BomColumnRoleIn": {
+        "properties": {
+          "index": {
+            "minimum": 0.0,
+            "title": "Index",
+            "type": "integer"
+          },
+          "role": {
+            "enum": [
+              "item",
+              "quantity",
+              "panel",
+              "model",
+              "brand",
+              "unit",
+              "row_number",
+              "price",
+              "other"
+            ],
+            "title": "Role",
+            "type": "string"
+          }
+        },
+        "required": [
+          "index",
+          "role"
+        ],
+        "title": "BomColumnRoleIn",
+        "type": "object"
+      },
+      "BomColumnsIn": {
+        "properties": {
+          "columns": {
+            "items": {
+              "$ref": "#/components/schemas/BomColumnRoleIn"
+            },
+            "minItems": 1,
+            "title": "Columns",
+            "type": "array"
+          }
+        },
+        "required": [
+          "columns"
+        ],
+        "title": "BomColumnsIn",
+        "type": "object"
+      },
+      "BomTableOut": {
+        "description": "A BOM page's table (01 §5.8): its columns and how they were mapped (S14 decision 1).",
+        "properties": {
+          "columns": {
+            "items": {
+              "$ref": "#/components/schemas/BomColumnOut"
+            },
+            "title": "Columns",
+            "type": "array"
+          },
+          "mapping_sure": {
+            "description": "False: the user should check the roles before decoding goes on",
+            "title": "Mapping Sure",
+            "type": "boolean"
+          },
+          "rows": {
+            "description": "Product rows, after the row rules",
+            "title": "Rows",
+            "type": "integer"
+          },
+          "sheet": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sheet"
+          },
+          "source": {
+            "enum": [
+              "spreadsheet",
+              "image"
+            ],
+            "title": "Source",
+            "type": "string"
+          }
+        },
+        "required": [
+          "source",
+          "sheet",
+          "mapping_sure",
+          "columns",
+          "rows"
+        ],
+        "title": "BomTableOut",
+        "type": "object"
+      },
       "BoxOut": {
         "description": "One instance on the drawing: PDF points, origin top left (00 §6.2).",
         "properties": {
@@ -1349,7 +1513,8 @@
               "enum": [
                 "low_confidence",
                 "no_diagram_pages",
-                "panel_count_mismatch"
+                "panel_count_mismatch",
+                "bom_mapping"
               ],
               "type": "string"
             },
@@ -1490,6 +1655,17 @@
       },
       "ProgressPageOut": {
         "properties": {
+          "bom": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/BomTableOut"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "A BOM page's table, once stage 1 read it"
+          },
           "classified_by": {
             "anyOf": [
               {
@@ -2927,7 +3103,7 @@
     },
     "/drawings/{drawing_id}/confirm": {
       "post": {
-        "description": "The user confirmed the pages (01 §5.6, \"אשר והמשך\"): decoding goes on from stage 2.",
+        "description": "The user confirmed the pages (01 §5.6, \"אשר והמשך\"): decoding goes on from stage 2. A BOM column mapping they\nwere shown is settled with it, and one with no item or no quantity column is refused (S14 decision 1).",
         "operationId": "confirm_drawings__drawing_id__confirm_post",
         "parameters": [
           {
@@ -3038,6 +3214,75 @@
           }
         ],
         "summary": "Change Page Kind",
+        "tags": [
+          "drawings"
+        ]
+      }
+    },
+    "/drawings/{drawing_id}/pages/{page_id}/bom-columns": {
+      "put": {
+        "description": "The user sets the roles of a BOM spreadsheet's columns (01 §5.8, S14 decision 1). On a finished drawing\nstages 2–7 run again.",
+        "operationId": "set_bom_columns_drawings__drawing_id__pages__page_id__bom_columns_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "drawing_id",
+            "required": true,
+            "schema": {
+              "pattern": "^drw_[0-9A-Z]{26}$",
+              "title": "Drawing Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "page_id",
+            "required": true,
+            "schema": {
+              "pattern": "^pg_[0-9A-Z]{26}$",
+              "title": "Page Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BomColumnsIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgressOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Set Bom Columns",
         "tags": [
           "drawings"
         ]
