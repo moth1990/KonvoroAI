@@ -86,7 +86,7 @@ docker-compose.yml  Makefile  .github/workflows/ci.yml  .nvmrc  .env.example
 
 | Layer | Tool | Covers | Where | When |
 | --- | --- | --- | --- | --- |
-| Unit | pytest, Vitest | Pure logic and stage functions with fake LLM and OCR. **Pricing at 100% branch coverage** (07 §10.1) | `backend/tests/unit`, `frontend/src/**/*.test.ts` | Every PR |
+| Unit | pytest, Vitest | Pure logic and stage functions with fake LLM and OCR. **Pricing at 100% branch coverage** (07 §10.1): `make test-unit` measures `konboro.domain.pricing` and `konboro.domain.totals` and fails below it (threshold in `backend/pyproject.toml`) | `backend/tests/unit`, `frontend/src/**/*.test.ts` | Every PR |
 | Integration | pytest against the compose services | Endpoints with a real DB, migrations, **cross-tenant RLS tests** (00 §8.1), quota atomicity under concurrency, flag evaluation, queue → worker → DB, S3 round trips, **no money in any LLM request** (08 §13.2) | `backend/tests/integration` | Every PR |
 | UI / E2E | Playwright (TS) | Prototype flows per screen against the real API with seeded data and fake LLM. Projects `desktop` (1440×900) and `mobile` (375×812). RTL, keyboard shortcuts, flag on/off | `frontend/e2e` | Every PR for touched screens. Full suite at gates |
 | Visual regression | Playwright `toHaveScreenshot` | App screenshots against committed baselines | `frontend/e2e` | Every PR touching UI |

@@ -5,7 +5,7 @@
 | **Track** | P |
 | **Branch** | `s18-price-list` |
 | **Depends on** | S17 |
-| **Status** | in progress |
+| **Status** | in review |
 | **PR** | (link) |
 
 ## Goal
@@ -80,7 +80,9 @@ Answered at kickoff; see "Decisions made".
 
 Filled in at `/session-close`.
 
-- **Done:**
+- **Done:** A tenant's price list behind an API. The pricing rules are pure `Decimal` functions in `domain/pricing/`. Which cost enters a quote follows 07 §7.2.2's order (the line's supplier, the product's preferred one, the family's, the brand's, the cheapest in force), then the brand discount, then `missing`. An expired price is skipped, a later supplier price list supersedes an older hand-typed cost, and a foreign price is converted at the latest rate up to 7 days old. The rules also give `price_status`, the most specific margin rule in force, its formula, the margin floors (which only report) and 10 §8's checks on a cost typed by hand. They and `domain/totals.py` are at 100% branch coverage, which `make test-unit` and CI now enforce.
+
+  Migration 0012 adds `supplier_preferences`, allows a cost with no supplier, and adds `price_history.subject`. `services/price_list.py` and the `/price-list` routes (behind `price_list`) cover products with their suppliers, suppliers, brand discounts, margin rules and supplier preferences, with every change in the history: who, when and from which quote. `POST /quotes/{id}/lines/{line_id}/price` changes a line's price for the quote only, or in the price list too. The master catalog has a CSV format ([docs/catalog-import.md](../catalog-import.md)) and a loader, and `make seed` loads a 20-item ABB sample, weekly USD and EUR rates, and links the demo products to the catalog.
 - **Decisions made:** (with the user at kickoff, 2026-11-02)
   1. **Master catalog format:** CSV, one row per item: `brand`, `sku`, `series`, `model_code`, `family`, `module_width`, `list_price`, `list_currency`, `status`, `replaced_by_sku`, and one `attr.<name>` column per attribute. Upsert on `(brand, sku)`, `source` = `import`. The sample until B3 is about 20 ABB items (the demo price list's products and a few more), with made-up list prices.
   2. **An expired supplier price is skipped.** A price past `valid_until` on the quote date is not in force (07 §7.2, priority 1) at any step of 07 §7.2.2's order; the lookup moves to the next supplier, then the brand discount, then `missing`.
@@ -96,5 +98,12 @@ Filled in at `/session-close`.
   12. **The line price route is behind `review_screen`**, like `GET /quotes/{id}`; the `catalog` scope writes the price list whatever `price_list` says. For `catalog` the line's override is cleared (it now has the price list's price), so a later price-list change can still tag it in a draft (07 §7.2.3).
   13. **The last `default` margin rule can't be deleted** (409 `default_rule_required`): without it a line with a cost has no price (07 §8 `no_margin_rule`).
 - **Eval / metrics:** `make eval` replay: no change against the baseline (no stage changed).
-- **Bugs logged:**
-- **Follow-ups:**
+- **Verification:** `make check` under Node 22 (the shell defaults to Node 20, where Vitest's workers don't start). Lint, licenses, secrets, the client check, unit tests (789 backend with pricing at 100% branch coverage, 201 Vitest), integration (536), eval (no change) and E2E (131 passed, 71 skipped) all passed. `check-screenshots` timed out on 2 dark review shots, then on 5 in a rerun, with no pixel difference. All 7 passed alone: BUG-038's load flake, at load average 18–27.
+- **Bugs logged:** BUG-039 (P2, fixed): the demo price list's families were symbol classes, so rules by family would never meet a drawing's component. The bug log's two tables also had their separator row in the wrong place and didn't render; fixed.
+- **Follow-ups:** in the roadmap backlog:
+  - Undo of a line's price change, including the price-list change (09 §7.14), with the review screen's editing (S23).
+  - A product's delete or archive, and the prototype's "a margin rule needs a supplier" check, for S19's editor.
+  - 10 §8's similar-products check without a catalog link.
+  - A real source of exchange rates before the pilot.
+
+  Draft quotes' "מחיר חדש במחירון" and the floors as findings stay with stage 7 (S22).
