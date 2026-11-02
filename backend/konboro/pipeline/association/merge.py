@@ -8,6 +8,8 @@ An instance is one symbol with what was read for it. The merge, once per drawing
 2. An auxiliary contact (family `aux_contact`) is an accessory of its own: its tag is the device it sits on
    (`parent_designators`), not a device of its own tag. An untagged contact or coil of a family that has tagged
    devices in the panel is another drawing of one of them, and joins the nearest (no quantity of its own).
+   A symbol tagged with a list ("MS1/MS2/MS3", 03 §3.7 item 5) is one device per tag in the list, so its quantity
+   is the list's length (BUG-031).
 3. **Then by signature**: devices with the same panel, family, class, supply scope and exactly the same values in
    every attribute (null included) are one component. Quantity: the number of distinct tags, plus the multiplicity
    of the untagged ones. Missing instances, different panels, and a known value against a null never merge.
@@ -25,6 +27,7 @@ from konboro.contracts.merge import (
     Instance,
     MissingInstance,
 )
+from konboro.pipeline.detection.designators import tags
 
 from .assign import Value
 from .config import DEFAULT, AssociationConfig
@@ -136,7 +139,7 @@ def devices(built: list[Built], schemas: Schemas, cfg: AssociationConfig = DEFAU
     by_tag: dict[tuple[str, str], list[Built]] = defaultdict(list)
     alone: list[Built] = []
     for b in sorted(built, key=lambda b: b.order):
-        if b.designator and b.instance.family != "aux_contact" and b.instance.panel_id:
+        if b.designator and len(tags(b.designator)) == 1 and b.instance.family != "aux_contact" and b.instance.panel_id:
             by_tag[(b.instance.panel_id, b.designator)].append(b)
         else:
             alone.append(b)
@@ -183,8 +186,8 @@ def devices(built: list[Built], schemas: Schemas, cfg: AssociationConfig = DEFAU
                 i.symbol_class,
                 i.panel_id or "",
                 {n: i.attributes.get(n) or attribute(None) for n in schemas.names(i.family)},
-                [] if aux or not b.designator else [b.designator],
-                [b.designator] if aux and b.designator else [],
+                [] if aux else tags(b.designator),
+                tags(b.designator) if aux else [],
                 i.multiplicity,
                 [b],
                 i.confidence,

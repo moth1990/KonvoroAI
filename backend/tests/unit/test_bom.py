@@ -489,3 +489,18 @@ def test_the_stand_in_model_answers_both_calls() -> None:
     assert [i.text for i in table.items(t)][-1] == "רב מודד SATEC כולל יציאת ממסר"
     m = table_transcription.map_columns(client, "- A: header 'X'; samples: (empty)\n- B: header 'Y'; samples: <int>")
     assert [c.role for c in m.data.columns] == ["item", "quantity"]
+
+
+def _named(source: str, panel: str | None) -> BomTable:
+    return BomTable(source=source, panel_name=panel, columns=[], rows=[], mapping_sure=True)  # type: ignore[arg-type]
+
+
+def test_only_a_picture_heading_needs_its_panel_name_checked() -> None:
+    # BUG-030: the model gives no confidence for a heading; a picture's is always the user's to check.
+    from konboro.pipeline.stages.s1_intake import heading_panel_from_picture
+
+    photo = {"pg_a": _named("image", 'לוח חשמל קומה י"א')}
+    assert heading_panel_from_picture(photo) == 'לוח חשמל קומה י"א'
+    assert heading_panel_from_picture({"pg_a": _named("image", None)}) is None
+    assert heading_panel_from_picture({"pg_s": _named("spreadsheet", "לוח 2")}) is None
+    assert heading_panel_from_picture({"pg_s": _named("spreadsheet", "לוח 2"), **photo}) == 'לוח חשמל קומה י"א'

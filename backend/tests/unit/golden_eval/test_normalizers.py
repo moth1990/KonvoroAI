@@ -95,6 +95,7 @@ def test_nevis_resolved_attributes_win() -> None:
 
 def test_designator_ranges_are_expanded() -> None:
     assert designators(["F1–F3", "C1-C2", "Q0", "TC-G1"]) == ("F1", "F2", "F3", "C1", "C2", "Q0", "TC-G1")
+    assert designators(["MS1/MS2/MS3"]) == ("MS1", "MS2", "MS3")  # one symbol for three (03 §3.7 item 5)
     (f1_17,) = [c for c in golden("NURSERY-1").panels[0].components if "F1" in c.designators]
     assert len(f1_17.designators) == f1_17.qty == 17
 

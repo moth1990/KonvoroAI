@@ -61,7 +61,7 @@ def test_e2e_tenants_have_their_states(migrated_db: dict[str, Engine]) -> None:
     for t in (t for t in e2e.TENANTS if t.audit):
         omissions = states[t.email][3].audit_omissions
         assert [(a.audit_id, a.quote_number, a.count, str(a.amount_at_risk)) for a in omissions] == [
-            (t.audit_id, "10271", 2, "1250.0000")
+            (t.audit_id, "10271", 3, "1250.0000")  # QG2 short, TC-G1/TC-G2 and MS1–MS3 (S17, BUG-031)
         ]
 
 

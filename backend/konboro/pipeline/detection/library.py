@@ -226,7 +226,8 @@ CONFUSABLE: dict[str, tuple[str, ...]] = {
 }
 
 # 03 §4.6, global level. A text matches an entry when it equals it, or when the entry is letters and the text is
-# those letters followed by a number ("C" matches "C1", "C12", "C1.2"): a box labelled with its own designator.
+# those letters followed by a number ("C" matches "C1", "C12", "C1.2"), or by a letter and a number ("TC" matches
+# "TC-G1", 26-993's trip coil on QG1; BUG-031): a box labelled with its own designator.
 ABBREVIATIONS: tuple[tuple[str, str], ...] = (
     ("מ.פ.", "rcd"),
     ("מפסק פחת", "rcd"),
@@ -249,7 +250,7 @@ ABBREVIATIONS: tuple[tuple[str, str], ...] = (
     ("TR", "impulse_relay"),
 )
 
-_DESIGNATOR = re.compile(r"^([A-Z]{1,4})\d{1,3}(?:[.\-]\d{1,3})?$")
+_DESIGNATOR = re.compile(r"^([A-Z]{1,4})(?:-[A-Z])?\d{1,3}(?:[.\-]\d{1,3})?$")
 
 
 def _norm(text: str) -> str:

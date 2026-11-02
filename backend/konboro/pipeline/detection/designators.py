@@ -12,7 +12,11 @@ the tag is a hint, never the value.
    beside a breaker are not tags; `NVR` inside a relay's box is).
 4. An auxiliary contact takes only the tag the model read beside it: the nearest tag is usually the breaker or
    contactor next to it, and its own device is the one the dashed line leads to (item 4, not read in v1).
-5. On a drawing where most devices have a tag (`no_tag_share`), a billable device without one is flagged `no_tag`
+5. A list of tags on one symbol ("MS1/MS2/MS3", 26-993's three current transformers drawn once) is the designator
+   of all of them, when the model read it beside that symbol and every tag in it would be accepted on its own and
+   has a number. Never by nearness alone: a terminal beside 26-993's CTs took the list too. Stage 4 splits it (`tags`):
+   one device per tag (BUG-031, S17).
+6. On a drawing where most devices have a tag (`no_tag_share`), a billable device without one is flagged `no_tag`
    (03 §3.7 last line).
 
 Ranges on a front view ("R1-R7", item 5) and the dashed link from an auxiliary contact to its breaker (item 4) are
@@ -32,20 +36,36 @@ _RATING = re.compile(r"^[BCDKZ]\d{2,3}A?$")  # C16, B10: a breaker's curve and c
 _PHASE = re.compile(r"^(?:L[1-3]|N|PE|W\d)$")
 PHASE_OK = {"indicator_lamp": re.compile(r"^L[1-3]$"), "busbar": re.compile(r"^W\d$")}
 BREAKERS = ("circuit_breaker", "rcd", "rcbo")
+LIST_MAX = 6  # tags in one list on one symbol
+_DIGIT = re.compile(r"\d")
 
 
 def _canon(text: str) -> str:
-    return text.strip().upper().replace("–", "-")
+    return re.sub(r"\s*/\s*", "/", text.strip().upper().replace("–", "-"))
+
+
+def tags(designator: str | None) -> list[str]:
+    """The tags a designator names: one, or each of a list (item 5)."""
+    return designator.split("/") if designator else []
+
+
+def _one_tag(t: str) -> bool:
+    return bool(_TAG.match(t)) and len(t) <= 8
 
 
 def tag_shaped(span: TextSpan) -> bool:
-    t = _canon(span.text)
-    return bool(_TAG.match(t)) and len(t) <= 8
+    parts = tags(_canon(span.text))
+    if len(parts) == 1:
+        return _one_tag(parts[0])
+    return 2 <= len(parts) <= LIST_MAX and all(_one_tag(p) and _DIGIT.search(p) for p in parts)
 
 
 def acceptable(text: str, c: Candidate, model_read: bool, inside: bool = False) -> bool:
     """`inside`: the span lies in the symbol's own box (a coil labelled with its tag)."""
     t = _canon(text)
+    parts = tags(t)
+    if len(parts) > 1:
+        return model_read and all(_DIGIT.search(p) and acceptable(p, c, model_read, inside) for p in parts)
     if _PHASE.match(t):
         rule = PHASE_OK.get(c.family)
         return bool(rule and rule.match(t))

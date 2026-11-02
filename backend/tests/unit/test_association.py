@@ -684,6 +684,22 @@ def test_nevis_1_by_tag() -> None:
     assert len(owner) == 7 and all(c.component_id.startswith("cmp_01X_") for c in comps)
 
 
+def test_a_list_of_tags_is_one_device_per_tag() -> None:
+    """BUG-031: 26-993 draws its three current transformers once, tagged "MS1/MS2/MS3" (03 §3.7 item 5)."""
+    built = [
+        _built(1, "current_transformer", tag="MS1/MS2/MS3"),
+        _built(2, "current_transformer", tag="MS2", page=2),  # MS2 drawn again on its own
+        _built(3, "aux_contact", tag="Q1/Q2", role="aux_contact"),
+    ]
+    comps, owner, _ = components("drw_01X", built, SCH)
+    ct = next(c for c in comps if c.family == "current_transformer")
+    assert ct.designators == ["MS1", "MS2", "MS3"] and ct.quantity == 3
+    assert len(ct.instance_ids) == len(set(ct.instance_ids)) == 2
+    aux = next(c for c in comps if c.family == "aux_contact")
+    assert aux.parent_designators == ["Q1", "Q2"] and aux.designators == []
+    assert len(owner) == 3
+
+
 def test_a_device_drawing_gives_the_family_and_disagreeing_values_are_a_conflict() -> None:
     built = [
         _built(1, "current_transformer", tag="Q0"),  # stage 3 took a breaker for a transformer once

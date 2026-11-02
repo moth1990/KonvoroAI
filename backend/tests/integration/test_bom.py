@@ -182,6 +182,9 @@ def test_a_photographed_bom_is_transcribed(
         [fake_llm.BOM_PANEL],
     )
     assert body["pages"][0]["bom"]["source"] == "image"
+    # BUG-030: a name read from a picture's heading may be misread; the done step asks the user to check it.
+    [notice] = body["notices"]
+    assert notice["code"] == "bom_panel_name_from_picture" and fake_llm.BOM_PANEL in notice["message"]
     with tenant_session(tenant.tenant_id, engine) as s:
         drawing = s.get_one(m.Drawing, drawing_id)
         assert drawing.title_block is not None and drawing.title_block["project_name"] == "פרויקט הדגמה"
@@ -220,7 +223,7 @@ def test_a_bom_photo_at_the_edge_warns_it_may_go_on(
     Worker(pipeline).run_until_idle()
     body = progress(api, tenant, drawing_id).json()
     assert body["status"] == "ready"
-    assert [n["code"] for n in body["notices"]] == ["bom_possibly_cropped"]
+    assert [n["code"] for n in body["notices"]] == ["bom_panel_name_from_picture", "bom_possibly_cropped"]
 
 
 UNKNOWN_HEADERS = 'אלפא,בטא,גמא\r\nמגען 3X25,2,120.50\r\nמא"ז 1X16,14,18\r\n'
