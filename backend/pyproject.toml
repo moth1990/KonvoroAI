@@ -48,6 +48,15 @@ markers = [
     "integration: needs the docker-compose services (make up)",
 ]
 
+# Measured only for the pricing code (`make test-unit`'s --cov), which needs 100% branch coverage (07 §10.1).
+[tool.coverage.run]
+branch = true
+
+[tool.coverage.report]
+fail_under = 100
+show_missing = true
+skip_covered = true
+
 [tool.ruff]
 line-length = 120
 target-version = "py312"

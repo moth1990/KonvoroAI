@@ -61,7 +61,8 @@ class Supplier(Base, TenantScoped, Created):
 
 
 class ProductSupplier(Base, TenantScoped, Timestamps):
-    """A supplier's price for a product (07 §7.2.2). At most one preferred supplier per product."""
+    """A supplier's price for a product (07 §7.2.2). At most one preferred supplier per product. A cost typed in a
+    quote with no supplier has `supplier_id` null, at most one such row per product (S18 decision 7)."""
 
     __tablename__ = "product_suppliers"
     __table_args__ = (
@@ -78,11 +79,18 @@ class ProductSupplier(Base, TenantScoped, Timestamps):
             unique=True,
             postgresql_where="preferred",
         ),
+        Index(
+            "uq_product_suppliers_one_manual",
+            "tenant_id",
+            "product_id",
+            unique=True,
+            postgresql_where="supplier_id IS NULL",
+        ),
     )
 
     id: Mapped[str] = pk()
     product_id: Mapped[str]
-    supplier_id: Mapped[str]
+    supplier_id: Mapped[str | None]
     supplier_sku: Mapped[str | None]
     unit_cost: Mapped[Decimal] = mapped_column(Money)
     currency: Mapped[str] = mapped_column(server_default="ILS")
@@ -94,21 +102,44 @@ class ProductSupplier(Base, TenantScoped, Timestamps):
 
 
 class PriceHistory(Base, TenantScoped, Created):
+    """Every change to the price list (07 §7.2.1 `history[]`, §12). A change that is not to a product (a brand
+    discount, a margin rule, a supplier preference) names what it changed in `subject`."""
+
     __tablename__ = "price_history"
     __table_args__ = (
         tenant_unique(),
         tenant_fk("product_id", "products", ondelete="CASCADE"),
         tenant_fk("quote_id", "quotes"),
         tenant_fk("changed_by", "users"),
+        CheckConstraint("product_id IS NOT NULL OR subject IS NOT NULL", name="product_or_subject"),
     )
 
     id: Mapped[str] = pk()
-    product_id: Mapped[str]
+    product_id: Mapped[str | None]
+    subject: Mapped[str | None]
     field: Mapped[str]
     old: Mapped[dict[str, Any] | None]
     new: Mapped[dict[str, Any] | None]
     quote_id: Mapped[str | None]
     changed_by: Mapped[str | None]
+
+
+class SupplierPreference(Base, TenantScoped, Timestamps):
+    """The factory's preferred supplier for a brand or a family (07 §7.2.2 item 3). Family beats brand (S18
+    decision 3)."""
+
+    __tablename__ = "supplier_preferences"
+    __table_args__ = (
+        tenant_unique(),
+        UniqueConstraint("tenant_id", "scope", "key"),
+        tenant_fk("supplier_id", "suppliers", ondelete="CASCADE"),
+        one_of("scope", ("brand", "family")),
+    )
+
+    id: Mapped[str] = pk()
+    scope: Mapped[str]
+    key: Mapped[str]
+    supplier_id: Mapped[str]
 
 
 class BrandDiscount(Base, TenantScoped, Timestamps):
@@ -170,4 +201,5 @@ __all__ = [
     "Product",
     "ProductSupplier",
     "Supplier",
+    "SupplierPreference",
 ]

@@ -1163,6 +1163,65 @@
         "title": "BoxOut",
         "type": "object"
       },
+      "BrandDiscountIn": {
+        "additionalProperties": false,
+        "properties": {
+          "discount_pct": {
+            "examples": [
+              "0.15"
+            ],
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Discount Pct",
+            "type": "string"
+          },
+          "quote_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The quote it was entered from (09 §7.13)",
+            "title": "Quote Id"
+          }
+        },
+        "required": [
+          "discount_pct"
+        ],
+        "title": "BrandDiscountIn",
+        "type": "object"
+      },
+      "BrandDiscountOut": {
+        "properties": {
+          "brand": {
+            "title": "Brand",
+            "type": "string"
+          },
+          "discount_pct": {
+            "description": "Off the manufacturer's list price: 0.32 is 32%",
+            "examples": [
+              "0.15"
+            ],
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Discount Pct",
+            "type": "string"
+          },
+          "priced_products": {
+            "description": "The brand's products this discount prices today",
+            "title": "Priced Products",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "brand",
+          "discount_pct",
+          "priced_products"
+        ],
+        "title": "BrandDiscountOut",
+        "type": "object"
+      },
       "CorrectedQuoteOut": {
         "properties": {
           "created": {
@@ -1805,6 +1864,34 @@
         "title": "LineOut",
         "type": "object"
       },
+      "LinePriceIn": {
+        "additionalProperties": false,
+        "description": "09 §7.14: the new sale price per unit, and \"רק בהצעה הזו\" (`quote`) or \"עדכן גם במחירון\" (`catalog`).",
+        "properties": {
+          "scope": {
+            "enum": [
+              "quote",
+              "catalog"
+            ],
+            "title": "Scope",
+            "type": "string"
+          },
+          "unit_price": {
+            "examples": [
+              "0.15"
+            ],
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Unit Price",
+            "type": "string"
+          }
+        },
+        "required": [
+          "unit_price",
+          "scope"
+        ],
+        "title": "LinePriceIn",
+        "type": "object"
+      },
       "LoginIn": {
         "additionalProperties": false,
         "properties": {
@@ -1827,6 +1914,313 @@
           "password"
         ],
         "title": "LoginIn",
+        "type": "object"
+      },
+      "MarginRuleIn": {
+        "additionalProperties": false,
+        "properties": {
+          "customer_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Customer Id"
+          },
+          "fixed_price": {
+            "anyOf": [
+              {
+                "examples": [
+                  "0.15"
+                ],
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fixed Price"
+          },
+          "kind": {
+            "description": "Required: a markup and a margin give different prices",
+            "enum": [
+              "markup",
+              "margin"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "level": {
+            "enum": [
+              "customer_sku",
+              "customer",
+              "sku",
+              "family",
+              "brand",
+              "default"
+            ],
+            "title": "Level",
+            "type": "string"
+          },
+          "target": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target"
+          },
+          "valid_from": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Valid From"
+          },
+          "valid_to": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Valid To"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "examples": [
+                  "0.15"
+                ],
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value"
+          }
+        },
+        "required": [
+          "level",
+          "kind"
+        ],
+        "title": "MarginRuleIn",
+        "type": "object"
+      },
+      "MarginRuleOut": {
+        "properties": {
+          "customer_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Customer Id"
+          },
+          "fixed_price": {
+            "anyOf": [
+              {
+                "examples": [
+                  "0.15"
+                ],
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fixed Price"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "markup",
+              "margin"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "level": {
+            "enum": [
+              "customer_sku",
+              "customer",
+              "sku",
+              "family",
+              "brand",
+              "default"
+            ],
+            "title": "Level",
+            "type": "string"
+          },
+          "target": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The product id (sku levels), the family or the brand",
+            "title": "Target"
+          },
+          "valid_from": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Valid From"
+          },
+          "valid_to": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Valid To"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "examples": [
+                  "0.15"
+                ],
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "level",
+          "target",
+          "customer_id",
+          "kind",
+          "value",
+          "fixed_price",
+          "valid_from",
+          "valid_to",
+          "version"
+        ],
+        "title": "MarginRuleOut",
+        "type": "object"
+      },
+      "MarginRulePatch": {
+        "additionalProperties": false,
+        "properties": {
+          "fixed_price": {
+            "anyOf": [
+              {
+                "examples": [
+                  "0.15"
+                ],
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fixed Price"
+          },
+          "kind": {
+            "anyOf": [
+              {
+                "enum": [
+                  "markup",
+                  "margin"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Kind"
+          },
+          "valid_from": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Valid From"
+          },
+          "valid_to": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Valid To"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "examples": [
+                  "0.15"
+                ],
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value"
+          }
+        },
+        "title": "MarginRulePatch",
         "type": "object"
       },
       "MeOut": {
@@ -2308,6 +2702,82 @@
         "title": "PlanOut",
         "type": "object"
       },
+      "PriceHistoryOut": {
+        "properties": {
+          "changed_at": {
+            "format": "date-time",
+            "title": "Changed At",
+            "type": "string"
+          },
+          "changed_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Changed By"
+          },
+          "field": {
+            "title": "Field",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "new": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "New"
+          },
+          "old": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "`{\"value\": …}`, or a whole supplier row; amounts as strings",
+            "title": "Old"
+          },
+          "quote_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The quote the change was made from, if any",
+            "title": "Quote Id"
+          }
+        },
+        "required": [
+          "id",
+          "field",
+          "old",
+          "new",
+          "quote_id",
+          "changed_by",
+          "changed_at"
+        ],
+        "title": "PriceHistoryOut",
+        "type": "object"
+      },
       "PriceSourceOut": {
         "description": "Where the sale price comes from: a fixed price (and the quotes it was imported from) or a margin rule.",
         "properties": {
@@ -2354,6 +2824,605 @@
           "kind"
         ],
         "title": "PriceSourceOut",
+        "type": "object"
+      },
+      "ProductIn": {
+        "additionalProperties": false,
+        "properties": {
+          "brand": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Brand"
+          },
+          "catalog_item_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Catalog Item Id"
+          },
+          "consumable": {
+            "default": false,
+            "title": "Consumable",
+            "type": "boolean"
+          },
+          "display_name": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Display Name",
+            "type": "string"
+          },
+          "family": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Family",
+            "type": "string"
+          },
+          "fixed_price": {
+            "anyOf": [
+              {
+                "examples": [
+                  "0.15"
+                ],
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fixed Price"
+          },
+          "includes": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Includes"
+          },
+          "manufacturer_sku": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Manufacturer Sku"
+          },
+          "quote_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The quote the product was entered from (07 §7.2)",
+            "title": "Quote Id"
+          },
+          "sale_mode": {
+            "default": "rule",
+            "enum": [
+              "rule",
+              "fixed"
+            ],
+            "title": "Sale Mode",
+            "type": "string"
+          },
+          "source": {
+            "default": "manual_entry",
+            "enum": [
+              "supplier_price_list",
+              "manual_entry",
+              "quote_import",
+              "brand_discount"
+            ],
+            "title": "Source",
+            "type": "string"
+          },
+          "suppliers": {
+            "items": {
+              "$ref": "#/components/schemas/SupplierPriceIn"
+            },
+            "maxItems": 50,
+            "title": "Suppliers",
+            "type": "array"
+          },
+          "unit": {
+            "default": "unit",
+            "maxLength": 20,
+            "minLength": 1,
+            "title": "Unit",
+            "type": "string"
+          }
+        },
+        "required": [
+          "display_name",
+          "family"
+        ],
+        "title": "ProductIn",
+        "type": "object"
+      },
+      "ProductOut": {
+        "description": "A price-list product (07 §7.2.1), with its cost and price today by the tenant's rules (07 §7.2.2, §7.3).",
+        "properties": {
+          "below_margin_floor": {
+            "title": "Below Margin Floor",
+            "type": "boolean"
+          },
+          "brand": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Brand"
+          },
+          "catalog_item_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Catalog Item Id"
+          },
+          "consumable": {
+            "title": "Consumable",
+            "type": "boolean"
+          },
+          "cost_source": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cost Source"
+          },
+          "display_name": {
+            "title": "Display Name",
+            "type": "string"
+          },
+          "entered_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Entered At"
+          },
+          "entered_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Entered By"
+          },
+          "entered_in_quote": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Entered In Quote"
+          },
+          "family": {
+            "title": "Family",
+            "type": "string"
+          },
+          "fixed_price": {
+            "anyOf": [
+              {
+                "examples": [
+                  "0.15"
+                ],
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fixed Price"
+          },
+          "history": {
+            "description": "Newest first; only on GET of one product",
+            "items": {
+              "$ref": "#/components/schemas/PriceHistoryOut"
+            },
+            "title": "History",
+            "type": "array"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "includes": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Includes"
+          },
+          "list_currency": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "List Currency"
+          },
+          "list_price": {
+            "anyOf": [
+              {
+                "examples": [
+                  "0.15"
+                ],
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The master catalog's manufacturer list price",
+            "title": "List Price"
+          },
+          "manufacturer_sku": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Manufacturer Sku"
+          },
+          "margin_pct": {
+            "anyOf": [
+              {
+                "examples": [
+                  "0.15"
+                ],
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Margin Pct"
+          },
+          "margin_rule": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Margin Rule"
+          },
+          "price_status": {
+            "enum": [
+              "ok",
+              "stale",
+              "discount_based",
+              "missing"
+            ],
+            "title": "Price Status",
+            "type": "string"
+          },
+          "sale_mode": {
+            "enum": [
+              "rule",
+              "fixed"
+            ],
+            "title": "Sale Mode",
+            "type": "string"
+          },
+          "sanity": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "10 §8's checks on the last cost typed by hand (10 §9.2)",
+            "title": "Sanity"
+          },
+          "source": {
+            "title": "Source",
+            "type": "string"
+          },
+          "suppliers": {
+            "items": {
+              "$ref": "#/components/schemas/SupplierPriceOut"
+            },
+            "title": "Suppliers",
+            "type": "array"
+          },
+          "unit": {
+            "title": "Unit",
+            "type": "string"
+          },
+          "unit_cost": {
+            "anyOf": [
+              {
+                "examples": [
+                  "0.15"
+                ],
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit Cost"
+          },
+          "unit_price": {
+            "anyOf": [
+              {
+                "examples": [
+                  "0.15"
+                ],
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Before 07 §7.6's rounding",
+            "title": "Unit Price"
+          }
+        },
+        "required": [
+          "id",
+          "display_name",
+          "manufacturer_sku",
+          "brand",
+          "family",
+          "unit",
+          "sale_mode",
+          "fixed_price",
+          "includes",
+          "consumable",
+          "source",
+          "catalog_item_id",
+          "list_price",
+          "list_currency",
+          "entered_in_quote",
+          "entered_by",
+          "entered_at",
+          "sanity",
+          "suppliers",
+          "unit_cost",
+          "price_status",
+          "cost_source",
+          "unit_price",
+          "margin_rule",
+          "margin_pct",
+          "below_margin_floor",
+          "history"
+        ],
+        "title": "ProductOut",
+        "type": "object"
+      },
+      "ProductPatch": {
+        "additionalProperties": false,
+        "description": "Only the fields sent change. `suppliers`, when sent, is the whole list: rows left out are removed.",
+        "properties": {
+          "brand": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Brand"
+          },
+          "catalog_item_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Catalog Item Id"
+          },
+          "consumable": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Consumable"
+          },
+          "display_name": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Display Name"
+          },
+          "family": {
+            "anyOf": [
+              {
+                "maxLength": 64,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Family"
+          },
+          "fixed_price": {
+            "anyOf": [
+              {
+                "examples": [
+                  "0.15"
+                ],
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fixed Price"
+          },
+          "includes": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Includes"
+          },
+          "manufacturer_sku": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Manufacturer Sku"
+          },
+          "quote_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quote Id"
+          },
+          "sale_mode": {
+            "anyOf": [
+              {
+                "enum": [
+                  "rule",
+                  "fixed"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sale Mode"
+          },
+          "suppliers": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/SupplierPriceIn"
+                },
+                "maxItems": 50,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Suppliers"
+          },
+          "unit": {
+            "anyOf": [
+              {
+                "maxLength": 20,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit"
+          }
+        },
+        "title": "ProductPatch",
         "type": "object"
       },
       "ProgressFileOut": {
@@ -3563,6 +4632,321 @@
         "title": "StatusReasonOut",
         "type": "object"
       },
+      "SupplierIn": {
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "title": "SupplierIn",
+        "type": "object"
+      },
+      "SupplierOut": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "product_count": {
+            "title": "Product Count",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "product_count"
+        ],
+        "title": "SupplierOut",
+        "type": "object"
+      },
+      "SupplierPreferenceIn": {
+        "additionalProperties": false,
+        "properties": {
+          "supplier_id": {
+            "title": "Supplier Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "supplier_id"
+        ],
+        "title": "SupplierPreferenceIn",
+        "type": "object"
+      },
+      "SupplierPreferenceOut": {
+        "properties": {
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "scope": {
+            "enum": [
+              "brand",
+              "family"
+            ],
+            "title": "Scope",
+            "type": "string"
+          },
+          "supplier_id": {
+            "title": "Supplier Id",
+            "type": "string"
+          },
+          "supplier_name": {
+            "title": "Supplier Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "scope",
+          "key",
+          "supplier_id",
+          "supplier_name"
+        ],
+        "title": "SupplierPreferenceOut",
+        "type": "object"
+      },
+      "SupplierPriceIn": {
+        "additionalProperties": false,
+        "properties": {
+          "currency": {
+            "default": "ILS",
+            "pattern": "^[A-Z]{3}$",
+            "title": "Currency",
+            "type": "string"
+          },
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Keep and update this row; without it, a new row",
+            "title": "Id"
+          },
+          "lead_days": {
+            "anyOf": [
+              {
+                "maximum": 3650.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lead Days"
+          },
+          "preferred": {
+            "default": false,
+            "title": "Preferred",
+            "type": "boolean"
+          },
+          "price_date": {
+            "format": "date",
+            "title": "Price Date",
+            "type": "string"
+          },
+          "source": {
+            "default": "supplier_price_list",
+            "enum": [
+              "supplier_price_list",
+              "manual_entry",
+              "quote_import"
+            ],
+            "title": "Source",
+            "type": "string"
+          },
+          "supplier_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Supplier Id"
+          },
+          "supplier_name": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Finds the supplier by name, or adds it",
+            "title": "Supplier Name"
+          },
+          "supplier_sku": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Supplier Sku"
+          },
+          "unit_cost": {
+            "examples": [
+              "0.15"
+            ],
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Unit Cost",
+            "type": "string"
+          },
+          "valid_until": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Valid Until"
+          }
+        },
+        "required": [
+          "unit_cost",
+          "price_date"
+        ],
+        "title": "SupplierPriceIn",
+        "type": "object"
+      },
+      "SupplierPriceOut": {
+        "properties": {
+          "currency": {
+            "title": "Currency",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "in_force": {
+            "description": "Not past `valid_until` today (07 §7.2)",
+            "title": "In Force",
+            "type": "boolean"
+          },
+          "lead_days": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lead Days"
+          },
+          "preferred": {
+            "title": "Preferred",
+            "type": "boolean"
+          },
+          "price_date": {
+            "format": "date",
+            "title": "Price Date",
+            "type": "string"
+          },
+          "source": {
+            "title": "Source",
+            "type": "string"
+          },
+          "supplier_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "null: a cost typed in a quote with no supplier",
+            "title": "Supplier Id"
+          },
+          "supplier_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Supplier Name"
+          },
+          "supplier_sku": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Supplier Sku"
+          },
+          "unit_cost": {
+            "examples": [
+              "0.15"
+            ],
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Unit Cost",
+            "type": "string"
+          },
+          "valid_until": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Valid Until"
+          }
+        },
+        "required": [
+          "id",
+          "supplier_id",
+          "supplier_name",
+          "supplier_sku",
+          "unit_cost",
+          "currency",
+          "lead_days",
+          "price_date",
+          "valid_until",
+          "preferred",
+          "source",
+          "in_force"
+        ],
+        "title": "SupplierPriceOut",
+        "type": "object"
+      },
       "TenantOut": {
         "properties": {
           "currency": {
@@ -4679,6 +6063,838 @@
         ]
       }
     },
+    "/price-list/brand-discounts": {
+      "get": {
+        "operationId": "list_brand_discounts_price_list_brand_discounts_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/BrandDiscountOut"
+                  },
+                  "title": "Response List Brand Discounts Price List Brand Discounts Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Brand Discounts",
+        "tags": [
+          "price-list"
+        ]
+      }
+    },
+    "/price-list/brand-discounts/{brand}": {
+      "delete": {
+        "operationId": "delete_brand_discount_price_list_brand_discounts__brand__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "brand",
+            "required": true,
+            "schema": {
+              "maxLength": 100,
+              "minLength": 1,
+              "title": "Brand",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Delete Brand Discount",
+        "tags": [
+          "price-list"
+        ]
+      },
+      "put": {
+        "description": "09 §7.13's \"כל המוצרים של שניידר: מחירון יצרן פחות 32%\" (07 §7.2, priority 2).",
+        "operationId": "set_brand_discount_price_list_brand_discounts__brand__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "brand",
+            "required": true,
+            "schema": {
+              "maxLength": 100,
+              "minLength": 1,
+              "title": "Brand",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BrandDiscountIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BrandDiscountOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Set Brand Discount",
+        "tags": [
+          "price-list"
+        ]
+      }
+    },
+    "/price-list/margin-rules": {
+      "get": {
+        "operationId": "list_margin_rules_price_list_margin_rules_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/MarginRuleOut"
+                  },
+                  "title": "Response List Margin Rules Price List Margin Rules Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Margin Rules",
+        "tags": [
+          "price-list"
+        ]
+      },
+      "post": {
+        "operationId": "create_margin_rule_price_list_margin_rules_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MarginRuleIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarginRuleOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Margin Rule",
+        "tags": [
+          "price-list"
+        ]
+      }
+    },
+    "/price-list/margin-rules/{rule_id}": {
+      "delete": {
+        "operationId": "delete_margin_rule_price_list_margin_rules__rule_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "rule_id",
+            "required": true,
+            "schema": {
+              "pattern": "^mr_[0-9A-Z]{26}$",
+              "title": "Rule Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Delete Margin Rule",
+        "tags": [
+          "price-list"
+        ]
+      },
+      "patch": {
+        "operationId": "update_margin_rule_price_list_margin_rules__rule_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "rule_id",
+            "required": true,
+            "schema": {
+              "pattern": "^mr_[0-9A-Z]{26}$",
+              "title": "Rule Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MarginRulePatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarginRuleOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Update Margin Rule",
+        "tags": [
+          "price-list"
+        ]
+      }
+    },
+    "/price-list/products": {
+      "get": {
+        "operationId": "list_products_price_list_products_get",
+        "parameters": [
+          {
+            "description": "Name, skus, brand or supplier",
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 100,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Name, skus, brand or supplier",
+              "title": "Q"
+            }
+          },
+          {
+            "in": "query",
+            "name": "family",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 64,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Family"
+            }
+          },
+          {
+            "in": "query",
+            "name": "brand",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 100,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Brand"
+            }
+          },
+          {
+            "description": "The screen's filters (prototype vPrices)",
+            "in": "query",
+            "name": "filter",
+            "required": false,
+            "schema": {
+              "default": "all",
+              "description": "The screen's filters (prototype vPrices)",
+              "enum": [
+                "all",
+                "nocost",
+                "multi",
+                "low"
+              ],
+              "title": "Filter",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ProductOut"
+                  },
+                  "title": "Response List Products Price List Products Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Products",
+        "tags": [
+          "price-list"
+        ]
+      },
+      "post": {
+        "operationId": "create_product_price_list_products_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProductIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Product",
+        "tags": [
+          "price-list"
+        ]
+      }
+    },
+    "/price-list/products/{product_id}": {
+      "get": {
+        "operationId": "get_product_price_list_products__product_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "product_id",
+            "required": true,
+            "schema": {
+              "pattern": "^prd_[0-9A-Z]{26}$",
+              "title": "Product Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Product",
+        "tags": [
+          "price-list"
+        ]
+      },
+      "patch": {
+        "operationId": "update_product_price_list_products__product_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "product_id",
+            "required": true,
+            "schema": {
+              "pattern": "^prd_[0-9A-Z]{26}$",
+              "title": "Product Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProductPatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Update Product",
+        "tags": [
+          "price-list"
+        ]
+      }
+    },
+    "/price-list/supplier-preferences": {
+      "get": {
+        "operationId": "list_supplier_preferences_price_list_supplier_preferences_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/SupplierPreferenceOut"
+                  },
+                  "title": "Response List Supplier Preferences Price List Supplier Preferences Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Supplier Preferences",
+        "tags": [
+          "price-list"
+        ]
+      }
+    },
+    "/price-list/supplier-preferences/{scope}/{key}": {
+      "delete": {
+        "operationId": "delete_supplier_preference_price_list_supplier_preferences__scope___key__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "scope",
+            "required": true,
+            "schema": {
+              "enum": [
+                "brand",
+                "family"
+              ],
+              "title": "Scope",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "maxLength": 100,
+              "minLength": 1,
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Delete Supplier Preference",
+        "tags": [
+          "price-list"
+        ]
+      },
+      "put": {
+        "description": "The preferred supplier for a family or a brand (07 §7.2.2 item 3); the family's applies first.",
+        "operationId": "set_supplier_preference_price_list_supplier_preferences__scope___key__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "scope",
+            "required": true,
+            "schema": {
+              "enum": [
+                "brand",
+                "family"
+              ],
+              "title": "Scope",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "key",
+            "required": true,
+            "schema": {
+              "maxLength": 100,
+              "minLength": 1,
+              "title": "Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SupplierPreferenceIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SupplierPreferenceOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Set Supplier Preference",
+        "tags": [
+          "price-list"
+        ]
+      }
+    },
+    "/price-list/suppliers": {
+      "get": {
+        "operationId": "list_suppliers_price_list_suppliers_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/SupplierOut"
+                  },
+                  "title": "Response List Suppliers Price List Suppliers Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Suppliers",
+        "tags": [
+          "price-list"
+        ]
+      },
+      "post": {
+        "operationId": "create_supplier_price_list_suppliers_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SupplierIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SupplierOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create Supplier",
+        "tags": [
+          "price-list"
+        ]
+      }
+    },
     "/quota": {
       "get": {
         "description": "Also releases reservations older than 24 h (01 §4.5), so the numbers are current.",
@@ -4811,6 +7027,75 @@
           }
         ],
         "summary": "Get Quote",
+        "tags": [
+          "quotes"
+        ]
+      }
+    },
+    "/quotes/{quote_id}/lines/{line_id}/price": {
+      "post": {
+        "description": "A line's sale price changed in the review screen (07 §7.2.3, 09 §7.14): for this quote only, or in the price\nlist too. A sent quote never changes (409). Returns the quote with its new totals.",
+        "operationId": "change_line_price_quotes__quote_id__lines__line_id__price_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "quote_id",
+            "required": true,
+            "schema": {
+              "pattern": "^quo_[0-9A-Z]{26}$",
+              "title": "Quote Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "line_id",
+            "required": true,
+            "schema": {
+              "pattern": "^ln_[0-9A-Z]{26}$",
+              "title": "Line Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LinePriceIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuoteOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Change Line Price",
         "tags": [
           "quotes"
         ]

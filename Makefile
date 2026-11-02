@@ -50,8 +50,11 @@ licenses: ## Fail on GPL or AGPL dependencies (specs/12-tech-stack.md §8)
 secrets: ## Scan every commit for secrets with the pinned gitleaks image (needs Docker)
 	docker run --rm -v "$(CURDIR):/repo" $(GITLEAKS_IMAGE) git /repo --log-opts="--all" --redact --no-banner
 
-test-unit: ## Backend unit tests and frontend Vitest
-	$(BACKEND) uv run pytest -m "not integration"
+# Pricing code needs 100% branch coverage (07 §10.1); the threshold is in backend/pyproject.toml. CI passes the same.
+PRICING_COV := --cov=konboro.domain.pricing --cov=konboro.domain.totals
+
+test-unit: ## Backend unit tests (pricing at 100% branch coverage) and frontend Vitest
+	$(BACKEND) uv run pytest -m "not integration" $(PRICING_COV)
 	$(FRONTEND) pnpm test
 
 test-int: ## Backend integration tests against the local services (needs `make up`)

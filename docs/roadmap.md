@@ -42,7 +42,7 @@ P and R sessions alternate. R sessions use a fixture quote seeded through the re
 | [S14](sessions/S14-bom-only.md) | P | BOM-only path | Excel and CSV import, photographed BOM through `table_transcription` (BOM-HW-1) | 01 §5.8 | — | S08 | done |
 | [S15](sessions/S15-quote-audit.md) | P | Quote audit backend | Read the existing quote, arithmetic check, matching, 8 difference types, money at risk, API | 11 §4–6, §8 | — | S13, S14 | done |
 | [S16](sessions/S16-audit-screen.md) | R | Audit screen | Audit flow and results screen, "create corrected quote" entry point, E2E on 26-993 (replay) | 11 §7–8 | 1066–1096 | S15 | done |
-| [S17](sessions/S17-gate-1.md) | G | **Gate 1** | Live eval, full E2E regression, fix bugs. Tag `phase-1` | dev-strategy §7 | all built screens | S16 | in review |
+| [S17](sessions/S17-gate-1.md) | G | **Gate 1** | Live eval, full E2E regression, fix bugs. Tag `phase-1` | dev-strategy §7 | all built screens | S16 | done |
 
 **Exit:** ≥80% difference accuracy on golden drawings that have actual quotes; audit and review E2E green.
 
@@ -50,7 +50,7 @@ P and R sessions alternate. R sessions use a fixture quote seeded through the re
 
 | # | Track | Session | Main contents | Specs | Prototype | Depends on | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| [S18](sessions/S18-price-list-backend.md) | P | Price list backend | Products with several suppliers, preferred or else cheapest, margin rules, history, consumables, cabinet "includes", bulk brand discount, master-catalog import format | 07 §7.2–7.3; 10 §9.2 | 484–511 | S17 | todo |
+| [S18](sessions/S18-price-list-backend.md) | P | Price list backend | Products with several suppliers, preferred or else cheapest, margin rules, history, consumables, cabinet "includes", bulk brand discount, master-catalog import format | 07 §7.2–7.3; 10 §9.2 | 484–511 | S17 | in progress |
 | [S19](sessions/S19-price-list-screen.md) | R | Price list screen | Price list table, filters, search, product editor modal, brand discount | 07 §7.2.1–7.2.3; 10 §8 | 1098–1208 | S18 | todo |
 | S20 | P | Stage 5: catalog matching | Signature, explicit SKU and series, match memory, brand, fill-in, circuit inference, candidate query, decision rules, `catalog_disambiguation`, bundles | 05 (all) | — | S18 | todo |
 | S21 | P | Stage 6: validation | Panel model, rules stored as data, starter rule pack, BOM cross-check, `validator_review`, re-run after edits in under 1 s | 06 (all) | 460–472 | S20 | todo |

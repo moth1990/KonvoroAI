@@ -45,8 +45,8 @@ jobs:
         run: uv run mypy
       - name: Licenses (no GPL or AGPL)
         run: uv run python -m konboro.licenses
-      - name: Unit tests
-        run: uv run pytest -m "not integration"
+      - name: Unit tests (pricing at 100% branch coverage, 07 §10.1; as in `make test-unit`)
+        run: uv run pytest -m "not integration" --cov=konboro.domain.pricing --cov=konboro.domain.totals
       - name: OpenAPI spec is current (run `make gen-client` and commit)
         run: |
           uv run python -m konboro.api.openapi ../frontend/src/api/openapi.json

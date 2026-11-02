@@ -5,7 +5,7 @@
 | **Track** | P |
 | **Branch** | `s18-price-list` |
 | **Depends on** | S17 |
-| **Status** | todo |
+| **Status** | in progress |
 | **PR** | (link) |
 
 ## Goal
@@ -22,39 +22,44 @@ A tenant's price list is real behind an API: products with several suppliers, th
 ## Tasks
 
 ### Backend
-- [ ] `konboro/domain/pricing/`: pure functions, `Decimal` only. `unit_cost(product, line_supplier, tenant_prefs, on_date)` by 07 §7.2.2's order; `price_status` (`ok`, `stale` after `stale_days`, `discount_based`, `missing`); brand discount as priority 2; currency conversion with the rate and its date kept for the trace.
-- [ ] Margin rules: the most specific rule in force (`customer_sku` > `customer` > `sku` > `family` > `brand` > `default`), `markup` / `margin` / `fixed` formulas, `margin` < 100% enforced, the line and quote margin floors as findings only.
-- [ ] `services/price_list.py`: create, read, update and list products with their suppliers, inside `tenant_session`; every change writes `price_history` (what, from, to, who, from which quote). One preferred supplier per product.
-- [ ] A price change from a quote (07 §7.2.3): "רק בהצעה הזו" vs "גם במחירון" (the product becomes `fixed` with the new price, history with the quote id). Draft quotes are not changed (they get "מחיר חדש במחירון" in S22/S23).
-- [ ] Bulk brand discount ("כל המוצרים של שניידר: מחירון יצרן פחות 32%") into `brand_discounts`.
-- [ ] Master-catalog import format: a documented file layout and a loader into the shared layer, with a small sample seed (B3).
-- [ ] API: `/price-list` routes with `require(Permission.X)` and a new flag if the route is new to users (13). Money as strings in JSON. `make gen-client`.
+- [x] `konboro/domain/pricing/`: pure functions, `Decimal` only. `unit_cost(product, line_supplier, tenant_prefs, on_date)` by 07 §7.2.2's order; `price_status` (`ok`, `stale` after `stale_days`, `discount_based`, `missing`); brand discount as priority 2; currency conversion with the rate and its date kept for the trace.
+- [x] Margin rules: the most specific rule in force (`customer_sku` > `customer` > `sku` > `family` > `brand` > `default`), `markup` / `margin` / `fixed` formulas, `margin` < 100% enforced, the line and quote margin floors as findings only.
+- [x] `services/price_list.py`: create, read, update and list products with their suppliers, inside `tenant_session`; every change writes `price_history` (what, from, to, who, from which quote). One preferred supplier per product.
+- [x] A price change from a quote (07 §7.2.3): "רק בהצעה הזו" vs "גם במחירון" (the product becomes `fixed` with the new price, history with the quote id). Draft quotes are not changed (they get "מחיר חדש במחירון" in S22/S23).
+- [x] Bulk brand discount ("כל המוצרים של שניידר: מחירון יצרן פחות 32%") into `brand_discounts`.
+- [x] Master-catalog import format (decision 1): a documented CSV layout, a loader into `catalog_items` (upsert on `(brand, sku)`, `source` = `import`), and a sample of about 20 ABB items loaded by `make seed`; demo products link to their catalog item.
+- [x] Migration 0012: `supplier_preferences` (decision 3), `product_suppliers.supplier_id` nullable with at most one supplier-less row per product (decision 7), `price_history.subject` (decision 10). The `price_list` flag in `seed.FLAGS` (decision 5), and `Permission.PRICE_LIST_READ` / `PRICE_LIST_WRITE` / `QUOTES_WRITE`.
+- [x] FX: seeded USD and EUR rates in `fx_rates`; the latest rate on or before the quote date, at most 7 days old, else `fx_rate_missing` (decision 4).
+- [x] Manual-entry sanity checks (10 §8) as pure functions, their result kept in `products.sanity` and returned as warnings.
+- [x] API: `/price-list` routes (products, suppliers, brand discounts, margin rules, supplier preferences) with `require(Permission.X)` and `require_flag("price_list")`. Money as strings in JSON. `make gen-client`.
+- [x] `POST /quotes/{id}/lines/{line_id}/price` with `scope` `quote` | `catalog` (decision 8): refuses a `sent` version (409), recomputes the line's amounts with `domain/totals.py`, writes a `price_changed` correction event.
 
 ### Frontend
 - None (S19).
 
 ### Unit tests
-- [ ] 100% branch coverage of `domain/pricing/` (07 §10.1), enforced in `make test-unit`.
-- [ ] The cost order, `stale`, brand discount, the identical-product rule (NURSERY-1's 3X20A gets no price from 3X16A or 3X25A), each formula with `Decimal`, rule priority and validity dates.
+- [x] 100% branch coverage of `domain/pricing/` (07 §10.1), enforced in `make test-unit`.
+- [x] The cost order, `stale`, brand discount, the identical-product rule (NURSERY-1's 3X20A gets no price from 3X16A or 3X25A), each formula with `Decimal`, rule priority and validity dates.
 
 ### Integration tests
-- [ ] The price-list API across two tenants (RLS), history rows, one preferred supplier, a price change from a quote with each choice.
-- [ ] A new tenant table, if any, gets a row in `tests/integration/factory.py`.
+- [x] The price-list API across two tenants (RLS), history rows, one preferred supplier, a price change from a quote with each choice.
+- [x] `supplier_preferences` gets a row in `tests/integration/factory.py`.
+- [x] The catalog loader against the DB (idempotent rerun), the flag off answers 404, and the line price endpoint on the NURSERY-1 fixture (both scopes, a sent version refused).
 
 ### UI tests (Playwright)
 - None (S19).
 
 ### Eval (pipeline sessions)
-- [ ] `make eval` replay unchanged (no stage changes).
+- [x] `make eval` replay unchanged (no stage changes).
 
 ### Docs
-- [ ] `docs/db-schema.md` for any migration; 07 for any rule settled here.
+- [x] `docs/db-schema.md` for any migration; 07 for any rule settled here.
 
 ## Acceptance criteria
 
-- [ ] Every 07 §7.2.2 cost case and every 07 §7.3 priority case has a test; pricing code at 100% branch coverage.
-- [ ] No float anywhere in pricing code or its JSON (a test checks the API's money fields are strings).
-- [ ] A product's history shows every change with who, when and from which quote.
+- [x] Every 07 §7.2.2 cost case and every 07 §7.3 priority case has a test; pricing code at 100% branch coverage.
+- [x] No float anywhere in pricing code or its JSON (a test checks the API's money fields are strings).
+- [x] A product's history shows every change with who, when and from which quote.
 
 ## Out of scope
 
@@ -64,8 +69,10 @@ A tenant's price list is real behind an API: products with several suppliers, th
 
 ## Open questions
 
+Answered at kickoff; see "Decisions made".
+
 1. The master catalog's import format: which columns, and is a sample of one brand enough until B3 arrives?
-2. `stale_days`: keep 90 by default, per tenant setting?
+2. `stale_days`: keep 90 by default, per tenant setting? (Already `tenant_settings.stale_days`, default 90, since S02.)
 3. The brand or family preferred supplier (07 §7.2.2 item 3): stored in tenant settings, or a table of its own?
 4. Currency rates: where do they come from locally, a fixed table in the seed?
 
@@ -74,7 +81,20 @@ A tenant's price list is real behind an API: products with several suppliers, th
 Filled in at `/session-close`.
 
 - **Done:**
-- **Decisions made:**
-- **Eval / metrics:**
+- **Decisions made:** (with the user at kickoff, 2026-11-02)
+  1. **Master catalog format:** CSV, one row per item: `brand`, `sku`, `series`, `model_code`, `family`, `module_width`, `list_price`, `list_currency`, `status`, `replaced_by_sku`, and one `attr.<name>` column per attribute. Upsert on `(brand, sku)`, `source` = `import`. The sample until B3 is about 20 ABB items (the demo price list's products and a few more), with made-up list prices.
+  2. **An expired supplier price is skipped.** A price past `valid_until` on the quote date is not in force (07 §7.2, priority 1) at any step of 07 §7.2.2's order; the lookup moves to the next supplier, then the brand discount, then `missing`.
+  3. **Brand or family preferred supplier:** a tenant table `supplier_preferences` (`scope` `brand` | `family`, `key`, `supplier_id`), RLS and a composite FK to `suppliers`. Family beats brand, the margin rules' order (07 §7.3).
+  4. **FX rates:** fixed USD and EUR rates seeded into the global `fx_rates` (`source` = `seed`). A quote uses the latest rate on or before its date, at most 7 days old; otherwise `fx_rate_missing` and no price. The rate and its date go into the trace.
+  5. **A `price_list` flag** gates the `/price-list` routes (non-negotiable 8): off by default, on for the demo and E2E tenants, 404 when off. Removed once S19's screen is complete.
+  6. **A fixed price lives in `products.fixed_price` only** (spec conflict: 07 §7.2.1 says it is stored as an `sku` rule). The rule picker treats a fixed product as the `sku`-level rule, so `customer_sku` and `customer` rules still beat it. 07 §7.2.1 is reworded in this PR.
+  7. **A manual cost with no supplier:** `product_suppliers.supplier_id` becomes nullable, with at most one supplier-less row per product. A newer supplier price-list row for the product supersedes an older manual one in the lookup (07 §7.2).
+  8. **The line price change has its endpoint now:** `POST /quotes/{id}/lines/{line_id}/price`, scope `quote` or `catalog`, tested on the NURSERY-1 fixture.
+  9. **A margin rule's `target`** (made while building, not asked): the product's id for `sku` and `customer_sku` (a product may have no manufacturer sku), the family or the brand for those levels, empty for `customer` and `default`. 07 §7.3's table says so now.
+  10. **Changes that are not to a product are logged too** (07 §12, made while building): `price_history.product_id` is nullable and `subject` names a brand discount, a margin rule or a supplier preference. A changed margin rule gets the next `version`.
+  11. **`price_date` doesn't limit "in force"** (made while building): only `valid_until` does (decision 2). A price dated after the quote date still applies, so a cost typed today prices a draft dated yesterday; `price_date` only ages a price (`stale`).
+  12. **The line price route is behind `review_screen`**, like `GET /quotes/{id}`; the `catalog` scope writes the price list whatever `price_list` says. For `catalog` the line's override is cleared (it now has the price list's price), so a later price-list change can still tag it in a draft (07 §7.2.3).
+  13. **The last `default` margin rule can't be deleted** (409 `default_rule_required`): without it a line with a cost has no price (07 §8 `no_margin_rule`).
+- **Eval / metrics:** `make eval` replay: no change against the baseline (no stage changed).
 - **Bugs logged:**
 - **Follow-ups:**

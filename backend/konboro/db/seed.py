@@ -1,12 +1,13 @@
 """Demo data for local development: `make seed` (runs after migrations). Safe to run more than once.
 
-Global rows (plans, flags, VAT) are upserted. The demo tenant is created once; if it exists, it is left alone.
+Global rows (plans, flags, VAT, FX rates, the sample master catalog) are upserted. The demo tenant is created once;
+if it exists, it is left alone.
 Names are made up (decided in S02): the products and prices come from the prototype's price list
 (prototype/konboro-app.html, CATALOG), which was built from real quotes, but no real customer or
 factory name appears here.
 """
 
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from decimal import Decimal
 from typing import TYPE_CHECKING
 from zoneinfo import ZoneInfo
@@ -17,6 +18,7 @@ from sqlalchemy.orm import Session
 
 from konboro.settings import get_settings
 
+from . import catalog
 from .config import migration_dsn
 from .ids import new_id
 
@@ -26,8 +28,10 @@ if TYPE_CHECKING:
 from .models import (
     Abbreviation,
     AttributeSchema,
+    CatalogItem,
     Customer,
     FeatureFlag,
+    FxRate,
     MarginRule,
     Plan,
     Product,
@@ -53,6 +57,8 @@ PLANS = [
     {"id": "pro", "name_he": "מקצועי", "monthly_quote_limit": 200, "max_pages_per_file": 60},
 ]
 
+PRICE_LIST_FLAG = "price_list"
+
 # Spec 13 keys (the prototype's shorter names are not used in code, see CLAUDE.md).
 FLAGS = [
     {"key": "unresolved_overlay", "description": "סימון מה לא פוענח על השרטוט (13 §4.4)", "depends_on": []},
@@ -66,6 +72,8 @@ FLAGS = [
     {"key": "bom_column_mapping", "description": "אישור מיפוי עמודות בכתב כמויות (01 §5.8)", "depends_on": []},
     # S15: the quote audit's API (11); its screen is S16's.
     {"key": "quote_audit", "description": "בדיקת הצעה קיימת (11)", "depends_on": []},
+    # S18 decision 5: the price list's API while its screen is built (S19), then removed.
+    {"key": PRICE_LIST_FLAG, "description": "מחירון המפעל (07 §7.2). יוסר אחרי S19", "depends_on": []},
 ]
 
 SUPPLIERS = {
@@ -76,21 +84,36 @@ SUPPLIERS = {
     "e": "ספק ה׳ · ארונות",
 }
 
+# The prototype's family names -> the attribute schemas' families (05 §4.4), which stage 4 writes and margin rules
+# and supplier preferences match on. Until S18 these were symbol classes (`mcb`, `mccb`); FAMILY_RENAMES fixes a demo
+# tenant seeded before then (BUG-039).
 FAMILY = {
-    'מא"ז': "mcb",
+    'מא"ז': "circuit_breaker",
     "פחת": "rcd",
-    "מפסק": "mccb",
+    "מפסק": "circuit_breaker",
     "מנתק": "switch_disconnector",
-    "מגן מנוע": "motor_protection",
-    "נורה": "pilot_light",
+    "מגן מנוע": "circuit_breaker",
+    "נורה": "indicator_lamp",
     "ממסר": "relay",
-    "מדידה": "meter",
+    "מדידה": "measuring_instrument",
     "מגן ברק": "surge_protector",
-    "אביזר": "accessory",
+    "אביזר": "aux_contact",
     "בורר": "selector_switch",
     "ארון": "enclosure",
     "מהדק": "terminal",
 }
+FAMILY_RENAMES = {
+    "mcb": "circuit_breaker",
+    "mccb": "circuit_breaker",
+    "motor_protection": "circuit_breaker",
+    "pilot_light": "indicator_lamp",
+    "meter": "measuring_instrument",
+    "accessory": "aux_contact",
+}
+
+# Fixed local rates, ILS per unit (S18 decision 4), one a week so every date has one within 7 days (`pricing.fx`).
+FX_RATES = {"USD": Decimal("3.70"), "EUR": Decimal("4.00")}
+FX_FROM, FX_TO = date(2026, 1, 1), date(2027, 12, 31)
 
 # (name, manufacturer sku, brand, family, fixed sale price or None, suppliers [(key, cost, lead, preferred, sku)])
 PRODUCTS: list[tuple[str, str | None, str | None, str, str | None, list[tuple[str, str, int, bool, str | None]]]] = [
@@ -144,7 +167,31 @@ def seed_global(session: Session) -> None:
         .values(id="vat_01JD0DEM000000000000000000", rate=Decimal("0.18"), valid_from=date(2025, 1, 1))
         .on_conflict_do_nothing(index_elements=["valid_from"])
     )
+    seed_fx_rates(session)
+    catalog.load_file(session, catalog.SAMPLE)
     seed_symbol_library(session)
+
+
+def seed_fx_rates(session: Session) -> None:
+    rows = [
+        {"currency": currency, "rate_date": FX_FROM + timedelta(days=week * 7), "rate": rate, "source": "seed"}
+        for currency, rate in FX_RATES.items()
+        for week in range((FX_TO - FX_FROM).days // 7 + 1)
+    ]
+    session.execute(insert(FxRate).values(rows).on_conflict_do_nothing(index_elements=["currency", "rate_date"]))
+
+
+def link_demo_catalog(session: Session, tenant_id: str) -> None:
+    """The demo products whose manufacturer sku is in the sample catalog point at it and take its family; the rest
+    get the family names stage 4 uses (BUG-039). Runs every seed, like the fixtures."""
+    for old, new in FAMILY_RENAMES.items():
+        session.execute(update(Product).where(Product.tenant_id == tenant_id, Product.family == old).values(family=new))
+    items = session.execute(select(CatalogItem.brand, CatalogItem.sku, CatalogItem.id, CatalogItem.family)).all()
+    by_sku = {(brand, sku): (id_, family) for brand, sku, id_, family in items}
+    for product in session.scalars(select(Product).where(Product.tenant_id == tenant_id)):
+        found = by_sku.get((product.brand or "", product.manufacturer_sku or ""))
+        if found is not None:
+            product.catalog_item_id, product.family = found
 
 
 def seed_symbol_library(session: Session) -> None:
@@ -296,6 +343,12 @@ def seed_demo_fixtures(session: Session, storage: "Storage") -> None:
     audit_993.enable_flag(session, DEMO_TENANT)
     audit_993.seed_audit_993(session, DEMO_TENANT, DEMO_USER)
     audit_993.seed_audit_993_pages(session, storage, DEMO_TENANT)
+    session.execute(
+        insert(TenantFeatureOverride)
+        .values(tenant_id=DEMO_TENANT, flag_key=PRICE_LIST_FLAG, enabled=True, reason="demo")
+        .on_conflict_do_nothing(index_elements=["tenant_id", "flag_key"])
+    )
+    link_demo_catalog(session, DEMO_TENANT)
 
 
 def seed(engine: Engine | None = None, storage: "Storage | None" = None) -> bool:

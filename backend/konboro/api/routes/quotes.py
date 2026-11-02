@@ -6,26 +6,51 @@ from fastapi import APIRouter, Depends, Path, Request
 
 from konboro.domain.permissions import Permission
 from konboro.domain.totals import QuoteSums, Sums
-from konboro.services import quotes
+from konboro.services import price_list, quotes
 from konboro.services.storage import Storage
 
 from ..deps import Actor, require, require_flag
 from ..errors import ERROR_RESPONSES, ApiError
-from ..schemas import QuoteOut
+from ..schemas import LinePriceIn, QuoteOut
 
 router = APIRouter(tags=["quotes"], responses=ERROR_RESPONSES)
 
 Reader = Annotated[Actor, Depends(require(Permission.QUOTES_READ))]
+Writer = Annotated[Actor, Depends(require(Permission.QUOTES_WRITE))]
 QuoteId = Annotated[str, Path(pattern=r"^quo_[0-9A-Z]{26}$")]
+LineId = Annotated[str, Path(pattern=r"^ln_[0-9A-Z]{26}$")]
 
 
 @router.get("/quotes/{quote_id}", dependencies=[Depends(require_flag("review_screen"))])
 def get_quote(actor: Reader, quote_id: QuoteId, request: Request) -> QuoteOut:
     """The quote's current version. Another tenant's quote is 404, the same as one that does not exist."""
+    return quote_out(actor, quote_id, request.app.state.storage)
+
+
+@router.post("/quotes/{quote_id}/lines/{line_id}/price", dependencies=[Depends(require_flag("review_screen"))])
+def change_line_price(
+    actor: Writer, quote_id: QuoteId, line_id: LineId, body: LinePriceIn, request: Request
+) -> QuoteOut:
+    """A line's sale price changed in the review screen (07 §7.2.3, 09 §7.14): for this quote only, or in the price
+    list too. A sent quote never changes (409). Returns the quote with its new totals."""
+    try:
+        price_list.change_line_price(
+            actor.session,
+            price_list.Actor(actor.tenant_id, actor.user_id),
+            quote_id,
+            line_id,
+            body.unit_price,
+            body.scope,
+        )
+    except price_list.PriceListError as e:
+        raise ApiError(e.status, e.code, e.details) from e
+    return quote_out(actor, quote_id, request.app.state.storage)
+
+
+def quote_out(actor: Actor, quote_id: str, storage: Storage) -> QuoteOut:
     view = quotes.read_quote(actor.session, actor.tenant_id, quote_id)
     if view is None:
         raise ApiError(404, "not_found")
-    storage: Storage = request.app.state.storage
     nested = ("panels", "totals", "findings", "pages")
     fields = {k: getattr(view, k) for k in QuoteOut.model_fields if k not in nested}
     return QuoteOut.model_validate(

@@ -366,6 +366,172 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/price-list/brand-discounts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Brand Discounts */
+        get: operations["list_brand_discounts_price_list_brand_discounts_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/price-list/brand-discounts/{brand}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Set Brand Discount
+         * @description 09 §7.13's "כל המוצרים של שניידר: מחירון יצרן פחות 32%" (07 §7.2, priority 2).
+         */
+        put: operations["set_brand_discount_price_list_brand_discounts__brand__put"];
+        post?: never;
+        /** Delete Brand Discount */
+        delete: operations["delete_brand_discount_price_list_brand_discounts__brand__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/price-list/margin-rules": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Margin Rules */
+        get: operations["list_margin_rules_price_list_margin_rules_get"];
+        put?: never;
+        /** Create Margin Rule */
+        post: operations["create_margin_rule_price_list_margin_rules_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/price-list/margin-rules/{rule_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete Margin Rule */
+        delete: operations["delete_margin_rule_price_list_margin_rules__rule_id__delete"];
+        options?: never;
+        head?: never;
+        /** Update Margin Rule */
+        patch: operations["update_margin_rule_price_list_margin_rules__rule_id__patch"];
+        trace?: never;
+    };
+    "/price-list/products": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Products */
+        get: operations["list_products_price_list_products_get"];
+        put?: never;
+        /** Create Product */
+        post: operations["create_product_price_list_products_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/price-list/products/{product_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Product */
+        get: operations["get_product_price_list_products__product_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update Product */
+        patch: operations["update_product_price_list_products__product_id__patch"];
+        trace?: never;
+    };
+    "/price-list/supplier-preferences": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Supplier Preferences */
+        get: operations["list_supplier_preferences_price_list_supplier_preferences_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/price-list/supplier-preferences/{scope}/{key}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Set Supplier Preference
+         * @description The preferred supplier for a family or a brand (07 §7.2.2 item 3); the family's applies first.
+         */
+        put: operations["set_supplier_preference_price_list_supplier_preferences__scope___key__put"];
+        post?: never;
+        /** Delete Supplier Preference */
+        delete: operations["delete_supplier_preference_price_list_supplier_preferences__scope___key__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/price-list/suppliers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Suppliers */
+        get: operations["list_suppliers_price_list_suppliers_get"];
+        put?: never;
+        /** Create Supplier */
+        post: operations["create_supplier_price_list_suppliers_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/quota": {
         parameters: {
             query?: never;
@@ -420,6 +586,27 @@ export interface paths {
         get: operations["get_quote_quotes__quote_id__get"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/quotes/{quote_id}/lines/{line_id}/price": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Change Line Price
+         * @description A line's sale price changed in the review screen (07 §7.2.3, 09 §7.14): for this quote only, or in the price
+         *     list too. A sent quote never changes (409). Returns the quote with its new totals.
+         */
+        post: operations["change_line_price_quotes__quote_id__lines__line_id__price_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -827,6 +1014,35 @@ export interface components {
             /** Page Id */
             page_id: string;
         };
+        /** BrandDiscountIn */
+        BrandDiscountIn: {
+            /**
+             * Discount Pct
+             * @example 0.15
+             */
+            discount_pct: string;
+            /**
+             * Quote Id
+             * @description The quote it was entered from (09 §7.13)
+             */
+            quote_id?: string | null;
+        };
+        /** BrandDiscountOut */
+        BrandDiscountOut: {
+            /** Brand */
+            brand: string;
+            /**
+             * Discount Pct
+             * @description Off the manufacturer's list price: 0.32 is 32%
+             * @example 0.15
+             */
+            discount_pct: string;
+            /**
+             * Priced Products
+             * @description The brand's products this discount prices today
+             */
+            priced_products: number;
+        };
         /** CorrectedQuoteOut */
         CorrectedQuoteOut: {
             /**
@@ -1032,12 +1248,99 @@ export interface components {
             /** Unit Price */
             unit_price: string | null;
         };
+        /**
+         * LinePriceIn
+         * @description 09 §7.14: the new sale price per unit, and "רק בהצעה הזו" (`quote`) or "עדכן גם במחירון" (`catalog`).
+         */
+        LinePriceIn: {
+            /**
+             * Scope
+             * @enum {string}
+             */
+            scope: "quote" | "catalog";
+            /**
+             * Unit Price
+             * @example 0.15
+             */
+            unit_price: string;
+        };
         /** LoginIn */
         LoginIn: {
             /** Email */
             email: string;
             /** Password */
             password: string;
+        };
+        /** MarginRuleIn */
+        MarginRuleIn: {
+            /** Customer Id */
+            customer_id?: string | null;
+            /** Fixed Price */
+            fixed_price?: string | null;
+            /**
+             * Kind
+             * @description Required: a markup and a margin give different prices
+             * @enum {string}
+             */
+            kind: "markup" | "margin";
+            /**
+             * Level
+             * @enum {string}
+             */
+            level: "customer_sku" | "customer" | "sku" | "family" | "brand" | "default";
+            /** Target */
+            target?: string | null;
+            /** Valid From */
+            valid_from?: string | null;
+            /** Valid To */
+            valid_to?: string | null;
+            /** Value */
+            value?: string | null;
+        };
+        /** MarginRuleOut */
+        MarginRuleOut: {
+            /** Customer Id */
+            customer_id: string | null;
+            /** Fixed Price */
+            fixed_price: string | null;
+            /** Id */
+            id: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "markup" | "margin";
+            /**
+             * Level
+             * @enum {string}
+             */
+            level: "customer_sku" | "customer" | "sku" | "family" | "brand" | "default";
+            /**
+             * Target
+             * @description The product id (sku levels), the family or the brand
+             */
+            target: string | null;
+            /** Valid From */
+            valid_from: string | null;
+            /** Valid To */
+            valid_to: string | null;
+            /** Value */
+            value: string | null;
+            /** Version */
+            version: number;
+        };
+        /** MarginRulePatch */
+        MarginRulePatch: {
+            /** Fixed Price */
+            fixed_price?: string | null;
+            /** Kind */
+            kind?: ("markup" | "margin") | null;
+            /** Valid From */
+            valid_from?: string | null;
+            /** Valid To */
+            valid_to?: string | null;
+            /** Value */
+            value?: string | null;
         };
         /** MeOut */
         MeOut: {
@@ -1213,6 +1516,36 @@ export interface components {
             /** Name He */
             name_he: string;
         };
+        /** PriceHistoryOut */
+        PriceHistoryOut: {
+            /**
+             * Changed At
+             * Format: date-time
+             */
+            changed_at: string;
+            /** Changed By */
+            changed_by: string | null;
+            /** Field */
+            field: string;
+            /** Id */
+            id: string;
+            /** New */
+            new: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Old
+             * @description `{"value": …}`, or a whole supplier row; amounts as strings
+             */
+            old: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Quote Id
+             * @description The quote the change was made from, if any
+             */
+            quote_id: string | null;
+        };
         /**
          * PriceSourceOut
          * @description Where the sale price comes from: a fixed price (and the quotes it was imported from) or a margin rule.
@@ -1229,6 +1562,172 @@ export interface components {
             source?: string | null;
             /** Value */
             value?: string | null;
+        };
+        /** ProductIn */
+        ProductIn: {
+            /** Brand */
+            brand?: string | null;
+            /** Catalog Item Id */
+            catalog_item_id?: string | null;
+            /**
+             * Consumable
+             * @default false
+             */
+            consumable: boolean;
+            /** Display Name */
+            display_name: string;
+            /** Family */
+            family: string;
+            /** Fixed Price */
+            fixed_price?: string | null;
+            /** Includes */
+            includes?: {
+                [key: string]: unknown;
+            } | null;
+            /** Manufacturer Sku */
+            manufacturer_sku?: string | null;
+            /**
+             * Quote Id
+             * @description The quote the product was entered from (07 §7.2)
+             */
+            quote_id?: string | null;
+            /**
+             * Sale Mode
+             * @default rule
+             * @enum {string}
+             */
+            sale_mode: "rule" | "fixed";
+            /**
+             * Source
+             * @default manual_entry
+             * @enum {string}
+             */
+            source: "supplier_price_list" | "manual_entry" | "quote_import" | "brand_discount";
+            /** Suppliers */
+            suppliers?: components["schemas"]["SupplierPriceIn"][];
+            /**
+             * Unit
+             * @default unit
+             */
+            unit: string;
+        };
+        /**
+         * ProductOut
+         * @description A price-list product (07 §7.2.1), with its cost and price today by the tenant's rules (07 §7.2.2, §7.3).
+         */
+        ProductOut: {
+            /** Below Margin Floor */
+            below_margin_floor: boolean;
+            /** Brand */
+            brand: string | null;
+            /** Catalog Item Id */
+            catalog_item_id: string | null;
+            /** Consumable */
+            consumable: boolean;
+            /** Cost Source */
+            cost_source: {
+                [key: string]: unknown;
+            } | null;
+            /** Display Name */
+            display_name: string;
+            /** Entered At */
+            entered_at: string | null;
+            /** Entered By */
+            entered_by: string | null;
+            /** Entered In Quote */
+            entered_in_quote: string | null;
+            /** Family */
+            family: string;
+            /** Fixed Price */
+            fixed_price: string | null;
+            /**
+             * History
+             * @description Newest first; only on GET of one product
+             */
+            history: components["schemas"]["PriceHistoryOut"][];
+            /** Id */
+            id: string;
+            /** Includes */
+            includes: {
+                [key: string]: unknown;
+            } | null;
+            /** List Currency */
+            list_currency: string | null;
+            /**
+             * List Price
+             * @description The master catalog's manufacturer list price
+             */
+            list_price: string | null;
+            /** Manufacturer Sku */
+            manufacturer_sku: string | null;
+            /** Margin Pct */
+            margin_pct: string | null;
+            /** Margin Rule */
+            margin_rule: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Price Status
+             * @enum {string}
+             */
+            price_status: "ok" | "stale" | "discount_based" | "missing";
+            /**
+             * Sale Mode
+             * @enum {string}
+             */
+            sale_mode: "rule" | "fixed";
+            /**
+             * Sanity
+             * @description 10 §8's checks on the last cost typed by hand (10 §9.2)
+             */
+            sanity: {
+                [key: string]: unknown;
+            } | null;
+            /** Source */
+            source: string;
+            /** Suppliers */
+            suppliers: components["schemas"]["SupplierPriceOut"][];
+            /** Unit */
+            unit: string;
+            /** Unit Cost */
+            unit_cost: string | null;
+            /**
+             * Unit Price
+             * @description Before 07 §7.6's rounding
+             */
+            unit_price: string | null;
+        };
+        /**
+         * ProductPatch
+         * @description Only the fields sent change. `suppliers`, when sent, is the whole list: rows left out are removed.
+         */
+        ProductPatch: {
+            /** Brand */
+            brand?: string | null;
+            /** Catalog Item Id */
+            catalog_item_id?: string | null;
+            /** Consumable */
+            consumable?: boolean | null;
+            /** Display Name */
+            display_name?: string | null;
+            /** Family */
+            family?: string | null;
+            /** Fixed Price */
+            fixed_price?: string | null;
+            /** Includes */
+            includes?: {
+                [key: string]: unknown;
+            } | null;
+            /** Manufacturer Sku */
+            manufacturer_sku?: string | null;
+            /** Quote Id */
+            quote_id?: string | null;
+            /** Sale Mode */
+            sale_mode?: ("rule" | "fixed") | null;
+            /** Suppliers */
+            suppliers?: components["schemas"]["SupplierPriceIn"][] | null;
+            /** Unit */
+            unit?: string | null;
         };
         /** ProgressFileOut */
         ProgressFileOut: {
@@ -1665,6 +2164,125 @@ export interface components {
             status: "green" | "yellow" | "red";
             /** Value */
             value?: unknown;
+        };
+        /** SupplierIn */
+        SupplierIn: {
+            /** Name */
+            name: string;
+        };
+        /** SupplierOut */
+        SupplierOut: {
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
+            /** Product Count */
+            product_count: number;
+        };
+        /** SupplierPreferenceIn */
+        SupplierPreferenceIn: {
+            /** Supplier Id */
+            supplier_id: string;
+        };
+        /** SupplierPreferenceOut */
+        SupplierPreferenceOut: {
+            /** Key */
+            key: string;
+            /**
+             * Scope
+             * @enum {string}
+             */
+            scope: "brand" | "family";
+            /** Supplier Id */
+            supplier_id: string;
+            /** Supplier Name */
+            supplier_name: string;
+        };
+        /** SupplierPriceIn */
+        SupplierPriceIn: {
+            /**
+             * Currency
+             * @default ILS
+             */
+            currency: string;
+            /**
+             * Id
+             * @description Keep and update this row; without it, a new row
+             */
+            id?: string | null;
+            /** Lead Days */
+            lead_days?: number | null;
+            /**
+             * Preferred
+             * @default false
+             */
+            preferred: boolean;
+            /**
+             * Price Date
+             * Format: date
+             */
+            price_date: string;
+            /**
+             * Source
+             * @default supplier_price_list
+             * @enum {string}
+             */
+            source: "supplier_price_list" | "manual_entry" | "quote_import";
+            /** Supplier Id */
+            supplier_id?: string | null;
+            /**
+             * Supplier Name
+             * @description Finds the supplier by name, or adds it
+             */
+            supplier_name?: string | null;
+            /** Supplier Sku */
+            supplier_sku?: string | null;
+            /**
+             * Unit Cost
+             * @example 0.15
+             */
+            unit_cost: string;
+            /** Valid Until */
+            valid_until?: string | null;
+        };
+        /** SupplierPriceOut */
+        SupplierPriceOut: {
+            /** Currency */
+            currency: string;
+            /** Id */
+            id: string;
+            /**
+             * In Force
+             * @description Not past `valid_until` today (07 §7.2)
+             */
+            in_force: boolean;
+            /** Lead Days */
+            lead_days: number | null;
+            /** Preferred */
+            preferred: boolean;
+            /**
+             * Price Date
+             * Format: date
+             */
+            price_date: string;
+            /** Source */
+            source: string;
+            /**
+             * Supplier Id
+             * @description null: a cost typed in a quote with no supplier
+             */
+            supplier_id: string | null;
+            /** Supplier Name */
+            supplier_name: string | null;
+            /** Supplier Sku */
+            supplier_sku: string | null;
+            /**
+             * Unit Cost
+             * @example 0.15
+             */
+            unit_cost: string;
+            /** Valid Until */
+            valid_until: string | null;
         };
         /** TenantOut */
         TenantOut: {
@@ -2346,6 +2964,517 @@ export interface operations {
             };
         };
     };
+    list_brand_discounts_price_list_brand_discounts_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BrandDiscountOut"][];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    set_brand_discount_price_list_brand_discounts__brand__put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                brand: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BrandDiscountIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BrandDiscountOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    delete_brand_discount_price_list_brand_discounts__brand__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                brand: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    list_margin_rules_price_list_margin_rules_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MarginRuleOut"][];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    create_margin_rule_price_list_margin_rules_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MarginRuleIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MarginRuleOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    delete_margin_rule_price_list_margin_rules__rule_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                rule_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    update_margin_rule_price_list_margin_rules__rule_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                rule_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MarginRulePatch"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MarginRuleOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    list_products_price_list_products_get: {
+        parameters: {
+            query?: {
+                /** @description Name, skus, brand or supplier */
+                q?: string | null;
+                family?: string | null;
+                brand?: string | null;
+                /** @description The screen's filters (prototype vPrices) */
+                filter?: "all" | "nocost" | "multi" | "low";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductOut"][];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    create_product_price_list_products_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProductIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_product_price_list_products__product_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                product_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    update_product_price_list_products__product_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                product_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProductPatch"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    list_supplier_preferences_price_list_supplier_preferences_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SupplierPreferenceOut"][];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    set_supplier_preference_price_list_supplier_preferences__scope___key__put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                scope: "brand" | "family";
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SupplierPreferenceIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SupplierPreferenceOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    delete_supplier_preference_price_list_supplier_preferences__scope___key__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                scope: "brand" | "family";
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    list_suppliers_price_list_suppliers_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SupplierOut"][];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    create_supplier_price_list_suppliers_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SupplierIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SupplierOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     get_quota_quota_get: {
         parameters: {
             query?: never;
@@ -2416,6 +3545,42 @@ export interface operations {
             cookie?: never;
         };
         requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QuoteOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    change_line_price_quotes__quote_id__lines__line_id__price_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                quote_id: string;
+                line_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LinePriceIn"];
+            };
+        };
         responses: {
             /** @description Successful Response */
             200: {

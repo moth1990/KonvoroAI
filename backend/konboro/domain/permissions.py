@@ -9,10 +9,13 @@ class Permission(StrEnum):
     ACCOUNT_READ = "account.read"
     QUOTA_READ = "quota.read"
     QUOTES_READ = "quotes.read"
+    QUOTES_WRITE = "quotes.write"
     DRAWINGS_READ = "drawings.read"
     DRAWINGS_WRITE = "drawings.write"
     SETTINGS_READ = "settings.read"
     SETTINGS_WRITE = "settings.write"
+    PRICE_LIST_READ = "price_list.read"
+    PRICE_LIST_WRITE = "price_list.write"
 
 
 ROLE_PERMISSIONS: dict[str, frozenset[Permission]] = {

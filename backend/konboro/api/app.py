@@ -11,7 +11,7 @@ from konboro.services.storage import Storage
 from konboro.settings import Settings, get_settings
 
 from . import errors
-from .routes import account, audits, drawings, health, home, pages, quotes
+from .routes import account, audits, drawings, health, home, pages, price_list, quotes
 from .routes import auth as auth_routes
 from .routes import settings as settings_routes
 
@@ -25,6 +25,7 @@ ROUTERS = (
     quotes.router,
     pages.router,
     audits.router,
+    price_list.router,
 )
 
 
