@@ -1,0 +1,173 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 465,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            551,
+            73,
+            597,
+            106
+          ],
+          "legible": "clear",
+          "text": "\"N\""
+        },
+        {
+          "box": [
+            555,
+            138,
+            589,
+            167
+          ],
+          "legible": "clear",
+          "text": "H2"
+        },
+        {
+          "box": [
+            871,
+            122,
+            933,
+            152
+          ],
+          "legible": "clear",
+          "text": "ידני"
+        },
+        {
+          "box": [
+            906,
+            159,
+            919,
+            188
+          ],
+          "legible": "clear",
+          "text": "1"
+        },
+        {
+          "box": [
+            982,
+            148,
+            1009,
+            186
+          ],
+          "legible": "clear",
+          "text": "0"
+        },
+        {
+          "box": [
+            534,
+            345,
+            567,
+            376
+          ],
+          "legible": "clear",
+          "text": "11"
+        },
+        {
+          "box": [
+            697,
+            345,
+            730,
+            376
+          ],
+          "legible": "clear",
+          "text": "11"
+        },
+        {
+          "box": [
+            442,
+            400,
+            489,
+            433
+          ],
+          "legible": "clear",
+          "text": "C2"
+        },
+        {
+          "box": [
+            609,
+            400,
+            656,
+            433
+          ],
+          "legible": "clear",
+          "text": "C3"
+        },
+        {
+          "box": [
+            815,
+            425,
+            877,
+            468
+          ],
+          "legible": "clear",
+          "text": "C2"
+        },
+        {
+          "box": [
+            531,
+            461,
+            574,
+            494
+          ],
+          "legible": "clear",
+          "text": "14"
+        },
+        {
+          "box": [
+            695,
+            461,
+            737,
+            494
+          ],
+          "legible": "clear",
+          "text": "14"
+        },
+        {
+          "box": [
+            849,
+            656,
+            1005,
+            698
+          ],
+          "legible": "clear",
+          "text": "מאוררים"
+        },
+        {
+          "box": [
+            942,
+            978,
+            992,
+            1010
+          ],
+          "legible": "clear",
+          "text": "שם"
+        },
+        {
+          "box": [
+            796,
+            978,
+            931,
+            1010
+          ],
+          "legible": "clear",
+          "text": "הפרויקט"
+        },
+        {
+          "box": [
+            759,
+            985,
+            768,
+            1005
+          ],
+          "legible": "clear",
+          "text": ":"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

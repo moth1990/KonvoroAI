@@ -1,0 +1,113 @@
+{
+  "answer": {
+    "input_tokens": 5892,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 463,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s11"
+              ],
+              "value": 20
+            },
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "poles",
+              "span_ids": [
+                "s11"
+              ],
+              "value": 3
+            }
+          ],
+          "brand_hint": "ABB",
+          "det": "d1",
+          "explicit_texts": [
+            "s8",
+            "s11",
+            "s15",
+            "s18",
+            "s20"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s13"
+              ],
+              "value": 16
+            },
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "poles",
+              "span_ids": [
+                "s13"
+              ],
+              "value": 1
+            }
+          ],
+          "brand_hint": "ABB",
+          "det": "d2",
+          "explicit_texts": [
+            "s9",
+            "s13",
+            "s16",
+            "s19",
+            "s21"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.7,
+              "evidence": "graphic",
+              "graphic_note": "three slanted strokes across the line",
+              "name": "poles",
+              "span_ids": [],
+              "value": 3
+            }
+          ],
+          "det": "d3",
+          "explicit_texts": [
+            "s24"
+          ]
+        },
+        {
+          "det": "d4",
+          "explicit_texts": [
+            "s26"
+          ]
+        },
+        {
+          "det": "d5",
+          "explicit_texts": [
+            "s27"
+          ]
+        }
+      ],
+      "unassigned_spans": [
+        {
+          "reason": "aux contact c1 terminal number",
+          "span_id": "s7"
+        },
+        {
+          "reason": "aux contact c1 terminal number",
+          "span_id": "s12"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

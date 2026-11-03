@@ -1,0 +1,145 @@
+{
+  "answer": {
+    "input_tokens": 5895,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 653,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [],
+          "det": "d1",
+          "explicit_texts": [
+            "s5"
+          ],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          }
+        },
+        {
+          "attributes": [],
+          "det": "d2",
+          "explicit_texts": [
+            "s16"
+          ],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          }
+        },
+        {
+          "attributes": [],
+          "det": "d3",
+          "explicit_texts": [
+            "s15",
+            "s12",
+            "s18"
+          ],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          }
+        },
+        {
+          "attributes": [],
+          "det": "d4",
+          "explicit_texts": [
+            "s14",
+            "s13",
+            "s19"
+          ],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          }
+        }
+      ],
+      "possible_missed": [],
+      "shared_labels": [],
+      "unassigned_spans": [
+        {
+          "reason": "tag of time switch T1",
+          "span_id": "s1"
+        },
+        {
+          "reason": "neutral bus label",
+          "span_id": "s2"
+        },
+        {
+          "reason": "terminal tag",
+          "span_id": "s3"
+        },
+        {
+          "reason": "Hebrew 'manual' label for switch",
+          "span_id": "s4"
+        },
+        {
+          "reason": "selector position",
+          "span_id": "s6"
+        },
+        {
+          "reason": "selector position",
+          "span_id": "s8"
+        },
+        {
+          "reason": "selector position",
+          "span_id": "s7"
+        },
+        {
+          "reason": "label for clock",
+          "span_id": "s9"
+        },
+        {
+          "reason": "label",
+          "span_id": "s10"
+        },
+        {
+          "reason": "relay tag",
+          "span_id": "s11"
+        },
+        {
+          "reason": "tag of neighbour c5",
+          "span_id": "s17"
+        },
+        {
+          "reason": "description 'fans'",
+          "span_id": "s20"
+        },
+        {
+          "reason": "title block",
+          "span_id": "s21"
+        },
+        {
+          "reason": "title block",
+          "span_id": "s22"
+        },
+        {
+          "reason": "title block",
+          "span_id": "s23"
+        },
+        {
+          "reason": "title block",
+          "span_id": "s24"
+        },
+        {
+          "reason": "title block",
+          "span_id": "s25"
+        },
+        {
+          "reason": "title block",
+          "span_id": "s26"
+        },
+        {
+          "reason": "title block",
+          "span_id": "s27"
+        },
+        {
+          "reason": "title block",
+          "span_id": "s28"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

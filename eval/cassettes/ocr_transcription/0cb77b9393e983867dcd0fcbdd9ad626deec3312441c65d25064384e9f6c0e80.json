@@ -1,0 +1,193 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 524,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            21,
+            52,
+            44,
+            83
+          ],
+          "legible": "clear",
+          "text": "C"
+        },
+        {
+          "box": [
+            21,
+            301,
+            45,
+            331
+          ],
+          "legible": "clear",
+          "text": "D"
+        },
+        {
+          "box": [
+            26,
+            629,
+            46,
+            660
+          ],
+          "legible": "clear",
+          "text": "E"
+        },
+        {
+          "box": [
+            393,
+            93,
+            438,
+            127
+          ],
+          "legible": "clear",
+          "text": "\"N\""
+        },
+        {
+          "box": [
+            403,
+            160,
+            436,
+            190
+          ],
+          "legible": "clear",
+          "text": "H1"
+        },
+        {
+          "box": [
+            589,
+            126,
+            662,
+            162
+          ],
+          "legible": "clear",
+          "text": "SW1"
+        },
+        {
+          "box": [
+            500,
+            152,
+            562,
+            184
+          ],
+          "legible": "clear",
+          "text": "ידני"
+        },
+        {
+          "box": [
+            726,
+            157,
+            789,
+            188
+          ],
+          "legible": "clear",
+          "text": "שעון"
+        },
+        {
+          "box": [
+            731,
+            103,
+            760,
+            140
+          ],
+          "legible": "clear",
+          "text": "2"
+        },
+        {
+          "box": [
+            677,
+            183,
+            699,
+            213
+          ],
+          "legible": "clear",
+          "text": "2"
+        },
+        {
+          "box": [
+            535,
+            189,
+            552,
+            218
+          ],
+          "legible": "clear",
+          "text": "1"
+        },
+        {
+          "box": [
+            611,
+            178,
+            637,
+            210
+          ],
+          "legible": "clear",
+          "text": "0"
+        },
+        {
+          "box": [
+            458,
+            328,
+            489,
+            360
+          ],
+          "legible": "clear",
+          "text": "11"
+        },
+        {
+          "box": [
+            457,
+            447,
+            496,
+            478
+          ],
+          "legible": "clear",
+          "text": "14"
+        },
+        {
+          "box": [
+            605,
+            421,
+            656,
+            461
+          ],
+          "legible": "clear",
+          "text": "C1"
+        },
+        {
+          "box": [
+            534,
+            626,
+            695,
+            667
+          ],
+          "legible": "unsure",
+          "text": "מסחררים"
+        },
+        {
+          "box": [
+            102,
+            990,
+            343,
+            1024
+          ],
+          "legible": "clear",
+          "text": "05/10/2026"
+        },
+        {
+          "box": [
+            358,
+            989,
+            504,
+            1022
+          ],
+          "legible": "unsure",
+          "text": "תאריך:"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

@@ -67,7 +67,7 @@ C20 = Item(
 
 
 def test_a_catalog_item_with_no_product_is_priced_at_the_brand_discount() -> None:
-    """BUG-051: 07 §7.2 priority 2 is by SKU."""
+    """BUG-058: 07 §7.2 priority 2 is by SKU."""
     book = _book(C20, discount="0.30")
     found = book.find(None, "cat_c20", "S203M-C20", "ABB")
     assert isinstance(found, Product) and found.listed and found.list_price == Decimal("215.00")

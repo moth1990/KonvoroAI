@@ -1,0 +1,167 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 661,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            30,
+            165,
+            55,
+            260
+          ],
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "mcb",
+          "tag": "F2"
+        },
+        {
+          "box": [
+            397,
+            165,
+            432,
+            260
+          ],
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "mcb",
+          "tag": "F3"
+        },
+        {
+          "box": [
+            765,
+            165,
+            806,
+            260
+          ],
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "mcb",
+          "tag": "F4"
+        },
+        {
+          "box": [
+            198,
+            130,
+            310,
+            325
+          ],
+          "family": "aux_contact",
+          "orientation": 0,
+          "role": "aux_contact",
+          "sure": false,
+          "symbol_class": "aux_contact",
+          "tag": "F2"
+        },
+        {
+          "box": [
+            602,
+            130,
+            692,
+            325
+          ],
+          "family": "aux_contact",
+          "orientation": 0,
+          "role": "aux_contact",
+          "sure": false,
+          "symbol_class": "aux_contact",
+          "tag": "F3"
+        },
+        {
+          "box": [
+            8,
+            422,
+            48,
+            490
+          ],
+          "family": "contactor",
+          "orientation": 0,
+          "role": "power_contact",
+          "sure": true,
+          "symbol_class": "contactor",
+          "tag": "C1"
+        },
+        {
+          "box": [
+            384,
+            422,
+            424,
+            490
+          ],
+          "family": "contactor",
+          "orientation": 0,
+          "role": "power_contact",
+          "sure": true,
+          "symbol_class": "contactor",
+          "tag": "C1"
+        },
+        {
+          "box": [
+            754,
+            422,
+            794,
+            490
+          ],
+          "family": "contactor",
+          "orientation": 0,
+          "role": "power_contact",
+          "sure": true,
+          "symbol_class": "contactor",
+          "tag": "C1"
+        },
+        {
+          "box": [
+            25,
+            864,
+            56,
+            895
+          ],
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "terminal",
+          "tag": "2"
+        },
+        {
+          "box": [
+            402,
+            864,
+            434,
+            895
+          ],
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "terminal",
+          "tag": "3"
+        },
+        {
+          "box": [
+            772,
+            864,
+            803,
+            895
+          ],
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "terminal",
+          "tag": "4"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

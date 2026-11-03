@@ -1,0 +1,253 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 693,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            19,
+            260,
+            40,
+            291
+          ],
+          "legible": "clear",
+          "text": "F"
+        },
+        {
+          "box": [
+            17,
+            437,
+            42,
+            470
+          ],
+          "legible": "clear",
+          "text": "G"
+        },
+        {
+          "box": [
+            103,
+            224,
+            342,
+            260
+          ],
+          "legible": "clear",
+          "text": "05/10/2026"
+        },
+        {
+          "box": [
+            368,
+            228,
+            382,
+            257
+          ],
+          "legible": "clear",
+          "text": ":"
+        },
+        {
+          "box": [
+            413,
+            222,
+            505,
+            260
+          ],
+          "legible": "clear",
+          "text": "תאריך"
+        },
+        {
+          "box": [
+            552,
+            228,
+            774,
+            266
+          ],
+          "legible": "clear",
+          "text": "26/952-1"
+        },
+        {
+          "box": [
+            799,
+            232,
+            809,
+            263
+          ],
+          "legible": "clear",
+          "text": ":"
+        },
+        {
+          "box": [
+            820,
+            226,
+            969,
+            268
+          ],
+          "legible": "unsure",
+          "text": "תוכנית"
+        },
+        {
+          "box": [
+            482,
+            286,
+            512,
+            314
+          ],
+          "legible": "clear",
+          "text": ":1"
+        },
+        {
+          "box": [
+            472,
+            342,
+            510,
+            373
+          ],
+          "legible": "clear",
+          "text": ":2"
+        },
+        {
+          "box": [
+            466,
+            399,
+            506,
+            431
+          ],
+          "legible": "clear",
+          "text": ":3"
+        },
+        {
+          "box": [
+            441,
+            451,
+            509,
+            486
+          ],
+          "legible": "clear",
+          "text": "בדק"
+        },
+        {
+          "box": [
+            418,
+            455,
+            430,
+            484
+          ],
+          "legible": "clear",
+          "text": ":"
+        },
+        {
+          "box": [
+            848,
+            313,
+            947,
+            347
+          ],
+          "legible": "clear",
+          "text": "מחמוד"
+        },
+        {
+          "box": [
+            779,
+            313,
+            839,
+            347
+          ],
+          "legible": "clear",
+          "text": "זועבי"
+        },
+        {
+          "box": [
+            960,
+            319,
+            969,
+            342
+          ],
+          "legible": "clear",
+          "text": ":"
+        },
+        {
+          "box": [
+            921,
+            378,
+            1009,
+            422
+          ],
+          "legible": "unsure",
+          "text": "הבה"
+        },
+        {
+          "box": [
+            751,
+            378,
+            914,
+            424
+          ],
+          "legible": "unsure",
+          "text": "גמאחנה"
+        },
+        {
+          "box": [
+            897,
+            448,
+            967,
+            483
+          ],
+          "legible": "clear",
+          "text": "עופר"
+        },
+        {
+          "box": [
+            820,
+            448,
+            889,
+            484
+          ],
+          "legible": "clear",
+          "text": "אלרון"
+        },
+        {
+          "box": [
+            990,
+            452,
+            998,
+            478
+          ],
+          "legible": "clear",
+          "text": ":"
+        },
+        {
+          "box": [
+            219,
+            529,
+            233,
+            560
+          ],
+          "legible": "clear",
+          "text": "1"
+        },
+        {
+          "box": [
+            493,
+            529,
+            512,
+            561
+          ],
+          "legible": "clear",
+          "text": "2"
+        },
+        {
+          "box": [
+            787,
+            529,
+            807,
+            560
+          ],
+          "legible": "clear",
+          "text": "3"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

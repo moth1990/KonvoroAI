@@ -1,0 +1,88 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 337,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            788,
+            958,
+            892,
+            1016
+          ],
+          "box_text": "TH1",
+          "family": "temperature_controller",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "temperature_controller",
+          "tag": "TH1"
+        },
+        {
+          "box": [
+            624,
+            948,
+            650,
+            1024
+          ],
+          "box_text": null,
+          "family": "relay",
+          "orientation": 0,
+          "role": "relay_contact",
+          "sure": false,
+          "symbol_class": "relay",
+          "tag": "TH1"
+        },
+        {
+          "box": [
+            139,
+            927,
+            178,
+            953
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "terminal",
+          "tag": null
+        },
+        {
+          "box": [
+            307,
+            927,
+            329,
+            950
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "terminal",
+          "tag": null
+        },
+        {
+          "box": [
+            217,
+            972,
+            238,
+            994
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "terminal",
+          "tag": null
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

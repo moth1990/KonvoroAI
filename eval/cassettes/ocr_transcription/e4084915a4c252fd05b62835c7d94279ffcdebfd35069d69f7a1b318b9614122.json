@@ -1,0 +1,233 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 653,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            252,
+            56,
+            275,
+            88
+          ],
+          "legible": "unsure",
+          "text": "6"
+        },
+        {
+          "box": [
+            576,
+            52,
+            598,
+            86
+          ],
+          "legible": "clear",
+          "text": "7"
+        },
+        {
+          "box": [
+            880,
+            54,
+            904,
+            88
+          ],
+          "legible": "clear",
+          "text": "8"
+        },
+        {
+          "box": [
+            212,
+            201,
+            244,
+            219
+          ],
+          "legible": "unsure",
+          "text": "\"N\""
+        },
+        {
+          "box": [
+            105,
+            322,
+            128,
+            343
+          ],
+          "legible": "clear",
+          "text": "L1"
+        },
+        {
+          "box": [
+            161,
+            322,
+            189,
+            343
+          ],
+          "legible": "clear",
+          "text": "L2"
+        },
+        {
+          "box": [
+            221,
+            322,
+            249,
+            343
+          ],
+          "legible": "clear",
+          "text": "L3"
+        },
+        {
+          "box": [
+            661,
+            294,
+            693,
+            321
+          ],
+          "legible": "clear",
+          "text": "F0"
+        },
+        {
+          "box": [
+            693,
+            339,
+            764,
+            367
+          ],
+          "legible": "clear",
+          "text": "3X40A"
+        },
+        {
+          "box": [
+            670,
+            371,
+            767,
+            398
+          ],
+          "legible": "clear",
+          "text": "INC=32A"
+        },
+        {
+          "box": [
+            682,
+            398,
+            756,
+            425
+          ],
+          "legible": "clear",
+          "text": "S203M"
+        },
+        {
+          "box": [
+            684,
+            430,
+            728,
+            457
+          ],
+          "legible": "clear",
+          "text": "ABB"
+        },
+        {
+          "box": [
+            675,
+            495,
+            708,
+            523
+          ],
+          "legible": "clear",
+          "text": "S0"
+        },
+        {
+          "box": [
+            666,
+            530,
+            737,
+            557
+          ],
+          "legible": "clear",
+          "text": "3X40A"
+        },
+        {
+          "box": [
+            673,
+            662,
+            724,
+            690
+          ],
+          "legible": "clear",
+          "text": "FB0"
+        },
+        {
+          "box": [
+            675,
+            697,
+            761,
+            726
+          ],
+          "legible": "clear",
+          "text": "4x40A"
+        },
+        {
+          "box": [
+            670,
+            732,
+            891,
+            764
+          ],
+          "legible": "clear",
+          "text": "0.3mA-TYPE\"A\""
+        },
+        {
+          "box": [
+            48,
+            939,
+            88,
+            968
+          ],
+          "legible": "clear",
+          "text": "F4"
+        },
+        {
+          "box": [
+            387,
+            938,
+            425,
+            968
+          ],
+          "legible": "clear",
+          "text": "21"
+        },
+        {
+          "box": [
+            516,
+            942,
+            556,
+            972
+          ],
+          "legible": "clear",
+          "text": "F5"
+        },
+        {
+          "box": [
+            897,
+            935,
+            935,
+            965
+          ],
+          "legible": "clear",
+          "text": "21"
+        },
+        {
+          "box": [
+            64,
+            990,
+            144,
+            1021
+          ],
+          "legible": "clear",
+          "text": "1X10A"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

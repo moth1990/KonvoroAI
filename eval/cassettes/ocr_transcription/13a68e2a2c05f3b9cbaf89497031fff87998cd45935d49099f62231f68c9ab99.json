@@ -1,0 +1,153 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 415,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            105,
+            121,
+            166,
+            152
+          ],
+          "legible": "clear",
+          "text": "ידני"
+        },
+        {
+          "box": [
+            189,
+            104,
+            270,
+            140
+          ],
+          "legible": "clear",
+          "text": "SW2"
+        },
+        {
+          "box": [
+            333,
+            123,
+            385,
+            152
+          ],
+          "legible": "clear",
+          "text": "בקר"
+        },
+        {
+          "box": [
+            324,
+            158,
+            388,
+            187
+          ],
+          "legible": "clear",
+          "text": "טמפ'"
+        },
+        {
+          "box": [
+            137,
+            160,
+            152,
+            187
+          ],
+          "legible": "clear",
+          "text": "1"
+        },
+        {
+          "box": [
+            214,
+            147,
+            241,
+            185
+          ],
+          "legible": "clear",
+          "text": "0"
+        },
+        {
+          "box": [
+            281,
+            153,
+            302,
+            184
+          ],
+          "legible": "clear",
+          "text": "2"
+        },
+        {
+          "box": [
+            803,
+            200,
+            877,
+            240
+          ],
+          "legible": "clear",
+          "text": "TH1"
+        },
+        {
+          "box": [
+            243,
+            295,
+            342,
+            336
+          ],
+          "legible": "clear",
+          "text": "RNV"
+        },
+        {
+          "box": [
+            48,
+            426,
+            108,
+            466
+          ],
+          "legible": "clear",
+          "text": "C2"
+        },
+        {
+          "box": [
+            194,
+            426,
+            257,
+            466
+          ],
+          "legible": "clear",
+          "text": "C3"
+        },
+        {
+          "box": [
+            80,
+            658,
+            238,
+            699
+          ],
+          "legible": "clear",
+          "text": "מאוררים"
+        },
+        {
+          "box": [
+            179,
+            979,
+            229,
+            1010
+          ],
+          "legible": "clear",
+          "text": "שם"
+        },
+        {
+          "box": [
+            26,
+            979,
+            170,
+            1011
+          ],
+          "legible": "clear",
+          "text": "הפרויקט"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

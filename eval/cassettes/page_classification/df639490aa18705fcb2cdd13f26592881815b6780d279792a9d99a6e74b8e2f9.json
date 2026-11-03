@@ -1,0 +1,28 @@
+{
+  "answer": {
+    "input_tokens": 4365,
+    "model": "claude-haiku-5-5",
+    "output_tokens": 984,
+    "payload": {
+      "component_labels": "not_applicable",
+      "language": "he",
+      "orientation": 0,
+      "page_kind": "factory_template",
+      "page_kind_confidence": 0.9,
+      "panels": [],
+      "reasoning": "The page holds fixed factory reference tables (conductor colour tables, terminal tables, torque table, circuit-sign table) and no devices of this project.",
+      "regions": [],
+      "title_block": {
+        "date": "2026-10-05",
+        "designer": "ס.ס לוחות חשמל ובקרה",
+        "drawing_number": "26/952-1",
+        "panel_name": null,
+        "project_name": "שדה ורבורג",
+        "revision": null,
+        "status": null
+      }
+    }
+  },
+  "model": "claude-haiku-5-5",
+  "stage": "page_classification"
+}

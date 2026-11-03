@@ -1,0 +1,43 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 147,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            21,
+            961,
+            124,
+            1017
+          ],
+          "box_text": "TH1",
+          "family": "temperature_controller",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "temperature_controller",
+          "tag": "TH1"
+        },
+        {
+          "box": [
+            494,
+            293,
+            560,
+            347
+          ],
+          "box_text": null,
+          "family": "busbar",
+          "orientation": 90,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "busbar",
+          "tag": "WO"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

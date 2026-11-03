@@ -1,0 +1,333 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 935,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            8,
+            283,
+            26,
+            318
+          ],
+          "legible": "clear",
+          "text": "1"
+        },
+        {
+          "box": [
+            55,
+            288,
+            67,
+            316
+          ],
+          "legible": "clear",
+          "text": ":"
+        },
+        {
+          "box": [
+            78,
+            279,
+            226,
+            321
+          ],
+          "legible": "clear",
+          "text": "תוכנית"
+        },
+        {
+          "box": [
+            237,
+            279,
+            321,
+            321
+          ],
+          "legible": "clear",
+          "text": "מס"
+        },
+        {
+          "box": [
+            632,
+            283,
+            732,
+            322
+          ],
+          "legible": "clear",
+          "text": "שדה"
+        },
+        {
+          "box": [
+            514,
+            283,
+            626,
+            322
+          ],
+          "legible": "unsure",
+          "text": "ורבורג"
+        },
+        {
+          "box": [
+            806,
+            266,
+            814,
+            292
+          ],
+          "legible": "clear",
+          "text": ":"
+        },
+        {
+          "box": [
+            842,
+            262,
+            976,
+            296
+          ],
+          "legible": "clear",
+          "text": "הפרויקט"
+        },
+        {
+          "box": [
+            850,
+            363,
+            882,
+            397
+          ],
+          "legible": "clear",
+          "text": "8:"
+        },
+        {
+          "box": [
+            889,
+            362,
+            947,
+            397
+          ],
+          "legible": "clear",
+          "text": "מס'"
+        },
+        {
+          "box": [
+            744,
+            369,
+            790,
+            402
+          ],
+          "legible": "clear",
+          "text": "שם"
+        },
+        {
+          "box": [
+            632,
+            369,
+            739,
+            402
+          ],
+          "legible": "clear",
+          "text": "הלוח:"
+        },
+        {
+          "box": [
+            96,
+            370,
+            209,
+            404
+          ],
+          "legible": "unsure",
+          "text": "מחמוד"
+        },
+        {
+          "box": [
+            36,
+            372,
+            93,
+            404
+          ],
+          "legible": "unsure",
+          "text": "זועבי"
+        },
+        {
+          "box": [
+            220,
+            374,
+            232,
+            400
+          ],
+          "legible": "clear",
+          "text": ":"
+        },
+        {
+          "box": [
+            243,
+            367,
+            356,
+            404
+          ],
+          "legible": "clear",
+          "text": "מתכנן"
+        },
+        {
+          "box": [
+            549,
+            419,
+            666,
+            457
+          ],
+          "legible": "unsure",
+          "text": "מנהרות"
+        },
+        {
+          "box": [
+            518,
+            421,
+            534,
+            454
+          ],
+          "legible": "clear",
+          "text": "1"
+        },
+        {
+          "box": [
+            163,
+            436,
+            232,
+            482
+          ],
+          "legible": "unsure",
+          "text": "הבה"
+        },
+        {
+          "box": [
+            238,
+            436,
+            357,
+            484
+          ],
+          "legible": "unsure",
+          "text": "שרטט:"
+        },
+        {
+          "box": [
+            741,
+            467,
+            787,
+            498
+          ],
+          "legible": "clear",
+          "text": "מזמין"
+        },
+        {
+          "box": [
+            690,
+            472,
+            697,
+            496
+          ],
+          "legible": "clear",
+          "text": ":"
+        },
+        {
+          "box": [
+            819,
+            483,
+            935,
+            520
+          ],
+          "legible": "clear",
+          "text": "1:100:"
+        },
+        {
+          "box": [
+            78,
+            508,
+            128,
+            544
+          ],
+          "legible": "unsure",
+          "text": "אילרן"
+        },
+        {
+          "box": [
+            274,
+            507,
+            358,
+            541
+          ],
+          "legible": "clear",
+          "text": "אישר"
+        },
+        {
+          "box": [
+            406,
+            515,
+            491,
+            553
+          ],
+          "legible": "clear",
+          "text": "pro"
+        },
+        {
+          "box": [
+            524,
+            514,
+            589,
+            551
+          ],
+          "legible": "clear",
+          "text": "fit"
+        },
+        {
+          "box": [
+            620,
+            515,
+            735,
+            553
+          ],
+          "legible": "clear",
+          "text": "agro"
+        },
+        {
+          "box": [
+            42,
+            593,
+            65,
+            624
+          ],
+          "legible": "clear",
+          "text": "3"
+        },
+        {
+          "box": [
+            338,
+            594,
+            360,
+            625
+          ],
+          "legible": "clear",
+          "text": "4"
+        },
+        {
+          "box": [
+            652,
+            593,
+            674,
+            624
+          ],
+          "legible": "clear",
+          "text": "5"
+        },
+        {
+          "box": [
+            937,
+            594,
+            959,
+            625
+          ],
+          "legible": "clear",
+          "text": "6"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

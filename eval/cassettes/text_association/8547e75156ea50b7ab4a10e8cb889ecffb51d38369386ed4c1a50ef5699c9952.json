@@ -1,0 +1,122 @@
+{
+  "answer": {
+    "input_tokens": 5988,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 457,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "confidence": 0.95,
+              "evidence": "text",
+              "name": "contacts",
+              "span_ids": [
+                "s12",
+                "s17"
+              ],
+              "value": "21/22"
+            }
+          ],
+          "det": "d1",
+          "explicit_texts": [
+            "s12",
+            "s17"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s15"
+              ],
+              "value": 10
+            },
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "poles",
+              "span_ids": [
+                "s15"
+              ],
+              "value": 1
+            }
+          ],
+          "det": "d2",
+          "explicit_texts": [
+            "s11",
+            "s15",
+            "s19",
+            "s21"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s16"
+              ],
+              "value": 10
+            },
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "poles",
+              "span_ids": [
+                "s16"
+              ],
+              "value": 1
+            }
+          ],
+          "det": "d3",
+          "explicit_texts": [
+            "s13",
+            "s16",
+            "s20",
+            "s22"
+          ]
+        },
+        {
+          "attributes": [],
+          "det": "d4"
+        },
+        {
+          "attributes": [],
+          "det": "d5",
+          "explicit_texts": [
+            "s24"
+          ]
+        },
+        {
+          "attributes": [],
+          "det": "d6",
+          "explicit_texts": [
+            "s29"
+          ]
+        }
+      ],
+      "unassigned_spans": [
+        {
+          "reason": "cable type",
+          "span_id": "s25"
+        },
+        {
+          "reason": "cable text",
+          "span_id": "s26"
+        },
+        {
+          "reason": "cable size",
+          "span_id": "s27"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

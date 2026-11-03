@@ -1,0 +1,104 @@
+{
+  "answer": {
+    "input_tokens": 6370,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 404,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "confidence": 0.95,
+              "evidence": "text",
+              "name": "contacts",
+              "span_ids": [
+                "s18",
+                "s28"
+              ],
+              "value": "21/22"
+            }
+          ],
+          "det": "d1",
+          "explicit_texts": [
+            "s18",
+            "s28"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.95,
+              "evidence": "text",
+              "name": "contacts",
+              "span_ids": [
+                "s19",
+                "s27"
+              ],
+              "value": "21/22"
+            }
+          ],
+          "det": "d2",
+          "explicit_texts": [
+            "s19",
+            "s27"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s24"
+              ],
+              "value": 20
+            },
+            {
+              "confidence": 0.95,
+              "evidence": "text",
+              "name": "poles",
+              "span_ids": [
+                "s24"
+              ],
+              "value": 3
+            }
+          ],
+          "brand_hint": "ABB",
+          "det": "d3",
+          "explicit_texts": [
+            "s20",
+            "s24",
+            "s31",
+            "s35",
+            "s37"
+          ]
+        },
+        {
+          "attributes": [],
+          "det": "d4",
+          "explicit_texts": [
+            "s40"
+          ]
+        },
+        {
+          "attributes": [],
+          "det": "d5",
+          "explicit_texts": [
+            "s43"
+          ]
+        }
+      ],
+      "possible_missed": [],
+      "shared_labels": [],
+      "unassigned_spans": [
+        {
+          "reason": "INC is load current, not a device rating",
+          "span_id": "s31"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

@@ -1,0 +1,67 @@
+{
+  "answer": {
+    "input_tokens": 4855,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 605,
+    "payload": {
+      "issues": [
+        {
+          "bbox": [
+            686,
+            619,
+            724,
+            650
+          ],
+          "component_ids": [
+            "c11"
+          ],
+          "confidence": 0.4,
+          "message": "C1 ו-C2 מוגדרים כמגען אחד בזרם 10A, אך בשרטוט C1 מפעיל שלושה מא\"זים 1x10A ו-C2 מחובר ל-F5 ב-3x20A. כדאי לבדוק את זרם וקוטביות המגענים, שכן C3 הוא 26A תלת-פאזי.",
+          "type": "inconsistent_attributes"
+        },
+        {
+          "bbox": [
+            1480,
+            470,
+            1568,
+            590
+          ],
+          "component_ids": [
+            "c10"
+          ],
+          "confidence": 0.3,
+          "message": "F7 נקרא בשרטוט כ-1X16A, אך בטקסט נראה INC=12.8A. יש לוודא שהערך תואם את הרכיב שנבחר ושהכמות 2 (F7, F13) נכונה.",
+          "type": "inconsistent_attributes"
+        },
+        {
+          "bbox": [
+            648,
+            40,
+            750,
+            100
+          ],
+          "component_ids": [
+            "c02"
+          ],
+          "confidence": 0.3,
+          "message": "בשרטוט נראות 4 נוריות (L1-L3 ו-HNV), אך בטבלה 8 נוריות, כולל H1, H2, HT1, HT2 שאינם נראים. כדאי לבדוק מול שאר הלוח.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": [
+            10,
+            436,
+            56,
+            556
+          ],
+          "component_ids": [],
+          "confidence": 0.3,
+          "message": "מגעי עזר 21/22 מופיעים ליד כל מא\"ז (F2-F6) והטבלה מציינת 8 מגעי עזר NC. כדאי לוודא שהכמות מתאימה ושכולם משויכים למא\"זים.",
+          "type": "missing_component"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "validator_review"
+}

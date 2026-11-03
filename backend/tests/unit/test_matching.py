@@ -332,6 +332,32 @@ def test_a_system_default_costs_nothing() -> None:
     assert m.method == "rules_unique" and m.confidence == pytest.approx(0.95 * 0.95, abs=1e-4)
 
 
+@pytest.mark.parametrize("written", ['0.3mA-TYPE"A"', "0,3mA"])
+def test_a_residual_written_in_amps_with_ma_is_inferred_not_defaulted(written: str) -> None:
+    """BUG-052, MINHAROT-1's FB0: no RCD has 0.3 mA. It is 0.3 A, inferred (yellow), and the 30 mA default, the
+    factory's or the system's, does not cover it."""
+    fb0 = comp("rcd", "rcd", {"current_a": 40, "poles": 4, "rcd_type": "A"}, ("FB0", "4×40A", written))
+    for fac in (factory(), factory(attribute_defaults={"rcd": {"residual_ma": 30}})):
+        m = one(fb0, fac=fac)
+        used = m.attributes_used["residual_ma"]
+        assert m.chosen_sku == "F204A-40/0.3" and used.value == 300 and used.source == "inferred"
+        assert used.note is not None and "0.3A" in used.note and "300mA" in used.note
+        assert "residual_ma" not in m.defaulted_attributes
+        assert "inferred_attribute" in m.warnings and m.confidence <= DEFAULT.yellow_max
+
+
+def test_a_residual_read_from_the_drawing_is_left_alone() -> None:
+    """The slip rule only stands in for a fill-in: a sensitivity the drawing gives is never replaced."""
+    m = one(comp("rcd", "rcd", {"current_a": 40, "poles": 4, "rcd_type": "A", "residual_ma": 30}, ("0.3mA",)))
+    assert m.chosen_sku == "F204A-40/0.03" and m.attributes_used["residual_ma"].source == "drawing"
+
+
+def test_the_residual_slip_rule_can_be_turned_off() -> None:
+    fac = factory(inference_off=frozenset({"residual_written_in_amps_as_ma"}))
+    m = one(comp("rcd", "rcd", {"current_a": 40, "poles": 4, "rcd_type": "A"}, ("0.3mA",)), fac=fac)
+    assert m.attributes_used["residual_ma"].source == "system_default"
+
+
 @pytest.mark.parametrize("family", sorted(schemas.SCHEMAS))
 def test_current_and_poles_never_take_a_default(family: str) -> None:
     """05 §4.4, non-negotiable 4: even a tenant default for them is ignored."""

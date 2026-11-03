@@ -30,6 +30,7 @@ TERMS: tuple[tuple[str, str, str | None], ...] = (
     ("פחת", "rcd", "rcd"),
     ("מ.פ.", "rcd", "rcd"),
     ("מגען", "contactor", "contactor"),
+    ("ממסר פחת", "rcd", "rcd"),  # a residual-current relay: what factories call an RCD (BUG-056)
     ("ממסר פיקוד", "relay", "relay"),
     ("ממסר צעד", "impulse_relay", "impulse_relay"),
     ("ממסר זמן", "timer", "timer"),

@@ -1,0 +1,50 @@
+{
+  "answer": {
+    "input_tokens": 4365,
+    "model": "claude-haiku-5-5",
+    "output_tokens": 1243,
+    "payload": {
+      "component_labels": "tags_and_models",
+      "language": "he",
+      "orientation": 0,
+      "page_kind": "single_line_diagram",
+      "page_kind_confidence": 0.9,
+      "panels": [
+        {
+          "bbox": [
+            55,
+            110,
+            960,
+            680
+          ],
+          "confidence": 0.7,
+          "name": "מנהרות 1"
+        }
+      ],
+      "reasoning": "Breakers F8–F13 on a common busbar with outgoing circuits and switches make this a single-line diagram of one panel.",
+      "regions": [
+        {
+          "bbox": [
+            25,
+            820,
+            980,
+            970
+          ],
+          "confidence": 0.9,
+          "region_kind": "title_block"
+        }
+      ],
+      "title_block": {
+        "date": "2026-10-05",
+        "designer": "ס.ס לוחות חשמל ובקרה",
+        "drawing_number": "26/952-1",
+        "panel_name": "מנהרות 1",
+        "project_name": "שדה ורבורג",
+        "revision": null,
+        "status": null
+      }
+    }
+  },
+  "model": "claude-haiku-5-5",
+  "stage": "page_classification"
+}

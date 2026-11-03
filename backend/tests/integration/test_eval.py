@@ -15,7 +15,7 @@ def first() -> report.Report:
 
 
 def test_replay_scores_every_golden_drawing(first: report.Report) -> None:
-    assert sorted(first["drawings"]) == ["26-993", "6199-2-50", "BOM-HW-1", "NEVIS-1", "NURSERY-1"]
+    assert sorted(first["drawings"]) == ["26-993", "6199-2-50", "BOM-HW-1", "MINHAROT-1", "NEVIS-1", "NURSERY-1"]
     assert set(first["totals"]["by_input_kind"]) == {"bom_only", "designer_plan", "factory_drawing"}
     nursery = first["drawings"]["NURSERY-1"]["scores"]
     assert nursery["s1"]["missed_process_pages"]["value"] == 0  # the stub routes every page to process

@@ -39,10 +39,10 @@ Written at kickoff, refined as they landed.
 - [x] **Attribute edit**: `POST /quotes/{id}/lines/{line_id}/attribute` (`current_a`, `breaking_capacity_ka`). The component with the user's value (`user`, a new 04 §6.2 source), confidence 1.0, the line's brand asked for; stage 5's `prepare` / `decide_prepared` / `finish` with no model (`ask=None`: ambiguous takes the first, yellow). Kept in `quote_lines.edits` as `attrs` and `match`; `edits.apply` gives the line the SKU, wording, reasons and alternatives; `review.edited_outputs` gives the rules the value. No candidate: red "אין בקטלוג מוצר עם הערכים האלה". The dropdown's values come with the line (`attribute_options`, the catalog's values per family). The fixture's prototype keys (`current: "160A"`) are read as the schema's.
 - [x] **Missing line**: `GET …/lines/{line_id}/candidates` (up to 3, stage 5's code on the missing instance); `POST …/lines/{line_id}/resolve` (a candidate or a picked product): an approved component line, `edits.replaced` + `resolved`, carried by its `m:` key. "אין כאן רכיב" is `review.delete`, its event `negative_example`.
 - [x] **Draw mode**: `POST /quotes/{id}/marks`: a manual line, its box in `quote_lines.boxes` (migration 0019), in the panel whose area holds the rectangle's centre, else the active one; the crop cut from the page's render to S3 (`…/marks/{trf}.png`) and a `tenant_reference_crops` row in the family's default class. Refused: no drawing, another drawing's page, a page not parsed, outside the page, under 10 points.
-- [x] **Bulk brand discount from a row**: `POST …/lines/{line_id}/brand-discount`: S19's `set_brand_discount`, then this quote's lines of the brand with no price of their own priced again. The price book prices a catalog item at the brand discount with no product (BUG-051).
+- [x] **Bulk brand discount from a row**: `POST …/lines/{line_id}/brand-discount`: S19's `set_brand_discount`, then this quote's lines of the brand with no price of their own priced again. The price book prices a catalog item at the brand discount with no product (BUG-058).
 - [x] Undo for all four: the lines (now with `line_type`), the created line and crop (`review_picker.undo_created`), the brand discount (`undo_brand_discount`). Events `attribute_changed`, `missing_resolved`, `component_marked`, `brand_discount_set`, `row_deleted` with `negative_example`.
 - [x] Manual lines are priced from the list when an action touches them, and keep their stored price otherwise (`engine.manual_line`, `load.carry`'s `kept`); their products and SKUs reach the book (`run.price_drawing`, `stored.book_for`).
-- [x] A missing line keeps its box (`Draft.boxes`, BUG-052).
+- [x] A missing line keeps its box (`Draft.boxes`, BUG-059).
 - [x] Remove `review_screen`: migration 0019 deletes the flag and its rows, the routes and the seed lose it, the 404 tests go.
 - [x] `make gen-client`.
 
@@ -57,7 +57,7 @@ Written at kickoff, refined as they landed.
 
 ### Unit tests
 - [x] pytest: the contract snapshot (`user` source); `test_review_picker.py` (the crop at the render's scale, the family's default class, the fixture's values, a catalog item at the brand discount with no product, a rematch and a resolution through `LineEdits` and `apply`); the existing suites with the book's fallback and manual pricing (1,018 pass).
-- [x] Vitest: units, the dropdown's value, the discount fraction, the missing text, the picker's meta, the new reasons, the drag rectangle, the 10-point rule, `canMark`, the accent box, Esc on a dialog over a dialog (BUG-053); 245 pass.
+- [x] Vitest: units, the dropdown's value, the discount fraction, the missing text, the picker's meta, the new reasons, the drag rectangle, the 10-point rule, `canMark`, the accent box, Esc on a dialog over a dialog (BUG-060); 245 pass.
 
 ### Integration tests
 - [x] `test_review_picker.py` (15): the search (and another tenant's product), an attribute and its undo, a value the catalog lacks, refusals; a missing line resolved and undone, "אין כאן רכיב", refusals, the candidates on a pipeline quote and a rerun keeping the resolution; a mark with its box, crop and undo, refusals, the panel by centre; the brand discount and its undo, a line with no list price; a sent version's 409s and another tenant's 404s.
@@ -72,7 +72,7 @@ Written at kickoff, refined as they landed.
 
 ### Docs
 - [x] 09 "החלטות ב-S23b"; 04 §6.2 (`user`); 07 §7.2 (priority 2 by SKU).
-- [x] `docs/db-schema.md` (migration 0019, the flag, the crops), CLAUDE.md, the roadmap's backlog, BUG-051, BUG-052.
+- [x] `docs/db-schema.md` (migration 0019, the flag, the crops), CLAUDE.md, the roadmap's backlog, BUG-058, BUG-059.
 
 ## Acceptance criteria
 
@@ -115,10 +115,10 @@ Filled in at `/session-close`.
   7. **Pasting from a supplier quote goes to the backlog** (Claude's proposal, accepted; question 7).
   8. **A missing line resolved** (Claude, 09 §7.8). An approved component line tagged "נבחר ידנית", carried by its `m:` key through a rerun; "אין כאן רכיב" is the delete, its event a negative example.
   9. **A manual line from draw mode** (Claude, 09 §6.6). In the outputs group, quantity 1, the rectangle as its box (`quote_lines.boxes`), priced from the list by its product; manual lines are now priced from the list when an action touches them and keep their price otherwise, like component lines (07 §7.2.3).
-  10. **The brand discount from a row** (Claude, 09 §7.13, 07 §7.2). Shown on an unpriced line whose catalog item has a list price; it sets the factory's brand discount and prices this quote's lines of the brand with no price of their own. Priority 2 applies to a SKU with no price-list product too (BUG-051, 07 §7.2 amended).
+  10. **The brand discount from a row** (Claude, 09 §7.13, 07 §7.2). Shown on an unpriced line whose catalog item has a list price; it sets the factory's brand discount and prices this quote's lines of the brand with no price of their own. Priority 2 applies to a SKU with no price-list product too (BUG-058, 07 §7.2 amended).
   11. **The fixture's breakers are `circuit_breaker`** (Claude). The S09 fixture's components were all `device`, so no dropdown could show; its breakers take the schema's family, and F18 its catalog item (S203M-C20), for the bulk entry. Its prototype-shaped values ("160A") are read as the schema's for a rematch.
   12. **`user` joins stage 4's attribute sources** (Claude, contract change, 04 §6.2). Stage 4 never writes it; stage 5 reads it on a rerun for one line. The schema snapshot is updated.
 - **Eval / metrics:** `make eval` in replay: no change against the baseline. Speed: the attribute rerun, a mark, the brand discount and a missing line's candidates each under 1 s in the integration tests.
 - **Checks:** `make check` under Node 22: lint, types, licenses, secrets, client, unit (1,018 pytest with pricing at 100% branch coverage, 245 Vitest), integration (648), eval (no change), E2E (179 passed, desktop and mobile), screenshots (82 of 86; the four that timed out right after the E2E suite, the dark desktop `review-detail`, `review-red`, `review-showdraw`, `review-finding`, passed rerun alone: BUG-038, no pixel difference). Baselines rewritten for the accepted changes: the five `picker-*` states, and `review-detail` and `review-showdraw` (F1's current is a dropdown now, and the drawing's toolbar has "סמן רכיב שפוספס").
-- **Bugs logged:** BUG-038 seen again (screenshot timeouts only). BUG-051 (P2, a brand discount priced no SKU without a price-list product; fixed), BUG-052 (P2, a missing line had no box on the drawing; fixed), BUG-053 (P2, Esc in the picker closed the phone's sheet too; fixed).
+- **Bugs logged:** BUG-038 seen again (screenshot timeouts only). BUG-058 (P2, a brand discount priced no SKU without a price-list product; fixed), BUG-059 (P2, a missing line had no box on the drawing; fixed), BUG-060 (P2, Esc in the picker closed the phone's sheet too; fixed).
 - **Follow-ups:** in the roadmap's backlog: pasting from a supplier quote; stage 3 reading the tenant's crops; a rematch and the kit; the rules on a resolved missing line; the picker at catalog scale; the picker's price for a catalog item at a brand discount. Not covered: the rematch's speed on a 150-line quote (the S23 performance test covers the other actions); keys 1–3 on a missing line are covered by Vitest and the API, not Playwright (the E2E fixture has no stage outputs, so no candidates). The S23 states (send, price dialog, locked) still have no screenshot baseline.

@@ -7,7 +7,7 @@ A price is looked up for the identical product only (07 §7.2): the price-list p
 stage 5 chose, else the one with the same manufacturer SKU. A neighbouring rating is another product, so NURSERY-1's
 3X20A stays without a price even when 3X16A and 3X25A have one. With neither, the catalog item itself is priced by its
 maker's list price less the factory's brand discount (07 §7.2 priority 2 is by SKU, not by product; `listed`), so a
-new factory's empty price list still prices a brand it set a discount for (09 §7.13, BUG-051).
+new factory's empty price list still prices a brand it set a discount for (09 §7.13, BUG-058).
 
 `price_status` follows the cost only when the sale price comes from it: a fixed product price (07 §7.2.1) is a price
 whatever its cost, and a missing or stale cost only leaves its margin unknown or old.

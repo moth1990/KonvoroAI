@@ -1,0 +1,123 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 319,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            119,
+            50,
+            140,
+            82
+          ],
+          "legible": "clear",
+          "text": "6"
+        },
+        {
+          "box": [
+            417,
+            47,
+            440,
+            79
+          ],
+          "legible": "clear",
+          "text": "7"
+        },
+        {
+          "box": [
+            700,
+            50,
+            722,
+            81
+          ],
+          "legible": "clear",
+          "text": "8"
+        },
+        {
+          "box": [
+            189,
+            872,
+            271,
+            908
+          ],
+          "legible": "clear",
+          "text": "SW2"
+        },
+        {
+          "box": [
+            104,
+            888,
+            165,
+            921
+          ],
+          "legible": "clear",
+          "text": "ידני"
+        },
+        {
+          "box": [
+            335,
+            891,
+            383,
+            921
+          ],
+          "legible": "clear",
+          "text": "בקר"
+        },
+        {
+          "box": [
+            138,
+            928,
+            155,
+            957
+          ],
+          "legible": "clear",
+          "text": "1"
+        },
+        {
+          "box": [
+            214,
+            913,
+            242,
+            953
+          ],
+          "legible": "clear",
+          "text": "0"
+        },
+        {
+          "box": [
+            281,
+            920,
+            302,
+            953
+          ],
+          "legible": "clear",
+          "text": "2"
+        },
+        {
+          "box": [
+            330,
+            927,
+            387,
+            956
+          ],
+          "legible": "clear",
+          "text": "טמפ'"
+        },
+        {
+          "box": [
+            800,
+            966,
+            881,
+            1011
+          ],
+          "legible": "clear",
+          "text": "TH1"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

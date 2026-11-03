@@ -82,7 +82,7 @@ These items are owned outside the code. They do not stop sessions from starting,
 
 | # | What | Needed by | Owner | Status |
 | --- | --- | --- | --- | --- |
-| B1 | Golden set grown to 10 drawings, from more than one factory | Gate 0 or Gate 1 | User + estimator | 5 of 10 |
+| B1 | Golden set grown to 10 drawings, from more than one factory | Gate 0 or Gate 1 | User + estimator | 6 of 10 (MINHAROT-1 not verified with the factory yet) |
 | B2 | Electrical expert: attribute schemas, validator rules, inference rules (`pipeline/matching/inference.json`, S20), abbreviation dictionary | S20, S21 | User | open |
 | B3 | Master catalog, 3–5 brands (until then, a small sample seed) | S18, S20 | Catalog | open |
 | B4 | OCR keys (Google Vision and Azure) | S31 | User | open |
@@ -154,5 +154,7 @@ Ideas and out-of-scope findings from sessions. Each one is scheduled into a sess
 - **A rematch and the kit** (from S23b). An attribute set by hand matches the line again, but the line's kit parts stay those of the product it had (05 §5.9.1). Rare (a kit is on a few MCCBs); make the parts follow the new product when it happens.
 - **The rules on a resolved missing line** (from S23b). A missing line resolved to a product is a component line for stage 7, but stage 6 still reads stage 4's components, which don't have it: a rule that counts breakers misses it until the drawing is decoded again.
 - **The picker at catalog scale** (from S23b). The search reads the active catalog items of the family, or all of them, in code; fine for the sample's 190 and a few thousand (roadmap B3). With a real catalog, a trigram index on the description and SKU.
-- **The picker's price for a catalog item at a brand discount** (from S23b). A catalog item with no product shows "אין מחיר" in the picker even when the factory's brand discount would price it on the line (BUG-051).
+- **The picker's price for a catalog item at a brand discount** (from S23b). A catalog item with no product shows "אין מחיר" in the picker even when the factory's brand discount would price it on the line (BUG-058).
+- **A test database per checkout** (from S23b's merge). Two checkouts on one machine (a worktree for another branch) share `konboro_test`: one run drops and creates it under the other, which fails with "column does not exist" or "database does not exist". Name the integration database after the checkout or an env var (`tests/integration/db.py`), like the E2E and eval databases.
 - **Show an action before the server answers** (from S23 decision 10, 09 §14). The screen waits for the server, which answers within 500 ms; measure the wait in the pilot before guessing amounts on the client.
+- **Reading fixes found on MINHAROT-1** (from fix-minharot-golden). One branch, `fix-minharot-reading`, since they move the same stages and cassettes: BUG-051 (selectors read as terminals, with BUG-036), BUG-053 (C1's poles, not stable between runs), BUG-054 (an aux contact's parent by the dashed link, 03 §3.7 item 4), BUG-055 (the layout against the plan, with BUG-046) and BUG-057 (a lamp's colour from its fill). Re-record the cassettes it moves and the baseline. Before Gate 2 (S28).

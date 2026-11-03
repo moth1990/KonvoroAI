@@ -1,0 +1,223 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 604,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            217,
+            72,
+            237,
+            100
+          ],
+          "legible": "clear",
+          "text": "6"
+        },
+        {
+          "box": [
+            689,
+            55,
+            709,
+            82
+          ],
+          "legible": "clear",
+          "text": "7"
+        },
+        {
+          "box": [
+            297,
+            401,
+            375,
+            444
+          ],
+          "legible": "clear",
+          "text": "ס.ס"
+        },
+        {
+          "box": [
+            67,
+            464,
+            151,
+            504
+          ],
+          "legible": "clear",
+          "text": "and"
+        },
+        {
+          "box": [
+            184,
+            464,
+            347,
+            505
+          ],
+          "legible": "clear",
+          "text": "control"
+        },
+        {
+          "box": [
+            379,
+            464,
+            533,
+            505
+          ],
+          "legible": "clear",
+          "text": "panels"
+        },
+        {
+          "box": [
+            346,
+            535,
+            469,
+            562
+          ],
+          "legible": "clear",
+          "text": "3659200"
+        },
+        {
+          "box": [
+            303,
+            535,
+            345,
+            562
+          ],
+          "legible": "clear",
+          "text": "ת\"ד"
+        },
+        {
+          "box": [
+            209,
+            535,
+            262,
+            562
+          ],
+          "legible": "clear",
+          "text": "276"
+        },
+        {
+          "box": [
+            165,
+            535,
+            200,
+            562
+          ],
+          "legible": "clear",
+          "text": "טל"
+        },
+        {
+          "box": [
+            941,
+            406,
+            960,
+            436
+          ],
+          "legible": "clear",
+          "text": "F"
+        },
+        {
+          "box": [
+            944,
+            592,
+            968,
+            625
+          ],
+          "legible": "clear",
+          "text": "G"
+        },
+        {
+          "box": [
+            113,
+            695,
+            137,
+            730
+          ],
+          "legible": "clear",
+          "text": "8"
+        },
+        {
+          "box": [
+            438,
+            694,
+            461,
+            727
+          ],
+          "legible": "clear",
+          "text": "9"
+        },
+        {
+          "box": [
+            768,
+            696,
+            814,
+            729
+          ],
+          "legible": "clear",
+          "text": "10"
+        },
+        {
+          "box": [
+            708,
+            562,
+            736,
+            579
+          ],
+          "legible": "clear",
+          "text": "ISO"
+        },
+        {
+          "box": [
+            737,
+            562,
+            769,
+            579
+          ],
+          "legible": "unsure",
+          "text": "9001:"
+        },
+        {
+          "box": [
+            724,
+            581,
+            756,
+            598
+          ],
+          "legible": "clear",
+          "text": "2008"
+        },
+        {
+          "box": [
+            801,
+            626,
+            861,
+            652
+          ],
+          "legible": "clear",
+          "text": "מכון"
+        },
+        {
+          "box": [
+            697,
+            626,
+            797,
+            652
+          ],
+          "legible": "clear",
+          "text": "התקנים"
+        },
+        {
+          "box": [
+            604,
+            626,
+            695,
+            652
+          ],
+          "legible": "clear",
+          "text": "הישראלי"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}
