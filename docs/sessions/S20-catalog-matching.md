@@ -6,7 +6,7 @@
 | **Branch** | `s20-catalog-matching` |
 | **Depends on** | S18 |
 | **Status** | in review |
-| **PR** | (link) |
+| **PR** | [moth1990/KonvoroAI#23](https://github.com/moth1990/KonvoroAI/pull/23) |
 
 ## Goal
 
