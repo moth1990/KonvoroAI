@@ -119,6 +119,9 @@ def load(
     matching: dict[str, Any] = dict(settings.matching or {}) if settings else {}
     tie_break = matching.get("tie_break", "frequency")
     priced, costs = _priced(session, tenant_id, catalog, on_date or price_list.today(session, tenant_id))
+    # The factory's habit is what it sent, not stage 7's own drafts: counting those would let the system's guesses
+    # vote for themselves, and one drawing sway the next (BUG-047, S22).
+    sent = select(m.QuoteVersion.id).where(m.QuoteVersion.tenant_id == tenant_id, m.QuoteVersion.status == "sent")
     usage = dict(
         session.execute(
             select(m.QuoteLine.catalog_item_id, func.count())
@@ -126,6 +129,7 @@ def load(
                 m.QuoteLine.tenant_id == tenant_id,
                 m.QuoteLine.catalog_item_id.is_not(None),
                 m.QuoteLine.deleted_at.is_(None),
+                m.QuoteLine.quote_version_id.in_(sent),
             )
             .group_by(m.QuoteLine.catalog_item_id)
         ).all()

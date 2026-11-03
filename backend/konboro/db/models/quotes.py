@@ -87,6 +87,7 @@ class QuoteLine(Base, TenantScoped, Timestamps):
     quote_version_id: Mapped[str]
     panel_id: Mapped[str | None]
     position: Mapped[int]
+    line_key: Mapped[str | None]  # stage 7's stable handle, so a rerun carries the user's edits (migration 0017)
     line_group: Mapped[str | None]
     line_type: Mapped[str] = mapped_column(server_default="component")
     component_id: Mapped[str | None]

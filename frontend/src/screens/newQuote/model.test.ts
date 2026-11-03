@@ -12,6 +12,7 @@ import {
   applyServerCheck,
   clientCheck,
   MESSAGES,
+  productsText,
   resultNote,
   sizeText,
   stageCounter,
@@ -25,6 +26,14 @@ const MB = 1024 * 1024;
 function picked(name: string, error: PickedFile["error"] = null): PickedFile {
   return { key: name, file: new File([new Uint8Array(1)], name), error };
 }
+
+describe("productsText (prototype line 847)", () => {
+  it("counts the products stage 7 priced, one in words", () => {
+    expect(productsText(13)).toBe("13 מוצרים");
+    expect(productsText(1)).toBe("מוצר אחד");
+    expect(productsText(0)).toBe("0 מוצרים");
+  });
+});
 
 describe("resultNote (prototype line 847)", () => {
   it("counts prices and findings, one finding in words", () => {

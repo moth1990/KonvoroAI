@@ -109,6 +109,7 @@ export const GROUP_LABELS: Record<string, string> = {
   outputs: "יציאות",
   control: "פיקוד ובקרה",
   enclosure: "ארון",
+  outside: "מחוץ ללוח", // 07 §7.4: priced apart, not in the enclosure's modules (S22)
 };
 export const SECTION_LABELS = { missing: "רכיבים שלא זוהו", extras: "פריטים נלווים ועבודה" } as const;
 

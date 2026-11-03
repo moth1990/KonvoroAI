@@ -191,9 +191,10 @@ def build_tenant_graph(s: Session, tenant_id: str) -> dict[str, str]:
         m.DerivedItemRule(
             id=new_id("dr"),
             tenant_id=tenant_id,
+            rule_key="enclosure",
             scope="panel",
             trigger={"always": True},
-            quantity_formula="1",
+            quantity_formula="enclosure",
             item={"family": "enclosure"},
             explanation_he="ארון",
         )

@@ -69,6 +69,7 @@ def build(results: list[tuple[GoldenDrawing, Prediction]]) -> Report:
             },
             "quote_total": str(label.quote_total) if label.quote_total is not None else None,
             "predicted_total": str(pred.quote_total) if pred.quote_total is not None else None,
+            "backtest": pred.backtest,
             "confirmed_value_at_risk": str(sum(at_risk, Decimal(0))) if label.audit else None,
             "predicted_value_at_risk": _predicted_at_risk(pred),
             "extraction": pred.extraction,
@@ -138,13 +139,17 @@ def markdown(report: Report) -> str:
             out += ["Per panel:", "", *_table(panels, "Panel"), ""]
         if section == "pricing":
             out += [
-                "| Drawing | Real quote, before VAT | Ours | Confirmed value at risk |",
-                "| --- | --- | --- | --- |",
+                "| Drawing | Real quote, before VAT | Ours (own prices) | Lines priced | Derived: quote / ours "
+                "| Leave one out | Lines priced | Confirmed value at risk |",
+                "| --- | --- | --- | --- | --- | --- | --- | --- |",
             ]
             out += [
-                f"| {d} | {v['quote_total']} | {v['predicted_total']} | {v['confirmed_value_at_risk']} |"
+                f"| {d} | {v['quote_total']} | {v['predicted_total']} | {b.get('own_coverage')} "
+                f"| {b.get('quote_derived')} / {b.get('own_derived')} | {b.get('loo_total')} | {b.get('loo_coverage')} "
+                f"| {v['confirmed_value_at_risk']} |"
                 for d, v in report["drawings"].items()
                 if v["quote_total"] is not None
+                for b in [v.get("backtest") or {}]
             ]
             out.append("")
     out += ["## Totals by input kind", ""]

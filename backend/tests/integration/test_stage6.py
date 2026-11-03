@@ -9,7 +9,7 @@ from datetime import date
 from decimal import Decimal
 
 import pytest
-from sqlalchemy import Engine, func, select
+from sqlalchemy import Engine, func, select, update
 from sqlalchemy.orm import Session
 
 from konboro.contracts.merge import AttributeValue, CircuitContext, Component, MergeResult
@@ -75,6 +75,9 @@ def stages_4_and_5_by_hand(engine: Engine, storage: Storage, tenant: ApiTenant, 
             *(_c(drawing_id, panel_id, [f"F{n}"], "mcb", current_a=16, poles=3) for n in range(1, 6)),
             _c(drawing_id, panel_id, ["FC1"], "mcb", load=20, current_a=16, poles=3),
         ]
+        mine = select(m.Component.id).where(m.Component.drawing_id == drawing_id)
+        # stage 7's draft lines point at the components; they let go first, as stage 4's rewrite does (S22)
+        s.execute(update(m.QuoteLine).where(m.QuoteLine.component_id.in_(mine)).values(component_id=None))
         s.query(m.Component).filter(m.Component.drawing_id == drawing_id).delete()
         for c in comps:
             s.add(
@@ -163,8 +166,13 @@ def test_stage_6_findings_reach_the_review_screen(
         assert run6.output_key.startswith(f"tenants/{tenant.tenant_id}/")
         result = ValidationResult.model_validate_json(storage.get(tenant.tenant_id, run6.output_key))
         rows = dict(
-            s.execute(select(m.Finding.id, m.Finding.quote_version_id).where(m.Finding.drawing_id == drawing_id)).all()
+            s.execute(
+                select(m.Finding.id, m.Finding.quote_version_id).where(
+                    m.Finding.drawing_id == drawing_id, m.Finding.source != "pricing"
+                )
+            ).all()
         )
+        priced = s.scalar(select(func.count()).where(m.Finding.drawing_id == drawing_id, m.Finding.source == "pricing"))
         version = s.scalar(select(m.QuoteVersion.id).join(m.Quote).where(m.Quote.drawing_id == drawing_id))
     assert result.rules_version == pack.default().version and result.checks_run
     assert set(rows) == {i.issue_id for i in result.issues}
@@ -172,7 +180,7 @@ def test_stage_6_findings_reach_the_review_screen(
 
     body = progress(api, tenant, drawing_id).json()
     open_count = sum(1 for i in result.issues if i.status == "open")
-    assert body["summary"]["findings"] == open_count
+    assert body["summary"]["findings"] == open_count + priced  # the done step counts pricing's too (S22)
     stage_6 = body["stages"][5]
     assert stage_6["status"] == "done"
     assert stage_6["summary"] == (
@@ -181,7 +189,7 @@ def test_stage_6_findings_reach_the_review_screen(
 
     quote = api.client.get(f"/quotes/{body['quote_id']}", headers=api.as_(tenant)).json()
     shown = {f["finding_id"]: f for f in quote["findings"]}
-    assert set(shown) == {i.issue_id for i in result.issues}
+    assert set(shown) >= {i.issue_id for i in result.issues}
     one = result.issues[0]
     assert shown[one.issue_id]["title"] == one.title and shown[one.issue_id]["message"] == one.message
 

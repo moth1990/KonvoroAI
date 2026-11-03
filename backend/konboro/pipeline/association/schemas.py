@@ -96,6 +96,17 @@ SCHEMAS: dict[str, tuple[Attribute, ...]] = {
     "terminal": (_a("cross_section_mm2", mode="gte"),),
     "aux_contact": (_a("contacts", mode="prefer"),),
     "socket_outlet": (_CURRENT, _POLES, _NEUTRAL, _a("socket_standard", True, default=True)),
+    # 07 §7.4's derived items: never drawn as components, queried by stage 7 (S22 decision 3)
+    "enclosure": (
+        _a("modules", mode="gte"),
+        _a("height_mm", mode="gte"),
+        _a("width_mm", mode="gte"),
+        _a("depth_mm", mode="gte"),
+        _a("ip", mode="gte"),
+    ),
+    "din_rail": (_a("length_mm", mode="gte"),),
+    "busbar": (_a("current_a", mode="gte"),),
+    "label": (),
 }
 
 

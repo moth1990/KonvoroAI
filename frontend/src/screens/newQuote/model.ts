@@ -55,6 +55,11 @@ export function applyServerCheck(files: PickedFile[], answer: UploadedFile[]): P
 }
 
 /** The done step's "8 עם מחיר · 4 ממצאים" (prototype line 847), with "ממצא אחד" for one. */
+/** "13 מוצרים" (prototype line 847), "מוצר אחד": the products stage 7 priced (S22). */
+export function productsText(products: number): string {
+  return products === 1 ? "מוצר אחד" : `${products} מוצרים`;
+}
+
 export function resultNote(priced: number, findings: number): string {
   return `${priced} עם מחיר · ${findings === 1 ? "ממצא אחד" : `${findings} ממצאים`}`;
 }

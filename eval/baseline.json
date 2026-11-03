@@ -1,6 +1,14 @@
 {
   "drawings": {
     "26-993": {
+      "backtest": {
+        "loo_coverage": "0.2500",
+        "loo_total": "1457.00",
+        "own_coverage": "0.7083",
+        "own_derived": "12600.00",
+        "own_total": "20427.00",
+        "quote_derived": "4200.00"
+      },
       "confirmed_value_at_risk": "1250",
       "detection": {
         "accepted": 46,
@@ -108,7 +116,7 @@
         "products": 27,
         "units": 57
       },
-      "predicted_total": "0",
+      "predicted_total": "20427.00",
       "predicted_value_at_risk": "1250.00",
       "quote_total": "14022.0",
       "scores": {
@@ -133,11 +141,23 @@
           }
         },
         "pricing": {
+          "backtest_derived_deviation": {
+            "den": 1,
+            "kind": "mean",
+            "num": 2.0,
+            "value": 2.0
+          },
+          "backtest_derived_within_10pct": {
+            "den": 1,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": 0.0
+          },
           "backtest_deviation": {
             "den": 1,
             "kind": "mean",
-            "num": 1.0,
-            "value": 1.0
+            "num": 0.456782,
+            "value": 0.456782
           },
           "backtest_within_5pct": {
             "den": 1,
@@ -388,9 +408,9 @@
         },
         "s5_labelled": {
           "consistency": {
-            "den": 18,
+            "den": 19,
             "kind": "ratio",
-            "num": 18.0,
+            "num": 19.0,
             "value": 1.0
           },
           "exact_value_accuracy": {
@@ -400,13 +420,13 @@
             "value": 1.0
           },
           "llm_share": {
-            "den": 19,
+            "den": 20,
             "kind": "ratio",
             "num": 2.0,
-            "value": 0.105263
+            "value": 0.1
           },
           "unmatched_in_catalog": {
-            "den": 17,
+            "den": 18,
             "kind": "ratio",
             "num": 0.0,
             "value": 0.0
@@ -518,6 +538,7 @@
       }
     },
     "6199-2-50": {
+      "backtest": {},
       "confirmed_value_at_risk": null,
       "detection": {
         "accepted": 146,
@@ -951,9 +972,9 @@
         },
         "s5_labelled": {
           "consistency": {
-            "den": 40,
+            "den": 41,
             "kind": "ratio",
-            "num": 40.0,
+            "num": 41.0,
             "value": 1.0
           },
           "exact_value_accuracy": {
@@ -963,13 +984,13 @@
             "value": 1.0
           },
           "llm_share": {
-            "den": 45,
+            "den": 46,
             "kind": "ratio",
             "num": 4.0,
-            "value": 0.088889
+            "value": 0.086957
           },
           "unmatched_in_catalog": {
-            "den": 88,
+            "den": 91,
             "kind": "ratio",
             "num": 0.0,
             "value": 0.0
@@ -1081,6 +1102,7 @@
       }
     },
     "BOM-HW-1": {
+      "backtest": {},
       "confirmed_value_at_risk": null,
       "detection": {
         "accepted": 0,
@@ -1450,6 +1472,14 @@
       }
     },
     "NEVIS-1": {
+      "backtest": {
+        "loo_coverage": "0.3810",
+        "loo_total": "2336.00",
+        "own_coverage": "0.6667",
+        "own_derived": "4200.00",
+        "own_total": "10656.00",
+        "quote_derived": "4200.00"
+      },
       "confirmed_value_at_risk": "0",
       "detection": {
         "accepted": 84,
@@ -1553,7 +1583,7 @@
         "products": 22,
         "units": 80
       },
-      "predicted_total": "0",
+      "predicted_total": "10656.00",
       "predicted_value_at_risk": "140.00",
       "quote_total": "11603.0",
       "scores": {
@@ -1578,11 +1608,23 @@
           }
         },
         "pricing": {
+          "backtest_derived_deviation": {
+            "den": 1,
+            "kind": "mean",
+            "num": 0.0,
+            "value": 0.0
+          },
+          "backtest_derived_within_10pct": {
+            "den": 1,
+            "kind": "ratio",
+            "num": 1.0,
+            "value": 1.0
+          },
           "backtest_deviation": {
             "den": 1,
             "kind": "mean",
-            "num": 1.0,
-            "value": 1.0
+            "num": 0.081617,
+            "value": 0.081617
           },
           "backtest_within_5pct": {
             "den": 1,
@@ -1945,6 +1987,14 @@
       }
     },
     "NURSERY-1": {
+      "backtest": {
+        "loo_coverage": "0.5333",
+        "loo_total": "4619.00",
+        "own_coverage": "0.6000",
+        "own_derived": "3800.00",
+        "own_total": "13229.00",
+        "quote_derived": "3800.00"
+      },
       "confirmed_value_at_risk": "185",
       "detection": {
         "accepted": 96,
@@ -2052,7 +2102,7 @@
         "products": 15,
         "units": 83
       },
-      "predicted_total": "0",
+      "predicted_total": "13229.00",
       "predicted_value_at_risk": "185.00",
       "quote_total": "14109.0",
       "scores": {
@@ -2077,11 +2127,23 @@
           }
         },
         "pricing": {
+          "backtest_derived_deviation": {
+            "den": 1,
+            "kind": "mean",
+            "num": 0.0,
+            "value": 0.0
+          },
+          "backtest_derived_within_10pct": {
+            "den": 1,
+            "kind": "ratio",
+            "num": 1.0,
+            "value": 1.0
+          },
           "backtest_deviation": {
             "den": 1,
             "kind": "mean",
-            "num": 1.0,
-            "value": 1.0
+            "num": 0.062372,
+            "value": 0.062372
           },
           "backtest_within_5pct": {
             "den": 1,
@@ -2302,9 +2364,9 @@
         },
         "s5_labelled": {
           "consistency": {
-            "den": 11,
+            "den": 12,
             "kind": "ratio",
-            "num": 11.0,
+            "num": 12.0,
             "value": 1.0
           },
           "exact_value_accuracy": {
@@ -2314,13 +2376,13 @@
             "value": 1.0
           },
           "llm_share": {
-            "den": 12,
+            "den": 13,
             "kind": "ratio",
             "num": 1.0,
-            "value": 0.083333
+            "value": 0.076923
           },
           "unmatched_in_catalog": {
-            "den": 11,
+            "den": 12,
             "kind": "ratio",
             "num": 0.0,
             "value": 0.0
@@ -2462,11 +2524,23 @@
         }
       },
       "pricing": {
+        "backtest_derived_deviation": {
+          "den": 3,
+          "kind": "mean",
+          "num": 2.0,
+          "value": 0.666667
+        },
+        "backtest_derived_within_10pct": {
+          "den": 3,
+          "kind": "ratio",
+          "num": 2.0,
+          "value": 0.666667
+        },
         "backtest_deviation": {
           "den": 3,
           "kind": "mean",
-          "num": 3.0,
-          "value": 1.0
+          "num": 0.600771,
+          "value": 0.200257
         },
         "backtest_within_5pct": {
           "den": 3,
@@ -2783,9 +2857,9 @@
       },
       "s5_labelled": {
         "consistency": {
-          "den": 103,
+          "den": 106,
           "kind": "ratio",
-          "num": 103.0,
+          "num": 106.0,
           "value": 1.0
         },
         "exact_value_accuracy": {
@@ -2795,13 +2869,13 @@
           "value": 1.0
         },
         "llm_share": {
-          "den": 115,
+          "den": 118,
           "kind": "ratio",
           "num": 9.0,
-          "value": 0.078261
+          "value": 0.076271
         },
         "unmatched_in_catalog": {
-          "den": 152,
+          "den": 157,
           "kind": "ratio",
           "num": 0.0,
           "value": 0.0
@@ -3439,9 +3513,9 @@
         },
         "s5_labelled": {
           "consistency": {
-            "den": 40,
+            "den": 41,
             "kind": "ratio",
-            "num": 40.0,
+            "num": 41.0,
             "value": 1.0
           },
           "exact_value_accuracy": {
@@ -3451,13 +3525,13 @@
             "value": 1.0
           },
           "llm_share": {
-            "den": 45,
+            "den": 46,
             "kind": "ratio",
             "num": 4.0,
-            "value": 0.088889
+            "value": 0.086957
           },
           "unmatched_in_catalog": {
-            "den": 88,
+            "den": 91,
             "kind": "ratio",
             "num": 0.0,
             "value": 0.0
@@ -3580,11 +3654,23 @@
           }
         },
         "pricing": {
+          "backtest_derived_deviation": {
+            "den": 3,
+            "kind": "mean",
+            "num": 2.0,
+            "value": 0.666667
+          },
+          "backtest_derived_within_10pct": {
+            "den": 3,
+            "kind": "ratio",
+            "num": 2.0,
+            "value": 0.666667
+          },
           "backtest_deviation": {
             "den": 3,
             "kind": "mean",
-            "num": 3.0,
-            "value": 1.0
+            "num": 0.600771,
+            "value": 0.200257
           },
           "backtest_within_5pct": {
             "den": 3,
@@ -3865,9 +3951,9 @@
         },
         "s5_labelled": {
           "consistency": {
-            "den": 45,
+            "den": 47,
             "kind": "ratio",
-            "num": 45.0,
+            "num": 47.0,
             "value": 1.0
           },
           "exact_value_accuracy": {
@@ -3877,13 +3963,13 @@
             "value": 1.0
           },
           "llm_share": {
-            "den": 51,
+            "den": 53,
             "kind": "ratio",
             "num": 3.0,
-            "value": 0.058824
+            "value": 0.056604
           },
           "unmatched_in_catalog": {
-            "den": 46,
+            "den": 48,
             "kind": "ratio",
             "num": 0.0,
             "value": 0.0

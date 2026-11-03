@@ -152,6 +152,11 @@ describe("rows (09 §6.3)", () => {
     const rows = buildRows(panel("x", [line({ line_group: null })]), "all");
     expect(rows[0]).toMatchObject({ kind: "group", label: "רכיבים" });
   });
+
+  it("names the group of the components priced outside the panel (07 §7.4)", () => {
+    const rows = buildRows(panel("x", [line({ line_group: "outside" })]), "all");
+    expect(rows[0]).toMatchObject({ kind: "group", label: "מחוץ ללוח" });
+  });
 });
 
 describe("keyboard steps (09 §8)", () => {

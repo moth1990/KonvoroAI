@@ -5,6 +5,7 @@ database: the service maps rows to these dataclasses. 100% branch coverage is en
 - `cost`: which cost enters a quote, and its `price_status` (07 §7.2, §7.2.2).
 - `margin`: the margin rule that applies, its formula, and the margin floors (07 §7.3).
 - `sanity`: the checks on a cost typed by hand (10 §8).
+- `rounding`: the unit price by the factory's setting (07 §7.6).
 """
 
 from decimal import ROUND_HALF_UP, Decimal

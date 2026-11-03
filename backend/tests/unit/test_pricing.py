@@ -19,6 +19,7 @@ from konboro.domain.pricing.margin import (
     quote_floor,
     sale_price,
 )
+from konboro.domain.pricing.rounding import UnknownRounding, mode, round_price
 from konboro.domain.pricing.sanity import check_cost
 
 DAY = date(2026, 11, 2)
@@ -430,3 +431,33 @@ def test_sanity_json_without_a_list_price() -> None:
     }
     far = check_cost(D("1000"), list_price=D("10"))
     assert far.as_json()["warnings"] == [{"code": "far_from_list", "reference": "10", "reference_date": None}]
+
+
+# --- rounding (07 §7.6) ---------------------------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    ("raw", "rounding", "expected"),
+    [
+        ("182.784", "agora", "182.78"),
+        ("182.785", "agora", "182.79"),  # half up
+        ("22.50", "shekel", "23.00"),  # the price list's ₪23 (S19 backlog, S22 decision 2)
+        ("22.49", "shekel", "22.00"),
+        ("182.50", "five", "185.00"),
+        ("182.49", "five", "180.00"),
+        ("185.00", "ten", "190.00"),
+        ("184.99", "ten", "180.00"),
+        ("0", "shekel", "0.00"),  # an included kit add-on stays 0.00
+        ("0.4", "ten", "0.00"),
+    ],
+)
+def test_unit_price_rounding(raw: str, rounding: str, expected: str) -> None:
+    result = round_price(D(raw), mode(rounding))
+    assert result == D(expected)
+    assert result.as_tuple().exponent == -2  # every stored price is to the agora
+
+
+def test_rounding_setting_defaults_to_agora_and_refuses_an_unknown_value() -> None:
+    assert mode(None) == "agora"
+    with pytest.raises(UnknownRounding):
+        mode("half_shekel")

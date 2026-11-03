@@ -52,6 +52,7 @@ class LineIn:
     unit_cost: Decimal | None = None
     cost_source: dict[str, Any] | None = None
     unit_price: Decimal | None = None
+    unit_price_raw: Decimal | None = None  # before 07 §7.6's rounding; the rounded price when not given
     price_status: str | None = None
     margin_rule: dict[str, Any] | None = None
     rounding: str | None = None
@@ -60,6 +61,10 @@ class LineIn:
     alternatives: list[dict[str, Any]] = field(default_factory=list)
     explanation: str | None = None
     derived: dict[str, Any] | None = None
+    unit: str = "unit"
+    catalog_item_id: str | None = None
+    line_key: str | None = None  # stage 7's stable handle (migration 0017)
+    override: dict[str, Any] | None = None
 
 
 def write_lines(
@@ -83,20 +88,23 @@ def write_lines(
                 quote_version_id=version.id,
                 panel_id=panel_id,
                 position=position,
+                line_key=line.line_key,
                 line_group=line.line_group,
                 line_type=line.line_type,
                 component_id=line.component_id,
                 parent_line_id=ids[line.parent] if line.parent else None,
                 product_id=line.product_id,
+                catalog_item_id=line.catalog_item_id,
                 sku=line.sku,
                 description=line.description,
                 manufacturer=line.manufacturer,
                 qty=line.qty,
+                unit=line.unit,
                 unit_cost=line.unit_cost,
                 cost_source=line.cost_source,
                 price_status=line.price_status,
                 margin_rule=line.margin_rule,
-                unit_price_raw=line.unit_price,
+                unit_price_raw=line.unit_price_raw if line.unit_price_raw is not None else line.unit_price,
                 unit_price=line.unit_price,
                 rounding=line.rounding,
                 line_cost=amounts.line_cost,
@@ -108,6 +116,7 @@ def write_lines(
                 status=line.status,
                 status_reasons=line.status_reasons,
                 issue_ids=line.issue_ids,
+                override=line.override,
             )
         )
         session.flush()  # a child line's foreign key needs its parent's row

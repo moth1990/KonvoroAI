@@ -11,6 +11,7 @@ LOWER_IS_BETTER = frozenset(
     {
         "missed_process_pages",
         "backtest_deviation",
+        "backtest_derived_deviation",
         "confirmation_rate",
         "duplicates_left",
         "llm_share",

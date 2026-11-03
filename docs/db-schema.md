@@ -276,15 +276,16 @@ This table answers the customer's question "why was this counted?".
 | `revision int not null default 0` | Increases on every edit. Used for the optimistic check (09 §11) and proposal expiry (08 §7.5) |
 | `quote_date`, `currency` | |
 | `discount_pct`, `totals jsonb` | `totals` follows the 07 §6.1 shape, with decimal strings |
-| `snapshot jsonb` | Price lists, rule versions, FX and VAT used for this version |
-| `diff_from_previous jsonb` | |
+| `snapshot jsonb` | What priced this version (07 §7.7, S22): `price_list_ids` (the `product_suppliers` rows its lines used), `products`, `margin_rules_version`, `derived_rules_version`, `fx_rates`, `vat_rate_id`, `rounding`, the panels' `notes` (supply scope `prepare_only` / `by_others`), and `deleted_line_keys` (lines the user deleted, carried into later versions, S22 decision 5) |
+| `diff_from_previous jsonb` | Against the sent version this one follows (07 §7.7): `from_version`, `lines[]` (`key`, `change` added / removed / changed, `before`, `after`, `delta`, `why`: sku, qty, cost, margin_rule, price), `net_before`, `net_after`, `delta`. "Open version N+1" writes `{from_version, lines: [], copied: true}` |
 | `sent_at`, `sent_by` | |
 
 **`quote_lines`** (`ln_`, 07 §6.2):
 
 | Columns | Notes |
 | --- | --- |
-| `quote_version_id`, `panel_id null`, `position int`, `line_group` | `line_group` is the review screen's group: feed, outputs, control, enclosure |
+| `quote_version_id`, `panel_id null`, `position int`, `line_group` | `line_group` is the review screen's group: feed, outputs, control, enclosure, outside (07 §7.4 "מחוץ ללוח") |
+| `line_key null` | Stage 7's stable handle: `c:<component>`, `c:<component>:kit:<n>`, `m:<instance>`, `d:<panel>:<rule>[:<item>]`, `l:<panel>`. A rerun carries what the user did on the line by it (migration 0017, S22 decision 5) |
 | `line_type` | `component`, `derived`, `labor`, `manual`, `missing` |
 | `component_id null`, `parent_line_id null` | `component_id` is how a line points back to the drawing |
 | `catalog_item_id null`, `product_id null` | |
@@ -344,7 +345,7 @@ The rest of the price-list tables:
   - `kind` is `markup` or `margin`; `value`, `fixed_price null`.
   - `valid_from`, `valid_to`, `version int`.
   - Checks: `margin < 1`, and exactly one of `value` or `fixed_price`.
-- **`derived_item_rules`** (`dr_`, 07 §7.4): `scope`, `trigger jsonb`, `quantity_formula`, `item jsonb`, `explanation_he`, `enabled`, `version`. A new tenant gets a copy of the starter rules.
+- **`derived_item_rules`** (`dr_`, 07 §7.4): `rule_key` (the starter rule it copies, unique per tenant), `scope`, `trigger jsonb`, `quantity_formula` (the rule's kind: the function in `pipeline/pricing/derived.py`), `item jsonb` (the catalog query, e.g. `{"family": "enclosure"}`), `params jsonb` (spare share, per output, consumables percentage), `explanation_he`, `enabled`, `version`, `approval` (`pending_expert` until roadmap B2). A tenant with no rows gets a copy of `pipeline/pricing/derived.json` (`pricing.load.ensure_rules`, from stage 7 and `make seed`); one that has rows keeps them as they are. Migration 0017.
 
 ### 6.3 Learning, chat and audit
 
