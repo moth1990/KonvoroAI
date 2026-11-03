@@ -119,6 +119,19 @@
           "title": "Message",
           "type": "string"
         },
+        "page_id": {
+          "anyOf": [
+            {
+              "pattern": "^pg_[0-9A-Za-z_]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Id"
+        },
         "panel_id": {
           "anyOf": [
             {
@@ -166,6 +179,18 @@
           ],
           "title": "Status",
           "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
         },
         "values": {
           "additionalProperties": true,
@@ -317,6 +342,49 @@
       ],
       "title": "SkippedCheck",
       "type": "object"
+    },
+    "StageIssue": {
+      "additionalProperties": false,
+      "description": "A warning or error a stage reports about its input (01 §6.5). `message` is Hebrew, ready to show.",
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "page_id": {
+          "anyOf": [
+            {
+              "pattern": "^pg_[0-9A-Za-z_]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Id"
+        },
+        "severity": {
+          "enum": [
+            "info",
+            "warning",
+            "error"
+          ],
+          "title": "Severity",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "severity",
+        "message"
+      ],
+      "title": "StageIssue",
+      "type": "object"
     }
   },
   "additionalProperties": false,
@@ -392,6 +460,14 @@
       ],
       "default": null,
       "title": "Rules Version"
+    },
+    "stage_issues": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/StageIssue"
+      },
+      "title": "Stage Issues",
+      "type": "array"
     },
     "tenant_rules_version": {
       "anyOf": [

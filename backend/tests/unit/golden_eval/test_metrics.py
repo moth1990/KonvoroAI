@@ -283,7 +283,19 @@ def test_backtest_na() -> None:
 def test_score_drawing_has_every_section() -> None:
     label = drawing(CanonPanel(name="P", components=(comp("rcd"),)), audit=CONFIRMED, quote_total=Decimal(100))
     scores = score_drawing(label, predicted(quote_total=Decimal(100)))
-    assert set(scores) == {"s1", "s2", "s3", "s3_family", "s4", "s5", "s5_labelled", "audit", "pricing"}
+    assert set(scores) == {
+        "s1",
+        "s2",
+        "s3",
+        "s3_family",
+        "s4",
+        "s5",
+        "s5_labelled",
+        "s6",
+        "s6_labelled",
+        "audit",
+        "pricing",
+    }
     assert scores["pricing"]["backtest_within_5pct"].value == 1.0
 
 
@@ -509,3 +521,31 @@ def test_stage_5_on_labelled_input() -> None:
         "llm_share": 0.0,
     }
     assert "unmatched_in_catalog" in LOWER_IS_BETTER
+
+
+def test_stage_6_end_to_end_and_on_the_labelled_quote() -> None:
+    """06 §10.2, S21: a golden drawing's findings, the noise per drawing, and the injected errors a rule can see."""
+    from eval.canonical import CanonFinding, CanonInjected
+    from eval.metrics import stage6
+
+    label = GoldenDrawing(id="NURSERY-1", file="x.pdf", input_kind="factory_drawing", pages=(), panels=())
+    found = (
+        CanonFinding(rule_id="FRONT_VIEW_DESIGNATOR_MISSING", severity="warning", source="rule", category="B"),
+        CanonFinding(rule_id="DATA_SKU_ATTR_MISMATCH", severity="error", source="rule", category="D", bug_net=True),
+    )
+    injected = (
+        CanonInjected(
+            kind="current_up", target="F1", applicable=True, caught=True, rule_ids=("PANEL_OUTGOING_GT_MAIN",)
+        ),
+        CanonInjected(kind="qty_minus_2", target="F2", applicable=True, caught=False),
+        CanonInjected(kind="deleted", target="F3", applicable=False, caught=False),
+    )
+    pred = predicted(findings=found, labelled_findings=found, injected=injected)
+    s = stage6.score(label, pred)
+    assert (s["golden_findings"].value, s["errors"].value, s["warnings"].value) == (1.0, 1.0, 1.0)
+    lab = stage6.score_labelled(pred)
+    assert (lab["false_errors"].value, lab["false_warnings"].value, lab["bug_net_fired"].value) == (1.0, 1.0, 1.0)
+    assert (lab["injected_caught"].num, lab["injected_caught"].den) == (1, 2)  # the one no rule can see is apart
+    assert (lab["injected_not_applicable"].num, lab["injected_qty_minus_2"].value) == (1, 0.0)
+    assert total([s, s])["warnings"].value == 1.0  # per drawing, across drawings
+    assert {"errors", "warnings", "false_errors", "false_warnings", "bug_net_fired"} <= LOWER_IS_BETTER

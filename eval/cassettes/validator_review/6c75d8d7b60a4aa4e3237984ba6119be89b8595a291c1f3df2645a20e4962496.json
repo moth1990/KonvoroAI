@@ -1,0 +1,73 @@
+{
+  "answer": {
+    "input_tokens": 6554,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 587,
+    "payload": {
+      "issues": [
+        {
+          "bbox": [
+            1060,
+            845,
+            1112,
+            920
+          ],
+          "component_ids": [
+            "c22"
+          ],
+          "confidence": 0.5,
+          "message": "בשרטוט מופיע מא\"ז 25A (x3) אחד עם 3 מעגלים (21-23), אך בטבלה הוא רשום כ-3 יחידות תלת-פזיות. יש לבדוק אם הכמות והקטבים נכונים (1 קוטב ×3).",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": [
+            610,
+            845,
+            710,
+            905
+          ],
+          "component_ids": [
+            "c02"
+          ],
+          "confidence": 0.45,
+          "message": "שני מא\"זים 16A בשרטוט הם חד-קוטביים (מעגלים 1 ו-2), אך בטבלה נרשמו כ-3 קטבים בכמות 3. יש לבדוק קטבים וכמות.",
+          "type": "inconsistent_attributes"
+        },
+        {
+          "bbox": [
+            1120,
+            745,
+            1545,
+            810
+          ],
+          "component_ids": [
+            "c14",
+            "c15",
+            "c13",
+            "c16",
+            "c17"
+          ],
+          "confidence": 0.35,
+          "message": "מפסקי MCCB בתיבה יצוקה באותו לוח מופיעים עם יכולת ניתוק שונה (25kA מול 6kA) ובחלקם ללא קטלוג. יש לבדוק עקביות.",
+          "type": "inconsistent_attributes"
+        },
+        {
+          "bbox": [
+            765,
+            845,
+            810,
+            925
+          ],
+          "component_ids": [
+            "c26"
+          ],
+          "confidence": 0.25,
+          "message": "בשרטוט מא\"ז 10A מופיע (x4) למעגלים 6-9, בנוסף ל-10A אחד ליד השעון (סה\"כ 5). יש לוודא שהכמות 5 מתאימה.",
+          "type": "inconsistent_attributes"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "validator_review"
+}

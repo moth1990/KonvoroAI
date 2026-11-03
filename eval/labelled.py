@@ -10,6 +10,7 @@ the catalog does not hold (an enclosure, a busbar block) are stage 7's and are l
 import re
 from typing import Any
 
+from konboro.contracts.intake import IntakeResult
 from konboro.contracts.merge import AttributeValue, CircuitContext, Component
 from konboro.db.ids import new_id
 from konboro.db.session import tenant_session
@@ -29,6 +30,7 @@ from konboro_llm.stages import catalog_disambiguation
 
 from .canonical import CanonComponent, CanonMatch, GoldenDrawing
 from .predict import canon_match
+from .validation import Labelled
 
 _RANGE = re.compile(r"^(\d+(?:\.\d+)?)\s*[-–]\s*(\d+(?:\.\d+)?)$")
 _RATIO = re.compile(r"^(\d+)/(\d+)$")
@@ -154,8 +156,9 @@ def _in_catalog(cat: catalog.Catalog, c: Component, sch: schemas_mod.Schemas) ->
 
 
 def labelled_matches(
-    pipeline: Pipeline, tenant_id: str, drawing_id: str, label: GoldenDrawing
-) -> tuple[CanonMatch, ...]:
+    pipeline: Pipeline, tenant_id: str, drawing_id: str, label: GoldenDrawing, intake: IntakeResult
+) -> tuple[tuple[CanonMatch, ...], Labelled]:
+    """Stage 5 on the labelled components, and what stage 6 needs to check the same quote (`validation.py`)."""
     upstream: dict[str, Component] = {}
     built = components(label, drawing_id, upstream)
     llm = LLMClient(pipeline.llm_providers, on_call=usage_recorder(pipeline.engine, tenant_id, drawing_id))
@@ -172,6 +175,8 @@ def labelled_matches(
         result = match_all(comps, Inputs(cat, fac, sch, Notes(), known, ask))
         labelled = {c.component_id: (lab, _in_catalog(cat, c, sch)) for c, lab in built}
     families = {c.component_id: c.family for c in comps}
+    classes = {i.sku: i.symbol_class for i in cat.items.values() if i.symbol_class}
+    lab = Labelled(intake, comps, result.matches, result.auxiliary, [p.name for p in label.panels], sch, classes)
     return tuple(
         canon_match(
             x,
@@ -180,4 +185,4 @@ def labelled_matches(
             in_catalog=labelled[x.component_id][1],
         )
         for x in result.matches
-    )
+    ), lab

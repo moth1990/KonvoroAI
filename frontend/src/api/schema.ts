@@ -1942,7 +1942,8 @@ export interface components {
         };
         /**
          * ProgressSummaryOut
-         * @description The done step's grid (01 §4.6 "סיום"). Products, prices and findings stay 0 until stages 4–7 are real.
+         * @description The done step's grid (01 §4.6 "סיום"). Products and prices stay 0 until stage 7 is real (S22); findings are
+         *     the drawing's open ones, stage 6's (S21).
          */
         ProgressSummaryOut: {
             /** Findings */

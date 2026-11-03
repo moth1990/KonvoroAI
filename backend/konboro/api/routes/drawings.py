@@ -266,7 +266,7 @@ def _progress_out(actor: Actor, storage: Storage, drawing_id: str) -> ProgressOu
             pages_by_route={r: routes.count(r) for r in ("process", "context", "skip")},
             products=0,
             priced=0,
-            findings=0,
+            findings=p.findings,
         )
         if ready
         else None,

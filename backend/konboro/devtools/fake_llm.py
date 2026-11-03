@@ -16,6 +16,9 @@ the stand-in breakers but their tag.
 
 The catalog agent (stage 5) chooses the first candidate it is shown, at 0.7.
 
+The reviewing agent (stage 6) notes one thing about the first component it is shown, at 0.6 (an info, never a
+colour), its message marked "stand-in".
+
 A picture of a BOM (01 §5.8) reads as a short handwritten form for "לוח קומה 1": quantity and item columns, three
 items, the third continued on the next row, and the last row clear of the image's edge. A spreadsheet's unknown
 headers map by position: the first column is the item, the second the quantity.
@@ -39,6 +42,7 @@ from konboro_llm.stages.symbol_disambiguation import STAGE as DISAMBIGUATE
 from konboro_llm.stages.table_transcription import STAGE as TABLE
 from konboro_llm.stages.table_transcription import MappingAnswer, QuoteAnswer
 from konboro_llm.stages.text_association import STAGE as ASSOCIATE
+from konboro_llm.stages.validator_review import STAGE as REVIEW
 
 UNSURE = "unsure"
 BOM = "bom"  # a picture whose file name has this is a BOM page
@@ -117,6 +121,14 @@ def catalog_choice(request: LLMRequest[Any]) -> dict[str, Any]:
     }
 
 
+def review(request: LLMRequest[Any]) -> dict[str, Any]:
+    first = re.search(r"^(c\d\d) \|", request.user_text, re.M)
+    if first is None:
+        return {"issues": []}
+    issue = {"type": "other", "component_ids": [first[1]], "bbox": None, "message": "stand-in: בדיקה לדוגמה"}
+    return {"issues": [{**issue, "confidence": 0.6}]}
+
+
 def tile_agent(request: LLMRequest[Any]) -> dict[str, Any]:
     return {"instances": [{"det": d} for d in _OWN.findall(request.user_text)]}
 
@@ -191,6 +203,8 @@ def answer(request: LLMRequest[Any]) -> dict[str, Any]:
         return bom_table(request)
     if request.stage == CATALOG:
         return catalog_choice(request)
+    if request.stage == REVIEW:
+        return review(request)
     if request.output_schema is TitleBlockAnswer:
         return TITLE_BLOCK
     if request.output_schema is GeneralNotes:

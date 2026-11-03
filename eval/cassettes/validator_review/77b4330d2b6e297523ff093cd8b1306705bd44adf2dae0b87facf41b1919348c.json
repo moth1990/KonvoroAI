@@ -1,0 +1,63 @@
+{
+  "answer": {
+    "input_tokens": 5100,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 549,
+    "payload": {
+      "issues": [
+        {
+          "bbox": [
+            1040,
+            140,
+            1220,
+            270
+          ],
+          "component_ids": [
+            "c02"
+          ],
+          "confidence": 0.5,
+          "message": "בציור Q0 מסומן ABB XT1C 4X80A עם INC=63A, ובטבלה מופיע XT1C160 80A. יש לבדוק את הזרם הנקוב ואת הדגם.",
+          "type": "inconsistent_attributes"
+        },
+        {
+          "bbox": [
+            1480,
+            430,
+            1568,
+            520
+          ],
+          "component_ids": [
+            "c07"
+          ],
+          "confidence": 0.3,
+          "message": "F3 מסומן בציור 16+N ו-F5 מסומן 16+N, אבל F4 הוא 10+N. יש לוודא שהקיבוץ של F3 ו-F5 בכמות 2 נכון ושהזרמים תואמים לעומסים.",
+          "type": "inconsistent_attributes"
+        },
+        {
+          "bbox": [
+            690,
+            600,
+            1280,
+            650
+          ],
+          "component_ids": [
+            "c10"
+          ],
+          "confidence": 0.5,
+          "message": "מגען C3 ו-C4 הם דו-קוטביים (2X208V) ו-C2 תלת-קוטבי, אך כולם מקובצים כשורה אחת ללא קטבים וללא פריט קטלוגי. יש לפצל לפי מספר קטבים ולהשלים פריט.",
+          "type": "inconsistent_attributes"
+        },
+        {
+          "component_ids": [
+            "c01"
+          ],
+          "confidence": 0.25,
+          "message": "9 נורות סימון, כולל HT1–HT5 שלא נראות בחלק הזה של הציור. יש לבדוק שהכמות תואמת לתוכנית המלאה.",
+          "type": "suspicious_quantity"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "validator_review"
+}

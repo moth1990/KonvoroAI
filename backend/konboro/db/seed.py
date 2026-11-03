@@ -45,6 +45,7 @@ from .models import (
     TenantFeatureOverride,
     TenantSettings,
     User,
+    ValidatorRule,
     VatRate,
 )
 
@@ -170,6 +171,17 @@ def seed_global(session: Session) -> None:
     seed_fx_rates(session)
     catalog.load_sample(session)
     seed_symbol_library(session)
+    seed_validator_rules(session)
+
+
+def seed_validator_rules(session: Session) -> None:
+    """06 §6.2, global layer, from `konboro/pipeline/validation/rules.json` (S21). A rule version already there is
+    kept: a new wording or threshold is a new version."""
+    from konboro.pipeline.validation import pack
+
+    session.execute(
+        insert(ValidatorRule).values(pack.rows()).on_conflict_do_nothing(index_elements=["rule_id", "version"])
+    )
 
 
 def seed_fx_rates(session: Session) -> None:

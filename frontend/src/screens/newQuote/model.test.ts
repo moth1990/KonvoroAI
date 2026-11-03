@@ -12,6 +12,7 @@ import {
   applyServerCheck,
   clientCheck,
   MESSAGES,
+  resultNote,
   sizeText,
   stageCounter,
   stageRows,
@@ -24,6 +25,14 @@ const MB = 1024 * 1024;
 function picked(name: string, error: PickedFile["error"] = null): PickedFile {
   return { key: name, file: new File([new Uint8Array(1)], name), error };
 }
+
+describe("resultNote (prototype line 847)", () => {
+  it("counts prices and findings, one finding in words", () => {
+    expect(resultNote(8, 4)).toBe("8 עם מחיר · 4 ממצאים");
+    expect(resultNote(0, 1)).toBe("0 עם מחיר · ממצא אחד");
+    expect(resultNote(0, 0)).toBe("0 עם מחיר · 0 ממצאים");
+  });
+});
 
 describe("clientCheck (mirrors the server: type, then size)", () => {
   it.each(["MAIN_BOARD.dwg", "x.DXF"])("%s is a CAD file", (name) => {

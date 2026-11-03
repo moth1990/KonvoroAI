@@ -1,5 +1,8 @@
 """Stage 7 stub (07): a quote with zero lines, version 1, draft, linked to the drawing. Pricing arrives in S22.
 
+Stage 6's findings, written on the drawing, are attached to the version, so the review screen shows them (S21
+decision 1). Their caps on the rows' colour wait for the lines (S22).
+
 The quote is named after the project, or else the first file, so home's recent work and the review link work.
 When stages 2–7 run again (a page moved to another route, S08), the drawing keeps its quote and version 1.
 """
@@ -7,7 +10,7 @@ When stages 2–7 run again (a page moved to another route, S08), the drawing ke
 from datetime import UTC, datetime
 from decimal import Decimal
 
-from sqlalchemy import select
+from sqlalchemy import select, update
 
 from konboro.contracts.intake import IntakeResult
 from konboro.contracts.pricing import PanelTotals, QuotePanel, QuoteTotals, QuoteVersionResult
@@ -33,6 +36,15 @@ def run(ctx: StageContext) -> QuoteVersionResult:
         s.add(m.Quote(id=quote_id, tenant_id=ctx.tenant_id, drawing_id=d.id, name=name or quote_id))
         s.flush()
         s.add(m.QuoteVersion(id=new_id("qv"), tenant_id=ctx.tenant_id, quote_id=quote_id, version=1, quote_date=today))
+        s.flush()
+    version_id = s.scalar(
+        select(m.QuoteVersion.id).where(m.QuoteVersion.quote_id == quote_id, m.QuoteVersion.version == 1)
+    )
+    s.execute(
+        update(m.Finding)
+        .where(m.Finding.tenant_id == ctx.tenant_id, m.Finding.drawing_id == d.id, m.Finding.quote_version_id.is_(None))
+        .values(quote_version_id=version_id)
+    )
     vat = s.scalar(select(m.VatRate.rate).where(m.VatRate.valid_from <= today).order_by(m.VatRate.valid_from.desc()))
     zero_panel = PanelTotals(cost_total=ZERO, price_total=ZERO)
     return QuoteVersionResult(

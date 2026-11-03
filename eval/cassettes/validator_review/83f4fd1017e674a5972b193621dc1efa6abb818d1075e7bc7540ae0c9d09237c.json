@@ -1,0 +1,72 @@
+{
+  "answer": {
+    "input_tokens": 5552,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 663,
+    "payload": {
+      "issues": [
+        {
+          "bbox": [
+            180,
+            535,
+            210,
+            570
+          ],
+          "component_ids": [
+            "c08",
+            "c14"
+          ],
+          "confidence": 0.55,
+          "message": "בתמונה יש מפסק אלקטרוני 160A LSI אחד (250A MCCB בכניסה), אך בטבלה שני מפסקי 160A שונים (c08 ו-c14) ובלי רכיב 250A. יש לבדוק כפילות ואת הערך הנכון.",
+          "type": "inconsistent_attributes"
+        },
+        {
+          "bbox": null,
+          "component_ids": [
+            "c21"
+          ],
+          "confidence": 0.4,
+          "message": "בטבלה 3 נתיכים 100A, אך בשרטוט אין נתיכים כאלה (יש מגן ברק HRC 3x100A אחד). יש לבדוק אם הכמות והסוג נכונים.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": null,
+          "component_ids": [
+            "c18"
+          ],
+          "confidence": 0.35,
+          "message": "כמות 14 של מא\"ז 6A נראית גבוהה: בשרטוט מופיעים בעיקר מא\"ז 6A בודדים וקבוצת x6 פעמיים. יש לבדוק את הספירה.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": [
+            1020,
+            520,
+            1110,
+            570
+          ],
+          "component_ids": [],
+          "confidence": 0.2,
+          "message": "בתמונה יש מא\"ז 6A ו-20A עם מגען C ומתגים, אך יש לוודא שכל הרכיבים מופיעים בטבלה (מגען C מופיע ללא פרטים).",
+          "type": "missing_component"
+        },
+        {
+          "bbox": [
+            555,
+            447,
+            610,
+            466
+          ],
+          "component_ids": [
+            "c10"
+          ],
+          "confidence": 0.25,
+          "message": "בשרטוט SATEC 135E מסומן ליד שנאי זרם 5/400A, ובטבלה מופיע מונה PM135E. יש לבדוק שהדגם והמשפחה תואמים.",
+          "type": "wrong_family"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "validator_review"
+}

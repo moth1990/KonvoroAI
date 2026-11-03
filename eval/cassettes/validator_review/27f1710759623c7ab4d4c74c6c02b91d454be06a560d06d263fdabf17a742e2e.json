@@ -1,0 +1,78 @@
+{
+  "answer": {
+    "input_tokens": 3764,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 583,
+    "payload": {
+      "issues": [
+        {
+          "bbox": [
+            285,
+            765,
+            382,
+            794
+          ],
+          "component_ids": [
+            "c08"
+          ],
+          "confidence": 0.6,
+          "message": "בשרטוט שלוש נורות סימון בשורה (שעון), אך בטבלה כמות 5. יש לבדוק את הכמות.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": null,
+          "component_ids": [
+            "c04"
+          ],
+          "confidence": 0.5,
+          "message": "ממסר תרמי בכמות 5 אינו מופיע בשרטוט ואין לו מקור ברור. יש לבדוק אם הוא קיים בלוח.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": [
+            695,
+            1000,
+            760,
+            1095
+          ],
+          "component_ids": [
+            "c10"
+          ],
+          "confidence": 0.4,
+          "message": "מא\"ז 16A בכמות 9: בשרטוט שני מא\"זים בודדים ועוד קבוצה של x6 (סה\"כ כ-8). יש לבדוק את הכמות.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": [
+            430,
+            770,
+            485,
+            820
+          ],
+          "component_ids": [
+            "c05"
+          ],
+          "confidence": 0.2,
+          "message": "הלחצן בשרטוט הוא לחצן על הלוח (צבע ירוק לא מצוין). יש לוודא את הצבע והסוג.",
+          "type": "wrong_family"
+        },
+        {
+          "bbox": [
+            340,
+            1000,
+            420,
+            1075
+          ],
+          "component_ids": [
+            "c12"
+          ],
+          "confidence": 0.15,
+          "message": "בשרטוט מא\"ז 10A מופיע פעמיים (אחד בראש העמודה השמאלית ואחד בענף 5), תואם 2, אך יש לוודא שהראשון הוא מא\"ז עם מגע עזר.",
+          "type": "suspicious_quantity"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "validator_review"
+}

@@ -1,0 +1,62 @@
+{
+  "answer": {
+    "input_tokens": 4185,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 600,
+    "payload": {
+      "issues": [
+        {
+          "bbox": [
+            1265,
+            265,
+            1440,
+            330
+          ],
+          "component_ids": [
+            "c04"
+          ],
+          "confidence": 0.7,
+          "message": "FB2 בשרטוט הוא מפסק פחת 4x40A 30mA סוג A (כמו FB1), אך בטבלה סווג כ-RCBO בלי פריט קטלוגי. יש לבדוק סיווג ולהשלים פריט קטלוגי (F204 40A).",
+          "type": "wrong_family"
+        },
+        {
+          "bbox": [
+            135,
+            150,
+            275,
+            240
+          ],
+          "component_ids": [
+            "c03"
+          ],
+          "confidence": 0.35,
+          "message": "Q1 בשרטוט הוא ABB XT1 3X80A, בטבלה מופיע XT1C160 80A עם 25kA ו-TMD שלא מופיעים בשרטוט. יש לוודא את הדגם ואת יכולת הניתוק.",
+          "type": "inconsistent_attributes"
+        },
+        {
+          "bbox": [
+            150,
+            420,
+            225,
+            690
+          ],
+          "component_ids": [],
+          "confidence": 0.3,
+          "message": "בשרטוט יש מהדק/כבל יציאה 5X25 למשאבה (PUMP BOARD) מ-Q1, ובטבלה יש מגן מנוע QRF וממסר תרמי בלי מגען וללא קישור לשרטוט. יש לבדוק אם חסר מגען או שהם שייכים ללוח אחר.",
+          "type": "missing_component"
+        },
+        {
+          "bbox": null,
+          "component_ids": [
+            "c09"
+          ],
+          "confidence": 0.3,
+          "message": "שני סלילי הפסקה (TC-G1, TC-G2) אינם נראים בשרטוט ואין להם מפסק מתאים בעץ ההזנה. יש לוודא שהכמות והשיוך נכונים.",
+          "type": "suspicious_quantity"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "validator_review"
+}

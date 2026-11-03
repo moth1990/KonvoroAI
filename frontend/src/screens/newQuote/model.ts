@@ -54,6 +54,11 @@ export function applyServerCheck(files: PickedFile[], answer: UploadedFile[]): P
   });
 }
 
+/** The done step's "8 עם מחיר · 4 ממצאים" (prototype line 847), with "ממצא אחד" for one. */
+export function resultNote(priced: number, findings: number): string {
+  return `${priced} עם מחיר · ${findings === 1 ? "ממצא אחד" : `${findings} ממצאים`}`;
+}
+
 /** "0.8MB", one decimal, as in the prototype's file rows. */
 export function sizeText(bytes: number): string {
   const mb = bytes / (1024 * 1024);

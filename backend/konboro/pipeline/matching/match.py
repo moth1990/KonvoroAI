@@ -550,8 +550,10 @@ def decide_prepared(pr: Prepared, inp: Inputs) -> Decided:
             else:
                 reason += "."
             brand = BrandDecision(brand=mem.brand, source="memory")
+            # stage 6 shows a settled conflict as a note, not a warning (S21 decision 4)
+            settled = [*warnings, "attribute_conflict_resolved"] if ex.conflicts else warnings
             return _matched(
-                component, inp, attrs, needs, mem, "memory", cfg.memory, brand, None, [], warnings, reason, sig, pool
+                component, inp, attrs, needs, mem, "memory", cfg.memory, brand, None, [], settled, reason, sig, pool
             )
     if ex.conflicts:
         return Decided(_conflict(component, inp, attrs, needs, cls, sig, ex, brand), 0.0, False, False)
