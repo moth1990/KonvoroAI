@@ -51,7 +51,7 @@ P and R sessions alternate. R sessions use a fixture quote seeded through the re
 | # | Track | Session | Main contents | Specs | Prototype | Depends on | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | [S18](sessions/S18-price-list-backend.md) | P | Price list backend | Products with several suppliers, preferred or else cheapest, margin rules, history, consumables, cabinet "includes", bulk brand discount, master-catalog import format | 07 §7.2–7.3; 10 §9.2 | 484–511 | S17 | done |
-| [S19](sessions/S19-price-list-screen.md) | R | Price list screen | Price list table, filters, search, product editor modal, brand discount | 07 §7.2.1–7.2.3; 10 §8 | 1098–1208 | S18 | in progress |
+| [S19](sessions/S19-price-list-screen.md) | R | Price list screen | Price list table, filters, search, product editor modal, brand discount | 07 §7.2.1–7.2.3; 10 §8 | 1098–1208 | S18 | in review |
 | S20 | P | Stage 5: catalog matching | Signature, explicit SKU and series, match memory, brand, fill-in, circuit inference, candidate query, decision rules, `catalog_disambiguation`, bundles | 05 (all) | — | S18 | todo |
 | S21 | P | Stage 6: validation | Panel model, rules stored as data, starter rule pack, BOM cross-check, `validator_review`, re-run after edits in under 1 s | 06 (all) | 460–472 | S20 | todo |
 | S22 | P | Stage 7: pricing and versions | Cost lookup, margin priorities, derived items and labor, final color as the worst source with all reasons, totals, versions draft → sent → new with diff, backtest | 07 (all) | 582–619 | S21 | todo |
@@ -100,6 +100,7 @@ Ideas and out-of-scope findings from sessions. Each one is scheduled into a sess
 - **Confirmation rate and `page_kind` below target** (from S08). 25% of drawings needed the confirmation screen (target ≤ 15%) and `page_kind` is 95.8% (target ≥ 97%). Calibrate the classifier's confidence, or the 0.85 threshold, against more labelled drawings (01 §12 item 5).
 
 - **Remove `review_screen`** (from S09). The flag gates the review screen while it is built (S09 decision 2); take it out, and its 404 test, when S23 completes the screen.
+- **Remove `price_list`** (from S18 decision 5, S19 decision 5). The price list screen was accepted in S19; take out the flag, its 404 tests (`test_api_price_list*.py`) and the `prices-off` E2E tenant. Due at Gate 2 (S28) at the latest.
 - **Review row sub line: spec vs prototype** (from S09). 09 §6.3 lists the catalog number, "×2 בשרטוט" and "עמ׳ 4, 5" in a line's sub line; the prototype row shows tags, chips and the circuit's load. S09 follows the prototype; ask the user at S23.
 - **Review pricing details** (from S09, for S22). Price hints for unpriced lines ("קרובים במחירון: …"), the "פריטים נלווים: …" footnote, "מחיר חדש במחירון" and "רווח נמוך X%" chips against the tenant's margin floors.
 - **Draw mode: mark a missed component** (from S11, 09 §6.6). "סמן רכיב שפוספס": draw a rectangle, pick a product, a manual line with an instance there, the panel by the rectangle's centre, the rectangle kept as a detector example (03 §11). No session has it; S23 at the earliest, since it needs the manual line and the product picker.
