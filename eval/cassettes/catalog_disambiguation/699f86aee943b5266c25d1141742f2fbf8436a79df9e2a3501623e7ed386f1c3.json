@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 805,
+    "model": "claude-haiku-5-5",
+    "output_tokens": 349,
+    "payload": {
+      "chosen_sku": "MPET4-10R",
+      "confidence": 0.75,
+      "missing_attributes": [],
+      "reason": "הכיתוב 'חירום' מצביע על לחצן עצירת חירום, שלפי המוסכמה הנפוצה הוא אדום. שני המועמדים הם ABB, ולכן הצבע מכריע."
+    }
+  },
+  "model": "claude-haiku-5-5",
+  "stage": "catalog_disambiguation"
+}

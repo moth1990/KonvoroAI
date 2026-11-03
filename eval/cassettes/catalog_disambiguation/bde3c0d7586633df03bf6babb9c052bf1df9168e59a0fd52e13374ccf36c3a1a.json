@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 834,
+    "model": "claude-haiku-5-5",
+    "output_tokens": 268,
+    "payload": {
+      "chosen_sku": "M2SS3-10B",
+      "confidence": 0.9,
+      "missing_attributes": [],
+      "reason": "הכיתוב ידני/0/אוטומטי מציין שלוש עמדות, והמועמד M2SS3-10B מתאים לכך עם עמדות 1-0-2. המועמד M2SS2-10B בעל שתי עמדות בלבד ולכן אינו מתאים."
+    }
+  },
+  "model": "claude-haiku-5-5",
+  "stage": "catalog_disambiguation"
+}

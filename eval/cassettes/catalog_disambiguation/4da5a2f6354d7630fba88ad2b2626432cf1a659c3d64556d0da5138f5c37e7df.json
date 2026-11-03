@@ -1,0 +1,17 @@
+{
+  "answer": {
+    "input_tokens": 921,
+    "model": "claude-haiku-5-5",
+    "output_tokens": 210,
+    "payload": {
+      "chosen_sku": null,
+      "confidence": 0.1,
+      "missing_attributes": [
+        "color"
+      ],
+      "reason": "הרישום שליד הרכיב הוא \"0\" בלבד, ואין בו צבע. שלושת המועמדים זהים בכל פרט אחר, ולכן אי אפשר לבחור ביניהם."
+    }
+  },
+  "model": "claude-haiku-5-5",
+  "stage": "catalog_disambiguation"
+}

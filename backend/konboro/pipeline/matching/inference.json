@@ -1,0 +1,44 @@
+{
+  "version": 1,
+  "note": "05 §5.5.1: what a device takes from its circuit when the drawing writes no value. Global starter rules, before the electrical expert's review (roadmap B2); a factory turns one off in tenant_settings.matching.inference_off.",
+  "rules": [
+    {
+      "id": "contactor_current_from_upstream",
+      "kind": "upstream_current",
+      "families": ["contactor"],
+      "attribute": "current_a",
+      "protective_families": ["circuit_breaker", "rcbo", "fuse"],
+      "explain": "נבחר לפי {designator} ({current}A): המגען הקטן ביותר שמתאים לזרם מכשיר ההגנה שמעליו"
+    },
+    {
+      "id": "coil_voltage_from_technical_data",
+      "kind": "control_voltage",
+      "families": ["contactor", "relay", "relay_coil", "timer", "impulse_relay", "time_switch", "shunt_trip", "indicator_lamp", "voltage_relay"],
+      "attribute": "coil_voltage_v",
+      "explain": "מתח הפיקוד בנתונים הטכניים: {volts}V"
+    },
+    {
+      "id": "overload_range_from_load",
+      "kind": "range_contains_load",
+      "families": ["overload_relay"],
+      "explain": "תחום הכיול מכיל את זרם העומס ({load}A)"
+    },
+    {
+      "id": "poles_from_cable_cores",
+      "kind": "cable_cores",
+      "families": ["circuit_breaker", "rcd", "rcbo"],
+      "attribute": "poles",
+      "cores": {"3": 1, "4": 3, "5": 3},
+      "explain": "לפי הכבל ביציאה: {cores} גידים"
+    },
+    {
+      "id": "untyped_breaker_by_current",
+      "kind": "class_by_current",
+      "families": ["circuit_breaker"],
+      "at_least_a": 100,
+      "above": "mccb",
+      "below": "mcb",
+      "explain": "סוג המפסק לא כתוב: {kind} לפי הזרם ({current}A)"
+    }
+  ]
+}

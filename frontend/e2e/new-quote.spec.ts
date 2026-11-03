@@ -113,6 +113,18 @@ test("the run step counts the devices stage 4 merged", async ({ page }) => {
   await expect(page.getByRole("status")).toHaveText("הפענוח בוטל. המקום במכסה שוחרר");
 });
 
+test("the run step counts what stage 5 matched", async ({ page }) => {
+  await page.getByLabel("פרויקט / שם הלוח").fill(SLOW_PROJECT);
+  await page.locator("#file-in").setInputFiles(NURSERY);
+  await page.getByTestId("start").click();
+  const stage5 = page.getByTestId("stage-5");
+  await expect(stage5).toHaveAttribute("data-state", "done", { timeout: 105_000 });
+  // the stand-in's breakers carry no current, so none is matched (05 §5.5; prototype line 765)
+  await expect(stage5).toContainText(/0 מותאמים · (אחד בלי דגם|\d+ בלי דגם)/);
+  await page.getByTestId("cancelrun").click();
+  await expect(page.getByRole("status")).toHaveText("הפענוח בוטל. המקום במכסה שוחרר");
+});
+
 test("a CAD file and an oversized file are rejected before upload", async ({ page }) => {
   await page.locator("#file-in").setInputFiles([
     { name: "MAIN_BOARD.dwg", mimeType: "application/octet-stream", buffer: Buffer.from("AC1027") },

@@ -1,0 +1,17 @@
+{
+  "answer": {
+    "input_tokens": 806,
+    "model": "claude-haiku-5-5",
+    "output_tokens": 319,
+    "payload": {
+      "chosen_sku": null,
+      "confidence": 0.3,
+      "missing_attributes": [
+        "color"
+      ],
+      "reason": "הרישוםליד הרכיב הוא 'לחצן חירום' בלבד ואינו מציין צבע, ושני המועמדים הם ABB. יש לבחור לפי הצבע הנדרש."
+    }
+  },
+  "model": "claude-haiku-5-5",
+  "stage": "catalog_disambiguation"
+}

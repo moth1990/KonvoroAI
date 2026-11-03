@@ -17,6 +17,7 @@ LOWER_IS_BETTER = frozenset(
         "values_without_evidence",
         "citation_mismatch_rate",
         "agent_tile_share",
+        "unmatched_in_catalog",
     }
 )
 

@@ -44,6 +44,7 @@ class CanonComponent(Canon):
     supply_scope: SupplyScope = "in_panel"
     label: str = ""  # the product name in the label, for the report only
     pages: tuple[int, ...] = ()  # where the label says it is drawn, when it says (stage 2's designator recall)
+    ref: str | None = None  # predictions only: the component's id, to find its stage-5 match
 
     @property
     def current_a(self) -> float | None:
@@ -54,6 +55,22 @@ class CanonComponent(Canon):
     def poles(self) -> int | None:
         value = self.attributes.get("poles")
         return int(value) if isinstance(value, int | float) else None
+
+
+class CanonMatch(Canon):
+    """Stage 5's match of one component (05 §6), as the metrics read it. On labelled input (05 §10) `label` holds the
+    labelled current, poles and neutral the match was asked for, and `in_catalog` whether the catalog has an active
+    item of the family with them."""
+
+    ref: str
+    family: str
+    status: str
+    sku: str | None = None
+    item: dict[str, Any] = {}  # the chosen item's attributes
+    method: str | None = None
+    signature: str | None = None
+    label: dict[str, Any] = {}
+    in_catalog: bool | None = None
 
 
 class CanonPanel(Canon):
@@ -127,3 +144,6 @@ class Prediction(Canon):
     detections: tuple[CanonDetection, ...] | None = None  # stage 3's, on the process pages
     detection: dict[str, int] = {}  # stage 3's counts: detections, orphan texts, disambiguation calls
     merge: dict[str, int] = {}  # stage 4's counts: agent tiles, cited values, mismatches, values with no evidence
+    matches: tuple[CanonMatch, ...] | None = None  # stage 5's, end to end
+    matching: dict[str, int] = {}  # stage 5's counts: signatures, the agent's, by status and method
+    labelled_matches: tuple[CanonMatch, ...] | None = None  # stage 5 on the labelled attributes (05 §10)

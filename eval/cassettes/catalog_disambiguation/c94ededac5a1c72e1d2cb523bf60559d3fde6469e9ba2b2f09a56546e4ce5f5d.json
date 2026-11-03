@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 812,
+    "model": "claude-haiku-5-5",
+    "output_tokens": 348,
+    "payload": {
+      "chosen_sku": "MPET4-10R",
+      "confidence": 0.8,
+      "missing_attributes": [],
+      "reason": "הכיתוב מציין לחצן חירום, ולחצני חירום מסומנים בדרך כלל באדום. MPET4-10R הוא הדגם האדום, והוא מותג ABB המועדף."
+    }
+  },
+  "model": "claude-haiku-5-5",
+  "stage": "catalog_disambiguation"
+}

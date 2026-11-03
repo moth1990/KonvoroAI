@@ -1,11 +1,11 @@
 # Master catalog import format
 
-The master catalog (`catalog_items`, [db-schema.md §3.2](db-schema.md#32-catalog-and-knowledge)) is the shared layer: the manufacturers' products, their attributes, module widths and list prices (07 §4.3, 05 §4.3). It never holds a factory's cost, sale price or supplier (10 §11). S18 decision 1 settles the format below. Until the catalog team delivers 3–5 brands (roadmap B3), `make seed` loads a sample of 20 ABB items with made-up list prices, [backend/konboro/db/catalog/abb_sample.csv](../backend/konboro/db/catalog/abb_sample.csv).
+The master catalog (`catalog_items`, [db-schema.md §3.2](db-schema.md#32-catalog-and-knowledge)) is the shared layer: the manufacturers' products, their attributes, module widths and list prices (07 §4.3, 05 §4.3). It never holds a factory's cost, sale price or supplier (10 §11). S18 decision 1 settles the format below. Until the catalog team delivers 3–5 brands (roadmap B3), `make seed` loads a sample with made-up list prices (S20 decision 1): about 150 ABB and Schneider items covering the golden drawings' families, and one SATEC meter, [backend/konboro/db/catalog/sample.csv](../backend/konboro/db/catalog/sample.csv), with its kits ([sample_kits.csv](../backend/konboro/db/catalog/sample_kits.csv)) and accessory fits ([sample_accessories.csv](../backend/konboro/db/catalog/sample_accessories.csv)).
 
 ## Loading a file
 
 ```bash
-cd backend && uv run python -m konboro.db.catalog path/to/catalog.csv
+cd backend && uv run python -m konboro.db.catalog path/to/catalog.csv --kits path/to/kits.csv --accessories path/to/accessories.csv
 ```
 
 - The loader runs as the database owner, like the seed, because the app role can only read global tables.
@@ -24,6 +24,8 @@ The file is UTF-8 CSV (a BOM is allowed). There is one header row, then one row 
 | `family` | yes | An attribute-schema family (05 §4.4): `circuit_breaker`, `rcd`, `contactor`… Not a symbol class (`mcb`) |
 | `series` | no | `S200M` |
 | `model_code` | no | `S203M` |
+| `model_tokens` | no | The model codes as drawings write them, separated by `\|`: `XT1C160\|XT1C\|XT1`. Upper-cased, spaces removed. Without it, the model code alone. Stage 5 narrows to the items that list a code written beside a component (05 §5.2.1) |
+| `symbol_class` | no | The class within the family, when the family has several: `mcb`, `mccb`, `motor_protection` (05 §5.1) |
 | `module_width` | no | Width in 18 mm modules, a decimal: `3`, `2.5`. Used to size the enclosure (07 §7.4) |
 | `list_price` | no | The manufacturer's list price per unit, a decimal with a dot, never a thousands separator. Brand discounts are taken off it (07 §7.2, priority 2) |
 | `list_currency` | when `list_price` is set | A 3-letter code: `ILS`, `USD`, `EUR`. Converted on the quote date (07 §7.2) |
@@ -46,6 +48,29 @@ brand,sku,series,model_code,family,module_width,list_price,list_currency,status,
 ABB,S203M-C16,S200M,S203M,circuit_breaker,3,210.00,ILS,active,,16,3,C,10
 ABB,XT1C160 TMD80 3P,Tmax XT,XT1C160,circuit_breaker,,230.00,USD,active,,80,3,,25
 ```
+
+## Kits and accessories (05 §5.9.1)
+
+Two optional companion files, loaded with the items (`--kits`, `--accessories`). Their rows name items by `brand` and sku; an item that is in neither the file nor the catalog fails the whole load. A rerun with the same rows changes nothing.
+
+**Kits**: the part a main item needs.
+
+| Column | Required | Value |
+| --- | --- | --- |
+| `brand` | yes | `ABB` |
+| `item_sku` | yes | The main item: `XT1C160 TMD80 4P` |
+| `part_sku` | yes | The part: `RC Sel 4P XT1` |
+| `quantity` | no | Per unit of the main item, a whole number, 1 by default |
+| `when_text` | no | The phrase in the component's text that calls for the part: `משולב פחת`. Empty: the part always comes with the item |
+| `reason_he` | yes | The reason the line shows: `מודול פחת למפסק משולב פחת` |
+
+**Accessories**: which device series an accessory fits.
+
+| Column | Required | Value |
+| --- | --- | --- |
+| `brand` | yes | The accessory's brand |
+| `accessory_sku` | yes | `S2C-H01` |
+| `fits_brand`, `fits_series` | yes | The device's brand and `series`: `ABB`, `S200M` |
 
 ## What the loader refuses
 

@@ -241,6 +241,7 @@ class Component(Base, TenantScoped, Created):
         tenant_fk("drawing_id", "drawings", ondelete="CASCADE"),
         tenant_fk("panel_id", "panels", ondelete="CASCADE"),
         one_of("supply_scope", ("in_panel", "other_location", "prepare_only", "by_others")),
+        one_of("match_status", ("matched", "ambiguous", "unmatched", "conflict", "auxiliary")),
     )
 
     id: Mapped[str] = pk()
@@ -255,6 +256,10 @@ class Component(Base, TenantScoped, Created):
     brand_hint: Mapped[str | None]
     explicit_texts: Mapped[list[Any]] = mapped_column(server_default="[]")
     supply_scope: Mapped[str] = mapped_column(server_default="in_panel")
+    # Stage 5's result (05 §6.2), for the run step and for what points at a component; the full match is stage 5's
+    # contract in S3. Null until stage 5 ran, and for an auxiliary family (S20 decision 3). Migration 0015.
+    match_status: Mapped[str | None]
+    catalog_item_id: Mapped[str | None] = mapped_column(ForeignKey("catalog_items.id"))
 
 
 __all__ = [

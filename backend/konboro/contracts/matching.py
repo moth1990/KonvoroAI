@@ -2,17 +2,22 @@
 
 from typing import Any, Literal
 
+from pydantic import Field
+
 from .common import ComponentId, Confidence, Contract, DrawingId, StageIssue, TraceId
 
-# Stage 5 adds these to the "read from the drawing" sources of stage 4 (04 §6.2).
+# Stage 5 adds these to the "read from the drawing" sources of stage 4 (04 §6.2): `series` (fixed by the model code,
+# 05 §5.2.1), `notes` / `tenant_default` / `system_default` (filled in, 05 §5.5), `inferred` (from the circuit,
+# 05 §5.5.1), `user` (the review screen).
 UsedSource = Literal[
     "drawing",
     "cad_attrib",
     "graphic",
     "shared_label",
     "bom",
+    "series",
     "notes",
-    "circuit",
+    "inferred",
     "tenant_default",
     "system_default",
     "user",
@@ -30,6 +35,7 @@ class CatalogItemSnapshot(Contract):
 class UsedAttribute(Contract):
     value: Any
     source: UsedSource
+    note: str | None = None  # why, when it was not read: "נבחר לפי F1 (16A)" (05 §5.5.1)
 
 
 class BrandDecision(Contract):
@@ -50,6 +56,18 @@ class Alternative(Contract):
     has_cost_price: bool
 
 
+class BundleLine(Contract):
+    """A kit's part that the main item needs (05 §5.9.1): the RCD module of "XT1C … משולב פחת". Stage 7 shows it
+    as a child line under the device's line."""
+
+    sku: str
+    manufacturer: str | None
+    description: str
+    quantity: int = Field(ge=1)
+    reason: str
+    has_cost_price: bool
+
+
 class ComponentMatch(Contract):
     component_id: ComponentId
     status: Literal["matched", "ambiguous", "unmatched", "conflict"]
@@ -65,6 +83,7 @@ class ComponentMatch(Contract):
     relaxations: list[str] = []
     has_cost_price: bool = False
     alternatives: list[Alternative] = []
+    bundle_lines: list[BundleLine] = []
     reason: str = ""
     missing_attributes: list[str] = []
     warnings: list[str] = []
@@ -72,10 +91,22 @@ class ComponentMatch(Contract):
     llm_decision: dict[str, Any] | None = None
 
 
+class MatchStats(Contract):
+    components: int = 0
+    signatures: int = 0  # distinct signatures in a panel and brand context: each matched once (05 §5, §9)
+    by_status: dict[str, int] = {}
+    by_method: dict[str, int] = {}
+    llm_signatures: int = 0  # signatures the agent decided (05 §5.8, target < 15%)
+    auxiliary: int = 0
+
+
 class MatchingResult(Contract):
-    """Stage 5's output for the drawing: one match per component."""
+    """Stage 5's output for the drawing: one match per component, except the components of the tenant's auxiliary
+    families (terminals by default), which get no SKU and are listed apart for stage 7 to count (S20 decision 3)."""
 
     drawing_id: DrawingId
     matches: list[ComponentMatch]
+    auxiliary: list[ComponentId] = []
+    stats: MatchStats = MatchStats()
     issues: list[StageIssue] = []
     trace_id: TraceId

@@ -4,6 +4,7 @@ from konboro.contracts.audit import Difference
 from konboro.contracts.detection import DetectionResult
 from konboro.contracts.extraction import ExtractionResult
 from konboro.contracts.intake import IntakeResult
+from konboro.contracts.matching import ComponentMatch, MatchingResult
 from konboro.contracts.merge import MergeResult
 from konboro.contracts.pricing import QuoteVersionResult
 
@@ -11,6 +12,7 @@ from .canonical import (
     CanonComponent,
     CanonDetection,
     CanonDifference,
+    CanonMatch,
     CanonPage,
     CanonPanel,
     DifferenceType,
@@ -51,6 +53,8 @@ def prediction(
     extraction: ExtractionResult | None = None,
     detection: DetectionResult | None = None,
     audit: list[Difference] | None = None,
+    matching: MatchingResult | None = None,
+    labelled: tuple[CanonMatch, ...] | None = None,
 ) -> Prediction:
     names = {p.panel_id: p.name for p in intake.panels}
     by_panel: dict[str, list[CanonComponent]] = {panel_id: [] for panel_id in names}
@@ -63,8 +67,10 @@ def prediction(
                 qty=c.quantity,
                 supply_scope=c.supply_scope,
                 label=" ".join(c.explicit_texts),
+                ref=c.component_id,
             )
         )
+    families = {c.component_id: c.family for c in merge.components}
     return Prediction(
         pages=tuple(CanonPage(no=p.page_no, kind=p.page_kind, route=p.route) for p in intake.pages),
         input_kind=intake.input_kind,
@@ -78,7 +84,33 @@ def prediction(
         detections=_detections(intake, detection) if detection else None,
         detection=_detection_counts(detection) if detection else {},
         merge=merge_counts(merge),
+        matches=tuple(canon_match(x, families.get(x.component_id, "")) for x in matching.matches) if matching else None,
+        matching=matching_counts(matching) if matching else {},
+        labelled_matches=labelled,
     )
+
+
+def canon_match(x: ComponentMatch, family: str, **extra: object) -> CanonMatch:
+    return CanonMatch(
+        ref=x.component_id,
+        family=family,
+        status=x.status,
+        sku=x.chosen_sku,
+        item=dict(x.catalog_item.attributes) if x.catalog_item else {},
+        method=x.method,
+        signature=x.signature,
+        **extra,  # type: ignore[arg-type]
+    )
+
+
+def matching_counts(result: MatchingResult) -> dict[str, int]:
+    """Stage 5's counts (05 §6.2, §9): signatures, the ones the agent decided, components by status and by method."""
+    s = result.stats
+    out = {"components": s.components, "signatures": s.signatures, "llm_signatures": s.llm_signatures}
+    out |= {f"status_{k}": v for k, v in sorted(s.by_status.items())}
+    out |= {f"method_{k}": v for k, v in sorted(s.by_method.items())}
+    out["auxiliary"] = s.auxiliary
+    return out
 
 
 EVIDENCE_SOURCES = frozenset({"drawing", "cad_attrib", "shared_label", "bom"})

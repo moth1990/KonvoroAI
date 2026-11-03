@@ -61,6 +61,10 @@ class TenantSettings(Base, TenantScoped):
     # Families the factory counts as auxiliary material, never a quote line of their own: the audit shows such a
     # component as "not a difference" (S15 decision 4).
     auxiliary_families: Mapped[list[str]] = mapped_column(ARRAY(Text), server_default="{terminal}")
+    # Stage 5's factory settings (05 §4.3, §5.4, §5.6–5.7, §13 item 1; migration 0015): `series` (family → the
+    # preferred series), `alternate_brands` (family → brands the factory allows instead), `tie_break` (`frequency`,
+    # the default, `price` or `ask`), `inference_off` (rule ids of 05 §5.5.1 the factory turned off).
+    matching: Mapped[dict[str, Any]] = mapped_column(server_default="{}")
 
 
 class TenantPlanOverride(Base, TenantScoped, Timestamps):

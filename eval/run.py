@@ -18,7 +18,7 @@ import subprocess
 import sys
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Literal
+from typing import Any, Literal
 
 from sqlalchemy import Engine, create_engine, select
 from sqlalchemy.orm import Session
@@ -27,6 +27,7 @@ from konboro.contracts.audit import Difference
 from konboro.contracts.detection import DetectionResult
 from konboro.contracts.extraction import ExtractionResult
 from konboro.contracts.intake import IntakeResult
+from konboro.contracts.matching import MatchingResult
 from konboro.contracts.merge import MergeResult
 from konboro.contracts.pricing import QuoteVersionResult
 from konboro.db import models as m
@@ -48,6 +49,7 @@ from konboro_llm import LLMClient
 
 from . import compare, report
 from .canonical import GoldenDrawing, Prediction
+from .labelled import labelled_matches
 from .normalizers import GOLDEN, load_all
 from .predict import prediction
 
@@ -77,13 +79,22 @@ def prepare() -> Engine:
     return app_engine(database_dsn(DATABASE, role="app"))
 
 
+# Stage 5's factory (S20): the golden set's factories quote ABB; Schneider may stand in; a breaker's curve C and 6 kA,
+# an RCD's type A, when the drawing writes none. No price list: every brand counts as priced (`matching.query`).
+FACTORY: dict[str, Any] = {
+    "brand_preferences": {"*": "ABB"},
+    "attribute_defaults": {"circuit_breaker": {"curve": "C", "breaking_capacity_ka": 6}, "rcd": {"rcd_type": "A"}},
+    "matching": {"alternate_brands": {"*": ["Schneider"]}},
+}
+
+
 def add_tenant(engine: Engine) -> tuple[str, str]:
     tenant_id, user_id = new_id("tnt"), new_id("usr")
     with tenant_session(tenant_id, engine) as s:
         s.add(m.Tenant(id=tenant_id, name="מפעל הערכה", plan_id="trial"))
         s.flush()
         s.add(m.User(id=user_id, tenant_id=tenant_id, email="eval@konboro.local", display_name="הערכה"))
-        s.add(m.TenantSettings(tenant_id=tenant_id))
+        s.add(m.TenantSettings(tenant_id=tenant_id, **FACTORY))
         s.add(m.TenantPlanOverride(tenant_id=tenant_id, monthly_quote_limit=1000))
     return tenant_id, user_id
 
@@ -115,6 +126,8 @@ def run_drawing(pipeline: Pipeline, tenant_id: str, user_id: str, label: GoldenD
         output(2, ExtractionResult),
         output(3, DetectionResult),
         differences,
+        output(5, MatchingResult),
+        labelled_matches(pipeline, tenant_id, drawing_id, label),
     )
 
 

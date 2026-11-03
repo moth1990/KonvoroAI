@@ -21,6 +21,8 @@ TITLES = {
     "s3": "Stage 3: symbols, by designators and family counts (03 §10, S12)",
     "s3_family": "Stage 3: recall by family (03 §10)",
     "s4": "Stage 4: association and merge (04 §10)",
+    "s5": "Stage 5: catalog matching, end to end (05 §10, S20)",
+    "s5_labelled": "Stage 5: catalog matching on the labelled attributes (05 §10)",
     "audit": "Quote audit (11 §10)",
     "pricing": "Pricing backtest against the real quote (07 §10.2)",
 }
@@ -65,6 +67,7 @@ def build(results: list[tuple[GoldenDrawing, Prediction]]) -> Report:
             "extraction": pred.extraction,
             "detection": pred.detection,
             "merge": pred.merge,
+            "matching": pred.matching,
             "scores": _dump(scores),
             "panels": _dump(panel_scores(label, pred)),
         }

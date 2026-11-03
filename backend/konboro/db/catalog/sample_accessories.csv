@@ -1,0 +1,11 @@
+brand,accessory_sku,fits_brand,fits_series
+ABB,S2C-H6R,ABB,S200M
+ABB,S2C-H01,ABB,S200M
+ABB,S2C-H10,ABB,S200M
+ABB,S2C-A1,ABB,S200M
+ABB,AUX-C 1Q+1SY XT1,ABB,Tmax XT
+ABB,SOR-C 220-240VAC XT1,ABB,Tmax XT
+Schneider,A9A26924,Schneider,Acti9 iC60N
+Schneider,A9A26946,Schneider,Acti9 iC60N
+Schneider,A9A26924,Schneider,Acti9 iC60H
+Schneider,A9A26946,Schneider,Acti9 iC60H

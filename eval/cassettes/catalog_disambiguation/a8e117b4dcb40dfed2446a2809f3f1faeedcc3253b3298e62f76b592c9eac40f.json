@@ -1,0 +1,17 @@
+{
+  "answer": {
+    "input_tokens": 930,
+    "model": "claude-haiku-5-5",
+    "output_tokens": 217,
+    "payload": {
+      "chosen_sku": null,
+      "confidence": 0.3,
+      "missing_attributes": [
+        "color"
+      ],
+      "reason": "הרישום בשרטוט הוא נורת סימון פאזה בלבד, ללא צבע. שלושת המועמדים הם ABB באותו מתח, ולכן הצבע הוא מה שמכריע."
+    }
+  },
+  "model": "claude-haiku-5-5",
+  "stage": "catalog_disambiguation"
+}
