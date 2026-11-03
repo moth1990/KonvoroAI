@@ -34,7 +34,7 @@ from konboro.services.storage import Storage
 from konboro_llm import LLMClient
 from konboro_llm.providers import FakeProvider
 
-from .api import Api, ApiTenant, add_tenant, set_tenant_flag
+from .api import Api, ApiTenant, add_tenant
 from .test_api_drawings import progress
 from .test_api_upload import upload
 from .test_pipeline import pipeline  # noqa: F401  (fixture)
@@ -67,7 +67,6 @@ def priced_tenant(engine: Engine) -> ApiTenant:
                 value=Decimal("0.25"),
             )
         )
-    set_tenant_flag(engine, tenant.tenant_id, "review_screen", True)
     return tenant
 
 

@@ -62,8 +62,7 @@ def dec(*values: str | None) -> tuple[Decimal | None, ...]:
 
 def tenant_with_audits(engine: Engine, **kw: int) -> ApiTenant:
     tenant = add_tenant(engine, **kw)
-    for key in (FLAG, "review_screen"):
-        set_tenant_flag(engine, tenant.tenant_id, key, True)
+    set_tenant_flag(engine, tenant.tenant_id, FLAG, True)
     flags.cache.clear()
     return tenant
 

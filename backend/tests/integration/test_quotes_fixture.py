@@ -43,7 +43,7 @@ class Nursery:
 def nursery(migrated_db: dict[str, Engine]) -> Iterator[Nursery]:
     """A tenant of its own (no price list: costs come from the demo list's constants), as the app role."""
     with Session(migrated_db["owner"]) as s, s.begin():
-        seed_global(s)  # the VAT rate and the review_screen flag
+        seed_global(s)  # the VAT rate
     engine = migrated_db["app"]
     tenant = add_tenant(engine)
     with tenant_session(tenant.tenant_id, engine) as s:

@@ -29,8 +29,7 @@ def audits(api: Api, migrated_db: dict[str, Engine], storage: Storage) -> Iterat
         with tenant_session(t.tenant_id, api.engine) as s:
             made.append(seed_audit_993(s, t.tenant_id, t.user_id))
             assert seed_audit_993_pages(s, storage, t.tenant_id) == 5
-        for key in ("quote_audit", "review_screen"):
-            set_tenant_flag(api.engine, t.tenant_id, key, True)
+        set_tenant_flag(api.engine, t.tenant_id, "quote_audit", True)
     flags.cache.clear()
     a, b = made
     assert a is not None and b is not None and a != b

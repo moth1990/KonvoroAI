@@ -66,3 +66,34 @@ describe("Modal", () => {
     expect(document.activeElement).toBe(last);
   });
 });
+
+describe("a dialog over another (S23b: the picker over the phone's sheet)", () => {
+  afterEach(cleanup);
+
+  function Stack() {
+    const [outer, setOuter] = useState(true);
+    const [inner, setInner] = useState(false);
+    return outer ? (
+      <Modal onClose={() => setOuter(false)} labelledBy="o-title">
+        <h2 id="o-title">גיליון</h2>
+        <button onClick={() => setInner(true)}>מוצר אחר…</button>
+        {inner ? (
+          <Modal onClose={() => setInner(false)} labelledBy="i-title">
+            <h2 id="i-title">בחירת מוצר</h2>
+            <input aria-label="חיפוש" />
+          </Modal>
+        ) : null}
+      </Modal>
+    ) : null;
+  }
+
+  it("Esc closes the top one only, then the one under it", () => {
+    render(<Stack />);
+    fireEvent.click(screen.getByRole("button", { name: "מוצר אחר…" })); // opened from the sheet, as in the app
+    fireEvent.keyDown(document, { key: "Escape" });
+    expect(screen.queryByRole("dialog", { name: "בחירת מוצר" })).toBeNull();
+    expect(screen.getByRole("dialog", { name: "גיליון" })).toBeTruthy();
+    fireEvent.keyDown(document, { key: "Escape" });
+    expect(screen.queryByRole("dialog", { name: "גיליון" })).toBeNull();
+  });
+});

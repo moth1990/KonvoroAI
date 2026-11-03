@@ -117,6 +117,8 @@ class QuoteLine(Base, TenantScoped, Timestamps):
     issue_ids: Mapped[list[str]] = mapped_column(ARRAY(Text), server_default="{}")
     override: Mapped[dict[str, Any] | None]
     edits: Mapped[dict[str, Any]] = mapped_column(server_default="{}")  # qty, supplier_id, replaced (migration 0018)
+    # where a line with no component is on the drawing: a missing line, a marked one (09 §6.6, migration 0019)
+    boxes: Mapped[list[Any]] = mapped_column(server_default="[]")
     approved_at: Mapped[datetime | None]
     deleted_at: Mapped[datetime | None]  # soft delete: undo must restore the row (09 §7.6, §7.11)
 

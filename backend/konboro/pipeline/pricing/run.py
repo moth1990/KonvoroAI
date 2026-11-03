@@ -190,7 +190,13 @@ def price_drawing(
     chosen = [
         (e.replaced.manufacturer or "", e.replaced.sku) for e in carried.edits.values() if e.replaced and e.replaced.sku
     ]
-    book, row_ids = load.book(session, tenant_id, version.quote_date, out.matching, quote.customer_id, chosen)
+    chosen += [(e.match.manufacturer or "", e.match.sku) for e in carried.edits.values() if e.match and e.match.sku]
+    chosen += [(ln.manufacturer or "", ln.sku) for ln in carried.manual if ln.sku]
+    picked = {e.replaced.product_id for e in carried.edits.values() if e.replaced and e.replaced.product_id}
+    picked |= {ln.product_id for ln in carried.manual if ln.product_id}
+    book, row_ids = load.book(
+        session, tenant_id, version.quote_date, out.matching, quote.customer_id, chosen, sorted(picked)
+    )
     vat = session.execute(
         select(m.VatRate.id, m.VatRate.rate)
         .where(m.VatRate.valid_from <= version.quote_date)
@@ -303,6 +309,7 @@ def line_in(ln: Draft) -> qs.LineIn:
         override=ln.override,
         edits=dict(ln.edits),  # applied to the draft already; the row keeps them for the next recalculation
         approved_at=ln.approved_at,
+        boxes=ln.boxes,
     )
 
 

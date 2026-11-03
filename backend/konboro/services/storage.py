@@ -69,6 +69,10 @@ class Storage:
         body: bytes = self.s3.get_object(Bucket=self.bucket, Key=key)["Body"].read()
         return body
 
+    def delete(self, tenant_id: str, key: str) -> None:
+        self._check(tenant_id, key)
+        self.s3.delete_object(Bucket=self.bucket, Key=key)
+
     def exists(self, tenant_id: str, key: str) -> bool:
         self._check(tenant_id, key)
         try:

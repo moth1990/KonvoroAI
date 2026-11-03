@@ -18,6 +18,7 @@ import {
   dismissFinding,
   fetchQuote,
   lineAction,
+  markComponent,
   openNextVersion,
   previewRecalculation,
   recalculateQuote,
@@ -28,6 +29,7 @@ import {
   type DismissReason,
   type Finding,
   type LineAction,
+  type ProductChoice,
   type Quote,
   type QuoteLine,
   type Recalculation,
@@ -39,8 +41,9 @@ import { Modal } from "../../ui/Modal";
 import { useToast } from "../../ui/Toast";
 import { INPUT_KINDS } from "../newQuote/model";
 import { DrawingPane } from "./Drawing";
-import { boxOnPage, findingBox, firstPage, overlays, pageForLine, stepPage } from "./drawingModel";
+import { boxOnPage, canMark, findingBox, firstPage, overlays, pageForLine, stepPage, tooSmall } from "./drawingModel";
 import { DismissControl, LineDetail, type DetailActions } from "./LineDetail";
+import { ProductPicker } from "./ProductPicker";
 import {
   belowFloor,
   buildRows,
@@ -143,6 +146,11 @@ function Review({ quote }: { quote: Quote }) {
   const [sending, setSending] = useState(false);
   const [recalc, setRecalc] = useState<Recalculation | null>(null);
   const [dismissing, setDismissing] = useState<string | null>(null);
+  // S23b: draw mode (09 §6.6) and the product picker, for a rectangle drawn or a missing line ("מוצר אחר…")
+  const [drawing, setDrawing] = useState(false);
+  const [picker, setPicker] = useState<
+    { kind: "mark"; pageId: string; bbox: number[] } | { kind: "missing"; line: QuoteLine } | null
+  >(null);
 
   const panel = quote.panels[Math.min(panelIdx, quote.panels.length - 1)];
   const allLines = useMemo(() => quote.panels.flatMap((p) => p.lines), [quote]);
@@ -380,13 +388,45 @@ function Review({ quote }: { quote: Quote }) {
   };
 
   const detailActions = (line: QuoteLine): DetailActions => ({
+    quoteId,
     locked,
     lineFloor: quote.line_floor,
     saveToList: saveToList[line.line_id] !== false,
     onSaveToList: (on) => setSaveToList((m) => ({ ...m, [line.line_id]: on })),
     onAction: act,
     onDismiss: dismiss,
+    onPickProduct: (l) => setPicker({ kind: "missing", line: l }),
   });
+
+  const page = quote.pages.find((p) => p.page_id === pageId) ?? quote.pages[0];
+  const markable = canMark(page, locked);
+  const drawn = (onPage: string, bbox: number[]) => {
+    if (tooSmall(bbox)) toast("גררו מלבן סביב הרכיב");
+    else setPicker({ kind: "mark", pageId: onPage, bbox });
+  };
+  const picked = (choice: ProductChoice) => {
+    const p = picker;
+    setPicker(null);
+    if (!p) return;
+    if (p.kind === "missing") {
+      void act(p.line, { kind: "resolve", ref: choice.ref });
+      return;
+    }
+    void run(
+      () =>
+        markComponent(quoteId, { page_id: p.pageId, bbox: p.bbox, ref: choice.ref, panel_id: panel?.panel_id ?? null }),
+      (q) => {
+        setDrawing(false);
+        // the new line, selected: the one manual line whose box is the rectangle
+        const added = q.panels
+          .flatMap((x) => x.lines)
+          .find(
+            (l) => l.line_type === "manual" && l.boxes.some((b) => b.page_id === p.pageId && sameBox(b.bbox, p.bbox)),
+          );
+        if (added) setSelected(added.line_id);
+      },
+    );
+  };
 
   const restore = (ids: string[]) => void run(() => restoreLines(quoteId, ids));
 
@@ -445,6 +485,13 @@ function Review({ quote }: { quote: Quote }) {
       return true;
     }
     const n = ["1", "2", "3"].indexOf(e.key);
+    if (n >= 0 && line.line_type === "missing" && e.code.startsWith("Digit")) {
+      // 09 §8: 1–3 pick a missing line's product, once the detail has fetched them
+      const found = qc.getQueryData<ProductChoice[]>(["candidates", quoteId, line.line_id]);
+      const choice = found?.[n];
+      if (choice) void act(line, { kind: "resolve", ref: choice.ref });
+      return !!choice;
+    }
     if (n >= 0 && line.alternatives[n] && e.code.startsWith("Digit")) {
       void act(line, { kind: "alternative", index: n });
       return true;
@@ -463,6 +510,11 @@ function Review({ quote }: { quote: Quote }) {
       if (isUndoKey(e)) {
         e.preventDefault();
         void undo.undo();
+        return;
+      }
+      if (e.key === "Escape" && drawingRef.current) {
+        // 09 §8: Esc leaves draw mode before it closes a sheet or drops the selection
+        setDrawing(false);
         return;
       }
       if (phone) return;
@@ -491,6 +543,10 @@ function Review({ quote }: { quote: Quote }) {
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, [phone, lineIds, selected, open, select, undo, quote.pages, pageId]);
+  const drawingRef = useRef(drawing);
+  useEffect(() => {
+    drawingRef.current = drawing;
+  });
 
   const kind = quote.input_kind ? INPUT_KINDS[quote.input_kind]?.[0] : null;
   const sub = [quote.drawing_number, kind, `גרסה ${quote.version}`, quote.status === "sent" ? "נשלחה" : "טיוטה"];
@@ -748,6 +804,7 @@ function Review({ quote }: { quote: Quote }) {
             finding={shownFinding}
             onSelectLine={selectFromDrawing}
             onSelectPanel={selectPanel}
+            mark={{ available: markable, on: drawing, onToggle: () => setDrawing((d) => !d), onDrawn: drawn }}
           />
         </section>
         <section className="pane chat-pane" aria-label="צ'אט">
@@ -773,6 +830,14 @@ function Review({ quote }: { quote: Quote }) {
             actions={detailActions(sheetLine)}
           />
         </Modal>
+      ) : null}
+      {picker ? (
+        <ProductPicker
+          quoteId={quoteId}
+          title={picker.kind === "mark" ? "איזה רכיב סימנתם?" : "בחירת מוצר לשורה"}
+          onPick={picked}
+          onClose={() => setPicker(null)}
+        />
       ) : null}
       {sending ? (
         <SendDialog quote={quote} busy={busy} onSend={() => void send()} onClose={() => setSending(false)} />
@@ -1144,4 +1209,8 @@ function StatusIcon({ shape, label }: { shape: Shape; label: string }) {
       {SHAPES[shape]}
     </svg>
   );
+}
+
+function sameBox(a: number[], b: number[]): boolean {
+  return a.length === b.length && a.every((v, i) => Math.abs(v - (b[i] ?? 0)) < 0.01);
 }

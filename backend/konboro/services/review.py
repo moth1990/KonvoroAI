@@ -26,7 +26,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from konboro.contracts.matching import CatalogItemSnapshot, MatchingResult
-from konboro.contracts.merge import MergeResult
+from konboro.contracts.merge import AttributeValue, MergeResult
 from konboro.db import models as m
 from konboro.db.ids import new_id
 from konboro.pipeline.pricing import load as pricing_load
@@ -45,6 +45,7 @@ TIMES = ("approved_at", "deleted_at")
 LINE_STATE = (
     *DECIMALS,
     *TIMES,
+    "line_type",  # a missing line resolved is a component line (09 §7.8)
     "sku",
     "description",
     "manufacturer",
@@ -356,11 +357,20 @@ def edited_outputs(ctx: Ctx, out: pricing.Outputs) -> tuple[MergeResult, Matchin
     for c in out.merge.components:
         if c.component_id in deleted:
             continue
-        qty = (heads[c.component_id].edits or {}).get("qty") if c.component_id in heads else None
-        components.append(c.model_copy(update={"quantity": int(Decimal(qty))}) if qty else c)
+        edits = (heads[c.component_id].edits or {}) if c.component_id in heads else {}
+        update: dict[str, Any] = {}
+        if edits.get("qty"):
+            update["quantity"] = int(Decimal(edits["qty"]))
+        if edits.get("attrs"):  # 09 §7.4: the user's value, which the rules read (C50 → C20)
+            attrs = dict(c.attributes)
+            for name, value in edits["attrs"].items():
+                attrs[name] = AttributeValue(value=value, source="user", confidence=1.0)
+            update["attributes"] = attrs
+        components.append(c.model_copy(update=update) if update else c)
     matches = []
     for x in out.matching.matches:
-        rep = (heads[x.component_id].edits or {}).get("replaced") if x.component_id in heads else None
+        e = (heads[x.component_id].edits or {}) if x.component_id in heads else {}
+        rep = e.get("replaced") or e.get("match")
         if rep and rep.get("sku"):
             item = ctx.session.scalar(select(m.CatalogItem).where(m.CatalogItem.sku == rep["sku"]).limit(1))
             snapshot = (
@@ -469,18 +479,17 @@ def delete(ctx: Ctx, line_id: str) -> Done:
     children = _children(ctx, row)
     derived = row.line_type in ("derived", "labor")
     restore = _restore_of(ctx, [row, *children], panels=[] if derived else [row.panel_id])
-    event = _event(
-        ctx,
-        "derived_removed" if derived else "row_deleted",
-        line=row,
-        before={"description": row.description, "qty": _json(row.qty), "line_type": row.line_type},
-        restore=restore,
-    )
+    before: dict[str, Any] = {"description": row.description, "qty": _json(row.qty), "line_type": row.line_type}
+    if row.line_type == "missing":  # "אין כאן רכיב": a negative example for the detector (09 §7.6, 03 §11)
+        before |= {"boxes": row.boxes, "negative_example": True}
+    event = _event(ctx, "derived_removed" if derived else "row_deleted", line=row, before=before, restore=restore)
     at = now()
     for r in (row, *children):
         r.deleted_at = at
     ctx.session.flush()
     refresh(ctx, revalidate=[] if derived else [row.panel_id])
+    if row.line_type == "missing":
+        return Done("השורה נמחקה: אין כאן רכיב", event.id)
     return Done("הפריט הנלווה הוסר מההצעה" if derived else "השורה נמחקה", event.id)
 
 
@@ -996,6 +1005,12 @@ def undo(ctx: Ctx, event_id: str) -> Done:
         _restore_product(ctx, restore["product"])
     if restore.get("memory"):
         _restore_memory(ctx, restore["memory"])
+    if restore.get("created_lines") or restore.get("brand_discount"):
+        from konboro.services import review_picker  # it builds on this module
+
+        review_picker.undo_created(ctx, restore)
+        if restore.get("brand_discount"):
+            review_picker.undo_brand_discount(ctx, restore["brand_discount"])
     snapshot = dict(ctx.version.snapshot or {})
     snapshot["deleted_line_keys"] = restore.get("deleted_line_keys", [])
     ctx.version.snapshot = snapshot

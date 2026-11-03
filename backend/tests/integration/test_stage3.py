@@ -18,7 +18,7 @@ from konboro.pipeline.worker import Worker
 from konboro.services.storage import Storage, TenantKeyError
 from konboro_llm.stages.symbol_detection import STAGE as DETECT
 
-from .api import Api, add_tenant, set_tenant_flag
+from .api import Api, add_tenant
 from .test_api_drawings import progress
 from .test_pipeline import pipeline  # noqa: F401  (fixture)
 from .test_stage1 import NURSERY, send
@@ -117,7 +117,6 @@ def test_a_drawing_from_the_pipeline_opens_for_review(
     The review fixture has no boxes, so only a drawing from the pipeline reaches that path (BUG-026)."""
     engine = seeded["app"]
     tenant = add_tenant(engine)
-    set_tenant_flag(engine, tenant.tenant_id, "review_screen", True)
     drawing_id = send(api, tenant, NURSERY)
     Worker(pipeline).run_until_idle()
     quote_id = progress(api, tenant, drawing_id).json()["quote_id"]

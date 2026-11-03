@@ -1,5 +1,5 @@
 """The drawing viewer's pyramid over HTTP (09 §6.5, 12 §6; S11): `page.dzi` and one tile, a ranged read of stage 2's
-pack, tenant-scoped and behind `review_screen`. Measured on the NURSERY fixture's pages (S11 decision 2)."""
+pack, tenant-scoped. Measured on the NURSERY fixture's pages (S11 decision 2)."""
 
 import io
 import json
@@ -16,9 +16,7 @@ from konboro.db.session import tenant_session
 from konboro.devtools.fixtures.nursery import MARKER, seed_nursery, seed_nursery_pages
 from konboro.services.storage import Storage
 
-from .api import Api, set_tenant_flag
-
-FLAG = "review_screen"
+from .api import Api
 
 
 @pytest.fixture(scope="module")
@@ -29,8 +27,6 @@ def pages(api: Api, migrated_db: dict[str, Engine], storage: Storage) -> Iterato
     with tenant_session(api.a.tenant_id, api.engine) as s:
         seed_nursery(s, api.a.tenant_id)
         assert seed_nursery_pages(s, storage, api.a.tenant_id) == 9
-    for t in (api.a, api.b):
-        set_tenant_flag(api.engine, t.tenant_id, FLAG, True)
     yield _pages(api)
 
 
@@ -115,15 +111,6 @@ def test_a_page_stage_2_has_not_rendered_is_not_found(api: Api, pages: list[m.Pa
             page = s.get(m.Page, pages[0].id)
             assert page is not None
             page.tiles_prefix = prefix
-
-
-def test_with_the_flag_off_the_routes_do_not_exist(api: Api, pages: list[m.Page]) -> None:
-    set_tenant_flag(api.engine, api.a.tenant_id, FLAG, False)
-    try:
-        assert api.client.get(_url(pages[4]), headers=api.as_(api.a)).status_code == 404
-        assert api.client.get(_url(pages[4], "page_files/0/0_0.png"), headers=api.as_(api.a)).status_code == 404
-    finally:
-        set_tenant_flag(api.engine, api.a.tenant_id, FLAG, True)
 
 
 def test_without_a_token(api: Api, pages: list[m.Page]) -> None:

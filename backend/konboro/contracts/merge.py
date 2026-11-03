@@ -24,7 +24,9 @@ from .common import (
     TraceId,
 )
 
-AttributeSource = Literal["drawing", "cad_attrib", "graphic", "shared_label", "bom"]
+AttributeSource = Literal[
+    "drawing", "cad_attrib", "graphic", "shared_label", "bom", "user"
+]  # user: set in review (09 §7.4)
 
 
 class AttributeValue(Contract):

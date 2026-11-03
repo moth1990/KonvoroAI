@@ -99,7 +99,7 @@ System limits (20 MB per file, 20 files, 200 pages per drawing, 2 m² per page) 
 - `default_on bool not null default false`. A new flag is always off.
 - `depends_on text[]`.
 - `owner`, `created_at`, `remove_by date`.
-- Seeded keys: spec 13's five, plus `review_screen` (S09), which gates the review screen while it is built and goes away in S23.
+- Seeded keys: spec 13's five. `review_screen` (S09) gated the review screen while it was built; migration 0019 removed it with S23b.
 
 **`plan_feature_flags`** holds the plan-level flag setting: `plan_id → plans`, `flag_key → feature_flags`, `enabled bool`, with PK `(plan_id, flag_key)`.
 
@@ -296,7 +296,8 @@ This table answers the customer's question "why was this counted?".
 | `derived jsonb`, `alternatives jsonb`, `explanation` | |
 | `status`, `status_reasons jsonb`, `issue_ids text[]` | `status` is `green`, `yellow` or `red`, and only stage 7 writes it |
 | `override jsonb`, `approved_at`, `deleted_at` | A price set for this quote only; the estimator's approval (09 §7.2); a soft delete, so undo brings the line back |
-| `edits jsonb` | The review screen's other edits, carried by `line_key` through a recalculation and a rerun: `qty`, the `supplier_id` chosen for this quote (07 §7.2.2 step 1), and `replaced` (the alternative's `sku`, `manufacturer`, `description`, `catalog_item_id`, 09 §7.3). Migration 0018, S23 |
+| `edits jsonb` | The review screen's other edits, carried by `line_key` through a recalculation and a rerun: `qty`, the `supplier_id` chosen for this quote (07 §7.2.2 step 1), and `replaced` (the alternative's `sku`, `manufacturer`, `description`, `catalog_item_id`, 09 §7.3; also a product picked for a missing line, with `product_id`, and `resolved`, 09 §7.8). Since S23b `attrs` (a current or breaking capacity the user set, 09 §7.4) and `match` (stage 5's answer with it: `sku`, `manufacturer`, `description`, `catalog_item_id`, `reasons`, `alternatives`, `explanation`). Migration 0018, S23 |
+| `boxes jsonb` | Where a line with no component is on the drawing, `[{page_id, bbox}]` in PDF points: a missing line's instance and a component the estimator marked (09 §6.6). Migration 0019, S23b |
 
 **`findings`** (`iss_`, 06 §6.2) are issues from the validator and from pricing. Stage 6 writes its own on the drawing, replacing them on every run, with `quote_version_id` null; stage 7 attaches them to the version it makes (S21 decision 1). The id is a digest of what the finding says, so a re-run keeps it. `values.title` is the finding's headline; `code` is the rule's id.
 - `quote_version_id`, `drawing_id`.
@@ -355,7 +356,7 @@ The rest of the price-list tables:
   - `customer_id null`, `signature`, `brand_context null`, `sku`, `approved_count`, `last_used_at`.
   - Unique `(tenant_id, coalesce(customer_id,''), signature, coalesce(brand_context,''))`.
 - **`tenant_abbreviations`** (`tab_`): the tenant's and designers' abbreviation dictionary (03 §4.6). Columns: `scope` (`tenant` or `designer`), `designer null`, `text`, `symbol_class`, `family`.
-- **`tenant_reference_crops`** (`trf_`): reference crops in `tenant`, `designer` or `drawing` scope (03 §4.3). Never visible to another tenant.
+- **`tenant_reference_crops`** (`trf_`): reference crops in `tenant`, `designer` or `drawing` scope (03 §4.3). Never visible to another tenant. Since S23b a component marked on the review screen (09 §6.6) writes one, `drawing` scope, `source` = `user_correction`, its class the family's default (S23b decision 5), the crop under `tenants/{tenant_id}/drawings/{drawing_id}/marks/`. Stage 3 does not read them yet.
 - **`tenant_rule_overrides`**: `rule_id`, `enabled`, `params jsonb`, with PK `(tenant_id, rule_id)` (06 §6.2).
 - **`knowledge_candidates`** (`kc_`) is the pilot approval queue (00 §14.2).
   - `kind`: `symbol`, `abbreviation`, `spelling`, `catalog_item` or `catalog_attribute`.

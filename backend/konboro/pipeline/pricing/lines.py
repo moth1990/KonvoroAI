@@ -29,7 +29,7 @@ from konboro.contracts.validation import Issue
 from konboro.pipeline.audit.differences import describe
 from konboro.pipeline.matching.match import ACCESSORY_FAMILIES
 
-from .book import INCLUDED, Book, Priced, Product, price
+from .book import INCLUDED, Book, Priced, Product, own_id, price
 
 # 09 §6.3's groups (db-schema `line_group`). A panel's main device is "feed" whatever its family (06 §6.1).
 FEED = frozenset({"changeover_switch", "ats", "energy_meter", "current_transformer", "measuring_instrument"})
@@ -78,6 +78,7 @@ class Draft:
     override: dict[str, Any] | None = None
     edits: dict[str, Any] = field(default_factory=dict)  # the review screen's, as stored (`edits.LineEdits`)
     approved_at: datetime | None = None  # the estimator approved the line (09 §7.2)
+    boxes: list[dict[str, Any]] = field(default_factory=list)  # a line with no component: where it is (09 §6.5)
     query_failed: bool = False  # a derived line whose catalog query found nothing (07 §7.5, `enclosure_not_found`)
     status: str = "red"
     status_reasons: list[dict[str, Any]] = field(default_factory=list)
@@ -167,7 +168,11 @@ def component_line(
 ) -> tuple[Draft, Product | None]:
     item = m.catalog_item if m else None
     catalog = book.item_by_sku(item.manufacturer, item.sku) if item else None
-    product = book.product(catalog.id if catalog else None, m.chosen_sku) if m and m.chosen_sku else None
+    product = (
+        book.find(None, catalog.id if catalog else None, m.chosen_sku, item.manufacturer if item else None)
+        if m and m.chosen_sku
+        else None
+    )
     priced = price(product, book) if m and m.chosen_sku else NO_SKU
     reasons = [confidence_reason(m.confidence if m else c.confidence)]
     reasons += match_reasons(m) if m else [{"source": "match", "value": "unmatched", "status": "red"}]
@@ -182,7 +187,7 @@ def component_line(
             priced=priced,
             line_group=group,
             component_id=c.component_id,
-            product_id=product.product_id if product else None,
+            product_id=own_id(product),
             catalog_item_id=catalog.id if catalog else None,
             sku=m.chosen_sku if m else None,
             manufacturer=item.manufacturer if item else None,
@@ -202,7 +207,7 @@ def kit_lines(parent: Draft, m: ComponentMatch, product: Product | None, book: B
     for n, part in enumerate(m.bundle_lines):
         included = product is not None and bool(product.includes.get(part.sku))
         catalog = book.item_by_sku(part.manufacturer, part.sku)
-        own = book.product(catalog.id if catalog else None, part.sku)
+        own = book.find(None, catalog.id if catalog else None, part.sku, part.manufacturer)
         out.append(
             Draft(
                 key=f"{parent.key}:kit:{n}",
@@ -214,7 +219,7 @@ def kit_lines(parent: Draft, m: ComponentMatch, product: Product | None, book: B
                 line_group=parent.line_group,
                 component_id=parent.component_id,
                 parent=parent.key,
-                product_id=None if included or own is None else own.product_id,
+                product_id=None if included else own_id(own),
                 catalog_item_id=catalog.id if catalog else None,
                 sku=part.sku,
                 manufacturer=part.manufacturer,
@@ -236,6 +241,7 @@ def missing_line(x: MissingInstance) -> Draft:
         line_group=None,
         explanation=x.origin or None,
         reasons=[confidence_reason(x.confidence), {"source": "missing", "value": x.origin, "status": "red"}],
+        boxes=[{"page_id": x.page_id, "bbox": list(x.bbox)}],
     )
 
 

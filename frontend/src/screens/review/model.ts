@@ -234,6 +234,8 @@ const MATCH_CHIPS: Record<string, [string, Tone]> = {
   ambiguous: ["כמה מוצרים מתאימים", "warn"],
   unmatched: ['אין מק"ט מתאים', "bad"],
   conflict: ["סתירה בין התכונות", "bad"],
+  not_in_catalog: ["אין בקטלוג מוצר עם הערכים האלה", "bad"], // 09 §7.4, after a value set by hand
+  resolved: ["נבחר ידנית", "ok"], // 09 §7.8: a missing line the estimator picked a product for
 };
 const PRICE_CHIPS: Record<string, [string, Tone]> = {
   missing: ["אין מחיר", "bad"],
@@ -324,10 +326,50 @@ const ATTRIBUTE_LABELS: Record<string, string> = {
   curve: "עקומה",
   breaking_capacity_ka: "כושר ניתוק",
   residual_ma: "זרם פחת",
+  current_a: "זרם",
 };
 
 export function attributeLabel(key: string): string {
   return ATTRIBUTE_LABELS[key] ?? key;
+}
+
+// --- the product picker (09 §6.4, §6.6, §7.4, §7.13; S23b) --------------------------------------------------------
+
+const UNITS: Record<string, string> = { current_a: "A", breaking_capacity_ka: "kA" };
+
+/** An attribute's value with its unit when the value is a bare number ("16" → "16A"); the fixture's "20A" stays. */
+export function attributeValue(attribute: string, value: string | null): string | null {
+  if (value == null) return null;
+  const unit = UNITS[attribute];
+  return unit && /^\d+(\.\d+)?$/.test(value) ? `${value}${unit}` : value;
+}
+
+/** The value the dropdown shows as chosen: the line's own, as a bare number, when the list has it. */
+export function attributeChoice(value: string | null, options: string[]): string {
+  if (value == null) return "";
+  const n = /^(\d+(?:\.\d+)?)/.exec(value)?.[1];
+  return n && options.some((o) => Number(o) === Number(n)) ? (options.find((o) => Number(o) === Number(n)) ?? "") : "";
+}
+
+/** "30" or "30%" typed as a discount → "0.3", the API's fraction; null for anything but 0 < x < 100. */
+export function discountFraction(text: string): string | null {
+  const clean = text.trim().replace(/%$/, "").trim();
+  if (!/^\d{1,2}(\.\d{1,2})?$/.test(clean)) return null;
+  const pct = Number(clean);
+  if (!(pct > 0 && pct < 100)) return null;
+  return String(Number((pct / 100).toFixed(4)));
+}
+
+/** 09 §6.4's explanation on a missing line, with what was read beside the symbol when there is anything. */
+export function missingText(line: QuoteLine): string {
+  const read = line.explanation?.trim();
+  const head = read ? `בשרטוט כתוב ״${read}״ ליד סימן שהזיהוי לא סימן.` : "בשרטוט יש כאן סימן שהזיהוי לא סימן.";
+  return `${head} אם יש כאן רכיב, בחרו מוצר. אם לא, מחקו את השורה.`;
+}
+
+/** A product in the picker's list: "ABB · S203M-C16" and its price, or "אין מחיר". */
+export function choiceMeta(c: { sku: string | null; manufacturer: string | null }): string {
+  return [c.manufacturer, c.sku].filter(Boolean).join(" · ");
 }
 
 /** The source wordings of 09 §6.4, shortened to fit the third column as in the prototype. */

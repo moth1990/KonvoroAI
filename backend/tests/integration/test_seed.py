@@ -44,15 +44,11 @@ def test_the_demo_tenant_gets_the_review_fixture_once(migrated_db: dict[str, Eng
     seed(migrated_db["owner"], storage)
     with tenant_session(DEMO_TENANT, migrated_db["app"]) as s:
         quotes = s.execute(select(func.count()).select_from(m.Quote).where(m.Quote.name == "NURSERY")).scalar_one()
-        enabled = s.execute(
-            select(m.TenantFeatureOverride.enabled).where(m.TenantFeatureOverride.flag_key == "review_screen")
-        ).scalar_one()
         # the demo price list links the lines to its products
         linked = s.execute(
             select(func.count()).select_from(m.QuoteLine).where(m.QuoteLine.product_id.is_not(None))
         ).scalar_one()
     assert quotes == 1
-    assert enabled is True
     assert linked == 8
 
 

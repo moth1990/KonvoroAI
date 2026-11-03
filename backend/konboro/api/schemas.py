@@ -256,6 +256,12 @@ class LineOut(BaseModel):
     supplier_id: str | None = Field(description="The supplier chosen for this quote only (09 §7.15)")
     price_hints: list[PriceHintOut] = Field(description="Neighbouring products, on a line with no price")
     qty_editable: bool
+    attribute_options: dict[str, list[str]] = Field(
+        description="09 §6.4: current and breaking capacity, the values the catalog has for the family (S23b)"
+    )
+    list_price_brand: str | None = Field(
+        description='09 §7.13: an unpriced line whose item has a list price: "כל המוצרים של X: מחירון יצרן פחות __%"'
+    )
 
 
 class LineCountsOut(BaseModel):
@@ -966,6 +972,39 @@ class DismissIn(Strict):
 
     reason: Literal["intended", "checker_wrong", "other"]
     text: str | None = Field(None, max_length=500)
+
+
+class AttributeIn(Strict):
+    attribute: Literal["current_a", "breaking_capacity_ka"] = Field(description="09 §6.4: the editable values")
+    value: DecimalStr = Field(description="Amperes or kiloamperes, as the catalog keeps them")
+
+
+class ProductRefIn(Strict):
+    ref: str = Field(pattern=r"^(cat|prd):[A-Za-z0-9_\-]{1,64}$", description="A choice from the picker")
+
+
+class MarkIn(Strict):
+    """09 §6.6: a rectangle drawn on a page, and the product picked for it."""
+
+    page_id: str = Field(pattern=r"^pg_[0-9A-Z]{26}$")
+    bbox: list[float] = Field(min_length=4, max_length=4, description="x0, y0, x1, y1 in PDF points, origin top left")
+    ref: str = Field(pattern=r"^(cat|prd):[A-Za-z0-9_\-]{1,64}$")
+    panel_id: str | None = Field(None, description="The panel the screen shows, for a page with no panel areas")
+
+
+class LineBrandDiscountIn(Strict):
+    discount_pct: DecimalStr = Field(description="Off the manufacturer's list price: 0.32 is 32%")
+
+
+class ProductChoiceOut(BaseModel):
+    """One product the picker offers (09 §6.6 step 3): from the master catalog or the factory's price list."""
+
+    ref: str = Field(description="cat:<catalog item> or prd:<product>, for the action that picks it")
+    description: str
+    sku: str | None
+    manufacturer: str | None
+    family: str | None
+    unit_price: DecimalStr | None = Field(description="The factory's sale price today; null: no price yet")
 
 
 class RestoreIn(Strict):

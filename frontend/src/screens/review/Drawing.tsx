@@ -39,6 +39,8 @@ export function DrawingPane(props: {
   finding: { pageId: string; bbox: number[] } | null;
   onSelectLine: (lineId: string) => void;
   onSelectPanel: (panelId: string) => void;
+  /** 09 §6.5–6.6 "סמן רכיב שפוספס" (S23b): the review screen only, on a parsed page of a draft. */
+  mark?: { available: boolean; on: boolean; onToggle: () => void; onDrawn: (pageId: string, bbox: number[]) => void };
 }) {
   const { pages } = props;
   const page = pages.find((p) => p.page_id === props.pageId) ?? pages[0];
@@ -76,6 +78,8 @@ export function DrawingPane(props: {
             focus={props.focus}
             onSelectLine={props.onSelectLine}
             onSelectPanel={props.onSelectPanel}
+            drawing={!!props.mark?.on && props.mark.available}
+            onDrawn={(bbox) => props.mark?.onDrawn(page.page_id, bbox)}
           />
         ) : (
           <div className="drawing-soon" data-testid="viewer" data-state="none">
@@ -127,7 +131,27 @@ export function DrawingPane(props: {
           <button type="button" className="btn ghost sm" aria-label="התאם לחלון" onClick={() => viewer.current?.fit()}>
             <Icon name="fit" />
           </button>
+          {props.mark?.available ? (
+            <>
+              <span className="vsep" aria-hidden="true" />
+              <button
+                type="button"
+                className={`btn ${props.mark.on ? "" : "ghost "}sm`}
+                aria-pressed={props.mark.on}
+                data-testid="draw"
+                onClick={props.mark.onToggle}
+              >
+                <Icon name="plus" />
+                סמן רכיב שפוספס
+              </button>
+            </>
+          ) : null}
         </div>
+        {props.mark?.on && props.mark.available ? (
+          <div className="draw-hint" role="status" data-testid="draw-hint">
+            גררו מלבן סביב הרכיב שפוספס, ואז בחרו מוצר · Esc לביטול
+          </div>
+        ) : null}
       </div>
     </>
   );

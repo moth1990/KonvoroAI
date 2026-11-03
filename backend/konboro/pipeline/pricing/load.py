@@ -222,9 +222,11 @@ def book(
     matching: MatchingResult,
     customer_id: str | None,
     extra_skus: Iterable[tuple[str, str]] = (),
+    product_ids: Iterable[str] = (),
 ) -> tuple[Book, list[str]]:
     """The book, and the ids of the price-list rows it holds (for the version's snapshot, 07 §7.7). `extra_skus`:
-    (maker, SKU) of the alternatives the estimator chose (09 §7.3), beside stage 5's."""
+    (maker, SKU) of the alternatives, rematches and manual lines the estimator chose (09 §7.3, §7.4, §6.6), beside
+    stage 5's; `product_ids`: the price-list products they picked by id (09 §7.8)."""
     extra = list(extra_skus)
     items = catalog_items(session, matching, DERIVED_FAMILIES, extra)
     skus = (
@@ -232,7 +234,9 @@ def book(
         | {b.sku for x in matching.matches for b in x.bundle_lines}
         | {sku for _, sku in extra}
     )
-    return book_of(session, tenant_id, on_date, customer_id, items, products(session, tenant_id, items, skus))
+    return book_of(
+        session, tenant_id, on_date, customer_id, items, products(session, tenant_id, items, skus, product_ids)
+    )
 
 
 def book_of(
@@ -378,6 +382,7 @@ def carry(session: Session, version: m.QuoteVersion | None, keep: frozenset[str]
             manufacturer=r.manufacturer,
             unit=r.unit,
             explanation=r.explanation,
+            boxes=list(r.boxes),
         )
         for r in rows
         if r.line_type == "manual" and r.deleted_at is None
@@ -387,7 +392,7 @@ def carry(session: Session, version: m.QuoteVersion | None, keep: frozenset[str]
         {
             r.line_key: Kept(r.product_id, r.sku, priced_as_stored(r))
             for r in rows
-            if r.line_key and r.deleted_at is None and r.line_key not in keep and r.line_type == "component"
+            if r.line_key and r.deleted_at is None and r.line_key not in keep and r.line_type in ("component", "manual")
         }
         if keep is not None
         else {}

@@ -1,5 +1,5 @@
-"""One quote for the review screen (09 §4–6, prototype `vReview`), and its actions (09 §7, S23). Behind `review_screen`
-(S09 decision 2) until S23b finishes the screen (S23 decision 8).
+"""One quote for the review screen (09 §4–6, prototype `vReview`), and its actions (09 §7, S23, S23b). The
+`review_screen` flag that gated it while it was built (S09 decision 2) came out when S23b finished it.
 
 Every action answers with the quote as it now is, the toast's text and the event "בטל" takes back (`ActionOut`). A
 sent version is never changed: every action on it is a 409 (07 §7.7).
@@ -9,30 +9,35 @@ from collections.abc import Callable
 from decimal import Decimal
 from typing import Annotated, Any
 
-from fastapi import APIRouter, Depends, Path, Request
+from fastapi import APIRouter, Depends, Path, Query, Request
 
 from konboro.domain.permissions import Permission, allowed
 from konboro.domain.totals import QuoteSums, Sums
-from konboro.services import price_list, quote_versions, quotes, review
+from konboro.services import price_list, quote_versions, quotes, review, review_picker
 from konboro.services.storage import Storage
 
-from ..deps import Actor, require, require_flag
+from ..deps import Actor, require
 from ..errors import ERROR_RESPONSES, ApiError
 from ..schemas import (
     ActionOut,
     AlternativeIn,
+    AttributeIn,
     CostEntryIn,
     DismissIn,
+    LineBrandDiscountIn,
     LinePriceIn,
     LineSupplierIn,
+    MarkIn,
     PriceEntryIn,
+    ProductChoiceOut,
+    ProductRefIn,
     QuantityIn,
     QuoteOut,
     RecalculationOut,
     RestoreIn,
 )
 
-router = APIRouter(tags=["quotes"], responses=ERROR_RESPONSES, dependencies=[Depends(require_flag("review_screen"))])
+router = APIRouter(tags=["quotes"], responses=ERROR_RESPONSES)
 
 Reader = Annotated[Actor, Depends(require(Permission.QUOTES_READ))]
 Writer = Annotated[Actor, Depends(require(Permission.QUOTES_WRITE))]
@@ -108,6 +113,92 @@ def dismiss_finding(
 ) -> ActionOut:
     """09 §7.7, 06 §11: dismissed with a reason; its lines' colour follows."""
     return act(actor, quote_id, request, lambda c: review.dismiss_finding(c, finding_id, body.reason, body.text))
+
+
+# --- the product picker (09 §6.4, §6.6, §7.4, §7.8; S23b) ----------------------------------------------------------
+
+
+def _choices(found: list[review_picker.Choice]) -> list[ProductChoiceOut]:
+    return [
+        ProductChoiceOut(
+            ref=c.ref,
+            description=c.description,
+            sku=c.sku,
+            manufacturer=c.manufacturer,
+            family=c.family,
+            unit_price=c.unit_price,
+        )
+        for c in found
+    ]
+
+
+def _draft(actor: Actor, quote_id: str, request: Request) -> review.Ctx:
+    try:
+        return review.open_draft(
+            actor.session, request.app.state.storage, review.Actor(actor.tenant_id, actor.user_id), quote_id
+        )
+    except review.ReviewError as e:
+        raise ApiError(e.status, e.code, e.details) from e
+
+
+@router.get("/quotes/{quote_id}/products")
+def search_products(
+    actor: Reader,
+    quote_id: QuoteId,
+    request: Request,
+    q: Annotated[str | None, Query(max_length=100)] = None,
+    family: Annotated[str | None, Query(max_length=64, pattern=r"^[a-z_]+$")] = None,
+) -> list[ProductChoiceOut]:
+    """09 §6.6 step 3, §6.4 "מוצר אחר…": the master catalog and the factory's products, priced ones first."""
+    _draft(actor, quote_id, request)
+    return _choices(review_picker.search(actor.session, actor.tenant_id, q, family))
+
+
+@router.get("/quotes/{quote_id}/lines/{line_id}/candidates")
+def missing_candidates(actor: Reader, quote_id: QuoteId, line_id: LineId, request: Request) -> list[ProductChoiceOut]:
+    """09 §6.4: up to three products for a missing line, by what was read beside it (stage 5's code, no model)."""
+    ctx = _draft(actor, quote_id, request)
+    try:
+        return _choices(review_picker.candidates(ctx, line_id))
+    except review.ReviewError as e:
+        raise ApiError(e.status, e.code, e.details) from e
+
+
+@router.post("/quotes/{quote_id}/lines/{line_id}/attribute")
+def set_attribute(actor: Writer, quote_id: QuoteId, line_id: LineId, body: AttributeIn, request: Request) -> ActionOut:
+    """09 §7.4: current or breaking capacity set by hand; stage 5 for the line in code, then stages 6 and 7."""
+    return act(
+        actor, quote_id, request, lambda c: review_picker.set_attribute(c, line_id, body.attribute, Decimal(body.value))
+    )
+
+
+@router.post("/quotes/{quote_id}/lines/{line_id}/resolve")
+def resolve_missing(
+    actor: Writer, quote_id: QuoteId, line_id: LineId, body: ProductRefIn, request: Request
+) -> ActionOut:
+    """09 §7.8: a product for a missing line, which becomes an approved component line."""
+    return act(actor, quote_id, request, lambda c: review_picker.resolve_missing(c, line_id, body.ref))
+
+
+@router.post("/quotes/{quote_id}/marks")
+def mark_component(actor: Writer, quote_id: QuoteId, body: MarkIn, request: Request) -> ActionOut:
+    """09 §6.6: a component the detection missed, marked on the drawing: a manual line there."""
+    return act(
+        actor,
+        quote_id,
+        request,
+        lambda c: review_picker.mark_component(c, body.page_id, body.bbox, body.ref, body.panel_id),
+    )
+
+
+@router.post("/quotes/{quote_id}/lines/{line_id}/brand-discount")
+def set_brand_discount(
+    actor: Writer, quote_id: QuoteId, line_id: LineId, body: LineBrandDiscountIn, request: Request
+) -> ActionOut:
+    """09 §7.13: "כל המוצרים של X: מחירון יצרן פחות __%", from an unpriced line."""
+    return act(
+        actor, quote_id, request, lambda c: review_picker.set_brand_discount(c, line_id, Decimal(body.discount_pct))
+    )
 
 
 # --- prices, costs, suppliers (09 §7.13–7.15) -----------------------------------------------------------------------

@@ -1,12 +1,16 @@
 import { useEffect, useLayoutEffect, useRef, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 
+/** The dialogs open now, oldest first: a key goes to the top one only (a picker over the phone's sheet, S23b). */
+const OPEN: object[] = [];
+
 const FOCUSABLE =
   'a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
 
 /**
  * A dialog (prototype `modal()`, lines 637–644): closes on Esc or a click on the backdrop, keeps Tab inside,
- * focuses the primary button or the first input when it opens, and gives focus back when it closes.
+ * focuses the primary button or the first input when it opens, and gives focus back when it closes. With a dialog
+ * over another, Esc and Tab are the top one's.
  */
 export function Modal({
   onClose,
@@ -34,7 +38,10 @@ export function Modal({
     const first = el?.querySelector<HTMLElement>("button.primary, input") ?? el?.querySelector<HTMLElement>(FOCUSABLE);
     (first ?? el)?.focus();
 
+    const me = {};
+    OPEN.push(me);
     function onKey(e: KeyboardEvent) {
+      if (OPEN[OPEN.length - 1] !== me) return;
       if (e.key === "Escape") {
         e.stopPropagation();
         close.current();
@@ -58,6 +65,7 @@ export function Modal({
     document.addEventListener("keydown", onKey);
     return () => {
       document.removeEventListener("keydown", onKey);
+      OPEN.splice(OPEN.indexOf(me), 1);
       opener?.focus();
     };
   }, []);
