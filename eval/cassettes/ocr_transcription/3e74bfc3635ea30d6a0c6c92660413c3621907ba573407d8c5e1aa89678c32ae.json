@@ -1,0 +1,193 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 523,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            234,
+            57,
+            252,
+            87
+          ],
+          "legible": "clear",
+          "text": "1"
+        },
+        {
+          "box": [
+            531,
+            57,
+            555,
+            88
+          ],
+          "legible": "clear",
+          "text": "2"
+        },
+        {
+          "box": [
+            851,
+            53,
+            874,
+            85
+          ],
+          "legible": "clear",
+          "text": "3"
+        },
+        {
+          "box": [
+            22,
+            360,
+            48,
+            392
+          ],
+          "legible": "clear",
+          "text": "A"
+        },
+        {
+          "box": [
+            22,
+            628,
+            46,
+            660
+          ],
+          "legible": "clear",
+          "text": "B"
+        },
+        {
+          "box": [
+            22,
+            886,
+            47,
+            919
+          ],
+          "legible": "clear",
+          "text": "C"
+        },
+        {
+          "box": [
+            825,
+            377,
+            901,
+            419
+          ],
+          "legible": "clear",
+          "text": "\"N\""
+        },
+        {
+          "box": [
+            762,
+            452,
+            835,
+            489
+          ],
+          "legible": "clear",
+          "text": "HNV"
+        },
+        {
+          "box": [
+            955,
+            517,
+            994,
+            553
+          ],
+          "legible": "clear",
+          "text": "10"
+        },
+        {
+          "box": [
+            973,
+            586,
+            993,
+            619
+          ],
+          "legible": "clear",
+          "text": "6"
+        },
+        {
+          "box": [
+            292,
+            725,
+            343,
+            767
+          ],
+          "legible": "clear",
+          "text": "W0"
+        },
+        {
+          "box": [
+            368,
+            726,
+            525,
+            768
+          ],
+          "legible": "clear",
+          "text": "L1,L2,L3"
+        },
+        {
+          "box": [
+            552,
+            722,
+            620,
+            766
+          ],
+          "legible": "clear",
+          "text": "\"N\""
+        },
+        {
+          "box": [
+            345,
+            938,
+            383,
+            968
+          ],
+          "legible": "clear",
+          "text": "F1"
+        },
+        {
+          "box": [
+            650,
+            935,
+            688,
+            966
+          ],
+          "legible": "clear",
+          "text": "21"
+        },
+        {
+          "box": [
+            837,
+            938,
+            877,
+            968
+          ],
+          "legible": "clear",
+          "text": "F2"
+        },
+        {
+          "box": [
+            360,
+            987,
+            441,
+            1022
+          ],
+          "legible": "clear",
+          "text": "1X10A"
+        },
+        {
+          "box": [
+            853,
+            987,
+            934,
+            1022
+          ],
+          "legible": "clear",
+          "text": "1X10A"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

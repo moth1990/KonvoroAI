@@ -1,0 +1,155 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 437,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            83,
+            162,
+            194,
+            203
+          ],
+          "legible": "clear",
+          "text": "פתיחה"
+        },
+        {
+          "box": [
+            343,
+            160,
+            444,
+            198
+          ],
+          "legible": "clear",
+          "text": "סגירה"
+        },
+        {
+          "box": [
+            228,
+            257,
+            339,
+            304
+          ],
+          "legible": "clear",
+          "text": "SW5"
+        },
+        {
+          "box": [
+            777,
+            30,
+            810,
+            54
+          ],
+          "legible": "clear",
+          "text": "11"
+        },
+        {
+          "box": [
+            785,
+            165,
+            816,
+            247
+          ],
+          "legible": "unsure",
+          "rotation": 270,
+          "text": "שקע"
+        },
+        {
+          "box": [
+            785,
+            262,
+            816,
+            358
+          ],
+          "legible": "unsure",
+          "rotation": 270,
+          "text": "שירות"
+        },
+        {
+          "box": [
+            53,
+            530,
+            163,
+            567
+          ],
+          "legible": "clear",
+          "text": "פתיחה"
+        },
+        {
+          "box": [
+            443,
+            549,
+            545,
+            589
+          ],
+          "legible": "clear",
+          "text": "סגירה"
+        },
+        {
+          "box": [
+            176,
+            608,
+            212,
+            634
+          ],
+          "legible": "clear",
+          "text": "10"
+        },
+        {
+          "box": [
+            377,
+            603,
+            441,
+            629
+          ],
+          "legible": "clear",
+          "text": "10.1"
+        },
+        {
+          "box": [
+            345,
+            672,
+            398,
+            704
+          ],
+          "legible": "clear",
+          "text": "וילון"
+        },
+        {
+          "box": [
+            262,
+            672,
+            340,
+            704
+          ],
+          "legible": "clear",
+          "text": "כניסת"
+        },
+        {
+          "box": [
+            203,
+            672,
+            260,
+            704
+          ],
+          "legible": "clear",
+          "text": "אוויר"
+        },
+        {
+          "box": [
+            290,
+            701,
+            335,
+            729
+          ],
+          "legible": "clear",
+          "text": "\"3\""
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

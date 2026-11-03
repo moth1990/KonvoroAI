@@ -1,0 +1,148 @@
+{
+  "answer": {
+    "input_tokens": 6420,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 578,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "contacts",
+              "span_ids": [
+                "s14",
+                "s26"
+              ],
+              "value": "21/22"
+            }
+          ],
+          "det": "d1",
+          "explicit_texts": [
+            "s14",
+            "s26"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "contacts",
+              "span_ids": [
+                "s15",
+                "s27"
+              ],
+              "value": "21/22"
+            }
+          ],
+          "det": "d2",
+          "explicit_texts": [
+            "s15",
+            "s27"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.85,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s23"
+              ],
+              "value": 10
+            },
+            {
+              "confidence": 0.8,
+              "evidence": "text",
+              "name": "poles",
+              "span_ids": [
+                "s23"
+              ],
+              "value": 1
+            }
+          ],
+          "det": "d3",
+          "explicit_texts": [
+            "s18",
+            "s23",
+            "s35"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.85,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s24"
+              ],
+              "value": 10
+            },
+            {
+              "confidence": 0.8,
+              "evidence": "text",
+              "name": "poles",
+              "span_ids": [
+                "s24"
+              ],
+              "value": 1
+            }
+          ],
+          "det": "d4",
+          "explicit_texts": [
+            "s19",
+            "s24",
+            "s36"
+          ]
+        },
+        {
+          "attributes": [],
+          "det": "d5"
+        },
+        {
+          "attributes": [],
+          "det": "d6",
+          "explicit_texts": [
+            "s37"
+          ]
+        },
+        {
+          "attributes": [],
+          "det": "d7",
+          "explicit_texts": [
+            "s39"
+          ]
+        },
+        {
+          "attributes": [],
+          "det": "d8",
+          "explicit_texts": [
+            "s40"
+          ]
+        }
+      ],
+      "possible_missed": [],
+      "shared_labels": [],
+      "unassigned_spans": [
+        {
+          "reason": "INC load current",
+          "span_id": "s31"
+        },
+        {
+          "reason": "INC load current",
+          "span_id": "s32"
+        },
+        {
+          "reason": "Hebrew label",
+          "span_id": "s41"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

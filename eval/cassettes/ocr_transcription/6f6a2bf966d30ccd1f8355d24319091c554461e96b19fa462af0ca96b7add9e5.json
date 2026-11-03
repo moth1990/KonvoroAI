@@ -1,0 +1,46 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 122,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            521,
+            274,
+            637,
+            340
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "HT2"
+        },
+        {
+          "box": [
+            409,
+            740,
+            571,
+            782
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "מאוררים"
+        },
+        {
+          "box": [
+            788,
+            734,
+            900,
+            797
+          ],
+          "legible": "unsure",
+          "rotation": 0,
+          "text": "\"N\""
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

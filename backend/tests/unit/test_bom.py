@@ -384,6 +384,8 @@ def test_every_term_names_a_family_and_class_of_the_library() -> None:
         ('מא"ז פחת 2X16', ("rcbo", "rcbo")),
         ("פחת 4X40", ("rcd", "rcd")),
         ("מפסק פחת 4X40", ("rcd", "rcd")),
+        ("ממסר פחת 4X40A", ("rcd", "rcd")),  # BUG-056
+        ("ממסר פיקוד", ("relay", "relay")),
         ("מגן מתח יתר 40KA", ("surge_protector", "surge_protector")),
         ("סליל הפסקה", ("shunt_trip", "shunt_trip")),
         ("משנה זרם 250/5", ("current_transformer", "current_transformer")),

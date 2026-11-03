@@ -1,0 +1,143 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 376,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            824,
+            67,
+            843,
+            92
+          ],
+          "legible": "clear",
+          "text": "2"
+        },
+        {
+          "box": [
+            111,
+            366,
+            371,
+            402
+          ],
+          "legible": "clear",
+          "text": "05/10/2026"
+        },
+        {
+          "box": [
+            396,
+            363,
+            547,
+            404
+          ],
+          "legible": "clear",
+          "text": "תאריך:"
+        },
+        {
+          "box": [
+            597,
+            371,
+            853,
+            413
+          ],
+          "legible": "clear",
+          "text": "26/952-1"
+        },
+        {
+          "box": [
+            520,
+            433,
+            553,
+            465
+          ],
+          "legible": "clear",
+          "text": ":1"
+        },
+        {
+          "box": [
+            22,
+            406,
+            42,
+            436
+          ],
+          "legible": "clear",
+          "text": "F"
+        },
+        {
+          "box": [
+            509,
+            496,
+            551,
+            529
+          ],
+          "legible": "clear",
+          "text": ":2"
+        },
+        {
+          "box": [
+            504,
+            557,
+            547,
+            591
+          ],
+          "legible": "clear",
+          "text": ":3"
+        },
+        {
+          "box": [
+            20,
+            598,
+            45,
+            630
+          ],
+          "legible": "clear",
+          "text": "G"
+        },
+        {
+          "box": [
+            447,
+            614,
+            548,
+            652
+          ],
+          "legible": "clear",
+          "text": "בדק:"
+        },
+        {
+          "box": [
+            235,
+            698,
+            251,
+            730
+          ],
+          "legible": "clear",
+          "text": "1"
+        },
+        {
+          "box": [
+            532,
+            698,
+            554,
+            731
+          ],
+          "legible": "clear",
+          "text": "2"
+        },
+        {
+          "box": [
+            851,
+            697,
+            873,
+            729
+          ],
+          "legible": "clear",
+          "text": "3"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1060,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 78,
+    "payload": {
+      "confidence": 0.8,
+      "decision": "choose",
+      "reason": "הסמל מציג מגע נורמלי סגור עם סימון 21/22, האופייני למגע עזר.",
+      "symbol_class": "aux_contact"
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

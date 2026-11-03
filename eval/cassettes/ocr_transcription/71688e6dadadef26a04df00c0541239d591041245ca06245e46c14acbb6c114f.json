@@ -1,0 +1,123 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 328,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            54,
+            52,
+            78,
+            85
+          ],
+          "legible": "clear",
+          "text": "3"
+        },
+        {
+          "box": [
+            355,
+            53,
+            378,
+            85
+          ],
+          "legible": "clear",
+          "text": "4"
+        },
+        {
+          "box": [
+            672,
+            52,
+            695,
+            85
+          ],
+          "legible": "clear",
+          "text": "5"
+        },
+        {
+          "box": [
+            962,
+            52,
+            985,
+            86
+          ],
+          "legible": "unsure",
+          "text": "6"
+        },
+        {
+          "box": [
+            410,
+            475,
+            448,
+            501
+          ],
+          "legible": "clear",
+          "text": "F9"
+        },
+        {
+          "box": [
+            424,
+            524,
+            502,
+            555
+          ],
+          "legible": "clear",
+          "text": "1X10A"
+        },
+        {
+          "box": [
+            420,
+            562,
+            514,
+            592
+          ],
+          "legible": "clear",
+          "text": "INC=8A"
+        },
+        {
+          "box": [
+            426,
+            596,
+            509,
+            626
+          ],
+          "legible": "clear",
+          "text": "S201M"
+        },
+        {
+          "box": [
+            180,
+            930,
+            291,
+            971
+          ],
+          "legible": "clear",
+          "text": "פתיחה"
+        },
+        {
+          "box": [
+            438,
+            926,
+            541,
+            965
+          ],
+          "legible": "clear",
+          "text": "סגירה"
+        },
+        {
+          "box": [
+            851,
+            931,
+            962,
+            971
+          ],
+          "legible": "clear",
+          "text": "פתיחה"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

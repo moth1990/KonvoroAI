@@ -1,0 +1,124 @@
+{
+  "answer": {
+    "input_tokens": 5766,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 498,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [],
+          "det": "d1",
+          "explicit_texts": [
+            "s6"
+          ]
+        },
+        {
+          "attributes": [],
+          "det": "d2",
+          "explicit_texts": [
+            "s5"
+          ]
+        },
+        {
+          "attributes": [],
+          "det": "d3",
+          "explicit_texts": []
+        },
+        {
+          "attributes": [],
+          "det": "d4",
+          "explicit_texts": [
+            "s10",
+            "s11",
+            "s12"
+          ]
+        },
+        {
+          "attributes": [],
+          "det": "d5",
+          "explicit_texts": [
+            "s4"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "evidence": null,
+              "name": "coil_voltage_v",
+              "value": null
+            }
+          ],
+          "det": "d6",
+          "explicit_texts": [
+            "s13"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "evidence": null,
+              "name": "current_a",
+              "value": null
+            },
+            {
+              "evidence": null,
+              "name": "poles",
+              "value": null
+            },
+            {
+              "evidence": null,
+              "name": "coil_voltage_v",
+              "value": null
+            }
+          ],
+          "det": "d7",
+          "explicit_texts": [
+            "s17"
+          ]
+        }
+      ],
+      "possible_missed": [],
+      "shared_labels": [],
+      "unassigned_spans": [
+        {
+          "reason": "selector switch tag",
+          "span_id": "s1"
+        },
+        {
+          "reason": "manual label",
+          "span_id": "s2"
+        },
+        {
+          "reason": "controller label",
+          "span_id": "s3"
+        },
+        {
+          "reason": "controller label",
+          "span_id": "s7"
+        },
+        {
+          "reason": "controller label",
+          "span_id": "s8"
+        },
+        {
+          "reason": "controller label",
+          "span_id": "s9"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s19"
+        },
+        {
+          "reason": "title block",
+          "span_id": "s20"
+        },
+        {
+          "reason": "title block",
+          "span_id": "s21"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

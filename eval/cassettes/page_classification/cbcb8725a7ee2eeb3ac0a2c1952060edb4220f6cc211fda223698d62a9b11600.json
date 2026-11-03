@@ -1,0 +1,39 @@
+{
+  "answer": {
+    "input_tokens": 4365,
+    "model": "claude-haiku-5-5",
+    "output_tokens": 1297,
+    "payload": {
+      "component_labels": "tags_only",
+      "language": "he",
+      "orientation": 0,
+      "page_kind": "panel_front_view",
+      "page_kind_confidence": 0.85,
+      "panels": [
+        {
+          "bbox": [
+            73,
+            183,
+            820,
+            766
+          ],
+          "confidence": 0.9,
+          "name": "מנהרות 1"
+        }
+      ],
+      "reasoning": "The page shows the panel's interior mounting layout and its door layout with pilot lamps, selector and devices drawn as installed, so it is a panel front view.",
+      "regions": [],
+      "title_block": {
+        "date": "2026-10-05",
+        "designer": "S.S לוחות חשמל ובקרה",
+        "drawing_number": "26/952-1",
+        "panel_name": "מנהרות 1",
+        "project_name": "שדה ורבורג",
+        "revision": null,
+        "status": null
+      }
+    }
+  },
+  "model": "claude-haiku-5-5",
+  "stage": "page_classification"
+}

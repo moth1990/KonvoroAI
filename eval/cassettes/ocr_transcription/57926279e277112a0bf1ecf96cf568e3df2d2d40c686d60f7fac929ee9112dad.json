@@ -1,0 +1,253 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 694,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            218,
+            50,
+            233,
+            80
+          ],
+          "legible": "clear",
+          "text": "1"
+        },
+        {
+          "box": [
+            491,
+            52,
+            513,
+            83
+          ],
+          "legible": "clear",
+          "text": "2"
+        },
+        {
+          "box": [
+            787,
+            48,
+            807,
+            78
+          ],
+          "legible": "clear",
+          "text": "3"
+        },
+        {
+          "box": [
+            21,
+            333,
+            45,
+            362
+          ],
+          "legible": "clear",
+          "text": "A"
+        },
+        {
+          "box": [
+            20,
+            581,
+            44,
+            611
+          ],
+          "legible": "clear",
+          "text": "B"
+        },
+        {
+          "box": [
+            21,
+            820,
+            44,
+            850
+          ],
+          "legible": "clear",
+          "text": "C"
+        },
+        {
+          "box": [
+            301,
+            298,
+            346,
+            338
+          ],
+          "legible": "clear",
+          "text": "W0"
+        },
+        {
+          "box": [
+            372,
+            298,
+            516,
+            338
+          ],
+          "legible": "clear",
+          "text": "L1,L2,L3"
+        },
+        {
+          "box": [
+            540,
+            296,
+            603,
+            338
+          ],
+          "legible": "clear",
+          "text": "\"N\""
+        },
+        {
+          "box": [
+            343,
+            484,
+            397,
+            516
+          ],
+          "legible": "clear",
+          "text": "FP1"
+        },
+        {
+          "box": [
+            343,
+            563,
+            407,
+            593
+          ],
+          "legible": "clear",
+          "text": "1X6A"
+        },
+        {
+          "box": [
+            342,
+            596,
+            437,
+            628
+          ],
+          "legible": "clear",
+          "text": "INC=4A"
+        },
+        {
+          "box": [
+            342,
+            628,
+            426,
+            658
+          ],
+          "legible": "clear",
+          "text": "S201M"
+        },
+        {
+          "box": [
+            959,
+            750,
+            1006,
+            795
+          ],
+          "legible": "clear",
+          "text": "T1"
+        },
+        {
+          "box": [
+            735,
+            755,
+            752,
+            790
+          ],
+          "legible": "clear",
+          "text": "1"
+        },
+        {
+          "box": [
+            731,
+            869,
+            759,
+            906
+          ],
+          "legible": "clear",
+          "text": "2"
+        },
+        {
+          "box": [
+            589,
+            895,
+            663,
+            930
+          ],
+          "legible": "clear",
+          "text": "SW1"
+        },
+        {
+          "box": [
+            392,
+            863,
+            438,
+            894
+          ],
+          "legible": "clear",
+          "text": "\"N\""
+        },
+        {
+          "box": [
+            403,
+            930,
+            436,
+            959
+          ],
+          "legible": "clear",
+          "text": "H1"
+        },
+        {
+          "box": [
+            500,
+            921,
+            560,
+            953
+          ],
+          "legible": "clear",
+          "text": "ידני"
+        },
+        {
+          "box": [
+            725,
+            927,
+            788,
+            957
+          ],
+          "legible": "clear",
+          "text": "שעון"
+        },
+        {
+          "box": [
+            610,
+            945,
+            637,
+            983
+          ],
+          "legible": "clear",
+          "text": "0"
+        },
+        {
+          "box": [
+            678,
+            951,
+            698,
+            982
+          ],
+          "legible": "clear",
+          "text": "2"
+        },
+        {
+          "box": [
+            534,
+            957,
+            549,
+            986
+          ],
+          "legible": "unsure",
+          "text": "1"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

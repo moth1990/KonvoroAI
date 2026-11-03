@@ -1,0 +1,28 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 82,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            194,
+            655,
+            296,
+            746
+          ],
+          "box_text": null,
+          "family": "aux_contact",
+          "orientation": 0,
+          "role": "aux_contact",
+          "sure": true,
+          "symbol_class": "aux_contact",
+          "tag": "F4"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

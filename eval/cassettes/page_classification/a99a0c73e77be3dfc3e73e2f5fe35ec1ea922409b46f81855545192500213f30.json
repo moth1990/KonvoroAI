@@ -1,0 +1,50 @@
+{
+  "answer": {
+    "input_tokens": 4365,
+    "model": "claude-haiku-5-5",
+    "output_tokens": 1234,
+    "payload": {
+      "component_labels": "tags_only",
+      "language": "he",
+      "orientation": 0,
+      "page_kind": "control_diagram",
+      "page_kind_confidence": 0.8,
+      "panels": [
+        {
+          "bbox": [
+            95,
+            90,
+            790,
+            700
+          ],
+          "confidence": 0.7,
+          "name": null
+        }
+      ],
+      "reasoning": "Breakers F2-F6 with 21/22 auxiliary contacts and red pilot lamps HT1/HT2 in a control-circuit layout, so control_diagram.",
+      "regions": [
+        {
+          "bbox": [
+            24,
+            820,
+            875,
+            970
+          ],
+          "confidence": 0.9,
+          "region_kind": "title_block"
+        }
+      ],
+      "title_block": {
+        "date": "2026-10-05",
+        "designer": "ס.ס לוחות חשמל ובקרה",
+        "drawing_number": "26/952-1",
+        "panel_name": "מנהרות 1",
+        "project_name": "שדה ורבורג",
+        "revision": null,
+        "status": null
+      }
+    }
+  },
+  "model": "claude-haiku-5-5",
+  "stage": "page_classification"
+}
