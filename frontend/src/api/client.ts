@@ -245,3 +245,72 @@ export async function createCorrectedQuote(auditId: string, client = api): Promi
   return unwrap(await client.POST("/audits/{audit_id}/corrected-quote", { params: { path: { audit_id: auditId } } }))
     .quote_id;
 }
+
+// --- price list (07 §7.2–7.3, S18; the screen is S19) -----------------------------------------------------------------
+
+export type Product = Schemas["ProductOut"];
+export type ProductBody = Schemas["ProductIn"];
+export type CostCheck = Schemas["CostCheckOut"];
+export type MarginRule = Schemas["MarginRuleOut"];
+export type BrandDiscount = Schemas["BrandDiscountOut"];
+export type Supplier = Schemas["SupplierOut"];
+
+/** The whole price list: the screen searches and filters it in memory, as the prototype does on every key. */
+export async function fetchProducts(client = api): Promise<Product[]> {
+  return unwrap(await client.GET("/price-list/products"));
+}
+
+/** One product with its history and the drafts that use it. */
+export async function fetchProduct(productId: string, client = api): Promise<Product> {
+  return unwrap(await client.GET("/price-list/products/{product_id}", { params: { path: { product_id: productId } } }));
+}
+
+export async function createProduct(body: ProductBody, client = api): Promise<Product> {
+  return unwrap(await client.POST("/price-list/products", { body }));
+}
+
+/** Only the fields sent change; `suppliers`, when sent, is the whole list. */
+export async function updateProduct(productId: string, body: Schemas["ProductPatch"], client = api): Promise<Product> {
+  return unwrap(
+    await client.PATCH("/price-list/products/{product_id}", { params: { path: { product_id: productId } }, body }),
+  );
+}
+
+/** 10 §8 on a cost that is not saved yet (S19 decision 4). Nothing is written. */
+export async function checkCost(body: Schemas["CostCheckIn"], client = api): Promise<CostCheck> {
+  return unwrap(await client.POST("/price-list/products/check-cost", { body }));
+}
+
+export async function fetchSuppliers(client = api): Promise<Supplier[]> {
+  return unwrap(await client.GET("/price-list/suppliers"));
+}
+
+export async function fetchMarginRules(client = api): Promise<MarginRule[]> {
+  return unwrap(await client.GET("/price-list/margin-rules"));
+}
+
+export async function fetchBrands(client = api): Promise<string[]> {
+  return unwrap(await client.GET("/price-list/brands"));
+}
+
+export async function fetchBrandDiscounts(client = api): Promise<BrandDiscount[]> {
+  return unwrap(await client.GET("/price-list/brand-discounts"));
+}
+
+/** "הנחת מותג גורפת": the brand's list price less `discountPct` ("0.38"). */
+export async function setBrandDiscount(brand: string, discountPct: string, client = api): Promise<BrandDiscount> {
+  return unwrap(
+    await client.PUT("/price-list/brand-discounts/{brand}", {
+      params: { path: { brand } },
+      body: { discount_pct: discountPct },
+    }),
+  );
+}
+
+export async function deleteBrandDiscount(brand: string, client = api): Promise<void> {
+  unwrap(await client.DELETE("/price-list/brand-discounts/{brand}", { params: { path: { brand } } }));
+}
+
+export async function fetchSettings(client = api): Promise<TenantSettings> {
+  return unwrap(await client.GET("/settings"));
+}

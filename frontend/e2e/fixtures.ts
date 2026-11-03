@@ -27,6 +27,12 @@ export const TENANTS = {
   auditDesktop: "audit-desktop@e2e.konboro.local",
   auditMobile: "audit-mobile@e2e.konboro.local",
   auditShots: "audit-shots@e2e.konboro.local",
+  // The price list (S19): the demo's products and the NURSERY draft. Saves change it, so one tenant per project; the
+  // shots read a third. The fourth has `price_list` off.
+  pricesDesktop: "prices-desktop@e2e.konboro.local",
+  pricesMobile: "prices-mobile@e2e.konboro.local",
+  pricesShots: "prices-shots@e2e.konboro.local",
+  pricesOff: "prices-off@e2e.konboro.local",
 } as const;
 
 /** The fixture audit's id in each audit tenant (`E2eTenant.audit_id` in devtools/e2e.py). */

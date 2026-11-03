@@ -32,7 +32,7 @@ To view it, serve the folder (`python -m http.server -d prototype`) and set `loc
 **Porting a screen:** the prototype's CSS moves to `frontend/src/theme/app.css` with the same class names, and the
 React screens render those classes; MUI is for behaviour, not looks. The app routes are paths (`/home`, `/review/:quoteId`…),
 not hashes. The phone layout starts at **860px** everywhere (09 §5.2; the prototype uses 820px), kept in `MOBILE_MAX_PX`.
-Built so far: login, shell, classic and chat home (S04); new quote: pick, run, done (S05); confirm pages and page-kind change (S08); review lines, filters and line detail on the NURSERY-1 fixture, behind `review_screen` (S09); the review drawing pane (OpenSeadragon, boxes, page strip, "הצג בשרטוט"), toast and undo stack (S11); a BOM spreadsheet's column mapping on the confirm step, behind `bom_column_mapping` (S14, no prototype screen). the audit's upload, results, decisions, "הצג בשרטוט" and corrected quote on the 26-993 fixture, behind `quote_audit` (S15 API, S16 screen; the upload has no prototype screen).
+Built so far: login, shell, classic and chat home (S04); new quote: pick, run, done (S05); confirm pages and page-kind change (S08); review lines, filters and line detail on the NURSERY-1 fixture, behind `review_screen` (S09); the review drawing pane (OpenSeadragon, boxes, page strip, "הצג בשרטוט"), toast and undo stack (S11); a BOM spreadsheet's column mapping on the confirm step, behind `bom_column_mapping` (S14, no prototype screen). the audit's upload, results, decisions, "הצג בשרטוט" and corrected quote on the 26-993 fixture, behind `quote_audit` (S15 API, S16 screen; the upload has no prototype screen); the price list, its product editor and the bulk brand discount, behind `price_list` (S19).
 
 | Screen | Route | Function | Lines |
 | --- | --- | --- | --- |
@@ -44,7 +44,7 @@ Built so far: login, shell, classic and chat home (S04); new quote: pick, run, d
 | Review: lines, line detail, drawing | `#review` | `vReview` | 872–1004 |
 | Chat drawer and proposal cards | `#review` | `vChat`, `applyProp` | 1007–1064 |
 | Audit of an existing quote | `#audit` | `vAudit` | 1066–1096 |
-| Price list and product editor | `#prices` | `vPrices`, `openEditor` | 1098–1208 |
+| Price list and product editor (built: `screens/prices/`) | `#prices` | `vPrices`, `openEditor` | 1098–1208 |
 | Approval queue | `#queue` | `vQueue` | 1210–1226 |
 | Settings and flags | `#prefs` | `vPrefs` | 1228–1251 |
 | Chat quote builder (`chat_quote_builder` flag) | `#build` | `parseBom`, `vBuild` | 1287–1357 |

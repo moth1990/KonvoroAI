@@ -1,8 +1,8 @@
 /**
  * Screenshot baselines for the screens the user accepted in the fidelity review (docs/dev-strategy.md §5):
  * login, home classic with the shell, home chat, the new-quote steps (S05) and the review screen's lines, line
- * detail and red filter (S09) and its drawing (S11), and the audit's results, evidence and pick step on the
- * 26-993 fixture (S16); light and dark; desktop and mobile projects.
+ * detail and red filter (S09) and its drawing (S11), the audit's results, evidence and pick step on the
+ * 26-993 fixture (S16), and the price list and its editor (S19); light and dark; desktop and mobile projects.
  *
  * They run only inside Playwright's pinned Linux image (e2e/visual/update.sh sets KONBORO_VISUAL), locally and in
  * CI, so fonts and rasterization never differ between the baseline and the check:
@@ -195,6 +195,18 @@ const AUDIT = [
   },
 ] as const;
 
+/** The price list (S19), in the tenant nothing changes: the demo's products and the NURSERY draft. */
+const PRICES = [
+  { name: "prices-list", setup: async () => {} },
+  {
+    name: "prices-editor",
+    setup: async (page: Page) => {
+      await page.getByTestId("prod").filter({ hasText: "S203M-C16" }).click();
+      await page.getByTestId("ed-drafts").waitFor({ timeout: 60_000 });
+    },
+  },
+] as const;
+
 for (const scheme of ["light", "dark"] as const) {
   test.describe(`${scheme} review`, () => {
     test.use({ colorScheme: scheme, reducedMotion: "reduce" }); // the drawing jumps straight to where it goes
@@ -274,6 +286,30 @@ for (const scheme of ["light", "dark"] as const) {
         await signIn(page, request, TENANTS.auditShots);
         await page.goto(screen.path);
         await meLoaded(page);
+        await page.evaluate(() => document.fonts.ready);
+        await screen.setup(page);
+        await page.waitForLoadState("networkidle");
+        await page.mouse.move(0, 0);
+        await expect(page).toHaveScreenshot(`${screen.name}-${scheme}.png`, {
+          animations: "disabled",
+          mask: volatile(page),
+          maxDiffPixelRatio: 0.002,
+        });
+      });
+    }
+  });
+}
+
+for (const scheme of ["light", "dark"] as const) {
+  test.describe(`${scheme} prices`, () => {
+    test.use({ colorScheme: scheme });
+
+    for (const screen of PRICES) {
+      test(screen.name, async ({ page, request }) => {
+        await signIn(page, request, TENANTS.pricesShots);
+        await page.goto("/prices");
+        await meLoaded(page);
+        await page.getByTestId("prod").last().waitFor({ timeout: 60_000 });
         await page.evaluate(() => document.fonts.ready);
         await screen.setup(page);
         await page.waitForLoadState("networkidle");

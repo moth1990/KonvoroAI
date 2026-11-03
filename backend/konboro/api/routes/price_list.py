@@ -18,6 +18,8 @@ from ..errors import ERROR_RESPONSES, ApiError
 from ..schemas import (
     BrandDiscountIn,
     BrandDiscountOut,
+    CostCheckIn,
+    CostCheckOut,
     MarginRuleIn,
     MarginRuleOut,
     MarginRulePatch,
@@ -95,6 +97,26 @@ def create_product(body: ProductIn, actor: Writer) -> ProductOut:
     return product_out(view)
 
 
+@router.post("/products/check-cost")
+def check_cost(body: CostCheckIn, actor: Reader) -> CostCheckOut:
+    """10 §8's checks on a typed cost before it is saved, for the editor's warning beside the field. Nothing is
+    written; the save runs the same checks again and keeps them in `sanity`."""
+    try:
+        result = pl.check_typed_cost(
+            actor.session,
+            actor.tenant_id,
+            body.unit_cost,
+            body.currency,
+            product_id=body.product_id,
+            row_id=body.row_id,
+            family=body.family,
+            brand=body.brand,
+        )
+    except pl.PriceListError as e:
+        raise api_error(e) from e
+    return CostCheckOut.model_validate(result)
+
+
 @router.get("/products/{product_id}")
 def get_product(product_id: ProductId, actor: Reader) -> ProductOut:
     try:
@@ -135,6 +157,12 @@ def create_supplier(body: SupplierIn, actor: Writer) -> SupplierOut:
 
 
 # --- brand discounts ------------------------------------------------------------------------------------------------
+
+
+@router.get("/brands")
+def list_brands(actor: Reader) -> list[str]:
+    """The bulk brand discount's choices: catalog brands with a list price, and brands already discounted."""
+    return pl.brands(actor.session, actor.tenant_id)
 
 
 @router.get("/brand-discounts")

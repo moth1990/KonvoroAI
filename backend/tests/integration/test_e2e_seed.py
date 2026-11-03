@@ -6,7 +6,7 @@ from sqlalchemy import Engine
 
 from konboro.db.session import tenant_session
 from konboro.devtools import e2e
-from konboro.services import auth, flags, home, quota
+from konboro.services import auth, flags, home, price_list, quota
 
 
 def test_e2e_tenants_have_their_states(migrated_db: dict[str, Engine]) -> None:
@@ -42,6 +42,10 @@ def test_e2e_tenants_have_their_states(migrated_db: dict[str, Engine]) -> None:
         "audit-desktop@e2e.konboro.local": (False, 12, "ok"),
         "audit-mobile@e2e.konboro.local": (False, 12, "ok"),
         "audit-shots@e2e.konboro.local": (False, 12, "ok"),
+        "prices-desktop@e2e.konboro.local": (False, 12, "ok"),
+        "prices-mobile@e2e.konboro.local": (False, 12, "ok"),
+        "prices-shots@e2e.konboro.local": (False, 12, "ok"),
+        "prices-off@e2e.konboro.local": (False, 12, "ok"),
     }
     sample = states["classic@e2e.konboro.local"][3]
     assert sample.queue_pending == 3
@@ -72,3 +76,16 @@ def test_every_e2e_tenant_can_log_in(migrated_db: dict[str, Engine]) -> None:
     for t in e2e.TENANTS:
         user = auth.dev_login(settings, migrated_db["app"], t.email, e2e.PASSWORD)
         assert (user.tenant_id, user.id) == (t.tenant_id, t.user_id)
+    # the price list (S19): the demo's products, linked to the sample catalog, used by the NURSERY draft
+    for t in (t for t in e2e.TENANTS if t.prices):
+        with tenant_session(t.tenant_id, migrated_db["app"]) as s:
+            products = price_list.list_products(s, t.tenant_id)
+            assert len(products) == 24
+            assert sum(p.catalog_item_id is not None for p in products) >= 15
+            f1 = next(p for p in products if p.manufacturer_sku == "SN201M-C10")
+            assert [u.quote_name for u in price_list.drafts_using(s, t.tenant_id, f1.id)] == ["NURSERY"]
+            assert flags.tenant_flags(s, t.tenant_id)["price_list"] is True
+    off = next(t for t in e2e.TENANTS if t.off)
+    with tenant_session(off.tenant_id, migrated_db["app"]) as s:
+        assert flags.tenant_flags(s, off.tenant_id)["price_list"] is False
+        assert flags.tenant_flags(s, off.tenant_id)["review_screen"] is True

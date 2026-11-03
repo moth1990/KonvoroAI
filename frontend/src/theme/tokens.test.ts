@@ -81,6 +81,7 @@ describe("mobile breakpoint", () => {
   });
 
   it("the other breakpoints are the prototype's", () => {
-    expect(new Set(widths)).toEqual(new Set([MOBILE_MAX_PX, 1000, 620]));
+    // 1100: the price list's four cards go two by two (prototype line 104, S19)
+    expect(new Set(widths)).toEqual(new Set([MOBILE_MAX_PX, 1100, 1000, 620]));
   });
 });
