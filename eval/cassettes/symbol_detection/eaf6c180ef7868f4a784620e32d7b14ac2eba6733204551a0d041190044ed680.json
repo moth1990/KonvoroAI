@@ -1,0 +1,28 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 83,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            21,
+            190,
+            124,
+            246
+          ],
+          "box_text": "TH1",
+          "family": "temperature_controller",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "temperature_controller",
+          "tag": "TH1"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

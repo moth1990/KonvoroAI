@@ -32,6 +32,16 @@
       "explain": "לפי הכבל ביציאה: {cores} גידים"
     },
     {
+      "id": "residual_written_in_amps_as_ma",
+      "kind": "unit_slip",
+      "about": "BUG-052: FB0 on MINHAROT-1 is written 0.3mA-TYPE\"A\". No RCD has 0.3 mA: the amps value with the mA unit. Read as amps, never under a default",
+      "families": ["rcd", "rcbo"],
+      "attribute": "residual_ma",
+      "pattern": "^0[.,](?P<digits>\\d{1,3})mA",
+      "factor": 1000,
+      "explain": "כתוב {written}: כנראה {amps}A, כלומר {value}mA"
+    },
+    {
       "id": "untyped_breaker_by_current",
       "kind": "class_by_current",
       "families": ["circuit_breaker"],

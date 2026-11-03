@@ -21,6 +21,7 @@ from .score import Score, Scores
 EXPECTED: dict[str, tuple[str, ...]] = {
     "NURSERY-1": ("FRONT_VIEW_DESIGNATOR_MISSING",),  # front_view_only F26–F29, its `rule`
     "NEVIS-1": ("DATA_MODEL_TEXT_CONFLICT",),  # FNV: "3X6A" with S204M (06 §6.2)
+    "MINHAROT-1": ("DATA_MODEL_TEXT_CONFLICT",),  # the same FNV
     "26-993": ("DATA_LOAD_CURRENT_GT_RATED", "FRONT_VIEW_DESIGNATOR_NEAR_MATCH"),  # findings 1–2: FC1 INC=20A; SE/SG
     "6199-2-50": ("PANEL_REFERENCED_NOT_DRAWN",),  # referenced_not_drawn: לוח מבנה משרדים
     "BOM-HW-1": ("BOM_ACCESSORY_HOST_COUNT", "BOM_NO_ENCLOSURE"),  # 06 §6.2: 5 shunt trips, 2 breakers; no enclosure

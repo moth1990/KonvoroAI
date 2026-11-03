@@ -1,0 +1,77 @@
+{
+  "answer": {
+    "input_tokens": 5207,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 432,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "confidence": 0.5,
+              "evidence": "graphic",
+              "graphic_note": "Single line enters and leaves the breaker, no slanted pole strokes, so 1 pole.",
+              "name": "poles",
+              "span_ids": [],
+              "value": 1
+            }
+          ],
+          "brand_hint": null,
+          "det": "d1",
+          "explicit_texts": [
+            "s4"
+          ],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          },
+          "uses_shared_label": false
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.5,
+              "evidence": "graphic",
+              "graphic_note": "Single line enters and leaves the breaker, no slanted pole strokes, so 1 pole.",
+              "name": "poles",
+              "span_ids": [],
+              "value": 1
+            }
+          ],
+          "brand_hint": null,
+          "det": "d2",
+          "explicit_texts": [
+            "s5"
+          ],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          },
+          "uses_shared_label": false
+        }
+      ],
+      "possible_missed": [],
+      "shared_labels": [],
+      "unassigned_spans": [
+        {
+          "reason": "column number in the header",
+          "span_id": "s1"
+        },
+        {
+          "reason": "column number in the header",
+          "span_id": "s2"
+        },
+        {
+          "reason": "column number in the header",
+          "span_id": "s3"
+        },
+        {
+          "reason": "text at the bottom edge of the tile, not beside either symbol",
+          "span_id": "s6"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

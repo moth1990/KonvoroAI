@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1158,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 109,
+    "payload": {
+      "confidence": 0.88,
+      "decision": "choose",
+      "reason": "הסמל הוא מגע עזר עם סימון ההדקים 21/22 ועם קו מקווקו מכני, ולכן הוא שייך למגע עזר ולא לסליל ממסר.",
+      "symbol_class": "aux_contact"
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

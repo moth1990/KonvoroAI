@@ -1,0 +1,113 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 291,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            18,
+            50,
+            41,
+            80
+          ],
+          "legible": "clear",
+          "text": "3"
+        },
+        {
+          "box": [
+            305,
+            51,
+            328,
+            81
+          ],
+          "legible": "clear",
+          "text": "4"
+        },
+        {
+          "box": [
+            609,
+            50,
+            632,
+            80
+          ],
+          "legible": "clear",
+          "text": "5"
+        },
+        {
+          "box": [
+            886,
+            50,
+            907,
+            81
+          ],
+          "legible": "unsure",
+          "text": "6"
+        },
+        {
+          "box": [
+            190,
+            751,
+            241,
+            794
+          ],
+          "legible": "clear",
+          "text": "T1"
+        },
+        {
+          "box": [
+            551,
+            841,
+            597,
+            874
+          ],
+          "legible": "clear",
+          "text": "\"N\""
+        },
+        {
+          "box": [
+            554,
+            905,
+            589,
+            936
+          ],
+          "legible": "clear",
+          "text": "H2"
+        },
+        {
+          "box": [
+            872,
+            888,
+            932,
+            921
+          ],
+          "legible": "unsure",
+          "text": "ידני"
+        },
+        {
+          "box": [
+            905,
+            927,
+            921,
+            956
+          ],
+          "legible": "clear",
+          "text": "1"
+        },
+        {
+          "box": [
+            982,
+            917,
+            1008,
+            953
+          ],
+          "legible": "unsure",
+          "text": "0"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

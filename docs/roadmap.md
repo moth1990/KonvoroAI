@@ -82,7 +82,7 @@ These items are owned outside the code. They do not stop sessions from starting,
 
 | # | What | Needed by | Owner | Status |
 | --- | --- | --- | --- | --- |
-| B1 | Golden set grown to 10 drawings, from more than one factory | Gate 0 or Gate 1 | User + estimator | 5 of 10 |
+| B1 | Golden set grown to 10 drawings, from more than one factory | Gate 0 or Gate 1 | User + estimator | 6 of 10 (MINHAROT-1 not verified with the factory yet) |
 | B2 | Electrical expert: attribute schemas, validator rules, inference rules (`pipeline/matching/inference.json`, S20), abbreviation dictionary | S20, S21 | User | open |
 | B3 | Master catalog, 3–5 brands (until then, a small sample seed) | S18, S20 | Catalog | open |
 | B4 | OCR keys (Google Vision and Azure) | S31 | User | open |
@@ -150,3 +150,4 @@ Ideas and out-of-scope findings from sessions. Each one is scheduled into a sess
 - **One editor at a time** (from S23, 09 §11). Every action carries the quote's `revision` and a stale one is refused; a second user sees the quote read-only. Not needed while a tenant has one user (00 §14.1).
 - **The review screen's usability test** (from S23 decision 1, roadmap B7). Five estimators with the prototype (09 §15.1); what comes out of it is scheduled at the next gate.
 - **Show an action before the server answers** (from S23 decision 10, 09 §14). The screen waits for the server, which answers within 500 ms; measure the wait in the pilot before guessing amounts on the client.
+- **Reading fixes found on MINHAROT-1** (from fix-minharot-golden). One branch, `fix-minharot-reading`, since they move the same stages and cassettes: BUG-051 (selectors read as terminals, with BUG-036), BUG-053 (C1's poles, not stable between runs), BUG-054 (an aux contact's parent by the dashed link, 03 §3.7 item 4), BUG-055 (the layout against the plan, with BUG-046) and BUG-057 (a lamp's colour from its fill). Re-record the cassettes it moves and the baseline. Before Gate 2 (S28).

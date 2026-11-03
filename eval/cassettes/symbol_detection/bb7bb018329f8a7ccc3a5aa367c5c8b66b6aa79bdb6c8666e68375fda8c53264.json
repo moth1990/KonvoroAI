@@ -1,0 +1,118 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 492,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            82,
+            264,
+            121,
+            300
+          ],
+          "box_text": null,
+          "family": "indicator_lamp",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "indicator_lamp",
+          "tag": "L1"
+        },
+        {
+          "box": [
+            139,
+            262,
+            177,
+            300
+          ],
+          "box_text": null,
+          "family": "indicator_lamp",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "indicator_lamp",
+          "tag": "L2"
+        },
+        {
+          "box": [
+            198,
+            262,
+            237,
+            300
+          ],
+          "box_text": null,
+          "family": "indicator_lamp",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "indicator_lamp",
+          "tag": "L3"
+        },
+        {
+          "box": [
+            608,
+            192,
+            660,
+            238
+          ],
+          "box_text": null,
+          "family": "current_transformer",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "current_transformer",
+          "tag": null
+        },
+        {
+          "box": [
+            610,
+            308,
+            654,
+            437
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "mcb",
+          "tag": "F0"
+        },
+        {
+          "box": [
+            614,
+            506,
+            648,
+            566
+          ],
+          "box_text": null,
+          "family": "switch_disconnector",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "switch_disconnector",
+          "tag": "S0"
+        },
+        {
+          "box": [
+            577,
+            655,
+            666,
+            753
+          ],
+          "box_text": null,
+          "family": "rcd",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "rcd",
+          "tag": "FB0"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

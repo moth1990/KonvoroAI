@@ -1,0 +1,103 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 276,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            699,
+            51,
+            722,
+            83
+          ],
+          "legible": "clear",
+          "text": "C"
+        },
+        {
+          "box": [
+            701,
+            299,
+            723,
+            331
+          ],
+          "legible": "clear",
+          "text": "D"
+        },
+        {
+          "box": [
+            701,
+            629,
+            720,
+            661
+          ],
+          "legible": "clear",
+          "text": "E"
+        },
+        {
+          "box": [
+            32,
+            197,
+            113,
+            241
+          ],
+          "legible": "clear",
+          "text": "TH1"
+        },
+        {
+          "box": [
+            157,
+            158,
+            214,
+            187
+          ],
+          "legible": "unsure",
+          "text": "טמפ'"
+        },
+        {
+          "box": [
+            226,
+            158,
+            276,
+            188
+          ],
+          "legible": "unsure",
+          "text": "בקר"
+        },
+        {
+          "box": [
+            172,
+            206,
+            263,
+            233
+          ],
+          "legible": "clear",
+          "text": "DELTA"
+        },
+        {
+          "box": [
+            144,
+            241,
+            316,
+            270
+          ],
+          "legible": "clear",
+          "text": "DTB4848RR"
+        },
+        {
+          "box": [
+            257,
+            634,
+            366,
+            699
+          ],
+          "legible": "unsure",
+          "text": "\"N\""
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

@@ -50,7 +50,7 @@ from .factory import Factory
 from .notes import Notes
 from .query import BrandPlan, Need, Ranked, alternatives_pool, check, decide, passes, query, rank, unknown_differences
 
-FILLED = ("notes", "tenant_default", "system_default")
+FILLED = inference.FILLED
 ACCESSORY_FAMILIES = frozenset({"aux_contact", "shunt_trip"})
 _SIG_NAMES = {"breaking_capacity_ka": "bc_ka"}
 _CONTACTS = re.compile(r"^([1-4])\d/[1-4]\d$")
@@ -427,8 +427,9 @@ def prepare(component: Component, inp: Inputs, done: dict[str, ComponentMatch], 
     needs = fill(component, needs, attrs, inp)
     untyped = component.symbol_class in (UNTYPED, "", None)
     inferred = inference.infer(component, needs, _upstream(component, inp), inp.notes, factory.inference_off, untyped)
-    for n in inferred.needs:
-        needs.setdefault(n.name, n)
+    for n in inferred.needs:  # a unit slip read from the drawing's text replaces a default (BUG-052)
+        if n.name not in needs or needs[n.name].source in FILLED:
+            needs[n.name] = n
     warnings += inferred.warnings
     if inferred.needs:
         warnings.append("inferred_attribute")

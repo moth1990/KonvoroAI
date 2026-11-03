@@ -1,0 +1,113 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 294,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            233,
+            48,
+            254,
+            79
+          ],
+          "legible": "clear",
+          "text": "9"
+        },
+        {
+          "box": [
+            538,
+            50,
+            580,
+            80
+          ],
+          "legible": "clear",
+          "text": "10"
+        },
+        {
+          "box": [
+            494,
+            292,
+            560,
+            348
+          ],
+          "legible": "clear",
+          "text": "WO"
+        },
+        {
+          "box": [
+            699,
+            333,
+            722,
+            363
+          ],
+          "legible": "clear",
+          "text": "A"
+        },
+        {
+          "box": [
+            699,
+            582,
+            721,
+            612
+          ],
+          "legible": "clear",
+          "text": "B"
+        },
+        {
+          "box": [
+            700,
+            820,
+            722,
+            849
+          ],
+          "legible": "clear",
+          "text": "C"
+        },
+        {
+          "box": [
+            222,
+            927,
+            277,
+            957
+          ],
+          "legible": "clear",
+          "text": "בקר"
+        },
+        {
+          "box": [
+            155,
+            927,
+            215,
+            957
+          ],
+          "legible": "unsure",
+          "text": "טמפ'"
+        },
+        {
+          "box": [
+            30,
+            963,
+            115,
+            1010
+          ],
+          "legible": "clear",
+          "text": "TH1"
+        },
+        {
+          "box": [
+            172,
+            975,
+            264,
+            1002
+          ],
+          "legible": "clear",
+          "text": "DELTA"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

@@ -1,0 +1,163 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 436,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            57,
+            0,
+            93,
+            28
+          ],
+          "legible": "unsure",
+          "text": "N"
+        },
+        {
+          "box": [
+            179,
+            311,
+            251,
+            352
+          ],
+          "legible": "clear",
+          "text": "ס.ס"
+        },
+        {
+          "box": [
+            69,
+            372,
+            226,
+            410
+          ],
+          "legible": "clear",
+          "text": "control"
+        },
+        {
+          "box": [
+            257,
+            372,
+            401,
+            412
+          ],
+          "legible": "clear",
+          "text": "panels"
+        },
+        {
+          "box": [
+            221,
+            438,
+            342,
+            466
+          ],
+          "legible": "clear",
+          "text": "3659200"
+        },
+        {
+          "box": [
+            148,
+            438,
+            218,
+            466
+          ],
+          "legible": "unsure",
+          "text": "ת\"ד"
+        },
+        {
+          "box": [
+            93,
+            438,
+            144,
+            465
+          ],
+          "legible": "clear",
+          "text": "276"
+        },
+        {
+          "box": [
+            28,
+            437,
+            77,
+            465
+          ],
+          "legible": "unsure",
+          "text": "טל:"
+        },
+        {
+          "box": [
+            790,
+            316,
+            808,
+            346
+          ],
+          "legible": "clear",
+          "text": "F"
+        },
+        {
+          "box": [
+            793,
+            494,
+            818,
+            526
+          ],
+          "legible": "clear",
+          "text": "G"
+        },
+        {
+          "box": [
+            312,
+            591,
+            333,
+            621
+          ],
+          "legible": "clear",
+          "text": "9"
+        },
+        {
+          "box": [
+            627,
+            593,
+            670,
+            623
+          ],
+          "legible": "clear",
+          "text": "10"
+        },
+        {
+          "box": [
+            568,
+            463,
+            596,
+            480
+          ],
+          "legible": "clear",
+          "text": "ISO"
+        },
+        {
+          "box": [
+            596,
+            463,
+            630,
+            480
+          ],
+          "legible": "clear",
+          "text": "9001:"
+        },
+        {
+          "box": [
+            583,
+            483,
+            617,
+            502
+          ],
+          "legible": "clear",
+          "text": "2008"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

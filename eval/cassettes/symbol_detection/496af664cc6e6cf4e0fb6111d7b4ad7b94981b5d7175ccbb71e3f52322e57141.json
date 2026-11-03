@@ -1,0 +1,103 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 414,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            414,
+            185,
+            475,
+            247
+          ],
+          "box_text": null,
+          "family": "indicator_lamp",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "indicator_lamp",
+          "tag": "H1"
+        },
+        {
+          "box": [
+            571,
+            409,
+            676,
+            466
+          ],
+          "box_text": "C1",
+          "family": "contactor",
+          "orientation": 0,
+          "role": "coil",
+          "sure": true,
+          "symbol_class": "contactor",
+          "tag": "C1"
+        },
+        {
+          "box": [
+            406,
+            361,
+            456,
+            476
+          ],
+          "box_text": null,
+          "family": "contactor",
+          "orientation": 0,
+          "role": "relay_contact",
+          "sure": false,
+          "symbol_class": "contactor",
+          "tag": "C1"
+        },
+        {
+          "box": [
+            847,
+            35,
+            956,
+            130
+          ],
+          "box_text": null,
+          "family": "time_switch",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "time_switch",
+          "tag": null
+        },
+        {
+          "box": [
+            546,
+            177,
+            637,
+            257
+          ],
+          "box_text": null,
+          "family": "selector_switch",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "selector_switch",
+          "tag": "SW1"
+        },
+        {
+          "box": [
+            676,
+            0,
+            728,
+            213
+          ],
+          "box_text": null,
+          "family": "selector_switch",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "selector_switch",
+          "tag": "SW1"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

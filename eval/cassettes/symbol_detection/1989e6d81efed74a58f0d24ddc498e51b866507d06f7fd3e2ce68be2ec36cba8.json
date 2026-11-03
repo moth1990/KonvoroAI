@@ -1,0 +1,97 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 366,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            284,
+            476,
+            332,
+            676
+          ],
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "mcb",
+          "tag": "FP1"
+        },
+        {
+          "box": [
+            414,
+            955,
+            474,
+            1015
+          ],
+          "family": "indicator_lamp",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "indicator_lamp",
+          "tag": "H1"
+        },
+        {
+          "box": [
+            847,
+            803,
+            956,
+            899
+          ],
+          "family": "time_switch",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "time_switch",
+          "tag": "T1"
+        },
+        {
+          "box": [
+            540,
+            958,
+            573,
+            982
+          ],
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "terminal",
+          "tag": null
+        },
+        {
+          "box": [
+            701,
+            960,
+            725,
+            982
+          ],
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "terminal",
+          "tag": null
+        },
+        {
+          "box": [
+            676,
+            762,
+            760,
+            908
+          ],
+          "family": "selector_switch",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "selector_switch",
+          "tag": "SW1"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

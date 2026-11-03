@@ -10,6 +10,7 @@ quantity, which is stage 4's; it waits for stage 6's cross-check (S21).
 """
 
 import json
+import re
 from dataclasses import dataclass, field
 from functools import cache
 from pathlib import Path
@@ -22,6 +23,7 @@ from .notes import Notes
 from .query import Need
 
 RULES = Path(__file__).with_name("inference.json")
+FILLED = ("notes", "tenant_default", "system_default")  # 05 §5.5: what a fill-in, not the drawing, gave
 
 
 @dataclass(frozen=True)
@@ -107,6 +109,18 @@ def infer(
                 out.used.append(rule.id)
             elif read.source == "graphic" and _num(read.value) != float(poles):
                 out.warnings.append("poles_cable_conflict")  # 05 §5.5.1: yellow, `POLES_CABLE_CONFLICT` (06)
+        elif rule.kind == "unit_slip":
+            read = have.get(p["attribute"])
+            if read is not None and read.source not in FILLED:
+                continue
+            for written in component.explicit_texts:
+                if m := re.match(p["pattern"], written):
+                    amps = float(f"0.{m['digits']}")
+                    value = round(amps * p["factor"])
+                    note = p["explain"].format(written=m[0], amps=text.number(amps), value=value)
+                    out.needs.append(Need(p["attribute"], value, "exact", "inferred", False, note))
+                    out.used.append(rule.id)
+                    break
         elif rule.kind == "class_by_current" and untyped:
             current = _num(have["current_a"].value) if "current_a" in have else None
             if current is None:

@@ -1,0 +1,182 @@
+{
+  "answer": {
+    "input_tokens": 6181,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 744,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "evidence": null,
+              "name": "ratio_primary_a",
+              "value": null
+            },
+            {
+              "evidence": null,
+              "name": "ratio_secondary_a",
+              "value": null
+            }
+          ],
+          "det": "d1"
+        },
+        {
+          "attributes": [
+            {
+              "evidence": null,
+              "name": "color",
+              "value": null
+            },
+            {
+              "evidence": null,
+              "name": "coil_voltage_v",
+              "value": null
+            }
+          ],
+          "det": "d2",
+          "explicit_texts": [
+            "s7"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "evidence": null,
+              "name": "color",
+              "value": null
+            },
+            {
+              "evidence": null,
+              "name": "coil_voltage_v",
+              "value": null
+            }
+          ],
+          "det": "d3",
+          "explicit_texts": [
+            "s8"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s9"
+              ],
+              "value": 40
+            },
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "poles",
+              "span_ids": [
+                "s9"
+              ],
+              "value": 3
+            }
+          ],
+          "brand_hint": "ABB",
+          "det": "d4",
+          "explicit_texts": [
+            "s5",
+            "s9",
+            "s10",
+            "s11",
+            "s12"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s14"
+              ],
+              "value": 40
+            },
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "poles",
+              "span_ids": [
+                "s14"
+              ],
+              "value": 3
+            }
+          ],
+          "det": "d5",
+          "explicit_texts": [
+            "s13",
+            "s14"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s18"
+              ],
+              "value": 40
+            },
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "poles",
+              "span_ids": [
+                "s18"
+              ],
+              "value": 4
+            },
+            {
+              "confidence": 0.3,
+              "evidence": "text",
+              "name": "residual_ma",
+              "span_ids": [
+                "s19"
+              ],
+              "value": 300
+            },
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "rcd_type",
+              "span_ids": [
+                "s19"
+              ],
+              "value": "A"
+            }
+          ],
+          "det": "d6",
+          "explicit_texts": [
+            "s17",
+            "s18",
+            "s19"
+          ]
+        }
+      ],
+      "unassigned_spans": [
+        {
+          "reason": "neutral bus label",
+          "span_id": "s4"
+        },
+        {
+          "reason": "belongs to a neighbour off tile",
+          "span_id": "s15"
+        },
+        {
+          "reason": "belongs to a neighbour off tile",
+          "span_id": "s16"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

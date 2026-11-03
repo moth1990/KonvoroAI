@@ -1,0 +1,193 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 522,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            130,
+            169,
+            167,
+            197
+          ],
+          "legible": "clear",
+          "text": "21"
+        },
+        {
+          "box": [
+            132,
+            254,
+            171,
+            282
+          ],
+          "legible": "clear",
+          "text": "22"
+        },
+        {
+          "box": [
+            237,
+            175,
+            276,
+            203
+          ],
+          "legible": "clear",
+          "text": "F6"
+        },
+        {
+          "box": [
+            709,
+            191,
+            748,
+            219
+          ],
+          "legible": "clear",
+          "text": "F7"
+        },
+        {
+          "box": [
+            257,
+            245,
+            327,
+            272
+          ],
+          "legible": "clear",
+          "text": "3X20A"
+        },
+        {
+          "box": [
+            246,
+            277,
+            345,
+            303
+          ],
+          "legible": "clear",
+          "text": "INC=16A"
+        },
+        {
+          "box": [
+            246,
+            306,
+            320,
+            331
+          ],
+          "legible": "clear",
+          "text": "S203M"
+        },
+        {
+          "box": [
+            248,
+            338,
+            292,
+            363
+          ],
+          "legible": "clear",
+          "text": "ABB"
+        },
+        {
+          "box": [
+            729,
+            262,
+            799,
+            289
+          ],
+          "legible": "clear",
+          "text": "1X16A"
+        },
+        {
+          "box": [
+            718,
+            292,
+            837,
+            319
+          ],
+          "legible": "clear",
+          "text": "INC=12.8A"
+        },
+        {
+          "box": [
+            718,
+            321,
+            792,
+            347
+          ],
+          "legible": "clear",
+          "text": "S201M"
+        },
+        {
+          "box": [
+            720,
+            353,
+            764,
+            378
+          ],
+          "legible": "clear",
+          "text": "ABB"
+        },
+        {
+          "box": [
+            342,
+            438,
+            377,
+            470
+          ],
+          "legible": "clear",
+          "text": "C3"
+        },
+        {
+          "box": [
+            943,
+            119,
+            968,
+            151
+          ],
+          "legible": "clear",
+          "text": "C"
+        },
+        {
+          "box": [
+            944,
+            388,
+            969,
+            420
+          ],
+          "legible": "clear",
+          "text": "D"
+        },
+        {
+          "box": [
+            944,
+            744,
+            965,
+            775
+          ],
+          "legible": "clear",
+          "text": "E"
+        },
+        {
+          "box": [
+            218,
+            841,
+            237,
+            867
+          ],
+          "legible": "clear",
+          "text": "6"
+        },
+        {
+          "box": [
+            691,
+            823,
+            708,
+            848
+          ],
+          "legible": "clear",
+          "text": "7"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

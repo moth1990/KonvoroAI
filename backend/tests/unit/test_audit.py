@@ -324,6 +324,8 @@ def test_total_before_vat_takes_a_discount_off() -> None:
         ("משנה זרם 125/5A", "current_transformer", {"ratio_primary_a": 125, "ratio_secondary_a": 5}, {}),
         ("ארון 1000/800/300 כולל פסי צבירה", "enclosure", {}, {"dims_mm": (300, 800, 1000)}),
         ("מגען 3X25A", "contactor", {"poles": 3, "current_a": 25}, {}),
+        # BUG-056: "ממסר פחת" is an RCD, not a relay (quote 10286, MINHAROT-1's FB0)
+        ("ממסר פחת ABB 4X40A 40/0.3", "rcd", {"poles": 4, "current_a": 40, "residual_ma": 300}, {}),
         ("שורה בלי מוצר", None, {}, {}),
     ],
 )

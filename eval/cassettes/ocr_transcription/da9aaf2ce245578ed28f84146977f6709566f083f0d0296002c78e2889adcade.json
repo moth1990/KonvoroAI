@@ -1,0 +1,223 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 612,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            69,
+            172,
+            109,
+            199
+          ],
+          "legible": "clear",
+          "text": "F2"
+        },
+        {
+          "box": [
+            268,
+            168,
+            305,
+            195
+          ],
+          "legible": "clear",
+          "text": "21"
+        },
+        {
+          "box": [
+            446,
+            172,
+            485,
+            199
+          ],
+          "legible": "clear",
+          "text": "F3"
+        },
+        {
+          "box": [
+            671,
+            168,
+            708,
+            195
+          ],
+          "legible": "clear",
+          "text": "21"
+        },
+        {
+          "box": [
+            817,
+            172,
+            856,
+            199
+          ],
+          "legible": "clear",
+          "text": "F4"
+        },
+        {
+          "box": [
+            85,
+            224,
+            165,
+            254
+          ],
+          "legible": "clear",
+          "text": "1X10A"
+        },
+        {
+          "box": [
+            460,
+            224,
+            541,
+            254
+          ],
+          "legible": "clear",
+          "text": "1X10A"
+        },
+        {
+          "box": [
+            832,
+            224,
+            912,
+            254
+          ],
+          "legible": "clear",
+          "text": "1X10A"
+        },
+        {
+          "box": [
+            270,
+            252,
+            309,
+            280
+          ],
+          "legible": "clear",
+          "text": "22"
+        },
+        {
+          "box": [
+            673,
+            252,
+            712,
+            280
+          ],
+          "legible": "clear",
+          "text": "22"
+        },
+        {
+          "box": [
+            80,
+            263,
+            177,
+            293
+          ],
+          "legible": "clear",
+          "text": "INC=8A"
+        },
+        {
+          "box": [
+            457,
+            263,
+            554,
+            293
+          ],
+          "legible": "clear",
+          "text": "INC=8A"
+        },
+        {
+          "box": [
+            827,
+            263,
+            925,
+            293
+          ],
+          "legible": "clear",
+          "text": "INC=8A"
+        },
+        {
+          "box": [
+            86,
+            299,
+            173,
+            328
+          ],
+          "legible": "clear",
+          "text": "S201M"
+        },
+        {
+          "box": [
+            462,
+            299,
+            549,
+            328
+          ],
+          "legible": "clear",
+          "text": "S201M"
+        },
+        {
+          "box": [
+            833,
+            299,
+            920,
+            328
+          ],
+          "legible": "clear",
+          "text": "S201M"
+        },
+        {
+          "box": [
+            922,
+            437,
+            957,
+            472
+          ],
+          "legible": "clear",
+          "text": "C1"
+        },
+        {
+          "box": [
+            57,
+            835,
+            76,
+            861
+          ],
+          "legible": "clear",
+          "text": "2"
+        },
+        {
+          "box": [
+            433,
+            835,
+            452,
+            861
+          ],
+          "legible": "clear",
+          "text": "3"
+        },
+        {
+          "box": [
+            804,
+            835,
+            822,
+            861
+          ],
+          "legible": "clear",
+          "text": "4"
+        },
+        {
+          "box": [
+            266,
+            955,
+            438,
+            998
+          ],
+          "legible": "unsure",
+          "text": "מסחררים"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

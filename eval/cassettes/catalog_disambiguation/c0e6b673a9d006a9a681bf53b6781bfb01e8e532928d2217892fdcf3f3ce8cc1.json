@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 833,
+    "model": "claude-haiku-5-5",
+    "output_tokens": 253,
+    "payload": {
+      "chosen_sku": "M2SS2-10B",
+      "confidence": 0.85,
+      "missing_attributes": [],
+      "reason": "המסמך מציין מצבים 0 ו-1 (ידני), וזה תואם לבורר M2SS2 עם מצבים 0-1. הבורר M2SS3 כולל מצב 2 שאינו מופיע בשרטוט."
+    }
+  },
+  "model": "claude-haiku-5-5",
+  "stage": "catalog_disambiguation"
+}

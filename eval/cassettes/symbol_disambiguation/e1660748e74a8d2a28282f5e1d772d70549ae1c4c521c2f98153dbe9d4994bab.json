@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1203,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 118,
+    "payload": {
+      "confidence": 0.8,
+      "decision": "choose",
+      "reason": "הסמל הוא מתג עם מגע נע בין שתי נקודות 1 ו-2, מסומן SW1 ותווית 'שעון', ללא מפעיל לחיצה, ולכן זה בורר.</br>",
+      "symbol_class": "selector_switch"
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}
