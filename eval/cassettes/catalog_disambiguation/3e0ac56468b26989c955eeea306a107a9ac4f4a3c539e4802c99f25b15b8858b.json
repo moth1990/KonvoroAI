@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 846,
+    "model": "claude-haiku-5-5",
+    "output_tokens": 433,
+    "payload": {
+      "chosen_sku": null,
+      "confidence": 0.4,
+      "missing_attributes": [],
+      "reason": "שני המועמדים הם סלילי הפסקה ABB של 230V, והשרטוט מציין רק 'סליל הפסקה' בלי דגם או סדרה, ולכן אין בו הכרעה ביניהם. העדפת המותג ABB לא מבדילה ביניהם."
+    }
+  },
+  "model": "claude-haiku-5-5",
+  "stage": "catalog_disambiguation"
+}

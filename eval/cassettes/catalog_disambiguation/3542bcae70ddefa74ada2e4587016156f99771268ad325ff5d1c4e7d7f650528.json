@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 845,
+    "model": "claude-haiku-5-5",
+    "output_tokens": 526,
+    "payload": {
+      "chosen_sku": null,
+      "confidence": 0.3,
+      "missing_attributes": [],
+      "reason": "שני המועמדים הם סלילי הפסקה ABB של 230V, והסימון בשרטוט הוא רק 'סליל הפסקה' בלי דגם או סדרה, ולכן אין בשרטוט הכרעה ביניהם."
+    }
+  },
+  "model": "claude-haiku-5-5",
+  "stage": "catalog_disambiguation"
+}

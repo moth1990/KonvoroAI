@@ -14,6 +14,8 @@ with no symbol finds nothing. The disambiguation call picks the first candidate.
 The tile agent (stage 4) answers once for every symbol it is asked about, with no values: nothing is written beside
 the stand-in breakers but their tag.
 
+The catalog agent (stage 5) chooses the first candidate it is shown, at 0.7.
+
 A picture of a BOM (01 §5.8) reads as a short handwritten form for "לוח קומה 1": quantity and item columns, three
 items, the third continued on the next row, and the last row clear of the image's edge. A spreadsheet's unknown
 headers map by position: the first column is the item, the second the quantity.
@@ -27,6 +29,7 @@ from PIL import Image
 
 from konboro_llm import LLMRequest
 from konboro_llm.providers import FakeProvider
+from konboro_llm.stages.catalog_disambiguation import STAGE as CATALOG
 from konboro_llm.stages.context_extraction import GeneralNotes
 from konboro_llm.stages.ocr_transcription import STAGE as OCR
 from konboro_llm.stages.page_classification import STAGE as CLASSIFY
@@ -101,6 +104,19 @@ def decision(request: LLMRequest[Any]) -> dict[str, Any]:
 _OWN = re.compile(r"^- (d\d+):", re.M)
 
 
+_FIRST_SKU = re.compile(r"^1\. sku: (.+?) \|", re.M)
+
+
+def catalog_choice(request: LLMRequest[Any]) -> dict[str, Any]:
+    first = _FIRST_SKU.search(request.user_text)
+    return {
+        "chosen_sku": first[1] if first else None,
+        "confidence": 0.7,
+        "reason": "stand-in",
+        "missing_attributes": [],
+    }
+
+
 def tile_agent(request: LLMRequest[Any]) -> dict[str, Any]:
     return {"instances": [{"det": d} for d in _OWN.findall(request.user_text)]}
 
@@ -173,6 +189,8 @@ def answer(request: LLMRequest[Any]) -> dict[str, Any]:
         return tile_agent(request)
     if request.stage == TABLE:
         return bom_table(request)
+    if request.stage == CATALOG:
+        return catalog_choice(request)
     if request.output_schema is TitleBlockAnswer:
         return TITLE_BLOCK
     if request.output_schema is GeneralNotes:

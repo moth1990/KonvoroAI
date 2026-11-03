@@ -168,7 +168,7 @@ def seed_global(session: Session) -> None:
         .on_conflict_do_nothing(index_elements=["valid_from"])
     )
     seed_fx_rates(session)
-    catalog.load_file(session, catalog.SAMPLE)
+    catalog.load_sample(session)
     seed_symbol_library(session)
 
 
@@ -179,6 +179,27 @@ def seed_fx_rates(session: Session) -> None:
         for week in range((FX_TO - FX_FROM).days // 7 + 1)
     ]
     session.execute(insert(FxRate).values(rows).on_conflict_do_nothing(index_elements=["currency", "rate_date"]))
+
+
+# Stage 5's factory settings (05 §4.3, S20): the prototype's "מותג מועדף למא"זים ולפחת" is ABB; Schneider may stand
+# in; a breaker's curve C and 6 kA, an RCD's type A, when the drawing writes none.
+DEMO_BRANDS = {"circuit_breaker": "ABB", "rcd": "ABB", "*": "ABB"}
+DEMO_MATCHING = {"alternate_brands": {"*": ["Schneider"]}, "tie_break": "frequency"}
+DEMO_DEFAULTS = {
+    "rcd": {"residual_ma": 30, "rcd_type": "A"},
+    "circuit_breaker": {"curve": "C", "breaking_capacity_ka": 6},
+}
+
+
+def demo_matching(session: Session, tenant_id: str) -> None:
+    """A demo tenant seeded before S20 gets the matching settings, once: settings someone changed are kept."""
+    settings = session.get(TenantSettings, tenant_id)
+    if settings is None or settings.matching:
+        return
+    settings.matching = DEMO_MATCHING
+    settings.brand_preferences = settings.brand_preferences or DEMO_BRANDS
+    if settings.attribute_defaults == {"rcd": {"residual_ma": 30}}:
+        settings.attribute_defaults = DEMO_DEFAULTS
 
 
 def link_demo_catalog(session: Session, tenant_id: str) -> None:
@@ -317,7 +338,9 @@ def seed_demo_tenant(session: Session) -> bool:
             tenant_id=t,
             min_line_margin=Decimal("0.15"),
             min_quote_margin=Decimal("0.15"),
-            attribute_defaults={"rcd": {"residual_ma": 30}},
+            attribute_defaults=DEMO_DEFAULTS,
+            brand_preferences=DEMO_BRANDS,
+            matching=DEMO_MATCHING,
             enclosure_includes_default={"busbar": True, "n": True, "pe": True, "panels": True, "doors": True},
             onboarding={"first_drawing_at": None, "quotes_sent": 0},
         )
@@ -356,6 +379,7 @@ def seed_demo_fixtures(session: Session, storage: "Storage") -> None:
         .on_conflict_do_nothing(index_elements=["tenant_id", "flag_key"])
     )
     link_demo_catalog(session, DEMO_TENANT)
+    demo_matching(session, DEMO_TENANT)
 
 
 def seed(engine: Engine | None = None, storage: "Storage | None" = None) -> bool:

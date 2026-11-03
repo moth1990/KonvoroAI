@@ -26,6 +26,19 @@
         "products": 22,
         "units": 47
       },
+      "matching": {
+        "auxiliary": 2,
+        "components": 27,
+        "llm_signatures": 1,
+        "method_explicit_series": 11,
+        "method_llm": 1,
+        "method_none": 8,
+        "method_rules_unique": 5,
+        "signatures": 20,
+        "status_ambiguous": 4,
+        "status_matched": 17,
+        "status_unmatched": 4
+      },
       "merge": {
         "agent_instances": 19,
         "agent_tiles": 7,
@@ -309,6 +322,58 @@
             "num": 0.0,
             "value": 0.0
           }
+        },
+        "s5": {
+          "consistency": {
+            "den": 16,
+            "kind": "ratio",
+            "num": 16.0,
+            "value": 1.0
+          },
+          "llm_share": {
+            "den": 20,
+            "kind": "ratio",
+            "num": 1.0,
+            "value": 0.05
+          },
+          "sku_value_accuracy": {
+            "den": 7,
+            "kind": "ratio",
+            "num": 7.0,
+            "value": 1.0
+          },
+          "with_sku": {
+            "den": 25,
+            "kind": "ratio",
+            "num": 21.0,
+            "value": 0.84
+          }
+        },
+        "s5_labelled": {
+          "consistency": {
+            "den": 18,
+            "kind": "ratio",
+            "num": 18.0,
+            "value": 1.0
+          },
+          "exact_value_accuracy": {
+            "den": 11,
+            "kind": "ratio",
+            "num": 11.0,
+            "value": 1.0
+          },
+          "llm_share": {
+            "den": 19,
+            "kind": "ratio",
+            "num": 2.0,
+            "value": 0.105263
+          },
+          "unmatched_in_catalog": {
+            "den": 17,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": 0.0
+          }
         }
       }
     },
@@ -337,6 +402,19 @@
       "labelled": {
         "products": 109,
         "units": 184
+      },
+      "matching": {
+        "auxiliary": 5,
+        "components": 88,
+        "llm_signatures": 3,
+        "method_llm": 6,
+        "method_none": 42,
+        "method_rules_ranked": 7,
+        "method_rules_unique": 28,
+        "signatures": 63,
+        "status_ambiguous": 11,
+        "status_matched": 35,
+        "status_unmatched": 37
       },
       "merge": {
         "agent_instances": 161,
@@ -647,6 +725,58 @@
             "num": 0.0,
             "value": 0.0
           }
+        },
+        "s5": {
+          "consistency": {
+            "den": 32,
+            "kind": "ratio",
+            "num": 32.0,
+            "value": 1.0
+          },
+          "llm_share": {
+            "den": 63,
+            "kind": "ratio",
+            "num": 3.0,
+            "value": 0.047619
+          },
+          "sku_value_accuracy": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          },
+          "with_sku": {
+            "den": 83,
+            "kind": "ratio",
+            "num": 46.0,
+            "value": 0.554217
+          }
+        },
+        "s5_labelled": {
+          "consistency": {
+            "den": 40,
+            "kind": "ratio",
+            "num": 40.0,
+            "value": 1.0
+          },
+          "exact_value_accuracy": {
+            "den": 63,
+            "kind": "ratio",
+            "num": 63.0,
+            "value": 1.0
+          },
+          "llm_share": {
+            "den": 45,
+            "kind": "ratio",
+            "num": 4.0,
+            "value": 0.088889
+          },
+          "unmatched_in_catalog": {
+            "den": 88,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": 0.0
+          }
         }
       }
     },
@@ -675,6 +805,19 @@
       "labelled": {
         "products": 19,
         "units": 91
+      },
+      "matching": {
+        "auxiliary": 0,
+        "components": 20,
+        "llm_signatures": 2,
+        "method_llm": 2,
+        "method_none": 1,
+        "method_rules_ranked": 2,
+        "method_rules_unique": 15,
+        "signatures": 19,
+        "status_ambiguous": 2,
+        "status_matched": 17,
+        "status_unmatched": 1
       },
       "merge": {
         "agent_instances": 0,
@@ -824,6 +967,58 @@
             "num": 0.0,
             "value": 0.0
           }
+        },
+        "s5": {
+          "consistency": {
+            "den": 18,
+            "kind": "ratio",
+            "num": 18.0,
+            "value": 1.0
+          },
+          "llm_share": {
+            "den": 19,
+            "kind": "ratio",
+            "num": 2.0,
+            "value": 0.105263
+          },
+          "sku_value_accuracy": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          },
+          "with_sku": {
+            "den": 20,
+            "kind": "ratio",
+            "num": 19.0,
+            "value": 0.95
+          }
+        },
+        "s5_labelled": {
+          "consistency": {
+            "den": 18,
+            "kind": "ratio",
+            "num": 18.0,
+            "value": 1.0
+          },
+          "exact_value_accuracy": {
+            "den": 13,
+            "kind": "ratio",
+            "num": 13.0,
+            "value": 1.0
+          },
+          "llm_share": {
+            "den": 19,
+            "kind": "ratio",
+            "num": 2.0,
+            "value": 0.105263
+          },
+          "unmatched_in_catalog": {
+            "den": 18,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": 0.0
+          }
         }
       }
     },
@@ -852,6 +1047,20 @@
       "labelled": {
         "products": 21,
         "units": 47
+      },
+      "matching": {
+        "auxiliary": 1,
+        "components": 22,
+        "llm_signatures": 0,
+        "method_explicit_series": 10,
+        "method_none": 6,
+        "method_rules_ranked": 3,
+        "method_rules_unique": 2,
+        "signatures": 21,
+        "status_ambiguous": 3,
+        "status_conflict": 1,
+        "status_matched": 15,
+        "status_unmatched": 2
       },
       "merge": {
         "agent_instances": 42,
@@ -1118,6 +1327,58 @@
             "num": 0.0,
             "value": 0.0
           }
+        },
+        "s5": {
+          "consistency": {
+            "den": 17,
+            "kind": "ratio",
+            "num": 17.0,
+            "value": 1.0
+          },
+          "llm_share": {
+            "den": 21,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": 0.0
+          },
+          "sku_value_accuracy": {
+            "den": 10,
+            "kind": "ratio",
+            "num": 10.0,
+            "value": 1.0
+          },
+          "with_sku": {
+            "den": 21,
+            "kind": "ratio",
+            "num": 17.0,
+            "value": 0.809524
+          }
+        },
+        "s5_labelled": {
+          "consistency": {
+            "den": 16,
+            "kind": "ratio",
+            "num": 16.0,
+            "value": 1.0
+          },
+          "exact_value_accuracy": {
+            "den": 10,
+            "kind": "ratio",
+            "num": 10.0,
+            "value": 1.0
+          },
+          "llm_share": {
+            "den": 20,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": 0.0
+          },
+          "unmatched_in_catalog": {
+            "den": 18,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": 0.0
+          }
         }
       }
     },
@@ -1146,6 +1407,19 @@
       "labelled": {
         "products": 13,
         "units": 42
+      },
+      "matching": {
+        "auxiliary": 1,
+        "components": 15,
+        "llm_signatures": 0,
+        "method_explicit_series": 7,
+        "method_none": 5,
+        "method_rules_unique": 2,
+        "signatures": 14,
+        "status_ambiguous": 1,
+        "status_conflict": 1,
+        "status_matched": 9,
+        "status_unmatched": 3
       },
       "merge": {
         "agent_instances": 20,
@@ -1400,6 +1674,58 @@
             "num": 0.0,
             "value": 0.0
           }
+        },
+        "s5": {
+          "consistency": {
+            "den": 10,
+            "kind": "ratio",
+            "num": 10.0,
+            "value": 1.0
+          },
+          "llm_share": {
+            "den": 14,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": 0.0
+          },
+          "sku_value_accuracy": {
+            "den": 7,
+            "kind": "ratio",
+            "num": 7.0,
+            "value": 1.0
+          },
+          "with_sku": {
+            "den": 14,
+            "kind": "ratio",
+            "num": 10.0,
+            "value": 0.714286
+          }
+        },
+        "s5_labelled": {
+          "consistency": {
+            "den": 11,
+            "kind": "ratio",
+            "num": 11.0,
+            "value": 1.0
+          },
+          "exact_value_accuracy": {
+            "den": 8,
+            "kind": "ratio",
+            "num": 8.0,
+            "value": 1.0
+          },
+          "llm_share": {
+            "den": 12,
+            "kind": "ratio",
+            "num": 1.0,
+            "value": 0.083333
+          },
+          "unmatched_in_catalog": {
+            "den": 11,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": 0.0
+          }
         }
       }
     }
@@ -1407,7 +1733,8 @@
   "not_labelled": {
     "s2": "אין עדיין תיוג ברמת אריח ומקטע טקסט: דיוק אסימונים וכיסוי אריחים לא נמדדים, רק איתור התגים",
     "s3": "אין עדיין תיוג ברמת תיבת סימן: precision לא נמדד, ה-recall לפי תגים וספירת משפחות",
-    "s4": "נמדד מקצה לקצה על הפלט של שלב 3, לא על זיהויים מתויגים (04 §10, S13)"
+    "s4": "נמדד מקצה לקצה על הפלט של שלב 3, לא על זיהויים מתויגים (04 §10, S13)",
+    "s5": "אין עדיין מק\"טים בתיוג: דיוק top-1 ו-top-3 לא נמדדים. נמדדים ערכים חשמליים, עקביות וחלק המודל (S20)"
   },
   "totals": {
     "all": {
@@ -1724,6 +2051,58 @@
           "num": 0.0,
           "value": 0.0
         }
+      },
+      "s5": {
+        "consistency": {
+          "den": 93,
+          "kind": "ratio",
+          "num": 93.0,
+          "value": 1.0
+        },
+        "llm_share": {
+          "den": 137,
+          "kind": "ratio",
+          "num": 6.0,
+          "value": 0.043796
+        },
+        "sku_value_accuracy": {
+          "den": 24,
+          "kind": "ratio",
+          "num": 24.0,
+          "value": 1.0
+        },
+        "with_sku": {
+          "den": 163,
+          "kind": "ratio",
+          "num": 113.0,
+          "value": 0.693252
+        }
+      },
+      "s5_labelled": {
+        "consistency": {
+          "den": 103,
+          "kind": "ratio",
+          "num": 103.0,
+          "value": 1.0
+        },
+        "exact_value_accuracy": {
+          "den": 105,
+          "kind": "ratio",
+          "num": 105.0,
+          "value": 1.0
+        },
+        "llm_share": {
+          "den": 115,
+          "kind": "ratio",
+          "num": 9.0,
+          "value": 0.078261
+        },
+        "unmatched_in_catalog": {
+          "den": 152,
+          "kind": "ratio",
+          "num": 0.0,
+          "value": 0.0
+        }
       }
     },
     "by_input_kind": {
@@ -1837,6 +2216,58 @@
           "values_without_evidence": {
             "den": 1,
             "kind": "count",
+            "num": 0.0,
+            "value": 0.0
+          }
+        },
+        "s5": {
+          "consistency": {
+            "den": 18,
+            "kind": "ratio",
+            "num": 18.0,
+            "value": 1.0
+          },
+          "llm_share": {
+            "den": 19,
+            "kind": "ratio",
+            "num": 2.0,
+            "value": 0.105263
+          },
+          "sku_value_accuracy": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          },
+          "with_sku": {
+            "den": 20,
+            "kind": "ratio",
+            "num": 19.0,
+            "value": 0.95
+          }
+        },
+        "s5_labelled": {
+          "consistency": {
+            "den": 18,
+            "kind": "ratio",
+            "num": 18.0,
+            "value": 1.0
+          },
+          "exact_value_accuracy": {
+            "den": 13,
+            "kind": "ratio",
+            "num": 13.0,
+            "value": 1.0
+          },
+          "llm_share": {
+            "den": 19,
+            "kind": "ratio",
+            "num": 2.0,
+            "value": 0.105263
+          },
+          "unmatched_in_catalog": {
+            "den": 18,
+            "kind": "ratio",
             "num": 0.0,
             "value": 0.0
           }
@@ -2085,6 +2516,58 @@
           "values_without_evidence": {
             "den": 1,
             "kind": "count",
+            "num": 0.0,
+            "value": 0.0
+          }
+        },
+        "s5": {
+          "consistency": {
+            "den": 32,
+            "kind": "ratio",
+            "num": 32.0,
+            "value": 1.0
+          },
+          "llm_share": {
+            "den": 63,
+            "kind": "ratio",
+            "num": 3.0,
+            "value": 0.047619
+          },
+          "sku_value_accuracy": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          },
+          "with_sku": {
+            "den": 83,
+            "kind": "ratio",
+            "num": 46.0,
+            "value": 0.554217
+          }
+        },
+        "s5_labelled": {
+          "consistency": {
+            "den": 40,
+            "kind": "ratio",
+            "num": 40.0,
+            "value": 1.0
+          },
+          "exact_value_accuracy": {
+            "den": 63,
+            "kind": "ratio",
+            "num": 63.0,
+            "value": 1.0
+          },
+          "llm_share": {
+            "den": 45,
+            "kind": "ratio",
+            "num": 4.0,
+            "value": 0.088889
+          },
+          "unmatched_in_catalog": {
+            "den": 88,
+            "kind": "ratio",
             "num": 0.0,
             "value": 0.0
           }
@@ -2365,6 +2848,58 @@
           "values_without_evidence": {
             "den": 3,
             "kind": "count",
+            "num": 0.0,
+            "value": 0.0
+          }
+        },
+        "s5": {
+          "consistency": {
+            "den": 43,
+            "kind": "ratio",
+            "num": 43.0,
+            "value": 1.0
+          },
+          "llm_share": {
+            "den": 55,
+            "kind": "ratio",
+            "num": 1.0,
+            "value": 0.018182
+          },
+          "sku_value_accuracy": {
+            "den": 24,
+            "kind": "ratio",
+            "num": 24.0,
+            "value": 1.0
+          },
+          "with_sku": {
+            "den": 60,
+            "kind": "ratio",
+            "num": 48.0,
+            "value": 0.8
+          }
+        },
+        "s5_labelled": {
+          "consistency": {
+            "den": 45,
+            "kind": "ratio",
+            "num": 45.0,
+            "value": 1.0
+          },
+          "exact_value_accuracy": {
+            "den": 29,
+            "kind": "ratio",
+            "num": 29.0,
+            "value": 1.0
+          },
+          "llm_share": {
+            "den": 51,
+            "kind": "ratio",
+            "num": 3.0,
+            "value": 0.058824
+          },
+          "unmatched_in_catalog": {
+            "den": 46,
+            "kind": "ratio",
             "num": 0.0,
             "value": 0.0
           }

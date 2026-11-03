@@ -9,7 +9,7 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from typing import Literal
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from konboro.db.ids import new_id
@@ -197,6 +197,7 @@ class Progress:
     components: tuple[int, int, bool] | None = None
     bom: dict[str, BomTable] = field(default_factory=dict)  # page id → the BOM table stage 1 read (01 §5.8)
     audit: Audit | None = None  # an audit drawing's audit (11 §5, S15 decision 2)
+    matches: dict[str, int] = field(default_factory=dict)  # stage 5's status → components (05 §7), once it ran
 
 
 def stage_numbers(p: Progress) -> list[int]:
@@ -230,6 +231,14 @@ def progress(session: Session, tenant_id: str, drawing_id: str) -> Progress | No
         )
     ).all()
     components = (int(sum(q for q, _ in rows)), len(rows), any(t for _, t in rows))
+    matches = {
+        str(status): int(n)
+        for status, n in session.execute(
+            select(Component.match_status, func.count())
+            .where(Component.drawing_id == drawing_id, Component.match_status.is_not(None))
+            .group_by(Component.match_status)
+        )
+    }
     bom = {
         a.page_id: BomTable.model_validate_json(a.content)
         for a in session.scalars(
@@ -249,11 +258,12 @@ def progress(session: Session, tenant_id: str, drawing_id: str) -> Progress | No
         components,
         bom,
         audit,
+        matches,
     )
 
 
 def stage_summary(p: Progress, stage: int) -> str | None:
-    """Stages 1 to 4 are the real ones so far (prototype STAGES, lines 761–764), and the audit step."""
+    """Stages 1 to 5 are the real ones so far (prototype STAGES, lines 761–765), and the audit step."""
     if stage == AUDIT_STAGE:
         return _audit_summary(p)
     if p.bom and not any(page.route == "process" for page, _ in p.pages):  # BOM only (01 §4.4)
@@ -264,6 +274,8 @@ def stage_summary(p: Progress, stage: int) -> str | None:
         return _symbols_summary(p)
     if stage == 4:
         return _merge_summary(p)
+    if stage == 5:
+        return _matching_summary(p)
     if stage != 1:
         return None
     # "9 עמודים · 2 תבניות של המפעל · לוח אחד"; the templates part only when there are any
@@ -336,6 +348,25 @@ def _merge_summary(p: Progress) -> str | None:
     where = "במוצר אחד" if products == 1 else f"ב-{products} מוצרים"
     text = f"{_count_text(devices, 'מכשיר אחד', 'מכשירים')} {where}"
     return f"איחוד לפי תגים: {text}" if tagged else text
+
+
+def _matching_summary(p: Progress) -> str | None:
+    """ "12 מותאמים · 1 בלי דגם" (prototype line 765): the products stage 5 matched, then the ones to choose, in
+    conflict and with no catalog item (05 §7); auxiliary material is not counted (S20 decision 3)."""
+    if not p.matches:
+        return None
+    counts = {k: v for k, v in p.matches.items() if k != "auxiliary"}
+    if not counts:
+        return None
+    parts = [_count_text(counts.get("matched", 0), "מותאם אחד", "מותאמים")]
+    for status, one, many in (
+        ("ambiguous", "אחד לבחירה", "לבחירה"),
+        ("conflict", "אחד בסתירה", "בסתירה"),
+        ("unmatched", "אחד בלי דגם", "בלי דגם"),
+    ):
+        if counts.get(status):
+            parts.append(_count_text(counts[status], one, many))
+    return " · ".join(parts)
 
 
 def revisable(session: Session, tenant_id: str, limit: int = 50) -> list[tuple[Drawing, Quote]]:

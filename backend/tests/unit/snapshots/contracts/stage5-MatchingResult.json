@@ -62,6 +62,54 @@
       "title": "BrandDecision",
       "type": "object"
     },
+    "BundleLine": {
+      "additionalProperties": false,
+      "description": "A kit's part that the main item needs (05 §5.9.1): the RCD module of \"XT1C … משולב פחת\". Stage 7 shows it\nas a child line under the device's line.",
+      "properties": {
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "has_cost_price": {
+          "title": "Has Cost Price",
+          "type": "boolean"
+        },
+        "manufacturer": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Manufacturer"
+        },
+        "quantity": {
+          "minimum": 1,
+          "title": "Quantity",
+          "type": "integer"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        },
+        "sku": {
+          "title": "Sku",
+          "type": "string"
+        }
+      },
+      "required": [
+        "sku",
+        "manufacturer",
+        "description",
+        "quantity",
+        "reason",
+        "has_cost_price"
+      ],
+      "title": "BundleLine",
+      "type": "object"
+    },
     "CatalogItemSnapshot": {
       "additionalProperties": false,
       "properties": {
@@ -140,6 +188,14 @@
             }
           ],
           "default": null
+        },
+        "bundle_lines": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/BundleLine"
+          },
+          "title": "Bundle Lines",
+          "type": "array"
         },
         "catalog_item": {
           "anyOf": [
@@ -300,6 +356,49 @@
       "title": "ComponentMatch",
       "type": "object"
     },
+    "MatchStats": {
+      "additionalProperties": false,
+      "properties": {
+        "auxiliary": {
+          "default": 0,
+          "title": "Auxiliary",
+          "type": "integer"
+        },
+        "by_method": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "default": {},
+          "title": "By Method",
+          "type": "object"
+        },
+        "by_status": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "default": {},
+          "title": "By Status",
+          "type": "object"
+        },
+        "components": {
+          "default": 0,
+          "title": "Components",
+          "type": "integer"
+        },
+        "llm_signatures": {
+          "default": 0,
+          "title": "Llm Signatures",
+          "type": "integer"
+        },
+        "signatures": {
+          "default": 0,
+          "title": "Signatures",
+          "type": "integer"
+        }
+      },
+      "title": "MatchStats",
+      "type": "object"
+    },
     "StageIssue": {
       "additionalProperties": false,
       "description": "A warning or error a stage reports about its input (01 §6.5). `message` is Hebrew, ready to show.",
@@ -384,6 +483,18 @@
     "UsedAttribute": {
       "additionalProperties": false,
       "properties": {
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        },
         "source": {
           "enum": [
             "drawing",
@@ -391,8 +502,9 @@
             "graphic",
             "shared_label",
             "bom",
+            "series",
             "notes",
-            "circuit",
+            "inferred",
             "tenant_default",
             "system_default",
             "user"
@@ -413,8 +525,17 @@
     }
   },
   "additionalProperties": false,
-  "description": "Stage 5's output for the drawing: one match per component.",
+  "description": "Stage 5's output for the drawing: one match per component, except the components of the tenant's auxiliary\nfamilies (terminals by default), which get no SKU and are listed apart for stage 7 to count (S20 decision 3).",
   "properties": {
+    "auxiliary": {
+      "default": [],
+      "items": {
+        "pattern": "^cmp_[0-9A-Za-z_]+$",
+        "type": "string"
+      },
+      "title": "Auxiliary",
+      "type": "array"
+    },
     "drawing_id": {
       "pattern": "^drw_[0-9A-Za-z_]+$",
       "title": "Drawing Id",
@@ -434,6 +555,17 @@
       },
       "title": "Matches",
       "type": "array"
+    },
+    "stats": {
+      "$ref": "#/$defs/MatchStats",
+      "default": {
+        "auxiliary": 0,
+        "by_method": {},
+        "by_status": {},
+        "components": 0,
+        "llm_signatures": 0,
+        "signatures": 0
+      }
     },
     "trace_id": {
       "pattern": "^trc_[0-9A-Za-z_]+$",

@@ -1,0 +1,17 @@
+{
+  "answer": {
+    "input_tokens": 935,
+    "model": "claude-haiku-5-5",
+    "output_tokens": 241,
+    "payload": {
+      "chosen_sku": null,
+      "confidence": 0.3,
+      "missing_attributes": [
+        "color"
+      ],
+      "reason": "הרישום מציין נורת סימון 22 מ\"מ בלבד, ללא צבע. שלושת המועמדים נבדלים בצבע בלבד, ולכן אין הכרעה לפי הרישום או העדפת המותג."
+    }
+  },
+  "model": "claude-haiku-5-5",
+  "stage": "catalog_disambiguation"
+}

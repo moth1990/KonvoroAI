@@ -111,12 +111,18 @@ System limits (20 MB per file, 20 files, 200 pages per drawing, 2 m² per page) 
 | --- | --- |
 | `id` (`cat_`) | |
 | `sku`, `brand`, `series`, `model_code`, `family` | Unique `(brand, sku)` |
+| `symbol_class null` | The class within the family (`mcb`, `mccb`, `motor_protection`): stage 5 narrows by it (05 §5.1; migration 0015) |
+| `model_tokens text[]` | The model codes as drawings write them, upper case (`S203M`; `XT1C160`, `XT1C`, `XT1`): an explicit series narrows to the items listing it (05 §5.2.1). Filled from `model_code` for older rows |
 | `attributes jsonb` | Normalized attribute values, by the family's schema |
 | `module_width numeric(5,2)` | For sizing the enclosure (07 §7.4) |
 | `list_price numeric(14,4)`, `list_currency` | The manufacturer's list price, when known |
 | `status` | `active` or `discontinued`; `replaced_by → catalog_items` |
 | `includes jsonb` | For enclosures and kits (07 §7.4) |
 | `source`, `source_tenant_id`, `approved_by`, `approved_at` | Where the record came from. `source` is one of `curated`, `pilot_engineer`, `import` (00 §14.2). The CSV loader writes `import` rows ([catalog-import.md](catalog-import.md), S18) |
+
+Two global tables hang off the catalog (05 §5.9.1, S20; migration 0015), loaded with it ([catalog-import.md](catalog-import.md)):
+- **`catalog_kits`** (`ckt_`): `item_id → catalog_items` (the main item), `part_id → catalog_items`, `quantity` (per unit, at least 1), `when_text` (the phrase in the component's text that calls for the part, "משולב פחת"; empty: always), `reason_he`, plus the source columns. Unique `(item_id, part_id, when_text)`.
+- **`catalog_accessories`** (`cac_`): `accessory_id → catalog_items`, `fits_brand`, `fits_series`, plus the source columns. Unique `(accessory_id, fits_brand, fits_series)`. An aux contact, shunt trip or lock is matched among the accessories that fit its device's series.
 
 The remaining global tables:
 - **`attribute_schemas`** (05 §4.4): `family text pk`, `version int`, `attributes jsonb`. `attributes` is a list of `{name, required, match_mode, default_allowed}`. For `current_a` and `poles`, `default_allowed` is always false. Seeded by `seed_global` from `konboro/pipeline/association/schemas.py` (S13), one row per billable family; a row already there is kept. Stage 4 reads them back.
@@ -155,7 +161,8 @@ The remaining global tables:
 | `rounding text default 'agora'` | |
 | `data_terms_accepted jsonb` | `{version, by, at}` |
 | `onboarding jsonb` | 10 §9.1 |
-| `auxiliary_families text[] default '{terminal}'` | Families the factory counts as auxiliary material: the audit shows them as `not_a_difference` (11 §5.4, S15 decision 4, migration 0011) |
+| `auxiliary_families text[] default '{terminal}'` | Families the factory counts as auxiliary material: the audit shows them as `not_a_difference` (11 §5.4, S15 decision 4, migration 0011), and stage 5 gives them no SKU (S20 decision 3) |
+| `matching jsonb default '{}'` | Stage 5's settings (05 §5.4–5.7, §13 item 1; migration 0015): `series` (family → preferred series), `alternate_brands` (family or `*` → brands allowed instead), `tie_break` (`frequency`, the default, `price` or `ask`), `inference_off` (rule ids of 05 §5.5.1 turned off). `brand_preferences` takes `*` for every family too |
 
 **`tenant_plan_overrides`** has `tenant_id` as PK. It holds `monthly_quote_limit`, `monthly_audit_limit` and `max_pages_per_file`, all nullable; `null` means use the plan's value.
 
@@ -249,6 +256,7 @@ This table answers the customer's question "why was this counted?".
 - `instances jsonb`: a list of `{instance_id, page_id, bbox, role}`, used for highlighting on the drawing. A BOM row (S14) has role `bom_row`, its `rows` in the table, and `bbox` null when it came from a spreadsheet.
 - `confidence`, `brand_hint`, `explicit_texts jsonb`.
 - `supply_scope`: `in_panel`, `other_location`, `prepare_only` or `by_others` (04 §5.1.2). The values were `outside_panel`, `prep_only` and `not_in_scope` until migration 0009 (S13): the spec's names won.
+- `match_status null`, `catalog_item_id null → catalog_items` (migration 0015): stage 5's result (05 §7), written by stage 5 for the run step and what points at a component; `auxiliary` for a family the factory counts as auxiliary material (S20 decision 3). The full match is stage 5's contract in S3.
 
 ## 6. Tenant layer: quotes, price list, learning
 
@@ -402,7 +410,8 @@ Added here:
 | `cat_` | catalog item | `ref_` | reference crop (global) |
 | `trf_` | reference crop (tenant) | `abr_` | abbreviation (global) |
 | `tab_` | abbreviation (tenant) | `vat_` | VAT rate |
-| `spf_` | supplier preference | | |
+| `spf_` | supplier preference | `ckt_` | catalog kit part (global) |
+| `cac_` | catalog accessory fit (global) | | |
 
 ## 8. Indexes beyond keys
 

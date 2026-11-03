@@ -51,8 +51,8 @@ P and R sessions alternate. R sessions use a fixture quote seeded through the re
 | # | Track | Session | Main contents | Specs | Prototype | Depends on | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | [S18](sessions/S18-price-list-backend.md) | P | Price list backend | Products with several suppliers, preferred or else cheapest, margin rules, history, consumables, cabinet "includes", bulk brand discount, master-catalog import format | 07 §7.2–7.3; 10 §9.2 | 484–511 | S17 | done |
-| [S19](sessions/S19-price-list-screen.md) | R | Price list screen | Price list table, filters, search, product editor modal, brand discount | 07 §7.2.1–7.2.3; 10 §8 | 1098–1208 | S18 | in review |
-| S20 | P | Stage 5: catalog matching | Signature, explicit SKU and series, match memory, brand, fill-in, circuit inference, candidate query, decision rules, `catalog_disambiguation`, bundles | 05 (all) | — | S18 | todo |
+| [S19](sessions/S19-price-list-screen.md) | R | Price list screen | Price list table, filters, search, product editor modal, brand discount | 07 §7.2.1–7.2.3; 10 §8 | 1098–1208 | S18 | done |
+| [S20](sessions/S20-catalog-matching.md) | P | Stage 5: catalog matching | Signature, explicit SKU and series, match memory, brand, fill-in, circuit inference, candidate query, decision rules, `catalog_disambiguation`, bundles | 05 (all) | — | S18 | in review |
 | S21 | P | Stage 6: validation | Panel model, rules stored as data, starter rule pack, BOM cross-check, `validator_review`, re-run after edits in under 1 s | 06 (all) | 460–472 | S20 | todo |
 | S22 | P | Stage 7: pricing and versions | Cost lookup, margin priorities, derived items and labor, final color as the worst source with all reasons, totals, versions draft → sent → new with diff, backtest | 07 (all) | 582–619 | S21 | todo |
 | S23 | R | Review III: actions | Price edit with "update the price list too?", supplier switch, profitability, findings actions, approve, delete, alternatives, send, lock, new version, correction events | 09 §7, §10; 07 §7.2.3 | 897–941, 1446–1559 | S19, S22 | todo |
@@ -82,7 +82,7 @@ These items are owned outside the code. They do not stop sessions from starting,
 | # | What | Needed by | Owner | Status |
 | --- | --- | --- | --- | --- |
 | B1 | Golden set grown to 10 drawings, from more than one factory | Gate 0 or Gate 1 | User + estimator | 5 of 10 |
-| B2 | Electrical expert: attribute schemas, validator rules, inference rules, abbreviation dictionary | S20, S21 | User | open |
+| B2 | Electrical expert: attribute schemas, validator rules, inference rules (`pipeline/matching/inference.json`, S20), abbreviation dictionary | S20, S21 | User | open |
 | B3 | Master catalog, 3–5 brands (until then, a small sample seed) | S18, S20 | Catalog | open |
 | B4 | OCR keys (Google Vision and Azure) | S31 | User | open |
 | B5 | Data terms (legal) | Before the pilot | Lawyer | open |
@@ -111,7 +111,7 @@ Ideas and out-of-scope findings from sessions. Each one is scheduled into a sess
 - **Disambiguation share above target** (from S12). 19.7% of detections reach the disambiguation call, against 03 §10's 10%: the interim model rates many symbols unsure. Candidates: a second look with neighbouring context only for the billable unsure ones, or the phase-4 index. Measure with the eval's `llm_share`.
 - **An auxiliary contact's device and front-view ranges** (from S12, 03 §3.7 items 4–5). `linked_designator` needs the dashed mechanical line, which needs line styles in the wire graph; ranges ("R1-R7") are on front views, which stage 3 doesn't read. Both wait for the cross-check (stage 6, S21).
 - **Legend crops as drawing-scope examples** (from S12, 03 §4.2). Stage 1's legend artifact is text, so stage 3 gives the legend to the disambiguation call as text only. Crops need a box per legend entry from stage 1. No golden drawing has a legend page.
-- **Output terminals as symbols** (from S12; the neutral pole was decided in S13: it joins its breaker). Every output terminal circle comes back as a `terminal`, and stage 4 counts them (26 on NEVIS-1, which labels none). Decide in S20 whether output terminals are quote lines.
+- **Output terminals as derived material** (from S12; S20 decision 3). Stage 5 gives the factory's auxiliary families (terminals by default) no SKU and lists them in `MatchingResult.auxiliary`. Stage 7 counts them as derived items (07 §7.4, S22).
 - **Dashed frames for supply scope** (from S13, 04 §5.1.2). Stage 4 reads the scope from the phrases only: stage 2's paths keep no line style, so a device in a dashed frame with no phrase near it stays `in_panel`. Keep the dash pattern in `paths.json` (pdfplumber's `dash`), then find closed dashed frames around symbols.
 - **An auxiliary contact drawn twice** (from S13). NEVIS-1 draws F1–F7's aux contacts on page 5 and again, untagged, in the fault-lamp circuit on page 7; stage 4 counts both drawings. Needs the aux contact's device (the dashed mechanical link, S21) to merge them by parent.
 - **Re-running stage 4 under existing quote lines** (from S13). A rerun replaces the drawing's `components` rows; `quote_lines.component_id` has no `ON DELETE`, so once stage 7 writes lines (S22) a rerun of stages 2–7 must replace the lines first, or keep the component ids it can.
@@ -126,7 +126,7 @@ Ideas and out-of-scope findings from sessions. Each one is scheduled into a sess
 - **The price list's sale price before rounding** (from S19). `ProductOut.unit_price` is before 07 §7.6's rounding, so a rule-priced product shows ₪22.50 where the prototype shows ₪23. Show the rounded price once stage 7's rounding is real (S22).
 - **Exchange rates in production** (from S18, S18 decision 4). Locally they are fixed seeded rates. Before the pilot, a daily feed (07 §4.3 "ממקור מוגדר") writes `fx_rates`, and `fx_rate_missing` alerts the operations team (07 §8).
 - **A model for quote lines code can't sign** (from S15, decision 3). A line no BOM word names has no family and matches nothing; it caps every missing item's confidence at 0.55. A closed-list `table_transcription`-style call (pick a family and values, no price in the request) would sign it; measure how many real lines need it first.
-- **The price list in the audit's money** (from S15, 11 §5.5 priority 3). A missing item with no similar line in the quote is "ללא מחיר" even when the factory's price list has it: searching the price list needs stage 5's matching (S20).
+- **The price list in the audit's money** (from S15, 11 §5.5 priority 3). A missing item with no similar line in the quote is "ללא מחיר" even when the factory's price list has it. Stage 5's matching exists since S20 (`pipeline/matching/match.py`): the audit can match the missing component and look up its product.
 - **The audit's learning loop** (from S15, 11 §9). S15 stores the verdicts and reject reasons only: the quote's prices into the price list ("מחיר מהצעה קיימת"), confirmed differences as golden labels (with the factory's consent), "טעות של המערכת" as negative examples for stages 3–4.
 - **"הורד דוח" for an audit** (from S16, 11 §7). The audit's differences and value at risk as a PDF or Excel report, next to `export_doc`.
 - **Audits in home's recent work** (from S16, prototype line 476). `GET /quotes` lists quotes only; an audit reaches home through the omissions card. A recent-work row per audit needs the list to carry audits.
@@ -134,3 +134,7 @@ Ideas and out-of-scope findings from sessions. Each one is scheduled into a sess
 - **Costs by permission** (from S09, 09 §12). A user without cost permission must not receive costs from the server. 1.0 has one owner role, so `GET /quotes/{id}` sends them to everyone; add a cost permission when a second role arrives.
 
 <a id="s00"></a>**S00** is the planning session that produced this roadmap. It has no session file; its PR is the record.
+- **Matching settings on the settings screen** (from S20). `tenant_settings.matching` (series, alternate brands, tie-break, rules turned off) and per-family `brand_preferences` and defaults have no screen; the prototype shows one brand for breakers and RCDs and the 30 mA toggle (lines 1239–1243). With the settings screen (S24).
+- **A drawing's BOM SKUs and a CT's count** (from S20, 05 §5.2 item 1, §5.5.1). A designer's BOM on a drawing is not yet linked to its components, so its SKUs reach stage 5 only on the BOM-only path; and a meter's one drawn CT is not yet counted as 3. Both need stage 6's BOM cross-check (S21).
+- **The factory tunes an inference rule** (from S20, 05 §5.5.1 last bullet). When the estimator keeps choosing one size above the rule's contactor, propose a tenant override; it takes effect on approval (06 §11). With the approval queue (S24).
+

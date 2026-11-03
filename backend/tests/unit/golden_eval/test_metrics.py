@@ -10,6 +10,7 @@ from eval.canonical import (
     CanonComponent,
     CanonDetection,
     CanonDifference,
+    CanonMatch,
     CanonPage,
     CanonPanel,
     GoldenDrawing,
@@ -282,7 +283,7 @@ def test_backtest_na() -> None:
 def test_score_drawing_has_every_section() -> None:
     label = drawing(CanonPanel(name="P", components=(comp("rcd"),)), audit=CONFIRMED, quote_total=Decimal(100))
     scores = score_drawing(label, predicted(quote_total=Decimal(100)))
-    assert set(scores) == {"s1", "s2", "s3", "s3_family", "s4", "audit", "pricing"}
+    assert set(scores) == {"s1", "s2", "s3", "s3_family", "s4", "s5", "s5_labelled", "audit", "pricing"}
     assert scores["pricing"]["backtest_within_5pct"].value == 1.0
 
 
@@ -444,3 +445,67 @@ def test_a_value_with_no_span_or_no_source_has_no_evidence() -> None:
     assert merge_counts(good)["cited_values"] == 1
     bad = MergeResult(drawing_id="drw_1", instances=[inst(current_a=bare, poles=nowhere)], trace_id="trc_1")
     assert merge_counts(bad)["values_without_evidence"] == 2
+
+
+# --- stage 5 (S20 decision 2) -------------------------------------------------------------------------------------
+
+
+def _match(ref: str, sku: str | None, sig: str, method: str = "rules_ranked", **kw: Any) -> CanonMatch:
+    status = kw.pop("status", "matched" if sku else "unmatched")
+    return CanonMatch(ref=ref, family="circuit_breaker", status=status, sku=sku, signature=sig, method=method, **kw)
+
+
+def test_stage_5_end_to_end_checks_the_skus_values_on_stage_4s_pairs() -> None:
+    from eval.metrics import stage5
+
+    label = drawing(
+        CanonPanel(
+            name="P",
+            components=(
+                comp("circuit_breaker", 1, "F1", current_a=16, poles=3),
+                comp("circuit_breaker", 1, "F2", current_a=20, poles=3),
+            ),
+        )
+    )
+    pred_panel = CanonPanel(
+        name="P",
+        components=(
+            CanonComponent(family="circuit_breaker", designators=("F1",), qty=1, ref="cmp_1"),
+            CanonComponent(family="circuit_breaker", designators=("F2",), qty=1, ref="cmp_2"),
+        ),
+    )
+    matches = (
+        _match("cmp_1", "S203M-C16", "a", item={"current_a": 16, "poles": 3}),
+        _match("cmp_2", "S203M-C16", "b", method="llm", item={"current_a": 16, "poles": 3}),
+    )
+    pred = predicted(pred_panel, matches=matches, matching={"signatures": 2, "llm_signatures": 1})
+    assert values(stage5.score(label, pred)) == {
+        "sku_value_accuracy": 0.5,  # F2 is 20A in the label
+        "with_sku": 1.0,
+        "consistency": 1.0,
+        "llm_share": 0.5,
+    }
+    assert stage5.score(label, predicted(pred_panel)) == {}
+
+
+def test_stage_5_on_labelled_input() -> None:
+    from eval.metrics import stage5
+
+    lab = {"current_a": 16, "poles": 1, "neutral": True}
+    matches = (
+        _match(
+            "c1", "SN201M-C16", "x", item={"current_a": 16, "poles": 1, "neutral": True}, label=lab, in_catalog=True
+        ),
+        _match("c2", "S201M-C16", "x", item={"current_a": 16, "poles": 1}, label=lab, in_catalog=True),  # no N
+        _match("c3", None, "y", label={"current_a": 13, "poles": 3}, in_catalog=False),  # nothing to find
+        _match("c4", None, "z", label={"current_a": 6, "poles": 3}, in_catalog=True, status="conflict"),  # FNV
+        _match("c5", None, "w", label={"current_a": 25, "poles": 3}, in_catalog=True),
+    )
+    scores = values(stage5.score_labelled(predicted(labelled_matches=matches)))
+    assert scores == {
+        "exact_value_accuracy": 0.5,
+        "unmatched_in_catalog": 0.25,  # c5 of c1, c2, c4, c5; a conflict is the right answer
+        "consistency": 0.0,  # signature x got two SKUs
+        "llm_share": 0.0,
+    }
+    assert "unmatched_in_catalog" in LOWER_IS_BETTER

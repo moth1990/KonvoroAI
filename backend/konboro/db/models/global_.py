@@ -81,6 +81,12 @@ class CatalogItem(Base, Timestamps, KnowledgeSource):
     series: Mapped[str | None]
     model_code: Mapped[str | None]
     family: Mapped[str]
+    # The class within the family (`mcb`, `mccb`, `motor_protection`): stage 5 narrows by it (05 §5.1 item 2). Null
+    # when the family has one class.
+    symbol_class: Mapped[str | None]
+    # The model codes as drawings write them ("S203M"; "XT1C160", "XT1C", "XT1"), upper case: an explicit series
+    # narrows to the items that list it (05 §5.2.1). Migration 0015.
+    model_tokens: Mapped[list[str]] = mapped_column(ARRAY(Text), server_default="{}")
     attributes: Mapped[dict[str, Any]] = mapped_column(server_default="{}")
     module_width: Mapped[Decimal | None] = mapped_column(Numeric(5, 2))
     list_price: Mapped[Decimal | None] = mapped_column(Money)
@@ -88,6 +94,37 @@ class CatalogItem(Base, Timestamps, KnowledgeSource):
     status: Mapped[str] = mapped_column(server_default="active")
     replaced_by: Mapped[str | None] = mapped_column(ForeignKey("catalog_items.id"))
     includes: Mapped[dict[str, Any] | None]
+
+
+class CatalogKit(Base, Created, KnowledgeSource):
+    """05 §5.9.1: a main item and a part it needs, e.g. "XT1C … משולב פחת" is the breaker and its RCD module.
+    `when_text` is the phrase in the component's text that calls for the part ("משולב פחת"); empty: always."""
+
+    __tablename__ = "catalog_kits"
+    __table_args__ = (
+        UniqueConstraint("item_id", "part_id", "when_text"),
+        CheckConstraint("quantity >= 1", name="quantity"),
+        one_of("source", GLOBAL_SOURCES),
+    )
+
+    id: Mapped[str] = pk()
+    item_id: Mapped[str] = mapped_column(ForeignKey("catalog_items.id", ondelete="CASCADE"))
+    part_id: Mapped[str] = mapped_column(ForeignKey("catalog_items.id", ondelete="CASCADE"))
+    quantity: Mapped[int] = mapped_column(server_default="1")
+    when_text: Mapped[str] = mapped_column(server_default="")
+    reason_he: Mapped[str]
+
+
+class CatalogAccessory(Base, Created, KnowledgeSource):
+    """05 §5.9.1: which accessory (an aux contact, a shunt trip, a lock) fits which device series of a brand."""
+
+    __tablename__ = "catalog_accessories"
+    __table_args__ = (UniqueConstraint("accessory_id", "fits_brand", "fits_series"), one_of("source", GLOBAL_SOURCES))
+
+    id: Mapped[str] = pk()
+    accessory_id: Mapped[str] = mapped_column(ForeignKey("catalog_items.id", ondelete="CASCADE"))
+    fits_brand: Mapped[str]
+    fits_series: Mapped[str]
 
 
 class SymbolClass(Base, Created, KnowledgeSource):

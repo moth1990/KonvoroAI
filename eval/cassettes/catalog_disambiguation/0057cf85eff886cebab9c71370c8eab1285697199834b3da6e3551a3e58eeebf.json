@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 802,
+    "model": "claude-haiku-5-5",
+    "output_tokens": 525,
+    "payload": {
+      "chosen_sku": "MPET4-10R",
+      "confidence": 0.75,
+      "missing_attributes": [],
+      "reason": "הרכיב מסווג כלחצן חירום והסימון EMS, ולחצן חירום מקובל בצבע אדום; הירוק אינו מתאים לפונקציה זו. שני המועמדים של ABB ולכן העדפת המותג אינה מכרעת."
+    }
+  },
+  "model": "claude-haiku-5-5",
+  "stage": "catalog_disambiguation"
+}
