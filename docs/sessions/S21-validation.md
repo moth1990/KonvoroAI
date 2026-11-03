@@ -6,7 +6,7 @@
 | **Branch** | `s21-validation` |
 | **Depends on** | S20 |
 | **Status** | in review |
-| **PR** | (link) |
+| **PR** | [moth1990/KonvoroAI#24](https://github.com/moth1990/KonvoroAI/pull/24) |
 
 ## Goal
 
