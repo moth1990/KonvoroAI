@@ -26,8 +26,9 @@ from konboro.db.seed import PRODUCTS, SUPPLIERS
 from konboro.pipeline.extraction import deepzoom
 from konboro.pipeline.extraction.config import DEFAULT as EXTRACTION
 from konboro.pipeline.intake.pages import png
+from konboro.pipeline.pricing import stored
 from konboro.pipeline.stages.s1_intake import THUMB_PX, thumbnail_key
-from konboro.services.quotes import LineIn, store_totals, write_lines
+from konboro.services.quotes import LineIn, write_lines
 from konboro.services.storage import Storage, drawing_key
 
 MARKER = "fixture:NURSERY-1"  # drawings.trace_id of the fixture drawing
@@ -85,7 +86,7 @@ def col(
 
 
 EXPLICIT = {"source": "match", "value": "explicit_model", "status": "green"}
-NO_PRICE = {"source": "price", "value": "missing", "status": "red"}
+NO_PRICE = {"source": "price", "value": "missing", "status": "red", "issues": ["missing_cost"]}  # 07 §8
 PRICE_OK = {"source": "price", "value": "ok", "status": "green"}
 
 # prototype makeLines() (konboro-app.html 410–470), in its order
@@ -313,15 +314,6 @@ FINDINGS: list[dict[str, Any]] = [
         "הם לא נספרו.",
     },
     {
-        "key": "price",
-        "source": "pricing",
-        "severity": "error",
-        "code": "MISSING_PRICE",
-        "title": "5 שורות בלי מחיר",
-        "message": "אין מחיר זהה במחירון של המפעל. אפשר להזין בשורה, והמחיר נשמר למחירון להצעות הבאות.",
-        "lines": [i.key for i in ITEMS if i.price is None],
-    },
-    {
         "key": "inc",
         "source": "rule",
         "severity": "info",
@@ -486,6 +478,7 @@ def seed_nursery(session: Session, tenant_id: str) -> str | None:
                 issue_ids=[finding_ids[item.finding]] if item.finding else [],
                 alternatives=[{"description": alt} for alt in item.alternatives],
                 explanation=item.why,
+                line_key=f"fixture:{item.key}",
             )
         )
 
@@ -514,7 +507,9 @@ def seed_nursery(session: Session, tenant_id: str) -> str | None:
             )
         )
     session.flush()
-    store_totals(session, version)
+    # stage 7's colour and pricing findings ("5 שורות בלי מחיר"), from the lines as written (S23): the same code
+    # prices the fixture again after each review action
+    stored.reprice(session, quote, version, frozenset())
     return str(quote.id)
 
 

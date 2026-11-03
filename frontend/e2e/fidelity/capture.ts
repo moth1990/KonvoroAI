@@ -307,17 +307,22 @@ async function appReview(page: Page) {
 
 function reviewScreens(): Screen[] {
   const notes = [
-    'Header: export, chat and "אשר ושלח" are left out until their sessions (S23, S25). The drawing pane is S11 ' +
+    'Header: "אשר ושלח" since S23; export and chat wait for their sessions (S26, S25). The drawing pane is S11 ' +
       "(its own screens below).",
     "S09 decision 3: a shape icon beside each stripe (check, triangle, X, box), so color is never the only signal.",
     'S09 decision 4: the spec\'s filter row (הכל · רק לבדיקה · ירוק · צהוב · אדום) and the "X מתוך Y שורות מוכנות" bar.',
-    "S09 decision 5: after the groups, a panel total row (09 §6.3). The prototype's footnote about accessories " +
-      "included in the enclosure comes back with accessory lines (S22).",
+    "S09 decision 5: after the groups, a panel total row (09 §6.3). The footnote about what the enclosure's price " +
+      "includes is the factory's setting (S23 decision 19).",
     'S09 decision 6: on the phone a row keeps its total, and "qty × unit price" moves to the sub line.',
-    "Read-only until S23: no price inputs (an unpriced line shows —), no price hints, no finding buttons.",
+    "S23: a line with no price takes it in its row (on the phone in place of the total, decision 3); the findings " +
+      'have "הצג רק אותן", "פתח את השורה" and "דחה…" (with a reason, decision 7) instead of one button per reason.',
+    '"N מחירים חדשים במחירון" in the filter row opens the recalculation\'s comparison (S23 decision 15, no prototype ' +
+      "screen).",
     "Findings are listed errors first. Runs of 3+ tags are one chip: F18–F21 here, four chips in the prototype.",
-    'The prototype marks the lamps "מחיר חדש במחירון: ₪23" (its markup rule against its own fixed price); the app ' +
-      "has no such state until pricing (S22).",
+    'The lamps show "מחיר חדש במחירון: ₪22.50": the E2E tenant rounds to the agora; the prototype and the demo ' +
+      "tenant round to the shekel (₪23, S22 decision 2).",
+    "\"5 שורות בלי מחיר\" is stage 7's warning since S23 (decision 13), so it follows the front view's, as in the " +
+      "prototype.",
     "Foot totals keep agorot (₪841.32, ₪5,515.32): the prototype rounds VAT to whole shekels in the browser.",
     "Data differs by design in the rail: the E2E tenant has no approval-queue items.",
   ];
@@ -332,7 +337,7 @@ function reviewScreens(): Screen[] {
       "by stage 2 and zoom sharp.",
     "S11 decision 4: \"עמוד x מתוך y\" and previous / next, each thumbnail's red (or yellow) count, and the page's " +
       "route, confidence and vector or scanned beside its title. Zoom is free; the buttons step ×1.5.",
-    "The header's undo button (09 §7.11) is in; it stays disabled until S23's actions.",
+    "The header's undo button (09 §7.11) is enabled once an action is on the stack (S23).",
   ];
   return [
     {
@@ -396,7 +401,8 @@ function reviewScreens(): Screen[] {
       },
       notes: [
         "A context page: the image with its role in a chip, and no component boxes; the finding's box only.",
-        "The finding's other buttons (התעלם, הוסף 4 שורות) wait for S23.",
+        'S23 decision 7: "דחה…" opens a reason (מכוון, הבודק טעה, אחר). "הוסף 4 שורות" waits for the product ' +
+          "picker (S23b).",
       ],
       window: true,
     },
@@ -420,7 +426,8 @@ function reviewScreens(): Screen[] {
         },
       },
       notes: [
-        "S09 decision 7: read-only. No price and cost inputs, no supplier select, no החלף / מחק. הצג בשרטוט is in since S11.",
+        "S23: the price with עדכן, the cost and supplier (the product's suppliers, its cost, margin and floor), " +
+          '"החלף" with its key, the quantity, "אשר שורה" and "מחק שורה". הצג בשרטוט is in since S11.',
         "On the phone the detail opens in a bottom sheet (09 §5.2); the prototype expands the row.",
       ],
     },
@@ -436,6 +443,73 @@ function reviewScreens(): Screen[] {
         },
       },
       notes: ['Every red line says why: here, "אין מחיר" on all five.'],
+    },
+    {
+      id: "review-send",
+      title: "Review: אשר ושלח (09 §7.12)",
+      prototype: { hash: "#review", authed: true, setup: (p) => p.locator('[data-act="send"]').click() },
+      app: {
+        ...review,
+        setup: async (page) => {
+          await appReview(page);
+          await page.getByTestId("send").click();
+          await page.getByRole("dialog").waitFor();
+        },
+      },
+      notes: [
+        "The one dialog that asks first. The app adds the margin (09 §7.12) and counts the lines with no price as left " +
+          "out of the sum.",
+      ],
+    },
+    {
+      id: "review-price",
+      title: "Review: לעדכן גם במחירון? (09 §7.14)",
+      prototype: {
+        hash: "#review",
+        authed: true,
+        setup: async (p) => {
+          await p.locator('[data-line="f22"]').click();
+          await p.locator("#edit-f22").fill("190");
+          await p.locator('[data-act="editprice"][data-id="f22"]').click();
+        },
+      },
+      app: {
+        ...review,
+        setup: async (page) => {
+          await appReview(page);
+          await (await lineWith(page, "S203M 3P \u200f16A")).click();
+          await page.getByLabel("מחיר מכירה ליחידה").fill("190");
+          await page.getByTestId("editprice").click();
+          await page.getByRole("dialog", { name: "לעדכן גם במחירון?" }).waitFor();
+        },
+      },
+      notes: ["On the phone the dialog opens over the line's sheet."],
+    },
+    {
+      id: "review-locked",
+      title: "Review: a sent version, locked (07 §7.7)",
+      prototype: {
+        hash: "#review",
+        authed: true,
+        setup: async (p) => {
+          await p.locator('[data-act="send"]').click();
+          await p.locator('[data-act="dosend"]').click();
+        },
+      },
+      app: {
+        ...review,
+        setup: async (page) => {
+          // the shared fixture is never sent: the quote's answer says it was
+          await page.route(/\/quotes\/quo_[0-9A-Z]{26}$/, async (route) => {
+            const response = await route.fetch();
+            const body = (await response.json()) as Record<string, unknown>;
+            await route.fulfill({ response, json: { ...body, status: "sent" } });
+          });
+          await appReview(page);
+          await page.getByTestId("locked").waitFor();
+        },
+      },
+      notes: ["No price cell, no action in the detail, and undo is cleared: nothing before sending is undone."],
     },
   ];
 }

@@ -110,17 +110,18 @@ def test_lines_follow_the_review_order_and_every_non_green_line_says_why(nursery
     assert {src.source for src in c1.sources} == {"circuit", "graphic", "notes"}
     assert c1.raw_text == ["C1 … C4", "(אין זרם כתוב)"]
 
-    # errors first, then by code: the same order on every database, whatever the ids (CI screenshots)
+    # errors first, then by code: the same order on every database, whatever the ids (CI screenshots). The price
+    # finding is stage 7's own since S23 (07 §8: a warning), so it follows the front view's, as in the prototype
     assert [(f.severity, f.code) for f in view.findings] == [
-        ("error", "MISSING_PRICE"),
         ("warning", "FRONT_VIEW_DESIGNATOR_MISSING"),
+        ("warning", "missing_cost"),
         ("info", "DATA_INFERRED_ATTRIBUTE"),
         ("info", "DATA_MODEL_TEXT_CONFLICT"),
     ]
     front = next(f for f in view.findings if f.code == "FRONT_VIEW_DESIGNATOR_MISSING")
     assert front.page_no == 4
-    priced = next(f for f in view.findings if f.code == "MISSING_PRICE")
-    assert len(priced.line_ids) == 5
+    priced = next(f for f in view.findings if f.code == "missing_cost")
+    assert len(priced.line_ids) == 5 and priced.title == "5 שורות בלי מחיר"
 
 
 def test_stored_totals_equal_the_sums_of_the_live_lines(nursery: Nursery) -> None:

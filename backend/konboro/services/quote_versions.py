@@ -16,6 +16,7 @@ Runs inside `tenant_session`; the explicit `tenant_id` filters are a second guar
 import hashlib
 from dataclasses import dataclass
 from datetime import UTC, datetime
+from decimal import Decimal
 from typing import Any
 
 from sqlalchemy import select
@@ -24,6 +25,8 @@ from sqlalchemy.orm import Session
 from konboro.db import models as m
 from konboro.db.ids import new_id
 from konboro.pipeline.pricing import run as pricing
+from konboro.pipeline.pricing import stored
+from konboro.pipeline.pricing.diff import diff
 from konboro.services import quotes as qs
 from konboro.services.storage import Storage
 
@@ -58,6 +61,7 @@ COPIED = (
     "status_reasons",
     "issue_ids",
     "override",
+    "edits",
     "approved_at",
     "deleted_at",
 )
@@ -138,6 +142,35 @@ def preview_recalculation(session: Session, storage: Storage, tenant_id: str, qu
         return recalculate(session, storage, tenant_id, quote_id).diff
     finally:
         savepoint.rollback()
+
+
+def recalculate_draft(session: Session, storage: Storage, tenant_id: str, quote_id: str, apply: bool) -> dict[str, Any]:
+    """The review screen's "חישוב מחדש" (07 §7.2.3, §7.7): every line of the draft priced from the list today,
+    keeping the estimator's edits. `apply` false: the comparison only, nothing written. A quote with no stage outputs
+    (the review fixture, one built by hand) is priced from its stored lines."""
+    quote, version = current(session, tenant_id, quote_id)
+    if version.status == "sent":
+        raise VersionError(409, "quote_sent")
+    savepoint = None if apply else session.begin_nested()
+    try:
+        try:
+            drawing = _drawing(session, tenant_id, quote)
+            out = pricing.read_outputs(session, storage, tenant_id, drawing.id)
+        except (VersionError, LookupError):
+            return _reprice_stored(session, quote, version)
+        return pricing.price_drawing(session, tenant_id, drawing, out, quote.name).diff
+    finally:
+        if savepoint is not None:
+            savepoint.rollback()
+
+
+def _reprice_stored(session: Session, quote: m.Quote, version: m.QuoteVersion) -> dict[str, Any]:
+    before = pricing.snapshot_of(session, version)
+    was = Decimal(str((version.totals or {}).get("net_total", "0")))
+    stored.reprice(session, quote, version, frozenset(stored.key_of(r) for r in qs.live_lines(session, version)))
+    after = pricing.snapshot_of(session, version)
+    now = Decimal(str((version.totals or {}).get("net_total", "0")))
+    return diff(before, after, version.version, was, now)
 
 
 def open_next(session: Session, actor: Actor, quote_id: str) -> m.QuoteVersion:

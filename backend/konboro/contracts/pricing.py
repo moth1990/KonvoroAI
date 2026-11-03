@@ -52,6 +52,11 @@ class StatusReason(Contract):
     status: LineStatus
     value: Any = None
     issue_id: IssueId | None = None
+    # S23: the price's pricing issues and the margin floor it fell under (07 §8), and, on a line the estimator
+    # approved, the colour the reason had before (09 §7.2)
+    issues: list[str] = []
+    floor: DecimalStr | None = None
+    was: LineStatus | None = None
 
 
 class Line(Contract):

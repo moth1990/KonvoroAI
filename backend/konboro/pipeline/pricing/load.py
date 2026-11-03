@@ -25,6 +25,7 @@ from konboro.services import price_list as pl
 
 from .book import Book, Item, Priced, Product, sku_key
 from .derived import DerivedRule, Labor, Requirement, starter_pack
+from .edits import Kept, LineEdits
 from .engine import Carry
 from .lines import Draft
 
@@ -136,9 +137,11 @@ def item_of(r: m.CatalogItem) -> Item:
     )
 
 
-def catalog_items(session: Session, matching: MatchingResult, families: Iterable[str]) -> list[Item]:
+def catalog_items(
+    session: Session, matching: MatchingResult, families: Iterable[str], extra: Iterable[tuple[str, str]] = ()
+) -> list[Item]:
     """The items stage 5 chose (and their kits' parts), and every item of the derived items' families."""
-    wanted: set[tuple[str, str]] = set()
+    wanted: set[tuple[str, str]] = set(extra)
     for x in matching.matches:
         if x.catalog_item is not None:
             wanted.add(((x.catalog_item.manufacturer or ""), x.catalog_item.sku))
@@ -150,9 +153,20 @@ def catalog_items(session: Session, matching: MatchingResult, families: Iterable
     return [item_of(r) for r in rows if r.family in families or (r.brand, r.sku) in wanted]
 
 
-def products(session: Session, tenant_id: str, items: Sequence[Item], skus: set[str]) -> list[Product]:
+def catalog_items_by_sku(session: Session, skus: Iterable[str]) -> list[Item]:
+    wanted = list(skus)
+    if not wanted:
+        return []
+    return [item_of(r) for r in session.scalars(select(m.CatalogItem).where(m.CatalogItem.sku.in_(wanted)))]
+
+
+def products(
+    session: Session, tenant_id: str, items: Sequence[Item], skus: set[str], ids: Iterable[str] = ()
+) -> list[Product]:
+    """The price-list products for these catalog items and SKUs, the derived families' own, and `ids` by id."""
     item_ids = [i.id for i in items]
     keys = {sku_key(s) for s in skus} | {sku_key(i.sku) for i in items}
+    by_id = set(ids)
     rows = list(
         session.scalars(
             select(m.Product).where(
@@ -161,6 +175,7 @@ def products(session: Session, tenant_id: str, items: Sequence[Item], skus: set[
                     m.Product.catalog_item_id.in_(item_ids),
                     m.Product.manufacturer_sku.is_not(None),
                     m.Product.family.in_(DERIVED_FAMILIES),
+                    m.Product.id.in_(by_id),
                 ),
             )
         )
@@ -171,6 +186,7 @@ def products(session: Session, tenant_id: str, items: Sequence[Item], skus: set[
         if p.catalog_item_id in item_ids
         or (p.manufacturer_sku and sku_key(p.manufacturer_sku) in keys)
         or (p.family in DERIVED_FAMILIES and not p.catalog_item_id)
+        or p.id in by_id
     ]
     loaded = pl.load(session, tenant_id, rows)
     by_item = {i.id: i for i in items}
@@ -200,16 +216,30 @@ def products(session: Session, tenant_id: str, items: Sequence[Item], skus: set[
 
 
 def book(
-    session: Session, tenant_id: str, on_date: date, matching: MatchingResult, customer_id: str | None
+    session: Session,
+    tenant_id: str,
+    on_date: date,
+    matching: MatchingResult,
+    customer_id: str | None,
+    extra_skus: Iterable[tuple[str, str]] = (),
 ) -> tuple[Book, list[str]]:
-    """The book, and the ids of the price-list rows it holds (for the version's snapshot, 07 §7.7)."""
+    """The book, and the ids of the price-list rows it holds (for the version's snapshot, 07 §7.7). `extra_skus`:
+    (maker, SKU) of the alternatives the estimator chose (09 §7.3), beside stage 5's."""
+    extra = list(extra_skus)
+    items = catalog_items(session, matching, DERIVED_FAMILIES, extra)
+    skus = (
+        {x.chosen_sku for x in matching.matches if x.chosen_sku}
+        | {b.sku for x in matching.matches for b in x.bundle_lines}
+        | {sku for _, sku in extra}
+    )
+    return book_of(session, tenant_id, on_date, customer_id, items, products(session, tenant_id, items, skus))
+
+
+def book_of(
+    session: Session, tenant_id: str, on_date: date, customer_id: str | None, items: list[Item], found: list[Product]
+) -> tuple[Book, list[str]]:
     ctx = pl.load_context(session, tenant_id, on_date)
     settings = session.get(m.TenantSettings, tenant_id)
-    items = catalog_items(session, matching, DERIVED_FAMILIES)
-    skus = {x.chosen_sku for x in matching.matches if x.chosen_sku} | {
-        b.sku for x in matching.matches for b in x.bundle_lines
-    }
-    found = products(session, tenant_id, items, skus)
     return (
         Book(
             cost=ctx.cost,
@@ -271,11 +301,55 @@ def requirements(intake: IntakeResult) -> dict[str | None, Requirement]:
 
 def priced_as_stored(ln: m.QuoteLine) -> Priced:
     status = ln.price_status or ("ok" if ln.unit_price is not None else "missing")
-    return Priced(ln.unit_cost, ln.cost_source, status, ln.margin_rule, ln.unit_price_raw, ln.unit_price, ln.rounding)
+    reason: dict[str, Any] = next((r for r in ln.status_reasons if r.get("source") == "price"), {})
+    floor = reason.get("floor")
+    issues = tuple(reason.get("issues", ())) if "issues" in reason else legacy_issues(ln, status)
+    return Priced(
+        ln.unit_cost,
+        ln.cost_source,
+        status,
+        ln.margin_rule,
+        ln.unit_price_raw,
+        ln.unit_price,
+        ln.rounding,
+        issues,
+        Decimal(floor) if floor is not None else None,
+    )
 
 
-def carry(session: Session, version: m.QuoteVersion | None) -> Carry:
-    """S22 decision 5: what a rerun keeps from the draft it replaces."""
+def legacy_issues(ln: m.QuoteLine, status: str) -> tuple[str, ...]:
+    """A line priced before S23 kept no pricing issues with its price: what 07 §8 would have said of it. No price on a
+    line whose match was not the problem is `missing_cost` (a line with no SKU has a red match reason instead)."""
+    if status == "stale":
+        return ("stale_price",)
+    if status != "missing" or ln.line_type not in ("component", "manual"):
+        return ()
+    if (ln.cost_source or {}).get("type") not in (None, "missing"):
+        return ()
+    if any(r.get("source") == "match" and r.get("status") == "red" for r in ln.status_reasons):
+        return ()
+    return ("missing_cost",)
+
+
+def edits_of(row: m.QuoteLine) -> LineEdits:
+    return LineEdits.of(row.edits, row.approved_at)
+
+
+def dismissed(session: Session, version: m.QuoteVersion) -> frozenset[str]:
+    return frozenset(
+        session.scalars(
+            select(m.Finding.id).where(
+                m.Finding.tenant_id == version.tenant_id,
+                m.Finding.quote_version_id == version.id,
+                m.Finding.status == "dismissed",
+            )
+        )
+    )
+
+
+def carry(session: Session, version: m.QuoteVersion | None, keep: frozenset[str] | None = None) -> Carry:
+    """S22 decision 5: what a rerun keeps from the draft it replaces, with the review screen's edits (S23). `keep`,
+    after a review action: the keys of the lines the action touched; every other line keeps its stored price."""
     if version is None:
         return Carry()
     rows = list(
@@ -308,4 +382,14 @@ def carry(session: Session, version: m.QuoteVersion | None) -> Carry:
         for r in rows
         if r.line_type == "manual" and r.deleted_at is None
     ]
-    return Carry(deleted, overrides, manual)
+    edits = {r.line_key: e for r in rows if r.line_key and r.deleted_at is None and not (e := edits_of(r)).empty}
+    kept = (
+        {
+            r.line_key: Kept(r.product_id, r.sku, priced_as_stored(r))
+            for r in rows
+            if r.line_key and r.deleted_at is None and r.line_key not in keep and r.line_type == "component"
+        }
+        if keep is not None
+        else {}
+    )
+    return Carry(deleted, overrides, manual, edits, dismissed(session, version), kept)

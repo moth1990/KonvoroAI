@@ -1,72 +1,244 @@
-"""One quote for the review screen (09 §4–6, prototype `vReview`). Behind `review_screen` until S23 (S09 decision 2)."""
+"""One quote for the review screen (09 §4–6, prototype `vReview`), and its actions (09 §7, S23). Behind `review_screen`
+(S09 decision 2) until S23b finishes the screen (S23 decision 8).
 
+Every action answers with the quote as it now is, the toast's text and the event "בטל" takes back (`ActionOut`). A
+sent version is never changed: every action on it is a 409 (07 §7.7).
+"""
+
+from collections.abc import Callable
+from decimal import Decimal
 from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, Path, Request
 
-from konboro.domain.permissions import Permission
+from konboro.domain.permissions import Permission, allowed
 from konboro.domain.totals import QuoteSums, Sums
-from konboro.services import price_list, quotes
+from konboro.services import price_list, quote_versions, quotes, review
 from konboro.services.storage import Storage
 
 from ..deps import Actor, require, require_flag
 from ..errors import ERROR_RESPONSES, ApiError
-from ..schemas import LinePriceIn, QuoteOut
+from ..schemas import (
+    ActionOut,
+    AlternativeIn,
+    CostEntryIn,
+    DismissIn,
+    LinePriceIn,
+    LineSupplierIn,
+    PriceEntryIn,
+    QuantityIn,
+    QuoteOut,
+    RecalculationOut,
+    RestoreIn,
+)
 
-router = APIRouter(tags=["quotes"], responses=ERROR_RESPONSES)
+router = APIRouter(tags=["quotes"], responses=ERROR_RESPONSES, dependencies=[Depends(require_flag("review_screen"))])
 
 Reader = Annotated[Actor, Depends(require(Permission.QUOTES_READ))]
 Writer = Annotated[Actor, Depends(require(Permission.QUOTES_WRITE))]
+Sender = Annotated[Actor, Depends(require(Permission.QUOTES_SEND))]
 QuoteId = Annotated[str, Path(pattern=r"^quo_[0-9A-Z]{26}$")]
 LineId = Annotated[str, Path(pattern=r"^ln_[0-9A-Z]{26}$")]
+FindingId = Annotated[str, Path(pattern=r"^iss_[0-9A-Za-z]{20,32}$")]
+EventId = Annotated[str, Path(pattern=r"^evt_[0-9A-Z]{26}$")]
 
 
-@router.get("/quotes/{quote_id}", dependencies=[Depends(require_flag("review_screen"))])
+@router.get("/quotes/{quote_id}")
 def get_quote(actor: Reader, quote_id: QuoteId, request: Request) -> QuoteOut:
     """The quote's current version. Another tenant's quote is 404, the same as one that does not exist."""
     return quote_out(actor, quote_id, request.app.state.storage)
 
 
-@router.post("/quotes/{quote_id}/lines/{line_id}/price", dependencies=[Depends(require_flag("review_screen"))])
-def change_line_price(
-    actor: Writer, quote_id: QuoteId, line_id: LineId, body: LinePriceIn, request: Request
-) -> QuoteOut:
-    """A line's sale price changed in the review screen (07 §7.2.3, 09 §7.14): for this quote only, or in the price
-    list too. A sent quote never changes (409). Returns the quote with its new totals."""
+def act(actor: Actor, quote_id: str, request: Request, action: Callable[[review.Ctx], review.Done]) -> ActionOut:
+    storage = request.app.state.storage
     try:
-        price_list.change_line_price(
-            actor.session,
-            price_list.Actor(actor.tenant_id, actor.user_id),
-            quote_id,
-            line_id,
-            body.unit_price,
-            body.scope,
-        )
+        ctx = review.open_draft(actor.session, storage, review.Actor(actor.tenant_id, actor.user_id), quote_id)
+        done = action(ctx)
+    except review.ReviewError as e:
+        raise ApiError(e.status, e.code, e.details) from e
     except price_list.PriceListError as e:
         raise ApiError(e.status, e.code, e.details) from e
+    return ActionOut(
+        quote=quote_out(actor, quote_id, storage),
+        message=done.message,
+        event_id=done.event_id,
+        count=done.count,
+        sanity=done.sanity,
+    )
+
+
+# --- lines (09 §7.2–7.6) --------------------------------------------------------------------------------------------
+
+
+@router.post("/quotes/{quote_id}/lines/{line_id}/approve")
+def approve_line(actor: Writer, quote_id: QuoteId, line_id: LineId, request: Request) -> ActionOut:
+    """09 §7.2: the line green, "אושר"; its open findings dismissed when every line they name is approved."""
+    return act(actor, quote_id, request, lambda c: review.approve(c, line_id))
+
+
+@router.delete("/quotes/{quote_id}/lines/{line_id}")
+def delete_line(actor: Writer, quote_id: QuoteId, line_id: LineId, request: Request) -> ActionOut:
+    """09 §7.6: out of the quote, its kit parts with it. A deleted derived line is not made again (07 §7.4)."""
+    return act(actor, quote_id, request, lambda c: review.delete(c, line_id))
+
+
+@router.post("/quotes/{quote_id}/lines/restore")
+def restore_lines(actor: Writer, quote_id: QuoteId, body: RestoreIn, request: Request) -> ActionOut:
+    """09 §6.3 "החזר": deleted lines back."""
+    return act(actor, quote_id, request, lambda c: review.restore_lines(c, body.line_ids))
+
+
+@router.post("/quotes/{quote_id}/lines/{line_id}/qty")
+def set_quantity(actor: Writer, quote_id: QuoteId, line_id: LineId, body: QuantityIn, request: Request) -> ActionOut:
+    """09 §7.5: at least 1; the rules and stage 7 run again."""
+    return act(actor, quote_id, request, lambda c: review.set_quantity(c, line_id, Decimal(body.qty)))
+
+
+@router.post("/quotes/{quote_id}/lines/{line_id}/alternative")
+def choose_alternative(
+    actor: Writer, quote_id: QuoteId, line_id: LineId, body: AlternativeIn, request: Request
+) -> ActionOut:
+    """09 §7.3: the alternative on every line with the same signature, in every panel, each approved."""
+    return act(actor, quote_id, request, lambda c: review.choose_alternative(c, line_id, body.index))
+
+
+@router.post("/quotes/{quote_id}/findings/{finding_id}/dismiss")
+def dismiss_finding(
+    actor: Writer, quote_id: QuoteId, finding_id: FindingId, body: DismissIn, request: Request
+) -> ActionOut:
+    """09 §7.7, 06 §11: dismissed with a reason; its lines' colour follows."""
+    return act(actor, quote_id, request, lambda c: review.dismiss_finding(c, finding_id, body.reason, body.text))
+
+
+# --- prices, costs, suppliers (09 §7.13–7.15) -----------------------------------------------------------------------
+
+
+@router.post("/quotes/{quote_id}/lines/{line_id}/price")
+def change_line_price(
+    actor: Writer, quote_id: QuoteId, line_id: LineId, body: LinePriceIn, request: Request
+) -> ActionOut:
+    """A line's sale price changed in the review screen (07 §7.2.3, 09 §7.14): for this quote only, or in the price
+    list too."""
+    return act(
+        actor, quote_id, request, lambda c: review.change_price(c, line_id, Decimal(body.unit_price), body.scope)
+    )
+
+
+@router.post("/quotes/{quote_id}/lines/{line_id}/price-entry")
+def enter_price(actor: Writer, quote_id: QuoteId, line_id: LineId, body: PriceEntryIn, request: Request) -> ActionOut:
+    """A price typed in the row of a line with none (S23 decision 3)."""
+    return act(actor, quote_id, request, lambda c: review.enter_price(c, line_id, Decimal(body.unit_price), body.save))
+
+
+@router.post("/quotes/{quote_id}/lines/{line_id}/cost")
+def enter_cost(actor: Writer, quote_id: QuoteId, line_id: LineId, body: CostEntryIn, request: Request) -> ActionOut:
+    """09 §6.4 "שמור עלות": to the price list, for every line of the product (09 §7.13)."""
+    return act(
+        actor, quote_id, request, lambda c: review.enter_cost(c, line_id, Decimal(body.unit_cost), body.supplier)
+    )
+
+
+@router.post("/quotes/{quote_id}/lines/{line_id}/list-price")
+def take_list_price(actor: Writer, quote_id: QuoteId, line_id: LineId, request: Request) -> ActionOut:
+    """07 §7.2.3 "עדכן בהצעה": the price list's price today."""
+    return act(actor, quote_id, request, lambda c: review.take_list_price(c, line_id))
+
+
+@router.post("/quotes/{quote_id}/lines/{line_id}/supplier")
+def choose_supplier(
+    actor: Writer, quote_id: QuoteId, line_id: LineId, body: LineSupplierIn, request: Request
+) -> ActionOut:
+    """09 §7.15: another of the product's suppliers, for this quote only."""
+    return act(actor, quote_id, request, lambda c: review.choose_supplier(c, line_id, body.supplier_price_id))
+
+
+@router.post("/quotes/{quote_id}/lines/{line_id}/supplier/preferred")
+def make_preferred(actor: Writer, quote_id: QuoteId, line_id: LineId, request: Request) -> ActionOut:
+    """09 §7.15 "הפוך למועדף במחירון"."""
+    return act(actor, quote_id, request, lambda c: review.make_preferred(c, line_id))
+
+
+# --- undo, versions -------------------------------------------------------------------------------------------------
+
+
+@router.post("/quotes/{quote_id}/undo/{event_id}")
+def undo(actor: Writer, quote_id: QuoteId, event_id: EventId, request: Request) -> ActionOut:
+    """09 §7.11: takes the action back. After sending, nothing before it is undone."""
+    return act(actor, quote_id, request, lambda c: review.undo(c, event_id))
+
+
+def _versions(actor: Actor, quote_id: str, request: Request, call: Callable[[], Any]) -> QuoteOut:
+    try:
+        call()
+    except quote_versions.VersionError as e:
+        raise ApiError(e.status, e.code) from e
     return quote_out(actor, quote_id, request.app.state.storage)
+
+
+@router.post("/quotes/{quote_id}/send")
+def send_quote(actor: Sender, quote_id: QuoteId, request: Request) -> QuoteOut:
+    """09 §7.12: the version locked (07 §7.7). The only action with no undo."""
+    who = quote_versions.Actor(actor.tenant_id, actor.user_id)
+    return _versions(actor, quote_id, request, lambda: quote_versions.send(actor.session, who, quote_id))
+
+
+@router.post("/quotes/{quote_id}/versions")
+def open_next_version(actor: Sender, quote_id: QuoteId, request: Request) -> QuoteOut:
+    """ "פתח גרסה N+1": a draft copy of the sent version, which stays as it was sent."""
+    who = quote_versions.Actor(actor.tenant_id, actor.user_id)
+    return _versions(actor, quote_id, request, lambda: quote_versions.open_next(actor.session, who, quote_id))
+
+
+def _recalculation(actor: Actor, quote_id: str, request: Request, apply: bool) -> dict[str, Any]:
+    try:
+        return quote_versions.recalculate_draft(
+            actor.session, request.app.state.storage, actor.tenant_id, quote_id, apply
+        )
+    except quote_versions.VersionError as e:
+        raise ApiError(e.status, e.code) from e
+
+
+@router.get("/quotes/{quote_id}/recalculation")
+def preview_recalculation(actor: Reader, quote_id: QuoteId, request: Request) -> RecalculationOut:
+    """07 §7.2.3: what "חישוב מחדש" would change. Nothing is written."""
+    return RecalculationOut.model_validate(_recalculation(actor, quote_id, request, apply=False))
+
+
+@router.post("/quotes/{quote_id}/recalculation")
+def recalculate(actor: Writer, quote_id: QuoteId, request: Request) -> QuoteOut:
+    """Every line of the draft priced from the list today, keeping the estimator's edits."""
+    _recalculation(actor, quote_id, request, apply=True)
+    return quote_out(actor, quote_id, request.app.state.storage)
+
+
+# --- the read model -------------------------------------------------------------------------------------------------
+
+COST_FIELDS = ("unit_cost", "line_cost", "margin_pct", "unit_margin", "cost_source")
 
 
 def quote_out(actor: Actor, quote_id: str, storage: Storage) -> QuoteOut:
     view = quotes.read_quote(actor.session, actor.tenant_id, quote_id)
     if view is None:
         raise ApiError(404, "not_found")
-    nested = ("panels", "totals", "findings", "pages")
+    costs = allowed(actor.role, Permission.COSTS_READ)
+    nested = ("panels", "totals", "findings", "pages", "can_see_costs")
     fields = {k: getattr(view, k) for k in QuoteOut.model_fields if k not in nested}
     return QuoteOut.model_validate(
         {
             **fields,
+            "can_see_costs": costs,
             "findings": [f.__dict__ for f in view.findings],
             "panels": [
                 {
                     "panel_id": p.panel_id,
                     "name": p.name,
-                    "lines": [_line(ln) for ln in p.lines],
-                    "totals": _sums(p.sums),
+                    "lines": [_line(ln, costs) for ln in p.lines],
+                    "totals": _sums(p.sums, costs),
+                    "removed": [r.__dict__ for r in p.removed],
                 }
                 for p in view.panels
             ],
-            "totals": _totals(view.totals),
+            "totals": _totals(view.totals, costs),
             "pages": [_page(p, storage, actor.tenant_id) for p in view.pages],
         }
     )
@@ -86,13 +258,22 @@ def _page(p: quotes.PageView, storage: Storage, tenant_id: str) -> dict[str, Any
     return out
 
 
-def _line(ln: quotes.LineView) -> dict[str, Any]:
-    return {**ln.__dict__, "sources": [s.__dict__ for s in ln.sources], "boxes": [b.__dict__ for b in ln.boxes]}
+def _line(ln: quotes.LineView, costs: bool) -> dict[str, Any]:
+    out = {
+        **ln.__dict__,
+        "sources": [s.__dict__ for s in ln.sources],
+        "boxes": [b.__dict__ for b in ln.boxes],
+        "suppliers": [s.__dict__ for s in ln.suppliers] if costs else [],
+        "price_hints": [h.__dict__ for h in ln.price_hints],
+    }
+    if not costs:  # 09 §12: the server sends no cost at all, not a hidden one
+        out |= dict.fromkeys(COST_FIELDS) | {"below_floor": False}
+    return out
 
 
-def _sums(s: Sums) -> dict[str, Any]:
+def _sums(s: Sums, costs: bool) -> dict[str, Any]:
     return {
-        "cost_total": s.cost_total,
+        "cost_total": s.cost_total if costs else None,
         "price_total": s.price_total,
         "line_counts": s.line_counts,
         "unpriced_count": s.unpriced_count,
@@ -100,14 +281,14 @@ def _sums(s: Sums) -> dict[str, Any]:
     }
 
 
-def _totals(q: QuoteSums) -> dict[str, Any]:
+def _totals(q: QuoteSums, costs: bool) -> dict[str, Any]:
     return {
-        **_sums(q.sums),
+        **_sums(q.sums, costs),
         "discount_pct": q.discount_pct,
         "discount": q.discount,
         "net_total": q.net_total,
-        "margin_abs": q.margin_abs,
-        "margin_pct": q.margin_pct,
+        "margin_abs": q.margin_abs if costs else None,
+        "margin_pct": q.margin_pct if costs else None,
         "vat_rate": q.vat_rate,
         "vat": q.vat,
         "gross_total": q.gross_total,

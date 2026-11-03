@@ -160,7 +160,7 @@ def test_the_drafts_that_use_a_product(pl: Api) -> None:
     assert quote_id is not None
 
     out = pl.client.get(f"/price-list/products/{product['id']}", headers=pl.as_(pl.a)).json()
-    assert out["used_in_drafts"] == [{"quote_id": quote_id, "quote_name": "NURSERY", "lines": [F1_TO_F17]}]
+    assert out["used_in_drafts"] == [{"quote_id": quote_id, "quote_name": "NURSERY", "lines": [F1_TO_F17], "fresh": 0}]
     listed = pl.client.get("/price-list/products", headers=pl.as_(pl.a)).json()
     assert all(p["used_in_drafts"] == [] for p in listed)  # only on GET of one product
 

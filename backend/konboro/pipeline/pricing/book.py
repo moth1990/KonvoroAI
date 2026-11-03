@@ -95,6 +95,13 @@ class Book:
     def _items_by_sku(self) -> dict[tuple[str, str], Item]:
         return {(i.brand.upper(), sku_key(i.sku)): i for i in self.items}
 
+    @cached_property
+    def _by_id(self) -> dict[str, Product]:
+        return {p.product_id: p for p in self.products}
+
+    def product_by_id(self, product_id: str | None) -> Product | None:
+        return self._by_id.get(product_id) if product_id else None
+
     def product(self, catalog_item_id: str | None, sku: str | None) -> Product | None:
         if catalog_item_id and catalog_item_id in self._by_item:
             return self._by_item[catalog_item_id]

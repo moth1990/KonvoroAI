@@ -911,6 +911,22 @@
     "StatusReason": {
       "additionalProperties": false,
       "properties": {
+        "floor": {
+          "anyOf": [
+            {
+              "examples": [
+                "0.15"
+              ],
+              "pattern": "^-?\\d+(\\.\\d+)?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Floor"
+        },
         "issue_id": {
           "anyOf": [
             {
@@ -923,6 +939,14 @@
           ],
           "default": null,
           "title": "Issue Id"
+        },
+        "issues": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Issues",
+          "type": "array"
         },
         "source": {
           "enum": [
@@ -948,6 +972,23 @@
         "value": {
           "default": null,
           "title": "Value"
+        },
+        "was": {
+          "anyOf": [
+            {
+              "enum": [
+                "green",
+                "yellow",
+                "red"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Was"
         }
       },
       "required": [

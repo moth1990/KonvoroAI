@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import {
   useCallback,
@@ -8,20 +8,41 @@ import {
   useRef,
   useState,
   useSyncExternalStore,
+  Fragment,
   type ReactNode,
 } from "react";
 import { Link, useParams } from "react-router";
 
-import { ApiError, fetchQuote, type Finding, type Quote, type QuoteLine } from "../../api/client";
+import {
+  ApiError,
+  dismissFinding,
+  fetchQuote,
+  lineAction,
+  openNextVersion,
+  previewRecalculation,
+  recalculateQuote,
+  restoreLines,
+  sendQuote,
+  undoAction,
+  type ActionResult,
+  type DismissReason,
+  type Finding,
+  type LineAction,
+  type Quote,
+  type QuoteLine,
+  type Recalculation,
+} from "../../api/client";
 import { Shell } from "../../shell/Shell";
 import { MOBILE_MAX_PX } from "../../theme/tokens";
 import { Icon } from "../../ui/Icon";
 import { Modal } from "../../ui/Modal";
+import { useToast } from "../../ui/Toast";
 import { INPUT_KINDS } from "../newQuote/model";
 import { DrawingPane } from "./Drawing";
 import { boxOnPage, findingBox, firstPage, overlays, pageForLine, stepPage } from "./drawingModel";
-import { LineDetail } from "./LineDetail";
+import { DismissControl, LineDetail, type DetailActions } from "./LineDetail";
 import {
+  belowFloor,
   buildRows,
   compactDesignators,
   FILTERS,
@@ -40,8 +61,14 @@ import {
   type Row,
   type Shape,
   matches,
+  nextToCheck,
+  nextUnpriced,
+  parseAmount,
+  priceChips,
+  sendSummary,
+  takesPrice,
 } from "./model";
-import { isUndoKey, useUndo } from "./undo";
+import { isUndoKey, undoStackFor, useUndo } from "./undo";
 import type { FocusRequest } from "./Viewer";
 
 type Tab = "lines" | "drawing" | "chat";
@@ -69,7 +96,10 @@ function readMarginPref(): boolean {
 
 /**
  * The review screen (09 §5–6.5, §8, prototype `vReview`): header, filters, findings, the grouped lines table and
- * line detail (S09), the drawing pane and undo (S11). Actions are S23, chat S25.
+ * line detail (S09), the drawing pane and undo (S11), and the actions (S23, 09 §7). Chat is S25.
+ *
+ * An action goes to the server and the screen shows what it answers: the server prices and colours every line
+ * (09 principle 7), within 500 ms (09 §14), so the screen never guesses an amount it would have to take back.
  */
 export function ReviewScreen() {
   const { quoteId = "" } = useParams();
@@ -105,6 +135,14 @@ function Review({ quote }: { quote: Quote }) {
   const [shownFinding, setShownFinding] = useState<{ pageId: string; bbox: number[] } | null>(null);
   const focusCount = useRef(0);
   const undo = useUndo(quote.quote_id);
+  const toast = useToast();
+  const qc = useQueryClient();
+  const locked = quote.status === "sent";
+  const [saveToList, setSaveToList] = useState<Record<string, boolean>>({});
+  const [busy, setBusy] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [recalc, setRecalc] = useState<Recalculation | null>(null);
+  const [dismissing, setDismissing] = useState<string | null>(null);
 
   const panel = quote.panels[Math.min(panelIdx, quote.panels.length - 1)];
   const allLines = useMemo(() => quote.panels.flatMap((p) => p.lines), [quote]);
@@ -146,7 +184,7 @@ function Review({ quote }: { quote: Quote }) {
   const virtual = useVirtualizer({
     count: rows.length,
     getScrollElement: () => scrollRef.current,
-    estimateSize: (i) => ({ group: 34, total: 44, empty: 120, line: 58 })[rows[i]?.kind ?? "line"],
+    estimateSize: (i) => ({ group: 34, total: 44, empty: 120, line: 58, removed: 40 })[rows[i]?.kind ?? "line"],
     getItemKey: (i) => rows[i]?.key ?? i,
     overscan: 10,
     scrollMargin: listTop,
@@ -247,7 +285,175 @@ function Review({ quote }: { quote: Quote }) {
     setSelected(null);
   };
 
-  // 09 §8, on the desktop, when the focus is not in a text field. Enter waits for "approve" (S23, decision 9).
+  // --- actions (09 §7) ---------------------------------------------------------------------------------------------
+
+  const quoteId = quote.quote_id;
+  const show = useCallback((q: Quote) => qc.setQueryData(["quote", quoteId], q), [qc, quoteId]);
+
+  /** Runs an action; its toast offers "בטל" when it has an event (09 §7.11). Resolves true when the server took it. */
+  const run = useCallback(
+    async (call: () => Promise<ActionResult>, after?: (q: Quote) => void): Promise<boolean> => {
+      setBusy(true);
+      try {
+        const done = await call();
+        show(done.quote);
+        const eventId = done.event_id;
+        if (eventId)
+          undo.record({
+            label: done.message,
+            undo: async () => {
+              show((await undoAction(quoteId, eventId)).quote);
+            },
+          });
+        else toast(done.message);
+        after?.(done.quote);
+        return true;
+      } catch (e) {
+        toast(e instanceof ApiError ? e.message : "לא הצלחנו לשמור. נסו שוב");
+        if (e instanceof ApiError && e.status === 409) void qc.invalidateQueries({ queryKey: ["quote", quoteId] });
+        return false;
+      } finally {
+        setBusy(false);
+      }
+    },
+    [show, undo, toast, quoteId, qc],
+  );
+
+  const panelIds = useCallback(
+    (q: Quote) => {
+      const p = q.panels[Math.min(panelIdx, q.panels.length - 1)];
+      return p ? buildRows(p, filter).flatMap((r) => (r.kind === "line" ? [r.key] : [])) : [];
+    },
+    [panelIdx, filter],
+  );
+
+  const act = useCallback(
+    (line: QuoteLine, action: LineAction) =>
+      run(
+        () => lineAction(quoteId, line.line_id, action),
+        (q) => {
+          if (action.kind === "approve") {
+            // 09 §7.2: on to the next line that still needs checking
+            const lines = q.panels.flatMap((p) => p.lines);
+            const next = nextToCheck(panelIds(q), lines, line.line_id);
+            if (next) {
+              setSelected(next);
+              setOpen((o) => (o === line.line_id ? next : o));
+            }
+          } else if (action.kind === "delete") {
+            setOpen((o) => (o === line.line_id ? null : o));
+            setSelected((sel) => (sel === line.line_id ? null : sel));
+          }
+        },
+      ),
+    [run, quoteId, panelIds],
+  );
+
+  const dismiss = useCallback(
+    (f: Finding, reason: DismissReason, text?: string) =>
+      run(
+        () => dismissFinding(quoteId, f.finding_id, reason, text),
+        () => setDismissing(null),
+      ),
+    [run, quoteId],
+  );
+
+  /** The row's price cell (S23 decision 3): Enter saves it and moves on to the next line with no price. */
+  const enterPrice = (line: QuoteLine, text: string) => {
+    const amount = parseAmount(text);
+    if (amount === null) {
+      toast("הזינו מחיר ליחידה, במספרים");
+      return;
+    }
+    const save = saveToList[line.line_id] !== false;
+    void run(
+      () => lineAction(quoteId, line.line_id, { kind: "price-entry", unit_price: amount, save }),
+      (q) => {
+        const lines = q.panels.flatMap((p) => p.lines);
+        const next = nextUnpriced(panelIds(q), lines, line.line_id);
+        if (!next) return;
+        const index = rows.findIndex((r) => r.key === next);
+        if (index >= 0) virtual.scrollToIndex(index, { align: "auto" });
+        requestAnimationFrame(() => document.querySelector<HTMLInputElement>(`#price-${next}`)?.focus());
+      },
+    );
+  };
+
+  const detailActions = (line: QuoteLine): DetailActions => ({
+    locked,
+    lineFloor: quote.line_floor,
+    saveToList: saveToList[line.line_id] !== false,
+    onSaveToList: (on) => setSaveToList((m) => ({ ...m, [line.line_id]: on })),
+    onAction: act,
+    onDismiss: dismiss,
+  });
+
+  const restore = (ids: string[]) => void run(() => restoreLines(quoteId, ids));
+
+  const send = async () => {
+    setBusy(true);
+    try {
+      show(await sendQuote(quoteId));
+      undoStackFor(quoteId).clear(); // nothing before sending can be undone (09 §7.11)
+      setSending(false);
+      toast(`גרסה ${quote.version} נשלחה ונעולה`);
+    } catch (e) {
+      toast(e instanceof ApiError ? e.message : "לא הצלחנו לשלוח. נסו שוב");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const openNext = async () => {
+    try {
+      show(await openNextVersion(quoteId));
+      toast(`נפתחה גרסה ${quote.version + 1}. הגרסה הקודמת נשמרה`);
+    } catch (e) {
+      toast(e instanceof ApiError ? e.message : "לא הצלחנו לפתוח גרסה חדשה");
+    }
+  };
+
+  const freshCount = allLines.filter((l) => l.fresh_price != null).length;
+  const askRecalc = async () => {
+    try {
+      setRecalc(await previewRecalculation(quoteId));
+    } catch (e) {
+      toast(e instanceof ApiError ? e.message : "לא הצלחנו לחשב מחדש");
+    }
+  };
+  const applyRecalc = async () => {
+    try {
+      show(await recalculateQuote(quoteId));
+      setRecalc(null);
+      toast("ההצעה חושבה מחדש לפי המחירון");
+    } catch (e) {
+      toast(e instanceof ApiError ? e.message : "לא הצלחנו לחשב מחדש");
+    }
+  };
+
+  const keyAction = useRef<(e: KeyboardEvent) => boolean>(() => false);
+  keyAction.current = (e: KeyboardEvent) => {
+    if (locked || busy || !selected) return false;
+    const line = allLines.find((l) => l.line_id === selected);
+    if (!line) return false;
+    if (e.key === "Enter" && !line.approved && line.line_type !== "missing" && line.line_type !== "manual") {
+      void act(line, { kind: "approve" });
+      return true;
+    }
+    if (e.key === "Delete" || e.key === "Backspace") {
+      void act(line, { kind: "delete" });
+      return true;
+    }
+    const n = ["1", "2", "3"].indexOf(e.key);
+    if (n >= 0 && line.alternatives[n] && e.code.startsWith("Digit")) {
+      void act(line, { kind: "alternative", index: n });
+      return true;
+    }
+    return false;
+  };
+
+  // 09 §8, on the desktop, when the focus is not in a text field. Enter approves (S09 decision 9), 1–3 choose an
+  // alternative, Delete deletes.
   // Undo (Ctrl+Z / ⌘Z) works on any keyboard, the phone's too (09 §7.11).
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -260,6 +466,10 @@ function Review({ quote }: { quote: Quote }) {
         return;
       }
       if (phone) return;
+      if (keyAction.current(e)) {
+        e.preventDefault();
+        return;
+      }
       if (e.key === "PageDown" || e.key === "PageUp") {
         e.preventDefault();
         const next = stepPage(quote.pages, pageId, e.key === "PageDown" ? 1 : -1);
@@ -306,7 +516,11 @@ function Review({ quote }: { quote: Quote }) {
         <div className="rv-totals" data-testid="rv-totals">
           <span className="small muted">לפני מע"מ</span>
           <b className="num">{shekels(t.net_total)}</b>
-          {t.margin_pct != null ? <span className="chip ok">רווח {percent(t.margin_pct)}</span> : null}
+          {t.margin_pct != null ? (
+            <span className={`chip ${belowFloor(t.margin_pct, quote.quote_floor) ? "warn" : "ok"}`}>
+              רווח {percent(t.margin_pct)}
+            </span>
+          ) : null}
           {t.unpriced_count ? <span className="chip bad">{t.unpriced_count} חסרים</span> : null}
         </div>
         <button
@@ -320,7 +534,23 @@ function Review({ quote }: { quote: Quote }) {
         >
           <Icon name="undo" />
         </button>
+        {locked ? (
+          <button type="button" className="btn primary sm" data-testid="newver" onClick={() => void openNext()}>
+            פתח גרסה {quote.version + 1}
+          </button>
+        ) : (
+          <button type="button" className="btn primary sm" data-testid="send" onClick={() => setSending(true)}>
+            <Icon name="send" />
+            אשר ושלח
+          </button>
+        )}
       </div>
+      {locked ? (
+        <div className="locked" data-testid="locked">
+          <Icon name="lock" />
+          <span>גרסה {quote.version} נשלחה ללקוח ונעולה. כדי לשנות, פותחים גרסה חדשה.</span>
+        </div>
+      ) : null}
       <div className="rv-tabs" role="tablist" aria-label="תצוגה">
         {(
           [
@@ -383,6 +613,11 @@ function Review({ quote }: { quote: Quote }) {
             <button type="button" className="fchip" aria-pressed={showMargin} onClick={toggleMargin}>
               רווחיות
             </button>
+            {!locked && freshCount ? (
+              <button type="button" className="fchip" data-testid="recalc" onClick={() => void askRecalc()}>
+                {freshCount === 1 ? "מחיר חדש במחירון" : `${freshCount} מחירים חדשים במחירון`}
+              </button>
+            ) : null}
             {quote.coverage_pct != null && quote.coverage_pct < 100 ? (
               <span className="small muted">
                 כיסוי מחירון <b className="num">{quote.coverage_pct}%</b>
@@ -403,7 +638,21 @@ function Review({ quote }: { quote: Quote }) {
             </div>
           </div>
           <div className="lines-scroll" ref={scrollRef} data-testid="lines-scroll">
-            <Findings findings={quote.findings} onShow={showFinding} />
+            <Findings
+              findings={quote.findings}
+              onShow={showFinding}
+              locked={locked}
+              dismissing={dismissing}
+              onDismissing={setDismissing}
+              onDismiss={dismiss}
+              onOnlyRed={() => setFilter("red")}
+              onOpenLine={(id) => {
+                setFilter("all");
+                setSelected(id);
+                setOpen(id);
+                follow(id);
+              }}
+            />
             <div className="lh" aria-hidden="true">
               <span />
               <span />
@@ -437,14 +686,23 @@ function Review({ quote }: { quote: Quote }) {
                       selected={selected}
                       open={phone ? null : open}
                       showMargin={showMargin}
+                      locked={locked}
                       onToggle={toggle}
                       onShowAll={() => setFilter("all")}
                       onShowOnDrawing={showOnDrawing}
+                      onEnterPrice={enterPrice}
+                      onRestore={restore}
+                      detailActions={detailActions}
                     />
                   </div>
                 );
               })}
             </div>
+            {quote.derived_note ? (
+              <div className="small muted" style={{ padding: 14 }} data-testid="derived-note">
+                {quote.derived_note} <Link to="/prefs">שינוי</Link>
+              </div>
+            ) : null}
           </div>
           <div className="lines-foot" data-testid="lines-foot">
             <span>
@@ -456,9 +714,12 @@ function Review({ quote }: { quote: Quote }) {
             <span>
               כולל מע"מ <b className="num">{shekels(t.gross_total)}</b>
             </span>
-            <span>
-              רווח <b className="num">{shekels(t.margin_abs)}</b> <span className="num">({percent(t.margin_pct)})</span>
-            </span>
+            {quote.can_see_costs ? (
+              <span className={belowFloor(t.margin_pct, quote.quote_floor) ? "warn-t" : undefined}>
+                רווח <b className="num">{shekels(t.margin_abs)}</b>{" "}
+                <span className="num">({percent(t.margin_pct)})</span>
+              </span>
+            ) : null}
             {t.uncosted_count ? (
               <span className="small muted">
                 {t.uncosted_count === 1 ? "שורה אחת בלי עלות לא נכללת" : `${t.uncosted_count} שורות בלי עלות לא נכללות`}
@@ -466,8 +727,10 @@ function Review({ quote }: { quote: Quote }) {
             ) : null}
             <span className="spacer" />
             <span className="small muted kbd-hint">
-              <span className="kbd">↑</span> <span className="kbd">↓</span> ניווט · <span className="kbd">Space</span>{" "}
-              פרטים · <span className="kbd">PgDn</span> עמוד · <span className="kbd">Esc</span> סגירה
+              <span className="kbd">↑</span> <span className="kbd">↓</span> ניווט · <span className="kbd">Enter</span>{" "}
+              אישור · <span className="kbd">Space</span> פרטים · <span className="kbd">1</span>–
+              <span className="kbd">3</span> חלופה · <span className="kbd">PgDn</span> עמוד ·{" "}
+              <span className="kbd">Esc</span> סגירה
             </span>
           </div>
         </section>
@@ -503,16 +766,38 @@ function Review({ quote }: { quote: Quote }) {
               <Icon name="x" />
             </button>
           </div>
-          <LineDetail line={sheetLine} findings={quote.findings} onShowOnDrawing={showOnDrawing} />
+          <LineDetail
+            line={sheetLine}
+            findings={quote.findings}
+            onShowOnDrawing={showOnDrawing}
+            actions={detailActions(sheetLine)}
+          />
         </Modal>
+      ) : null}
+      {sending ? (
+        <SendDialog quote={quote} busy={busy} onSend={() => void send()} onClose={() => setSending(false)} />
+      ) : null}
+      {recalc ? (
+        <RecalcDialog diff={recalc} onApply={() => void applyRecalc()} onClose={() => setRecalc(null)} />
       ) : null}
     </div>
   );
 }
 
-function Findings({ findings, onShow }: { findings: Finding[]; onShow: (f: Finding) => void }) {
+function Findings(props: {
+  findings: Finding[];
+  onShow: (f: Finding) => void;
+  locked: boolean;
+  dismissing: string | null;
+  onDismissing: (id: string | null) => void;
+  onDismiss: (f: Finding, reason: DismissReason, text?: string) => Promise<boolean>;
+  onOnlyRed: () => void;
+  onOpenLine: (lineId: string) => void;
+}) {
+  const { findings } = props;
   if (!findings.length) return null;
-  // Read-only until S23 (dismiss), S09 decision 11. "בשרטוט" frames the finding's box (S11).
+  // prototype `f-*`: "הצג רק אותן" for the lines with no price, "פתח את השורה", "בשרטוט" (S11), and a dismissal with
+  // a reason (09 §7.7) for any finding a price does not answer
   return (
     <details className="findings" open data-testid="findings">
       <summary>
@@ -521,18 +806,49 @@ function Findings({ findings, onShow }: { findings: Finding[]; onShow: (f: Findi
         <span className="small muted">מהבודק</span>
       </summary>
       {findings.map((f) => (
-        <div key={f.finding_id} className="finding">
+        <div key={f.finding_id} className="finding" data-testid="finding">
           <span className={`sev ${f.severity}`} aria-hidden="true" />
           <div style={{ display: "grid", gap: 3 }}>
             <b>{f.title ?? f.message}</b>
             {f.title ? <span className="small muted">{f.message}</span> : null}
           </div>
-          {findingBox(f) ? (
-            <div className="acts">
-              <button type="button" className="btn ghost sm" data-testid="f-show" onClick={() => onShow(f)}>
+          <div className="acts">
+            {f.code === "missing_cost" ? (
+              <button type="button" className="btn sm" data-testid="f-onlyred" onClick={props.onOnlyRed}>
+                הצג רק אותן
+              </button>
+            ) : null}
+            {f.source !== "pricing" && f.line_ids.length === 1 && f.line_ids[0] ? (
+              <button
+                type="button"
+                className="btn sm"
+                data-testid="f-goto"
+                onClick={() => props.onOpenLine(f.line_ids[0] ?? "")}
+              >
+                פתח את השורה
+              </button>
+            ) : null}
+            {!props.locked && f.source !== "pricing" ? (
+              <button
+                type="button"
+                className="btn sm"
+                data-testid="f-ignore"
+                aria-expanded={props.dismissing === f.finding_id}
+                onClick={() => props.onDismissing(props.dismissing === f.finding_id ? null : f.finding_id)}
+              >
+                דחה…
+              </button>
+            ) : null}
+            {findingBox(f) ? (
+              <button type="button" className="btn ghost sm" data-testid="f-show" onClick={() => props.onShow(f)}>
                 <Icon name="eye" />
                 בשרטוט
               </button>
+            ) : null}
+          </div>
+          {props.dismissing === f.finding_id ? (
+            <div style={{ gridColumn: 2 }}>
+              <DismissControl finding={f} onDismiss={props.onDismiss} />
             </div>
           ) : null}
         </div>
@@ -547,9 +863,13 @@ function RowView(props: {
   selected: string | null;
   open: string | null;
   showMargin: boolean;
+  locked: boolean;
   onToggle: (id: string) => void;
   onShowAll: () => void;
   onShowOnDrawing: (line: QuoteLine) => void;
+  onEnterPrice: (line: QuoteLine, text: string) => void;
+  onRestore: (ids: string[]) => void;
+  detailActions: (line: QuoteLine) => DetailActions;
 }) {
   const { row } = props;
   if (row.kind === "group") return <div className="grp">{row.label}</div>;
@@ -569,6 +889,17 @@ function RowView(props: {
         </button>
       </div>
     );
+  if (row.kind === "removed")
+    return (
+      <div className="ln-removed" data-testid="removed">
+        <span>{row.lineIds.length === 1 ? "פריט נלווה אחד הוסר" : `${row.lineIds.length} פריטים נלווים הוסרו`}</span>
+        {props.locked ? null : (
+          <button type="button" className="btn ghost sm" onClick={() => props.onRestore(row.lineIds)}>
+            החזר
+          </button>
+        )}
+      </div>
+    );
   return (
     <LineRow
       line={row.line}
@@ -577,8 +908,11 @@ function RowView(props: {
       selected={props.selected === row.line.line_id}
       open={props.open === row.line.line_id}
       showMargin={props.showMargin}
+      locked={props.locked}
       onToggle={props.onToggle}
       onShowOnDrawing={props.onShowOnDrawing}
+      onEnterPrice={props.onEnterPrice}
+      detailActions={props.detailActions}
     />
   );
 }
@@ -590,12 +924,16 @@ function LineRow(props: {
   selected: boolean;
   open: boolean;
   showMargin: boolean;
+  locked: boolean;
   onToggle: (id: string) => void;
   onShowOnDrawing: (line: QuoteLine) => void;
+  onEnterPrice: (line: QuoteLine, text: string) => void;
+  detailActions: (line: QuoteLine) => DetailActions;
 }) {
   const { line } = props;
   const mark = statusMark(line);
   const tone = { green: "g", yellow: "y", red: "r" }[line.status];
+  const priceCell = !props.locked && takesPrice(line);
   return (
     <>
       <div
@@ -606,7 +944,10 @@ function LineRow(props: {
         data-testid="line"
         aria-current={props.selected ? "true" : undefined}
         aria-expanded={props.open}
-        onClick={() => props.onToggle(line.line_id)}
+        onClick={(e) => {
+          if ((e.target as HTMLElement).closest("input")) return; // typing a price is not a click on the row
+          props.onToggle(line.line_id);
+        }}
       >
         <span className="stripe" aria-hidden="true" />
         <StatusIcon shape={mark.shape} label={mark.label} />
@@ -618,7 +959,7 @@ function LineRow(props: {
                 {d}
               </span>
             ))}
-            {reasonChips(line, props.findings).map((c) => (
+            {[...reasonChips(line, props.findings), ...priceChips(line, props.locked)].map((c) => (
               <span key={c.text} className={`chip ${c.tone}`}>
                 {c.text}
               </span>
@@ -629,10 +970,30 @@ function LineRow(props: {
         </div>
         <span className="q num">{qtyText(line.qty)}</span>
         <span className="p">
-          {line.included ? <span className="small muted">כלול</span> : shekels(line.unit_price)}
+          {line.included ? (
+            <span className="small muted">כלול</span>
+          ) : priceCell ? (
+            <input
+              className="price-in"
+              id={`price-${line.line_id}`}
+              data-testid="price-in"
+              inputMode="decimal"
+              placeholder="מחיר"
+              aria-label={`מחיר ליחידה ל${line.description}`}
+              onKeyDown={(e) => {
+                e.stopPropagation(); // the row's own keys (Enter approves) are not the cell's
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  props.onEnterPrice(line, e.currentTarget.value);
+                }
+              }}
+            />
+          ) : (
+            shekels(line.unit_price)
+          )}
         </span>
         {props.showMargin ? (
-          <span className="mg num">
+          <span className={`mg num${line.below_floor ? " warn-t" : ""}`}>
             {line.included ? "" : line.margin_pct == null ? "—" : percent(line.margin_pct)}
           </span>
         ) : null}
@@ -640,10 +1001,101 @@ function LineRow(props: {
       </div>
       {props.open ? (
         <div style={{ padding: "0 14px 8px" }}>
-          <LineDetail line={line} findings={props.findings} onShowOnDrawing={props.onShowOnDrawing} />
+          <LineDetail
+            line={line}
+            findings={props.findings}
+            onShowOnDrawing={props.onShowOnDrawing}
+            actions={props.detailActions(line)}
+          />
         </div>
       ) : null}
     </>
+  );
+}
+
+/** 09 §7.12, prototype `send`: the one dialog that asks before acting, since sending cannot be undone. */
+function SendDialog(props: { quote: Quote; busy: boolean; onSend: () => void; onClose: () => void }) {
+  const { quote } = props;
+  const t = quote.totals;
+  const sum = sendSummary(quote);
+  return (
+    <Modal onClose={props.onClose} labelledBy="send-title">
+      <h2 id="send-title">לשלוח את גרסה {quote.version}?</h2>
+      <dl className="kv">
+        <dt>לפני מע"מ</dt>
+        <dd className="num">
+          <b>{shekels(t.net_total)}</b>
+        </dd>
+        <dd />
+        <dt>כולל מע"מ</dt>
+        <dd className="num">{shekels(t.gross_total)}</dd>
+        <dd />
+        {quote.can_see_costs && t.margin_pct != null ? (
+          <>
+            <dt>רווח</dt>
+            <dd className="num">
+              {shekels(t.margin_abs)} ({percent(t.margin_pct)})
+            </dd>
+            <dd />
+          </>
+        ) : null}
+      </dl>
+      {sum.unpriced ? (
+        <div className="small alert-bad">
+          {sum.unpriced === 1 ? "שורה אחת בלי מחיר לא נכללת" : `${sum.unpriced} שורות בלי מחיר לא נכללות`} בסכום, ותופיע
+          בהצעה בלי סכום. מומלץ להשלים לפני השליחה.
+        </div>
+      ) : null}
+      {sum.red && sum.red !== sum.unpriced ? <div className="small alert-bad">{sum.red} שורות אדומות.</div> : null}
+      {sum.yellow ? <div className="small alert-warn">{sum.yellow} שורות צהובות לא אושרו.</div> : null}
+      <span className="small muted">הלקוח מקבל תיאור, כמות, מחיר וסכום. לא עלות, לא רווח ולא צבעים.</span>
+      <div className="row">
+        <button type="button" className="btn primary" data-testid="dosend" disabled={props.busy} onClick={props.onSend}>
+          {sum.red || sum.yellow ? "שלח בכל זאת" : "שלח ללקוח"}
+        </button>
+        <button type="button" className="btn" onClick={props.onClose}>
+          חזרה להצעה
+        </button>
+      </div>
+    </Modal>
+  );
+}
+
+/** 07 §7.2.3: "חישוב מחדש" shows what changes before it is applied. */
+function RecalcDialog(props: { diff: Recalculation; onApply: () => void; onClose: () => void }) {
+  const { diff } = props;
+  const changed = diff.lines.filter((x) => x.change === "changed");
+  return (
+    <Modal onClose={props.onClose} labelledBy="recalc-title" className="wide">
+      <h2 id="recalc-title">לעדכן את ההצעה לפי המחירון?</h2>
+      {changed.length ? (
+        <dl className="kv">
+          {changed.map((x) => (
+            <Fragment key={x.key}>
+              <dt>{x.description}</dt>
+              <dd className="num">
+                {shekels((x.before?.unit_price as string | undefined) ?? null)} ←{" "}
+                {shekels((x.after?.unit_price as string | undefined) ?? null)}
+              </dd>
+              <dd className="num small muted">{shekels(x.delta ?? null)}</dd>
+            </Fragment>
+          ))}
+        </dl>
+      ) : (
+        <span className="small muted">אין שינוי במחירים.</span>
+      )}
+      <span className="small">
+        לפני מע"מ: <b className="num">{shekels(diff.net_before)}</b> ← <b className="num">{shekels(diff.net_after)}</b>
+      </span>
+      <div className="row">
+        <button type="button" className="btn primary" data-testid="dorecalc" onClick={props.onApply}>
+          עדכן את כל השורות
+        </button>
+        <button type="button" className="btn" onClick={props.onClose}>
+          ביטול
+        </button>
+      </div>
+    </Modal>
   );
 }
 

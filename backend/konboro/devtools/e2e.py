@@ -90,7 +90,8 @@ TENANTS = (
     E2eTenant(8, "done-dark-desktop@e2e.konboro.local", home_chat=False, used=12, sample_data=False),
     E2eTenant(9, "done-light-mobile@e2e.konboro.local", home_chat=False, used=12, sample_data=False),
     E2eTenant(10, "done-dark-mobile@e2e.konboro.local", home_chat=False, used=12, sample_data=False),
-    E2eTenant(11, "review@e2e.konboro.local", home_chat=False, used=12, sample_data=False, nursery=True),
+    # with the demo price list since S23, as the prototype has one: the detail's prices, costs and suppliers
+    E2eTenant(11, "review@e2e.konboro.local", home_chat=False, used=12, sample_data=False, nursery=True, prices=True),
     # BOM uploads (S14), apart from the drawing uploads so neither changes the other's quota counts.
     E2eTenant(12, "bom-desktop@e2e.konboro.local", home_chat=False, used=12, sample_data=False),
     E2eTenant(13, "bom-mobile@e2e.konboro.local", home_chat=False, used=12, sample_data=False),
@@ -105,6 +106,10 @@ TENANTS = (
     E2eTenant(18, "prices-mobile@e2e.konboro.local", False, 12, False, nursery=True, prices=True),
     E2eTenant(19, "prices-shots@e2e.konboro.local", False, 12, False, nursery=True, prices=True),
     E2eTenant(20, "prices-off@e2e.konboro.local", False, 12, False, off=("price_list",)),
+    # The review screen's actions (S23): they change the NURSERY draft (and sending locks it), so one tenant per
+    # project, with the demo price list for its prices, costs and suppliers.
+    E2eTenant(21, "review-desktop@e2e.konboro.local", False, 12, False, nursery=True, prices=True),
+    E2eTenant(22, "review-mobile@e2e.konboro.local", False, 12, False, nursery=True, prices=True),
 )
 
 # A project with this name runs slowly, so a test can cancel it mid-run; every other upload runs at full speed.

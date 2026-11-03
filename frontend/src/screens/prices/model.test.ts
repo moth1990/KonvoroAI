@@ -332,7 +332,9 @@ describe("history, drafts and the toast", () => {
 
   it("names the drafts that use the product", () => {
     expect(draftsText(product())).toBeNull();
-    const one = product({ used_in_drafts: [{ quote_id: "quo_1", quote_name: "NURSERY", lines: ["F1, F2", "Q0"] }] });
+    const one = product({
+      used_in_drafts: [{ quote_id: "quo_1", quote_name: "NURSERY", lines: ["F1, F2", "Q0"], fresh: 0 }],
+    });
     expect(draftsText(one)).toBe("בשימוש בטיוטה הפתוחה NURSERY (F1, F2 · Q0)");
   });
 
@@ -341,5 +343,12 @@ describe("history, drafts and the toast", () => {
     expect(savedText(null, before)).toBe("המוצר נוסף למחירון");
     expect(savedText(before, product())).toBe("נשמר");
     expect(savedText(before, product({ unit_price: "195.0000" }))).toBe("נשמר. הצעות שנשלחו לא השתנו");
+    const used = (fresh: number) => [{ quote_id: "quo_1", quote_name: "NURSERY", lines: ["F1"], fresh }];
+    expect(savedText(before, product({ unit_price: "195.0000", used_in_drafts: used(1) }))).toBe(
+      'נשמר. הצעות שנשלחו לא השתנו; בטיוטה הפתוחה שורה אחת מסומנת "מחיר חדש"',
+    );
+    expect(savedText(before, product({ unit_price: "195.0000", used_in_drafts: used(3) }))).toBe(
+      'נשמר. הצעות שנשלחו לא השתנו; בטיוטה הפתוחה 3 שורות מסומנות "מחיר חדש"',
+    );
   });
 });

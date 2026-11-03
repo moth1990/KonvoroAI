@@ -41,6 +41,14 @@ export function line(over: Partial<QuoteLine> = {}): QuoteLine {
     derived: null,
     approved: false,
     boxes: [],
+    product_id: "prd_01JD0000000000000000000001",
+    override: false,
+    fresh_price: null,
+    below_floor: false,
+    suppliers: [],
+    supplier_id: null,
+    price_hints: [],
+    qty_editable: true,
     ...over,
   };
 }
@@ -53,6 +61,7 @@ export function panel(name: string, lines: QuoteLine[], priceTotal = "0.0000"): 
     name,
     lines,
     totals: { cost_total: "0", price_total: priceTotal, line_counts: zero, unpriced_count: 0, uncosted_count: 0 },
+    removed: [],
   };
 }
 
@@ -72,6 +81,10 @@ export function quote(panels: Quote["panels"], findings: Finding[] = [], pages: 
     panels,
     findings,
     pages,
+    line_floor: "0.1500",
+    quote_floor: "0.1500",
+    derived_note: null,
+    can_see_costs: true,
     totals: {
       cost_total: "0",
       price_total: "0",
@@ -126,6 +139,7 @@ export function finding(over: Partial<Finding> = {}): Finding {
     page_no: null,
     page_id: null,
     bbox: null,
+    source: "rule",
     ...over,
   };
 }

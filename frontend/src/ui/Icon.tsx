@@ -75,6 +75,12 @@ const PATHS = {
       <circle cx="12" cy="12" r="3" />
     </>
   ),
+  lock: (
+    <>
+      <rect x="4" y="11" width="16" height="10" rx="2" />
+      <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+    </>
+  ),
   upload: (
     <>
       <path d="M12 16V4M7 9l5-5 5 5" />

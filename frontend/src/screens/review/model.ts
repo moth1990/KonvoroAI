@@ -116,6 +116,7 @@ export const SECTION_LABELS = { missing: "רכיבים שלא זוהו", extras:
 export type Row =
   | { kind: "group"; key: string; label: string }
   | { kind: "line"; key: string; line: QuoteLine; child: boolean }
+  | { kind: "removed"; key: string; lineIds: string[] }
   | { kind: "total"; key: string; label: string; amount: string }
   | { kind: "empty"; key: string };
 
@@ -137,8 +138,67 @@ export function buildRows(panel: Quote["panels"][number], filter: Filter): Row[]
     rows.push({ kind: "line", key: line.line_id, line, child: line.parent_line_id !== null });
   }
   if (shown.length === 0) rows.push({ kind: "empty", key: "empty" });
+  // 09 §6.3 item 4: "X פריטים נלווים הוסרו" with "החזר", at the end of the accessories
+  if (panel.removed.length) {
+    if (heading !== SECTION_LABELS.extras) rows.push({ kind: "group", key: "g:removed", label: SECTION_LABELS.extras });
+    rows.push({ kind: "removed", key: "removed", lineIds: panel.removed.map((r) => r.line_id) });
+  }
   rows.push({ kind: "total", key: "total", label: `סה״כ ${panel.name} לפני מע״מ`, amount: panel.totals.price_total });
   return rows;
+}
+
+/**
+ * 09 §7.2: after an approval, the next line that still needs checking (not green), in table order, going on from the
+ * start at the end. `ids` are the table's lines in order; null when none is left.
+ */
+export function nextToCheck(ids: string[], lines: QuoteLine[], current: string | null): string | null {
+  const byId = new Map(lines.map((l) => [l.line_id, l]));
+  const at = current === null ? -1 : ids.indexOf(current);
+  for (let step = 1; step <= ids.length; step++) {
+    const id = ids[(at + step + ids.length) % ids.length];
+    if (id === undefined || id === current) continue;
+    if (byId.get(id)?.status !== "green") return id;
+  }
+  return null;
+}
+
+/** A line whose price is typed in its row (prototype line 879): no price, not a kit part priced in its parent. */
+export function takesPrice(line: QuoteLine): boolean {
+  return line.unit_price == null && !line.included && (line.line_type === "component" || line.line_type === "manual");
+}
+
+/** 09 §7.13: Enter in a price cell saves it and moves to the next line with no price, after this one. */
+export function nextUnpriced(ids: string[], lines: QuoteLine[], current: string): string | null {
+  const byId = new Map(lines.map((l) => [l.line_id, l]));
+  const at = ids.indexOf(current);
+  for (let step = 1; step < ids.length; step++) {
+    const id = ids[(at + step) % ids.length];
+    const line = id === undefined ? undefined : byId.get(id);
+    if (line && id !== current && takesPrice(line)) return id ?? null;
+  }
+  return null;
+}
+
+/** The send dialog's warnings (09 §7.12, prototype `send`): red and yellow lines, and lines left out of the sum. */
+export function sendSummary(quote: Quote): { red: number; yellow: number; unpriced: number } {
+  const lines = quote.panels.flatMap((p) => p.lines);
+  return {
+    red: lines.filter((l) => l.status === "red").length,
+    yellow: lines.filter((l) => l.status === "yellow").length,
+    unpriced: quote.totals.unpriced_count,
+  };
+}
+
+/** A rate under a floor, both decimal strings from the server ("0.1200" < "0.1500"). */
+export function belowFloor(rate: string | null | undefined, floor: string | null | undefined): boolean {
+  return rate != null && floor != null && Number(rate) < Number(floor);
+}
+
+/** A typed amount as the API takes it: digits and one decimal point, more than zero; null when it is not one. */
+export function parseAmount(text: string): string | null {
+  const clean = text.replace(/[^\d.]/g, "");
+  if (!/^\d+(\.\d{1,4})?$/.test(clean) || !/[1-9]/.test(clean)) return null;
+  return clean;
 }
 
 /** ↑/↓ over the lines the filter shows (09 §8). Starts at the first line when nothing is selected. */
@@ -185,6 +245,12 @@ const toneOf = (s: Status): Tone => (s === "red" ? "bad" : s === "yellow" ? "war
 type Reason = QuoteLine["status_reasons"][number];
 
 function reasonChip(r: Reason, findings: Finding[]): [string, Tone] | null {
+  const chip = reasonChipOf(r, findings);
+  // an approved line (09 §7.2): what made it yellow or red is still said, but no longer as a warning
+  return chip && r.was && r.was !== "green" ? [chip[0], "ok"] : chip;
+}
+
+function reasonChipOf(r: Reason, findings: Finding[]): [string, Tone] | null {
   const v = r.value as unknown;
   const code = typeof v === "string" ? v : v && typeof v === "object" ? (v as { code?: string }).code : undefined;
   const detail = v && typeof v === "object" ? (v as Record<string, string | undefined>) : {};
@@ -197,7 +263,7 @@ function reasonChip(r: Reason, findings: Finding[]): [string, Tone] | null {
     case "confidence":
       return r.status === "green" ? null : [`ביטחון קריאה ${String(v)}`, toneOf(r.status)];
     case "validator": {
-      if (r.status === "green") return null; // an info finding shows in the findings box, not as a chip
+      if (r.status === "green") return null; // an info finding shows in the findings box; an approved one is gone
       const f = findings.find((x) => x.finding_id === r.issue_id);
       return [f ? (f.title ?? f.message) : "ממצא של הבודק", toneOf(r.status)];
     }
@@ -210,6 +276,19 @@ function reasonChip(r: Reason, findings: Finding[]): [string, Tone] | null {
     default:
       return null;
   }
+}
+
+/**
+ * 09 §6.3's price chips (prototype `lineRow`): "מחיר להצעה הזו", "מחיר חדש במחירון: X" and "רווח נמוך X%". A sent
+ * version shows none of the first two: it never changes.
+ */
+export function priceChips(line: QuoteLine, locked: boolean): { text: string; tone: Tone }[] {
+  const chips: { text: string; tone: Tone }[] = [];
+  if (line.override) chips.push({ text: "מחיר להצעה הזו", tone: "acc" });
+  if (!locked && line.fresh_price != null)
+    chips.push({ text: `מחיר חדש במחירון: ${shekels(line.fresh_price)}`, tone: "warn" });
+  if (line.below_floor) chips.push({ text: `רווח נמוך ${percent(line.margin_pct)}`, tone: "warn" });
+  return chips;
 }
 
 /**

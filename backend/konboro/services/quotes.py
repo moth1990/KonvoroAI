@@ -9,9 +9,10 @@ a second guard and let Postgres use the `(tenant_id, …)` indexes.
   so a soft-deleted line never counts. The screen shows these numbers and computes none of its own (09 principle 7).
 """
 
-from collections.abc import Sequence
+import re
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
-from datetime import date
+from datetime import date, datetime
 from decimal import ROUND_HALF_UP, Decimal
 from typing import Any
 
@@ -65,12 +66,20 @@ class LineIn:
     catalog_item_id: str | None = None
     line_key: str | None = None  # stage 7's stable handle (migration 0017)
     override: dict[str, Any] | None = None
+    edits: dict[str, Any] = field(default_factory=dict)  # the review screen's (migration 0018)
+    approved_at: datetime | None = None
 
 
 def write_lines(
-    session: Session, version: m.QuoteVersion, panel_id: str | None, lines: Sequence[LineIn]
+    session: Session,
+    version: m.QuoteVersion,
+    panel_id: str | None,
+    lines: Sequence[LineIn],
+    reuse: Mapping[str, str] | None = None,
 ) -> dict[str, str]:
-    """Appends the lines to a draft version, in order. Returns `key → line_id`."""
+    """Appends the lines to a draft version, in order. Returns `key → line_id`. `reuse`: `line_key → line_id` of the
+    rows a recalculation replaces, so a line keeps its id."""
+    reuse = reuse or {}
     start = session.scalar(
         select(m.QuoteLine.position)
         .where(m.QuoteLine.tenant_id == version.tenant_id, m.QuoteLine.quote_version_id == version.id)
@@ -79,7 +88,7 @@ def write_lines(
     )
     ids: dict[str, str] = {}
     for position, line in enumerate(lines, start=(start or 0) + 1):
-        ids[line.key] = new_id("ln")
+        ids[line.key] = reuse.get(line.line_key or "") or new_id("ln")
         amounts = t.line_amounts(line.qty, line.unit_price, line.unit_cost)
         session.add(
             m.QuoteLine(
@@ -117,6 +126,8 @@ def write_lines(
                 status_reasons=line.status_reasons,
                 issue_ids=line.issue_ids,
                 override=line.override,
+                edits=line.edits,
+                approved_at=line.approved_at,
             )
         )
         session.flush()  # a child line's foreign key needs its parent's row
@@ -133,7 +144,7 @@ def vat_rate_on(session: Session, day: date) -> Decimal:
 def store_totals(session: Session, version: m.QuoteVersion) -> t.QuoteSums:
     """Sums the version's live lines into `quote_versions.totals` (07 §6.1 shape, decimal strings)."""
     vat = vat_rate_on(session, version.quote_date) if version.quote_date else t.ZERO
-    sums = t.quote_sums(t.sum_lines(_figures(_live_lines(session, version))), version.discount_pct, vat)
+    sums = t.quote_sums(t.sum_lines(_figures(live_lines(session, version))), version.discount_pct, vat)
     version.totals = totals_contract(sums).model_dump(mode="json")
     session.flush()
     return sums
@@ -211,6 +222,46 @@ class LineView:
     derived: dict[str, Any] | None
     approved: bool
     boxes: list[BoxView]  # every instance of the line's component, for the drawing pane (09 §6.5)
+    product_id: str | None = None
+    override: bool = False  # "מחיר להצעה הזו" (07 §7.2.3)
+    fresh_price: Decimal | None = None  # "מחיר חדש במחירון: X": the list's price differs, and no override
+    below_floor: bool = False  # "רווח נמוך X%" (07 §7.3): under the factory's line floor
+    suppliers: list["SupplierChoice"] = field(default_factory=list)  # 09 §7.15
+    supplier_id: str | None = None  # chosen for this quote only; None: the list's order (07 §7.2.2)
+    price_hints: list["PriceHint"] = field(default_factory=list)  # "קרובים במחירון: …", on a line with no price
+    qty_editable: bool = False  # 09 §7.5: a component or manual line, not a kit's part
+
+
+@dataclass(frozen=True)
+class SupplierChoice:
+    """One of the product's suppliers, for the line's "ספק" list (09 §6.4, §7.15)."""
+
+    supplier_price_id: str
+    supplier_id: str | None
+    name: str | None
+    unit_cost: Decimal
+    currency: str
+    lead_days: int | None
+    preferred: bool
+    in_force: bool
+    chosen: bool  # the cost on the line comes from it
+
+
+@dataclass(frozen=True)
+class PriceHint:
+    """A neighbouring product in the price list (prototype `l.hint`): a hint, never the line's price (07 §7.2)."""
+
+    product_id: str
+    name: str
+    unit_price: Decimal | None
+
+
+@dataclass(frozen=True)
+class RemovedLine:
+    """A derived line the estimator removed, for "X פריטים נלווים הוסרו" → "החזר" (09 §6.3)."""
+
+    line_id: str
+    description: str
 
 
 @dataclass(frozen=True)
@@ -219,6 +270,7 @@ class PanelView:
     name: str
     lines: list[LineView]
     sums: t.Sums
+    removed: list[RemovedLine] = field(default_factory=list)
 
 
 @dataclass(frozen=True)
@@ -232,6 +284,7 @@ class FindingView:
     page_no: int | None
     page_id: str | None
     bbox: list[float] | None  # "בשרטוט" (prototype `f-show`)
+    source: str = "rule"  # pricing's are answered by a price, never dismissed (09 §7.7)
 
 
 def _panel_box(boxes: list[list[float]] | None) -> list[float] | None:
@@ -288,6 +341,9 @@ class QuoteView:
     findings: list[FindingView]
     totals: t.QuoteSums
     pages: list[PageView]
+    line_floor: Decimal | None = None  # the factory's margin floors (07 §7.3), for the header's warning colour
+    quote_floor: Decimal | None = None
+    derived_note: str | None = None  # "פריטים נלווים: פסי צבירה, אפס והארקה כלולים במחיר הארון…" (prototype 978)
 
 
 def read_quote(session: Session, tenant_id: str, quote_id: str) -> QuoteView | None:
@@ -308,9 +364,14 @@ def read_quote(session: Session, tenant_id: str, quote_id: str) -> QuoteView | N
         return None
     quote, version = row
     drawing = session.get(m.Drawing, quote.drawing_id) if quote.drawing_id else None
-    lines = _live_lines(session, version)
+    lines = live_lines(session, version)
     components = _by_id(session, m.Component, tenant_id, {ln.component_id for ln in lines if ln.component_id})
     panels = _by_id(session, m.Panel, tenant_id, {ln.panel_id for ln in lines if ln.panel_id})
+
+    settings = session.get(m.TenantSettings, tenant_id)
+    floor = settings.min_line_margin if settings else None
+    extra = _pricing_details(session, quote, version, lines) if version.status == "draft" else PricingDetails()
+    removed = _removed(session, version)
 
     by_panel: dict[str | None, list[m.QuoteLine]] = {}
     for ln in lines:
@@ -319,8 +380,9 @@ def read_quote(session: Session, tenant_id: str, quote_id: str) -> QuoteView | N
         PanelView(
             panel_id=pid,
             name=panels[pid].name if pid in panels else quote.name,
-            lines=[_line_view(ln, components.get(ln.component_id or "")) for ln in display_order(group)],
+            lines=[_line_view(ln, components.get(ln.component_id or ""), extra, floor) for ln in display_order(group)],
             sums=t.sum_lines(_figures(group)),
+            removed=removed.get(pid, []),
         )
         for pid, group in sorted(by_panel.items(), key=lambda kv: min(ln.position for ln in kv[1]))
     ]
@@ -342,7 +404,155 @@ def read_quote(session: Session, tenant_id: str, quote_id: str) -> QuoteView | N
         findings=_findings(session, version),
         totals=sums,
         pages=drawing_pages(session, drawing, [ln for p in panel_views for ln in p.lines]) if drawing else [],
+        line_floor=floor,
+        quote_floor=settings.min_quote_margin if settings else None,
+        derived_note=derived_note(settings),
     )
+
+
+# 07 §7.4 `includes`: what the enclosure's price covers, as the footnote under the lines says it (prototype line 978)
+INCLUDED_WORDS = (("busbar", "פסי צבירה"), ("n", "אפס"), ("pe", "הארקה"))
+
+
+def derived_note(settings: m.TenantSettings | None) -> str | None:
+    on = [word for key, word in INCLUDED_WORDS if (settings.enclosure_includes_default if settings else {}).get(key)]
+    if not on:
+        return None
+    listed = on[0] if len(on) == 1 else ", ".join(on[:-1]) + " ו" + on[-1]
+    return f"פריטים נלווים: {listed} כלולים במחיר הארון לפי הגדרות המפעל."
+
+
+@dataclass(frozen=True)
+class PricingDetails:
+    fresh: dict[str, Decimal] = field(default_factory=dict)
+    suppliers: dict[str, list[SupplierChoice]] = field(default_factory=dict)
+    hints: dict[str, list[PriceHint]] = field(default_factory=dict)
+
+
+HINTS = 3
+CURRENT = re.compile(r"(\d+(?:\.\d+)?)\s*A\b")
+
+
+def _current(text: str) -> float | None:
+    found = CURRENT.search(text)
+    return float(found.group(1)) if found else None
+
+
+def _pricing_details(
+    session: Session, quote: m.Quote, version: m.QuoteVersion, lines: Sequence[m.QuoteLine]
+) -> PricingDetails:
+    """What a draft's lines show of the price list today (07 §7.2.3, 09 §6.3–6.4, §7.15): a newer price, the
+    product's suppliers, and neighbouring products for a line with none. Read only: nothing on the line changes."""
+    from konboro.pipeline.pricing import book as pricing_book
+    from konboro.pipeline.pricing import edits, stored  # stage 7 writes through this module
+
+    out = PricingDetails()
+    unpriced = [ln for ln in lines if ln.unit_price is None and ln.line_type in ("component", "manual")]
+    hint_rows = _hint_candidates(session, version.tenant_id, unpriced)
+    book = stored.book_for(session, version, quote, lines, {p.id for ps in hint_rows.values() for p in ps})
+    for ln in lines:
+        if not ln.product_id or ln.override or _included(ln) or ln.line_type not in ("component", "manual"):
+            continue
+        p = edits.price_line(stored.draft_of(ln, {}), book, (ln.edits or {}).get("supplier_id"))
+        if p.unit_price is not None and ln.unit_price is not None and p.unit_price != ln.unit_price:
+            out.fresh[ln.id] = p.unit_price
+    for line_id, products in hint_rows.items():
+        out.hints[line_id] = [
+            PriceHint(p.id, p.display_name, pricing_book.price(bp, book).unit_price if bp else None)
+            for p in products
+            for bp in [book.product_by_id(p.id)]
+        ]
+    _suppliers(session, version, lines, out)
+    return out
+
+
+def _hint_candidates(session: Session, tenant_id: str, lines: Sequence[m.QuoteLine]) -> dict[str, list[m.Product]]:
+    """The products whose name starts as the line's does (kind, maker, series: "מא״ז ABB S203M"), nearest current
+    first."""
+    out: dict[str, list[m.Product]] = {}
+    for ln in lines:
+        words = ln.description.split()
+        if len(words) < 2:
+            continue
+        prefix = " ".join(words[: min(3, len(words) - 1)])
+        rows = list(
+            session.scalars(
+                select(m.Product).where(
+                    m.Product.tenant_id == tenant_id,
+                    m.Product.display_name.startswith(prefix, autoescape=True),
+                    m.Product.id != (ln.product_id or ""),
+                )
+            )
+        )
+        mine = _current(ln.description)
+        rows.sort(key=lambda p: (abs((_current(p.display_name) or 0) - (mine or 0)), p.display_name))
+        if rows:
+            out[ln.id] = rows[:HINTS]
+    return out
+
+
+def _suppliers(session: Session, version: m.QuoteVersion, lines: Sequence[m.QuoteLine], out: PricingDetails) -> None:
+    ids = {ln.product_id for ln in lines if ln.product_id}
+    if not ids:
+        return
+    rows = session.execute(
+        select(m.ProductSupplier, m.Supplier.name)
+        .outerjoin(
+            m.Supplier,
+            and_(m.Supplier.tenant_id == m.ProductSupplier.tenant_id, m.Supplier.id == m.ProductSupplier.supplier_id),
+        )
+        .where(m.ProductSupplier.tenant_id == version.tenant_id, m.ProductSupplier.product_id.in_(ids))
+        .order_by(m.ProductSupplier.unit_cost)
+    ).all()
+    by_product: dict[str, list[tuple[m.ProductSupplier, str | None]]] = {}
+    for r, name in rows:
+        by_product.setdefault(r.product_id, []).append((r, name))
+    on = version.quote_date or date.today()
+    for ln in lines:
+        # the row the cost came from; a line priced before the trace named it: the chosen supplier, else the preferred
+        used = (ln.cost_source or {}).get("supplier_price_id")
+        if used is None and ln.unit_cost is not None:
+            pick = (ln.edits or {}).get("supplier_id")
+            found = next(
+                (
+                    r
+                    for r, _ in by_product.get(ln.product_id or "", [])
+                    if (r.supplier_id == pick if pick else r.preferred)
+                ),
+                None,
+            )
+            used = found.id if found else None
+        out.suppliers[ln.id] = [
+            SupplierChoice(
+                supplier_price_id=r.id,
+                supplier_id=r.supplier_id,
+                name=name,
+                unit_cost=r.unit_cost,
+                currency=r.currency,
+                lead_days=r.lead_days,
+                preferred=r.preferred,
+                in_force=r.valid_until is None or r.valid_until >= on,
+                chosen=r.id == used,
+            )
+            for r, name in by_product.get(ln.product_id or "", [])
+        ]
+
+
+def _removed(session: Session, version: m.QuoteVersion) -> dict[str | None, list[RemovedLine]]:
+    rows = session.scalars(
+        select(m.QuoteLine)
+        .where(
+            m.QuoteLine.tenant_id == version.tenant_id,
+            m.QuoteLine.quote_version_id == version.id,
+            m.QuoteLine.deleted_at.is_not(None),
+            m.QuoteLine.line_type.in_(("derived", "labor")),
+        )
+        .order_by(m.QuoteLine.position)
+    )
+    out: dict[str | None, list[RemovedLine]] = {}
+    for r in rows:
+        out.setdefault(r.panel_id, []).append(RemovedLine(r.id, r.description))
+    return out
 
 
 def display_order(lines: Sequence[m.QuoteLine]) -> list[m.QuoteLine]:
@@ -383,7 +593,7 @@ def _included(ln: m.QuoteLine) -> bool:
     return ln.parent_line_id is not None and ln.unit_price is not None and ln.unit_price == t.ZERO
 
 
-def _live_lines(session: Session, version: m.QuoteVersion) -> list[m.QuoteLine]:
+def live_lines(session: Session, version: m.QuoteVersion) -> list[m.QuoteLine]:
     return list(
         session.scalars(
             select(m.QuoteLine)
@@ -412,7 +622,9 @@ def _by_id(session: Session, model: type[Any], tenant_id: str, ids: set[str]) ->
 NOTE_ATTRIBUTE = "load"
 
 
-def _line_view(ln: m.QuoteLine, cmp: m.Component | None) -> LineView:
+def _line_view(
+    ln: m.QuoteLine, cmp: m.Component | None, extra: "PricingDetails | None" = None, floor: Decimal | None = None
+) -> LineView:
     attributes: dict[str, Any] = cmp.attributes if cmp else {}
     sources = [
         SourceView(
@@ -459,6 +671,14 @@ def _line_view(ln: m.QuoteLine, cmp: m.Component | None) -> LineView:
         derived=ln.derived,
         approved=ln.approved_at is not None,
         boxes=[BoxView(i["page_id"], list(i["bbox"])) for i in (cmp.instances if cmp else []) if i.get("bbox")],
+        product_id=ln.product_id,
+        override=bool(ln.override),
+        fresh_price=extra.fresh.get(ln.id) if extra else None,
+        below_floor=floor is not None and ln.margin_pct is not None and not _included(ln) and ln.margin_pct < floor,
+        suppliers=extra.suppliers.get(ln.id, []) if extra else [],
+        supplier_id=(ln.edits or {}).get("supplier_id"),
+        price_hints=extra.hints.get(ln.id, []) if extra else [],
+        qty_editable=ln.line_type in ("component", "manual") and ln.parent_line_id is None,
     )
 
 
@@ -486,6 +706,7 @@ def _findings(session: Session, version: m.QuoteVersion) -> list[FindingView]:
             page_no,
             f.page_id,
             list(f.bbox) if f.bbox else None,
+            f.source,
         )
         for f, page_no in rows
     ]

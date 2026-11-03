@@ -295,7 +295,8 @@ This table answers the customer's question "why was this counted?".
 | `unit_price_raw`, `unit_price`, `rounding`, `line_cost`, `line_total`, `margin_pct` | All `null` while the line has no price |
 | `derived jsonb`, `alternatives jsonb`, `explanation` | |
 | `status`, `status_reasons jsonb`, `issue_ids text[]` | `status` is `green`, `yellow` or `red`, and only stage 7 writes it |
-| `override jsonb`, `approved_at`, `deleted_at` | |
+| `override jsonb`, `approved_at`, `deleted_at` | A price set for this quote only; the estimator's approval (09 §7.2); a soft delete, so undo brings the line back |
+| `edits jsonb` | The review screen's other edits, carried by `line_key` through a recalculation and a rerun: `qty`, the `supplier_id` chosen for this quote (07 §7.2.2 step 1), and `replaced` (the alternative's `sku`, `manufacturer`, `description`, `catalog_item_id`, 09 §7.3). Migration 0018, S23 |
 
 **`findings`** (`iss_`, 06 §6.2) are issues from the validator and from pricing. Stage 6 writes its own on the drawing, replacing them on every run, with `quote_version_id` null; stage 7 attaches them to the version it makes (S21 decision 1). The id is a digest of what the finding says, so a re-run keeps it. `values.title` is the finding's headline; `code` is the rule's id.
 - `quote_version_id`, `drawing_id`.
@@ -305,8 +306,9 @@ This table answers the customer's question "why was this counted?".
 - `page_id`, `bbox jsonb`.
 - `message`, `values jsonb`, `confidence`.
 - `status`: `open`, `resolved` or `dismissed`.
+- `dismissal jsonb null`: why the estimator dismissed it (09 §7.7, 06 §11): `reason` (`intended`, `checker_wrong`, `other`, or `approved` when approving its lines dismissed it), `text`, `by`, `at`, `event_id` (migration 0018, S23). A dismissed finding's reasons leave its lines.
 
-**`correction_events`** (`evt_`, 09 §10) is append-only. The app may update only `undone`, and a trigger enforces this.
+**`correction_events`** (`evt_`, 09 §10) is append-only. The app may update only `undone`, and a trigger enforces this. So an event is written once, whole: a review action keeps what undo needs to put back in `before.restore` (the lines' state, the findings, the price-list product, the match memory, S23).
 - `quote_id`, `quote_version`, `user_id`.
 - `source`: `review_screen`, `chat`, `price_list`, or `new_quote` (a page kind changed on the new-quote screen, S08).
 - `type`: the 09 §10 list, plus `price_changed` and `supplier_selected` from 09 §7.14–7.15, and `bom_columns_mapped` (the user set a BOM spreadsheet's column roles, 01 §5.8; migration 0010, S14).

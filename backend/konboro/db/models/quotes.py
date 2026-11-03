@@ -116,6 +116,7 @@ class QuoteLine(Base, TenantScoped, Timestamps):
     status_reasons: Mapped[list[Any]] = mapped_column(server_default="[]")
     issue_ids: Mapped[list[str]] = mapped_column(ARRAY(Text), server_default="{}")
     override: Mapped[dict[str, Any] | None]
+    edits: Mapped[dict[str, Any]] = mapped_column(server_default="{}")  # qty, supplier_id, replaced (migration 0018)
     approved_at: Mapped[datetime | None]
     deleted_at: Mapped[datetime | None]  # soft delete: undo must restore the row (09 §7.6, §7.11)
 
@@ -155,6 +156,7 @@ class Finding(Base, TenantScoped, Timestamps):
     values: Mapped[dict[str, Any]] = mapped_column(server_default="{}")
     confidence: Mapped[float] = mapped_column(server_default="1")
     status: Mapped[str] = mapped_column(server_default="open")
+    dismissal: Mapped[dict[str, Any] | None]  # reason, text, by, at, event_id (09 §7.7, migration 0018)
 
 
 CORRECTION_TYPES = (

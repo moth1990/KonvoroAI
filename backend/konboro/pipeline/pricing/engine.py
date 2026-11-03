@@ -4,7 +4,9 @@ the agora (07 §10.1), and the eval prices a run again with another book (S22 de
 
 What the user did on an earlier draft of the same drawing comes in as `Carry` (S22 decision 5): a line they deleted
 stays deleted, a derived line they deleted is not made again, a price they set on a line is kept and no rule
-overwrites it (07 §7), and their manual lines stay.
+overwrites it (07 §7), and their manual lines stay. So do their review-screen edits (S23, `edits.py`): a quantity, an
+alternative, a supplier, an approval, a dismissed finding. After a review action, `kept` holds the stored price of every
+line the action did not touch, so only those it touched are priced from the list (07 §7.2.3).
 
 Pricing issues (07 §8) are grouped as stage 6's are (S21 decision 14): one finding per cause, naming every line. The
 margin floors only tag (07 §7.3), and a pricing finding never changes a line's colour: its price status does.
@@ -25,6 +27,7 @@ from konboro.domain.pricing import margin as pm
 
 from .book import Book
 from .derived import DerivedRule, Labor, PanelContext, Requirement, derive
+from .edits import Kept, LineEdits, apply_all
 from .lines import Draft, panel_lines, values_of
 from .status import finalize
 
@@ -48,6 +51,9 @@ class Carry:
     deleted: frozenset[str] = frozenset()  # line keys the user deleted, derived ones included
     overrides: Mapping[str, dict[str, Any]] = field(default_factory=dict)  # line key → `override`
     manual: Sequence[Draft] = ()  # lines the user added, as they were
+    edits: Mapping[str, LineEdits] = field(default_factory=dict)  # line key → the review screen's edits
+    dismissed: frozenset[str] = frozenset()  # finding ids the user dismissed: their reasons leave the lines
+    kept: Mapping[str, Kept] = field(default_factory=dict)  # line key → its stored price, after a review action
 
 
 @dataclass(frozen=True)
@@ -154,6 +160,8 @@ def price_quote(inp: QuoteInput) -> PricedQuote:
     auxiliary = set(inp.matching.auxiliary)
     issues_by_component: dict[str, list[Issue]] = {}
     for i in inp.validation.issues:
+        if i.status != "open":  # resolved by a re-run of the rules after an edit (06 §6.3), or dismissed
+            continue
         for cid in i.component_ids:
             issues_by_component.setdefault(cid, []).append(i)
     main_ids = {s.main_device_component_id for s in inp.validation.panel_summaries if s.main_device_component_id}
@@ -167,6 +175,7 @@ def price_quote(inp: QuoteInput) -> PricedQuote:
         built = panel_lines(
             panel_id, inp.merge.components, matches, auxiliary, missing, issues_by_component, main_ids, inp.book
         )
+        built.lines = apply_all(built.lines, inp.carry.edits, inp.book, inp.carry.dismissed, inp.carry.kept)
         comps = [c for c in inp.merge.components if c.panel_id == panel_id]
         main = next((by_id[i] for i in main_ids if i in by_id and by_id[i].panel_id == panel_id), None)
         ctx = PanelContext(
@@ -248,7 +257,11 @@ def _pct(ratio: Decimal) -> str:
 
 
 MESSAGES = {
-    "missing_cost": ("אין מחיר", "אין מחיר עלות ל-{n}. הזינו מחיר בשורה, או עדכנו את המחירון"),
+    # the prototype's wording (makeFindings, "price"): its count is the title, so it moves as prices are entered
+    "missing_cost": (
+        "{n} בלי מחיר",
+        "אין מחיר זהה במחירון של המפעל. אפשר להזין בשורה, והמחיר נשמר למחירון להצעות הבאות",
+    ),
     "stale_price": ("מחיר ישן", "המחיר ל-{n} ישן מהמוגדר. כדאי לעדכן את המחירון"),
     "fx_rate_missing": ("אין שער מטבע", "אין שער מטבע עדכני ל-{n}, ולכן הן בלי מחיר"),
     "no_margin_rule": ("אין חוק רווח", "אין חוק רווח שחל על {n}, ולכן הן בלי מחיר מכירה"),
@@ -273,7 +286,7 @@ def line_findings(panels: Sequence[PricedPanel]) -> list[PricingFinding]:
                 code,
                 SEVERITY[code],
                 text.format(n=_lines_text(len(hit))),
-                title,
+                title.format(n=_lines_text(len(hit))),
                 line_keys=tuple(ln.key for ln in hit),
                 component_ids=tuple(sorted({ln.component_id for ln in hit if ln.component_id})),
                 values={"count": len(hit), "skus": skus},

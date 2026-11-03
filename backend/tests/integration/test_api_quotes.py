@@ -53,7 +53,7 @@ def test_the_fixture_comes_back_with_money_as_strings(api: Api, quote_id: str) -
     assert (f1["qty"], f1["unit_price"], f1["line_total"]) == ("17.000", "130.0000", "2210.0000")
     assert f1["price_source"] == {"kind": "fixed", "source": "quote_import", "quotes": ["10288"], "value": None}
     assert f1["cost_source"]["supplier"] == "ספק א׳ · מפיץ ABB"
-    assert body["findings"][0]["code"] == "MISSING_PRICE"
+    assert [f["code"] for f in body["findings"]][:2] == ["FRONT_VIEW_DESIGNATOR_MISSING", "missing_cost"]
 
 
 def test_the_drawing_pane_gets_pages_boxes_and_counts(api: Api, quote_id: str) -> None:
