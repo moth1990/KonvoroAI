@@ -11,25 +11,40 @@ LineStatus = Literal["green", "yellow", "red"]
 
 
 class CostSource(Contract):
+    """07 §7.2: where the cost came from. `price_list_id` is the price-list row (`product_suppliers`); `via` is which
+    step of 07 §7.2.2's order chose it (S22)."""
+
     type: str
     price_list_id: str | None = None
     supplier: str | None = None
+    supplier_id: str | None = None
+    via: str | None = None
     price_date: date | None = None
     original_currency: str | None = None
+    original_cost: DecimalStr | None = None
     fx_rate: DecimalStr | None = None
+    fx_date: date | None = None
+    list_price: DecimalStr | None = None  # `brand_discount`: the manufacturer's list price and the discount
+    discount_pct: DecimalStr | None = None
 
 
 class MarginRule(Contract):
+    """07 §7.3: the rule that set the sale price; `fixed` for a product's fixed price (07 §7.2.1, S18 decision 6)."""
+
     rule_id: str
     level: str
-    kind: Literal["markup", "margin"]
-    value: DecimalStr
+    kind: Literal["markup", "margin", "fixed"]
+    value: DecimalStr | None = None
+    fixed_price: DecimalStr | None = None
 
 
 class Derived(Contract):
     rule_id: str
+    rule_key: str | None = None  # the starter rule it copies (`enclosure`, `labor`…), stable across tenants
     from_component_ids: list[ComponentId] = []
     explanation: str
+    hours: dict[str, DecimalStr] | None = None  # labor: hours per family (07 §7.4)
+    service: bool = False  # a required service from the notes: yellow, no price (07 §7.4)
 
 
 class StatusReason(Contract):

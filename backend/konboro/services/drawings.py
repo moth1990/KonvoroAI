@@ -25,6 +25,8 @@ from konboro.db.models import (
     Panel,
     Project,
     Quote,
+    QuoteLine,
+    QuoteVersion,
     StageRun,
 )
 from konboro.db.models.pipeline import AUDIT_STAGE
@@ -199,7 +201,10 @@ class Progress:
     bom: dict[str, BomTable] = field(default_factory=dict)  # page id → the BOM table stage 1 read (01 §5.8)
     audit: Audit | None = None  # an audit drawing's audit (11 §5, S15 decision 2)
     matches: dict[str, int] = field(default_factory=dict)  # stage 5's status → components (05 §7), once it ran
-    findings: int = 0  # open findings on the drawing: stage 6's (06 §6), and from S22 pricing's
+    findings: int = 0  # open findings on the drawing: stage 6's (06 §6) and pricing's (07 §8)
+    validation_findings: int = 0  # stage 6's alone, for its line on the run step
+    # stage 7's lines on the quote's current version: (products, priced), the done step's grid (01 §4.6, S22)
+    lines: tuple[int, int] = (0, 0)
 
 
 def stage_numbers(p: Progress) -> list[int]:
@@ -241,12 +246,16 @@ def progress(session: Session, tenant_id: str, drawing_id: str) -> Progress | No
             .group_by(Component.match_status)
         )
     }
-    findings = int(
-        session.scalar(
-            select(func.count()).select_from(Finding).where(Finding.drawing_id == drawing_id, Finding.status == "open")
-        )
-        or 0
+    by_source = dict(
+        session.execute(
+            select(Finding.source, func.count())
+            .where(Finding.drawing_id == drawing_id, Finding.status == "open")
+            .group_by(Finding.source)
+        ).all()
     )
+    findings = int(sum(by_source.values()))
+    validation_findings = int(sum(n for src, n in by_source.items() if src != "pricing"))
+    lines = _priced_lines(session, quote_id) if quote_id else (0, 0)
     bom = {
         a.page_id: BomTable.model_validate_json(a.content)
         for a in session.scalars(
@@ -268,15 +277,47 @@ def progress(session: Session, tenant_id: str, drawing_id: str) -> Progress | No
         audit,
         matches,
         findings,
+        validation_findings,
+        lines,
     )
 
 
+def _priced_lines(session: Session, quote_id: str) -> tuple[int, int]:
+    """The products the quote prices (component and missing lines, a kit part priced in its parent left out) and how
+    many have a price."""
+    rows = session.execute(
+        select(QuoteLine.unit_price, QuoteLine.parent_line_id)
+        .join(
+            QuoteVersion,
+            (QuoteVersion.tenant_id == QuoteLine.tenant_id) & (QuoteVersion.id == QuoteLine.quote_version_id),
+        )
+        .join(Quote, (Quote.tenant_id == QuoteVersion.tenant_id) & (Quote.id == QuoteVersion.quote_id))
+        .where(
+            Quote.id == quote_id,
+            QuoteVersion.version == Quote.current_version,
+            QuoteLine.deleted_at.is_(None),
+            QuoteLine.line_type.in_(("component", "missing", "manual")),
+        )
+    ).all()
+    counted = [price for price, parent in rows if not (parent is not None and price == 0)]
+    return len(counted), sum(1 for price in counted if price is not None)
+
+
 def stage_summary(p: Progress, stage: int) -> str | None:
-    """Stages 1 to 6 are the real ones so far (prototype STAGES, lines 761–766), and the audit step."""
+    """Every stage's line (prototype STAGES, lines 761–767), and the audit step."""
     if stage == AUDIT_STAGE:
         return _audit_summary(p)
-    if stage == 6:  # "4 ממצאים" (prototype line 766): every open finding, as the review screen lists them
-        return _count_text(p.findings, "ממצא אחד", "ממצאים") if p.findings else "אין ממצאים"
+    if stage == 6:  # "4 ממצאים" (prototype line 766): stage 6's open findings
+        n = p.validation_findings
+        return _count_text(n, "ממצא אחד", "ממצאים") if n else "אין ממצאים"
+    if stage == 7:  # "8 מחירים מהמחירון · 5 חסרים" (prototype line 767)
+        products, priced = p.lines
+        if not products:
+            return None
+        parts = [_count_text(priced, "מחיר אחד מהמחירון", "מחירים מהמחירון") if priced else "אין מחירים במחירון"]
+        if products - priced:
+            parts.append(_count_text(products - priced, "חסר אחד", "חסרים"))
+        return " · ".join(parts)
     if p.bom and not any(page.route == "process" for page, _ in p.pages):  # BOM only (01 §4.4)
         return _bom_summary(p, stage)
     if stage == 2:

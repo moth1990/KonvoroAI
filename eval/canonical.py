@@ -158,6 +158,8 @@ class Prediction(Canon):
     panels: tuple[CanonPanel, ...]
     audit: tuple[CanonDifference, ...] | None = None  # the audit's differences, when the drawing has a quote (S15)
     quote_total: Decimal | None = None
+    # the backtest (07 §10.2, `eval/backtest.py`): own-quote and leave-one-out totals and coverage, decimal strings
+    backtest: dict[str, str | None] = {}
     title_block: dict[str, str | None] = {}
     needs_confirmation: bool | None = None
     span_texts: tuple[str, ...] | None = None  # stage 2's normalized text on the process pages

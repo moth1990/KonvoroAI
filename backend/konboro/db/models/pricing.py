@@ -181,12 +181,19 @@ class DerivedItemRule(Base, TenantScoped, Timestamps):
     """07 §7.4: items that are not drawn but go into the panel. A new tenant gets a copy of the starter rules."""
 
     __tablename__ = "derived_item_rules"
-    __table_args__ = (tenant_unique(), one_of("scope", ("panel", "quote")))
+    __table_args__ = (
+        tenant_unique(),
+        one_of("scope", ("panel", "quote")),
+        UniqueConstraint("tenant_id", "rule_key"),
+    )
 
     id: Mapped[str] = pk()
+    rule_key: Mapped[str]  # the starter rule this row copies (`pipeline/pricing/derived.json`); migration 0017
     scope: Mapped[str]
     trigger: Mapped[dict[str, Any]]
-    quantity_formula: Mapped[str]
+    quantity_formula: Mapped[str]  # the rule's kind: the function in `pipeline/pricing/derived.py`
+    params: Mapped[dict[str, Any]] = mapped_column(server_default="{}")
+    approval: Mapped[str | None]  # `pending_expert` until roadmap B2 signs the starter pack off (S22 decision 3)
     item: Mapped[dict[str, Any]]
     explanation_he: Mapped[str]
     enabled: Mapped[bool] = mapped_column(server_default="true")

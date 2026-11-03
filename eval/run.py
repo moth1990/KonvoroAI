@@ -16,14 +16,14 @@ import json
 import os
 import subprocess
 import sys
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
+from decimal import Decimal
 from pathlib import Path
 from typing import Any, Literal
 
-from sqlalchemy import Engine, create_engine, select
+from sqlalchemy import Engine, create_engine, select, update
 from sqlalchemy.orm import Session
 
-from konboro.contracts.audit import Difference
 from konboro.contracts.detection import DetectionResult
 from konboro.contracts.extraction import ExtractionResult
 from konboro.contracts.intake import IntakeResult
@@ -36,10 +36,11 @@ from konboro.db.admin import database_dsn, fresh_database
 from konboro.db.ids import new_id
 from konboro.db.seed import seed_global
 from konboro.db.session import app_engine, tenant_session
-from konboro.pipeline.audit.differences import audit
+from konboro.pipeline.audit.differences import Outcome, audit
 from konboro.pipeline.audit.step import drawn_components, read_quote_bytes
 from konboro.pipeline.context import M
 from konboro.pipeline.coordinator import Pipeline
+from konboro.pipeline.pricing import load as pricing_load
 from konboro.pipeline.validation import pack as rule_pack
 from konboro.services import drawings
 from konboro.services.intake import detect_format
@@ -49,7 +50,7 @@ from konboro.services.storage import Storage
 from konboro.settings import Settings
 from konboro_llm import LLMClient
 
-from . import compare, report
+from . import backtest, compare, report
 from .canonical import GoldenDrawing, Prediction
 from .labelled import labelled_matches
 from .normalizers import GOLDEN, load_all
@@ -88,6 +89,7 @@ FACTORY: dict[str, Any] = {
     "brand_preferences": {"*": "ABB"},
     "attribute_defaults": {"circuit_breaker": {"curve": "C", "breaking_capacity_ka": 6}, "rcd": {"rcd_type": "A"}},
     "matching": {"alternate_brands": {"*": ["Schneider"]}},
+    "enclosure_includes_default": backtest.INCLUDES,  # the golden quotes' factory (S22 decision 1)
 }
 
 
@@ -101,10 +103,16 @@ def add_tenant(engine: Engine) -> tuple[str, str]:
         # no price list here, so every SKU would lack a cost: the factory turns the check off (06 §6.5 item 2)
         s.add(m.TenantRuleOverride(tenant_id=tenant_id, rule_id="DATA_NO_COST_PRICE", enabled=False))
         s.add(m.TenantPlanOverride(tenant_id=tenant_id, monthly_quote_limit=1000))
+        s.flush()
+        # it quotes no labor, terminals, labels, rails or consumables as lines: only the enclosure rule (S22 decision 1)
+        pricing_load.ensure_rules(s, tenant_id)
+        s.execute(update(m.DerivedItemRule).where(m.DerivedItemRule.rule_key != "enclosure").values(enabled=False))
     return tenant_id, user_id
 
 
-def run_drawing(pipeline: Pipeline, tenant_id: str, user_id: str, label: GoldenDrawing, golden: Path) -> Prediction:
+def run_drawing(
+    pipeline: Pipeline, tenant_id: str, user_id: str, label: GoldenDrawing, golden: Path
+) -> tuple[Prediction, backtest.Material | None]:
     data = (golden / label.id / label.file).read_bytes()
     with tenant_session(tenant_id, pipeline.engine) as s:
         upload = drawings.create_upload(
@@ -123,11 +131,20 @@ def run_drawing(pipeline: Pipeline, tenant_id: str, user_id: str, label: GoldenD
 
     intake, merge = output(1, IntakeResult), output(4, MergeResult)
     folder = golden / label.id
-    differences = audit_golden(pipeline, tenant_id, drawing_id, intake, merge, folder) if label.audit else None
+    outcome = audit_golden(pipeline, tenant_id, drawing_id, intake, merge, folder) if label.audit else None
+    differences = outcome.differences if outcome is not None else None
     labelled, lab = labelled_matches(pipeline, tenant_id, drawing_id, label, intake)
     with tenant_session(tenant_id, pipeline.engine) as s:
         pack = rule_pack.for_tenant(s, tenant_id)
     checked = output(6, ValidationResult)
+    matched = output(5, MatchingResult)
+    material = None
+    if outcome is not None:
+        with tenant_session(tenant_id, pipeline.engine) as s:
+            items = pricing_load.catalog_items(s, matched, pricing_load.DERIVED_FAMILIES)
+        material = backtest.Material(
+            label.id, intake, merge, matched, checked, items, pricing_load.requirements(intake), outcome.lines
+        )
     labelled_findings, injected = labelled_validation(lab, pack)
     pred = prediction(
         intake,
@@ -136,7 +153,7 @@ def run_drawing(pipeline: Pipeline, tenant_id: str, user_id: str, label: GoldenD
         output(2, ExtractionResult),
         output(3, DetectionResult),
         differences,
-        output(5, MatchingResult),
+        matched,
         labelled,
     )
     return pred.model_copy(
@@ -146,15 +163,16 @@ def run_drawing(pipeline: Pipeline, tenant_id: str, user_id: str, label: GoldenD
             "labelled_findings": labelled_findings,
             "injected": injected,
         }
-    )
+    ), material
 
 
 AUXILIARY = frozenset({"terminal"})  # a new tenant's default (S15 decision 4)
+BACKTEST_DATE = date(2026, 11, 3)
 
 
 def audit_golden(
     pipeline: Pipeline, tenant_id: str, drawing_id: str, intake: IntakeResult, merge: MergeResult, folder: Path
-) -> list[Difference] | None:
+) -> Outcome | None:
     """The audit of the factory's real quote (11 §10), on this run's own stage 1 and 4: the same code as the audit
     step, without a second run of stages 1–4. The quote is read as the step reads it, through the cassettes."""
     quote = next(iter(sorted(folder.glob("actual_quote_*.*"))), None)
@@ -166,7 +184,7 @@ def audit_golden(
     llm = LLMClient(pipeline.llm_providers, on_call=usage_recorder(pipeline.engine, tenant_id, drawing_id))
     read = read_quote_bytes(llm, tenant_id, fmt, data, new_id("fil"), hashlib.sha256(data).hexdigest())
     pages = {p.page_id: p.page_no for p in intake.pages}
-    return audit(read, drawn_components(pages, merge), AUXILIARY).differences
+    return audit(read, drawn_components(pages, merge), AUXILIARY)
 
 
 def evaluate(
@@ -185,9 +203,19 @@ def evaluate(
     pipeline = Pipeline(settings, engine, storage, Queue(settings), llm_providers=providers)
     tenant_id, user_id = add_tenant(engine)
     labels = load_all(golden)
-    results = [(label, run_drawing(pipeline, tenant_id, user_id, label, golden)) for label in labels]
+    runs = [(label, *run_drawing(pipeline, tenant_id, user_id, label, golden)) for label in labels]
     engine.dispose()
+    # the backtest's date is fixed, so a replay prices the same to the agora (07 §10.1)
+    priced = backtest.run([mat for _, _, mat in runs if mat is not None], BACKTEST_DATE)
+    results = [(label, _with_backtest(pred, priced.get(label.id))) for label, pred, _ in runs]
     return report.build(results)
+
+
+def _with_backtest(pred: Prediction, priced: dict[str, str | None] | None) -> Prediction:
+    """The backtest's own-quote total is the drawing's predicted total (07 §10.2)."""
+    if priced is None:
+        return pred
+    return pred.model_copy(update={"quote_total": Decimal(priced["own_total"] or 0), "backtest": priced})
 
 
 def _commit() -> str:

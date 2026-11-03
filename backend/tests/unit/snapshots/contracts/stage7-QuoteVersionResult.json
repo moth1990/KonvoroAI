@@ -2,7 +2,37 @@
   "$defs": {
     "CostSource": {
       "additionalProperties": false,
+      "description": "07 §7.2: where the cost came from. `price_list_id` is the price-list row (`product_suppliers`); `via` is which\nstep of 07 §7.2.2's order chose it (S22).",
       "properties": {
+        "discount_pct": {
+          "anyOf": [
+            {
+              "examples": [
+                "0.15"
+              ],
+              "pattern": "^-?\\d+(\\.\\d+)?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Discount Pct"
+        },
+        "fx_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fx Date"
+        },
         "fx_rate": {
           "anyOf": [
             {
@@ -18,6 +48,38 @@
           ],
           "default": null,
           "title": "Fx Rate"
+        },
+        "list_price": {
+          "anyOf": [
+            {
+              "examples": [
+                "0.15"
+              ],
+              "pattern": "^-?\\d+(\\.\\d+)?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "List Price"
+        },
+        "original_cost": {
+          "anyOf": [
+            {
+              "examples": [
+                "0.15"
+              ],
+              "pattern": "^-?\\d+(\\.\\d+)?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Original Cost"
         },
         "original_currency": {
           "anyOf": [
@@ -68,9 +130,33 @@
           "default": null,
           "title": "Supplier"
         },
+        "supplier_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Supplier Id"
+        },
         "type": {
           "title": "Type",
           "type": "string"
+        },
+        "via": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Via"
         }
       },
       "required": [
@@ -95,9 +181,45 @@
           "title": "From Component Ids",
           "type": "array"
         },
+        "hours": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "examples": [
+                  "0.15"
+                ],
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Hours"
+        },
         "rule_id": {
           "title": "Rule Id",
           "type": "string"
+        },
+        "rule_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rule Key"
+        },
+        "service": {
+          "default": false,
+          "title": "Service",
+          "type": "boolean"
         }
       },
       "required": [
@@ -450,11 +572,29 @@
     },
     "MarginRule": {
       "additionalProperties": false,
+      "description": "07 §7.3: the rule that set the sale price; `fixed` for a product's fixed price (07 §7.2.1, S18 decision 6).",
       "properties": {
+        "fixed_price": {
+          "anyOf": [
+            {
+              "examples": [
+                "0.15"
+              ],
+              "pattern": "^-?\\d+(\\.\\d+)?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fixed Price"
+        },
         "kind": {
           "enum": [
             "markup",
-            "margin"
+            "margin",
+            "fixed"
           ],
           "title": "Kind",
           "type": "string"
@@ -468,19 +608,26 @@
           "type": "string"
         },
         "value": {
-          "examples": [
-            "0.15"
+          "anyOf": [
+            {
+              "examples": [
+                "0.15"
+              ],
+              "pattern": "^-?\\d+(\\.\\d+)?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
           ],
-          "pattern": "^-?\\d+(\\.\\d+)?$",
-          "title": "Value",
-          "type": "string"
+          "default": null,
+          "title": "Value"
         }
       },
       "required": [
         "rule_id",
         "level",
-        "kind",
-        "value"
+        "kind"
       ],
       "title": "MarginRule",
       "type": "object"

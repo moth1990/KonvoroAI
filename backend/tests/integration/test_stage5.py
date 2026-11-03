@@ -7,7 +7,7 @@ from datetime import date
 from decimal import Decimal
 
 import pytest
-from sqlalchemy import Engine, select
+from sqlalchemy import Engine, select, update
 from sqlalchemy.orm import Session
 
 from konboro.contracts.matching import MatchingResult
@@ -81,6 +81,9 @@ def stage_4_by_hand(engine: Engine, storage: Storage, tenant: ApiTenant, drawing
         panel_id = s.scalars(select(m.Panel.id).where(m.Panel.drawing_id == drawing_id)).first()
         assert panel_id is not None
         comps = components(drawing_id, panel_id)
+        mine = select(m.Component.id).where(m.Component.drawing_id == drawing_id)
+        # stage 7's draft lines point at the components; they let go first, as stage 4's rewrite does (S22)
+        s.execute(update(m.QuoteLine).where(m.QuoteLine.component_id.in_(mine)).values(component_id=None))
         s.query(m.Component).filter(m.Component.drawing_id == drawing_id).delete()
         for c in comps:
             s.add(

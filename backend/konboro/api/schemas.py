@@ -403,8 +403,8 @@ class PageKindIn(BaseModel):
 
 
 class ProgressSummaryOut(BaseModel):
-    """The done step's grid (01 §4.6 "סיום"). Products and prices stay 0 until stage 7 is real (S22); findings are
-    the drawing's open ones, stage 6's (S21)."""
+    """The done step's grid (01 §4.6 "סיום"): the products stage 7 priced and how many have a price (S22), and the
+    drawing's open findings, stage 6's and pricing's."""
 
     input_kind: str | None
     panels: list[str]

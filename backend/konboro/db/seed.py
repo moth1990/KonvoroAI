@@ -355,6 +355,7 @@ def seed_demo_tenant(session: Session) -> bool:
             matching=DEMO_MATCHING,
             enclosure_includes_default={"busbar": True, "n": True, "pe": True, "panels": True, "doors": True},
             onboarding={"first_drawing_at": None, "quotes_sent": 0},
+            rounding="shekel",  # the prototype's whole-shekel sale prices (S22 decision 2)
         )
     )
     session.add(MarginRule(id=new_id("mr"), tenant_id=t, level="default", kind="markup", value=Decimal("0.25")))
@@ -392,6 +393,9 @@ def seed_demo_fixtures(session: Session, storage: "Storage") -> None:
     )
     link_demo_catalog(session, DEMO_TENANT)
     demo_matching(session, DEMO_TENANT)
+    from konboro.pipeline.pricing.load import ensure_rules
+
+    ensure_rules(session, DEMO_TENANT)  # 07 §7.4's starter pack; stage 7 copies it for any tenant without one
 
 
 def seed(engine: Engine | None = None, storage: "Storage | None" = None) -> bool:

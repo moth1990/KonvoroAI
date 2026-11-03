@@ -1,0 +1,76 @@
+{
+  "version": 1,
+  "note": "07 §7.4's starter rules. Every tenant gets a copy (derived_item_rules) and tunes it. The numbers wait for the electrical expert's review (roadmap B2, S22 decision 3).",
+  "rules": [
+    {
+      "key": "enclosure",
+      "kind": "enclosure",
+      "scope": "panel",
+      "item": {"family": "enclosure"},
+      "params": {"spare_pct": "0.20"},
+      "explanation_he": "ארון לפי סך רוחב המודולים ועוד רזרבה, או לפי המידות שבשרטוט",
+      "enabled": true,
+      "approval": "pending_expert"
+    },
+    {
+      "key": "din_rail",
+      "kind": "din_rail",
+      "scope": "panel",
+      "item": {"family": "din_rail"},
+      "params": {},
+      "explanation_he": "מסילת DIN לכל שורה בארון",
+      "enabled": true,
+      "approval": "pending_expert"
+    },
+    {
+      "key": "busbar",
+      "kind": "busbar",
+      "scope": "panel",
+      "item": {"family": "busbar"},
+      "params": {},
+      "explanation_he": "פסי צבירה לפי השרטוט, או אחד לכל שורה בארון. לא נוסף כשהארון כולל אותם",
+      "enabled": true,
+      "approval": "pending_expert"
+    },
+    {
+      "key": "terminals",
+      "kind": "terminals",
+      "scope": "panel",
+      "item": {"family": "terminal"},
+      "params": {"per_output": "0"},
+      "explanation_he": "מהדקים לפי המהדקים שבשרטוט, לכל חתך",
+      "enabled": true,
+      "approval": "pending_expert"
+    },
+    {
+      "key": "labels",
+      "kind": "labels",
+      "scope": "panel",
+      "item": {"family": "label"},
+      "params": {"per_output": "1", "per_panel": "1"},
+      "explanation_he": "שלט לכל יציאה ושלט ללוח",
+      "enabled": true,
+      "approval": "pending_expert"
+    },
+    {
+      "key": "consumables",
+      "kind": "consumables",
+      "scope": "panel",
+      "item": {},
+      "params": {"pct": "0"},
+      "explanation_he": "חומרי עזר (חוטים, שרוולים, נעלי כבל) כאחוז מעלות הרכיבים בלוח",
+      "enabled": true,
+      "approval": "pending_expert"
+    },
+    {
+      "key": "heat_calculation",
+      "kind": "service",
+      "scope": "panel",
+      "item": {},
+      "params": {"contains": "חום"},
+      "explanation_he": "דרישת שירות מהערות הלוח, למשל חישוב חום. המפעל מחליט אם לתמחר",
+      "enabled": true,
+      "approval": "pending_expert"
+    }
+  ]
+}

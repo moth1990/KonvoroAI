@@ -31,7 +31,7 @@ def score_drawing(label: GoldenDrawing, pred: Prediction) -> dict[str, Scores]:
         "s6": stage6.score(label, pred),
         "s6_labelled": stage6.score_labelled(pred),
         "audit": audit.score(label.audit, pred.audit),
-        "pricing": pricing.score(label.quote_total, pred.quote_total),
+        "pricing": pricing.score(label.quote_total, pred.quote_total, pred.backtest),
     }
 
 

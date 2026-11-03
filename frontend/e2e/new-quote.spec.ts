@@ -46,14 +46,19 @@ test("a drawing goes through all 7 stages and opens for review", async ({ page }
   await expect(done.locator(".sumgrid")).toContainText("5 פענוח · 2 הקשר · 2 דילוג");
   await expect(done).toContainText("כל העמודים סווגו בביטחון גבוה");
   await expect(done).toContainText("נספרה במכסה: 13 מתוך 50"); // counted once, after stage 1
-  // stage 6 finds one thing on the stand-in's breakers, which carry no values (06 §6.2, prototype line 847)
-  await expect(done.locator(".sumgrid")).toContainText("0 עם מחיר · ממצא אחד");
+  // stage 7 prices the stand-in's one breaker, which carries no values, and adds its enclosure and labels: nothing
+  // has a price in this tenant's empty price list. Stage 6 finds one thing, pricing the rest (prototype line 847)
+  await expect(done.locator(".sumgrid")).toContainText("מוצר אחד");
+  await expect(done.locator(".sumgrid")).toContainText(/0 עם מחיר · \d+ ממצאים/);
   if (!isMobile(page)) await expect(page.getByTestId("quota-meter")).toContainText("13 מתוך 50");
 
   await page.reload(); // the URL brings the finished run back
   await expect(page.getByTestId("done")).toBeVisible();
   await page.getByTestId("toreview").click();
   await expect(page).toHaveURL(/\/review\/quo_/);
+  // stage 7's lines: the breaker, and the derived enclosure the drawing's modules can't size (07 §7.4)
+  await expect(page.getByText("ארון: לא ידוע כמה מודולים").first()).toBeVisible();
+  await expect(page.getByText("פריטים נלווים ועבודה").first()).toBeVisible();
 
   await page.goto("/home");
   await expect(page.getByTestId("recent")).toContainText("גן ילדים, לוח ראשי");

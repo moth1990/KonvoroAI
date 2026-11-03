@@ -33,6 +33,18 @@ The file is UTF-8 CSV (a BOM is allowed). There is one header row, then one row 
 | `replaced_by_sku` | no | The `sku` of the same brand's item that replaces this one. It must be in the same file |
 | `attr.<name>` | no | One column per attribute in the family's schema: `attr.current_a`, `attr.poles`, `attr.curve`. An empty cell means the item has no value for it |
 
+Stage 7's derived items (07 §7.4, S22) query their own families, which are never drawn as components:
+
+| Family | Attributes the rule reads |
+| --- | --- |
+| `enclosure` | `attr.modules` and `attr.rows` (by modules), `attr.height_mm`, `attr.width_mm`, `attr.depth_mm`, `attr.ip` (by the drawing's dimensions, all at least), `attr.material` |
+| `din_rail` | `attr.length_mm`: the shortest at least the enclosure's width |
+| `busbar` | `attr.current_a`: the smallest at least the main device's current |
+| `terminal` | `attr.cross_section_mm2`: per drawn cross-section |
+| `label` | none |
+
+The sample's rows of these families are illustrative, for the demo and the tests, until the master catalog (roadmap B3).
+
 **Attribute values** are written the way stage 4 writes them (04 §6):
 - `true` and `false` become booleans.
 - Whole numbers become integers.

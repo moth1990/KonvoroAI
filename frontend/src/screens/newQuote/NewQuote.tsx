@@ -36,6 +36,7 @@ import {
   INPUT_KINDS,
   PAGE_KINDS,
   pageNote,
+  productsText,
   resultNote,
   ROUTES,
   sizeText,
@@ -502,7 +503,7 @@ function DoneStep({ progress: p, me }: { progress: Progress; me: Me }) {
           </div>
           <div>
             <span className="eyebrow">תוצאה</span>
-            <b className="num">{`${summary.products} מוצרים`}</b>
+            <b className="num">{productsText(summary.products)}</b>
             <span className="small muted">{resultNote(summary.priced, summary.findings)}</span>
           </div>
         </div>

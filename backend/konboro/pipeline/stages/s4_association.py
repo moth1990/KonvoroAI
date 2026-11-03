@@ -22,7 +22,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from PIL import Image
-from sqlalchemy import delete
+from sqlalchemy import delete, select, update
 
 from konboro.contracts.common import StageIssue
 from konboro.contracts.detection import Detection, DetectionResult, PageDetections
@@ -611,11 +611,36 @@ def run(ctx: StageContext, cfg: AssociationConfig = DEFAULT) -> MergeResult:
 
 def _store(ctx: StageContext, comps: list[Any], places: dict[str, dict[str, Any]]) -> None:
     """The components, for quote lines and audits to point at (`components`, 04 §6.3), each with where its
-    instances are (`places`: instance id → page, box, role, and a BOM row's numbers). A rerun replaces them."""
+    instances are (`places`: instance id → page, box, role, and a BOM row's numbers). A rerun replaces them.
+
+    Quote lines point at components. A draft's lines let go of them first: stage 7 writes the draft again. A sent
+    version's lines never change (07 §7.7), so the components they point at are kept, and updated in place when the
+    rerun makes one with the same id (S22, the S13 backlog item)."""
     s = ctx.session
-    s.execute(delete(m.Component).where(m.Component.drawing_id == ctx.drawing.id))
+    tid, did = ctx.tenant_id, ctx.drawing.id
+    mine = select(m.Component.id).where(m.Component.tenant_id == tid, m.Component.drawing_id == did)
+    versions = select(m.QuoteVersion.id).where(m.QuoteVersion.tenant_id == tid, m.QuoteVersion.status == "draft")
+    s.execute(
+        update(m.QuoteLine)
+        .where(
+            m.QuoteLine.tenant_id == tid,
+            m.QuoteLine.component_id.in_(mine),
+            m.QuoteLine.quote_version_id.in_(versions),
+        )
+        .values(component_id=None)
+    )
+    kept = set(
+        s.scalars(
+            select(m.QuoteLine.component_id).where(m.QuoteLine.tenant_id == tid, m.QuoteLine.component_id.in_(mine))
+        )
+    )
+    s.execute(
+        delete(m.Component).where(
+            m.Component.tenant_id == tid, m.Component.drawing_id == did, m.Component.id.not_in(kept)
+        )
+    )
     for c in comps:
-        s.add(
+        s.merge(
             m.Component(
                 id=c.component_id,
                 tenant_id=ctx.tenant_id,
