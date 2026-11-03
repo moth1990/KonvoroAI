@@ -125,7 +125,7 @@ def snapshot_of(session: Session, version: m.QuoteVersion) -> list[LineSnap]:
     )
     return [
         LineSnap(
-            key=r.line_key or "",
+            key=r.line_key or r.id,
             panel_id=r.panel_id,
             description=r.description,
             sku=r.sku,
@@ -170,14 +170,27 @@ def snap_drafts(priced: PricedQuote) -> list[LineSnap]:
     ]
 
 
-def price_drawing(session: Session, tenant_id: str, drawing: m.Drawing, out: Outputs, name: str) -> Priced:
+def price_drawing(
+    session: Session,
+    tenant_id: str,
+    drawing: m.Drawing,
+    out: Outputs,
+    name: str,
+    keep: frozenset[str] | None = None,
+) -> Priced:
+    """`keep`, after a review action on the draft: the keys of the lines the action touched. Every other line keeps
+    its stored price (07 §7.2.3), and the quote date stays."""
     quote, version, previous = target(session, tenant_id, drawing, name)
-    carried = load.carry(session, previous or version)
+    carried = load.carry(session, previous or version, keep)
     load.ensure_rules(session, tenant_id)
     rules = load.derived_rules(session, tenant_id)
     settings = session.get(m.TenantSettings, tenant_id)
-    version.quote_date = today()
-    book, row_ids = load.book(session, tenant_id, version.quote_date, out.matching, quote.customer_id)
+    if keep is None or version.quote_date is None:
+        version.quote_date = today()
+    chosen = [
+        (e.replaced.manufacturer or "", e.replaced.sku) for e in carried.edits.values() if e.replaced and e.replaced.sku
+    ]
+    book, row_ids = load.book(session, tenant_id, version.quote_date, out.matching, quote.customer_id, chosen)
     vat = session.execute(
         select(m.VatRate.id, m.VatRate.rate)
         .where(m.VatRate.valid_from <= version.quote_date)
@@ -288,6 +301,8 @@ def line_in(ln: Draft) -> qs.LineIn:
         catalog_item_id=ln.catalog_item_id,
         line_key=ln.key,
         override=ln.override,
+        edits=dict(ln.edits),  # applied to the draft already; the row keeps them for the next recalculation
+        approved_at=ln.approved_at,
     )
 
 
@@ -295,6 +310,18 @@ def write(session: Session, version: m.QuoteVersion, drawing_id: str, priced: Pr
     """The version's live lines and its findings, replaced whole. A line the user deleted stays, soft-deleted: undo
     can bring it back (09 §7.11), and its key keeps the rule from making it again."""
     tid = version.tenant_id
+    # a line keeps its id across a recalculation, by its key: the review screen's selection and undo name it
+    reuse = {
+        key: line_id
+        for key, line_id in session.execute(
+            select(m.QuoteLine.line_key, m.QuoteLine.id).where(
+                m.QuoteLine.tenant_id == tid,
+                m.QuoteLine.quote_version_id == version.id,
+                m.QuoteLine.deleted_at.is_(None),
+            )
+        )
+        if key
+    }
     session.execute(
         delete(m.QuoteLine).where(
             m.QuoteLine.tenant_id == tid, m.QuoteLine.quote_version_id == version.id, m.QuoteLine.deleted_at.is_(None)
@@ -302,7 +329,7 @@ def write(session: Session, version: m.QuoteVersion, drawing_id: str, priced: Pr
     )
     ids: dict[str, str] = {}
     for p in priced.panels:
-        ids |= qs.write_lines(session, version, p.panel_id, [line_in(ln) for ln in p.lines])
+        ids |= qs.write_lines(session, version, p.panel_id, [line_in(ln) for ln in p.lines], reuse)
     by_component: dict[str, list[str]] = {}
     for p in priced.panels:
         for ln in p.lines:

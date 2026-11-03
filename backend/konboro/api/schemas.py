@@ -145,6 +145,7 @@ class StatusReasonOut(BaseModel):
     status: Literal["green", "yellow", "red"]
     value: Any = None
     issue_id: str | None = None
+    was: Literal["green", "yellow", "red"] | None = Field(None, description="Its colour before the line was approved")
 
 
 class PriceSourceOut(BaseModel):
@@ -160,9 +161,39 @@ class CostSourceOut(BaseModel):
     type: str
     supplier: str | None = None
     price_date: date | None = None
+    supplier_price_id: str | None = None
 
 
 class AlternativeOut(BaseModel):
+    description: str
+    sku: str | None = None
+    manufacturer: str | None = None
+
+
+class SupplierChoiceOut(BaseModel):
+    """One of the product's suppliers, for the line's "ספק" list (09 §6.4, §7.15)."""
+
+    supplier_price_id: str
+    supplier_id: str | None
+    name: str | None
+    unit_cost: DecimalStr
+    currency: str
+    lead_days: int | None
+    preferred: bool
+    in_force: bool = Field(description="Its price is valid on the quote's date (07 §7.2.2)")
+    chosen: bool = Field(description="The line's cost comes from it")
+
+
+class PriceHintOut(BaseModel):
+    """A neighbouring product in the price list, for a line with no price ("קרובים במחירון")."""
+
+    product_id: str
+    name: str
+    unit_price: DecimalStr | None
+
+
+class RemovedLineOut(BaseModel):
+    line_id: str
     description: str
 
 
@@ -215,6 +246,16 @@ class LineOut(BaseModel):
     derived: DerivedOut | None
     approved: bool
     boxes: list[BoxOut] = Field(description="Every instance of the line's component, for the drawing (09 §6.5)")
+    product_id: str | None
+    override: bool = Field(description='"מחיר להצעה הזו": a price set for this quote only (07 §7.2.3)')
+    fresh_price: DecimalStr | None = Field(
+        description='"מחיר חדש במחירון": the price list\'s price today, when it differs and there is no override'
+    )
+    below_floor: bool = Field(description="The line's margin is under the factory's floor (07 §7.3)")
+    suppliers: list[SupplierChoiceOut] = Field(description="The product's suppliers, cheapest first")
+    supplier_id: str | None = Field(description="The supplier chosen for this quote only (09 §7.15)")
+    price_hints: list[PriceHintOut] = Field(description="Neighbouring products, on a line with no price")
+    qty_editable: bool
 
 
 class LineCountsOut(BaseModel):
@@ -224,7 +265,7 @@ class LineCountsOut(BaseModel):
 
 
 class PanelTotalsOut(BaseModel):
-    cost_total: DecimalStr
+    cost_total: DecimalStr | None = Field(description="Null without the cost permission (09 §12)")
     price_total: DecimalStr
     line_counts: LineCountsOut
     unpriced_count: int
@@ -236,6 +277,7 @@ class PanelOut(BaseModel):
     name: str
     lines: list[LineOut] = Field(description="In the review screen's order (09 §6.3); a child follows its parent")
     totals: PanelTotalsOut
+    removed: list[RemovedLineOut] = Field(description='Derived lines removed, for "החזר" (09 §6.3)')
 
 
 class QuoteTotalsOut(PanelTotalsOut):
@@ -244,7 +286,7 @@ class QuoteTotalsOut(PanelTotalsOut):
     discount_pct: DecimalStr | None
     discount: DecimalStr | None
     net_total: DecimalStr = Field(description="Before VAT")
-    margin_abs: DecimalStr
+    margin_abs: DecimalStr | None
     margin_pct: DecimalStr | None
     vat_rate: DecimalStr
     vat: DecimalStr
@@ -261,6 +303,9 @@ class FindingOut(BaseModel):
     page_no: int | None
     page_id: str | None
     bbox: list[float] | None = Field(description='Where the finding is on the page, for "בשרטוט"')
+    source: Literal["rule", "bom_crosscheck", "agent", "pricing"] = Field(
+        description="Pricing's findings are answered by a price; the others can be dismissed (09 §7.7)"
+    )
 
 
 class PagePanelOut(BaseModel):
@@ -308,6 +353,40 @@ class QuoteOut(BaseModel):
     findings: list[FindingOut] = Field(description="Open findings, errors first")
     totals: QuoteTotalsOut
     pages: list[PageOut] = Field(description="The drawing's pages, in order")
+    line_floor: DecimalStr | None = Field(description="The factory's line margin floor (07 §7.3)")
+    quote_floor: DecimalStr | None = Field(description="The factory's quote margin floor (07 §7.3)")
+    derived_note: str | None = Field(description="What the enclosure's price covers, under the lines")
+    can_see_costs: bool = Field(description="09 §12: without it, every cost and margin is null")
+
+
+class ActionOut(BaseModel):
+    """A review action's answer (09 §7): the quote as it now is, the toast, and the event "בטל" undoes."""
+
+    quote: QuoteOut
+    message: str
+    event_id: str | None = Field(description="POST /quotes/{id}/undo/{event_id} takes the action back (09 §7.11)")
+    count: int = Field(description="How many lines it changed")
+    sanity: dict[str, Any] | None = Field(None, description="10 §8's checks, after a cost typed by hand")
+
+
+class RecalculationLineOut(BaseModel):
+    key: str
+    change: Literal["added", "removed", "changed"]
+    description: str
+    delta: DecimalStr | None = None
+    why: list[str] = []
+    before: dict[str, Any] | None = None
+    after: dict[str, Any] | None = None
+
+
+class RecalculationOut(BaseModel):
+    """07 §7.2.3: what "חישוב מחדש" changes, shown before it is applied."""
+
+    from_version: int
+    lines: list[RecalculationLineOut]
+    net_before: DecimalStr
+    net_after: DecimalStr
+    delta: DecimalStr
 
 
 # --- drawings (01 §4, §4.6) ----------------------------------------------------------------------------
@@ -671,6 +750,7 @@ class DraftUseOut(BaseModel):
     quote_id: str
     quote_name: str
     lines: list[str] = Field(description="Each line's designators, or its description when it has none")
+    fresh: int = Field(0, description='Lines that now show "מחיר חדש במחירון" (07 §7.2.3)')
 
 
 class ProductOut(BaseModel):
@@ -853,3 +933,40 @@ class LinePriceIn(Strict):
 
     unit_price: DecimalStr
     scope: Literal["quote", "catalog"]
+
+
+class PriceEntryIn(Strict):
+    """A price typed in the row of a line with none (S23 decision 3): to the price list too, or this quote only."""
+
+    unit_price: DecimalStr
+    save: bool = True
+
+
+class CostEntryIn(Strict):
+    """09 §6.4 "שמור עלות": a cost per unit and who sells it, saved to the price list."""
+
+    unit_cost: DecimalStr
+    supplier: str | None = Field(None, max_length=200)
+
+
+class QuantityIn(Strict):
+    qty: DecimalStr = Field(description="A whole number, at least 1 (09 §7.5)")
+
+
+class AlternativeIn(Strict):
+    index: int = Field(ge=0, le=9, description="Which of the line's alternatives (09 §7.3)")
+
+
+class LineSupplierIn(Strict):
+    supplier_price_id: str
+
+
+class DismissIn(Strict):
+    """09 §7.7: why the finding is wrong here."""
+
+    reason: Literal["intended", "checker_wrong", "other"]
+    text: str | None = Field(None, max_length=500)
+
+
+class RestoreIn(Strict):
+    line_ids: list[str] = Field(min_length=1, max_length=200)

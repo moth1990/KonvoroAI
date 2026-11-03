@@ -633,6 +633,146 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/quotes/{quote_id}/findings/{finding_id}/dismiss": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Dismiss Finding
+         * @description 09 §7.7, 06 §11: dismissed with a reason; its lines' colour follows.
+         */
+        post: operations["dismiss_finding_quotes__quote_id__findings__finding_id__dismiss_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/quotes/{quote_id}/lines/restore": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Restore Lines
+         * @description 09 §6.3 "החזר": deleted lines back.
+         */
+        post: operations["restore_lines_quotes__quote_id__lines_restore_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/quotes/{quote_id}/lines/{line_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /**
+         * Delete Line
+         * @description 09 §7.6: out of the quote, its kit parts with it. A deleted derived line is not made again (07 §7.4).
+         */
+        delete: operations["delete_line_quotes__quote_id__lines__line_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/quotes/{quote_id}/lines/{line_id}/alternative": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Choose Alternative
+         * @description 09 §7.3: the alternative on every line with the same signature, in every panel, each approved.
+         */
+        post: operations["choose_alternative_quotes__quote_id__lines__line_id__alternative_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/quotes/{quote_id}/lines/{line_id}/approve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Approve Line
+         * @description 09 §7.2: the line green, "אושר"; its open findings dismissed when every line they name is approved.
+         */
+        post: operations["approve_line_quotes__quote_id__lines__line_id__approve_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/quotes/{quote_id}/lines/{line_id}/cost": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Enter Cost
+         * @description 09 §6.4 "שמור עלות": to the price list, for every line of the product (09 §7.13).
+         */
+        post: operations["enter_cost_quotes__quote_id__lines__line_id__cost_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/quotes/{quote_id}/lines/{line_id}/list-price": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Take List Price
+         * @description 07 §7.2.3 "עדכן בהצעה": the price list's price today.
+         */
+        post: operations["take_list_price_quotes__quote_id__lines__line_id__list_price_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/quotes/{quote_id}/lines/{line_id}/price": {
         parameters: {
             query?: never;
@@ -645,9 +785,173 @@ export interface paths {
         /**
          * Change Line Price
          * @description A line's sale price changed in the review screen (07 §7.2.3, 09 §7.14): for this quote only, or in the price
-         *     list too. A sent quote never changes (409). Returns the quote with its new totals.
+         *     list too.
          */
         post: operations["change_line_price_quotes__quote_id__lines__line_id__price_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/quotes/{quote_id}/lines/{line_id}/price-entry": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Enter Price
+         * @description A price typed in the row of a line with none (S23 decision 3).
+         */
+        post: operations["enter_price_quotes__quote_id__lines__line_id__price_entry_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/quotes/{quote_id}/lines/{line_id}/qty": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Set Quantity
+         * @description 09 §7.5: at least 1; the rules and stage 7 run again.
+         */
+        post: operations["set_quantity_quotes__quote_id__lines__line_id__qty_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/quotes/{quote_id}/lines/{line_id}/supplier": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Choose Supplier
+         * @description 09 §7.15: another of the product's suppliers, for this quote only.
+         */
+        post: operations["choose_supplier_quotes__quote_id__lines__line_id__supplier_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/quotes/{quote_id}/lines/{line_id}/supplier/preferred": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Make Preferred
+         * @description 09 §7.15 "הפוך למועדף במחירון".
+         */
+        post: operations["make_preferred_quotes__quote_id__lines__line_id__supplier_preferred_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/quotes/{quote_id}/recalculation": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Preview Recalculation
+         * @description 07 §7.2.3: what "חישוב מחדש" would change. Nothing is written.
+         */
+        get: operations["preview_recalculation_quotes__quote_id__recalculation_get"];
+        put?: never;
+        /**
+         * Recalculate
+         * @description Every line of the draft priced from the list today, keeping the estimator's edits.
+         */
+        post: operations["recalculate_quotes__quote_id__recalculation_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/quotes/{quote_id}/send": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Send Quote
+         * @description 09 §7.12: the version locked (07 §7.7). The only action with no undo.
+         */
+        post: operations["send_quote_quotes__quote_id__send_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/quotes/{quote_id}/undo/{event_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Undo
+         * @description 09 §7.11: takes the action back. After sending, nothing before it is undone.
+         */
+        post: operations["undo_quotes__quote_id__undo__event_id__post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/quotes/{quote_id}/versions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Open Next Version
+         * @description "פתח גרסה N+1": a draft copy of the sent version, which stays as it was sent.
+         */
+        post: operations["open_next_version_quotes__quote_id__versions_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -676,10 +980,48 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /**
+         * ActionOut
+         * @description A review action's answer (09 §7): the quote as it now is, the toast, and the event "בטל" undoes.
+         */
+        ActionOut: {
+            /**
+             * Count
+             * @description How many lines it changed
+             */
+            count: number;
+            /**
+             * Event Id
+             * @description POST /quotes/{id}/undo/{event_id} takes the action back (09 §7.11)
+             */
+            event_id: string | null;
+            /** Message */
+            message: string;
+            quote: components["schemas"]["QuoteOut"];
+            /**
+             * Sanity
+             * @description 10 §8's checks, after a cost typed by hand
+             */
+            sanity?: {
+                [key: string]: unknown;
+            } | null;
+        };
+        /** AlternativeIn */
+        AlternativeIn: {
+            /**
+             * Index
+             * @description Which of the line's alternatives (09 §7.3)
+             */
+            index: number;
+        };
         /** AlternativeOut */
         AlternativeOut: {
             /** Description */
             description: string;
+            /** Manufacturer */
+            manufacturer?: string | null;
+            /** Sku */
+            sku?: string | null;
         };
         /**
          * AuditDecisionIn
@@ -1134,12 +1476,27 @@ export interface components {
              */
             warnings: components["schemas"]["SanityWarningOut"][];
         };
+        /**
+         * CostEntryIn
+         * @description 09 §6.4 "שמור עלות": a cost per unit and who sells it, saved to the price list.
+         */
+        CostEntryIn: {
+            /** Supplier */
+            supplier?: string | null;
+            /**
+             * Unit Cost
+             * @example 0.15
+             */
+            unit_cost: string;
+        };
         /** CostSourceOut */
         CostSourceOut: {
             /** Price Date */
             price_date?: string | null;
             /** Supplier */
             supplier?: string | null;
+            /** Supplier Price Id */
+            supplier_price_id?: string | null;
             /** Type */
             type: string;
         };
@@ -1153,8 +1510,27 @@ export interface components {
             /** Rule Id */
             rule_id?: string | null;
         };
+        /**
+         * DismissIn
+         * @description 09 §7.7: why the finding is wrong here.
+         */
+        DismissIn: {
+            /**
+             * Reason
+             * @enum {string}
+             */
+            reason: "intended" | "checker_wrong" | "other";
+            /** Text */
+            text?: string | null;
+        };
         /** DraftUseOut */
         DraftUseOut: {
+            /**
+             * Fresh
+             * @description Lines that now show "מחיר חדש במחירון" (07 §7.2.3)
+             * @default 0
+             */
+            fresh: number;
             /**
              * Lines
              * @description Each line's designators, or its description when it has none
@@ -1204,6 +1580,12 @@ export interface components {
              * @enum {string}
              */
             severity: "error" | "warning" | "info";
+            /**
+             * Source
+             * @description Pricing's findings are answered by a price; the others can be dismissed (09 §7.7)
+             * @enum {string}
+             */
+            source: "rule" | "bom_crosscheck" | "agent" | "pricing";
             /** Title */
             title: string | null;
         };
@@ -1250,6 +1632,11 @@ export interface components {
             /** Approved */
             approved: boolean;
             /**
+             * Below Floor
+             * @description The line's margin is under the factory's floor (07 §7.3)
+             */
+            below_floor: boolean;
+            /**
              * Boxes
              * @description Every instance of the line's component, for the drawing (09 §6.5)
              */
@@ -1265,6 +1652,11 @@ export interface components {
              * @description Why this product, when it needs saying
              */
             explanation: string | null;
+            /**
+             * Fresh Price
+             * @description "מחיר חדש במחירון": the price list's price today, when it differs and there is no override
+             */
+            fresh_price: string | null;
             /**
              * Included
              * @description A kit add-on whose price is in its parent line's
@@ -1297,16 +1689,30 @@ export interface components {
              * @description The circuit's load, as written in the drawing
              */
             note: string | null;
+            /**
+             * Override
+             * @description "מחיר להצעה הזו": a price set for this quote only (07 §7.2.3)
+             */
+            override: boolean;
             /** Parent Line Id */
             parent_line_id: string | null;
+            /**
+             * Price Hints
+             * @description Neighbouring products, on a line with no price
+             */
+            price_hints: components["schemas"]["PriceHintOut"][];
             price_source: components["schemas"]["PriceSourceOut"] | null;
             /** Price Status */
             price_status: ("ok" | "stale" | "discount_based" | "missing") | null;
+            /** Product Id */
+            product_id: string | null;
             /**
              * Qty
              * @example 0.15
              */
             qty: string;
+            /** Qty Editable */
+            qty_editable: boolean;
             /**
              * Raw Text
              * @description The text read beside the component, line by line
@@ -1329,6 +1735,16 @@ export interface components {
             status: "green" | "yellow" | "red";
             /** Status Reasons */
             status_reasons: components["schemas"]["StatusReasonOut"][];
+            /**
+             * Supplier Id
+             * @description The supplier chosen for this quote only (09 §7.15)
+             */
+            supplier_id: string | null;
+            /**
+             * Suppliers
+             * @description The product's suppliers, cheapest first
+             */
+            suppliers: components["schemas"]["SupplierChoiceOut"][];
             /** Unit */
             unit: string;
             /** Unit Cost */
@@ -1356,6 +1772,11 @@ export interface components {
              * @example 0.15
              */
             unit_price: string;
+        };
+        /** LineSupplierIn */
+        LineSupplierIn: {
+            /** Supplier Price Id */
+            supplier_price_id: string;
         };
         /** LoginIn */
         LoginIn: {
@@ -1559,15 +1980,20 @@ export interface components {
             name: string;
             /** Panel Id */
             panel_id: string | null;
+            /**
+             * Removed
+             * @description Derived lines removed, for "החזר" (09 §6.3)
+             */
+            removed: components["schemas"]["RemovedLineOut"][];
             totals: components["schemas"]["PanelTotalsOut"];
         };
         /** PanelTotalsOut */
         PanelTotalsOut: {
             /**
              * Cost Total
-             * @example 0.15
+             * @description Null without the cost permission (09 §12)
              */
-            cost_total: string;
+            cost_total: string | null;
             line_counts: components["schemas"]["LineCountsOut"];
             /**
              * Price Total
@@ -1608,6 +2034,34 @@ export interface components {
             monthly_quote_limit: number | null;
             /** Name He */
             name_he: string;
+        };
+        /**
+         * PriceEntryIn
+         * @description A price typed in the row of a line with none (S23 decision 3): to the price list too, or this quote only.
+         */
+        PriceEntryIn: {
+            /**
+             * Save
+             * @default true
+             */
+            save: boolean;
+            /**
+             * Unit Price
+             * @example 0.15
+             */
+            unit_price: string;
+        };
+        /**
+         * PriceHintOut
+         * @description A neighbouring product in the price list, for a line with no price ("קרובים במחירון").
+         */
+        PriceHintOut: {
+            /** Name */
+            name: string;
+            /** Product Id */
+            product_id: string;
+            /** Unit Price */
+            unit_price: string | null;
         };
         /** PriceHistoryOut */
         PriceHistoryOut: {
@@ -1963,6 +2417,15 @@ export interface components {
             /** Products */
             products: number;
         };
+        /** QuantityIn */
+        QuantityIn: {
+            /**
+             * Qty
+             * @description A whole number, at least 1 (09 §7.5)
+             * @example 0.15
+             */
+            qty: string;
+        };
         /** QuotaCounterOut */
         QuotaCounterOut: {
             /**
@@ -2039,12 +2502,22 @@ export interface components {
          */
         QuoteOut: {
             /**
+             * Can See Costs
+             * @description 09 §12: without it, every cost and margin is null
+             */
+            can_see_costs: boolean;
+            /**
              * Coverage Pct
              * @description Share of the lines that have a price (09 §6.1, 10 §7)
              */
             coverage_pct: number | null;
             /** Currency */
             currency: string;
+            /**
+             * Derived Note
+             * @description What the enclosure's price covers, under the lines
+             */
+            derived_note: string | null;
             /** Drawing Id */
             drawing_id: string | null;
             /** Drawing Number */
@@ -2056,6 +2529,11 @@ export interface components {
             findings: components["schemas"]["FindingOut"][];
             /** Input Kind */
             input_kind: ("factory_drawing" | "designer_plan" | "bom_only" | "mixed") | null;
+            /**
+             * Line Floor
+             * @description The factory's line margin floor (07 §7.3)
+             */
+            line_floor: string | null;
             /** Name */
             name: string;
             /**
@@ -2067,6 +2545,11 @@ export interface components {
             panels: components["schemas"]["PanelOut"][];
             /** Quote Date */
             quote_date: string | null;
+            /**
+             * Quote Floor
+             * @description The factory's quote margin floor (07 §7.3)
+             */
+            quote_floor: string | null;
             /** Quote Id */
             quote_id: string;
             /** Revision */
@@ -2087,9 +2570,9 @@ export interface components {
         QuoteTotalsOut: {
             /**
              * Cost Total
-             * @example 0.15
+             * @description Null without the cost permission (09 §12)
              */
-            cost_total: string;
+            cost_total: string | null;
             /** Discount */
             discount: string | null;
             /** Discount Pct */
@@ -2100,11 +2583,8 @@ export interface components {
              */
             gross_total: string;
             line_counts: components["schemas"]["LineCountsOut"];
-            /**
-             * Margin Abs
-             * @example 0.15
-             */
-            margin_abs: string;
+            /** Margin Abs */
+            margin_abs: string | null;
             /** Margin Pct */
             margin_pct: string | null;
             /**
@@ -2135,6 +2615,70 @@ export interface components {
              * @example 0.15
              */
             vat_rate: string;
+        };
+        /** RecalculationLineOut */
+        RecalculationLineOut: {
+            /** After */
+            after?: {
+                [key: string]: unknown;
+            } | null;
+            /** Before */
+            before?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Change
+             * @enum {string}
+             */
+            change: "added" | "removed" | "changed";
+            /** Delta */
+            delta?: string | null;
+            /** Description */
+            description: string;
+            /** Key */
+            key: string;
+            /**
+             * Why
+             * @default []
+             */
+            why: string[];
+        };
+        /**
+         * RecalculationOut
+         * @description 07 §7.2.3: what "חישוב מחדש" changes, shown before it is applied.
+         */
+        RecalculationOut: {
+            /**
+             * Delta
+             * @example 0.15
+             */
+            delta: string;
+            /** From Version */
+            from_version: number;
+            /** Lines */
+            lines: components["schemas"]["RecalculationLineOut"][];
+            /**
+             * Net After
+             * @example 0.15
+             */
+            net_after: string;
+            /**
+             * Net Before
+             * @example 0.15
+             */
+            net_before: string;
+        };
+        /** RemovedLineOut */
+        RemovedLineOut: {
+            /** Description */
+            description: string;
+            /** Line Id */
+            line_id: string;
+        };
+        /** RestoreIn */
+        RestoreIn: {
+            /** Line Ids */
+            line_ids: string[];
         };
         /**
          * RevisableOut
@@ -2292,6 +2836,44 @@ export interface components {
             status: "green" | "yellow" | "red";
             /** Value */
             value?: unknown;
+            /**
+             * Was
+             * @description Its colour before the line was approved
+             */
+            was?: ("green" | "yellow" | "red") | null;
+        };
+        /**
+         * SupplierChoiceOut
+         * @description One of the product's suppliers, for the line's "ספק" list (09 §6.4, §7.15).
+         */
+        SupplierChoiceOut: {
+            /**
+             * Chosen
+             * @description The line's cost comes from it
+             */
+            chosen: boolean;
+            /** Currency */
+            currency: string;
+            /**
+             * In Force
+             * @description Its price is valid on the quote's date (07 §7.2.2)
+             */
+            in_force: boolean;
+            /** Lead Days */
+            lead_days: number | null;
+            /** Name */
+            name: string | null;
+            /** Preferred */
+            preferred: boolean;
+            /** Supplier Id */
+            supplier_id: string | null;
+            /** Supplier Price Id */
+            supplier_price_id: string;
+            /**
+             * Unit Cost
+             * @example 0.15
+             */
+            unit_cost: string;
         };
         /** SupplierIn */
         SupplierIn: {
@@ -3756,6 +4338,245 @@ export interface operations {
             };
         };
     };
+    dismiss_finding_quotes__quote_id__findings__finding_id__dismiss_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                quote_id: string;
+                finding_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DismissIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ActionOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    restore_lines_quotes__quote_id__lines_restore_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                quote_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RestoreIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ActionOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    delete_line_quotes__quote_id__lines__line_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                quote_id: string;
+                line_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ActionOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    choose_alternative_quotes__quote_id__lines__line_id__alternative_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                quote_id: string;
+                line_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AlternativeIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ActionOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    approve_line_quotes__quote_id__lines__line_id__approve_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                quote_id: string;
+                line_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ActionOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    enter_cost_quotes__quote_id__lines__line_id__cost_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                quote_id: string;
+                line_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CostEntryIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ActionOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    take_list_price_quotes__quote_id__lines__line_id__list_price_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                quote_id: string;
+                line_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ActionOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     change_line_price_quotes__quote_id__lines__line_id__price_post: {
         parameters: {
             query?: never;
@@ -3771,6 +4592,302 @@ export interface operations {
                 "application/json": components["schemas"]["LinePriceIn"];
             };
         };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ActionOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    enter_price_quotes__quote_id__lines__line_id__price_entry_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                quote_id: string;
+                line_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PriceEntryIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ActionOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    set_quantity_quotes__quote_id__lines__line_id__qty_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                quote_id: string;
+                line_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["QuantityIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ActionOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    choose_supplier_quotes__quote_id__lines__line_id__supplier_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                quote_id: string;
+                line_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LineSupplierIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ActionOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    make_preferred_quotes__quote_id__lines__line_id__supplier_preferred_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                quote_id: string;
+                line_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ActionOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    preview_recalculation_quotes__quote_id__recalculation_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                quote_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RecalculationOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    recalculate_quotes__quote_id__recalculation_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                quote_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QuoteOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    send_quote_quotes__quote_id__send_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                quote_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QuoteOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    undo_quotes__quote_id__undo__event_id__post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                quote_id: string;
+                event_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ActionOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    open_next_version_quotes__quote_id__versions_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                quote_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description Successful Response */
             200: {

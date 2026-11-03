@@ -1,11 +1,100 @@
 {
   "components": {
     "schemas": {
+      "ActionOut": {
+        "description": "A review action's answer (09 §7): the quote as it now is, the toast, and the event \"בטל\" undoes.",
+        "properties": {
+          "count": {
+            "description": "How many lines it changed",
+            "title": "Count",
+            "type": "integer"
+          },
+          "event_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "POST /quotes/{id}/undo/{event_id} takes the action back (09 §7.11)",
+            "title": "Event Id"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "quote": {
+            "$ref": "#/components/schemas/QuoteOut"
+          },
+          "sanity": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "10 §8's checks, after a cost typed by hand",
+            "title": "Sanity"
+          }
+        },
+        "required": [
+          "quote",
+          "message",
+          "event_id",
+          "count"
+        ],
+        "title": "ActionOut",
+        "type": "object"
+      },
+      "AlternativeIn": {
+        "additionalProperties": false,
+        "properties": {
+          "index": {
+            "description": "Which of the line's alternatives (09 §7.3)",
+            "maximum": 9.0,
+            "minimum": 0.0,
+            "title": "Index",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "index"
+        ],
+        "title": "AlternativeIn",
+        "type": "object"
+      },
       "AlternativeOut": {
         "properties": {
           "description": {
             "title": "Description",
             "type": "string"
+          },
+          "manufacturer": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Manufacturer"
+          },
+          "sku": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sku"
           }
         },
         "required": [
@@ -1363,6 +1452,37 @@
         "title": "CostCheckOut",
         "type": "object"
       },
+      "CostEntryIn": {
+        "additionalProperties": false,
+        "description": "09 §6.4 \"שמור עלות\": a cost per unit and who sells it, saved to the price list.",
+        "properties": {
+          "supplier": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Supplier"
+          },
+          "unit_cost": {
+            "examples": [
+              "0.15"
+            ],
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Unit Cost",
+            "type": "string"
+          }
+        },
+        "required": [
+          "unit_cost"
+        ],
+        "title": "CostEntryIn",
+        "type": "object"
+      },
       "CostSourceOut": {
         "properties": {
           "price_date": {
@@ -1387,6 +1507,17 @@
               }
             ],
             "title": "Supplier"
+          },
+          "supplier_price_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Supplier Price Id"
           },
           "type": {
             "title": "Type",
@@ -1424,8 +1555,46 @@
         "title": "DerivedOut",
         "type": "object"
       },
+      "DismissIn": {
+        "additionalProperties": false,
+        "description": "09 §7.7: why the finding is wrong here.",
+        "properties": {
+          "reason": {
+            "enum": [
+              "intended",
+              "checker_wrong",
+              "other"
+            ],
+            "title": "Reason",
+            "type": "string"
+          },
+          "text": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Text"
+          }
+        },
+        "required": [
+          "reason"
+        ],
+        "title": "DismissIn",
+        "type": "object"
+      },
       "DraftUseOut": {
         "properties": {
+          "fresh": {
+            "default": 0,
+            "description": "Lines that now show \"מחיר חדש במחירון\" (07 §7.2.3)",
+            "title": "Fresh",
+            "type": "integer"
+          },
           "lines": {
             "description": "Each line's designators, or its description when it has none",
             "items": {
@@ -1563,6 +1732,17 @@
             "title": "Severity",
             "type": "string"
           },
+          "source": {
+            "description": "Pricing's findings are answered by a price; the others can be dismissed (09 §7.7)",
+            "enum": [
+              "rule",
+              "bom_crosscheck",
+              "agent",
+              "pricing"
+            ],
+            "title": "Source",
+            "type": "string"
+          },
           "title": {
             "anyOf": [
               {
@@ -1584,7 +1764,8 @@
           "line_ids",
           "page_no",
           "page_id",
-          "bbox"
+          "bbox",
+          "source"
         ],
         "title": "FindingOut",
         "type": "object"
@@ -1669,6 +1850,11 @@
             "title": "Approved",
             "type": "boolean"
           },
+          "below_floor": {
+            "description": "The line's margin is under the factory's floor (07 §7.3)",
+            "title": "Below Floor",
+            "type": "boolean"
+          },
           "boxes": {
             "description": "Every instance of the line's component, for the drawing (09 §6.5)",
             "items": {
@@ -1719,6 +1905,22 @@
             ],
             "description": "Why this product, when it needs saying",
             "title": "Explanation"
+          },
+          "fresh_price": {
+            "anyOf": [
+              {
+                "examples": [
+                  "0.15"
+                ],
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "\"מחיר חדש במחירון\": the price list's price today, when it differs and there is no override",
+            "title": "Fresh Price"
           },
           "included": {
             "description": "A kit add-on whose price is in its parent line's",
@@ -1827,6 +2029,11 @@
             "description": "The circuit's load, as written in the drawing",
             "title": "Note"
           },
+          "override": {
+            "description": "\"מחיר להצעה הזו\": a price set for this quote only (07 §7.2.3)",
+            "title": "Override",
+            "type": "boolean"
+          },
           "parent_line_id": {
             "anyOf": [
               {
@@ -1837,6 +2044,14 @@
               }
             ],
             "title": "Parent Line Id"
+          },
+          "price_hints": {
+            "description": "Neighbouring products, on a line with no price",
+            "items": {
+              "$ref": "#/components/schemas/PriceHintOut"
+            },
+            "title": "Price Hints",
+            "type": "array"
           },
           "price_source": {
             "anyOf": [
@@ -1865,6 +2080,17 @@
             ],
             "title": "Price Status"
           },
+          "product_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Product Id"
+          },
           "qty": {
             "examples": [
               "0.15"
@@ -1872,6 +2098,10 @@
             "pattern": "^-?\\d+(\\.\\d+)?$",
             "title": "Qty",
             "type": "string"
+          },
+          "qty_editable": {
+            "title": "Qty Editable",
+            "type": "boolean"
           },
           "raw_text": {
             "description": "The text read beside the component, line by line",
@@ -1923,6 +2153,26 @@
               "$ref": "#/components/schemas/StatusReasonOut"
             },
             "title": "Status Reasons",
+            "type": "array"
+          },
+          "supplier_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The supplier chosen for this quote only (09 §7.15)",
+            "title": "Supplier Id"
+          },
+          "suppliers": {
+            "description": "The product's suppliers, cheapest first",
+            "items": {
+              "$ref": "#/components/schemas/SupplierChoiceOut"
+            },
+            "title": "Suppliers",
             "type": "array"
           },
           "unit": {
@@ -2008,7 +2258,15 @@
           "alternatives",
           "derived",
           "approved",
-          "boxes"
+          "boxes",
+          "product_id",
+          "override",
+          "fresh_price",
+          "below_floor",
+          "suppliers",
+          "supplier_id",
+          "price_hints",
+          "qty_editable"
         ],
         "title": "LineOut",
         "type": "object"
@@ -2039,6 +2297,20 @@
           "scope"
         ],
         "title": "LinePriceIn",
+        "type": "object"
+      },
+      "LineSupplierIn": {
+        "additionalProperties": false,
+        "properties": {
+          "supplier_price_id": {
+            "title": "Supplier Price Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "supplier_price_id"
+        ],
+        "title": "LineSupplierIn",
         "type": "object"
       },
       "LoginIn": {
@@ -2730,6 +3002,14 @@
             ],
             "title": "Panel Id"
           },
+          "removed": {
+            "description": "Derived lines removed, for \"החזר\" (09 §6.3)",
+            "items": {
+              "$ref": "#/components/schemas/RemovedLineOut"
+            },
+            "title": "Removed",
+            "type": "array"
+          },
           "totals": {
             "$ref": "#/components/schemas/PanelTotalsOut"
           }
@@ -2738,7 +3018,8 @@
           "panel_id",
           "name",
           "lines",
-          "totals"
+          "totals",
+          "removed"
         ],
         "title": "PanelOut",
         "type": "object"
@@ -2746,12 +3027,20 @@
       "PanelTotalsOut": {
         "properties": {
           "cost_total": {
-            "examples": [
-              "0.15"
+            "anyOf": [
+              {
+                "examples": [
+                  "0.15"
+                ],
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
             ],
-            "pattern": "^-?\\d+(\\.\\d+)?$",
-            "title": "Cost Total",
-            "type": "string"
+            "description": "Null without the cost permission (09 §12)",
+            "title": "Cost Total"
           },
           "line_counts": {
             "$ref": "#/components/schemas/LineCountsOut"
@@ -2849,6 +3138,65 @@
           "max_pages_per_file"
         ],
         "title": "PlanOut",
+        "type": "object"
+      },
+      "PriceEntryIn": {
+        "additionalProperties": false,
+        "description": "A price typed in the row of a line with none (S23 decision 3): to the price list too, or this quote only.",
+        "properties": {
+          "save": {
+            "default": true,
+            "title": "Save",
+            "type": "boolean"
+          },
+          "unit_price": {
+            "examples": [
+              "0.15"
+            ],
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Unit Price",
+            "type": "string"
+          }
+        },
+        "required": [
+          "unit_price"
+        ],
+        "title": "PriceEntryIn",
+        "type": "object"
+      },
+      "PriceHintOut": {
+        "description": "A neighbouring product in the price list, for a line with no price (\"קרובים במחירון\").",
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "product_id": {
+            "title": "Product Id",
+            "type": "string"
+          },
+          "unit_price": {
+            "anyOf": [
+              {
+                "examples": [
+                  "0.15"
+                ],
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit Price"
+          }
+        },
+        "required": [
+          "product_id",
+          "name",
+          "unit_price"
+        ],
+        "title": "PriceHintOut",
         "type": "object"
       },
       "PriceHistoryOut": {
@@ -3977,6 +4325,25 @@
         "title": "ProgressSummaryOut",
         "type": "object"
       },
+      "QuantityIn": {
+        "additionalProperties": false,
+        "properties": {
+          "qty": {
+            "description": "A whole number, at least 1 (09 §7.5)",
+            "examples": [
+              "0.15"
+            ],
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Qty",
+            "type": "string"
+          }
+        },
+        "required": [
+          "qty"
+        ],
+        "title": "QuantityIn",
+        "type": "object"
+      },
       "QuotaCounterOut": {
         "properties": {
           "counter": {
@@ -4134,6 +4501,11 @@
       "QuoteOut": {
         "description": "The review screen's quote (09 §4): its current version, panels, lines, findings and totals.",
         "properties": {
+          "can_see_costs": {
+            "description": "09 §12: without it, every cost and margin is null",
+            "title": "Can See Costs",
+            "type": "boolean"
+          },
           "coverage_pct": {
             "anyOf": [
               {
@@ -4149,6 +4521,18 @@
           "currency": {
             "title": "Currency",
             "type": "string"
+          },
+          "derived_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "What the enclosure's price covers, under the lines",
+            "title": "Derived Note"
           },
           "drawing_id": {
             "anyOf": [
@@ -4197,6 +4581,22 @@
             ],
             "title": "Input Kind"
           },
+          "line_floor": {
+            "anyOf": [
+              {
+                "examples": [
+                  "0.15"
+                ],
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The factory's line margin floor (07 §7.3)",
+            "title": "Line Floor"
+          },
           "name": {
             "title": "Name",
             "type": "string"
@@ -4227,6 +4627,22 @@
               }
             ],
             "title": "Quote Date"
+          },
+          "quote_floor": {
+            "anyOf": [
+              {
+                "examples": [
+                  "0.15"
+                ],
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The factory's quote margin floor (07 §7.3)",
+            "title": "Quote Floor"
           },
           "quote_id": {
             "title": "Quote Id",
@@ -4267,7 +4683,11 @@
           "panels",
           "findings",
           "totals",
-          "pages"
+          "pages",
+          "line_floor",
+          "quote_floor",
+          "derived_note",
+          "can_see_costs"
         ],
         "title": "QuoteOut",
         "type": "object"
@@ -4276,12 +4696,20 @@
         "description": "07 §7.6, summed on the server from the live lines.",
         "properties": {
           "cost_total": {
-            "examples": [
-              "0.15"
+            "anyOf": [
+              {
+                "examples": [
+                  "0.15"
+                ],
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
             ],
-            "pattern": "^-?\\d+(\\.\\d+)?$",
-            "title": "Cost Total",
-            "type": "string"
+            "description": "Null without the cost permission (09 §12)",
+            "title": "Cost Total"
           },
           "discount": {
             "anyOf": [
@@ -4325,12 +4753,19 @@
             "$ref": "#/components/schemas/LineCountsOut"
           },
           "margin_abs": {
-            "examples": [
-              "0.15"
+            "anyOf": [
+              {
+                "examples": [
+                  "0.15"
+                ],
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
             ],
-            "pattern": "^-?\\d+(\\.\\d+)?$",
-            "title": "Margin Abs",
-            "type": "string"
+            "title": "Margin Abs"
           },
           "margin_pct": {
             "anyOf": [
@@ -4406,6 +4841,167 @@
           "gross_total"
         ],
         "title": "QuoteTotalsOut",
+        "type": "object"
+      },
+      "RecalculationLineOut": {
+        "properties": {
+          "after": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "After"
+          },
+          "before": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Before"
+          },
+          "change": {
+            "enum": [
+              "added",
+              "removed",
+              "changed"
+            ],
+            "title": "Change",
+            "type": "string"
+          },
+          "delta": {
+            "anyOf": [
+              {
+                "examples": [
+                  "0.15"
+                ],
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Delta"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "why": {
+            "default": [],
+            "items": {
+              "type": "string"
+            },
+            "title": "Why",
+            "type": "array"
+          }
+        },
+        "required": [
+          "key",
+          "change",
+          "description"
+        ],
+        "title": "RecalculationLineOut",
+        "type": "object"
+      },
+      "RecalculationOut": {
+        "description": "07 §7.2.3: what \"חישוב מחדש\" changes, shown before it is applied.",
+        "properties": {
+          "delta": {
+            "examples": [
+              "0.15"
+            ],
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Delta",
+            "type": "string"
+          },
+          "from_version": {
+            "title": "From Version",
+            "type": "integer"
+          },
+          "lines": {
+            "items": {
+              "$ref": "#/components/schemas/RecalculationLineOut"
+            },
+            "title": "Lines",
+            "type": "array"
+          },
+          "net_after": {
+            "examples": [
+              "0.15"
+            ],
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Net After",
+            "type": "string"
+          },
+          "net_before": {
+            "examples": [
+              "0.15"
+            ],
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Net Before",
+            "type": "string"
+          }
+        },
+        "required": [
+          "from_version",
+          "lines",
+          "net_before",
+          "net_after",
+          "delta"
+        ],
+        "title": "RecalculationOut",
+        "type": "object"
+      },
+      "RemovedLineOut": {
+        "properties": {
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "line_id": {
+            "title": "Line Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "line_id",
+          "description"
+        ],
+        "title": "RemovedLineOut",
+        "type": "object"
+      },
+      "RestoreIn": {
+        "additionalProperties": false,
+        "properties": {
+          "line_ids": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 200,
+            "minItems": 1,
+            "title": "Line Ids",
+            "type": "array"
+          }
+        },
+        "required": [
+          "line_ids"
+        ],
+        "title": "RestoreIn",
         "type": "object"
       },
       "RevisableOut": {
@@ -4850,6 +5446,23 @@
           },
           "value": {
             "title": "Value"
+          },
+          "was": {
+            "anyOf": [
+              {
+                "enum": [
+                  "green",
+                  "yellow",
+                  "red"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Its colour before the line was approved",
+            "title": "Was"
           }
         },
         "required": [
@@ -4857,6 +5470,87 @@
           "status"
         ],
         "title": "StatusReasonOut",
+        "type": "object"
+      },
+      "SupplierChoiceOut": {
+        "description": "One of the product's suppliers, for the line's \"ספק\" list (09 §6.4, §7.15).",
+        "properties": {
+          "chosen": {
+            "description": "The line's cost comes from it",
+            "title": "Chosen",
+            "type": "boolean"
+          },
+          "currency": {
+            "title": "Currency",
+            "type": "string"
+          },
+          "in_force": {
+            "description": "Its price is valid on the quote's date (07 §7.2.2)",
+            "title": "In Force",
+            "type": "boolean"
+          },
+          "lead_days": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lead Days"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "preferred": {
+            "title": "Preferred",
+            "type": "boolean"
+          },
+          "supplier_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Supplier Id"
+          },
+          "supplier_price_id": {
+            "title": "Supplier Price Id",
+            "type": "string"
+          },
+          "unit_cost": {
+            "examples": [
+              "0.15"
+            ],
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Unit Cost",
+            "type": "string"
+          }
+        },
+        "required": [
+          "supplier_price_id",
+          "supplier_id",
+          "name",
+          "unit_cost",
+          "currency",
+          "lead_days",
+          "preferred",
+          "in_force",
+          "chosen"
+        ],
+        "title": "SupplierChoiceOut",
         "type": "object"
       },
       "SupplierIn": {
@@ -7347,9 +8041,452 @@
         ]
       }
     },
+    "/quotes/{quote_id}/findings/{finding_id}/dismiss": {
+      "post": {
+        "description": "09 §7.7, 06 §11: dismissed with a reason; its lines' colour follows.",
+        "operationId": "dismiss_finding_quotes__quote_id__findings__finding_id__dismiss_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "quote_id",
+            "required": true,
+            "schema": {
+              "pattern": "^quo_[0-9A-Z]{26}$",
+              "title": "Quote Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "finding_id",
+            "required": true,
+            "schema": {
+              "pattern": "^iss_[0-9A-Za-z]{20,32}$",
+              "title": "Finding Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DismissIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Dismiss Finding",
+        "tags": [
+          "quotes"
+        ]
+      }
+    },
+    "/quotes/{quote_id}/lines/restore": {
+      "post": {
+        "description": "09 §6.3 \"החזר\": deleted lines back.",
+        "operationId": "restore_lines_quotes__quote_id__lines_restore_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "quote_id",
+            "required": true,
+            "schema": {
+              "pattern": "^quo_[0-9A-Z]{26}$",
+              "title": "Quote Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RestoreIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Restore Lines",
+        "tags": [
+          "quotes"
+        ]
+      }
+    },
+    "/quotes/{quote_id}/lines/{line_id}": {
+      "delete": {
+        "description": "09 §7.6: out of the quote, its kit parts with it. A deleted derived line is not made again (07 §7.4).",
+        "operationId": "delete_line_quotes__quote_id__lines__line_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "quote_id",
+            "required": true,
+            "schema": {
+              "pattern": "^quo_[0-9A-Z]{26}$",
+              "title": "Quote Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "line_id",
+            "required": true,
+            "schema": {
+              "pattern": "^ln_[0-9A-Z]{26}$",
+              "title": "Line Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Delete Line",
+        "tags": [
+          "quotes"
+        ]
+      }
+    },
+    "/quotes/{quote_id}/lines/{line_id}/alternative": {
+      "post": {
+        "description": "09 §7.3: the alternative on every line with the same signature, in every panel, each approved.",
+        "operationId": "choose_alternative_quotes__quote_id__lines__line_id__alternative_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "quote_id",
+            "required": true,
+            "schema": {
+              "pattern": "^quo_[0-9A-Z]{26}$",
+              "title": "Quote Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "line_id",
+            "required": true,
+            "schema": {
+              "pattern": "^ln_[0-9A-Z]{26}$",
+              "title": "Line Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AlternativeIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Choose Alternative",
+        "tags": [
+          "quotes"
+        ]
+      }
+    },
+    "/quotes/{quote_id}/lines/{line_id}/approve": {
+      "post": {
+        "description": "09 §7.2: the line green, \"אושר\"; its open findings dismissed when every line they name is approved.",
+        "operationId": "approve_line_quotes__quote_id__lines__line_id__approve_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "quote_id",
+            "required": true,
+            "schema": {
+              "pattern": "^quo_[0-9A-Z]{26}$",
+              "title": "Quote Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "line_id",
+            "required": true,
+            "schema": {
+              "pattern": "^ln_[0-9A-Z]{26}$",
+              "title": "Line Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Approve Line",
+        "tags": [
+          "quotes"
+        ]
+      }
+    },
+    "/quotes/{quote_id}/lines/{line_id}/cost": {
+      "post": {
+        "description": "09 §6.4 \"שמור עלות\": to the price list, for every line of the product (09 §7.13).",
+        "operationId": "enter_cost_quotes__quote_id__lines__line_id__cost_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "quote_id",
+            "required": true,
+            "schema": {
+              "pattern": "^quo_[0-9A-Z]{26}$",
+              "title": "Quote Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "line_id",
+            "required": true,
+            "schema": {
+              "pattern": "^ln_[0-9A-Z]{26}$",
+              "title": "Line Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CostEntryIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Enter Cost",
+        "tags": [
+          "quotes"
+        ]
+      }
+    },
+    "/quotes/{quote_id}/lines/{line_id}/list-price": {
+      "post": {
+        "description": "07 §7.2.3 \"עדכן בהצעה\": the price list's price today.",
+        "operationId": "take_list_price_quotes__quote_id__lines__line_id__list_price_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "quote_id",
+            "required": true,
+            "schema": {
+              "pattern": "^quo_[0-9A-Z]{26}$",
+              "title": "Quote Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "line_id",
+            "required": true,
+            "schema": {
+              "pattern": "^ln_[0-9A-Z]{26}$",
+              "title": "Line Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Take List Price",
+        "tags": [
+          "quotes"
+        ]
+      }
+    },
     "/quotes/{quote_id}/lines/{line_id}/price": {
       "post": {
-        "description": "A line's sale price changed in the review screen (07 §7.2.3, 09 §7.14): for this quote only, or in the price\nlist too. A sent quote never changes (409). Returns the quote with its new totals.",
+        "description": "A line's sale price changed in the review screen (07 §7.2.3, 09 §7.14): for this quote only, or in the price\nlist too.",
         "operationId": "change_line_price_quotes__quote_id__lines__line_id__price_post",
         "parameters": [
           {
@@ -7388,7 +8525,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/QuoteOut"
+                  "$ref": "#/components/schemas/ActionOut"
                 }
               }
             },
@@ -7411,6 +8548,525 @@
           }
         ],
         "summary": "Change Line Price",
+        "tags": [
+          "quotes"
+        ]
+      }
+    },
+    "/quotes/{quote_id}/lines/{line_id}/price-entry": {
+      "post": {
+        "description": "A price typed in the row of a line with none (S23 decision 3).",
+        "operationId": "enter_price_quotes__quote_id__lines__line_id__price_entry_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "quote_id",
+            "required": true,
+            "schema": {
+              "pattern": "^quo_[0-9A-Z]{26}$",
+              "title": "Quote Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "line_id",
+            "required": true,
+            "schema": {
+              "pattern": "^ln_[0-9A-Z]{26}$",
+              "title": "Line Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PriceEntryIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Enter Price",
+        "tags": [
+          "quotes"
+        ]
+      }
+    },
+    "/quotes/{quote_id}/lines/{line_id}/qty": {
+      "post": {
+        "description": "09 §7.5: at least 1; the rules and stage 7 run again.",
+        "operationId": "set_quantity_quotes__quote_id__lines__line_id__qty_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "quote_id",
+            "required": true,
+            "schema": {
+              "pattern": "^quo_[0-9A-Z]{26}$",
+              "title": "Quote Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "line_id",
+            "required": true,
+            "schema": {
+              "pattern": "^ln_[0-9A-Z]{26}$",
+              "title": "Line Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuantityIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Set Quantity",
+        "tags": [
+          "quotes"
+        ]
+      }
+    },
+    "/quotes/{quote_id}/lines/{line_id}/supplier": {
+      "post": {
+        "description": "09 §7.15: another of the product's suppliers, for this quote only.",
+        "operationId": "choose_supplier_quotes__quote_id__lines__line_id__supplier_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "quote_id",
+            "required": true,
+            "schema": {
+              "pattern": "^quo_[0-9A-Z]{26}$",
+              "title": "Quote Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "line_id",
+            "required": true,
+            "schema": {
+              "pattern": "^ln_[0-9A-Z]{26}$",
+              "title": "Line Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LineSupplierIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Choose Supplier",
+        "tags": [
+          "quotes"
+        ]
+      }
+    },
+    "/quotes/{quote_id}/lines/{line_id}/supplier/preferred": {
+      "post": {
+        "description": "09 §7.15 \"הפוך למועדף במחירון\".",
+        "operationId": "make_preferred_quotes__quote_id__lines__line_id__supplier_preferred_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "quote_id",
+            "required": true,
+            "schema": {
+              "pattern": "^quo_[0-9A-Z]{26}$",
+              "title": "Quote Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "line_id",
+            "required": true,
+            "schema": {
+              "pattern": "^ln_[0-9A-Z]{26}$",
+              "title": "Line Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Make Preferred",
+        "tags": [
+          "quotes"
+        ]
+      }
+    },
+    "/quotes/{quote_id}/recalculation": {
+      "get": {
+        "description": "07 §7.2.3: what \"חישוב מחדש\" would change. Nothing is written.",
+        "operationId": "preview_recalculation_quotes__quote_id__recalculation_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "quote_id",
+            "required": true,
+            "schema": {
+              "pattern": "^quo_[0-9A-Z]{26}$",
+              "title": "Quote Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecalculationOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Preview Recalculation",
+        "tags": [
+          "quotes"
+        ]
+      },
+      "post": {
+        "description": "Every line of the draft priced from the list today, keeping the estimator's edits.",
+        "operationId": "recalculate_quotes__quote_id__recalculation_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "quote_id",
+            "required": true,
+            "schema": {
+              "pattern": "^quo_[0-9A-Z]{26}$",
+              "title": "Quote Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuoteOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Recalculate",
+        "tags": [
+          "quotes"
+        ]
+      }
+    },
+    "/quotes/{quote_id}/send": {
+      "post": {
+        "description": "09 §7.12: the version locked (07 §7.7). The only action with no undo.",
+        "operationId": "send_quote_quotes__quote_id__send_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "quote_id",
+            "required": true,
+            "schema": {
+              "pattern": "^quo_[0-9A-Z]{26}$",
+              "title": "Quote Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuoteOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Send Quote",
+        "tags": [
+          "quotes"
+        ]
+      }
+    },
+    "/quotes/{quote_id}/undo/{event_id}": {
+      "post": {
+        "description": "09 §7.11: takes the action back. After sending, nothing before it is undone.",
+        "operationId": "undo_quotes__quote_id__undo__event_id__post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "quote_id",
+            "required": true,
+            "schema": {
+              "pattern": "^quo_[0-9A-Z]{26}$",
+              "title": "Quote Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "event_id",
+            "required": true,
+            "schema": {
+              "pattern": "^evt_[0-9A-Z]{26}$",
+              "title": "Event Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Undo",
+        "tags": [
+          "quotes"
+        ]
+      }
+    },
+    "/quotes/{quote_id}/versions": {
+      "post": {
+        "description": "\"פתח גרסה N+1\": a draft copy of the sent version, which stays as it was sent.",
+        "operationId": "open_next_version_quotes__quote_id__versions_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "quote_id",
+            "required": true,
+            "schema": {
+              "pattern": "^quo_[0-9A-Z]{26}$",
+              "title": "Quote Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuoteOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Open Next Version",
         "tags": [
           "quotes"
         ]

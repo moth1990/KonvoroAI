@@ -213,7 +213,7 @@ def test_only_the_identical_product_is_priced() -> None:
     q = quote([comp("cmp_1")], [match("cmp_1", "S203M-C20")])
     ln = by_key(q)["c:cmp_1"]
     assert ln.priced.unit_price is None and ln.status == "red"
-    assert {"source": "price", "value": "missing", "status": "red"} in ln.status_reasons
+    assert {"source": "price", "value": "missing", "status": "red", "issues": ["missing_cost"]} in ln.status_reasons
     assert [f.code for f in q.findings] == ["missing_cost"] and q.findings[0].line_keys == ("c:cmp_1",)
     assert ln.issue_ids == [q.findings[0].finding_id("qv_1")]
 

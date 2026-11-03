@@ -206,6 +206,140 @@ export async function fetchQuote(quoteId: string, client = api): Promise<Quote> 
   return unwrap(await client.GET("/quotes/{quote_id}", { params: { path: { quote_id: quoteId } } }));
 }
 
+// --- review actions (09 §7, S23) -------------------------------------------------------------------------------------
+
+export type ActionResult = Schemas["ActionOut"];
+export type Recalculation = Schemas["RecalculationOut"];
+export type DismissReason = Schemas["DismissIn"]["reason"];
+
+/**
+ * One action of the review screen. Every one answers with the quote as it now is, the toast's text and the event
+ * "בטל" takes back. A sent version answers 409 to every one (07 §7.7).
+ */
+export type LineAction =
+  | { kind: "approve" }
+  | { kind: "delete" }
+  | { kind: "qty"; qty: string }
+  | { kind: "alternative"; index: number }
+  | { kind: "price"; unit_price: string; scope: "quote" | "catalog" }
+  | { kind: "price-entry"; unit_price: string; save: boolean }
+  | { kind: "cost"; unit_cost: string; supplier: string | null }
+  | { kind: "list-price" }
+  | { kind: "supplier"; supplier_price_id: string }
+  | { kind: "preferred" };
+
+export async function lineAction(
+  quoteId: string,
+  lineId: string,
+  action: LineAction,
+  client = api,
+): Promise<ActionResult> {
+  const path = { quote_id: quoteId, line_id: lineId };
+  switch (action.kind) {
+    case "approve":
+      return unwrap(await client.POST("/quotes/{quote_id}/lines/{line_id}/approve", { params: { path } }));
+    case "delete":
+      return unwrap(await client.DELETE("/quotes/{quote_id}/lines/{line_id}", { params: { path } }));
+    case "qty":
+      return unwrap(
+        await client.POST("/quotes/{quote_id}/lines/{line_id}/qty", { params: { path }, body: { qty: action.qty } }),
+      );
+    case "alternative":
+      return unwrap(
+        await client.POST("/quotes/{quote_id}/lines/{line_id}/alternative", {
+          params: { path },
+          body: { index: action.index },
+        }),
+      );
+    case "price":
+      return unwrap(
+        await client.POST("/quotes/{quote_id}/lines/{line_id}/price", {
+          params: { path },
+          body: { unit_price: action.unit_price, scope: action.scope },
+        }),
+      );
+    case "price-entry":
+      return unwrap(
+        await client.POST("/quotes/{quote_id}/lines/{line_id}/price-entry", {
+          params: { path },
+          body: { unit_price: action.unit_price, save: action.save },
+        }),
+      );
+    case "cost":
+      return unwrap(
+        await client.POST("/quotes/{quote_id}/lines/{line_id}/cost", {
+          params: { path },
+          body: { unit_cost: action.unit_cost, supplier: action.supplier },
+        }),
+      );
+    case "list-price":
+      return unwrap(await client.POST("/quotes/{quote_id}/lines/{line_id}/list-price", { params: { path } }));
+    case "supplier":
+      return unwrap(
+        await client.POST("/quotes/{quote_id}/lines/{line_id}/supplier", {
+          params: { path },
+          body: { supplier_price_id: action.supplier_price_id },
+        }),
+      );
+    case "preferred":
+      return unwrap(await client.POST("/quotes/{quote_id}/lines/{line_id}/supplier/preferred", { params: { path } }));
+  }
+}
+
+/** 09 §6.3 "החזר": derived lines removed from the quote, back. */
+export async function restoreLines(quoteId: string, lineIds: string[], client = api): Promise<ActionResult> {
+  return unwrap(
+    await client.POST("/quotes/{quote_id}/lines/restore", {
+      params: { path: { quote_id: quoteId } },
+      body: { line_ids: lineIds },
+    }),
+  );
+}
+
+/** 09 §7.7: dismissed with a reason; "אחר" needs its text. */
+export async function dismissFinding(
+  quoteId: string,
+  findingId: string,
+  reason: DismissReason,
+  text?: string,
+  client = api,
+): Promise<ActionResult> {
+  return unwrap(
+    await client.POST("/quotes/{quote_id}/findings/{finding_id}/dismiss", {
+      params: { path: { quote_id: quoteId, finding_id: findingId } },
+      body: { reason, text: text ?? null },
+    }),
+  );
+}
+
+/** 09 §7.11: takes an action back, by its event. */
+export async function undoAction(quoteId: string, eventId: string, client = api): Promise<ActionResult> {
+  return unwrap(
+    await client.POST("/quotes/{quote_id}/undo/{event_id}", {
+      params: { path: { quote_id: quoteId, event_id: eventId } },
+    }),
+  );
+}
+
+/** 09 §7.12: the version locked; the only action with no undo. */
+export async function sendQuote(quoteId: string, client = api): Promise<Quote> {
+  return unwrap(await client.POST("/quotes/{quote_id}/send", { params: { path: { quote_id: quoteId } } }));
+}
+
+/** "פתח גרסה N+1": a draft copy of the sent version. */
+export async function openNextVersion(quoteId: string, client = api): Promise<Quote> {
+  return unwrap(await client.POST("/quotes/{quote_id}/versions", { params: { path: { quote_id: quoteId } } }));
+}
+
+/** 07 §7.2.3: what "חישוב מחדש" would change. Nothing is written. */
+export async function previewRecalculation(quoteId: string, client = api): Promise<Recalculation> {
+  return unwrap(await client.GET("/quotes/{quote_id}/recalculation", { params: { path: { quote_id: quoteId } } }));
+}
+
+export async function recalculateQuote(quoteId: string, client = api): Promise<Quote> {
+  return unwrap(await client.POST("/quotes/{quote_id}/recalculation", { params: { path: { quote_id: quoteId } } }));
+}
+
 /** The audit of an existing quote (11 §6, S15). 404 when it is another tenant's, or `quote_audit` is off. */
 export async function fetchAudit(auditId: string, client = api): Promise<Audit> {
   return unwrap(await client.GET("/audits/{audit_id}", { params: { path: { audit_id: auditId } } }));

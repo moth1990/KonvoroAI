@@ -483,12 +483,15 @@ export function draftsText(p: Product): string | null {
   return p.used_in_drafts.length === 1 ? `בשימוש בטיוטה הפתוחה ${each}` : `בשימוש בטיוטות הפתוחות ${each}`;
 }
 
-/** The toast after saving (prototype `saveEditor`). Draft lines are not tagged "מחיר חדש" until stage 7 (S22), so
- * the toast says only what is true now. */
+/** The toast after saving (prototype `saveEditor`, line 1205): sent quotes never change, and the open drafts' lines
+ * now tagged "מחיר חדש במחירון" (07 §7.2.3, S23). */
 export function savedText(before: Product | null, after: Product): string {
   if (!before) return "המוצר נוסף למחירון";
   const changed = (before.unit_price ?? "") !== (after.unit_price ?? "");
-  return changed ? "נשמר. הצעות שנשלחו לא השתנו" : "נשמר";
+  if (!changed) return "נשמר";
+  const used = after.used_in_drafts.reduce((n, u) => n + u.fresh, 0);
+  const tagged = used === 1 ? "שורה אחת מסומנת" : `${used} שורות מסומנות`;
+  return `נשמר. הצעות שנשלחו לא השתנו${used ? `; בטיוטה הפתוחה ${tagged} "מחיר חדש"` : ""}`;
 }
 
 export { percent, shekels };

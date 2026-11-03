@@ -94,7 +94,7 @@ def test_a_product_with_two_suppliers(pl: Api) -> None:
         ("ספק ב׳", "131.0000", False),
     ]
     # 07 §7.2.2: the preferred supplier, not the cheapest; the default markup of 25% on it
-    assert (out["unit_cost"], out["price_status"], out["unit_price"]) == ("138.0000", "ok", "172.5000")
+    assert (out["unit_cost"], out["price_status"], out["unit_price"]) == ("138.0000", "ok", "172.50")
     assert out["cost_source"]["via"] == "product_preferred" and out["margin_rule"]["level"] == "default"
     assert out["margin_pct"] == "0.2000"
 
@@ -158,7 +158,7 @@ def test_history_shows_every_change_with_who_and_the_quote(pl: Api) -> None:
     r = pl.client.patch(f"/price-list/products/{out['id']}", json=patch, headers=pl.as_(pl.a))
     assert r.status_code == 200, r.text
     after = pl.client.get(f"/price-list/products/{out['id']}", headers=pl.as_(pl.a)).json()
-    assert (after["unit_price"], after["unit_cost"], after["margin_rule"]["kind"]) == ("130.0000", "64.0000", "fixed")
+    assert (after["unit_price"], after["unit_cost"], after["margin_rule"]["kind"]) == ("130.00", "64.0000", "fixed")
     changes = {h["field"]: h for h in after["history"] if h["quote_id"] == quote}
     assert set(changes) == {"sale_mode", "fixed_price", "supplier"}
     assert (changes["sale_mode"]["old"], changes["sale_mode"]["new"]) == ({"value": "rule"}, {"value": "fixed"})
@@ -173,7 +173,7 @@ def test_history_shows_every_change_with_who_and_the_quote(pl: Api) -> None:
 
     # a row left out is removed, and logged
     gone = pl.client.patch(f"/price-list/products/{out['id']}", json={"suppliers": []}, headers=pl.as_(pl.a)).json()
-    assert gone["suppliers"] == [] and gone["unit_cost"] is None and gone["unit_price"] == "130.0000"
+    assert gone["suppliers"] == [] and gone["unit_cost"] is None and gone["unit_price"] == "130.00"
     assert gone["history"][0]["field"] == "supplier" and gone["history"][0]["new"] is None
 
 
@@ -245,7 +245,7 @@ def test_brand_discount(pl: Api) -> None:
     assert r.json() == {"brand": "ABB", "discount_pct": "0.3200", "priced_products": 1}
     after = pl.client.get(f"/price-list/products/{out['id']}", headers=pl.as_(pl.b)).json()
     assert (after["unit_cost"], after["price_status"]) == ("146.2000", "discount_based")  # 215 × 0.68
-    assert after["unit_price"] == "182.7500"
+    assert after["unit_price"] == "182.75"
     assert pl.client.get("/price-list/brand-discounts", headers=pl.as_(pl.a)).json() == []  # tenant a has none
     bad = pl.client.put("/price-list/brand-discounts/ABB", json={"discount_pct": "1"}, headers=pl.as_(pl.b))
     assert bad.status_code == 422
@@ -258,7 +258,7 @@ def test_brand_discount(pl: Api) -> None:
 
 def test_margin_rules(pl: Api) -> None:
     out = post(pl, pl.a, {"display_name": "ממסר", "family": "timer", "suppliers": [supplier("ספק א׳", "100")]})
-    assert out["unit_price"] == "125.0000"
+    assert out["unit_price"] == "125.00"
     h = pl.as_(pl.a)
     rule = pl.client.post(
         "/price-list/margin-rules",
@@ -267,14 +267,14 @@ def test_margin_rules(pl: Api) -> None:
     )
     assert rule.status_code == 201, rule.text
     after = pl.client.get(f"/price-list/products/{out['id']}", headers=h).json()
-    assert (after["unit_price"], after["margin_rule"]["level"]) == ("133.3333", "family")
+    assert (after["unit_price"], after["margin_rule"]["level"]) == ("133.33", "family")
 
     sku = pl.client.post(
         "/price-list/margin-rules",
         json={"level": "sku", "target": out["id"], "kind": "markup", "value": "0.5"},
         headers=h,
     )
-    assert pl.client.get(f"/price-list/products/{out['id']}", headers=h).json()["unit_price"] == "150.0000"
+    assert pl.client.get(f"/price-list/products/{out['id']}", headers=h).json()["unit_price"] == "150.00"
     patched = pl.client.patch(f"/price-list/margin-rules/{sku.json()['id']}", json={"value": "0.4"}, headers=h).json()
     assert (patched["value"], patched["version"]) == ("0.4000", 2)
 

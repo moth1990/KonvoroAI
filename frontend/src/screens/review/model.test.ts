@@ -19,6 +19,7 @@ import {
   statusMark,
   stepLine,
 } from "./model";
+import { belowFloor, nextToCheck, nextUnpriced, parseAmount, priceChips, sendSummary, takesPrice } from "./model";
 
 describe("money from strings", () => {
   it.each([
@@ -231,6 +232,7 @@ describe("status shape and chips (09 §6.3, §9, §13)", () => {
       page_no: null,
       page_id: null,
       bbox: null,
+      source: "rule" as const,
     };
     const warn = line({
       status: "yellow",
@@ -308,5 +310,90 @@ describe("line detail wording (09 §6.4)", () => {
     expect(compactDesignators(["Q0"])).toEqual(["Q0"]);
     expect(compactDesignators(["F1", "F2"])).toEqual(["F1", "F2"]);
     expect(compactDesignators(["Q0b", "ארון"])).toEqual(["Q0b", "ארון"]);
+  });
+});
+
+describe("review actions (S23)", () => {
+  it("moves on to the next line that still needs checking, from the start at the end (09 §7.2)", () => {
+    const a = line({ status: "green" });
+    const b = line({ status: "yellow" });
+    const c = line({ status: "green" });
+    const d = line({ status: "red" });
+    const ids = [a, b, c, d].map((l) => l.line_id);
+    const lines = [a, b, c, d];
+    expect(nextToCheck(ids, lines, b.line_id)).toBe(d.line_id);
+    expect(nextToCheck(ids, lines, d.line_id)).toBe(b.line_id);
+    expect(nextToCheck(ids, lines, null)).toBe(b.line_id);
+    expect(nextToCheck([a.line_id], [a], a.line_id)).toBeNull();
+  });
+
+  it("types a price only where a line has none, and Enter goes on to the next one (09 §7.13)", () => {
+    const priced = line();
+    const one = line({ unit_price: null });
+    const kit = line({ unit_price: "0.0000", included: true, parent_line_id: priced.line_id });
+    const extra = line({ unit_price: null, line_type: "derived" });
+    const two = line({ unit_price: null });
+    expect([priced, one, kit, extra, two].map(takesPrice)).toEqual([false, true, false, false, true]);
+    const ids = [priced, one, kit, extra, two].map((l) => l.line_id);
+    const lines = [priced, one, kit, extra, two];
+    expect(nextUnpriced(ids, lines, one.line_id)).toBe(two.line_id);
+    expect(nextUnpriced(ids, lines, two.line_id)).toBe(one.line_id);
+    expect(nextUnpriced([one.line_id], [one], one.line_id)).toBeNull();
+  });
+
+  it("reads a typed amount as the API takes it", () => {
+    expect(["130", "₪1,250", "22.5", "0", "abc", "1.23456", ""].map(parseAmount)).toEqual([
+      "130",
+      "1250",
+      "22.5",
+      null,
+      null,
+      null,
+      null,
+    ]);
+  });
+
+  it("tags the price: for this quote only, new in the price list, low margin (09 §6.3)", () => {
+    const l = line({ override: true, fresh_price: "190.00", below_floor: true, margin_pct: "0.0900" });
+    expect(priceChips(l, false)).toEqual([
+      { text: "מחיר להצעה הזו", tone: "acc" },
+      { text: "מחיר חדש במחירון: ₪190", tone: "warn" },
+      { text: "רווח נמוך 9%", tone: "warn" },
+    ]);
+    expect(priceChips(l, true).map((c) => c.text)).toEqual(["מחיר להצעה הזו", "רווח נמוך 9%"]);
+  });
+
+  it("shows an approved line's reasons as said, not as warnings", () => {
+    const l = line({
+      status: "green",
+      approved: true,
+      status_reasons: [
+        { source: "user", status: "green", value: "approved", issue_id: null },
+        { source: "match", status: "green", value: "inferred_attribute", issue_id: null, was: "yellow" },
+      ],
+    });
+    expect(reasonChips(l, [])).toEqual([
+      { text: "אושר", tone: "ok" },
+      { text: "הוסק מהמעגל", tone: "ok" },
+    ]);
+  });
+
+  it("puts the removed accessories after the accessories, with their ids for החזר (09 §6.3)", () => {
+    const p = { ...panel("A", [line()]), removed: [{ line_id: "ln_x", description: "ארון" }] };
+    const rows = buildRows(p, "all");
+    expect(rows.map((r) => r.kind)).toEqual(["group", "line", "group", "removed", "total"]);
+    const removed = rows.find((r) => r.kind === "removed");
+    expect(removed && removed.kind === "removed" && removed.lineIds).toEqual(["ln_x"]);
+  });
+
+  it("warns before sending about red, yellow and unpriced lines (09 §7.12)", () => {
+    const q = quote([panel("A", [line({ status: "red", unit_price: null }), line({ status: "yellow" }), line()])]);
+    q.totals.unpriced_count = 1;
+    expect(sendSummary(q)).toEqual({ red: 1, yellow: 1, unpriced: 1 });
+    expect([belowFloor("0.12", "0.15"), belowFloor("0.15", "0.15"), belowFloor(null, "0.15")]).toEqual([
+      true,
+      false,
+      false,
+    ]);
   });
 });

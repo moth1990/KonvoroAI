@@ -33,6 +33,8 @@ def quote_id(api: Api, migrated_db: dict[str, Engine]) -> Iterator[str]:
 
 
 def lines(body: dict[str, Any]) -> dict[str, dict[str, Any]]:
+    """A quote, or an action's answer (S23: `ActionOut` holds the quote)."""
+    body = body.get("quote", body)
     return {ln["designators"][0] if ln["designators"] else ln["description"]: ln for ln in body["panels"][0]["lines"]}
 
 
@@ -52,7 +54,7 @@ def test_only_in_this_quote(api: Api, quote_id: str) -> None:
         "2125.0000",
         "override",
     )
-    assert Decimal(r.json()["totals"]["net_total"]) == Decimal(before["totals"]["net_total"]) - 85
+    assert Decimal(r.json()["quote"]["totals"]["net_total"]) == Decimal(before["totals"]["net_total"]) - 85
     with tenant_session(api.a.tenant_id, api.engine) as s:
         line = s.get_one(m.QuoteLine, f1["line_id"])
         assert line.override and (line.override["scope"], line.override["previous_price"]) == ("quote", "130")

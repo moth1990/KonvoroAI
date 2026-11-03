@@ -77,3 +77,28 @@ def approve(
     row.last_used_at = datetime.now(UTC)
     session.flush()
     return row
+
+
+def rows_for(
+    session: Session, tenant_id: str, signature: str, sku: str, customer_id: str | None = None
+) -> list[m.MatchMemory]:
+    """The memories that chose `sku` for `signature`: the factory's and this customer's, in any brand context."""
+    query = select(m.MatchMemory).where(
+        m.MatchMemory.tenant_id == tenant_id, m.MatchMemory.signature == signature, m.MatchMemory.sku == sku
+    )
+    rows = session.scalars(query)
+    return [r for r in rows if r.customer_id is None or r.customer_id == customer_id]
+
+
+def approve_all(
+    session: Session, tenant_id: str, signature: str, sku: str, customer_id: str | None = None
+) -> list[m.MatchMemory]:
+    """09 §7.2 "אישור שורה" (`row_confirmed`): every memory that chose this line's SKU is strengthened. The review
+    screen knows the line's signature, not the brand context stage 5 looked it up in."""
+    rows = rows_for(session, tenant_id, signature, sku, customer_id)
+    at = datetime.now(UTC)
+    for row in rows:
+        row.approved_count += 1
+        row.last_used_at = at
+    session.flush()
+    return rows

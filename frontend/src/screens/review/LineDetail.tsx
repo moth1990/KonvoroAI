@@ -1,19 +1,48 @@
-import type { Finding, QuoteLine } from "../../api/client";
+import { useId, useState } from "react";
+
+import type { DismissReason, Finding, LineAction, QuoteLine } from "../../api/client";
 import { Icon } from "../../ui/Icon";
-import { attributeLabel, lineFindings, percent, priceSourceText, shekels, sourceText } from "./model";
+import { Modal } from "../../ui/Modal";
+import {
+  attributeLabel,
+  lineFindings,
+  parseAmount,
+  percent,
+  priceSourceText,
+  qtyText,
+  shekels,
+  sourceText,
+} from "./model";
+
+/** What the detail can do (S23). Without it the detail is read-only, as on a sent version. */
+export interface DetailActions {
+  locked: boolean;
+  lineFloor: string | null;
+  /** "שמור למחירון להצעות הבאות" for this line's price cell (prototype `savelist`), on unless turned off. */
+  saveToList: boolean;
+  onSaveToList: (on: boolean) => void;
+  /** Resolves true when the server took it. */
+  onAction: (line: QuoteLine, action: LineAction) => Promise<boolean>;
+  onDismiss: (finding: Finding, reason: DismissReason, text?: string) => Promise<boolean>;
+}
 
 /**
- * Line detail, read-only in S09 (S09 decision 7): what the drawing says, where each value comes from, why, the
- * price and its source, cost and margin, the line's findings and its alternatives (09 §6.4, prototype `lineDetail`).
- * Editing arrives in S23. "הצג בשרטוט" frames the line on the drawing (S11), for a line that has an instance.
+ * Line detail (09 §6.4, prototype `lineDetail`): what the drawing says, where each value comes from, why, the price
+ * and its source, cost and margin, the line's findings and its alternatives, and since S23 what can be done about
+ * each: a price ("לעדכן גם במחירון?"), a cost, a supplier, a finding dismissed with a reason, an alternative, the
+ * quantity, approve and delete. "הצג בשרטוט" frames the line on the drawing (S11).
  */
 export function LineDetail(props: {
   line: QuoteLine;
   findings: Finding[];
   onShowOnDrawing?: (line: QuoteLine) => void;
+  actions?: DetailActions;
 }) {
-  const { line, findings, onShowOnDrawing } = props;
+  const { line, findings, onShowOnDrawing, actions } = props;
   const own = lineFindings(line, findings);
+  const editable = actions && !actions.locked ? actions : null;
+  const derived = line.line_type === "derived" || line.line_type === "labor";
+  const hasError = own.some((f) => f.severity === "error");
   return (
     <div className="detail" data-testid="line-detail" id={`detail-${line.line_id}`}>
       <div className="dgrid">
@@ -54,12 +83,12 @@ export function LineDetail(props: {
       <div className="dgrid">
         <div style={{ display: "grid", gap: 6, alignContent: "start" }}>
           <span className="eyebrow">מחיר</span>
-          <PriceBox line={line} />
+          <PriceBox line={line} actions={editable} />
         </div>
         {line.included ? null : (
           <div style={{ display: "grid", gap: 6, alignContent: "start" }}>
             <span className="eyebrow">עלות ורווח</span>
-            <CostBox line={line} />
+            <CostBox line={line} actions={editable} floor={actions?.lineFloor ?? null} />
           </div>
         )}
       </div>
@@ -67,36 +96,76 @@ export function LineDetail(props: {
         <div style={{ display: "grid", gap: 6 }}>
           <span className="eyebrow">ממצאי הבודק</span>
           {own.map((f) => (
-            <div key={f.finding_id} className="row small" style={{ alignItems: "stretch" }}>
-              <span className={`sev ${f.severity}`} aria-hidden="true" />
-              <span>
-                <b>{f.title ?? f.message}</b>
-                {f.title ? <span className="muted"> · {f.message}</span> : null}
-              </span>
+            <div key={f.finding_id} style={{ display: "grid", gap: 6 }}>
+              <div className="row small" style={{ alignItems: "stretch" }}>
+                <span className={`sev ${f.severity}`} aria-hidden="true" />
+                <span>
+                  <b>{f.title ?? f.message}</b>
+                  {f.title ? <span className="muted"> · {f.message}</span> : null}
+                </span>
+              </div>
+              {editable && f.source !== "pricing" ? (
+                <DismissControl finding={f} onDismiss={editable.onDismiss} />
+              ) : null}
             </div>
           ))}
         </div>
       ) : null}
-      <div style={{ display: "grid", gap: 6 }}>
-        <span className="eyebrow">חלופות</span>
-        {line.alternatives.length ? (
-          line.alternatives.map((alt) => (
-            <div key={alt.description} className="alt">
-              <span style={{ flex: 1 }}>{alt.description}</span>
-            </div>
-          ))
-        ) : (
-          <span className="small muted">אין חלופות. הדגם כתוב בשרטוט</span>
-        )}
-      </div>
-      {onShowOnDrawing && line.boxes.length ? (
-        <div className="row">
+      {derived ? null : (
+        <div style={{ display: "grid", gap: 6 }}>
+          <span className="eyebrow">חלופות</span>
+          {line.alternatives.length ? (
+            line.alternatives.slice(0, 3).map((alt, i) => (
+              <div key={`${i}:${alt.description}`} className="alt">
+                <span style={{ flex: 1 }}>{alt.description}</span>
+                {editable ? (
+                  <button
+                    type="button"
+                    className="btn sm"
+                    data-testid="alt"
+                    aria-keyshortcuts={String(i + 1)}
+                    onClick={() => void editable.onAction(line, { kind: "alternative", index: i })}
+                  >
+                    החלף <span className="kbd">{i + 1}</span>
+                  </button>
+                ) : null}
+              </div>
+            ))
+          ) : (
+            <span className="small muted">אין חלופות. הדגם כתוב בשרטוט</span>
+          )}
+        </div>
+      )}
+      <div className="row">
+        {onShowOnDrawing && line.boxes.length ? (
           <button type="button" className="btn sm" data-testid="showdraw" onClick={() => onShowOnDrawing(line)}>
             <Icon name="eye" />
             הצג בשרטוט
           </button>
-        </div>
-      ) : null}
+        ) : null}
+        {editable && line.qty_editable ? <QtyStepper line={line} actions={editable} /> : null}
+        {editable && !line.approved && line.line_type !== "missing" && line.line_type !== "manual" ? (
+          <button
+            type="button"
+            className="btn sm"
+            data-testid="approve"
+            onClick={() => void editable.onAction(line, { kind: "approve" })}
+          >
+            {hasError ? "אשר למרות הממצא" : "אשר שורה"}
+          </button>
+        ) : null}
+        <span className="spacer" />
+        {editable ? (
+          <button
+            type="button"
+            className="btn ghost sm danger"
+            data-testid="del"
+            onClick={() => void editable.onAction(line, { kind: "delete" })}
+          >
+            {derived ? "הסר מההצעה" : "מחק שורה"}
+          </button>
+        ) : null}
+      </div>
     </div>
   );
 }
@@ -113,41 +182,321 @@ function SourceRow(props: { label: string; value: string | null; text: string; w
   );
 }
 
-function PriceBox({ line }: { line: QuoteLine }) {
+const DISMISS_REASONS: [DismissReason, string][] = [
+  ["intended", "מכוון"],
+  ["checker_wrong", "הבודק טעה"],
+  ["other", "אחר"],
+];
+
+/** 09 §6.4, §7.7: a reason from the list, then "דחה". "אחר" asks for a few words. */
+export function DismissControl(props: {
+  finding: Finding;
+  onDismiss: (finding: Finding, reason: DismissReason, text?: string) => Promise<boolean>;
+}) {
+  const [reason, setReason] = useState<DismissReason>("intended");
+  const [text, setText] = useState("");
+  const id = useId();
+  const missing = reason === "other" && !text.trim();
+  return (
+    <div className="row small" data-testid="dismiss">
+      <label className="muted" htmlFor={id}>
+        סיבת דחייה
+      </label>
+      <select
+        id={id}
+        className="input"
+        style={{ width: "auto", padding: "4px 8px" }}
+        value={reason}
+        onChange={(e) => setReason(e.target.value as DismissReason)}
+      >
+        {DISMISS_REASONS.map(([k, label]) => (
+          <option key={k} value={k}>
+            {label}
+          </option>
+        ))}
+      </select>
+      {reason === "other" ? (
+        <input
+          className="input"
+          style={{ width: 160, padding: "4px 8px" }}
+          aria-label="למה הממצא לא נכון כאן"
+          placeholder="למה?"
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+        />
+      ) : null}
+      <button
+        type="button"
+        className="btn sm"
+        disabled={missing}
+        onClick={() => void props.onDismiss(props.finding, reason, reason === "other" ? text.trim() : undefined)}
+      >
+        דחה
+      </button>
+    </div>
+  );
+}
+
+function QtyStepper({ line, actions }: { line: QuoteLine; actions: DetailActions }) {
+  const n = Number(qtyText(line.qty));
+  const set = (to: number) => void actions.onAction(line, { kind: "qty", qty: String(to) });
+  return (
+    <span className="qty-step" role="group" aria-label="כמות">
+      <button type="button" className="btn sm" aria-label="הפחת כמות" disabled={n <= 1} onClick={() => set(n - 1)}>
+        −
+      </button>
+      <b className="num" data-testid="qty">
+        {qtyText(line.qty)}
+      </b>
+      <button type="button" className="btn sm" aria-label="הוסף כמות" onClick={() => set(n + 1)}>
+        +
+      </button>
+    </span>
+  );
+}
+
+function PriceBox({ line, actions }: { line: QuoteLine; actions: DetailActions | null }) {
+  const [value, setValue] = useState(line.unit_price == null ? "" : qtyText(line.unit_price));
+  const [pending, setPending] = useState<string | null>(null);
+  const [bad, setBad] = useState(false);
+  const inputId = useId();
+  const titleId = useId();
   if (line.included) return <span className="small muted">כלול במחיר שורת האב (ערכה)</span>;
-  if (line.unit_price == null) return <span className="small">אין מחיר זהה במחירון. הזנת מחיר מהשורה תגיע בהמשך</span>;
+  if (line.unit_price == null)
+    return (
+      <>
+        <span className="small">
+          {line.price_hints.length
+            ? `קרובים במחירון: ${line.price_hints.map((h) => `${h.name} ${shekels(h.unit_price)}`).join(", ")}`
+            : "אין מחיר זהה במחירון. הקלידו מחיר בשורה"}
+        </span>
+        {actions ? (
+          <label className="row small">
+            <button
+              type="button"
+              className="toggle"
+              role="switch"
+              aria-checked={actions.saveToList}
+              aria-label="שמור למחירון"
+              data-testid="savelist"
+              onClick={() => actions.onSaveToList(!actions.saveToList)}
+            />
+            שמור למחירון להצעות הבאות
+          </label>
+        ) : null}
+      </>
+    );
+  const submit = () => {
+    const amount = parseAmount(value);
+    setBad(amount === null);
+    if (amount === null || !actions) return;
+    if (Number(amount) === Number(line.unit_price)) return;
+    setPending(amount);
+  };
+  const choose = async (scope: "quote" | "catalog") => {
+    if (!pending || !actions) return;
+    const ok = await actions.onAction(line, { kind: "price", unit_price: pending, scope });
+    if (ok) setPending(null);
+  };
   return (
     <>
-      <dl className="kv">
-        <dt>מחיר מכירה ליחידה</dt>
-        <dd className="num">
-          <b>{shekels(line.unit_price)}</b>
-        </dd>
-        <dd />
-      </dl>
-      <span className="small muted">מקור: {priceSourceText(line)}</span>
+      <div className="row">
+        <label className="small muted" htmlFor={inputId}>
+          מחיר מכירה ליחידה
+        </label>
+        <input
+          id={inputId}
+          className={`input num${bad ? " err" : ""}`}
+          style={{ width: 96, padding: "5px 8px", textAlign: "end" }}
+          value={value}
+          inputMode="decimal"
+          disabled={!actions}
+          onChange={(e) => setValue(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") submit();
+          }}
+        />
+        <button type="button" className="btn sm" data-testid="editprice" disabled={!actions} onClick={submit}>
+          עדכן
+        </button>
+      </div>
+      <span className="small muted">מקור: {line.override ? "שונה בהצעה הזו" : priceSourceText(line)}</span>
+      {actions && line.fresh_price != null ? (
+        <div className="row small fresh-box" data-testid="fresh">
+          <span>
+            במחירון יש מחיר חדש: <b className="num">{shekels(line.fresh_price)}</b>
+          </span>
+          <span className="spacer" />
+          <button
+            type="button"
+            className="btn sm"
+            data-testid="takefresh"
+            onClick={() => void actions.onAction(line, { kind: "list-price" })}
+          >
+            עדכן בהצעה
+          </button>
+        </div>
+      ) : null}
+      {pending ? (
+        <Modal onClose={() => setPending(null)} labelledBy={titleId}>
+          <h2 id={titleId}>לעדכן גם במחירון?</h2>
+          <span>
+            שינית את המחיר של <b>{line.description}</b> מ-<b className="num">{shekels(line.unit_price)}</b> ל-
+            <b className="num">{shekels(pending)}</b> בהצעה הזו.
+          </span>
+          <div className="small note-box">
+            <span>
+              <b>עדכון במחירון:</b> הצעות חדשות וחישוב מחדש ישתמשו במחיר החדש
+              {line.price_source?.kind === "markup" || line.price_source?.kind === "margin" ? ", במקום חוק הרווח" : ""}.
+            </span>
+            <span>
+              <b>הצעות שנשלחו לא משתנות.</b> טיוטות פתוחות לא משתנות לבד, ויציגו שיש מחיר חדש.
+            </span>
+          </div>
+          <div className="row">
+            {line.product_id ? (
+              <button
+                type="button"
+                className="btn primary"
+                data-testid="price-db"
+                onClick={() => void choose("catalog")}
+              >
+                עדכן גם במחירון
+              </button>
+            ) : null}
+            <button
+              type="button"
+              className={`btn${line.product_id ? "" : " primary"}`}
+              data-testid="price-here"
+              onClick={() => void choose("quote")}
+            >
+              רק בהצעה הזו
+            </button>
+            <span className="spacer" />
+            <button type="button" className="btn ghost" onClick={() => setPending(null)}>
+              ביטול
+            </button>
+          </div>
+        </Modal>
+      ) : null}
     </>
   );
 }
 
-function CostBox({ line }: { line: QuoteLine }) {
-  if (line.unit_cost == null) return <span className="small muted">אין עלות למוצר הזה, ולכן אין חישוב רווח.</span>;
+function CostBox({ line, actions, floor }: { line: QuoteLine; actions: DetailActions | null; floor: string | null }) {
+  const [cost, setCost] = useState("");
+  const [supplier, setSupplier] = useState("");
+  const [bad, setBad] = useState(false);
+  const selectId = useId();
+  const chosen = line.suppliers.find((s) => s.chosen);
+  const saveCost = async () => {
+    const amount = parseAmount(cost);
+    setBad(amount === null);
+    if (amount === null || !actions) return;
+    if (await actions.onAction(line, { kind: "cost", unit_cost: amount, supplier: supplier.trim() || null })) {
+      setCost("");
+      setSupplier("");
+    }
+  };
   return (
-    <dl className="kv">
-      <dt>עלות ליחידה</dt>
-      <dd className="num">
-        <b>{shekels(line.unit_cost)}</b>
-      </dd>
-      <dd className="small muted">{line.cost_source?.supplier ?? ""}</dd>
-      {line.unit_margin != null ? (
-        <>
-          <dt>רווח ליחידה</dt>
-          <dd className="num">
-            <b>{shekels(line.unit_margin)}</b>
-          </dd>
-          <dd className="small muted">{percent(line.margin_pct)}</dd>
-        </>
+    <div style={{ display: "grid", gap: 6 }}>
+      {line.suppliers.length ? (
+        <div className="row">
+          <label className="small muted" htmlFor={selectId}>
+            ספק
+          </label>
+          <select
+            id={selectId}
+            className="input"
+            data-testid="supsel"
+            style={{ width: "auto", padding: "5px 8px" }}
+            value={chosen?.supplier_price_id ?? ""}
+            disabled={!actions}
+            onChange={(e) =>
+              actions && void actions.onAction(line, { kind: "supplier", supplier_price_id: e.target.value })
+            }
+          >
+            {chosen ? null : <option value="">—</option>}
+            {line.suppliers.map((s) => (
+              <option key={s.supplier_price_id} value={s.supplier_price_id}>
+                {[
+                  s.name ?? "ספק לא צוין",
+                  shekels(s.unit_cost),
+                  s.preferred ? "מועדף" : null,
+                  s.lead_days != null ? `${s.lead_days} ימים` : null,
+                ]
+                  .filter(Boolean)
+                  .join(" · ")}
+              </option>
+            ))}
+          </select>
+        </div>
       ) : null}
-    </dl>
+      {actions && line.supplier_id ? (
+        <div className="row small">
+          <span className="muted">הספק הוחלף רק בהצעה הזו.</span>
+          <button
+            type="button"
+            className="btn ghost sm"
+            data-testid="mkpref"
+            onClick={() => void actions.onAction(line, { kind: "preferred" })}
+          >
+            הפוך למועדף במחירון
+          </button>
+        </div>
+      ) : null}
+      {line.unit_cost != null ? (
+        <dl className="kv">
+          <dt>עלות ליחידה</dt>
+          <dd className="num">
+            <b>{shekels(line.unit_cost)}</b>
+          </dd>
+          <dd className="small muted">{line.cost_source?.supplier ?? chosen?.name ?? ""}</dd>
+          {line.unit_margin != null ? (
+            <>
+              <dt>רווח ליחידה</dt>
+              <dd className="num">
+                <b>{shekels(line.unit_margin)}</b>
+              </dd>
+              <dd className={`small ${line.below_floor ? "warn-t" : "muted"}`}>
+                {percent(line.margin_pct)}
+                {line.below_floor && floor ? ` · מתחת לרצפה (${percent(floor)})` : ""}
+              </dd>
+            </>
+          ) : null}
+        </dl>
+      ) : (
+        <>
+          <span className="small muted">אין עלות למוצר הזה, ולכן אין חישוב רווח.</span>
+          {actions ? (
+            <div className="row">
+              <input
+                className={`input num${bad ? " err" : ""}`}
+                aria-label="עלות ליחידה"
+                placeholder="עלות"
+                style={{ width: 84, padding: "5px 8px" }}
+                inputMode="decimal"
+                value={cost}
+                onChange={(e) => setCost(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") void saveCost();
+                }}
+              />
+              <input
+                className="input"
+                aria-label="ספק"
+                placeholder="ספק"
+                style={{ width: 130, padding: "5px 8px" }}
+                value={supplier}
+                onChange={(e) => setSupplier(e.target.value)}
+              />
+              <button type="button" className="btn sm" data-testid="addcost" onClick={() => void saveCost()}>
+                שמור עלות
+              </button>
+            </div>
+          ) : null}
+        </>
+      )}
+    </div>
   );
 }

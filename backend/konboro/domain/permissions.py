@@ -16,6 +16,8 @@ class Permission(StrEnum):
     SETTINGS_WRITE = "settings.write"
     PRICE_LIST_READ = "price_list.read"
     PRICE_LIST_WRITE = "price_list.write"
+    COSTS_READ = "costs.read"  # 09 §12: costs and margins; without it the server sends none
+    QUOTES_SEND = "quotes.send"  # 09 §12: send to the customer, open a new version
 
 
 ROLE_PERMISSIONS: dict[str, frozenset[Permission]] = {

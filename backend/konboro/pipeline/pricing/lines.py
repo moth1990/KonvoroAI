@@ -19,6 +19,7 @@ decides the colour (07 §7.5).
 
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
+from datetime import datetime
 from decimal import Decimal
 from typing import Any
 
@@ -75,9 +76,15 @@ class Draft:
     reasons: list[dict[str, Any]] = field(default_factory=list)
     issue_ids: list[str] = field(default_factory=list)
     override: dict[str, Any] | None = None
+    edits: dict[str, Any] = field(default_factory=dict)  # the review screen's, as stored (`edits.LineEdits`)
+    approved_at: datetime | None = None  # the estimator approved the line (09 §7.2)
     query_failed: bool = False  # a derived line whose catalog query found nothing (07 §7.5, `enclosure_not_found`)
     status: str = "red"
     status_reasons: list[dict[str, Any]] = field(default_factory=list)
+
+    @property
+    def approved(self) -> bool:
+        return self.approved_at is not None
 
     @property
     def included(self) -> bool:

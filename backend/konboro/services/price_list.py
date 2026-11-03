@@ -31,8 +31,9 @@ from konboro.domain.pricing import ONE, ZERO
 from konboro.domain.pricing import cost as pc
 from konboro.domain.pricing import margin as pm
 from konboro.domain.pricing.fx import MAX_AGE_DAYS, FxRate, FxRateMissing, convert
+from konboro.domain.pricing.rounding import Rounding, round_price
+from konboro.domain.pricing.rounding import mode as rounding_mode
 from konboro.domain.pricing.sanity import check_cost
-from konboro.services.quotes import store_totals
 
 MAX_MONEY = Decimal("10000000000")  # numeric(14,4)
 PRODUCT_FIELDS = (
@@ -187,6 +188,7 @@ class DraftUse:
     quote_id: str
     quote_name: str
     lines: list[str]  # each line's designators, or its description when it has none
+    fresh: int = 0  # of them, how many now show "מחיר חדש במחירון": a price other than the list's, no override
 
 
 # --- context --------------------------------------------------------------------------------------------------------
@@ -199,6 +201,7 @@ class Context:
     cost: pc.CostContext
     rules: list[pm.Rule]
     min_line_margin: Decimal | None
+    rounding: Rounding = "agora"  # 07 §7.6, the factory's setting: the price list shows the price a quote gets
 
 
 def load_context(session: Session, tenant_id: str, on_date: date) -> Context:
@@ -229,6 +232,7 @@ def load_context(session: Session, tenant_id: str, on_date: date) -> Context:
         ),
         rules,
         settings.min_line_margin if settings else None,
+        rounding_mode(settings.rounding if settings else None),
     )
 
 
@@ -349,6 +353,7 @@ def view(
     item = loaded.items.get(product.catalog_item_id) if product.catalog_item_id else None
     cost = pc.unit_cost(product_costs(product, rows, loaded.names, item), ctx.cost)
     sale = pm.sale_price(cost.unit_cost, ctx.rules, subject(product), ctx.cost.on_date)
+    price = round_price(sale.unit_price_raw, ctx.rounding) if sale.unit_price_raw is not None else None
     return ProductView(
         id=product.id,
         display_name=product.display_name,
@@ -388,10 +393,10 @@ def view(
         unit_cost=cost.unit_cost,
         price_status=cost.price_status,
         cost_source=cost.source,
-        unit_price=sale.unit_price_raw,
+        unit_price=price,
         margin_rule=sale.rule,
-        margin_pct=totals.margin_ratio(sale.unit_price_raw, cost.unit_cost),
-        below_margin_floor=pm.line_floor(sale.unit_price_raw, cost.unit_cost, ctx.min_line_margin) is not None,
+        margin_pct=totals.margin_ratio(price, cost.unit_cost),
+        below_margin_floor=pm.line_floor(price, cost.unit_cost, ctx.min_line_margin) is not None,
         entered_in_quote_name=loaded.quotes.get(product.entered_in_quote) if product.entered_in_quote else None,
         last_changed_at=loaded.changed.get(product.id),
         history=list(history),
@@ -467,11 +472,21 @@ def history(session: Session, tenant_id: str, product_id: str) -> list[HistoryVi
     ]
 
 
-def drafts_using(session: Session, tenant_id: str, product_id: str) -> list[DraftUse]:
+def drafts_using(
+    session: Session, tenant_id: str, product_id: str, unit_price: Decimal | None = None
+) -> list[DraftUse]:
     """The editor's "בשימוש בטיוטה הפתוחה" (prototype openEditor): live lines of the product in each draft's current
-    version, named by their components' designators (`l.des.join(", ") || l.name`)."""
+    version, named by their components' designators (`l.des.join(", ") || l.name`). `unit_price`: the list's price
+    today, to count the lines that now show a new one (S23, prototype `saveEditor`)."""
     rows = session.execute(
-        select(m.Quote.id, m.Quote.name, m.Component.designators, m.QuoteLine.description)
+        select(
+            m.Quote.id,
+            m.Quote.name,
+            m.Component.designators,
+            m.QuoteLine.description,
+            m.QuoteLine.unit_price,
+            m.QuoteLine.override,
+        )
         .join(
             m.QuoteVersion,
             (m.QuoteVersion.tenant_id == m.Quote.tenant_id)
@@ -495,20 +510,22 @@ def drafts_using(session: Session, tenant_id: str, product_id: str) -> list[Draf
         .order_by(m.Quote.created_at.desc(), m.Quote.id, m.QuoteLine.position)
     ).all()
     uses: dict[str, DraftUse] = {}
-    for quote_id, name, designators, description in rows:
+    fresh: dict[str, int] = {}
+    for quote_id, name, designators, description, price, override in rows:
         uses.setdefault(quote_id, DraftUse(quote_id, name, [])).lines.append(
             ", ".join(designators or []) or description
         )
-    return list(uses.values())
+        if unit_price is not None and price is not None and price != unit_price and not override:
+            fresh[quote_id] = fresh.get(quote_id, 0) + 1
+    return [replace(u, fresh=fresh.get(u.quote_id, 0)) for u in uses.values()]
 
 
 def get_product(session: Session, tenant_id: str, product_id: str, on_date: date | None = None) -> ProductView:
     product = _product(session, tenant_id, product_id)
     loaded = load(session, tenant_id, [product])
     ctx = load_context(session, tenant_id, on_date or today(session, tenant_id))
-    return view(
-        loaded, product, ctx, history(session, tenant_id, product_id), drafts_using(session, tenant_id, product_id)
-    )
+    out = view(loaded, product, ctx, history(session, tenant_id, product_id))
+    return replace(out, used_in_drafts=drafts_using(session, tenant_id, product_id, out.unit_price))
 
 
 def _product(session: Session, tenant_id: str, product_id: str) -> m.Product:
@@ -1209,80 +1226,3 @@ def delete_supplier_preference(session: Session, actor: Actor, scope: str, key: 
 
 
 # --- a price change from a quote (07 §7.2.3; 09 §7.14) --------------------------------------------------------------
-
-
-def change_line_price(
-    session: Session,
-    actor: Actor,
-    quote_id: str,
-    line_id: str,
-    unit_price: Decimal,
-    scope: Literal["quote", "catalog"],
-) -> None:
-    """ "רק בהצעה הזו": the line gets an override tagged "מחיר להצעה הזו", and nothing else changes. "גם במחירון": the
-    line, and its product becomes `fixed` at the new price, with the quote in the product's history.
-
-    Either way other quotes are untouched: a sent one never changes (07 §7.7), and a draft gets "מחיר חדש במחירון"
-    from stage 7 (S22), never a silent new amount. The line's color is stage 7's, so it stays.
-    """
-    row = session.execute(
-        select(m.QuoteLine, m.QuoteVersion)
-        .join(
-            m.QuoteVersion,
-            (m.QuoteVersion.tenant_id == m.QuoteLine.tenant_id) & (m.QuoteVersion.id == m.QuoteLine.quote_version_id),
-        )
-        .where(
-            m.QuoteLine.tenant_id == actor.tenant_id,
-            m.QuoteLine.id == line_id,
-            m.QuoteLine.deleted_at.is_(None),
-            m.QuoteVersion.quote_id == quote_id,
-        )
-    ).first()
-    if row is None:
-        raise PriceListError(404, "not_found")
-    line, version = row
-    if version.status == "sent":
-        raise PriceListError(409, "quote_sent")
-    check_money(unit_price, ("unit_price",))
-    if scope == "catalog" and line.product_id is None:
-        raise PriceListError(422, "validation_error", ("scope",), "no_product")
-
-    before = {"unit_price": as_json(line.unit_price), "override": line.override}
-    if scope == "catalog":
-        update_product(
-            session,
-            actor,
-            line.product_id,  # type: ignore[arg-type]
-            {"sale_mode": "fixed", "fixed_price": unit_price},
-            quote_id=quote_id,
-        )
-        line.override = None  # the line now has the price list's price
-        line.margin_rule = {"kind": "fixed", "source": "manual_entry", "quotes": [], "value": None}
-    else:
-        line.override = {
-            "scope": "quote",
-            "unit_price": as_json(unit_price),
-            "previous_price": as_json(line.unit_price),
-            "by": actor.user_id,
-            "at": datetime.now(UTC).isoformat(),
-        }
-        line.margin_rule = {"kind": "override", "source": "quote", "quotes": [], "value": None}
-    line.unit_price = line.unit_price_raw = unit_price
-    amounts = totals.line_amounts(line.qty, unit_price, line.unit_cost)
-    line.line_total, line.line_cost, line.margin_pct = amounts.line_total, amounts.line_cost, amounts.margin_pct
-    session.add(
-        m.CorrectionEvent(
-            id=new_id("evt"),
-            tenant_id=actor.tenant_id,
-            quote_id=quote_id,
-            quote_version=version.version,
-            user_id=actor.user_id,
-            source="review_screen",
-            type="price_changed",
-            line_id=line.id,
-            before=before,
-            after={"unit_price": as_json(unit_price), "scope": scope},  # 09 §7.14: scope quote or catalog
-        )
-    )
-    session.flush()
-    store_totals(session, version)
