@@ -11,9 +11,10 @@ their reasons (06 §1 principle 2).
   main ("ראשי", "MAIN"); else the highest current among the feed classes (a switch-disconnector, a moulded-case
   breaker, a changeover); else the highest current among the breakers. A highest current that more than one device
   shares names no main.
-- Structural elements (`context_elements`), the panel's missing rows, its front view's designators (stage 1's
-  `panel_front_view` artifact, S21 decision 2), the breaking capacity its notes ask for (01 §5.5.1), the designer's BOM
-  rows that belong to it (01 §5.8), and its electrical text spans for the coverage check.
+- Structural elements (`context_elements`), the panel's missing rows, its front view's designators, the door's and
+  the interior layout's (stage 1's `panel_front_view` artifact, S21 decision 2, BUG-055), the breaking capacity its
+  notes ask for (01 §5.5.1), the designer's BOM rows that belong to it (01 §5.8), and its electrical text spans for
+  the coverage check.
 """
 
 import json
@@ -177,6 +178,10 @@ def compress(designators: list[str], limit: int = 6) -> str:
     return ", ".join(out)
 
 
+# the neutral, the earth and the busbars a layout labels (W0, read "WO" too): no device's tag (03 §3.7 item 2)
+_BUS = re.compile(r"^(?:N|PE|W[0-9O])$")
+
+
 def spread(written: str) -> list[str]:
     """ "F1-F17" → F1 … F17; "R1-R7" → R1 … R7; anything else as it is."""
     w = written.strip()
@@ -247,7 +252,9 @@ def _front_views(
             content = json.loads(a.content)
         except ValueError:
             continue
-        written = [str(d) for d in content.get("designators") or [] if str(d).strip()]
+        # the door's tags, then the interior layout's when the page draws one (BUG-055): both are what the panel holds
+        shown = [*(content.get("designators") or []), *(content.get("layout_designators") or [])]
+        written = [str(d) for d in shown if str(d).strip()]
         owners = [p.panel_id for p in intake.panels if a.page_id in p.page_ids]
         if len(owners) != 1:
             owners = [intake.panels[0].panel_id] if len(intake.panels) == 1 else []
@@ -256,7 +263,8 @@ def _front_views(
         seen: dict[str, None] = {}
         for w in written:
             for d in spread(w):
-                seen.setdefault(d, None)
+                if not _BUS.match(d):
+                    seen.setdefault(d, None)
         view = out.get(owners[0])
         if view is None:
             out[owners[0]] = FrontView(a.page_id, page_no.get(a.page_id or ""), written, list(seen))

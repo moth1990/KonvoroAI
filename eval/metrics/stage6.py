@@ -20,8 +20,15 @@ from .score import Score, Scores
 # Findings the golden drawings call for: rule ids, from each label's notes and the examples 06 §6.2 gives on them
 EXPECTED: dict[str, tuple[str, ...]] = {
     "NURSERY-1": ("FRONT_VIEW_DESIGNATOR_MISSING",),  # front_view_only F26–F29, its `rule`
-    "NEVIS-1": ("DATA_MODEL_TEXT_CONFLICT",),  # FNV: "3X6A" with S204M (06 §6.2)
-    "MINHAROT-1": ("DATA_MODEL_TEXT_CONFLICT",),  # the same FNV
+    "NEVIS-1": (  # FNV: "3X6A" with S204M (06 §6.2); R2, R4 on the layout's R1-R7, not in the control plan
+        "DATA_MODEL_TEXT_CONFLICT",
+        "FRONT_VIEW_DESIGNATOR_MISSING",
+    ),
+    "MINHAROT-1": (  # the same FNV; the layout's C8–C10.1 and FHL, not in the plan, and the plan's F5–F7, not in it
+        "DATA_MODEL_TEXT_CONFLICT",
+        "FRONT_VIEW_DESIGNATOR_MISSING",
+        "FRONT_VIEW_DESIGNATOR_EXTRA",
+    ),
     "26-993": ("DATA_LOAD_CURRENT_GT_RATED", "FRONT_VIEW_DESIGNATOR_NEAR_MATCH"),  # findings 1–2: FC1 INC=20A; SE/SG
     "6199-2-50": ("PANEL_REFERENCED_NOT_DRAWN",),  # referenced_not_drawn: לוח מבנה משרדים
     "BOM-HW-1": ("BOM_ACCESSORY_HOST_COUNT", "BOM_NO_ENCLOSURE"),  # 06 §6.2: 5 shunt trips, 2 breakers; no enclosure

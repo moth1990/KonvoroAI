@@ -1,0 +1,64 @@
+{
+  "answer": {
+    "input_tokens": 4516,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 542,
+    "payload": {
+      "issues": [
+        {
+          "bbox": null,
+          "component_ids": [
+            "c07"
+          ],
+          "confidence": 0.5,
+          "message": "בטבלה 17 מא\"ז SN201M (F1–F17), אך בתמונה מופיעים רק F1–F7 (7 יציאות, BOM 1–7). יש לבדוק אם הכמות נכונה או שיש חלק נוסף בתוכנית שלא נראה.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": [
+            100,
+            425,
+            185,
+            480
+          ],
+          "component_ids": [
+            "c07"
+          ],
+          "confidence": 0.55,
+          "message": "בתמונה כתוב INC=8A ליציאות F1–F7, ואילו בטבלה הזרם 10A. יש לבדוק את הערך מול השרטוט.",
+          "type": "inconsistent_attributes"
+        },
+        {
+          "bbox": [
+            530,
+            200,
+            620,
+            290
+          ],
+          "component_ids": [
+            "c06"
+          ],
+          "confidence": 0.45,
+          "message": "בתמונה FNV הוא S204M, INC=4A, 3X6A, והטבלה מציגה 3 קטבים 6A ללא קוד קטלוגי. יש לבדוק את הזרם והדגם (S204 הוא 4 קטבים).",
+          "type": "inconsistent_attributes"
+        },
+        {
+          "bbox": [
+            920,
+            100,
+            1145,
+            260
+          ],
+          "component_ids": [
+            "c01"
+          ],
+          "confidence": 0.3,
+          "message": "בתמונה Q0 הוא 4X160A XT1C עם INC=125A, ובטבלה מופיע 160A ללא ציון זרם הכוונון. יש לוודא את הערך שיצוין בהצעה.",
+          "type": "inconsistent_attributes"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "validator_review"
+}
