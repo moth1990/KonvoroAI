@@ -758,6 +758,10 @@ a.list-item:hover {
   max-height: calc(100vh - 32px);
   overflow: auto;
 }
+/* the prototype sets it again at the end of its stylesheet (line 335): this is the width its modals get */
+.modal.wide {
+  width: min(640px, 100%);
+}
 .seg {
   display: inline-flex;
   border: 1px solid var(--line-strong);
@@ -1720,4 +1724,65 @@ table.tbl {
   .diff-msg {
     display: none;
   }
+}
+
+/* ---------- price list (prototype lines 49–52, 102–105, 145–149) ---------- */
+.stats.four {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+@media (max-width: 1100px) {
+  .stats.four {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 620px) {
+  .stats.four {
+    grid-template-columns: 1fr;
+  }
+}
+.toggle {
+  position: relative;
+  width: 36px;
+  height: 20px;
+  border-radius: 999px;
+  background: var(--line-strong);
+  border: 0;
+  flex: none;
+  transition: background 0.15s;
+}
+.toggle::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  inset-inline-start: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--surface);
+  transition: inset-inline-start 0.15s;
+}
+.toggle[aria-checked="true"] {
+  background: var(--accent);
+}
+.toggle[aria-checked="true"]::after {
+  inset-inline-start: 18px;
+}
+.sup-tbl input {
+  padding: 5px 7px;
+  font-size: 13px;
+}
+.sup-tbl td {
+  padding: 6px 8px;
+  vertical-align: middle;
+}
+.prod-cell {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.tbl tr.click {
+  cursor: pointer;
+}
+.tbl tr.click:hover td {
+  background: var(--surface-2);
 }

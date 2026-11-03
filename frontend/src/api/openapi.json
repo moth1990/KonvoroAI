@@ -1241,6 +1241,128 @@
         "title": "CorrectedQuoteOut",
         "type": "object"
       },
+      "CostCheckIn": {
+        "additionalProperties": false,
+        "description": "A cost the editor has not saved yet (10 §8, S19 decision 4). With `product_id`, the product's catalog link and\nits previous cost (the row's own with `row_id`); `family` and `brand` are the editor's, sent together.",
+        "properties": {
+          "brand": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Brand"
+          },
+          "currency": {
+            "default": "ILS",
+            "pattern": "^[A-Z]{3}$",
+            "title": "Currency",
+            "type": "string"
+          },
+          "family": {
+            "anyOf": [
+              {
+                "maxLength": 64,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Family"
+          },
+          "product_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Product Id"
+          },
+          "row_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The supplier row being edited, if it is saved",
+            "title": "Row Id"
+          },
+          "unit_cost": {
+            "examples": [
+              "0.15"
+            ],
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Unit Cost",
+            "type": "string"
+          }
+        },
+        "required": [
+          "unit_cost"
+        ],
+        "title": "CostCheckIn",
+        "type": "object"
+      },
+      "CostCheckOut": {
+        "properties": {
+          "list_price": {
+            "anyOf": [
+              {
+                "examples": [
+                  "0.15"
+                ],
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "List Price"
+          },
+          "ratio_to_list": {
+            "anyOf": [
+              {
+                "examples": [
+                  "0.15"
+                ],
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ratio To List"
+          },
+          "warnings": {
+            "description": "Warnings only: the user can save anyway",
+            "items": {
+              "$ref": "#/components/schemas/SanityWarningOut"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "list_price",
+          "ratio_to_list",
+          "warnings"
+        ],
+        "title": "CostCheckOut",
+        "type": "object"
+      },
       "CostSourceOut": {
         "properties": {
           "price_date": {
@@ -1300,6 +1422,33 @@
           "explanation"
         ],
         "title": "DerivedOut",
+        "type": "object"
+      },
+      "DraftUseOut": {
+        "properties": {
+          "lines": {
+            "description": "Each line's designators, or its description when it has none",
+            "items": {
+              "type": "string"
+            },
+            "title": "Lines",
+            "type": "array"
+          },
+          "quote_id": {
+            "title": "Quote Id",
+            "type": "string"
+          },
+          "quote_name": {
+            "title": "Quote Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "quote_id",
+          "quote_name",
+          "lines"
+        ],
+        "title": "DraftUseOut",
         "type": "object"
       },
       "ErrorBody": {
@@ -3046,6 +3195,18 @@
             ],
             "title": "Entered In Quote"
           },
+          "entered_in_quote_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The name of the quote in `entered_in_quote`",
+            "title": "Entered In Quote Name"
+          },
           "family": {
             "title": "Family",
             "type": "string"
@@ -3088,6 +3249,19 @@
               }
             ],
             "title": "Includes"
+          },
+          "last_changed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The newest history row",
+            "title": "Last Changed At"
           },
           "list_currency": {
             "anyOf": [
@@ -3230,6 +3404,14 @@
             ],
             "description": "Before 07 §7.6's rounding",
             "title": "Unit Price"
+          },
+          "used_in_drafts": {
+            "description": "Drafts whose current version has lines with the product (07 §7.2.3); only on GET of one product",
+            "items": {
+              "$ref": "#/components/schemas/DraftUseOut"
+            },
+            "title": "Used In Drafts",
+            "type": "array"
           }
         },
         "required": [
@@ -3259,7 +3441,10 @@
           "margin_rule",
           "margin_pct",
           "below_margin_floor",
-          "history"
+          "entered_in_quote_name",
+          "last_changed_at",
+          "history",
+          "used_in_drafts"
         ],
         "title": "ProductOut",
         "type": "object"
@@ -4251,6 +4436,48 @@
           "updated_at"
         ],
         "title": "RevisableOut",
+        "type": "object"
+      },
+      "SanityWarningOut": {
+        "properties": {
+          "code": {
+            "enum": [
+              "far_from_list",
+              "far_from_similar",
+              "jump_from_previous"
+            ],
+            "title": "Code",
+            "type": "string"
+          },
+          "reference": {
+            "description": "The price it was compared with, in the tenant's currency",
+            "examples": [
+              "0.15"
+            ],
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Reference",
+            "type": "string"
+          },
+          "reference_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "When the previous cost was set (`jump_from_previous`)",
+            "title": "Reference Date"
+          }
+        },
+        "required": [
+          "code",
+          "reference",
+          "reference_date"
+        ],
+        "title": "SanityWarningOut",
         "type": "object"
       },
       "SettingsOut": {
@@ -6203,6 +6430,47 @@
         ]
       }
     },
+    "/price-list/brands": {
+      "get": {
+        "description": "The bulk brand discount's choices: catalog brands with a list price, and brands already discounted.",
+        "operationId": "list_brands_price_list_brands_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "title": "Response List Brands Price List Brands Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Brands",
+        "tags": [
+          "price-list"
+        ]
+      }
+    },
     "/price-list/margin-rules": {
       "get": {
         "operationId": "list_margin_rules_price_list_margin_rules_get",
@@ -6536,6 +6804,53 @@
           }
         ],
         "summary": "Create Product",
+        "tags": [
+          "price-list"
+        ]
+      }
+    },
+    "/price-list/products/check-cost": {
+      "post": {
+        "description": "10 §8's checks on a typed cost before it is saved, for the editor's warning beside the field. Nothing is\nwritten; the save runs the same checks again and keeps them in `sanity`.",
+        "operationId": "check_cost_price_list_products_check_cost_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CostCheckIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CostCheckOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Check Cost",
         "tags": [
           "price-list"
         ]

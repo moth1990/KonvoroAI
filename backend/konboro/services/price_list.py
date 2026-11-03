@@ -173,7 +173,20 @@ class ProductView:
     margin_rule: dict[str, Any] | None
     margin_pct: Decimal | None
     below_margin_floor: bool
+    entered_in_quote_name: str | None = None
+    last_changed_at: datetime | None = None  # the newest history row
     history: list[HistoryView] = field(default_factory=list)
+    used_in_drafts: list["DraftUse"] = field(default_factory=list)
+
+
+@dataclass(frozen=True)
+class DraftUse:
+    """A draft whose current version has lines with the product: a price-list change tags them there and changes
+    nothing by itself (07 §7.2.3). Sent quotes never change, so they are not listed."""
+
+    quote_id: str
+    quote_name: str
+    lines: list[str]  # each line's designators, or its description when it has none
 
 
 # --- context --------------------------------------------------------------------------------------------------------
@@ -276,12 +289,15 @@ def product_costs(
 
 @dataclass
 class Loaded:
-    """Products with their supplier rows, the tenant's supplier names and the linked catalog items."""
+    """Products with their supplier rows, the tenant's supplier names, the linked catalog items, the names of the
+    quotes products were entered in, and when each product last changed."""
 
     products: list[m.Product]
     rows: dict[str, list[m.ProductSupplier]]
     names: dict[str, str]
     items: dict[str, m.CatalogItem]
+    quotes: dict[str, str] = field(default_factory=dict)
+    changed: dict[str, datetime] = field(default_factory=dict)
 
 
 def load(session: Session, tenant_id: str, products: list[m.Product]) -> Loaded:
@@ -301,10 +317,34 @@ def load(session: Session, tenant_id: str, products: list[m.Product]) -> Loaded:
         if item_ids
         else {}
     )
-    return Loaded(products, rows, names, items)
+    quote_ids = {p.entered_in_quote for p in products if p.entered_in_quote}
+    quotes = (
+        dict(
+            session.execute(
+                select(m.Quote.id, m.Quote.name).where(m.Quote.tenant_id == tenant_id, m.Quote.id.in_(quote_ids))
+            ).all()
+        )
+        if quote_ids
+        else {}
+    )
+    changed: dict[str, datetime] = {}
+    if ids:
+        for product_id, at in session.execute(
+            select(m.PriceHistory.product_id, func.max(m.PriceHistory.created_at))
+            .where(m.PriceHistory.tenant_id == tenant_id, m.PriceHistory.product_id.in_(ids))
+            .group_by(m.PriceHistory.product_id)
+        ):
+            changed[product_id or ""] = at
+    return Loaded(products, rows, names, items, quotes, changed)
 
 
-def view(loaded: Loaded, product: m.Product, ctx: Context, history: Sequence[HistoryView] = ()) -> ProductView:
+def view(
+    loaded: Loaded,
+    product: m.Product,
+    ctx: Context,
+    history: Sequence[HistoryView] = (),
+    drafts: Sequence[DraftUse] = (),
+) -> ProductView:
     rows = loaded.rows.get(product.id, [])
     item = loaded.items.get(product.catalog_item_id) if product.catalog_item_id else None
     cost = pc.unit_cost(product_costs(product, rows, loaded.names, item), ctx.cost)
@@ -352,7 +392,10 @@ def view(loaded: Loaded, product: m.Product, ctx: Context, history: Sequence[His
         margin_rule=sale.rule,
         margin_pct=totals.margin_ratio(sale.unit_price_raw, cost.unit_cost),
         below_margin_floor=pm.line_floor(sale.unit_price_raw, cost.unit_cost, ctx.min_line_margin) is not None,
+        entered_in_quote_name=loaded.quotes.get(product.entered_in_quote) if product.entered_in_quote else None,
+        last_changed_at=loaded.changed.get(product.id),
         history=list(history),
+        used_in_drafts=list(drafts),
     )
 
 
@@ -424,11 +467,48 @@ def history(session: Session, tenant_id: str, product_id: str) -> list[HistoryVi
     ]
 
 
+def drafts_using(session: Session, tenant_id: str, product_id: str) -> list[DraftUse]:
+    """The editor's "בשימוש בטיוטה הפתוחה" (prototype openEditor): live lines of the product in each draft's current
+    version, named by their components' designators (`l.des.join(", ") || l.name`)."""
+    rows = session.execute(
+        select(m.Quote.id, m.Quote.name, m.Component.designators, m.QuoteLine.description)
+        .join(
+            m.QuoteVersion,
+            (m.QuoteVersion.tenant_id == m.Quote.tenant_id)
+            & (m.QuoteVersion.quote_id == m.Quote.id)
+            & (m.QuoteVersion.version == m.Quote.current_version),
+        )
+        .join(
+            m.QuoteLine,
+            (m.QuoteLine.tenant_id == m.QuoteVersion.tenant_id) & (m.QuoteLine.quote_version_id == m.QuoteVersion.id),
+        )
+        .outerjoin(
+            m.Component,
+            (m.Component.tenant_id == m.QuoteLine.tenant_id) & (m.Component.id == m.QuoteLine.component_id),
+        )
+        .where(
+            m.Quote.tenant_id == tenant_id,
+            m.QuoteVersion.status == "draft",
+            m.QuoteLine.product_id == product_id,
+            m.QuoteLine.deleted_at.is_(None),
+        )
+        .order_by(m.Quote.created_at.desc(), m.Quote.id, m.QuoteLine.position)
+    ).all()
+    uses: dict[str, DraftUse] = {}
+    for quote_id, name, designators, description in rows:
+        uses.setdefault(quote_id, DraftUse(quote_id, name, [])).lines.append(
+            ", ".join(designators or []) or description
+        )
+    return list(uses.values())
+
+
 def get_product(session: Session, tenant_id: str, product_id: str, on_date: date | None = None) -> ProductView:
     product = _product(session, tenant_id, product_id)
     loaded = load(session, tenant_id, [product])
     ctx = load_context(session, tenant_id, on_date or today(session, tenant_id))
-    return view(loaded, product, ctx, history(session, tenant_id, product_id))
+    return view(
+        loaded, product, ctx, history(session, tenant_id, product_id), drafts_using(session, tenant_id, product_id)
+    )
 
 
 def _product(session: Session, tenant_id: str, product_id: str) -> m.Product:
@@ -663,11 +743,17 @@ def set_suppliers(
         if old != new:
             log(session, actor, "supplier", old, new, product_id=product.id, quote_id=quote_id)
             if r.source == "manual_entry" and (old is None or old["unit_cost"] != new["unit_cost"]):
-                checked.append((r, previous[0] if previous else before.unit_cost, previous[1] if previous else None))
+                checked.append((r, *(previous or (before.unit_cost, source_date(before)))))
     if checked:
         r, prev_cost, prev_date = checked[-1]
         product.sanity = sanity_for(session, actor.tenant_id, product, r, prev_cost, prev_date)
     session.flush()
+
+
+def source_date(cost: pc.Cost) -> date | None:
+    """When the cost a product has today was set: its supplier row's `price_date` (07 §6.2 `cost_source`)."""
+    when = (cost.source or {}).get("price_date")
+    return date.fromisoformat(when) if isinstance(when, str) else None
 
 
 def _ctx(session: Session, tenant_id: str) -> Context:
@@ -688,7 +774,32 @@ def sanity_for(
     previous: Decimal | None,
     previous_date: date | None,
 ) -> dict[str, Any]:
-    """10 §8, in the tenant's currency: the list price, the same family, brand and current, and the previous cost."""
+    return sanity(
+        session,
+        tenant_id,
+        Typed(row.unit_cost, row.currency, product.family, product.brand, product.catalog_item_id, product.id),
+        previous,
+        previous_date or row.price_date,
+    )
+
+
+@dataclass(frozen=True)
+class Typed:
+    """A cost typed by hand, and the product it is for as the editor has it (it may not be saved yet)."""
+
+    unit_cost: Decimal
+    currency: str
+    family: str
+    brand: str | None
+    catalog_item_id: str | None
+    product_id: str | None = None
+
+
+def sanity(
+    session: Session, tenant_id: str, typed: Typed, previous: Decimal | None, previous_date: date | None
+) -> dict[str, Any]:
+    """10 §8, in the tenant's currency: the list price, the same family, brand and current, and the previous cost.
+    Only this tenant's products are compared (10 §8, §11); RLS and the `tenant_id` filter both hold it."""
     ctx = _ctx(session, tenant_id)
 
     def local(amount: Decimal | None, currency: str | None) -> Decimal | None:
@@ -701,10 +812,10 @@ def sanity_for(
         except FxRateMissing:
             return None
 
-    cost = local(row.unit_cost, row.currency)
+    cost = local(typed.unit_cost, typed.currency)
     if cost is None:
         return {"warning_shown": False, "warnings": [], "list_price": None, "ratio_to_list": None}
-    item = session.get(m.CatalogItem, product.catalog_item_id) if product.catalog_item_id else None
+    item = session.get(m.CatalogItem, typed.catalog_item_id) if typed.catalog_item_id else None
     current = (item.attributes or {}).get("current_a") if item else None
     similar: list[Decimal] = []
     if current is not None:
@@ -712,9 +823,9 @@ def sanity_for(
             session.scalars(
                 select(m.Product).where(
                     m.Product.tenant_id == tenant_id,
-                    m.Product.id != product.id,
-                    m.Product.family == product.family,
-                    m.Product.brand == product.brand,
+                    m.Product.id != (typed.product_id or ""),
+                    m.Product.family == typed.family,
+                    m.Product.brand == typed.brand,
                     m.Product.catalog_item_id.is_not(None),
                 )
             )
@@ -731,9 +842,62 @@ def sanity_for(
         cost,
         list_price=local(item.list_price, item.list_currency) if item else None,
         similar_costs=similar,
-        previous=(previous, previous_date or row.price_date) if previous is not None else None,
+        previous=(previous, previous_date or ctx.cost.on_date) if previous is not None else None,
     )
     return result.as_json()
+
+
+def check_typed_cost(
+    session: Session,
+    tenant_id: str,
+    unit_cost: Decimal,
+    currency: str,
+    *,
+    product_id: str | None = None,
+    row_id: str | None = None,
+    family: str | None = None,
+    brand: str | None = None,
+) -> dict[str, Any]:
+    """The editor's check before saving (S19 decision 4): 10 §8 on a cost that is not saved yet. Nothing is written.
+
+    The previous cost is the row's own when `row_id` names one of the product's rows, otherwise the product's cost
+    today, as a save would compare it (`set_suppliers`). `family` and `brand` are the editor's, which may not be saved
+    yet; the catalog link is the product's (a new product has none, so only the previous-cost check can run).
+    """
+    check_money(unit_cost, ("unit_cost",))
+    product = _product(session, tenant_id, product_id) if product_id else None
+    if product is None and not family:
+        raise PriceListError(422, "validation_error", ("family",), "missing")
+    previous: Decimal | None = None
+    previous_date: date | None = None
+    if product is not None:
+        row = (
+            session.scalar(
+                select(m.ProductSupplier).where(
+                    m.ProductSupplier.tenant_id == tenant_id,
+                    m.ProductSupplier.product_id == product.id,
+                    m.ProductSupplier.id == row_id,
+                )
+            )
+            if row_id
+            else None
+        )
+        if row_id and row is None:
+            raise PriceListError(422, "validation_error", ("row_id",), "not_found")
+        if row is not None:
+            previous, previous_date = row.unit_cost, row.price_date
+        else:
+            now = pc.unit_cost(_costs_of(session, tenant_id, product), _ctx(session, tenant_id).cost)
+            previous, previous_date = now.unit_cost, source_date(now)
+    typed = Typed(
+        unit_cost,
+        currency,
+        family or (product.family if product else ""),
+        brand if family is not None or product is None else product.brand,
+        product.catalog_item_id if product else None,
+        product.id if product else None,
+    )
+    return sanity(session, tenant_id, typed, previous, previous_date)
 
 
 # --- suppliers ------------------------------------------------------------------------------------------------------
@@ -797,6 +961,14 @@ def brand_discount_view(session: Session, tenant_id: str, brand: str, pct: Decim
     ctx = _ctx(session, tenant_id)
     priced = sum(1 for p in products if view(loaded, p, ctx).price_status == "discount_based")
     return BrandDiscountView(brand, pct, priced)
+
+
+def brands(session: Session, tenant_id: str) -> list[str]:
+    """The bulk brand discount's choices (prototype vPrices "הנחת מותג גורפת"): the master catalog's brands that have a
+    list price, since a discount prices from it (07 §7.2, priority 2), and any brand the tenant already discounts."""
+    listed = session.scalars(select(m.CatalogItem.brand).where(m.CatalogItem.list_price.is_not(None)).distinct())
+    discounted = session.scalars(select(m.BrandDiscount.brand).where(m.BrandDiscount.tenant_id == tenant_id))
+    return sorted({*listed, *discounted}, key=str.casefold)
 
 
 def list_brand_discounts(session: Session, tenant_id: str) -> list[BrandDiscountView]:

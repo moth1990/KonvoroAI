@@ -404,6 +404,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/price-list/brands": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Brands
+         * @description The bulk brand discount's choices: catalog brands with a list price, and brands already discounted.
+         */
+        get: operations["list_brands_price_list_brands_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/price-list/margin-rules": {
         parameters: {
             query?: never;
@@ -452,6 +472,27 @@ export interface paths {
         put?: never;
         /** Create Product */
         post: operations["create_product_price_list_products_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/price-list/products/check-cost": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Check Cost
+         * @description 10 §8's checks on a typed cost before it is saved, for the editor's warning beside the field. Nothing is
+         *     written; the save runs the same checks again and keeps them in `sanity`.
+         */
+        post: operations["check_cost_price_list_products_check_cost_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1053,6 +1094,46 @@ export interface components {
             /** Quote Id */
             quote_id: string;
         };
+        /**
+         * CostCheckIn
+         * @description A cost the editor has not saved yet (10 §8, S19 decision 4). With `product_id`, the product's catalog link and
+         *     its previous cost (the row's own with `row_id`); `family` and `brand` are the editor's, sent together.
+         */
+        CostCheckIn: {
+            /** Brand */
+            brand?: string | null;
+            /**
+             * Currency
+             * @default ILS
+             */
+            currency: string;
+            /** Family */
+            family?: string | null;
+            /** Product Id */
+            product_id?: string | null;
+            /**
+             * Row Id
+             * @description The supplier row being edited, if it is saved
+             */
+            row_id?: string | null;
+            /**
+             * Unit Cost
+             * @example 0.15
+             */
+            unit_cost: string;
+        };
+        /** CostCheckOut */
+        CostCheckOut: {
+            /** List Price */
+            list_price: string | null;
+            /** Ratio To List */
+            ratio_to_list: string | null;
+            /**
+             * Warnings
+             * @description Warnings only: the user can save anyway
+             */
+            warnings: components["schemas"]["SanityWarningOut"][];
+        };
         /** CostSourceOut */
         CostSourceOut: {
             /** Price Date */
@@ -1071,6 +1152,18 @@ export interface components {
             explanation: string;
             /** Rule Id */
             rule_id?: string | null;
+        };
+        /** DraftUseOut */
+        DraftUseOut: {
+            /**
+             * Lines
+             * @description Each line's designators, or its description when it has none
+             */
+            lines: string[];
+            /** Quote Id */
+            quote_id: string;
+            /** Quote Name */
+            quote_name: string;
         };
         /** ErrorBody */
         ErrorBody: {
@@ -1636,6 +1729,11 @@ export interface components {
             entered_by: string | null;
             /** Entered In Quote */
             entered_in_quote: string | null;
+            /**
+             * Entered In Quote Name
+             * @description The name of the quote in `entered_in_quote`
+             */
+            entered_in_quote_name: string | null;
             /** Family */
             family: string;
             /** Fixed Price */
@@ -1651,6 +1749,11 @@ export interface components {
             includes: {
                 [key: string]: unknown;
             } | null;
+            /**
+             * Last Changed At
+             * @description The newest history row
+             */
+            last_changed_at: string | null;
             /** List Currency */
             list_currency: string | null;
             /**
@@ -1696,6 +1799,11 @@ export interface components {
              * @description Before 07 §7.6's rounding
              */
             unit_price: string | null;
+            /**
+             * Used In Drafts
+             * @description Drafts whose current version has lines with the product (07 §7.2.3); only on GET of one product
+             */
+            used_in_drafts: components["schemas"]["DraftUseOut"][];
         };
         /**
          * ProductPatch
@@ -2043,6 +2151,25 @@ export interface components {
             updated_at: string;
             /** Version */
             version: number;
+        };
+        /** SanityWarningOut */
+        SanityWarningOut: {
+            /**
+             * Code
+             * @enum {string}
+             */
+            code: "far_from_list" | "far_from_similar" | "jump_from_previous";
+            /**
+             * Reference
+             * @description The price it was compared with, in the tenant's currency
+             * @example 0.15
+             */
+            reference: string;
+            /**
+             * Reference Date
+             * @description When the previous cost was set (`jump_from_previous`)
+             */
+            reference_date: string | null;
         };
         /** SettingsOut */
         SettingsOut: {
@@ -3057,6 +3184,35 @@ export interface operations {
             };
         };
     };
+    list_brands_price_list_brands_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": string[];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     list_margin_rules_price_list_margin_rules_get: {
         parameters: {
             query?: never;
@@ -3239,6 +3395,39 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ProductOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    check_cost_price_list_products_check_cost_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CostCheckIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CostCheckOut"];
                 };
             };
             /** @description Error */

@@ -8,6 +8,7 @@ import { HomeScreen } from "./screens/Home";
 import { LoginScreen } from "./screens/Login";
 import { NewQuoteScreen } from "./screens/newQuote/NewQuote";
 import { Placeholder } from "./screens/Placeholder";
+import { PricesScreen } from "./screens/prices/Prices";
 import { ReviewScreen } from "./screens/review/Review";
 
 /** `/build` exists only when `chat_quote_builder` is on: off, it behaves like any unknown path (13 §3.2). */
@@ -32,6 +33,13 @@ function AuditRoute({ results = false }: { results?: boolean }) {
   return results ? <AuditScreen /> : <NewAuditScreen />;
 }
 
+/** The price list (S19) is behind `price_list`, like its API (S18 decision 5, S19 decision 5); off, a placeholder. */
+function PricesRoute() {
+  const me = useMe();
+  if (!me.data) return null;
+  return me.data.flags.price_list ? <PricesScreen /> : <Placeholder screen="prices" />;
+}
+
 /** The prototype's routes (`ROUTES`, line 647) as paths. Unknown paths go home, like its `route()`. */
 export default function App() {
   return (
@@ -45,7 +53,7 @@ export default function App() {
           <Route path="/review/:quoteId?" element={<ReviewRoute />} />
           <Route path="/audit" element={<AuditRoute />} />
           <Route path="/audit/:auditId" element={<AuditRoute results />} />
-          <Route path="/prices" element={<Placeholder screen="prices" />} />
+          <Route path="/prices" element={<PricesRoute />} />
           <Route path="/queue" element={<Placeholder screen="queue" />} />
           <Route path="/prefs" element={<Placeholder screen="prefs" />} />
           <Route path="/build" element={<BuildRoute />} />

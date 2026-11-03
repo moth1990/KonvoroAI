@@ -666,6 +666,12 @@ class PriceHistoryOut(BaseModel):
     changed_at: datetime
 
 
+class DraftUseOut(BaseModel):
+    quote_id: str
+    quote_name: str
+    lines: list[str] = Field(description="Each line's designators, or its description when it has none")
+
+
 class ProductOut(BaseModel):
     """A price-list product (07 §7.2.1), with its cost and price today by the tenant's rules (07 §7.2.2, §7.3)."""
 
@@ -695,7 +701,12 @@ class ProductOut(BaseModel):
     margin_rule: dict[str, Any] | None
     margin_pct: DecimalStr | None
     below_margin_floor: bool
+    entered_in_quote_name: str | None = Field(description="The name of the quote in `entered_in_quote`")
+    last_changed_at: datetime | None = Field(description="The newest history row")
     history: list[PriceHistoryOut] = Field(description="Newest first; only on GET of one product")
+    used_in_drafts: list[DraftUseOut] = Field(
+        description="Drafts whose current version has lines with the product (07 §7.2.3); only on GET of one product"
+    )
 
 
 class SupplierPriceIn(Strict):
@@ -743,6 +754,30 @@ class ProductPatch(Strict):
     catalog_item_id: str | None = None
     suppliers: list[SupplierPriceIn] | None = Field(default=None, max_length=50)
     quote_id: str | None = None
+
+
+class CostCheckIn(Strict):
+    """A cost the editor has not saved yet (10 §8, S19 decision 4). With `product_id`, the product's catalog link and
+    its previous cost (the row's own with `row_id`); `family` and `brand` are the editor's, sent together."""
+
+    unit_cost: DecimalStr
+    currency: Currency = "ILS"
+    product_id: str | None = None
+    row_id: str | None = Field(default=None, description="The supplier row being edited, if it is saved")
+    family: Annotated[str, Field(min_length=1, max_length=64)] | None = None
+    brand: Annotated[str, Field(max_length=100)] | None = None
+
+
+class SanityWarningOut(BaseModel):
+    code: Literal["far_from_list", "far_from_similar", "jump_from_previous"]
+    reference: DecimalStr = Field(description="The price it was compared with, in the tenant's currency")
+    reference_date: date | None = Field(description="When the previous cost was set (`jump_from_previous`)")
+
+
+class CostCheckOut(BaseModel):
+    list_price: DecimalStr | None
+    ratio_to_list: DecimalStr | None
+    warnings: list[SanityWarningOut] = Field(description="Warnings only: the user can save anyway")
 
 
 class SupplierOut(BaseModel):

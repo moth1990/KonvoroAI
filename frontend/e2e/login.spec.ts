@@ -66,5 +66,5 @@ test("a protected page sends you to login, and back there after signing in", asy
   await page.getByLabel("סיסמה").fill(PASSWORD);
   await page.getByRole("button", { name: "כניסה" }).click();
   await expect(page).toHaveURL(/\/prices$/);
-  await expect(page.getByRole("heading", { name: "מחירון" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "מחירון", exact: true })).toBeVisible();
 });

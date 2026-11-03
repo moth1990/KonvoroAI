@@ -193,7 +193,58 @@ const SCREENS: Screen[] = [
   },
   ...reviewScreens(),
   ...auditScreens(),
+  ...priceScreens(),
 ];
+
+/** The price list (S19), in a tenant nothing changes: the demo's products (the prototype's `CATALOG`). */
+function priceScreens(): Screen[] {
+  const prices = { path: "/prices", tenant: TENANTS.pricesShots };
+  const listed = (page: Page) => page.getByTestId("prod").last().waitFor();
+  return [
+    {
+      id: "prices",
+      title: "Price list",
+      prototype: { hash: "#prices", authed: true },
+      app: { ...prices, setup: listed },
+      notes: [
+        "Rows are in family order, then name (S18's API); the prototype keeps its array's order.",
+        "Families are the attribute schemas' codes with Hebrew names (S19): 'מא\"ז', 'מפסק' and 'מגן מנוע' are " +
+          "one family, circuit_breaker, shown as 'מא\"ז / מפסק'; 'אביזר' is 'מגע עזר'.",
+        "Money keeps agorot (₪31.50); the prototype rounds to whole shekels.",
+        "The source column says where a product came from ('מהצעה קודמת', 'מחירון ספק', 'הוזן ב…'); the prototype " +
+          "names quote numbers the demo seed does not keep. Its date is the last change, empty until one.",
+        "The bulk discount offers the master catalog's brands with a list price (ABB in the sample), filled with " +
+          "the saved discount; saving an empty field removes it.",
+        "Data differs by design in the rail: the E2E tenant has no approval-queue items.",
+      ],
+    },
+    {
+      id: "prices-editor",
+      title: "Price list: product editor (S203M-C16, two suppliers)",
+      prototype: {
+        hash: "#prices",
+        authed: true,
+        setup: (p) => p.locator('[data-act="prod"][data-id="s203_16"]').click(),
+      },
+      app: {
+        ...prices,
+        setup: async (page) => {
+          await listed(page);
+          await page.getByTestId("prod").filter({ hasText: "S203M-C16" }).click();
+          await page.getByTestId("ed-drafts").waitFor();
+        },
+      },
+      notes: [
+        "Family is a list (S19): the codes margin rules and supplier preferences match on, with Hebrew names.",
+        "S19 decision 1: a rule with no supplier saves, with 'בלי ספק אין עלות, ולכן אין מחיר'.",
+        "S19 decision 2: 'כלול בארון' is five checkboxes on a cabinet (not this product).",
+        "S19 decision 4: a typed cost is checked on blur; a warning shows in a row under the supplier (not in this shot).",
+        "The drafts note lists the NURSERY lines that use the product; the prototype's names NURSERY's open draft too.",
+        "The history appears after the first change; this product has none yet.",
+      ],
+    },
+  ];
+}
 
 /** The 26-993 audit fixture (S16), in a tenant nothing changes. */
 function auditScreens(): Screen[] {

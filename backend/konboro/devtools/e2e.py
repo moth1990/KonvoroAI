@@ -26,6 +26,7 @@ from konboro.db.models import (
     AuditDifference,
     Drawing,
     KnowledgeCandidate,
+    MarginRule,
     Project,
     QuotaUsage,
     Quote,
@@ -36,7 +37,7 @@ from konboro.db.models import (
     TenantSettings,
     User,
 )
-from konboro.db.seed import FLAGS, seed_global
+from konboro.db.seed import FLAGS, link_demo_catalog, seed_global, seed_price_list
 from konboro.db.session import app_engine
 from konboro.devtools.fixtures.audit_993 import seed_audit_993, seed_audit_993_pages
 from konboro.devtools.fixtures.nursery import seed_nursery, seed_nursery_pages
@@ -59,6 +60,8 @@ class E2eTenant:
     sample_data: bool
     nursery: bool = False  # the review screen's fixture quote (S09); read-only, so one tenant serves both projects
     audit: bool = False  # the 26-993 audit fixture (S16), under `audit_id`
+    prices: bool = False  # the demo price list (S19), before the NURSERY fixture so its lines use the products
+    off: tuple[str, ...] = ()  # flags this tenant has off; every other flag is on
 
     @property
     def tenant_id(self) -> str:
@@ -96,6 +99,12 @@ TENANTS = (
     E2eTenant(14, "audit-desktop@e2e.konboro.local", home_chat=False, used=12, sample_data=False, audit=True),
     E2eTenant(15, "audit-mobile@e2e.konboro.local", home_chat=False, used=12, sample_data=False, audit=True),
     E2eTenant(16, "audit-shots@e2e.konboro.local", home_chat=False, used=12, sample_data=False, audit=True),
+    # The price list (S19): saves change it, so one tenant per project; the screenshots read a third. Each has the
+    # NURSERY draft, for the editor's "בשימוש בטיוטה הפתוחה". A fourth has the screen's flag off.
+    E2eTenant(17, "prices-desktop@e2e.konboro.local", False, 12, False, nursery=True, prices=True),
+    E2eTenant(18, "prices-mobile@e2e.konboro.local", False, 12, False, nursery=True, prices=True),
+    E2eTenant(19, "prices-shots@e2e.konboro.local", False, 12, False, nursery=True, prices=True),
+    E2eTenant(20, "prices-off@e2e.konboro.local", False, 12, False, off=("price_list",)),
 )
 
 # A project with this name runs slowly, so a test can cancel it mid-run; every other upload runs at full speed.
@@ -204,14 +213,27 @@ def seed_e2e(owner: Engine, storage: Storage | None = None) -> None:
             s.add(Tenant(id=t.tenant_id, name=f"מפעל בדיקה {t.number}", plan_id="trial"))
             s.flush()
             s.add(User(id=t.user_id, tenant_id=t.tenant_id, email=t.email, display_name="בעלים"))
-            s.add(TenantSettings(tenant_id=t.tenant_id))
+            if t.prices:  # the prototype's settings: floor 15%, a cabinet includes everything
+                everything = {k: True for k in ("busbar", "n", "pe", "panels", "doors")}
+                s.add(
+                    TenantSettings(
+                        tenant_id=t.tenant_id, min_line_margin=Decimal("0.15"), enclosure_includes_default=everything
+                    )
+                )
+            else:
+                s.add(TenantSettings(tenant_id=t.tenant_id))
             s.add(QuotaUsage(tenant_id=t.tenant_id, month=month, used=t.used))
             for flag in FLAGS:
-                enabled = t.home_chat if flag["key"] == "home_chat" else True
+                enabled = t.home_chat if flag["key"] == "home_chat" else flag["key"] not in t.off
                 s.add(TenantFeatureOverride(tenant_id=t.tenant_id, flag_key=flag["key"], enabled=enabled, reason="e2e"))
             s.flush()
             if t.sample_data:
                 _sample_data(s, t)
+            if t.prices:
+                s.add(MarginRule(id=new_id("mr"), tenant_id=t.tenant_id, level="default", value=Decimal("0.25")))
+                seed_price_list(s, t.tenant_id)
+                link_demo_catalog(s, t.tenant_id)
+                s.flush()
             if t.nursery:
                 seed_nursery(s, t.tenant_id)
                 if storage is not None:

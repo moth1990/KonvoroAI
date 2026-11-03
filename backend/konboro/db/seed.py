@@ -252,38 +252,10 @@ def seed_attribute_schemas(session: Session) -> None:
     session.flush()
 
 
-def seed_demo_tenant(session: Session) -> bool:
-    """Creates the demo tenant. Returns False if it already exists."""
-    session.execute(text("SELECT set_config('app.tenant_id', :t, true)"), {"t": DEMO_TENANT})
-    if session.execute(select(Tenant.id).where(Tenant.id == DEMO_TENANT)).first():
-        return False
-
-    t = DEMO_TENANT
-    session.add(Tenant(id=t, name='לוחות דמו בע"מ', plan_id="trial"))
-    session.flush()
-    session.add(User(id=DEMO_USER, tenant_id=t, email=DEMO_EMAIL, display_name="אומדן דמו"))
-    # Prototype settings screen: markup 25%, floor 15%, RCD 30mA by default, enclosure includes everything.
-    session.add(
-        TenantSettings(
-            tenant_id=t,
-            min_line_margin=Decimal("0.15"),
-            min_quote_margin=Decimal("0.15"),
-            attribute_defaults={"rcd": {"residual_ma": 30}},
-            enclosure_includes_default={"busbar": True, "n": True, "pe": True, "panels": True, "doors": True},
-            onboarding={"first_drawing_at": None, "quotes_sent": 0},
-        )
-    )
-    session.add(MarginRule(id=new_id("mr"), tenant_id=t, level="default", kind="markup", value=Decimal("0.25")))
-    for flag in FLAGS:  # the prototype shows every v1.0 feature
-        session.add(TenantFeatureOverride(tenant_id=t, flag_key=flag["key"], enabled=True, reason="demo"))
-    month = datetime.now(ZoneInfo("Asia/Jerusalem")).date().replace(day=1)
-    session.add(QuotaUsage(tenant_id=t, month=month, used=12))  # the prototype's "12 of 50"
-
-    customer = Customer(id=new_id("cus"), tenant_id=t, name='קבלן לדוגמה בע"מ')
-    session.add(customer)
-    session.flush()
-    session.add(Project(id=new_id("prj"), tenant_id=t, customer_id=customer.id, name="גן ילדים, לוח ראשי"))
-
+def seed_price_list(session: Session, tenant_id: str) -> None:
+    """The prototype's price list (`CATALOG`, `SUP`, lines 484–511) in a tenant: the demo's, and the E2E price-list
+    tenants' (S19). Link it to the sample catalog with `link_demo_catalog` once the catalog is loaded."""
+    t = tenant_id
     suppliers = {key: Supplier(id=new_id("sup"), tenant_id=t, name=name) for key, name in SUPPLIERS.items()}
     session.add_all(suppliers.values())
     session.flush()
@@ -327,6 +299,41 @@ def seed_demo_tenant(session: Session) -> bool:
             source="manual_entry",
         )
     )
+
+
+def seed_demo_tenant(session: Session) -> bool:
+    """Creates the demo tenant. Returns False if it already exists."""
+    session.execute(text("SELECT set_config('app.tenant_id', :t, true)"), {"t": DEMO_TENANT})
+    if session.execute(select(Tenant.id).where(Tenant.id == DEMO_TENANT)).first():
+        return False
+
+    t = DEMO_TENANT
+    session.add(Tenant(id=t, name='לוחות דמו בע"מ', plan_id="trial"))
+    session.flush()
+    session.add(User(id=DEMO_USER, tenant_id=t, email=DEMO_EMAIL, display_name="אומדן דמו"))
+    # Prototype settings screen: markup 25%, floor 15%, RCD 30mA by default, enclosure includes everything.
+    session.add(
+        TenantSettings(
+            tenant_id=t,
+            min_line_margin=Decimal("0.15"),
+            min_quote_margin=Decimal("0.15"),
+            attribute_defaults={"rcd": {"residual_ma": 30}},
+            enclosure_includes_default={"busbar": True, "n": True, "pe": True, "panels": True, "doors": True},
+            onboarding={"first_drawing_at": None, "quotes_sent": 0},
+        )
+    )
+    session.add(MarginRule(id=new_id("mr"), tenant_id=t, level="default", kind="markup", value=Decimal("0.25")))
+    for flag in FLAGS:  # the prototype shows every v1.0 feature
+        session.add(TenantFeatureOverride(tenant_id=t, flag_key=flag["key"], enabled=True, reason="demo"))
+    month = datetime.now(ZoneInfo("Asia/Jerusalem")).date().replace(day=1)
+    session.add(QuotaUsage(tenant_id=t, month=month, used=12))  # the prototype's "12 of 50"
+
+    customer = Customer(id=new_id("cus"), tenant_id=t, name='קבלן לדוגמה בע"מ')
+    session.add(customer)
+    session.flush()
+    session.add(Project(id=new_id("prj"), tenant_id=t, customer_id=customer.id, name="גן ילדים, לוח ראשי"))
+
+    seed_price_list(session, t)
     return True
 
 
