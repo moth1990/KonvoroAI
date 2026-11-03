@@ -175,7 +175,9 @@ class ValidatorRule(Base, Created):
     __table_args__ = (
         one_of("category", ("A", "B", "C", "D", "E")),
         one_of("severity", ("error", "warning", "info")),
-        CheckConstraint("requires IS NULL OR requires IN ('wire_graph', 'bom_table')", name="requires"),
+        CheckConstraint(
+            "requires IS NULL OR requires IN ('wire_graph', 'bom_table', 'front_view', 'text_layer')", name="requires"
+        ),
     )
 
     rule_id: Mapped[str] = mapped_column(primary_key=True)
@@ -186,7 +188,9 @@ class ValidatorRule(Base, Created):
     severity: Mapped[str]
     params: Mapped[dict[str, Any]] = mapped_column(server_default="{}")
     message_he: Mapped[str]
+    title_he: Mapped[str] = mapped_column(server_default="")
     enabled: Mapped[bool] = mapped_column(server_default=text("true"))
+    approval: Mapped[str | None]  # `pending_expert`: category A until the electrical expert signs it off (S21)
 
 
 class VatRate(Base, Created):

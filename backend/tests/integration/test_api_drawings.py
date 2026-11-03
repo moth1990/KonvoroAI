@@ -51,8 +51,9 @@ def test_progress_from_upload_to_ready(api: Api, migrated_db: dict[str, Engine],
         "pages_by_route": {"process": 5, "context": 2, "skip": 2},
         "products": 0,
         "priced": 0,
-        "findings": 0,
+        "findings": 1,  # stage 6 on the stand-in's breakers, which carry no values (S21)
     }
+    assert body["stages"][5]["summary"] == "ממצא אחד"
     assert [p["page_no"] for p in body["pages"]] == list(range(1, 10))
     assert [p["page_kind"] for p in body["pages"]][:4] == [
         "technical_data",

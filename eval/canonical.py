@@ -129,6 +129,27 @@ class CanonDetection(Canon):
     billable: bool
 
 
+class CanonFinding(Canon):
+    """One of stage 6's issues (06 §6.2), as the metrics read it (S21)."""
+
+    rule_id: str
+    severity: str
+    source: str
+    category: str
+    designators: tuple[str, ...] = ()
+    bug_net: bool = False  # a category-D safety net that should never fire (06 §6.2)
+
+
+class CanonInjected(Canon):
+    """One error put into a correct quote (06 §10.1, S21 decision 3) and whether the rules caught it."""
+
+    kind: str
+    target: str  # what was changed, for the report
+    applicable: bool  # the drawing has the data a rule needs to see it (a main device, a front view, a BOM)
+    caught: bool
+    rule_ids: tuple[str, ...] = ()  # the new findings on what was changed
+
+
 class Prediction(Canon):
     """What one pipeline run produced, in the same shape. `None` = the stage produced nothing to score."""
 
@@ -147,3 +168,7 @@ class Prediction(Canon):
     matches: tuple[CanonMatch, ...] | None = None  # stage 5's, end to end
     matching: dict[str, int] = {}  # stage 5's counts: signatures, the agent's, by status and method
     labelled_matches: tuple[CanonMatch, ...] | None = None  # stage 5 on the labelled attributes (05 §10)
+    findings: tuple[CanonFinding, ...] | None = None  # stage 6's, end to end
+    validation: dict[str, int] = {}  # stage 6's counts: agent calls, checks run and skipped
+    labelled_findings: tuple[CanonFinding, ...] | None = None  # stage 6 on the labelled (correct) quote, rules only
+    injected: tuple[CanonInjected, ...] | None = None  # the injected-error set (06 §10.1)

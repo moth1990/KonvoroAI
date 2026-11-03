@@ -129,7 +129,7 @@ The remaining global tables:
 - **`symbol_classes`** (03 §4.3): `id text pk` (e.g. `mcb`), `family`, `display_name_he`, `billable bool`, `standard_ref`, `attribute_schema → attribute_schemas.family`, plus the source columns. Seeded by `seed_global` from `konboro/pipeline/detection/library.py` (S12); a row already there is kept, and gets its family's `attribute_schema` when it has none (S13).
 - **`reference_crops`** (03 §4.3), global scope only: `id` (`ref_`), `symbol_class → symbol_classes`, `image_key`, `source`, `approved_count`. The `embedding vector` column is added with the similarity index in phase 4. The `vector` extension is enabled now. The curated rows (S12) have `image_key` = `reference/<file>.png`, a file in `konboro/pipeline/detection/reference/`, not an S3 key.
 - **`abbreviations`** (03 §4.6), global: `id` (`abr_`), `text`, `symbol_class`, `family`, `display_he`, plus the source columns. Seeded from the same module (S12).
-- **`validator_rules`** (06 §6.2): PK `(rule_id, version)`, `category` (A–E), `applies_to text[]`, `requires text null`, `severity`, `params jsonb`, `message_he`, `enabled bool`.
+- **`validator_rules`** (06 §6.2): PK `(rule_id, version)`, `category` (A–E), `applies_to text[]`, `requires text null` (`wire_graph`, `bom_table`, `front_view`, `text_layer`; migration 0016), `severity`, `params jsonb`, `title_he` and `message_he` (templates; migration 0016), `enabled bool`, `approval text null` (`pending_expert`: category A until the electrical expert signs it off, S21 decision 7). Seeded by `seed_global` from `konboro/pipeline/validation/rules.json` (S21); a row already there is kept, so a new wording or threshold is a new version.
 - **`vat_rates`** (07 §4.3): `id` (`vat_`), `rate numeric(7,4)`, `valid_from date`. The VAT rate is data, never a constant in code.
 - **`fx_rates`**: `currency`, `rate_date`, `rate numeric(14,6)`, `source`, with PK `(currency, rate_date)`. The rate is how many ILS one unit costs. A quote uses the latest rate on or before its date, at most 7 days old (S18 decision 4). Locally, `make seed` writes fixed USD and EUR rates, one a week through 2027 (`source` = `seed`).
 
@@ -296,7 +296,7 @@ This table answers the customer's question "why was this counted?".
 | `status`, `status_reasons jsonb`, `issue_ids text[]` | `status` is `green`, `yellow` or `red`, and only stage 7 writes it |
 | `override jsonb`, `approved_at`, `deleted_at` | |
 
-**`findings`** (`iss_`, 06 §6.2) are issues from the validator and from pricing.
+**`findings`** (`iss_`, 06 §6.2) are issues from the validator and from pricing. Stage 6 writes its own on the drawing, replacing them on every run, with `quote_version_id` null; stage 7 attaches them to the version it makes (S21 decision 1). The id is a digest of what the finding says, so a re-run keeps it. `values.title` is the finding's headline; `code` is the rule's id.
 - `quote_version_id`, `drawing_id`.
 - `source`: `rule`, `bom_crosscheck`, `agent` or `pricing`.
 - `rule_id`, `rule_version`, `category`, `severity`, `code`.

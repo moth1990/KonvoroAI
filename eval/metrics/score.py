@@ -4,7 +4,7 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, computed_field
 
-Kind = Literal["ratio", "count", "mean"]
+Kind = Literal["ratio", "count", "mean", "average"]
 
 # Every other metric is better when higher.
 LOWER_IS_BETTER = frozenset(
@@ -18,13 +18,20 @@ LOWER_IS_BETTER = frozenset(
         "citation_mismatch_rate",
         "agent_tile_share",
         "unmatched_in_catalog",
+        "errors",
+        "warnings",
+        "false_errors",
+        "false_warnings",
+        "bug_net_fired",
+        "injected_not_applicable",
     }
 )
 
 
 class Score(BaseModel):
     """`ratio`: num of den were right. `count`: num things went wrong out of den chances. `mean`: num is a sum over
-    den drawings. den = 0 means nothing to score (n/a), never 0%."""
+    den drawings, a rate. `average`: num things over den drawings, how many per drawing (S21). den = 0 means nothing
+    to score (n/a), never 0%."""
 
     model_config = ConfigDict(frozen=True)
 

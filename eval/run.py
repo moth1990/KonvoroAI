@@ -30,6 +30,7 @@ from konboro.contracts.intake import IntakeResult
 from konboro.contracts.matching import MatchingResult
 from konboro.contracts.merge import MergeResult
 from konboro.contracts.pricing import QuoteVersionResult
+from konboro.contracts.validation import ValidationResult
 from konboro.db import models as m
 from konboro.db.admin import database_dsn, fresh_database
 from konboro.db.ids import new_id
@@ -39,6 +40,7 @@ from konboro.pipeline.audit.differences import audit
 from konboro.pipeline.audit.step import drawn_components, read_quote_bytes
 from konboro.pipeline.context import M
 from konboro.pipeline.coordinator import Pipeline
+from konboro.pipeline.validation import pack as rule_pack
 from konboro.services import drawings
 from konboro.services.intake import detect_format
 from konboro.services.llm import EvalMode, eval_providers, usage_recorder
@@ -52,6 +54,7 @@ from .canonical import GoldenDrawing, Prediction
 from .labelled import labelled_matches
 from .normalizers import GOLDEN, load_all
 from .predict import prediction
+from .validation import canon_findings, labelled_validation, validation_counts
 
 EVAL = Path(__file__).resolve().parent
 CASSETTES = EVAL / "cassettes"
@@ -95,6 +98,8 @@ def add_tenant(engine: Engine) -> tuple[str, str]:
         s.flush()
         s.add(m.User(id=user_id, tenant_id=tenant_id, email="eval@konboro.local", display_name="הערכה"))
         s.add(m.TenantSettings(tenant_id=tenant_id, **FACTORY))
+        # no price list here, so every SKU would lack a cost: the factory turns the check off (06 §6.5 item 2)
+        s.add(m.TenantRuleOverride(tenant_id=tenant_id, rule_id="DATA_NO_COST_PRICE", enabled=False))
         s.add(m.TenantPlanOverride(tenant_id=tenant_id, monthly_quote_limit=1000))
     return tenant_id, user_id
 
@@ -119,7 +124,12 @@ def run_drawing(pipeline: Pipeline, tenant_id: str, user_id: str, label: GoldenD
     intake, merge = output(1, IntakeResult), output(4, MergeResult)
     folder = golden / label.id
     differences = audit_golden(pipeline, tenant_id, drawing_id, intake, merge, folder) if label.audit else None
-    return prediction(
+    labelled, lab = labelled_matches(pipeline, tenant_id, drawing_id, label, intake)
+    with tenant_session(tenant_id, pipeline.engine) as s:
+        pack = rule_pack.for_tenant(s, tenant_id)
+    checked = output(6, ValidationResult)
+    labelled_findings, injected = labelled_validation(lab, pack)
+    pred = prediction(
         intake,
         merge,
         output(7, QuoteVersionResult),
@@ -127,7 +137,15 @@ def run_drawing(pipeline: Pipeline, tenant_id: str, user_id: str, label: GoldenD
         output(3, DetectionResult),
         differences,
         output(5, MatchingResult),
-        labelled_matches(pipeline, tenant_id, drawing_id, label),
+        labelled,
+    )
+    return pred.model_copy(
+        update={
+            "findings": canon_findings(checked, merge.components, pack),
+            "validation": validation_counts(checked),
+            "labelled_findings": labelled_findings,
+            "injected": injected,
+        }
     )
 
 

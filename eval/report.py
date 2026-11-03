@@ -9,7 +9,7 @@ from collections import defaultdict
 from decimal import Decimal
 from typing import Any
 
-from .canonical import GoldenDrawing, Prediction
+from .canonical import CanonInjected, GoldenDrawing, Prediction
 from .metrics import NOT_LABELLED, SECTIONS, Scores, panel_scores, score_drawing, total
 from .metrics import audit as audit_metric
 
@@ -23,6 +23,8 @@ TITLES = {
     "s4": "Stage 4: association and merge (04 §10)",
     "s5": "Stage 5: catalog matching, end to end (05 §10, S20)",
     "s5_labelled": "Stage 5: catalog matching on the labelled attributes (05 §10)",
+    "s6": "Stage 6: validation, end to end (06 §10, S21)",
+    "s6_labelled": "Stage 6: validation rules on the labelled quote, with injected errors (06 §10.1–10.2)",
     "audit": "Quote audit (11 §10)",
     "pricing": "Pricing backtest against the real quote (07 §10.2)",
 }
@@ -34,6 +36,11 @@ def _dump(sections: dict[str, Scores]) -> dict[str, Any]:
 
 def _totals(many: list[dict[str, Scores]]) -> dict[str, Scores]:
     return {section: total([m[section] for m in many]) for section in SECTIONS}
+
+
+def _injected(i: CanonInjected) -> str:
+    outcome = "caught" if i.caught else "missed" if i.applicable else "n/a"
+    return f"{i.kind}: {i.target}: {outcome} {','.join(i.rule_ids)}".strip()
 
 
 def _predicted_at_risk(pred: Prediction) -> str | None:
@@ -68,6 +75,12 @@ def build(results: list[tuple[GoldenDrawing, Prediction]]) -> Report:
             "detection": pred.detection,
             "merge": pred.merge,
             "matching": pred.matching,
+            "validation": pred.validation,
+            "findings": [
+                f"{f.severity} {f.rule_id} {' '.join(f.designators[:6])}".strip() for f in pred.findings or ()
+            ],
+            "labelled_findings": [f"{f.severity} {f.rule_id}" for f in pred.labelled_findings or ()],
+            "injected": [_injected(i) for i in pred.injected or ()],
             "scores": _dump(scores),
             "panels": _dump(panel_scores(label, pred)),
         }
@@ -92,6 +105,8 @@ def fmt(score: dict[str, Any] | None) -> str:
         return f"{int(score['num'])} of {score['den']}"
     if score["kind"] == "mean":
         return f"{score['value']:.1%}"
+    if score["kind"] == "average":
+        return f"{score['value']:.1f} ({int(score['num'])} in {score['den']})"
     return f"{score['value']:.1%} ({int(score['num'])}/{score['den']})"
 
 

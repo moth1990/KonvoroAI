@@ -1,0 +1,48 @@
+{
+  "answer": {
+    "input_tokens": 3201,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 497,
+    "payload": {
+      "issues": [
+        {
+          "bbox": null,
+          "component_ids": [
+            "c08"
+          ],
+          "confidence": 0.6,
+          "message": "לחצן מסווג כלחצן חירום אך הצבע ירוק (חירום הוא בדרך כלל אדום). יש לבדוק אם זה לחצן הפעלה רגיל.",
+          "type": "wrong_family"
+        },
+        {
+          "bbox": null,
+          "component_ids": [
+            "c15",
+            "c03"
+          ],
+          "confidence": 0.4,
+          "message": "6 מפסקי פחת 4P ו-5 סלילי הפסקה לעומת מפסק ראשי אחד בלבד. יש לוודא שהכמויות מתאימות ללוח ושהסלילים משויכים למפסקים שיכולים לשאת אותם.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": null,
+          "component_ids": [
+            "c09"
+          ],
+          "confidence": 0.25,
+          "message": "מפסק ABB XT1C160 עם זרם 125A ללא טווח, ואילו המפסק הראשי XT4 הוא 250A. יש לבדוק את הערך ואת פרטי המפסק בשרטוט.",
+          "type": "inconsistent_attributes"
+        },
+        {
+          "bbox": null,
+          "component_ids": [],
+          "confidence": 0.35,
+          "message": "בכתב הכמויות יש שורה מסוג לא מוכר ללא פרטים שאינה מופיעה בטבלה. יש לבדוק איזה רכיב חסר או לא זוהה.",
+          "type": "missing_component"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "validator_review"
+}

@@ -1,0 +1,543 @@
+{
+  "version": "rules-global-2026.11.1",
+  "rules": [
+    {
+      "rule_id": "HIER_CHILD_CURRENT_GT_PARENT",
+      "version": 1,
+      "category": "A",
+      "applies_to": [
+        "circuit_breaker",
+        "rcbo",
+        "fuse"
+      ],
+      "requires": "wire_graph",
+      "severity": "error",
+      "params": {},
+      "approval": "pending_expert",
+      "title_he": "{designator}: {child_a}A גבוה מ-{parent} שמזין אותו ({parent_a}A)",
+      "message_he": "{what} {child_a}A מוזן מ-{parent} ({parent_a}A). כדאי לבדוק את הזרם שנקרא."
+    },
+    {
+      "rule_id": "HIER_RCD_UNDERRATED",
+      "version": 1,
+      "category": "A",
+      "applies_to": [
+        "rcd"
+      ],
+      "requires": "wire_graph",
+      "severity": "warning",
+      "params": {},
+      "approval": "pending_expert",
+      "title_he": "{designator}: מפסק פחת {child_a}A מתחת ל-{parent} ({parent_a}A)",
+      "message_he": "זרם מפסק הפחת ({child_a}A) נמוך מזרם התקן ההגנה שמעליו, {parent} ({parent_a}A). כדאי לבדוק."
+    },
+    {
+      "rule_id": "HIER_CHILD_POLES_GT_PARENT",
+      "version": 1,
+      "category": "A",
+      "applies_to": [],
+      "requires": "wire_graph",
+      "severity": "warning",
+      "params": {},
+      "approval": "pending_expert",
+      "title_he": "{designator}: {child_poles} קטבים מתחת ל-{parent} ({parent_poles} קטבים)",
+      "message_he": "ל-{what} יש יותר קטבים ({child_poles}) מאשר ל-{parent} שמזין אותו ({parent_poles}). כדאי לבדוק את הקטבים שנקראו."
+    },
+    {
+      "rule_id": "HIER_ORPHAN_DEVICE",
+      "version": 1,
+      "category": "A",
+      "applies_to": [
+        "circuit_breaker",
+        "rcd",
+        "rcbo",
+        "fuse",
+        "switch_disconnector"
+      ],
+      "requires": "wire_graph",
+      "severity": "info",
+      "params": {},
+      "approval": "pending_expert",
+      "title_he": "{designators}: לא מחוברים לעץ ההזנה",
+      "message_he": "לא מצאנו בגרף החיבורים ממה {count_text} מוזנים. כדאי לבדוק שהם שייכים ללוח."
+    },
+    {
+      "rule_id": "PANEL_OUTGOING_GT_MAIN",
+      "version": 1,
+      "category": "A",
+      "applies_to": [
+        "circuit_breaker",
+        "rcbo",
+        "fuse"
+      ],
+      "requires": null,
+      "severity": "error",
+      "params": {},
+      "approval": "pending_expert",
+      "title_he": "{designator}: {outgoing_a}A גבוה מהמפסק הראשי ({main_a}A)",
+      "message_he": "{what} {outgoing_a}A גבוה מהמפסק הראשי של הלוח, {main} ({main_a}A). כדאי לבדוק את הזרם שנקרא."
+    },
+    {
+      "rule_id": "PANEL_POLES_GT_MAIN",
+      "version": 1,
+      "category": "A",
+      "applies_to": [
+        "circuit_breaker",
+        "rcd",
+        "rcbo",
+        "fuse",
+        "switch_disconnector",
+        "contactor"
+      ],
+      "requires": null,
+      "severity": "warning",
+      "params": {},
+      "approval": "pending_expert",
+      "title_he": "{designator}: {poles} קטבים, יותר מהמפסק הראשי ({main_poles})",
+      "message_he": "ל-{what} יש {poles} קטבים, ולמפסק הראשי {main} רק {main_poles}. כדאי לבדוק את הקטבים שנקראו."
+    },
+    {
+      "rule_id": "PANEL_NO_MAIN_DEVICE",
+      "version": 1,
+      "category": "B",
+      "applies_to": [
+        "circuit_breaker",
+        "rcbo",
+        "fuse",
+        "switch_disconnector"
+      ],
+      "requires": null,
+      "severity": "warning",
+      "params": {
+        "min_outgoing": 2
+      },
+      "title_he": "לא זיהינו מפסק ראשי בלוח",
+      "message_he": "בלוח {count} יציאות, ולא זיהינו את התקן ההזנה שלו. כדאי לבדוק אם הוא חסר בהצעה."
+    },
+    {
+      "rule_id": "PANEL_EMPTY",
+      "version": 1,
+      "category": "B",
+      "applies_to": [],
+      "requires": null,
+      "severity": "warning",
+      "params": {},
+      "title_he": "לא מצאנו רכיבים בלוח",
+      "message_he": "בלוח {panel} לא מצאנו אף רכיב לתמחור. כדאי לבדוק את העמודים שלו."
+    },
+    {
+      "rule_id": "CTRL_OVERLOAD_WITHOUT_CONTACTOR",
+      "version": 1,
+      "category": "B",
+      "applies_to": [
+        "overload_relay"
+      ],
+      "requires": null,
+      "severity": "warning",
+      "params": {},
+      "title_he": "{designators}: ממסר תרמי בלי מגען",
+      "message_he": "בלוח {count_text} ואין בו מגען. ממסר תרמי עובד עם מגען: כדאי לבדוק אם המגען חסר בהצעה."
+    },
+    {
+      "rule_id": "CTRL_CONTACTOR_WITHOUT_COIL_CIRCUIT",
+      "version": 1,
+      "category": "B",
+      "applies_to": [
+        "contactor"
+      ],
+      "requires": null,
+      "severity": "info",
+      "params": {},
+      "title_he": "מגענים בלי תוכנית פיקוד",
+      "message_he": "בלוח {count_text}, ובשרטוט אין תוכנית פיקוד. אביזרי הפיקוד שלהם (לחצנים, נורות, ממסרים) לא בהצעה."
+    },
+    {
+      "rule_id": "FRONT_VIEW_DESIGNATOR_MISSING",
+      "version": 1,
+      "category": "B",
+      "applies_to": [],
+      "requires": "front_view",
+      "severity": "warning",
+      "params": {},
+      "title_he": "{shown} מופיעים בחזית ולא בתוכנית",
+      "message_he": "{shown} מצוירים בחזית הלוח (עמוד {page_no}), ולא מצאנו אותם באף עמוד של התוכנית. הם לא נספרו."
+    },
+    {
+      "rule_id": "FRONT_VIEW_DESIGNATOR_EXTRA",
+      "version": 1,
+      "category": "B",
+      "applies_to": [],
+      "requires": "front_view",
+      "severity": "info",
+      "params": {},
+      "title_he": "{shown} בתוכנית ולא בחזית",
+      "message_he": "{shown} נמצאו בתוכנית, ולא מופיעים בחזית הלוח (עמוד {page_no}). כדאי לבדוק שהם שייכים ללוח."
+    },
+    {
+      "rule_id": "FRONT_VIEW_DESIGNATOR_NEAR_MATCH",
+      "version": 1,
+      "category": "B",
+      "applies_to": [],
+      "requires": "front_view",
+      "severity": "warning",
+      "params": {},
+      "title_he": "{front} בחזית ו-{plan} בתוכנית: כנראה אותו מכשיר",
+      "message_he": "בחזית הלוח (עמוד {page_no}) כתוב {front}, ובתוכנית {plan}. כנראה זה אותו מכשיר עם תג שונה. אם כן, הוא נספר פעם אחת."
+    },
+    {
+      "rule_id": "PANEL_MISSING_ROWS",
+      "version": 1,
+      "category": "B",
+      "applies_to": [],
+      "requires": null,
+      "severity": "warning",
+      "params": {},
+      "title_he": "{count_text} בלי פענוח",
+      "message_he": "בלוח {count_text} שמצאנו בשרטוט ולא הצלחנו לקרוא. הם מופיעים בהצעה כשורות חסרות."
+    },
+    {
+      "rule_id": "PANEL_REFERENCED_NOT_DRAWN",
+      "version": 1,
+      "category": "B",
+      "applies_to": [],
+      "requires": null,
+      "severity": "warning",
+      "params": {},
+      "title_he": "\"{referenced}\" מוזן מהשרטוט ואין לו תוכנית",
+      "message_he": "\"{referenced}\" מוזן {fed_from}, ולא מצאנו לו תוכנית בשרטוט. אם צריך לבנות גם אותו, הוא חסר בהצעה."
+    },
+    {
+      "rule_id": "BOM_ACCESSORY_HOST_COUNT",
+      "version": 1,
+      "category": "B",
+      "applies_to": [
+        "shunt_trip",
+        "aux_contact"
+      ],
+      "requires": "bom_table",
+      "severity": "warning",
+      "params": {
+        "hosts": {
+          "shunt_trip": [
+            "mccb",
+            "switch_disconnector"
+          ],
+          "aux_contact": [
+            "mcb",
+            "mccb",
+            "motor_protection",
+            "rcd",
+            "rcbo",
+            "switch_disconnector",
+            "contactor"
+          ]
+        }
+      },
+      "title_he": "{accessories} {accessory_name} ו-{hosts} מכשירים שנושאים אותם",
+      "message_he": "בכתב הכמויות {accessories} {accessory_name}, ורק {hosts} מכשירים שיכולים לשאת אותם. כדאי לבדוק את הכמויות."
+    },
+    {
+      "rule_id": "BOM_NO_ENCLOSURE",
+      "version": 1,
+      "category": "B",
+      "applies_to": [],
+      "requires": "bom_table",
+      "severity": "info",
+      "params": {
+        "words": [
+          "ארון",
+          "תיבה",
+          "enclosure",
+          "cabinet"
+        ]
+      },
+      "title_he": "אין ארון בכתב הכמויות",
+      "message_he": "בכתב הכמויות אין ארון. הארון יחושב לפי מספר המודולים."
+    },
+    {
+      "rule_id": "SCOPE_NOT_IN_PANEL",
+      "version": 1,
+      "category": "B",
+      "applies_to": [],
+      "requires": null,
+      "severity": "info",
+      "params": {},
+      "title_he": "{count_text} מחוץ ללוח",
+      "message_he": "לפי השרטוט {count_text} לא בתוך הלוח ({scopes}). האומדן מחליט אם לתמחר אותם."
+    },
+    {
+      "rule_id": "QTY_MULTIPLICITY_OUTLIER",
+      "version": 1,
+      "category": "C",
+      "applies_to": [],
+      "requires": null,
+      "severity": "warning",
+      "params": {
+        "max_multiplicity": 24
+      },
+      "title_he": "{designator}: ריבוי ×{multiplicity}",
+      "message_he": "ל-{what} נקרא ריבוי של {multiplicity}, יותר מ-{max_multiplicity}. כדאי לבדוק את הכמות."
+    },
+    {
+      "rule_id": "QTY_SINGLE_INSTANCE_FAMILY",
+      "version": 1,
+      "category": "C",
+      "applies_to": [
+        "circuit_breaker",
+        "switch_disconnector"
+      ],
+      "requires": null,
+      "severity": "warning",
+      "params": {
+        "multi_feed_families": [
+          "ats",
+          "changeover_switch"
+        ]
+      },
+      "title_he": "{count} התקני הזנה בלוח",
+      "message_he": "בלוח {count} התקני הזנה ({what}), ואין בו מחליף או מעביר אוטומטי. כדאי לבדוק את הכמות."
+    },
+    {
+      "rule_id": "QTY_RANGE_MISMATCH",
+      "version": 1,
+      "category": "C",
+      "applies_to": [],
+      "requires": null,
+      "severity": "warning",
+      "params": {},
+      "title_he": "{designator}: מעגלים {range} וכמות {count}",
+      "message_he": "טווח המעגלים {range} הוא {size} מעגלים, ול-{what} נקראה כמות {count}. כדאי לבדוק את הכמות."
+    },
+    {
+      "rule_id": "QTY_INHERITED_MULTIPLICITY",
+      "version": 1,
+      "category": "C",
+      "applies_to": [],
+      "requires": null,
+      "severity": "info",
+      "params": {},
+      "title_he": "{designator}: הכמות ממכשיר שמעליו",
+      "message_he": "הכמות של {what} ({count}) נלקחה מהמכשיר שמעליו בשרשרת."
+    },
+    {
+      "rule_id": "TEXT_COVERAGE_LOW",
+      "version": 1,
+      "category": "C",
+      "applies_to": [],
+      "requires": "text_layer",
+      "severity": "warning",
+      "params": {
+        "max_unassigned_share": 0.1,
+        "min_spans": 10,
+        "tags": [
+          "current_a"
+        ]
+      },
+      "title_he": "{unassigned} ערכים בלוח לא שויכו לרכיב",
+      "message_he": "{unassigned} מתוך {total} הערכים החשמליים בלוח ({pct}%) לא שויכו לאף רכיב. ייתכן שרכיבים חסרים בהצעה."
+    },
+    {
+      "rule_id": "DATA_SKU_ATTR_MISMATCH",
+      "version": 1,
+      "category": "D",
+      "applies_to": [],
+      "requires": null,
+      "severity": "error",
+      "params": {
+        "bug_net": true
+      },
+      "title_he": "{designator}: המק\"ט {sku} סותר את מה שנקרא",
+      "message_he": "בשרטוט נקרא {attribute} = {read}, ובמק\"ט שנבחר ({sku}) {attribute} = {item}. כדאי לבחור מק\"ט אחר."
+    },
+    {
+      "rule_id": "DATA_SAME_SIGNATURE_DIFF_SKU",
+      "version": 1,
+      "category": "D",
+      "applies_to": [],
+      "requires": null,
+      "severity": "error",
+      "params": {
+        "bug_net": true
+      },
+      "title_he": "אותו רכיב קיבל מק\"טים שונים",
+      "message_he": "רכיבים זהים קיבלו מק\"טים שונים: {skus}. כדאי לאחד."
+    },
+    {
+      "rule_id": "DATA_NOTES_NOT_APPLIED",
+      "version": 1,
+      "category": "D",
+      "applies_to": [],
+      "requires": null,
+      "severity": "warning",
+      "params": {},
+      "title_he": "{designators}: ההערה \"{note}\" לא יושמה",
+      "message_he": "בהערות השרטוט כתוב \"{note}\", אבל ב-{count_text} נבחר {chosen}. כדאי לבדוק."
+    },
+    {
+      "rule_id": "DATA_MANY_DEFAULTS",
+      "version": 1,
+      "category": "D",
+      "applies_to": [],
+      "requires": null,
+      "severity": "info",
+      "params": {
+        "max_share": 0.3
+      },
+      "title_he": "{pct}% מהרכיבים עם ערכים מברירת מחדל",
+      "message_he": "ב-{count} מתוך {total} הרכיבים בלוח הושלמו ערכים מברירת המחדל של המפעל, כי לא נכתבו בשרטוט."
+    },
+    {
+      "rule_id": "DATA_DESIGNATOR_FAMILY_CONFLICT",
+      "version": 1,
+      "category": "D",
+      "applies_to": [],
+      "requires": null,
+      "severity": "error",
+      "params": {},
+      "title_he": "{designator}: אותו תג, שני סוגי רכיבים",
+      "message_he": "התג {designator} סווג כ{families}. כדאי לבדוק איזה מהם נכון."
+    },
+    {
+      "rule_id": "DATA_MODEL_TEXT_CONFLICT",
+      "version": 1,
+      "category": "D",
+      "applies_to": [],
+      "requires": null,
+      "severity": "warning",
+      "params": {
+        "resolved_severity": "info"
+      },
+      "title_he": "{designator}: הדגם סותר את הטקסט",
+      "message_he": "{reason}"
+    },
+    {
+      "rule_id": "DATA_LOAD_CURRENT_GT_RATED",
+      "version": 1,
+      "category": "D",
+      "applies_to": [
+        "circuit_breaker",
+        "rcbo",
+        "fuse"
+      ],
+      "requires": null,
+      "severity": "warning",
+      "params": {},
+      "title_he": "{designator}: זרם עומס {load_a}A מעל {rated_a}A",
+      "message_he": "בשרטוט כתוב זרם עומס (INC=) של {load_a}A, גבוה מהזרם הנקוב של {what} ({rated_a}A). כדאי לבדוק את הזרם."
+    },
+    {
+      "rule_id": "DATA_INFERRED_ATTRIBUTE",
+      "version": 1,
+      "category": "D",
+      "applies_to": [],
+      "requires": null,
+      "severity": "info",
+      "params": {},
+      "title_he": "{designator}: {attribute_he} הוסק",
+      "message_he": "{attribute_he} לא כתוב בשרטוט. {note}"
+    },
+    {
+      "rule_id": "POLES_CABLE_CONFLICT",
+      "version": 1,
+      "category": "D",
+      "applies_to": [
+        "circuit_breaker",
+        "rcd",
+        "rcbo"
+      ],
+      "requires": null,
+      "severity": "warning",
+      "params": {
+        "cores_to_poles": {
+          "2": [
+            1,
+            2
+          ],
+          "3": [
+            1,
+            2
+          ],
+          "4": [
+            3,
+            4
+          ],
+          "5": [
+            3,
+            4
+          ]
+        }
+      },
+      "title_he": "{designator}: {poles} קטבים וכבל של {cores} גידים",
+      "message_he": "ל-{what} נקראו {poles} קטבים, וכבל היציאה שלו {cores} גידים. כדאי לבדוק את הקטבים."
+    },
+    {
+      "rule_id": "DATA_PANEL_REQUIREMENT_NOT_MET",
+      "version": 1,
+      "category": "D",
+      "applies_to": [
+        "circuit_breaker",
+        "rcbo"
+      ],
+      "requires": null,
+      "severity": "error",
+      "params": {},
+      "title_he": "{designators}: כושר ניתוק {item_ka}kA, נדרש {required_ka}kA",
+      "message_he": "ב{source} נדרש כושר ניתוק {required_ka}kA לפחות, וב-{count_text} נבחר מק\"ט עם {item_ka}kA."
+    },
+    {
+      "rule_id": "DATA_NO_COST_PRICE",
+      "version": 1,
+      "category": "D",
+      "applies_to": [],
+      "requires": null,
+      "severity": "warning",
+      "params": {},
+      "title_he": "{count_text} בלי מחיר עלות",
+      "message_he": "למק\"טים שנבחרו ל-{count_text} אין מחיר עלות במחירון. אפשר להזין בשורה, והמחיר נשמר למחירון."
+    },
+    {
+      "rule_id": "BOM_MISSING_IN_QUOTE",
+      "version": 1,
+      "category": "E",
+      "applies_to": [],
+      "requires": "bom_table",
+      "severity": "warning",
+      "params": {},
+      "title_he": "בכתב הכמויות ולא בהצעה: {what}",
+      "message_he": "בכתב הכמויות של המתכנן: {bom_qty} {what}. בהצעה אין כאלה."
+    },
+    {
+      "rule_id": "BOM_EXTRA_IN_QUOTE",
+      "version": 1,
+      "category": "E",
+      "applies_to": [],
+      "requires": "bom_table",
+      "severity": "info",
+      "params": {},
+      "title_he": "בהצעה ולא בכתב הכמויות: {what}",
+      "message_he": "בהצעה {quote_qty} {what}, ובכתב הכמויות של המתכנן אין כאלה. לרוב זו השמטה של המתכנן."
+    },
+    {
+      "rule_id": "BOM_QTY_DIFF",
+      "version": 1,
+      "category": "E",
+      "applies_to": [],
+      "requires": "bom_table",
+      "severity": "warning",
+      "params": {},
+      "title_he": "{what}: {bom_qty} בכתב הכמויות, {quote_qty} בהצעה",
+      "message_he": "בכתב הכמויות של המתכנן: {bom_qty} {what}. בהצעה: {quote_qty}."
+    },
+    {
+      "rule_id": "BOM_SKU_DIFF",
+      "version": 1,
+      "category": "E",
+      "applies_to": [],
+      "requires": "bom_table",
+      "severity": "info",
+      "params": {},
+      "title_he": "{what}: מק\"ט אחר מכתב הכמויות",
+      "message_he": "בכתב הכמויות של המתכנן כתוב {bom_sku}, ונבחר {sku}."
+    }
+  ]
+}

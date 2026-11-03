@@ -46,6 +46,8 @@ test("a drawing goes through all 7 stages and opens for review", async ({ page }
   await expect(done.locator(".sumgrid")).toContainText("5 פענוח · 2 הקשר · 2 דילוג");
   await expect(done).toContainText("כל העמודים סווגו בביטחון גבוה");
   await expect(done).toContainText("נספרה במכסה: 13 מתוך 50"); // counted once, after stage 1
+  // stage 6 finds one thing on the stand-in's breakers, which carry no values (06 §6.2, prototype line 847)
+  await expect(done.locator(".sumgrid")).toContainText("0 עם מחיר · ממצא אחד");
   if (!isMobile(page)) await expect(page.getByTestId("quota-meter")).toContainText("13 מתוך 50");
 
   await page.reload(); // the URL brings the finished run back
@@ -121,6 +123,17 @@ test("the run step counts what stage 5 matched", async ({ page }) => {
   await expect(stage5).toHaveAttribute("data-state", "done", { timeout: 105_000 });
   // the stand-in's breakers carry no current, so none is matched (05 §5.5; prototype line 765)
   await expect(stage5).toContainText(/0 מותאמים · (אחד בלי דגם|\d+ בלי דגם)/);
+  await page.getByTestId("cancelrun").click();
+  await expect(page.getByRole("status")).toHaveText("הפענוח בוטל. המקום במכסה שוחרר");
+});
+
+test("the run step counts what stage 6 found", async ({ page }) => {
+  await page.getByLabel("פרויקט / שם הלוח").fill(SLOW_PROJECT);
+  await page.locator("#file-in").setInputFiles(NURSERY);
+  await page.getByTestId("start").click();
+  const stage6 = page.getByTestId("stage-6");
+  await expect(stage6).toHaveAttribute("data-state", "done", { timeout: 120_000 });
+  await expect(stage6).toContainText(/בדיקה.*(ממצא אחד|\d+ ממצאים|אין ממצאים)/); // prototype line 766
   await page.getByTestId("cancelrun").click();
   await expect(page.getByRole("status")).toHaveText("הפענוח בוטל. המקום במכסה שוחרר");
 });

@@ -2,7 +2,20 @@
 
 from typing import Any, Literal
 
-from .common import Bbox, ComponentId, Confidence, Contract, DrawingId, InstanceId, IssueId, PanelId, Severity, TraceId
+from .common import (
+    Bbox,
+    ComponentId,
+    Confidence,
+    Contract,
+    DrawingId,
+    InstanceId,
+    IssueId,
+    PageId,
+    PanelId,
+    Severity,
+    StageIssue,
+    TraceId,
+)
 
 
 class Issue(Contract):
@@ -16,6 +29,8 @@ class Issue(Contract):
     component_ids: list[ComponentId] = []
     instance_ids: list[InstanceId] = []
     bbox: Bbox | None = None
+    page_id: PageId | None = None  # the page `bbox` is on (S21 decision 11)
+    title: str | None = None  # the finding's headline on the review screen ("F26–F29 מופיעים בחזית ולא בתוכנית")
     message: str
     values: dict[str, Any] = {}
     confidence: Confidence = 1.0
@@ -66,4 +81,5 @@ class ValidationResult(Contract):
     checks_run: list[str] = []
     checks_skipped: list[SkippedCheck] = []
     agent_calls: int = 0
+    stage_issues: list[StageIssue] = []  # 06 §8: the stage's own warnings, not findings about the quote
     trace_id: TraceId
