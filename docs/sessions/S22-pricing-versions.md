@@ -6,7 +6,7 @@
 | **Branch** | `s22-pricing-versions` |
 | **Depends on** | S21 |
 | **Status** | in review |
-| **PR** | (link) |
+| **PR** | [moth1990/KonvoroAI#25](https://github.com/moth1990/KonvoroAI/pull/25) |
 
 ## Goal
 
