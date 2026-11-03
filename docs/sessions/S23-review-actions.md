@@ -6,7 +6,7 @@
 | **Branch** | `s23-review-actions` |
 | **Depends on** | S19, S22 |
 | **Status** | in review |
-| **PR** | (link) |
+| **PR** | [moth1990/KonvoroAI#26](https://github.com/moth1990/KonvoroAI/pull/26) |
 
 ## Goal
 
