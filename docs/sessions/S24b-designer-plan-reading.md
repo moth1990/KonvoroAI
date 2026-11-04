@@ -6,7 +6,7 @@
 | **Branch** | `s24b-designer-plan-reading` |
 | **Depends on** | S22 |
 | **Status** | in review |
-| **PR** | (link) |
+| **PR** | [moth1990/KonvoroAI#32](https://github.com/moth1990/KonvoroAI/pull/32) |
 
 ## Goal
 
