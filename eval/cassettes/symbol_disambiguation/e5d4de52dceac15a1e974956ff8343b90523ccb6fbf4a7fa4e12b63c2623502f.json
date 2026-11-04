@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1076,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 104,
+    "payload": {
+      "confidence": 0.8,
+      "decision": "choose",
+      "reason": "הסמל הוא עיגול קטן בקצה קו אנכי, בדומה למהדק, ולא טבעת גדולה של משנה זרם ולא מלבן של נתיך.\n",
+      "symbol_class": "terminal"
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

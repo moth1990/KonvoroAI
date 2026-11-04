@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1718,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 139,
+    "payload": {
+      "confidence": 0.8,
+      "decision": "none_of_these",
+      "reason": "הסמל מציג מגע מתג עם חץ שחור ומנגנון תרמי/מגנטי בצורת מדרגה וקו חוצה, בלי איקס במגע – זה לא מא\"ז, מנתק או מגן פחת, ואף מועמד אינו מתאים.",
+      "symbol_class": null
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

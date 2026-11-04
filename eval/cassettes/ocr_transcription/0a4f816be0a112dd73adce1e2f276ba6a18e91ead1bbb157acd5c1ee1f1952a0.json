@@ -1,0 +1,156 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 495,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            108,
+            653,
+            154,
+            805
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3X1.5"
+        },
+        {
+          "box": [
+            108,
+            475,
+            154,
+            611
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "N2XY"
+        },
+        {
+          "box": [
+            181,
+            527,
+            231,
+            711
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "עירותים"
+        },
+        {
+          "box": [
+            415,
+            653,
+            461,
+            805
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3X1.5"
+        },
+        {
+          "box": [
+            415,
+            475,
+            461,
+            611
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "N2XY"
+        },
+        {
+          "box": [
+            480,
+            481,
+            529,
+            583
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "מאור"
+        },
+        {
+          "box": [
+            480,
+            609,
+            529,
+            726
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "אולם"
+        },
+        {
+          "box": [
+            641,
+            653,
+            687,
+            805
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3X1.5"
+        },
+        {
+          "box": [
+            641,
+            475,
+            687,
+            611
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "N2XY"
+        },
+        {
+          "box": [
+            702,
+            470,
+            750,
+            574
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "מאור"
+        },
+        {
+          "box": [
+            702,
+            607,
+            750,
+            711
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "אולם"
+        },
+        {
+          "box": [
+            914,
+            630,
+            960,
+            780
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3X1.5"
+        },
+        {
+          "box": [
+            914,
+            452,
+            960,
+            588
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "N2XY"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

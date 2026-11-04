@@ -47,4 +47,4 @@ A missing cassette fails the run with "no cassette for stage …". This happens 
 
 ## Adding a drawing
 
-Put it in `golden/<id>/` with a `README.md`, `labels.json` and, if there is one, `actual_quote.json`. If the labels use a known shape, nothing else is needed. Otherwise add a normalizer to `normalizers/shapes.py` and a case to `normalizer_for`. Then run `make eval-baseline` and commit the new baseline with the drawing.
+Put it in `golden/<id>/` with a `README.md`, `labels.json` and, if there is one, `actual_quote.json`. A panel the user has not checked yet goes in with `verified: false` and no components (25.26.100's sub-panel): stage 1 counts it as a panel, stage 4 does not score it. If the labels use a known shape, nothing else is needed. Otherwise add a normalizer to `normalizers/shapes.py` and a case to `normalizer_for`. Then run `make eval-baseline` and commit the new baseline with the drawing.

@@ -1,0 +1,18 @@
+{
+  "answer": {
+    "input_tokens": 2873,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 394,
+    "payload": {
+      "date": "2025-07-17",
+      "designer": "אבניו פרוייקטים בע\"מ",
+      "drawing_number": "25.26.100.10",
+      "panel_name": "לוח",
+      "project_name": "בית כנסת מקווה בבאר גנים",
+      "revision": "2",
+      "status": "for_execution"
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "context_extraction"
+}

@@ -1,0 +1,136 @@
+{
+  "answer": {
+    "input_tokens": 5564,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 593,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s3"
+              ],
+              "value": 40
+            },
+            {
+              "confidence": 0.6,
+              "evidence": "graphic",
+              "graphic_note": "three short slanted strokes across the line",
+              "name": "poles",
+              "span_ids": [],
+              "value": 3
+            }
+          ],
+          "det": "d1",
+          "explicit_texts": [
+            "s3"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s4"
+              ],
+              "value": 40
+            },
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "poles",
+              "span_ids": [
+                "s4"
+              ],
+              "value": 4
+            },
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "residual_ma",
+              "span_ids": [
+                "s5"
+              ],
+              "value": 30
+            },
+            {
+              "confidence": 0.6,
+              "evidence": "text",
+              "name": "rcd_type",
+              "span_ids": [
+                "s6"
+              ],
+              "value": "A"
+            }
+          ],
+          "det": "d2",
+          "explicit_texts": [
+            "s4",
+            "s5",
+            "s6",
+            "s7"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s11"
+              ],
+              "value": 16
+            },
+            {
+              "confidence": 0.5,
+              "evidence": "graphic",
+              "graphic_note": "one line with a single stroke",
+              "name": "poles",
+              "span_ids": [],
+              "value": 1
+            }
+          ],
+          "det": "d3",
+          "explicit_texts": [
+            "s11"
+          ]
+        }
+      ],
+      "unassigned_spans": [
+        {
+          "reason": "panel title",
+          "span_id": "s1"
+        },
+        {
+          "reason": "panel title",
+          "span_id": "s2"
+        },
+        {
+          "reason": "load name: sockets",
+          "span_id": "s8"
+        },
+        {
+          "reason": "load name: field",
+          "span_id": "s9"
+        },
+        {
+          "reason": "belongs to c5",
+          "span_id": "s10"
+        },
+        {
+          "reason": "cable type",
+          "span_id": "s12"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

@@ -1,0 +1,73 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 180,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            104,
+            298,
+            178,
+            334
+          ],
+          "legible": "clear",
+          "text": "25A"
+        },
+        {
+          "box": [
+            857,
+            278,
+            938,
+            313
+          ],
+          "legible": "clear",
+          "text": "40A"
+        },
+        {
+          "box": [
+            735,
+            455,
+            816,
+            498
+          ],
+          "legible": "clear",
+          "text": "שדה"
+        },
+        {
+          "box": [
+            595,
+            455,
+            725,
+            498
+          ],
+          "legible": "clear",
+          "text": "תאורה"
+        },
+        {
+          "box": [
+            543,
+            711,
+            633,
+            769
+          ],
+          "legible": "clear",
+          "text": "10A"
+        },
+        {
+          "box": [
+            848,
+            711,
+            938,
+            769
+          ],
+          "legible": "clear",
+          "text": "10A"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

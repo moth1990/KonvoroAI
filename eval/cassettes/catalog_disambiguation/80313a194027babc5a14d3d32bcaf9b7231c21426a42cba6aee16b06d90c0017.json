@@ -1,0 +1,17 @@
+{
+  "answer": {
+    "input_tokens": 905,
+    "model": "claude-haiku-5-5",
+    "output_tokens": 454,
+    "payload": {
+      "chosen_sku": null,
+      "confidence": 0.85,
+      "missing_attributes": [
+        "positions"
+      ],
+      "reason": "הרישום בשרטוט מציין מפסק עם 4 מצבים, ואף אחד מהמועמדים (0-1 או 1-0-2) אינו תואם למספר המצבים הזה. לכן לא ניתן לבחור מועמד."
+    }
+  },
+  "model": "claude-haiku-5-5",
+  "stage": "catalog_disambiguation"
+}

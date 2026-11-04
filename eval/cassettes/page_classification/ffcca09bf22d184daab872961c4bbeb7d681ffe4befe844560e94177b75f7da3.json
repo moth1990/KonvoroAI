@@ -1,0 +1,71 @@
+{
+  "answer": {
+    "input_tokens": 4066,
+    "model": "claude-haiku-5-5",
+    "output_tokens": 1615,
+    "payload": {
+      "component_labels": "tags_and_models",
+      "language": "he",
+      "orientation": 0,
+      "page_kind": "single_line_diagram",
+      "page_kind_confidence": 0.93,
+      "panels": [
+        {
+          "bbox": [
+            44,
+            135,
+            801,
+            469
+          ],
+          "confidence": 0.9,
+          "name": "לוח ראשי-בית כנסת"
+        },
+        {
+          "bbox": [
+            278,
+            531,
+            527,
+            844
+          ],
+          "confidence": 0.9,
+          "name": "לוח משנה-מקווה"
+        }
+      ],
+      "reasoning": "Single-line diagram with breakers and outgoing circuits feeding two named panels, the main synagogue panel and the mikveh sub-panel.",
+      "regions": [
+        {
+          "bbox": [
+            858,
+            146,
+            988,
+            271
+          ],
+          "confidence": 0.7,
+          "panel_ref": null,
+          "region_kind": "notes_block"
+        },
+        {
+          "bbox": [
+            835,
+            302,
+            996,
+            896
+          ],
+          "confidence": 0.8,
+          "region_kind": "title_block"
+        }
+      ],
+      "title_block": {
+        "date": "2025-07-17",
+        "designer": "Avenue Projects",
+        "drawing_number": "25.26.100",
+        "panel_name": null,
+        "project_name": "בית כנסת מקווה בבאר גנים",
+        "revision": "2",
+        "status": "for_execution"
+      }
+    }
+  },
+  "model": "claude-haiku-5-5",
+  "stage": "page_classification"
+}

@@ -1,0 +1,43 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 104,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            712,
+            199,
+            812,
+            243
+          ],
+          "legible": "clear",
+          "text": "מונה"
+        },
+        {
+          "box": [
+            564,
+            199,
+            670,
+            243
+          ],
+          "legible": "unsure",
+          "text": "חח\"י"
+        },
+        {
+          "box": [
+            874,
+            249,
+            1002,
+            293
+          ],
+          "legible": "clear",
+          "text": "R,S,T,0"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

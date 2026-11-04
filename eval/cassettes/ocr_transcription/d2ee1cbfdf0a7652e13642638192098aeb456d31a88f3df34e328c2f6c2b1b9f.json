@@ -1,0 +1,63 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 162,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            80,
+            98,
+            385,
+            172
+          ],
+          "legible": "clear",
+          "text": "לביצוע"
+        },
+        {
+          "box": [
+            185,
+            391,
+            390,
+            459
+          ],
+          "legible": "clear",
+          "text": "מהות"
+        },
+        {
+          "box": [
+            360,
+            930,
+            655,
+            1010
+          ],
+          "legible": "clear",
+          "text": "מקווה"
+        },
+        {
+          "box": [
+            743,
+            930,
+            995,
+            1010
+          ],
+          "legible": "clear",
+          "text": "כנסת"
+        },
+        {
+          "box": [
+            212,
+            607,
+            422,
+            712
+          ],
+          "legible": "unsure",
+          "text": "א.מ"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1341,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 117,
+    "payload": {
+      "confidence": 0.8,
+      "decision": "none_of_these",
+      "reason": "הסמל מציג מפסק מגן/מפסק אוטומטי עם שחרור תרמי-מגנטי (חץ ושלב זיגזג), 16A, ולא לחצן, מגען, נורה או בורר.",
+      "symbol_class": null
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

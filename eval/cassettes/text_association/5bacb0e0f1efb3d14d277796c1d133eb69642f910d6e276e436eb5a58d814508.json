@@ -1,0 +1,163 @@
+{
+  "answer": {
+    "input_tokens": 5628,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 753,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "confidence": 0.85,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s15"
+              ],
+              "value": 10
+            },
+            {
+              "confidence": 0.8,
+              "evidence": "text",
+              "name": "poles",
+              "span_ids": [
+                "s15"
+              ],
+              "value": 1
+            },
+            {
+              "confidence": 0.5,
+              "evidence": "text",
+              "name": "neutral",
+              "span_ids": [
+                "s15"
+              ],
+              "value": false
+            }
+          ],
+          "brand_hint": null,
+          "det": "d1",
+          "explicit_texts": [
+            "s15"
+          ],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          },
+          "uses_shared_label": false
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": null,
+              "name": "coil_voltage_v",
+              "span_ids": [],
+              "value": null
+            }
+          ],
+          "brand_hint": null,
+          "det": "d2",
+          "explicit_texts": [
+            "s16"
+          ],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          },
+          "uses_shared_label": false
+        }
+      ],
+      "possible_missed": [],
+      "shared_labels": [],
+      "unassigned_spans": [
+        {
+          "reason": "note text",
+          "span_id": "s1"
+        },
+        {
+          "reason": "note text",
+          "span_id": "s2"
+        },
+        {
+          "reason": "note text",
+          "span_id": "s3"
+        },
+        {
+          "reason": "belongs to neighbour c3",
+          "span_id": "s4"
+        },
+        {
+          "reason": "belongs to neighbour c3",
+          "span_id": "s5"
+        },
+        {
+          "reason": "note text",
+          "span_id": "s6"
+        },
+        {
+          "reason": "note text",
+          "span_id": "s7"
+        },
+        {
+          "reason": "note text",
+          "span_id": "s8"
+        },
+        {
+          "reason": "note text",
+          "span_id": "s9"
+        },
+        {
+          "reason": "note text",
+          "span_id": "s10"
+        },
+        {
+          "reason": "note text",
+          "span_id": "s11"
+        },
+        {
+          "reason": "note text",
+          "span_id": "s12"
+        },
+        {
+          "reason": "note text",
+          "span_id": "s13"
+        },
+        {
+          "reason": "note text",
+          "span_id": "s14"
+        },
+        {
+          "reason": "terminal number",
+          "span_id": "s17"
+        },
+        {
+          "reason": "terminal number",
+          "span_id": "s18"
+        },
+        {
+          "reason": "terminal number",
+          "span_id": "s19"
+        },
+        {
+          "reason": "terminal number",
+          "span_id": "s20"
+        },
+        {
+          "reason": "terminal number",
+          "span_id": "s21"
+        },
+        {
+          "reason": "tag of another symbol",
+          "span_id": "s22"
+        },
+        {
+          "reason": "cable/circuit reference",
+          "span_id": "s23"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

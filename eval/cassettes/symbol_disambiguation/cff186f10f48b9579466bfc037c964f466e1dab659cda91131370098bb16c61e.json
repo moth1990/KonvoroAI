@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1321,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 112,
+    "payload": {
+      "confidence": 0.8,
+      "decision": "choose",
+      "reason": "הסמל הוא מגע של ממסר עם תווית T1, שמציינת ממסר זמן (טיימר), ולכן הוא שייך למשפחת הטיימר ולא לממסר עזר רגיל.",
+      "symbol_class": "timer"
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

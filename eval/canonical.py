@@ -76,6 +76,7 @@ class CanonMatch(Canon):
 class CanonPanel(Canon):
     name: str
     components: tuple[CanonComponent, ...]
+    verified: bool = True  # a labelled panel nobody checked (25.26.100's sub-panel): counted as a panel, not scored
 
 
 class CanonDifference(Canon):

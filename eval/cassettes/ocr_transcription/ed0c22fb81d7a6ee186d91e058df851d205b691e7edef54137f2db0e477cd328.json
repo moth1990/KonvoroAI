@@ -1,0 +1,73 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 177,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            76,
+            285,
+            169,
+            344
+          ],
+          "legible": "clear",
+          "text": "16A"
+        },
+        {
+          "box": [
+            273,
+            290,
+            344,
+            326
+          ],
+          "legible": "clear",
+          "text": "16A"
+        },
+        {
+          "box": [
+            399,
+            257,
+            489,
+            316
+          ],
+          "legible": "clear",
+          "text": "16A"
+        },
+        {
+          "box": [
+            386,
+            325,
+            465,
+            360
+          ],
+          "legible": "clear",
+          "text": "X11"
+        },
+        {
+          "box": [
+            716,
+            297,
+            788,
+            330
+          ],
+          "legible": "clear",
+          "text": "16A"
+        },
+        {
+          "box": [
+            828,
+            260,
+            918,
+            317
+          ],
+          "legible": "clear",
+          "text": "16A"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

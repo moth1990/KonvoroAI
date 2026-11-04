@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1730,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 145,
+    "payload": {
+      "confidence": 0.6,
+      "decision": "none_of_these",
+      "reason": "הסמל מציג מגע עם חץ מלא, מנגנון תרמי/מגנטי וקו חוצה בקצה, ללא איקס במגע הקבוע, ולכן הוא אינו תואם למועמד כלשהו; הכיתוב 25A אינו מצביע על אחד מהם.",
+      "symbol_class": null
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

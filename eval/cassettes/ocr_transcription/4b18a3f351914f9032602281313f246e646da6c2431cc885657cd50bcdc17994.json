@@ -1,0 +1,89 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 260,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            777,
+            46,
+            870,
+            103
+          ],
+          "legible": "clear",
+          "text": "10A"
+        },
+        {
+          "box": [
+            150,
+            646,
+            196,
+            749
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "5X6"
+        },
+        {
+          "box": [
+            151,
+            471,
+            196,
+            609
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "N2XY"
+        },
+        {
+          "box": [
+            694,
+            757,
+            741,
+            907
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3X1.5"
+        },
+        {
+          "box": [
+            695,
+            576,
+            741,
+            712
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "N2XY"
+        },
+        {
+          "box": [
+            775,
+            659,
+            823,
+            820
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "כניסה"
+        },
+        {
+          "box": [
+            775,
+            552,
+            823,
+            641
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "מאול"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

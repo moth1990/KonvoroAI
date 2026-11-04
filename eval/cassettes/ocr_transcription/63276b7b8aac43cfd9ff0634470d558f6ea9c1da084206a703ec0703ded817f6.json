@@ -1,0 +1,53 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 125,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            449,
+            2,
+            514,
+            84
+          ],
+          "legible": "clear",
+          "text": ".3"
+        },
+        {
+          "box": [
+            198,
+            0,
+            419,
+            84
+          ],
+          "legible": "unsure",
+          "text": "נדרש"
+        },
+        {
+          "box": [
+            55,
+            903,
+            310,
+            958
+          ],
+          "legible": "clear",
+          "text": "17.7.25"
+        },
+        {
+          "box": [
+            557,
+            904,
+            592,
+            956
+          ],
+          "legible": "clear",
+          "text": "2"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

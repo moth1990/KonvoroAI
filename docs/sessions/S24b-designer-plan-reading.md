@@ -48,12 +48,13 @@ A designer's single-sheet plan in the style of 25.26.100 (בית כנסת מקו
 ## Acceptance criteria
 
 - [x] The main panel's re-run: both RCDs (4P 40A 30 mA type A), 23 16A breakers, 3 current transformers (T1–T3), no phantom CTs, Q0 a switch or MCCB, one 10A 1P line.
+- [x] In replay, `make eval` shows 25.26.100's main panel with both RCDs, 23 16A breakers (S201M × 22, S203M × 1 by stage 5), 3 CTs and no other, Q0 an MCCB, and one 10A 1P line (× 12; two more breakers with no current read are a line of their own).
 - [x] `make check` passes (the four dark review shots of BUG-038 passed rerun alone; gitleaks run with the main repository's `.git` mounted, since the worktree's `.git` is a pointer). `make eval` passes against the rewritten baseline; the metric drops against the old one are explained above.
 
 ## Out of scope
 
 - The sub-panel (לוח משנה-מקווה): the user has not checked it.
-- A golden file for 25.26.100: only once the user verifies the labels (then `golden/25.26.100/`).
+- The sub-panel's labels (not checked by the user yet).
 
 ## Open questions
 
@@ -73,6 +74,8 @@ A designer's single-sheet plan in the style of 25.26.100 (בית כנסת מקו
   8. **One line for breakers whose cable gives the poles the others read** (Claude, from the user's "one 10A 1P line"): on the live run the agent read the pole mark on 10 of the 13 10A breakers. A protective device with no poles written joins the identical component whose poles are what its own cable's cores give (05 §5.5.1's table, read from `matching/inference.json`), when that component's cables agree. Its instance keeps the poles unread: no value without evidence (00 §5.3), and stage 5 does the filling in. A known value against a null still never merges otherwise.
   9. **An uncited count of 1 from the tile agent is no reading** (Claude, BUG-067): on the live run it hid every "x2" and "X11". Code's mark stands then; a count the agent cites wins.
   10. **The rewritten eval baseline is kept** (the user, after review): NEVIS-1's poles accuracy and SKU share drops and stage 3's `llm_share` rise are accepted as explained below.
+  11. **25.26.100 joins the golden set, main panel only** (the user, after the PR opened): `golden/25.26.100/` with the PDF, a README and labels in 6199-2-50's shape, no quote. The sub-panel is listed with `verified: false` and no components; stage 4 skips a panel nobody verified (`eval/metrics/stage4.py`), stage 1 still counts it. Labels read from the drawing and the user's corrections; what is not read is in `to_verify`, and two rows are interpretations marked as such: the 25A feeder's 3P (from its 5X6 cable, no pole mark drawn) and 1X10AC as an MCB 1P 10A curve C. Its cassettes were recorded live (`EVAL_RECORD=missing`, 316 calls kept), and the baseline rewritten with it.
+  12. **A breaker's own copy is not the next breaker** (Claude, from the new drawing's eval run): a breaker found twice, the second box inside the first, stopped the walk to its cable. The walk goes through a protective symbol that overlaps the start's box.
 - **Eval / metrics:** cassettes re-recorded for the calls the change moved (`EVAL_RECORD=missing`, three live runs, about 60 calls), then the baseline rewritten (`make eval-baseline`, its own commit). Better: 6199-2-50 component recall 0.575 → 0.644, precision 0.506 → 0.560, unit recall 0.522 → 0.576, with SKU 0.554 → 0.616 (guard-booth panel recall 0.357 → 0.643); NEVIS-1 component recall 0.857 → 0.905, unit recall 0.766 → 0.787. 6199-2-50 unit recall then 0.576 → 0.620 with decisions 8–9 (its with-SKU share 0.616 → 0.612: two components joined). Worse, explained: NEVIS-1 poles accuracy 0.917 → 0.846 and with SKU 0.810 → 0.773, from the re-recorded tile's answer, which reads C4's power contacts as one pole (graphic); the tile's prompt moved because F4's unsure cross is now an `mcb` by its letter, which stage 4 defaulted it to before. Stage 3's `llm_share` rises by up to 1.7 points on the designer's plans: the same disambiguation calls over fewer detections, the circles absorbed after their call. 6199-2-50's `s5_labelled` `llm_share` 0.0870 → 0.0889: one signature fewer once an MCB above the catalog's range is an MCCB.
 - **Bugs logged:** BUG-066 to BUG-072 closed. BUG-051 and BUG-036 checked: not BUG-066's cause (stage 3 detects only terminals there).
 - **Follow-ups:** see the roadmap backlog.

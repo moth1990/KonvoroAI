@@ -1,0 +1,118 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 446,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            47,
+            231,
+            91,
+            273
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "terminal",
+          "tag": null
+        },
+        {
+          "box": [
+            333,
+            320,
+            376,
+            364
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "terminal",
+          "tag": null
+        },
+        {
+          "box": [
+            519,
+            320,
+            563,
+            364
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "terminal",
+          "tag": null
+        },
+        {
+          "box": [
+            945,
+            499,
+            986,
+            539
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "terminal",
+          "tag": null
+        },
+        {
+          "box": [
+            246,
+            268,
+            309,
+            298
+          ],
+          "box_text": null,
+          "family": "ground",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "ground",
+          "tag": null
+        },
+        {
+          "box": [
+            444,
+            181,
+            642,
+            199
+          ],
+          "box_text": null,
+          "family": "busbar",
+          "orientation": 90,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "busbar",
+          "tag": null
+        },
+        {
+          "box": [
+            397,
+            422,
+            520,
+            490
+          ],
+          "box_text": null,
+          "family": "push_button",
+          "orientation": 90,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "emergency_button",
+          "tag": "ES"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

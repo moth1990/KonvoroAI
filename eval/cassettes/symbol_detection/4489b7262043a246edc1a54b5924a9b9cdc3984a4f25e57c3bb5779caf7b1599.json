@@ -1,0 +1,43 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 144,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            634,
+            49,
+            1024,
+            159
+          ],
+          "box_text": null,
+          "family": "busbar",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "busbar",
+          "tag": null
+        },
+        {
+          "box": [
+            768,
+            527,
+            862,
+            623
+          ],
+          "box_text": null,
+          "family": "current_transformer",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "current_transformer",
+          "tag": "T1-T3"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

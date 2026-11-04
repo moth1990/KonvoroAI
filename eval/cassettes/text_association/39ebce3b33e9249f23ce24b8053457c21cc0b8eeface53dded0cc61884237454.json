@@ -1,0 +1,83 @@
+{
+  "answer": {
+    "input_tokens": 5205,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 385,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "evidence": null,
+              "name": "cross_section_mm2",
+              "value": null
+            }
+          ],
+          "det": "d1",
+          "explicit_texts": [],
+          "multiplicity": {
+            "count": 1
+          }
+        },
+        {
+          "attributes": [
+            {
+              "evidence": null,
+              "name": "cross_section_mm2",
+              "value": null
+            }
+          ],
+          "det": "d2",
+          "explicit_texts": [],
+          "multiplicity": {
+            "count": 1
+          }
+        },
+        {
+          "attributes": [
+            {
+              "evidence": null,
+              "name": "cross_section_mm2",
+              "value": null
+            }
+          ],
+          "det": "d3",
+          "explicit_texts": [],
+          "multiplicity": {
+            "count": 1
+          }
+        }
+      ],
+      "possible_missed": [],
+      "shared_labels": [],
+      "unassigned_spans": [
+        {
+          "reason": "X2 is a terminal strip name, not a cross-section",
+          "span_id": "s1"
+        },
+        {
+          "reason": "X2 terminal strip name, belongs to neighbour c1",
+          "span_id": "s2"
+        },
+        {
+          "reason": "terminal number",
+          "span_id": "s3"
+        },
+        {
+          "reason": "terminal numbers",
+          "span_id": "s4"
+        },
+        {
+          "reason": "terminal numbers of c1",
+          "span_id": "s5"
+        },
+        {
+          "reason": "terminal number",
+          "span_id": "s6"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

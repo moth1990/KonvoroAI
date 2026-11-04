@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1171,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 117,
+    "payload": {
+      "confidence": 0.6,
+      "decision": "none_of_these",
+      "reason": "התיבה עם הכיתוב ELENET LTC היא התקן/מודול ייעודי ולא מכשיר מדידה (עיגול עם A, V או Hz), ולכן אף מועמד אינו מתאים.}",
+      "symbol_class": null
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

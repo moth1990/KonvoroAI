@@ -1,0 +1,107 @@
+{
+  "answer": {
+    "input_tokens": 5616,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 454,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s4"
+              ],
+              "value": 25
+            }
+          ],
+          "det": "d1",
+          "explicit_texts": [
+            "s4"
+          ],
+          "multiplicity": {
+            "count": 1
+          }
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s7"
+              ],
+              "value": 10
+            }
+          ],
+          "det": "d2",
+          "explicit_texts": [
+            "s7"
+          ],
+          "multiplicity": {
+            "count": 1
+          }
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s8"
+              ],
+              "value": 10
+            }
+          ],
+          "det": "d3",
+          "explicit_texts": [
+            "s8"
+          ],
+          "multiplicity": {
+            "count": 1
+          }
+        }
+      ],
+      "unassigned_spans": [
+        {
+          "reason": "belongs to a symbol outside the tile",
+          "span_id": "s1"
+        },
+        {
+          "reason": "belongs to neighbour c3",
+          "span_id": "s2"
+        },
+        {
+          "reason": "belongs to a symbol outside the tile",
+          "span_id": "s3"
+        },
+        {
+          "reason": "busbar/load name",
+          "span_id": "s5"
+        },
+        {
+          "reason": "busbar/load name",
+          "span_id": "s6"
+        },
+        {
+          "reason": "belongs to neighbour c6",
+          "span_id": "s9"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s10"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s11"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}
