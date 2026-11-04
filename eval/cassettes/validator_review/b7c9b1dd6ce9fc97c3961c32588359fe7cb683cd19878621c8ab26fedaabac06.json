@@ -1,0 +1,74 @@
+{
+  "answer": {
+    "input_tokens": 5530,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 587,
+    "payload": {
+      "issues": [
+        {
+          "bbox": null,
+          "component_ids": [
+            "c19"
+          ],
+          "confidence": 0.5,
+          "message": "בטבלה 3 נתיכי 100A, אך בשרטוט לא נראה אף נתיך. יש לבדוק אם הרכיב קיים בלוח ומה הכמות.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": [
+            183,
+            540,
+            210,
+            568
+          ],
+          "component_ids": [
+            "c06",
+            "c12"
+          ],
+          "confidence": 0.4,
+          "message": "שני מפסקים בתיבה יצוקה 160A LSI, אבל בשרטוט רק אחד כזה בפתיחה (250A) ואחד באלקטרוני. יכולת הניתוק שונה (10kA מול 36kA); לבדוק אם זו כפילות.",
+          "type": "inconsistent_attributes"
+        },
+        {
+          "bbox": null,
+          "component_ids": [
+            "c16"
+          ],
+          "confidence": 0.4,
+          "message": "14 מא\"ז 6A חד-קוטביים, אך בשרטוט נראים רק כ-5 מא\"זים כאלה. לבדוק את הכמות.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": [
+            262,
+            672,
+            540,
+            690
+          ],
+          "component_ids": [
+            "c03"
+          ],
+          "confidence": 0.4,
+          "message": "T2 הוגדר כמגען, אך הוא מסומן כמגען/טיימר על ענף התאורה (T1 הוא טיימר). לבדוק את סוג הרכיב.",
+          "type": "wrong_family"
+        },
+        {
+          "bbox": [
+            555,
+            444,
+            610,
+            466
+          ],
+          "component_ids": [
+            "c08"
+          ],
+          "confidence": 0.3,
+          "message": "בשרטוט מסומן SATEC 135E ובטבלה PM135E. לבדוק התאמת הדגם.",
+          "type": "inconsistent_attributes"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "validator_review"
+}

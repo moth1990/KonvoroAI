@@ -1,0 +1,55 @@
+{
+  "answer": {
+    "input_tokens": 3558,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 445,
+    "payload": {
+      "issues": [
+        {
+          "bbox": [
+            620,
+            40,
+            700,
+            115
+          ],
+          "component_ids": [
+            "c01"
+          ],
+          "confidence": 0.4,
+          "message": "בטבלה מופיעים 2 מא\"זים 3P 40A, אך בשרטוט נראה מא\"ז 40A אחד בהזנה של שדה תאורה ואחד בהזנה של שדה שקעים (1P). יש לבדוק כמות וקטבים.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": [
+            1130,
+            40,
+            1210,
+            125
+          ],
+          "component_ids": [
+            "c01"
+          ],
+          "confidence": 0.3,
+          "message": "המא\"ז 40A בהזנת שדה השקעים נראה כמא\"ז בודד, בעוד שבטבלה הוא 3 קטבים. יש לבדוק את מספר הקטבים מול השרטוט.",
+          "type": "inconsistent_attributes"
+        },
+        {
+          "bbox": [
+            1120,
+            140,
+            1330,
+            205
+          ],
+          "component_ids": [
+            "c03"
+          ],
+          "confidence": 0.25,
+          "message": "מפסק הפחת מסומן 4x40A 0.03A סוג A, ולכן ההזנה שלו כנראה מקבילה לשדה השקעים. יש לבדוק שהוא משויך לשדה הנכון ושלא מדובר בהזנה כפולה.",
+          "type": "inconsistent_attributes"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "validator_review"
+}

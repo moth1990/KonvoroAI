@@ -1,0 +1,69 @@
+{
+  "answer": {
+    "input_tokens": 3429,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 517,
+    "payload": {
+      "issues": [
+        {
+          "bbox": [
+            985,
+            30,
+            1020,
+            70
+          ],
+          "component_ids": [
+            "c08"
+          ],
+          "confidence": 0.5,
+          "message": "c08 מוגדר כמפסק בתיבה יצוקה 40A, אך בשרטוט נראים מפסקים זעירים (מא\"ז) 40A עם הגנת פחת 4x40A. כדאי לבדוק את הסוג.",
+          "type": "wrong_family"
+        },
+        {
+          "bbox": [
+            5,
+            70,
+            45,
+            100
+          ],
+          "component_ids": [
+            "c13"
+          ],
+          "confidence": 0.4,
+          "message": "c13 מופיע בכמות 3 עם שלושה תגים T1–T3 (100/5A), ואילו T1 משמש גם כממסר זמן. כדאי לוודא את הכמות ואת התגים.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": [
+            100,
+            195,
+            135,
+            235
+          ],
+          "component_ids": [
+            "c06"
+          ],
+          "confidence": 0.45,
+          "message": "לחצן חירום ES מוגדר בצבע ירוק. לחצן חירום הוא בדרך כלל אדום, כדאי לבדוק את הצבע ואת הדגם.",
+          "type": "inconsistent_attributes"
+        },
+        {
+          "bbox": [
+            895,
+            95,
+            1160,
+            125
+          ],
+          "component_ids": [
+            "c09"
+          ],
+          "confidence": 0.35,
+          "message": "22 מא\"זים חד־קוטביים 16A. כדאי לספור מחדש בשורות שקעים ובמעגלים הנוספים (X2, X11), ייתכן שהכמות מנופחת.",
+          "type": "suspicious_quantity"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "validator_review"
+}

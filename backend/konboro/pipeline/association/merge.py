@@ -9,7 +9,8 @@ An instance is one symbol with what was read for it. The merge, once per drawing
    device of its own, untagged and yellow, flagged `tag_conflict` (25.26.100's "X2" took 16A breakers and two RCDs
    into one terminal × 76). Unless it is unsure and beside one of the device's drawings, within its length: then it
    is a misread part of that drawing (Q0's ring read as a current transformer, QLG1's thermal release as an overload
-   relay). An accessory (a shunt trip) under a device's tag sits on that device.
+   relay). An accessory (a shunt trip) under a device's tag sits on that device. One written tag names one device
+   (BUG-081, `one_name_per_tag`): a span nearest a coil or a contact names that one's device, not another family's.
 2. An auxiliary contact (family `aux_contact`) is an accessory of its own: its tag is the device it sits on
    (`parent_designators`), not a device of its own tag. An untagged contact or coil of a family that has tagged
    devices in the panel is another drawing of one of them, and joins the nearest (no quantity of its own).
@@ -95,6 +96,7 @@ class Built:
     circuit_context: CircuitContext | None = None
     extra_det_ids: list[str] = field(default_factory=list)  # absorbed symbols (the neutral pole)
     order: tuple[int, float, float] = (0, 0.0, 0.0)  # page, y, x: the merge keeps the drawing's order
+    designator_span: tuple[str, Bbox] | None = None  # the span stage 3 linked as its tag, and where it is (BUG-081)
 
 
 @dataclass
@@ -141,8 +143,46 @@ def _join_attributes(
     return out, conflicts, penalty
 
 
+SHARED_TOUCH_PT = 6.0  # a symbol this close to the tag's nearest symbol is part of its drawing (S24b decision 4)
+
+
+def _gap(a: Bbox, b: Bbox) -> float:
+    dx, dy = max(a[0] - b[2], 0.0, b[0] - a[2]), max(a[1] - b[3], 0.0, b[1] - a[3])
+    return float((dx * dx + dy * dy) ** 0.5)
+
+
+def one_name_per_tag(built: list[Built]) -> None:
+    """BUG-081: one written tag names one device. Stage 3 links each symbol to its nearest tag-shaped span, so one
+    "T1" under 25.26.100's clock was also the selector's and C130,131's coil's (the model read it beside them too),
+    and the selector became T1's device. A span nearest a coil or a contact names that coil's device (a contactor, a
+    relay, a timer): another family's symbol that took it loses it, unless it touches that coil or contact or sits on
+    the device (an accessory). A span nearest a device drawing is left to `devices` (S24b decision 4: Q0's ring read
+    as a current transformer is a part of Q0). Here, not in stage 3: the tile agent is shown stage 3's tags."""
+    takers: dict[tuple[str, str], list[Built]] = defaultdict(list)
+    for b in built:
+        if b.designator and b.designator_span and b.instance.bbox is not None:
+            takers[(b.instance.page_id, b.designator_span[0])].append(b)
+    for group in takers.values():
+        if len({b.instance.family for b in group}) < 2:
+            continue
+        where = group[0].designator_span[1]  # type: ignore[index]
+        nearest = min(group, key=lambda b: (_gap(b.instance.bbox, where), b.order))  # type: ignore[arg-type]
+        if nearest.role not in REPRESENTATIONS:
+            continue
+        for b in group:
+            i = b.instance
+            if (
+                i.family == nearest.instance.family
+                or i.family in ACCESSORIES
+                or _gap(i.bbox, nearest.instance.bbox) <= SHARED_TOUCH_PT  # type: ignore[arg-type]
+            ):
+                continue
+            b.designator = None
+
+
 def devices(built: list[Built], schemas: Schemas, cfg: AssociationConfig = DEFAULT) -> list[Device]:
     """5.8 items 1–3: one device per tag in a panel; an auxiliary contact on its own; an untagged symbol alone."""
+    one_name_per_tag(built)
     by_tag: dict[tuple[str, str], list[Built]] = defaultdict(list)
     alone: list[Built] = []
     accessories: list[tuple[Built, str]] = []  # an accessory under another device's tag, and that tag

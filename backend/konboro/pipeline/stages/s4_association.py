@@ -128,6 +128,7 @@ def associate_page(
     work = PageWork(detections=pd.detections)
     dets = pd.detections
     absorbed = assign.absorb_neutral(dets, pe.text_spans, cfg)
+    span_boxes = {s.span_id: s.bbox for s in pe.text_spans}
     live = [d for d in dets if d.det_id not in absorbed]
     by_det = {d.det_id: d for d in dets}
     tags = {d.designator for d in dets if d.designator}
@@ -329,6 +330,11 @@ def associate_page(
                 circuit_context=circuit,
                 extra_det_ids=sorted(x for x, host in absorbed.items() if host == d.det_id),
                 order=(seq, round(d.bbox[1], 1), round(d.bbox[0], 1)),
+                designator_span=(
+                    (d.designator_span_id, span_boxes[d.designator_span_id])
+                    if d.designator_span_id in span_boxes
+                    else None
+                ),
             )
         )
 

@@ -17,6 +17,7 @@ from sqlalchemy.orm import Session
 
 from konboro.db import models as m
 from konboro.domain.pricing import cost as pc
+from konboro.pipeline.detection.library import prefix_table
 from konboro.services import price_list
 
 from .catalog import Catalog, Item
@@ -44,6 +45,8 @@ class Factory:
     alternate_brands: dict[str, list[str]] = field(default_factory=dict)  # family (or "*") → allowed instead
     tie_break: str = "frequency"
     inference_off: frozenset[str] = frozenset()
+    # a designator's letters → the classes they may name, the factory's rows on top (BUG-070, BUG-077)
+    designator_prefixes: dict[str, tuple[str, ...]] = field(default_factory=prefix_table)
     auxiliary_families: frozenset[str] = frozenset({"terminal"})
     priced: frozenset[str] = frozenset()  # catalog item ids with an active cost price
     costs: dict[str, Decimal] = field(default_factory=dict)  # catalog item id → unit cost, for `tie_break` = price
@@ -147,6 +150,7 @@ def load(
         alternate_brands={k: list(v) for k, v in (matching.get("alternate_brands") or {}).items()},
         tie_break=tie_break if tie_break in TIE_BREAKS else "frequency",
         inference_off=frozenset(matching.get("inference_off") or ()),
+        designator_prefixes=prefix_table(matching.get("designator_prefixes")),
         auxiliary_families=frozenset(settings.auxiliary_families or ()) if settings else frozenset({"terminal"}),
         priced=priced,
         costs=costs,
