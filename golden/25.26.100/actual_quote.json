@@ -1,0 +1,287 @@
+{
+  "quote_number": "10298",
+  "date": "2026-11-04",
+  "drawing": "25.26.100",
+  "panel": "לוח ראשי-בית כנסת",
+  "currency": "ILS",
+  "customer": "לא נשמר",
+  "lines": [
+    {
+      "line": 1,
+      "text": "מפסק 3X80A",
+      "qty": 1,
+      "unit_price": 750,
+      "total": 750,
+      "drawing_designators": [
+        "Q0"
+      ]
+    },
+    {
+      "line": 2,
+      "text": "הגנת מנוע 2.5-4A",
+      "qty": 1,
+      "unit_price": 260,
+      "total": 260,
+      "drawing_designators": [
+        "FS"
+      ]
+    },
+    {
+      "line": 3,
+      "text": "רב מודד SATEC",
+      "qty": 1,
+      "unit_price": 1800,
+      "total": 1800,
+      "drawing_designators": [
+        "LTC"
+      ],
+      "note": "בשרטוט מונה ELENET. המפעל תמחר SATEC"
+    },
+    {
+      "line": 4,
+      "text": "משנה זרם 100/5",
+      "qty": 3,
+      "unit_price": 110,
+      "total": 330,
+      "drawing_designators": [
+        "T1-T3"
+      ]
+    },
+    {
+      "line": 5,
+      "text": "משנה זרם 100/5",
+      "qty": 3,
+      "unit_price": 110,
+      "total": 330,
+      "drawing_designators": [
+        "T1-T3"
+      ],
+      "error": "שורה 4 פעמיים: בלוח 3 משני זרם (T1-T3), לא 6"
+    },
+    {
+      "line": 6,
+      "text": "סליל הפסקה",
+      "qty": 1,
+      "unit_price": 265,
+      "total": 265,
+      "drawing_designators": [
+        "TC"
+      ]
+    },
+    {
+      "line": 7,
+      "text": "לחצן חירום לדלת",
+      "qty": 1,
+      "unit_price": 160,
+      "total": 160,
+      "drawing_designators": [
+        "ES"
+      ]
+    },
+    {
+      "line": 8,
+      "text": "מא\"ז 1X25A",
+      "qty": 1,
+      "unit_price": 42,
+      "total": 42,
+      "drawing_designators": [],
+      "error": "ההזנה ללוח המשנה היא 3P ‏25A (אושר בידי המשתמש), לא 1P"
+    },
+    {
+      "line": 9,
+      "text": "מא\"ז 3X40A",
+      "qty": 5,
+      "unit_price": 195,
+      "total": 975,
+      "drawing_designators": []
+    },
+    {
+      "line": 10,
+      "text": "מא\"ז 1X16A",
+      "qty": 9,
+      "unit_price": 42,
+      "total": 378,
+      "drawing_designators": [],
+      "error": "בלוח 22 מא\"זים 1P ‏16A"
+    },
+    {
+      "line": 11,
+      "text": "מא\"ז 1X10A",
+      "qty": 14,
+      "unit_price": 42,
+      "total": 588,
+      "drawing_designators": [],
+      "error": "בלוח 16 מא\"זים 1P ‏10A (15, ועוד 1X10AC בראש מעגל הפיקוד)"
+    },
+    {
+      "line": 12,
+      "text": "מא\"ז 3X16A",
+      "qty": 1,
+      "unit_price": 175,
+      "total": 175,
+      "drawing_designators": []
+    },
+    {
+      "line": 13,
+      "text": "מגען מודולרי 2X25A",
+      "qty": 2,
+      "unit_price": 180,
+      "total": 360,
+      "drawing_designators": [
+        "C130,131"
+      ]
+    },
+    {
+      "line": 14,
+      "text": "שעון אסטרונומי",
+      "qty": 1,
+      "unit_price": 888,
+      "total": 888,
+      "drawing_designators": [
+        "T1"
+      ]
+    },
+    {
+      "line": 15,
+      "text": "ממסר פחת 4X40A 40/0.3 ABB",
+      "qty": 2,
+      "unit_price": 420,
+      "total": 840,
+      "drawing_designators": [],
+      "note": "40/0.3 היא טעות הקלדה: 30mA דגם A, כמו בשרטוט (אושר בידי המשתמש)"
+    },
+    {
+      "line": 16,
+      "text": "מבנה לוח מפח כולל פנילים דלתות פסי צבירה אפס הארקה מהדקי חיבור שילוט במידות 2100/600/400",
+      "qty": 1,
+      "unit_price": 6200,
+      "total": 6200,
+      "drawing_designators": [
+        "enclosure"
+      ]
+    }
+  ],
+  "subtotal": 14341.0,
+  "vat_pct": 18,
+  "total_incl_vat": 16922.38,
+  "comparison": {
+    "matched_lines": 14,
+    "differences": [
+      {
+        "type": "quantity_mismatch",
+        "item": "משנה זרם 100/5A",
+        "drawing": 3,
+        "quote": 6,
+        "designators": [
+          "T1-T3"
+        ],
+        "quote_lines": [
+          4,
+          5
+        ],
+        "value_at_risk": null,
+        "over_charged": 330,
+        "price_source": "שורה 5 בהצעה, כפולה של שורה 4",
+        "confirmed_by_factory": true
+      },
+      {
+        "type": "attribute_mismatch",
+        "item": "מפסק 3P ‏25A להזנת לוח המשנה",
+        "drawing": "3P",
+        "quote": "1P",
+        "designators": [],
+        "quote_lines": [
+          8
+        ],
+        "value_at_risk": null,
+        "price_source": "בהצעה אין מחיר למא\"ז 3P ‏25A",
+        "confirmed_by_factory": true
+      },
+      {
+        "type": "quantity_mismatch",
+        "item": "מא\"ז 1P ‏16A",
+        "drawing": 22,
+        "quote": 9,
+        "designators": [],
+        "quote_lines": [
+          10
+        ],
+        "value_at_risk": 546,
+        "price_source": "שורה 10 בהצעה: 13 × 42",
+        "confirmed_by_factory": true
+      },
+      {
+        "type": "quantity_mismatch",
+        "item": "מא\"ז 1P ‏10A",
+        "drawing": 16,
+        "quote": 14,
+        "designators": [],
+        "quote_lines": [
+          11
+        ],
+        "value_at_risk": 84,
+        "price_source": "שורה 11 בהצעה: 2 × 42",
+        "confirmed_by_factory": true
+      },
+      {
+        "type": "missing",
+        "item": "מפסק פיקוד 4 מצבים (בורר)",
+        "drawing": 1,
+        "quote": 0,
+        "designators": [],
+        "family": "selector_switch",
+        "value_at_risk": null,
+        "price_source": "אין שורה דומה בהצעה",
+        "confirmed_by_factory": true
+      },
+      {
+        "type": "not_a_difference",
+        "item": "מגען C130,131",
+        "drawing": 2,
+        "quote": 2,
+        "designators": [
+          "C130,131"
+        ],
+        "quote_lines": [
+          13
+        ],
+        "value_at_risk": null,
+        "resolution": "שני מגענים, כמו בהצעה. התיוג תוקן ל-2 (אושר בידי המשתמש)"
+      },
+      {
+        "type": "not_a_difference",
+        "item": "מפסק פחת 4X40A",
+        "drawing": "0.03A",
+        "quote": "40/0.3",
+        "designators": [],
+        "quote_lines": [
+          15
+        ],
+        "value_at_risk": null,
+        "resolution": "טעות הקלדה בהצעה: 30mA (אושר בידי המשתמש)"
+      },
+      {
+        "type": "not_a_difference",
+        "item": "מונה",
+        "drawing": "ELENET",
+        "quote": "SATEC",
+        "designators": [
+          "LTC"
+        ],
+        "quote_lines": [
+          3
+        ],
+        "value_at_risk": null,
+        "resolution": "החלפת מותג של המפעל, אותו מוצר בלוח"
+      }
+    ],
+    "bundles_in_quote": [
+      {
+        "line": 16,
+        "covers": "ארון 2100/600/400 + פנלים + דלתות + פסי צבירה + פס אפס והארקה + מהדקי חיבור + שילוט"
+      }
+    ],
+    "value_at_risk_priced": 630,
+    "status": "אושר בידי המשתמש: משני הזרם נספרו פעמיים, ההזנה ללוח המשנה תומחרה כ-1P, חסרים 13 מא\"זים 1P ‏16A ו-2 של 10A, והבורר הושמט. המגענים 2, כמו בהצעה"
+  }
+}

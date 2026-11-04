@@ -269,6 +269,30 @@ def test_a_confirmed_difference_split_by_component_is_right_twice() -> None:
     }
 
 
+def test_an_untagged_difference_matches_by_quote_line_or_family() -> None:
+    """25.26.100: most breakers carry no tag, so a confirmed difference names the quote line it is about, or for an
+    omission with no line, its family. A tagged difference still matches by designators only."""
+    label = CanonAudit(
+        matched=None,
+        differences=(
+            CanonDifference(type="quantity_mismatch", item='מא"ז 1P 16A', quote_lines=(10,)),
+            CanonDifference(type="missing_in_quote", item="בורר", family="selector_switch"),
+            CanonDifference(type="quantity_mismatch", item="משנה זרם", designators=("T1",), quote_lines=(5,)),
+        ),
+    )
+    pred = (
+        CanonDifference(type="quantity_mismatch", item="x", quote_lines=(10,), family="mcb", confidence=0.9),
+        CanonDifference(type="missing_in_quote", item="x", family="selector_switch", confidence=0.9),
+        CanonDifference(type="attribute_mismatch", item="x", quote_lines=(5,), confidence=0.9),  # no T1: no match
+        CanonDifference(type="missing_in_quote", item="x", quote_lines=(3,), family="selector_switch", confidence=0.9),
+    )
+    assert values(audit.score(label, pred)) == {
+        "difference_precision": 0.5,
+        "difference_recall": pytest.approx(2 / 3, abs=1e-6),
+        "type_agreement": 1.0,
+    }
+
+
 def test_audit_na_and_unlabelled() -> None:
     assert all(v is None for v in values(audit.score(CONFIRMED, None)).values())
     assert audit.score(None, ()) == {}

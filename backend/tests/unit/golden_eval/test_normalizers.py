@@ -21,7 +21,7 @@ def golden(folder: str) -> GoldenDrawing:
         ("26-993", 22, 47),
         ("NURSERY-1", 13, 42),
         ("BOM-HW-1", 19, 91),
-        ("25.26.100", 16, 58),
+        ("25.26.100", 16, 59),
     ],
 )
 def test_product_and_unit_counts(folder: str, products: int, units: int) -> None:
@@ -141,6 +141,22 @@ def test_audit_keeps_only_confirmed_differences() -> None:
     nursery = golden("NURSERY-1").audit
     assert nursery is not None and [d.designators for d in nursery.differences] == [("FNV",), ("RNV",)]
     assert golden("6199-2-50").audit is None
+
+
+def test_25_26_100_quote_differences() -> None:
+    """Quote 10298, confirmed by the user: the CTs twice, the 25A feeder as 1P, 13 and 2 breakers short, the selector
+    left out. The contactors (2), the RCD's typo and the meter's brand are not differences."""
+    g = golden("25.26.100")
+    assert g.quote_total == Decimal("14341.0")
+    a = g.audit
+    assert a is not None and a.matched == 14
+    assert [(d.type, d.designators, d.quote_lines, d.family, d.value_at_risk) for d in a.differences] == [
+        ("quantity_mismatch", ("T1", "T2", "T3"), (4, 5), None, None),
+        ("attribute_mismatch", (), (8,), None, None),
+        ("quantity_mismatch", (), (10,), None, Decimal("546")),
+        ("quantity_mismatch", (), (11,), None, Decimal("84")),
+        ("missing_in_quote", (), (), "selector_switch", None),
+    ]
 
 
 def test_quote_totals_are_before_vat() -> None:
