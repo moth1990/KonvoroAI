@@ -121,7 +121,11 @@ def unmatched_description(c: Component, m: ComponentMatch | None) -> str:
     for name, used in (m.attributes_used if m else {}).items():
         if name not in values and used.value is not None and used.source not in DEFAULTED:
             values[name] = used.value
-    return describe(c.family, c.symbol_class, c.brand_hint, None, values)
+    # the class stage 5 looked for, from its signature "family|class|…": an MCCB in the MCB range typed again by its
+    # current is described as an MCB (BUG-077), like the product it would have matched
+    sig = (m.signature or "").split("|") if m else []
+    cls = sig[1] if len(sig) > 1 and sig[0] == c.family and sig[1] else c.symbol_class
+    return describe(c.family, cls, c.brand_hint, None, values)
 
 
 def match_reasons(m: ComponentMatch) -> list[dict[str, Any]]:

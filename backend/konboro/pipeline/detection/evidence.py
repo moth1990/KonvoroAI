@@ -16,6 +16,10 @@ A class changed here keeps the line yellow at most: code's evidence is good, not
    other's height is not drawn the same: NURSERY-1's 1P+N breakers draw the N contact small beside the breaker.
    25.26.100's four 10A lighting breakers read as switch-disconnectors beside mcbs, and two 16A breakers read as
    push buttons.
+   3b. **A rated push button** (the user's exception to S24b decision 2, after a live run of 25.26.100): a symbol
+   read as a push button, however sure, with a current rating beside it and drawn like the breakers in its row
+   (whatever their confidence) with the same rating, is a breaker, and yellow: the model was sure of two 16A
+   socket breakers as push buttons ("לחצן" × 12, one with "X11"), in a row with no sure breaker for rule 3.
 4. **The designator's letter** (BUG-070, `prefixes.json`, the factory's own on top). Q is a switching device or an
    MCCB, F an MCB. Among the classes the model saw for an unsure symbol, the one the prefix allows wins; else the one
    class of its family the prefix allows ("Q" on a breaker: an MCCB). A prefix never brings in a family the model
@@ -138,24 +142,55 @@ def _rating(c: Candidate, spans: list[TextSpan], cfg: DetectionConfig) -> float 
     return float(value) if isinstance(value, int | float) else None
 
 
+BUTTONS = ("push_button",)  # rule 3b: families a current rating beside them says are not what they were read as
+
+
+def _alike(a: Candidate, c: Candidate, rating: dict[int, float | None]) -> bool:
+    """Drawn the same in one row: tops level, widths and heights alike, the same way, the same rating."""
+    width = c.bbox[2] - c.bbox[0]
+    return (
+        abs(a.bbox[1] - c.bbox[1]) <= ROW_PT
+        and abs((a.bbox[2] - a.bbox[0]) - width) <= WIDTH_SHARE * (a.bbox[2] - a.bbox[0])
+        and _height_alike(a, c)
+        and a.orientation == c.orientation
+        and rating[id(a)] == rating[id(c)]
+    )
+
+
+def _rated_buttons(
+    devices: list[Candidate], rating: dict[int, float | None], lib: Library, cfg: DetectionConfig
+) -> None:
+    """Rule 3b."""
+    for c in devices:
+        if c.family not in BUTTONS or rating[id(c)] is None:
+            continue
+        like = [a for a in devices if a is not c and a.family in PROTECTIVE and _alike(a, c, rating)]
+        if not like:
+            continue
+        family = max({a.family for a in like}, key=lambda f: (sum(a.family == f for a in like), f))
+        known = [(a.confidence, a.symbol_class) for a in like if a.family == family and a.symbol_class != UNKNOWN]
+        seen = [
+            (score, cls)
+            for a in like
+            for cls, score in a.candidates
+            if cls in lib.classes and lib.classes[cls].family == family
+        ]
+        default = [k.symbol_class for k in lib.families.get(family, [])]
+        cls = max(known)[1] if known else max(seen)[1] if seen else default[0] if default else UNKNOWN
+        _adopt(c, family, cls, TEXT_FLOOR)
+        c.ceiling = _cap(cfg)  # a sure reading overturned by code is yellow at most
+
+
 def peers(found: list[Candidate], spans: list[TextSpan], lib: Library, cfg: DetectionConfig) -> None:
-    """Rule 3."""
+    """Rules 3 and 3b."""
     devices = [c for c in found if c.role == "device" and c.family not in ("terminal", "rcd", "rcbo", *NOT_DEVICES)]
     rating = {id(c): _rating(c, spans, cfg) for c in devices}  # an RCD in the row is no breaker's peer
+    _rated_buttons(devices, rating, lib, cfg)
     sure = [c for c in devices if _sure(c, cfg) and c.family in PROTECTIVE and rating[id(c)] is not None]
     for c in devices:
         if _sure(c, cfg) or rating[id(c)] is None:
             continue
-        width = c.bbox[2] - c.bbox[0]
-        like = [
-            a
-            for a in sure
-            if abs(a.bbox[1] - c.bbox[1]) <= ROW_PT
-            and abs((a.bbox[2] - a.bbox[0]) - width) <= WIDTH_SHARE * (a.bbox[2] - a.bbox[0])
-            and _height_alike(a, c)
-            and a.orientation == c.orientation
-            and rating[id(a)] == rating[id(c)]
-        ]
+        like = [a for a in sure if _alike(a, c, rating)]
         if not like:
             continue
         best = max(like, key=lambda a: (a.confidence, -abs(a.bbox[0] - c.bbox[0])))
