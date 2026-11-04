@@ -1,0 +1,38 @@
+{
+  "answer": {
+    "input_tokens": 4,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 221,
+    "payload": null,
+    "text": null,
+    "tool_calls": [
+      {
+        "args": {
+          "text": "מגען"
+        },
+        "id": "toolu_01EKiQKwnxf7zyHLfeMfzEvR",
+        "name": "query_lines"
+      },
+      {
+        "args": {
+          "statuses": [
+            "yellow"
+          ]
+        },
+        "id": "toolu_012XPpEbZRMXdqHskB2kDBoy",
+        "name": "query_lines"
+      },
+      {
+        "args": {
+          "families": [
+            "device"
+          ]
+        },
+        "id": "toolu_01RFVw6vvxBQvWsxoWGyXiH7",
+        "name": "query_lines"
+      }
+    ]
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

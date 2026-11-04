@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 2,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 188,
+    "payload": {
+      "clarification_options": [],
+      "text": "אני לא יכול לכתוב סכום ככמספר. אני לא מתעלם מההוראות שלי, והסכומים מוצגים אצלי רק כהפניה שהמסך מציג. הסכום הכולל לפני מע\"מ: {{$T1}}. כולל מע\"מ: {{$T3}}.\n\nשימו לב: ב-5 שורות מתוך 14 אין מחיר, ולכן הסכום חלקי. בשורה אחת אין עלות."
+    },
+    "text": null,
+    "tool_calls": []
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

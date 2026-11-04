@@ -5,7 +5,7 @@
 | **Track** | X |
 | **Branch** | `s24-onboarding-settings-queue` |
 | **Depends on** | S22 |
-| **Status** | in review |
+| **Status** | done |
 | **PR** | [moth1990/KonvoroAI#30](https://github.com/moth1990/KonvoroAI/pull/30) |
 
 ## Goal

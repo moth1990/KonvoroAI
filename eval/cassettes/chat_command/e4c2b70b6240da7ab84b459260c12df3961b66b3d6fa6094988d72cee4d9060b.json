@@ -1,0 +1,27 @@
+{
+  "answer": {
+    "input_tokens": 4,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 79,
+    "payload": null,
+    "text": null,
+    "tool_calls": [
+      {
+        "args": {},
+        "id": "toolu_018TVZkbdeNykMbdg92McwBQ",
+        "name": "rerun_validation"
+      },
+      {
+        "args": {
+          "statuses": [
+            "red"
+          ]
+        },
+        "id": "toolu_01Dggo2jB5kLLtVtG5bK3SG3",
+        "name": "query_lines"
+      }
+    ]
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

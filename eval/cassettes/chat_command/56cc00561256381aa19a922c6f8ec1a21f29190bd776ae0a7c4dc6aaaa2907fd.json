@@ -1,0 +1,31 @@
+{
+  "answer": {
+    "input_tokens": 2,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 156,
+    "payload": null,
+    "text": null,
+    "tool_calls": [
+      {
+        "args": {
+          "changes": [
+            {
+              "sku": "A9F74116",
+              "target": {
+                "lines": [
+                  "L1"
+                ]
+              },
+              "type": "replace_sku"
+            }
+          ],
+          "summary_he": "החלפת L1 למק\"ט A9F74116"
+        },
+        "id": "toolu_01PE8RSmgqg8eNf8M2LmEvD9",
+        "name": "propose_change"
+      }
+    ]
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 2,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 167,
+    "payload": {
+      "clarification_options": [],
+      "text": "הכנתי הצעה (CH1) למחיקת {{line:L1}}: מא\"ז ABB S201M 1P 16A, כמות 1, ירוק וללא ממצאים. סכום הרשת יורד מ-{{$T2}} ל-{{$T3}}. ההצעה לא החזירה אזהרות או בעיות חדשות. שום דבר לא ישתנה עד שתאשר את הכרטיס."
+    },
+    "text": null,
+    "tool_calls": []
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

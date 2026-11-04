@@ -1,0 +1,31 @@
+{
+  "answer": {
+    "input_tokens": 2,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 139,
+    "payload": null,
+    "text": null,
+    "tool_calls": [
+      {
+        "args": {
+          "attributes": [
+            {
+              "name": "poles",
+              "value": "1"
+            },
+            {
+              "name": "current_a",
+              "value": "16"
+            }
+          ],
+          "family": "circuit_breaker",
+          "manufacturer": "Schneider"
+        },
+        "id": "toolu_01EBBC46qJy42joXN76Q5dMt",
+        "name": "search_catalog"
+      }
+    ]
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

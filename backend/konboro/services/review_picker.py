@@ -202,8 +202,9 @@ def _fixture_value(name: str, value: Any) -> Any:
     if name in ("current_a", "breaking_capacity_ka") and isinstance(value, str):
         found = NUMBER.search(value)
         return _number(Decimal(found.group(1))) if found else None
-    if name == "poles" and isinstance(value, str) and value.isdigit():
-        return int(value)
+    if name == "poles" and isinstance(value, str):
+        found = NUMBER.search(value)  # "3", or "1P+N" (BUG-064): the neutral is its own value, `neutral`
+        return int(Decimal(found.group(1))) if found else None
     return value
 
 
@@ -223,6 +224,8 @@ def component_of(ctx: Ctx, row: m.QuoteLine) -> Component | None:
         source = a.get("source") if a.get("source") in READ_SOURCES else "drawing"
         value = _fixture_value(name, a.get("value"))
         attrs[name] = AttributeValue.model_construct(value=value, source=source, confidence=a.get("confidence"))
+        if name == "poles" and "+N" in str(a.get("value", "")).upper() and "neutral" not in attrs:
+            attrs["neutral"] = AttributeValue.model_construct(value=True, source=source, confidence=a.get("confidence"))
     return Component.model_construct(
         component_id=cmp.id,
         drawing_id=cmp.drawing_id,
@@ -253,17 +256,25 @@ def _match_one(ctx: Ctx, component: Component) -> tuple[ComponentMatch, match.In
     return match.finish(component, match.decide_prepared(pr, inp), inp.cfg), inp
 
 
-def rematch(ctx: Ctx, row: m.QuoteLine, values: dict[str, Any]) -> Rematch:
+def rematch(ctx: Ctx, row: m.QuoteLine, values: dict[str, Any], brand: str | None = None) -> Rematch:
     """09 §7.4: the component with the user's values (`user`), the reading's confidence penalty removed, the line's
-    brand asked for; what stage 5 then chooses for it, and the reasons it gives the line."""
+    brand asked for (or `brand`, the chat's `replace_brand`, 08 §6.7); what stage 5 then chooses for it, and the
+    reasons it gives the line."""
     component = component_of(ctx, row)
     if component is None:
         raise ReviewError(422, "validation_error", ("line_id",), "no_component")
     attrs = dict(component.attributes)
+    if brand:
+        attrs.pop("series", None)  # the series written beside it is the old brand's (05 §5.4)
     for name, value in values.items():
         attrs[name] = AttributeValue(value=value, source="user", confidence=1.0)
     component = component.model_copy(
-        update={"attributes": attrs, "confidence": 1.0, "brand_hint": row.manufacturer or component.brand_hint}
+        update={
+            "attributes": attrs,
+            "confidence": 1.0,
+            "brand_hint": brand or row.manufacturer or component.brand_hint,
+            "explicit_texts": [] if brand else component.explicit_texts,  # a SKU written beside it would win (05 §5.2)
+        }
     )
     x, inp = _match_one(ctx, component)
     if x.chosen_sku is None:

@@ -139,6 +139,44 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/chat/proposals/{proposal_id}/apply": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Apply Proposal
+         * @description 08 §7.5: the estimator approved the card. The same actions as the screen's, as one undoable change; a sent
+         *     version opens N+1 first. A proposal the quote has moved past answers 409 `proposal_expired`.
+         */
+        post: operations["apply_proposal_chat_proposals__proposal_id__apply_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/chat/proposals/{proposal_id}/dismiss": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Dismiss Proposal */
+        post: operations["dismiss_proposal_chat_proposals__proposal_id__dismiss_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/drawings": {
         parameters: {
             query?: never;
@@ -699,6 +737,67 @@ export interface paths {
         get: operations["get_quote_quotes__quote_id__get"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/quotes/{quote_id}/chat": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Chat
+         * @description The active conversation, its messages and proposals; pending proposals the quote has moved past come back
+         *     `expired` (08 §7.5).
+         */
+        get: operations["get_chat_quotes__quote_id__chat_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/quotes/{quote_id}/chat/messages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Send Message
+         * @description One turn (08 §4–§8): the answer's blocks, with the amounts of the money references they use.
+         */
+        post: operations["send_message_quotes__quote_id__chat_messages_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/quotes/{quote_id}/chat/new": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * New Conversation
+         * @description "שיחה חדשה": the active conversation is closed and kept read only; its pending proposals expire.
+         */
+        post: operations["new_conversation_quotes__quote_id__chat_new_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1683,6 +1782,161 @@ export interface components {
              * @description What would join the shared layer
              */
             what: string;
+        };
+        /**
+         * ChatApplyOut
+         * @description Applying a proposal (08 §7.5): the quote as it now is, the toast, and the event "בטל" undoes.
+         */
+        ChatApplyOut: {
+            /** Count */
+            count: number;
+            /** Event Id */
+            event_id: string | null;
+            /** Message */
+            message: string;
+            proposal: components["schemas"]["ChatProposalOut"];
+            quote: components["schemas"]["QuoteOut"];
+        };
+        /**
+         * ChatBlockOut
+         * @description 08 §8.1. `text`: `{{line:ln_…}}` and `{{$T1}}` references in `content`; `clarification`: `options`;
+         *     `proposal`: `proposal_id`; `ui_action`: `action` with `line_ids`, `panel_id`, `statuses`; `settings_link`: `kind`,
+         *     `route`, `values`.
+         */
+        ChatBlockOut: {
+            /** Action */
+            action?: string | null;
+            /** Content */
+            content?: string | null;
+            /** Kind */
+            kind?: string | null;
+            /** Line Ids */
+            line_ids?: string[] | null;
+            /** Options */
+            options?: string[] | null;
+            /** Panel Id */
+            panel_id?: string | null;
+            /** Proposal Id */
+            proposal_id?: string | null;
+            /** Route */
+            route?: string | null;
+            /** Statuses */
+            statuses?: string[] | null;
+            /**
+             * Type
+             * @enum {string}
+             */
+            type: "text" | "clarification" | "proposal" | "ui_action" | "settings_link";
+            /** Values */
+            values?: {
+                [key: string]: string;
+            } | null;
+        };
+        /** ChatMessageIn */
+        ChatMessageIn: {
+            /** Message */
+            message: string;
+            ui_context?: components["schemas"]["ChatUiContextIn"];
+        };
+        /** ChatMessageOut */
+        ChatMessageOut: {
+            /** Blocks */
+            blocks: components["schemas"]["ChatBlockOut"][];
+            /** Message Id */
+            message_id: string;
+            /** Money */
+            money: {
+                [key: string]: components["schemas"]["ChatMoneyOut"];
+            };
+            /**
+             * Role
+             * @enum {string}
+             */
+            role: "user" | "assistant";
+        };
+        /**
+         * ChatMoneyOut
+         * @description A money reference's amount, for the screen only; never sent to the model (08 §5.4).
+         */
+        ChatMoneyOut: {
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "ils" | "pct";
+            /**
+             * Value
+             * @example 0.15
+             */
+            value: string;
+        };
+        /**
+         * ChatOut
+         * @description The quote's active conversation (08 §5.2.1). `closed_count`: earlier ones, kept read only.
+         */
+        ChatOut: {
+            /** Closed Count */
+            closed_count: number;
+            /** Conversation Id */
+            conversation_id: string | null;
+            /** Messages */
+            messages: components["schemas"]["ChatMessageOut"][];
+            /** Proposals */
+            proposals: components["schemas"]["ChatProposalOut"][];
+        };
+        /**
+         * ChatProposalOut
+         * @description 08 §7.1. `diff` carries money references; `money` their amounts.
+         */
+        ChatProposalOut: {
+            /** Affected Line Count */
+            affected_line_count: number;
+            /** Base Version */
+            base_version: number;
+            /** Diff */
+            diff: {
+                [key: string]: unknown;
+            };
+            /** Money */
+            money: {
+                [key: string]: components["schemas"]["ChatMoneyOut"];
+            };
+            /** Proposal Id */
+            proposal_id: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "pending" | "applied" | "dismissed" | "expired" | "undone";
+            /** Summary He */
+            summary_he: string;
+            /** Warnings */
+            warnings: string[];
+        };
+        /** ChatTurnOut */
+        ChatTurnOut: {
+            assistant: components["schemas"]["ChatMessageOut"];
+            /**
+             * Proposals
+             * @description The proposals this turn made
+             */
+            proposals: components["schemas"]["ChatProposalOut"][];
+            user: components["schemas"]["ChatMessageOut"];
+        };
+        /**
+         * ChatUiContextIn
+         * @description 08 §5.1: what the screen shows when the message is sent. "הלוח הזה" is the panel, "השורות האלה" the lines.
+         */
+        ChatUiContextIn: {
+            /** Active Filter */
+            active_filter?: ("green" | "yellow" | "red") | null;
+            /** Panel Id */
+            panel_id?: string | null;
+            /**
+             * Selected Line Ids
+             * @default []
+             */
+            selected_line_ids: string[];
         };
         /** CorrectedQuoteOut */
         CorrectedQuoteOut: {
@@ -3699,6 +3953,68 @@ export interface operations {
             };
         };
     };
+    apply_proposal_chat_proposals__proposal_id__apply_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                proposal_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ChatApplyOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    dismiss_proposal_chat_proposals__proposal_id__dismiss_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                proposal_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ChatProposalOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     upload_drawings_post: {
         parameters: {
             query?: never;
@@ -4877,6 +5193,103 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["QuoteOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_chat_quotes__quote_id__chat_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                quote_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ChatOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    send_message_quotes__quote_id__chat_messages_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                quote_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ChatMessageIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ChatTurnOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    new_conversation_quotes__quote_id__chat_new_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                quote_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ChatOut"];
                 };
             };
             /** @description Error */

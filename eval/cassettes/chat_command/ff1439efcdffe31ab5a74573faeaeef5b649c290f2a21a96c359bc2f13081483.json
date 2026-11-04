@@ -1,0 +1,36 @@
+{
+  "answer": {
+    "input_tokens": 4,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 300,
+    "payload": null,
+    "text": null,
+    "tool_calls": [
+      {
+        "args": {
+          "text": "A9F74116"
+        },
+        "id": "toolu_01JD3xA3a43Sh5L5BMfUKvHT",
+        "name": "search_catalog"
+      },
+      {
+        "args": {
+          "changes": [
+            {
+              "panel": "B1",
+              "qty": 2,
+              "sku": "A9F74116",
+              "target": {},
+              "type": "add_line"
+            }
+          ],
+          "summary_he": "הוספת 2 יחידות של A9F74116 ללוח NURSERY"
+        },
+        "id": "toolu_01V5pYbsTNZ2mB5fQCcyEeL7",
+        "name": "propose_change"
+      }
+    ]
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

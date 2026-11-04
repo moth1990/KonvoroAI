@@ -96,7 +96,9 @@ def build(results: list[tuple[GoldenDrawing, Prediction]]) -> Report:
 
 
 def metrics_json(report: Report) -> str:
-    return json.dumps({k: v for k, v in report.items() if k != "meta"}, sort_keys=True, ensure_ascii=False, indent=2)
+    # the chat's per-request rows (answers included) are in the run's report, not the baseline
+    kept = {k: v for k, v in report.items() if k not in ("meta", "chat_cases")}
+    return json.dumps(kept, sort_keys=True, ensure_ascii=False, indent=2)
 
 
 def fmt(score: dict[str, Any] | None) -> str:

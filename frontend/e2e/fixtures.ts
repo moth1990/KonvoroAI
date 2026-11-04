@@ -52,6 +52,11 @@ export const TENANTS = {
   // The settings and queue screenshots, which change nothing; and a tenant with the three S24 flags off.
   s24Shots: "s24-shots@e2e.konboro.local",
   s24Off: "s24-off@e2e.konboro.local",
+  // S25. The chat: applying a proposal changes the NURSERY draft, so one tenant per project; one has `chat_layer` off.
+  chatDesktop: "chat-desktop@e2e.konboro.local",
+  chatMobile: "chat-mobile@e2e.konboro.local",
+  chatOff: "chat-off@e2e.konboro.local",
+  chatShots: "chat-shots@e2e.konboro.local", // the fidelity shots: proposals are made, never applied
 } as const;
 
 /** The fixture audit's id in each audit tenant (`E2eTenant.audit_id` in devtools/e2e.py). */

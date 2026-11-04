@@ -22,7 +22,7 @@ from konboro.db.ids import new_id
 from konboro.db.models import LlmCall
 from konboro.db.session import tenant_session
 from konboro_llm import LLMClient, LLMError, LLMRequest, LLMResult
-from konboro_llm.base import LLMProvider, RawAnswer
+from konboro_llm.base import LLMProvider, RawAnswer, RawTurn
 from konboro_llm.client import OnCall
 from konboro_llm.providers import CassetteProvider, FakeProvider
 
@@ -40,6 +40,23 @@ def live_providers(api_key: str | None = None) -> dict[str, LLMProvider]:
     from konboro_llm.providers.anthropic_provider import AnthropicProvider
 
     return {"anthropic": AnthropicProvider(api_key=key)}
+
+
+def chat_providers(settings: Any) -> dict[str, Any]:
+    """The API's model, for the chat (08). Tests always get the stand-in, whatever the .env has; a local API without
+    a key gets it too, loudly; anywhere else Claude or nothing."""
+    from konboro.devtools.fake_llm import fake_providers
+
+    if settings.env == "test":
+        return fake_providers()
+    key = settings.anthropic_api_key.get_secret_value() if settings.anthropic_api_key else None
+    live = live_providers(key)
+    if live or settings.env != "local":
+        return live
+    import logging
+
+    logging.getLogger("konboro.chat").warning("no ANTHROPIC_API_KEY: the chat answers from the stand-in model")
+    return fake_providers()
 
 
 def is_stand_in(provider_name: str) -> bool:
@@ -98,6 +115,19 @@ class SpendingCap:
             if self.spent_usd >= self.max_usd:
                 raise LLMError(f"spending cap reached: ${self.spent_usd:.2f} of ${self.max_usd:.2f}")
         answer = self.wrapped.complete_structured(request, model, retry_hint)
+        price_in, price_out = PRICES_USD.get(model, max(PRICES_USD.values()))
+        cost = (answer.input_tokens * price_in + answer.output_tokens * price_out) / 1_000_000
+        with self._lock:
+            self.spent_usd += cost
+        return answer
+
+    def complete_turn(
+        self, request: Any, turns: Any, model: str, allow_tools: bool = True, retry_hint: str | None = None
+    ) -> RawTurn:
+        with self._lock:
+            if self.spent_usd >= self.max_usd:
+                raise LLMError(f"spending cap reached: ${self.spent_usd:.2f} of ${self.max_usd:.2f}")
+        answer: RawTurn = self.wrapped.complete_turn(request, turns, model, allow_tools, retry_hint)  # type: ignore[attr-defined]
         price_in, price_out = PRICES_USD.get(model, max(PRICES_USD.values()))
         cost = (answer.input_tokens * price_in + answer.output_tokens * price_out) / 1_000_000
         with self._lock:

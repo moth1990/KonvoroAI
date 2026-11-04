@@ -135,6 +135,8 @@ class ChatConversation(Base, TenantScoped, Timestamps):
     quote_id: Mapped[str]
     status: Mapped[str] = mapped_column(server_default="active")
     summary: Mapped[str | None]
+    # the short names the model was given (`L3`, `CH1`) and the money references (`$T1`) with their amounts (S25)
+    state: Mapped[dict[str, Any]] = mapped_column(server_default="{}")
 
 
 class ChatMessage(Base, TenantScoped, Created):
@@ -160,7 +162,7 @@ class ChatProposal(Base, TenantScoped, Timestamps):
         tenant_unique(),
         tenant_fk("quote_id", "quotes"),
         tenant_fk("conversation_id", "chat_conversations"),
-        one_of("status", ("pending", "applied", "dismissed", "expired")),
+        one_of("status", ("pending", "applied", "dismissed", "expired", "undone")),
         one_of("remember_default", ("quote_only", "customer", "tenant")),
     )
 
@@ -175,6 +177,9 @@ class ChatProposal(Base, TenantScoped, Timestamps):
     remember_default: Mapped[str] = mapped_column(server_default="quote_only")
     status: Mapped[str] = mapped_column(server_default="pending")
     resolved_at: Mapped[datetime | None]
+    warnings: Mapped[list[Any]] = mapped_column(server_default="[]")
+    affected_line_count: Mapped[int] = mapped_column(server_default="0")
+    alias: Mapped[str | None]  # "CH1", the name the model knows it by
 
 
 class Audit(Base, TenantScoped, Timestamps):

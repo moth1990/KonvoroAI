@@ -1069,3 +1069,89 @@ class ProductChoiceOut(BaseModel):
 
 class RestoreIn(Strict):
     line_ids: list[str] = Field(min_length=1, max_length=200)
+
+
+# --- the chat (08, S25) --------------------------------------------------------------------------------------------
+
+
+class ChatUiContextIn(Strict):
+    """08 §5.1: what the screen shows when the message is sent. "הלוח הזה" is the panel, "השורות האלה" the lines."""
+
+    panel_id: str | None = Field(None, max_length=40)
+    selected_line_ids: list[Annotated[str, Field(max_length=40)]] = Field(default=[], max_length=200)
+    active_filter: Literal["red", "yellow", "green"] | None = None
+
+
+class ChatMessageIn(Strict):
+    message: Annotated[str, Field(min_length=1, max_length=2000)]
+    ui_context: ChatUiContextIn = Field(default_factory=lambda: ChatUiContextIn(panel_id=None, active_filter=None))
+
+
+class ChatMoneyOut(BaseModel):
+    """A money reference's amount, for the screen only; never sent to the model (08 §5.4)."""
+
+    kind: Literal["ils", "pct"]
+    value: DecimalStr
+
+
+class ChatBlockOut(BaseModel):
+    """08 §8.1. `text`: `{{line:ln_…}}` and `{{$T1}}` references in `content`; `clarification`: `options`;
+    `proposal`: `proposal_id`; `ui_action`: `action` with `line_ids`, `panel_id`, `statuses`; `settings_link`: `kind`,
+    `route`, `values`."""
+
+    type: Literal["text", "clarification", "proposal", "ui_action", "settings_link"]
+    content: str | None = None
+    options: list[str] | None = None
+    proposal_id: str | None = None
+    action: str | None = None
+    line_ids: list[str] | None = None
+    panel_id: str | None = None
+    statuses: list[str] | None = None
+    kind: str | None = None
+    route: str | None = None
+    values: dict[str, str] | None = None
+
+
+class ChatMessageOut(BaseModel):
+    message_id: str
+    role: Literal["user", "assistant"]
+    blocks: list[ChatBlockOut]
+    money: dict[str, ChatMoneyOut]
+
+
+class ChatProposalOut(BaseModel):
+    """08 §7.1. `diff` carries money references; `money` their amounts."""
+
+    proposal_id: str
+    summary_he: str
+    status: Literal["pending", "applied", "dismissed", "expired", "undone"]
+    affected_line_count: int
+    warnings: list[str]
+    diff: dict[str, Any]
+    base_version: int
+    money: dict[str, ChatMoneyOut]
+
+
+class ChatOut(BaseModel):
+    """The quote's active conversation (08 §5.2.1). `closed_count`: earlier ones, kept read only."""
+
+    conversation_id: str | None
+    messages: list[ChatMessageOut]
+    proposals: list[ChatProposalOut]
+    closed_count: int
+
+
+class ChatTurnOut(BaseModel):
+    user: ChatMessageOut
+    assistant: ChatMessageOut
+    proposals: list[ChatProposalOut] = Field(description="The proposals this turn made")
+
+
+class ChatApplyOut(BaseModel):
+    """Applying a proposal (08 §7.5): the quote as it now is, the toast, and the event "בטל" undoes."""
+
+    quote: QuoteOut
+    message: str
+    event_id: str | None
+    count: int
+    proposal: ChatProposalOut

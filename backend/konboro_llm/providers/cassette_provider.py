@@ -8,6 +8,9 @@
 The key is a hash of everything that can change the answer: stage, model, system prompt, user text, image bytes
 (or the image's stable `key`, when the caller gives one), few-shot examples, the output schema, the retry hint and
 the effort, when one is set. Change any of them and the cassette must be recorded again.
+
+A tool loop's call (the chat, `complete_turn`) keys on the stage, model, instructions, context, every turn so far
+(tool results included), the tools' definitions, the answer schema, whether tools were allowed, and the retry hint.
 """
 
 from __future__ import annotations
@@ -17,8 +20,8 @@ import json
 from pathlib import Path
 from typing import Any, Literal
 
-from ..base import LLMProvider, RawAnswer
-from ..types import LLMError, LLMRequest
+from ..base import LLMProvider, RawAnswer, RawTurn, ToolProvider
+from ..types import LLMError, LLMRequest, ToolLoopRequest, Turn
 
 CassetteMode = Literal["replay", "record", "fill"]
 
@@ -47,6 +50,32 @@ def cassette_key(request: LLMRequest[Any], model: str, retry_hint: str | None) -
     return _sha256(json.dumps(material, sort_keys=True, ensure_ascii=False).encode())
 
 
+def _turn_material(t: Turn) -> dict[str, Any]:
+    return {
+        "role": t.role,
+        "text": t.text,
+        "calls": [[c.id, c.name, c.args] for c in t.tool_calls],
+        "results": [[r.call_id, r.content, r.is_error] for r in t.tool_results],
+    }
+
+
+def turn_key(
+    request: ToolLoopRequest[Any], turns: list[Turn], model: str, allow_tools: bool, retry_hint: str | None
+) -> str:
+    material = {
+        "stage": request.stage,
+        "model": model,
+        "system": request.system,
+        "context": request.context,
+        "turns": [_turn_material(t) for t in turns],
+        "tools": [[t.name, t.description, t.args_schema.model_json_schema()] for t in request.tools],
+        "schema": request.output_schema.model_json_schema(),
+        "allow_tools": allow_tools,
+        "retry_hint": retry_hint,
+    }
+    return _sha256(json.dumps(material, sort_keys=True, ensure_ascii=False).encode())
+
+
 class CassetteProvider:
     def __init__(self, root: Path, mode: CassetteMode = "replay", wrapped: LLMProvider | None = None):
         if mode in ("record", "fill") and wrapped is None:
@@ -72,6 +101,29 @@ class CassetteProvider:
             return RawAnswer.model_validate(json.loads(path.read_text(encoding="utf-8"))["answer"])
         assert self.wrapped is not None  # noqa: S101 (checked in __init__)
         answer = self.wrapped.complete_structured(request, model, retry_hint)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        record = {"stage": request.stage, "model": model, "answer": answer.model_dump()}
+        path.write_text(json.dumps(record, sort_keys=True, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        return answer
+
+    def complete_turn(
+        self,
+        request: ToolLoopRequest[Any],
+        turns: list[Turn],
+        model: str,
+        allow_tools: bool = True,
+        retry_hint: str | None = None,
+    ) -> RawTurn:
+        path = self.root / request.stage / f"{turn_key(request, turns, model, allow_tools, retry_hint)}.json"
+        if self.mode == "replay" or (self.mode == "fill" and path.exists()):
+            if not path.exists():
+                raise CassetteMissingError(
+                    f"no cassette for stage '{request.stage}' ({path.name}): the prompt, tools or conversation "
+                    "changed. Record it with EVAL_MODE=live EVAL_RECORD=1 make eval"
+                )
+            return RawTurn.model_validate(json.loads(path.read_text(encoding="utf-8"))["answer"])
+        wrapped: ToolProvider = self.wrapped  # type: ignore[assignment]
+        answer = wrapped.complete_turn(request, turns, model, allow_tools, retry_hint)
         path.parent.mkdir(parents=True, exist_ok=True)
         record = {"stage": request.stage, "model": model, "answer": answer.model_dump()}
         path.write_text(json.dumps(record, sort_keys=True, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

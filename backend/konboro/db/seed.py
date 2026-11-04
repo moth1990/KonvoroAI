@@ -82,8 +82,11 @@ FLAGS = [
     },
     {"key": "settings_screen", "description": "מסך ההגדרות (10 §9.1)", "depends_on": []},
     {"key": "approval_queue", "description": "תור אישור לשכבה המשותפת (00 §14.2)", "depends_on": []},
+    # S25 decision 5: spec 13 has no key for the chat; removed once its screen is accepted
+    {"key": "chat_layer", "description": "צ'אט על ההצעה במסך הבדיקה (08)", "depends_on": []},
 ]
 S24_FLAGS = ("onboarding", "settings_screen", "approval_queue")
+CHAT_FLAG = "chat_layer"
 # The demo factory has answered the two questions, and its price list came from two quotes it sent (10288, 10271).
 DEMO_TERMS = {"version": "2026-10", "by": DEMO_USER, "at": "2026-10-01T09:00:00+00:00"}
 
@@ -410,7 +413,7 @@ def seed_demo_fixtures(session: Session, storage: "Storage") -> None:
     audit_993.enable_flag(session, DEMO_TENANT)
     audit_993.seed_audit_993(session, DEMO_TENANT, DEMO_USER)
     audit_993.seed_audit_993_pages(session, storage, DEMO_TENANT)
-    for key in (PRICE_LIST_FLAG, *S24_FLAGS):
+    for key in (PRICE_LIST_FLAG, *S24_FLAGS, CHAT_FLAG):
         session.execute(
             insert(TenantFeatureOverride)
             .values(tenant_id=DEMO_TENANT, flag_key=key, enabled=True, reason="demo")
