@@ -57,14 +57,19 @@ A designer's single-sheet plan in the style of 25.26.100 (בית כנסת מקו
 
 ## Open questions
 
-- None blocking. The rules below are the user's (findings 1–7); their exact thresholds are recorded as decisions.
+- None blocking. The rules are the user's (findings 1–7 on 25.26.100); their thresholds are recorded as decisions below.
 
 ## Outcome
 
-Filled in at `/session-close`.
-
-- **Done:**
+- **Done:** BUG-066 to BUG-072. On 25.26.100's main panel, replayed from the dev run's stage 2–3 outputs (`tests/unit/test_plan_25_26_100.py`, stage 4 without the tile agent), the panel now has both RCDs (4P 40A 30 mA), 23 16A breakers (22 on 3×2.5 → 1P, the kitchen's on 5×2.5 → 3P), three current transformers T1–T3, no current transformer made of an end circle, Q0 an MCCB (XT1 on the sample catalog), and the 10A lighting breakers as one 1P line on their 3×1.5 cables.
 - **Decisions made:**
-- **Eval / metrics:**
-- **Bugs logged:**
-- **Follow-ups:**
+  1. **Where the factory overrides the prefix table** (Claude): `tenant_settings.matching.designator_prefixes`, a key in an existing JSON column, so no migration (S25's open branch adds 0021). The table is not part of the library's version: the model never sees it, so it moves no cassette.
+  2. **The prefix only weighs** (Claude, from the user's "weighs the class"): it changes an unsure reading only, picks among the classes the model saw, else the one class of the symbol's own family the prefix allows, and never brings in a family the model did not see. A sure reading stands.
+  3. **"Above the catalog's MCB range"** (the user's rule, finding 2): stage 5 types a breaker the drawing did not call an MCB in words again by its current, as an MCCB, when the current is above the largest MCB in the catalog (63A in the sample). An MCB written as such ("MCB") still narrows to MCBs (05 §5.1 item 2), so `test_the_class_narrows_the_family` now writes "MCB". 05 §5.5.1's row is amended.
+  4. **A tag conflict** (Claude, BUG-066): a sure device of another family under a tag, or one drawn away from the tag's device, stays its own device, untagged and yellow (`tag_conflict`). An unsure one within the length of one of the tag's device's drawings is a misread part of it and joins, as before (NEVIS-1's Q0 ring, 26-993's QLG1 thermal release): treating those as conflicts made phantom current transformers on two golden drawings.
+  5. **End circles after the disambiguation call** (Claude): absorbing them before the call would save a few calls, but it moves the page's budget and so every disambiguation cassette. After the call, the eval's stage 3 changes come from the new rules only. Follow-up below.
+  6. **Thresholds** (Claude, starting values): an end circle is ≤ 35% of its device and within 6 pt or 30% of its size; peers share a top within 3 pt, a width within 15% and a height within 60%; a count is beside a rating or a range within 1.5 line heights; a wire that starts within 3 pt of where the walk passed carries it on; a dead end of 4 pt or less is a tick.
+  7. **No golden file for 25.26.100** (brief): the user checked the main panel only. A unit fixture from the dev run instead, with the title block, notes and file name left out.
+- **Eval / metrics:** cassettes re-recorded for the calls the change moved (`EVAL_RECORD=missing`, three live runs, about 60 calls), then the baseline rewritten (`make eval-baseline`, its own commit). Better: 6199-2-50 component recall 0.575 → 0.644, precision 0.506 → 0.560, unit recall 0.522 → 0.576, with SKU 0.554 → 0.616 (guard-booth panel recall 0.357 → 0.643); NEVIS-1 component recall 0.857 → 0.905, unit recall 0.766 → 0.787. Worse, explained: NEVIS-1 poles accuracy 0.917 → 0.846 and with SKU 0.810 → 0.773, from the re-recorded tile's answer, which reads C4's power contacts as one pole (graphic); the tile's prompt moved because F4's unsure cross is now an `mcb` by its letter, which stage 4 defaulted it to before. Stage 3's `llm_share` rises by up to 1.7 points on the designer's plans: the same disambiguation calls over fewer detections, the circles absorbed after their call. 6199-2-50's `s5_labelled` `llm_share` 0.0870 → 0.0889: one signature fewer once an MCB above the catalog's range is an MCCB.
+- **Bugs logged:** BUG-066 to BUG-072 closed. BUG-051 and BUG-036 checked: not BUG-066's cause (stage 3 detects only terminals there).
+- **Follow-ups:** see the roadmap backlog.
