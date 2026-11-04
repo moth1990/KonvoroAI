@@ -8,7 +8,8 @@ For each page stage 3 searched, in this order:
    over a row of symbols; what each symbol's text says; whether it is resolved.
 4. Supply scope (5.1.2) and the ranges of circuit numbers (5.1.1) from the lines of text.
 5. The tile agent (5.3–5.5) for the tiles code could not resolve, its tiles in parallel, every answer checked.
-6. Instances (5.6), with the multiplicity, the circuit around them from the wire graph, and their confidence (6.4);
+6. Instances (5.6), a lamp's colour from its symbol's fill when no text gives it (`association/colour.py`), with the
+   multiplicity, the circuit around them from the wire graph, and their confidence (6.4);
    missed symbols (5.7) from the agent and from stage 3's orphan texts.
 Then, once for the drawing, the chains (5.1.1 rule 3) and the merge (5.8), and the components are written to the
 `components` table (they outlive the contract: quote lines and audits point at them).
@@ -39,7 +40,7 @@ from konboro.contracts.merge import (
 )
 from konboro.db import models as m
 
-from ..association import agent, assign, bom, circuits, quantity, schemas
+from ..association import agent, assign, bom, circuits, colour, quantity, schemas
 from ..association.assign import Value
 from ..association.config import DEFAULT, AssociationConfig
 from ..association.merge import Built, attribute, components, instance_confidence, issue, missing_instance, status
@@ -164,8 +165,15 @@ def associate_page(
     work.tiles_total = sum(1 for t in pe.tiles if not t.is_blank)
     work.tiles_with_agent = len(tile_ids)
     checked: dict[str, agent.Checked | None] = {}
+    rendered: list[Image.Image] = []
+
+    def render_of(uri: str) -> Image.Image:  # the page's render, loaded once, only when something needs it
+        if not rendered:
+            rendered.append(Image.open(io.BytesIO(ctx.storage.get(ctx.tenant_id, uri))).convert("RGB"))
+        return rendered[0]
+
     if tile_ids and pe.render is not None:
-        render = Image.open(io.BytesIO(ctx.storage.get(ctx.tenant_id, pe.render.image_uri))).convert("RGB")
+        render = render_of(pe.render.image_uri)
         page_key = f"{page.sha256 or page.page_id}:{page.rotation_applied}:{pe.render.dpi}"
         tiles = {t.tile_id: t for t in pe.tiles}
         jobs = []
@@ -257,6 +265,10 @@ def associate_page(
                                 cfg.near_competitor,
                                 by_span[span_id].span.confidence,
                             )
+        if "color" in sch.names(d.family) and "color" not in values and pe.render is not None:
+            drawn = colour.fill(render_of(pe.render.image_uri), d.bbox, pe.render.px_per_pt, cfg)  # BUG-057
+            if drawn is not None:
+                values["color"] = Value(drawn, "graphic", [], cfg.fill_confidence, 1.0, 1.0, "the symbol's fill")
         mult = _multiplicity(d, r, agent_mult.get(d.det_id) if ok else None, page_lines)
         if d.det_id in ranges:
             mult.circuit_range, rid = ranges[d.det_id]

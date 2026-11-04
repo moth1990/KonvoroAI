@@ -1,24 +1,30 @@
 {
   "answer": {
-    "input_tokens": 3289,
+    "input_tokens": 3195,
     "model": "claude-sonnet-5-5",
-    "output_tokens": 544,
+    "output_tokens": 109,
     "payload": {
       "designators": [
         "L1",
         "L2",
         "L3",
-        "LG1",
-        "LG2",
-        "LG3",
-        "PM",
-        "EMS"
+        "HNV"
+      ],
+      "layout_designators": [
+        "Q0",
+        "F1-F17",
+        "F30",
+        "F18-F21",
+        "F22-F25",
+        "Q01",
+        "FNV",
+        "F26-F29"
       ],
       "panels": [
         {
           "depth_mm": 300,
-          "height_mm": 1000,
-          "name": "MAIN ELECTRICAL BOARD",
+          "height_mm": 1200,
+          "name": null,
           "width_mm": 800
         }
       ]

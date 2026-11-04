@@ -759,6 +759,91 @@ def test_an_aux_contact_is_an_accessory_and_an_untagged_contact_joins_its_device
     assert len(owner) == 4
 
 
+def test_terminals_tagged_like_a_selector_are_selectors() -> None:
+    """BUG-051: MINHAROT-1's SW2–SW5 were read as their two contact points, terminals, while SW1 was read as a
+    selector. Untagged terminals and a strip's X1 stay terminals; a tie between two families names none."""
+    built = [
+        _built(1, "selector_switch", tag="SW1", page=3),
+        _built(2, "terminal", tag="SW2", page=3),
+        _built(3, "terminal", tag="SW2", page=3),
+        _built(4, "terminal", tag="SW3", page=2),
+        _built(5, "terminal", tag="SW3", page=2),
+        _built(6, "terminal", page=2),
+        _built(7, "terminal", page=2),
+        _built(8, "terminal", tag="X1"),
+        _built(9, "indicator_lamp", tag="L1"),  # NURSERY-1: lamps L1–L3, and terminals L4, N4 for circuit 4
+        _built(10, "terminal", tag="L4"),
+        _built(11, "terminal", tag="N4"),
+    ]
+    comps, owner, issues = components("drw_01X", built, SCH)
+    selectors = next(c for c in comps if c.family == "selector_switch")
+    assert selectors.designators == ["SW1", "SW2", "SW3"] and selectors.quantity == 3
+    assert selectors.symbol_class == "selector_switch" and selectors.confidence <= DEFAULT.family_by_tag_max
+    assert selectors.status == "uncertain"
+    terminals = next(c for c in comps if c.family == "terminal")
+    assert terminals.designators == ["L4", "N4", "X1"] and terminals.quantity == 5
+    assert [(i.code, i.severity) for i in issues] == [("family_by_tag", "warning")]
+    assert "SW2, SW3" in issues[0].message and "SW1" in issues[0].message
+    assert len(owner) == 11
+
+    tie = [_built(1, "relay", tag="K1"), _built(2, "contactor", tag="K2"), _built(3, "terminal", tag="K3")]
+    assert {c.family for c in components("drw_01X", tie, SCH)[0]} == {"relay", "contactor", "terminal"}
+
+
+def _drawn_poles(b: Built, poles: int | None) -> Built:
+    b.instance.attributes["poles"] = AttributeValue(
+        value=poles, source="graphic" if poles else None, confidence=0.6 if poles else None, span_ids=[]
+    )
+    return b
+
+
+def test_a_contactor_drawn_as_single_pole_contacts_has_a_pole_per_contact() -> None:
+    """BUG-053: MINHAROT-1's C1 switches F2–F4, one single-pole contact on each circuit; only the third is tagged.
+    C2 is drawn once, three-pole. Poles written as text are never recounted."""
+    built = [
+        _drawn_poles(_built(1, "contactor", role="power_contact"), None),
+        _drawn_poles(_built(2, "contactor", role="power_contact"), 1),
+        _drawn_poles(_built(3, "contactor", tag="C1", role="power_contact"), 1),
+        _built(4, "contactor", tag="C1", role="coil", page=3),
+        _drawn_poles(_built(9, "contactor", tag="C2", role="power_contact"), 3),
+        _built(10, "contactor", tag="C2", role="coil", page=3),
+    ]
+    comps, _, _ = components("drw_01X", built, SCH)
+    assert len(comps) == 1 and comps[0].designators == ["C1", "C2"] and comps[0].quantity == 2
+    poles = comps[0].attributes["poles"]
+    assert poles.value == 3 and poles.source == "graphic" and poles.confidence == 0.6
+
+    written = [
+        _built(1, "contactor", role="power_contact"),
+        _built(2, "contactor", tag="C1", role="power_contact", values={"poles": 1}),
+    ]
+    assert components("drw_01X", written, SCH)[0][0].attributes["poles"].value == 1
+
+    one = [_drawn_poles(_built(1, "contactor", tag="C1", role="power_contact"), 1)]
+    assert components("drw_01X", one, SCH)[0][0].attributes["poles"].value == 1
+
+
+def test_an_aux_contact_drawn_again_where_it_is_used_is_counted_once() -> None:
+    """BUG-054: MINHAROT-1 draws five 21/22 contacts beside F2–F6 on page 5 (two read with a neighbour's tag, three
+    with none) and three of them again on page 8, read with F2–F4. Page 8's join page 5's. When the devices' page
+    has fewer contacts than are bound for it, each is counted where it is drawn."""
+    breakers = [_built(n, tag=f"F{n}", values={"current_a": 10, "poles": 1}, page=5) for n in range(2, 7)]
+    home = [
+        _built(11, "aux_contact", tag="F2", role="aux_contact", page=5),
+        _built(12, "aux_contact", tag="F3", role="aux_contact", page=5),
+        *[_built(n, "aux_contact", role="aux_contact", page=5) for n in (13, 14, 15)],
+    ]
+    used = [_built(n, "aux_contact", tag=f"F{n - 19}", role="aux_contact", page=8) for n in (21, 22, 23)]
+    comps, owner, _ = components("drw_01X", breakers + home + used, SCH)
+    aux = [c for c in comps if c.family == "aux_contact"]
+    assert sum(c.quantity for c in aux) == 5
+    assert sorted({t for c in aux for t in c.parent_designators}) == ["F2", "F3", "F4"]
+    assert sum(len(c.instance_ids) for c in aux) == 8 and len(owner) == 13
+
+    comps, _, _ = components("drw_01X", breakers + home[:2] + used, SCH)
+    assert sum(c.quantity for c in comps if c.family == "aux_contact") == 5  # 2 on page 5, 3 on page 8
+
+
 def test_two_brands_for_one_component() -> None:
     built = [
         _built(1, values={"current_a": 16, "poles": 1}, brand="ABB"),
@@ -852,3 +937,37 @@ def test_one_value_written_over_several_spans_is_proven_by_them_together() -> No
         FAMILIES,
     )
     assert wrong.citation_mismatches == 1
+
+
+# ---------- a lamp's colour from its fill (BUG-057) ----------
+
+
+def _lamp(fill: tuple[int, int, int] | None, outline: tuple[int, int, int] = (0, 0, 0)) -> Image.Image:
+    """A lamp as MINHAROT-1 draws it at 2 px per point: a circle with a cross, two quadrants filled, at (10, 10)."""
+    from PIL import ImageDraw
+
+    im = Image.new("RGB", (100, 100), "white")
+    draw = ImageDraw.Draw(im)
+    box = (20, 20, 60, 60)
+    if fill is not None:
+        draw.pieslice(box, 225, 315, fill=fill)
+        draw.pieslice(box, 45, 135, fill=fill)
+    draw.ellipse(box, outline=outline, width=2)
+    draw.line((26, 26, 54, 54), fill=outline, width=2)
+    draw.line((26, 54, 54, 26), fill=outline, width=2)
+    return im
+
+
+def test_a_lamps_colour_is_its_fill() -> None:
+    from konboro.pipeline.association import colour
+
+    lamp = (10.0, 10.0, 30.0, 30.0)
+    assert colour.fill(_lamp((0, 200, 0)), lamp, 2.0) == "green"
+    assert colour.fill(_lamp((230, 0, 0)), lamp, 2.0) == "red"
+    assert colour.fill(_lamp((230, 0, 0), outline=(230, 0, 0)), lamp, 2.0) == "red"  # HT1: a red ring too
+    assert colour.fill(_lamp(None), lamp, 2.0) is None  # drawn black, no fill
+    assert colour.fill(_lamp(None, outline=(0, 160, 0)), lamp, 2.0) is None  # a green CAD layer, lines only
+    assert colour.fill(_lamp((0, 200, 0)), (40.0, 40.0, 50.0, 50.0), 2.0) is None  # beside the lamp, not on it
+    two = _lamp((0, 200, 0))
+    two.paste(_lamp((230, 0, 0)).crop((20, 40, 60, 60)), (20, 40))
+    assert colour.fill(two, lamp, 2.0) is None  # half green, half red: no one colour
