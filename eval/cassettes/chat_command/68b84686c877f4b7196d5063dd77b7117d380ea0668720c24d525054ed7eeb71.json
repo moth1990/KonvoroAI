@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 2,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 359,
+    "payload": {
+      "clarification_options": [],
+      "text": "הכנתי הצעה (CH1) להנחת לקוח של 5% על כל ההצעה. שום דבר לא משתנה עד שתאשר את הכרטיס.\n\nאם תאשר, ההנחה תהיה {{$T3}}. הסכום נטו ישתנה מ-{{$T1}} ל-{{$T2}}, והמרווח מ-{{$P1}} ל-{{$P2}}.\n\nשימו לב: 5 שורות אדומות עדיין בלי מחיר ({{line:L1}}, {{line:L2}}, {{line:L3}}, {{line:L4}}, {{line:L5}}). ההנחה מחושבת רק על השורות שיש להן מחיר, ולכן הסכום יעלה כשיתמחרו."
+    },
+    "text": null,
+    "tool_calls": []
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

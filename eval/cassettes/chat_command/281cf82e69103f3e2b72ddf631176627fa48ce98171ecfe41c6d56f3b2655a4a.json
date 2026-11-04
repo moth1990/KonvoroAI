@@ -1,0 +1,20 @@
+{
+  "answer": {
+    "input_tokens": 4,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 329,
+    "payload": {
+      "clarification_options": [
+        "החלפת מותג בכל 8 המפסקים",
+        "החלפת מותג ב־5 השורות האדומות",
+        "החלפת מק\"ט בשורה מסוימת",
+        "החלפת מותג בכל 14 השורות"
+      ],
+      "text": "מה להחליף ובמה? אפשר לבחור מה לטפל, ואז תכתוב לי במה להחליף, למשל מותג או מק\"ט."
+    },
+    "text": null,
+    "tool_calls": []
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

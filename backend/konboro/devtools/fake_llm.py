@@ -19,6 +19,12 @@ The catalog agent (stage 5) chooses the first candidate it is shown, at 0.7.
 The reviewing agent (stage 6) notes one thing about the first component it is shown, at 0.6 (an info, never a
 colour), its message marked "stand-in".
 
+The chat coordinator (08, S25) follows a short script on the review screen's suggestions: why lines are yellow
+(`query_lines` on yellow), what is missing to send (`query_lines` on red), replacing ABB breakers with Schneider
+(`propose_change` `replace_brand`), showing the red lines (`focus_ui`), how many RCDs (`query_lines` on `rcd`),
+deleting or setting the quantity of the selected lines (`propose_change`). Anything else gets a fixed answer that
+says so. Its answers name the lines and the first line's total by the references the tools gave it.
+
 A picture of a BOM (01 §5.8) reads as a short handwritten form for "לוח קומה 1": quantity and item columns, three
 items, the third continued on the next row, and the last row clear of the image's edge. A spreadsheet's unknown
 headers map by position: the first column is the item, the second the quantity.
@@ -33,6 +39,8 @@ from PIL import Image
 from konboro_llm import LLMRequest
 from konboro_llm.providers import FakeProvider
 from konboro_llm.stages.catalog_disambiguation import STAGE as CATALOG
+from konboro_llm.stages.chat_command import STAGE as CHAT
+from konboro_llm.stages.chat_compaction import STAGE as COMPACT
 from konboro_llm.stages.context_extraction import GeneralNotes
 from konboro_llm.stages.ocr_transcription import STAGE as OCR
 from konboro_llm.stages.page_classification import STAGE as CLASSIFY
@@ -188,7 +196,88 @@ def bom_table(request: LLMRequest[Any]) -> dict[str, Any]:
     }
 
 
-def answer(request: LLMRequest[Any]) -> dict[str, Any]:
+CHAT_UNKNOWN = "זו תשובה של מודל הדמה: הוא מכיר רק את הפקודות שמתחת לחלון."
+_SELECTED = re.compile(r"selected lines ([L0-9, ]+)")
+_QTY = re.compile(r"(\d+)")
+
+
+def _chat_decide(text: str) -> dict[str, Any]:
+    found = _SELECTED.search(text)
+    selected = [x.strip() for x in (found[1].split(",") if found else []) if x.strip()]
+    message = text.split("]\n", 1)[-1]
+    qty = _QTY.search(message)
+    if re.search(r"שניידר|schneider", message, re.I):
+        change: dict[str, Any] = {
+            "type": "replace_brand",
+            "target": {"manufacturers": ["ABB"], "families": ["circuit_breaker"]},
+            "manufacturer": "Schneider Electric",
+        }
+        return {
+            "tool_calls": [
+                {"name": "propose_change", "args": {"changes": [change], "summary_he": 'החלפת מא"זי ABB ל-Schneider'}}
+            ]
+        }
+    if re.search(r"מחק|תמחק", message) and selected:
+        change = {"type": "delete_lines", "target": {"lines": selected}}
+        return {
+            "tool_calls": [
+                {"name": "propose_change", "args": {"changes": [change], "summary_he": "מחיקת השורות המסומנות"}}
+            ]
+        }
+    if re.search(r"כמות", message) and selected and qty:
+        change = {"type": "set_quantity", "target": {"lines": selected}, "qty": int(qty[1])}
+        return {"tool_calls": [{"name": "propose_change", "args": {"changes": [change], "summary_he": "שינוי כמות"}}]}
+    if re.search(r"צהוב", message):
+        return {"tool_calls": [{"name": "query_lines", "args": {"statuses": ["yellow"]}}]}
+    if re.search(r"חסר|לשלוח", message):
+        return {"tool_calls": [{"name": "query_lines", "args": {"statuses": ["red"]}}]}
+    if re.search(r"אדומ", message):
+        return {"tool_calls": [{"name": "focus_ui", "args": {"statuses": ["red"]}}]}
+    if re.search(r"פחת", message):
+        return {"tool_calls": [{"name": "query_lines", "args": {"families": ["rcd"]}}]}
+    return {"answer": {"text": CHAT_UNKNOWN, "clarification_options": []}}
+
+
+def _chat_answer(name: str, result: dict[str, Any]) -> dict[str, Any]:
+    if "error" in result:
+        return {"answer": {"text": f"לא הצלחתי: {result['error']}"}}
+    if name == "query_lines":
+        lines = result.get("lines", [])
+        refs = ", ".join("{{line:" + ln["line"] + "}}" for ln in lines[:8])
+        total = next((ln["line_total"] for ln in lines if ln.get("line_total")), None)
+        text = f"מצאתי {result['total_count']} שורות: {refs}." if lines else "לא מצאתי שורות כאלה."
+        if total:
+            text += " סך השורה הראשונה עם מחיר: {{" + total + "}}."
+        return {"answer": {"text": text}}
+    if name == "propose_change":
+        text = f"הכנתי הצעה ({result['proposal']}) ל-{result['affected_line_count']} שורות. שום דבר לא משתנה עד שתאשר."
+        if result.get("not_changed"):
+            text += f" {len(result['not_changed'])} שורות לא מתחלפות, הסיבה בכרטיס."
+        return {"answer": {"text": text}}
+    if name == "focus_ui":
+        return {"answer": {"text": "סימנתי את השורות בטבלה."}}
+    return {"answer": {"text": "בוצע."}}
+
+
+def chat_turn(turn: Any) -> dict[str, Any]:
+    """The coordinator's next step: the current message is the last user turn with text."""
+    turns = turn.turns
+    at = max(i for i, t in enumerate(turns) if t.role == "user" and t.text)
+    text = turns[at].text or ""
+    if text.startswith("Your answer wrote an amount"):
+        return {"answer": {"text": "הסכום מופיע בכרטיס."}}
+    after = turns[at + 1 :]
+    if not after:
+        return _chat_decide(text)
+    call = after[-2].tool_calls[-1]
+    return _chat_answer(call.name, after[-1].tool_results[-1].content)
+
+
+def answer(request: Any) -> dict[str, Any]:
+    if request.stage == CHAT:
+        return chat_turn(request)
+    if request.stage == COMPACT:
+        return {"summary": "סיכום של מודל הדמה."}
     if request.stage == CLASSIFY:
         return classification(request)
     if request.stage == OCR:

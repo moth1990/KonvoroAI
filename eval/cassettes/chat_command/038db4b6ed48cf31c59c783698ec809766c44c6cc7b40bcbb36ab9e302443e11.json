@@ -1,0 +1,30 @@
+{
+  "answer": {
+    "input_tokens": 2,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 105,
+    "payload": null,
+    "text": null,
+    "tool_calls": [
+      {
+        "args": {
+          "kind": "margin_rule",
+          "values": [
+            {
+              "name": "margin_pct",
+              "value": "25"
+            },
+            {
+              "name": "family",
+              "value": "device"
+            }
+          ]
+        },
+        "id": "toolu_01DRT5AXzdcU6Dbg2BX1gENa",
+        "name": "open_settings"
+      }
+    ]
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

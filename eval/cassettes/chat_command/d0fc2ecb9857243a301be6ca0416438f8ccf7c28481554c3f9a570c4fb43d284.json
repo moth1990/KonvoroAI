@@ -1,0 +1,32 @@
+{
+  "answer": {
+    "input_tokens": 2,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 209,
+    "payload": null,
+    "text": null,
+    "tool_calls": [
+      {
+        "args": {
+          "changes": [
+            {
+              "margin_kind": "margin",
+              "pct": "25",
+              "target": {
+                "lines": [
+                  "L3"
+                ]
+              },
+              "type": "set_line_margin"
+            }
+          ],
+          "summary_he": "רווח 25% על המגען"
+        },
+        "id": "toolu_01GEeaM6zA6dPP9YTLYXb5kF",
+        "name": "propose_change"
+      }
+    ]
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

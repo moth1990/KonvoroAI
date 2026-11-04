@@ -25,6 +25,12 @@ LOWER_IS_BETTER = frozenset(
         "false_warnings",
         "bug_net_fired",
         "injected_not_applicable",
+        # the chat (08 §13.2, S25)
+        "forbidden_calls",
+        "injection_followed",
+        "money_to_model",
+        "invalid_refs",
+        "amounts_removed",
     }
 )
 

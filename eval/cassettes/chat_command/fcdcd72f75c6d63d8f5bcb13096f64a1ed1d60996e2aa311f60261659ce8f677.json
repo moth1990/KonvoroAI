@@ -1,0 +1,21 @@
+{
+  "answer": {
+    "input_tokens": 2,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 85,
+    "payload": null,
+    "text": null,
+    "tool_calls": [
+      {
+        "args": {
+          "manufacturer": "Schneider",
+          "text": "iC60 1P 16A"
+        },
+        "id": "toolu_01KuBVSQzW7CPWXVQmWxKKf1",
+        "name": "search_catalog"
+      }
+    ]
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

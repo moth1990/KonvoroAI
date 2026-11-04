@@ -38,9 +38,14 @@ def test_the_fixtures_texts_are_read_as_numbers() -> None:
     assert _fixture_value("current_a", "160A") == 160
     assert _fixture_value("breaking_capacity_ka", "4.5kA") == 4.5
     assert _fixture_value("poles", "3") == 3
-    assert _fixture_value("poles", "1P+N") == "1P+N"
     assert _fixture_value("curve", "C") == "C"
     assert _fixture_value("current_a", "—") is None
+
+
+def test_fixture_poles_with_a_neutral() -> None:
+    """BUG-064: "1P+N" is one pole and a neutral; stage 5 and `describe` take poles as a number."""
+    assert _fixture_value("poles", "1P+N") == 1
+    assert _fixture_value("poles", "—") is None
 
 
 def test_the_panel_falls_back_to_none_with_no_panels() -> None:

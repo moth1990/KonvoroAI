@@ -4,6 +4,11 @@ Structured output is the API's JSON output (`output_config.format`) with the sta
 the SDK's `transform_schema` (constraints it can't enforce move into descriptions; the client still validates the
 answer against the full schema). Not a forced tool call: Claude Sonnet 5.5 and Opus 5.5 reject `tool_choice`
 `tool`/`any` with a 400 (BUG-013).
+
+A tool loop's call (`complete_turn`, the chat coordinator) sends the tools with `tool_choice` `auto`, or `none` for
+the last call, and the same JSON output for the final answer. The fixed instructions and the tool definitions are
+the cached prefix (08 §5.2.1); the per-turn context follows them uncached, and the newest message is a second
+breakpoint, so each step of one loop reads the steps before it from the cache.
 """
 
 from __future__ import annotations
@@ -14,8 +19,10 @@ from typing import Any
 
 import anthropic
 
-from ..base import RawAnswer
-from ..types import ImageInput, LLMError, LLMRequest
+from ..base import RawAnswer, RawToolCall, RawTurn
+from ..types import ImageInput, LLMError, LLMRequest, ToolLoopRequest, Turn
+
+CACHE = {"type": "ephemeral"}
 
 
 class AnthropicProvider:
@@ -77,6 +84,90 @@ class AnthropicProvider:
             input_tokens=response.usage.input_tokens,
             output_tokens=response.usage.output_tokens,
         )
+
+    def complete_turn(
+        self,
+        request: ToolLoopRequest[Any],
+        turns: list[Turn],
+        model: str,
+        allow_tools: bool = True,
+        retry_hint: str | None = None,
+    ) -> RawTurn:
+        try:
+            response = self._client.messages.create(**self.turn_params(request, turns, model, allow_tools, retry_hint))
+        except anthropic.APIError as exc:
+            raise LLMError(f"anthropic call failed: {exc}") from exc
+        if response.stop_reason in ("refusal", "max_tokens"):
+            raise LLMError(f"model stopped before answering: {response.stop_reason}")
+
+        calls = [
+            RawToolCall(id=b.id, name=b.name, args=dict(b.input)) for b in response.content if b.type == "tool_use"
+        ]
+        text = "".join(b.text for b in response.content if b.type == "text") or None
+        payload: dict[str, Any] | None = None
+        if not calls and text is not None:
+            try:
+                loaded = json.loads(text)
+            except json.JSONDecodeError:
+                loaded = None
+            payload = loaded if isinstance(loaded, dict) else None
+        return RawTurn(
+            tool_calls=calls,
+            text=text if calls else None,
+            payload=payload,
+            model=response.model,
+            input_tokens=response.usage.input_tokens,
+            output_tokens=response.usage.output_tokens,
+        )
+
+    def turn_params(
+        self, request: ToolLoopRequest[Any], turns: list[Turn], model: str, allow_tools: bool, retry_hint: str | None
+    ) -> dict[str, Any]:
+        system: list[dict[str, Any]] = [{"type": "text", "text": request.system, "cache_control": CACHE}]
+        if request.context:
+            system.append({"type": "text", "text": request.context})
+        messages = [self._turn_message(t) for t in turns]
+        if retry_hint:
+            messages[-1]["content"].append(
+                {"type": "text", "text": f"Your previous answer was not valid: {retry_hint}\nFix it."}
+            )
+        messages[-1]["content"][-1] = {**messages[-1]["content"][-1], "cache_control": CACHE}
+        return {
+            "model": self.model_id(model),
+            "max_tokens": request.max_tokens,
+            "system": system,
+            "tools": [
+                {
+                    "name": t.name,
+                    "description": t.description,
+                    "input_schema": anthropic.transform_schema(t.args_schema),
+                }
+                for t in request.tools
+            ],
+            "tool_choice": {"type": "auto" if allow_tools else "none"},
+            "messages": messages,
+            "output_config": {
+                "format": {"type": "json_schema", "schema": anthropic.transform_schema(request.output_schema)}
+            },
+        }
+
+    @staticmethod
+    def _turn_message(turn: Turn) -> dict[str, Any]:
+        content: list[dict[str, Any]] = [
+            {
+                "type": "tool_result",
+                "tool_use_id": r.call_id,
+                "content": json.dumps(r.content, ensure_ascii=False),
+                **({"is_error": True} if r.is_error else {}),
+            }
+            for r in turn.tool_results
+        ]
+        if turn.text:
+            content.append({"type": "text", "text": turn.text})
+        content += [{"type": "tool_use", "id": c.id, "name": c.name, "input": c.args} for c in turn.tool_calls]
+        if not content:
+            content.append({"type": "text", "text": "…"})
+        return {"role": turn.role, "content": content}
 
     # ------------------------------------------------------------------ helpers
 

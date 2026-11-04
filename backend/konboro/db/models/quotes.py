@@ -183,6 +183,8 @@ CORRECTION_TYPES = (
     "supplier_selected",
     # 01 §5.8: the user set a BOM spreadsheet's column roles (S14)
     "bom_columns_mapped",
+    # 08 §6.7 `set_customer_discount`, from the chat (S25)
+    "discount_set",
 )
 
 

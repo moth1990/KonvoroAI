@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 2,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 247,
+    "payload": {
+      "clarification_options": [],
+      "text": "כן, יש בקטלוג שני מא\"ז 1P 16A של שניידר, שניהם עקומה C:\n• A9F74116 – iC60N, 6kA\n• A9F84116 – iC60H, 10kA\n\nיש גם A9F74616, שהוא 1P+N ולא 1P רגיל.\n\nשלוש הפריטים האלה מסומנים אצלי כלא נמצאים ברשימת המחירים וללא מחיר עלות. אם תבחר אחד מהם, כנראה לא יהיה לו מחיר בהצעה. רוצה שאכין הצעת החלפה לשורות ה-ABB?"
+    },
+    "text": null,
+    "tool_calls": []
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

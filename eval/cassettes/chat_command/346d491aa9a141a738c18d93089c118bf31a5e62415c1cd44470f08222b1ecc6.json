@@ -1,0 +1,39 @@
+{
+  "answer": {
+    "input_tokens": 4,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 236,
+    "payload": null,
+    "text": null,
+    "tool_calls": [
+      {
+        "args": {
+          "statuses": [
+            "red"
+          ]
+        },
+        "id": "toolu_01DEVxKVg9r7uuXr4LVYhNoY",
+        "name": "query_lines"
+      },
+      {
+        "args": {
+          "changes": [
+            {
+              "target": {
+                "statuses": [
+                  "red"
+                ]
+              },
+              "type": "delete_lines"
+            }
+          ],
+          "summary_he": "מחיקת כל השורות האדומות"
+        },
+        "id": "toolu_012ngdqERefq8US1M1D5xsRV",
+        "name": "propose_change"
+      }
+    ]
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

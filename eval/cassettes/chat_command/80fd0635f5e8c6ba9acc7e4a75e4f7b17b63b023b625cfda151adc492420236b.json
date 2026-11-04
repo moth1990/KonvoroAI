@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 2,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 142,
+    "payload": {
+      "clarification_options": [],
+      "text": "יש 2 שורות של מא\"ז 16A בלוח B1, ושתיהן ירוקות:\n- {{line:L1}}: ABB S203M-C16, 3 קטבים, כמות 5.\n- {{line:L2}}: ABB S201M-C16, קוטב אחד, כמות 1.\n\nסימנתי אותן במסך."
+    },
+    "text": null,
+    "tool_calls": []
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

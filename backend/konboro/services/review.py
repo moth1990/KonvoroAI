@@ -90,6 +90,16 @@ class Done:
 
 
 @dataclass
+class Deferred:
+    """Stages 6 and 7 held back while a chat proposal runs several actions (08 §7.2): what each asked for, run once
+    at the end (`run_deferred`)."""
+
+    reprice: set[str] = field(default_factory=set)
+    revalidate: set[str] = field(default_factory=set)
+    asked: bool = False
+
+
+@dataclass
 class Ctx:
     session: Session
     storage: Storage
@@ -97,6 +107,10 @@ class Ctx:
     quote: m.Quote
     version: m.QuoteVersion
     _outputs: pricing.Outputs | bool | None = field(default=False, repr=False)
+    # Who acts (09 §10's `source`): the review screen, or the chat applying a proposal (08 §7.5)
+    source: str = "review_screen"
+    tags: dict[str, Any] = field(default_factory=dict)  # added to every event's `after` (the chat's proposal id)
+    deferred: Deferred | None = None
 
     @property
     def tid(self) -> str:
@@ -309,12 +323,12 @@ def _event(
         quote_id=ctx.quote.id,
         quote_version=ctx.version.version,
         user_id=ctx.actor.user_id,
-        source="review_screen",
+        source=ctx.source,
         type=type_,
         line_id=line.id if line else line_id,
         component_id=line.component_id if line else None,
         before={**(before or {}), **({"restore": restore} if restore is not None else {})},
-        after=after,
+        after={**(after or {}), **ctx.tags} if (after or ctx.tags) else after,
         reason=reason,
     )
     ctx.session.add(event)
@@ -393,6 +407,11 @@ def edited_outputs(ctx: Ctx, out: pricing.Outputs) -> tuple[MergeResult, Matchin
 def refresh(ctx: Ctx, reprice: Iterable[str] = (), revalidate: Iterable[str | None] = ()) -> None:
     """Stage 6 on the panels in `revalidate`, then stage 7, with the lines whose keys are in `reprice` priced from
     the list and every other line keeping its price."""
+    if ctx.deferred is not None:
+        ctx.deferred.reprice |= set(reprice)
+        ctx.deferred.revalidate |= {p for p in revalidate if p}
+        ctx.deferred.asked = True
+        return
     keys = frozenset(reprice)
     out = ctx.outputs()
     if out is None:
@@ -409,6 +428,13 @@ def refresh(ctx: Ctx, reprice: Iterable[str] = (), revalidate: Iterable[str | No
         out = pricing.read_outputs(ctx.session, ctx.storage, ctx.tid, drawing.id)
         ctx._outputs = out
     pricing.price_drawing(ctx.session, ctx.tid, drawing, out, ctx.quote.name, keep=keys)
+
+
+def run_deferred(ctx: Ctx) -> None:
+    """Stages 6 and 7 once, for everything the held-back actions asked for."""
+    held, ctx.deferred = ctx.deferred, None
+    if held is not None and held.asked:
+        refresh(ctx, reprice=held.reprice, revalidate=held.revalidate)
 
 
 # --- line actions (09 §7.2–7.6) -------------------------------------------------------------------------------------
@@ -995,10 +1021,14 @@ def undo(ctx: Ctx, event_id: str) -> Done:
     if event is None:
         raise ReviewError(404, "not_found")
     restore = (event.before or {}).get("restore")
-    if event.quote_version != ctx.version.version or restore is None or event.type == "undo":
+    proposal = (event.after or {}).get("proposal") if event.type != "undo" else None
+    if event.quote_version != ctx.version.version or (restore is None and not proposal) or event.type == "undo":
         raise ReviewError(409, "not_undoable")
     if event.undone:
         raise ReviewError(409, "already_undone")
+    if proposal:  # 08 §7.5: a proposal applied from the chat is one action, whatever it changed
+        return _undo_proposal(ctx, proposal)
+    assert restore is not None  # noqa: S101 (refused above unless the event is a proposal's)
     _restore_lines(ctx, restore.get("lines", {}))
     _restore_findings(ctx, restore.get("findings", {}))
     if restore.get("product"):
@@ -1031,3 +1061,60 @@ def undo(ctx: Ctx, event_id: str) -> Done:
     mark = _event(ctx, "undo", after={"event_id": event.id, "type": event.type}, line_id=event.line_id)
     refresh(ctx, revalidate=restore.get("revalidate", []))
     return Done("הפעולה בוטלה", mark.id)
+
+
+def _put_back(ctx: Ctx, event: m.CorrectionEvent) -> None:
+    restore = (event.before or {}).get("restore") or {}
+    _restore_lines(ctx, restore.get("lines", {}))
+    _restore_findings(ctx, restore.get("findings", {}))
+    if restore.get("product"):
+        _restore_product(ctx, restore["product"])
+    if restore.get("memory"):
+        _restore_memory(ctx, restore["memory"])
+    if restore.get("created_lines") or restore.get("brand_discount"):
+        from konboro.services import review_picker
+
+        review_picker.undo_created(ctx, restore)
+        if restore.get("brand_discount"):
+            review_picker.undo_brand_discount(ctx, restore["brand_discount"])
+    if "discount_pct" in restore:
+        ctx.version.discount_pct = Decimal(restore["discount_pct"]) if restore["discount_pct"] else None
+    snapshot = dict(ctx.version.snapshot or {})
+    snapshot["deleted_line_keys"] = restore.get("deleted_line_keys", [])
+    ctx.version.snapshot = snapshot
+    event.undone = True
+
+
+def _undo_proposal(ctx: Ctx, proposal_id: str) -> Done:
+    events = list(
+        ctx.session.scalars(
+            select(m.CorrectionEvent)
+            .where(
+                m.CorrectionEvent.tenant_id == ctx.tid,
+                m.CorrectionEvent.quote_id == ctx.quote.id,
+                m.CorrectionEvent.quote_version == ctx.version.version,
+                m.CorrectionEvent.after["proposal"].astext == proposal_id,
+                m.CorrectionEvent.undone.is_(False),
+                m.CorrectionEvent.type != "undo",
+            )
+            .order_by(m.CorrectionEvent.created_at.desc(), m.CorrectionEvent.id.desc())
+        )
+    )
+    panels: set[str] = set()
+    for e in events:  # newest first: each puts back what was there before it
+        panels |= set(((e.before or {}).get("restore") or {}).get("revalidate", []))
+        _put_back(ctx, e)
+    ctx.session.flush()
+    first = events[-1] if events else None
+    mark = _event(
+        ctx,
+        "undo",
+        after={"event_id": first.id if first else None, "type": "chat_proposal", "proposal": proposal_id},
+        line_id=None,
+    )
+    proposal = ctx.session.get(m.ChatProposal, proposal_id)
+    if proposal is not None and proposal.tenant_id == ctx.tid:
+        proposal.status = "undone"
+    ctx.session.flush()
+    refresh(ctx, revalidate=panels)
+    return Done("השינוי מהצ'אט בוטל", mark.id, len(events))

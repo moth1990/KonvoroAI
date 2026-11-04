@@ -138,6 +138,11 @@ TENANTS = (
         terms=False,
         off=("onboarding", "settings_screen", "approval_queue"),
     ),
+    # S25. Applying a proposal changes the NURSERY draft, so one tenant per project; one has the chat's flag off.
+    E2eTenant(33, "chat-desktop@e2e.konboro.local", False, 12, False, nursery=True, prices=True),
+    E2eTenant(34, "chat-mobile@e2e.konboro.local", False, 12, False, nursery=True, prices=True),
+    E2eTenant(35, "chat-off@e2e.konboro.local", False, 12, False, nursery=True, prices=True, off=("chat_layer",)),
+    E2eTenant(36, "chat-shots@e2e.konboro.local", False, 12, False, nursery=True, prices=True),
 )
 TERMS = {"version": "2026-10", "at": "2026-10-01T09:00:00+00:00"}
 
@@ -338,7 +343,8 @@ def main() -> None:
         queue.purge(base)
     # The pipeline worker, beside the API, with the stand-in model: E2E never calls a real one (CLAUDE.md, testing)
     start_in_thread(settings, engine, stages=e2e_stages(STAGES), llm_providers=fake_providers())
-    uvicorn.run(create_app(settings, engine=engine), host="127.0.0.1", port=api_port, log_level="warning")
+    app = create_app(settings, engine=engine, llm_providers=fake_providers())  # the chat's stand-in too (S25)
+    uvicorn.run(app, host="127.0.0.1", port=api_port, log_level="warning")
 
 
 if __name__ == "__main__":
