@@ -18,6 +18,8 @@ class Permission(StrEnum):
     PRICE_LIST_WRITE = "price_list.write"
     COSTS_READ = "costs.read"  # 09 §12: costs and margins; without it the server sends none
     QUOTES_SEND = "quotes.send"  # 09 §12: send to the customer, open a new version
+    KNOWLEDGE_READ = "knowledge.read"  # the approval queue (00 §14.2)
+    KNOWLEDGE_DECIDE = "knowledge.decide"  # approve a candidate for the shared layer, or reject it
 
 
 ROLE_PERMISSIONS: dict[str, frozenset[Permission]] = {

@@ -1340,6 +1340,117 @@
         "title": "BrandDiscountOut",
         "type": "object"
       },
+      "CandidateList": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/CandidateOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "pending": {
+            "title": "Pending",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "pending"
+        ],
+        "title": "CandidateList",
+        "type": "object"
+      },
+      "CandidateOut": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "decided_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Decided At"
+          },
+          "evidence": {
+            "description": "The factory's own evidence; it is never copied",
+            "title": "Evidence",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "symbol",
+              "abbreviation",
+              "spelling",
+              "catalog_item",
+              "catalog_attribute"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "origin": {
+            "description": "Where it came from: a manual entry, a correction in a quote…",
+            "title": "Origin",
+            "type": "string"
+          },
+          "promoted": {
+            "description": "The approval wrote, or found, the global record (source `pilot_engineer`)",
+            "title": "Promoted",
+            "type": "boolean"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
+          "status": {
+            "enum": [
+              "pending",
+              "approved",
+              "rejected"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "what": {
+            "description": "What would join the shared layer",
+            "title": "What",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "what",
+          "evidence",
+          "origin",
+          "status",
+          "created_at",
+          "decided_at",
+          "reason",
+          "promoted"
+        ],
+        "title": "CandidateOut",
+        "type": "object"
+      },
       "CorrectedQuoteOut": {
         "properties": {
           "created": {
@@ -2772,6 +2883,11 @@
             "title": "Flags",
             "type": "object"
           },
+          "onboarding_required": {
+            "description": "`onboarding` is on and the data terms are not accepted: the app opens /welcome (10 §5.1)",
+            "title": "Onboarding Required",
+            "type": "boolean"
+          },
           "plan": {
             "$ref": "#/components/schemas/PlanOut"
           },
@@ -2790,7 +2906,8 @@
           "tenant",
           "plan",
           "flags",
-          "quota"
+          "quota",
+          "onboarding_required"
         ],
         "title": "MeOut",
         "type": "object"
@@ -2856,6 +2973,133 @@
           "message"
         ],
         "title": "NoticeOut",
+        "type": "object"
+      },
+      "OnboardingIn": {
+        "additionalProperties": false,
+        "description": "The two questions and the terms, in one request. The brand question can be skipped (null).",
+        "properties": {
+          "accept_terms": {
+            "title": "Accept Terms",
+            "type": "boolean"
+          },
+          "brands": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "Schneider",
+                    "ABB",
+                    "Hager",
+                    "other"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "propertyNames": {
+              "enum": [
+                "circuit_breaker",
+                "rcd"
+              ]
+            },
+            "title": "Brands",
+            "type": "object"
+          },
+          "markup": {
+            "description": "On cost: 0.25 is 25%. Up to 500%",
+            "examples": [
+              "0.15"
+            ],
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Markup",
+            "type": "string"
+          }
+        },
+        "required": [
+          "markup",
+          "accept_terms"
+        ],
+        "title": "OnboardingIn",
+        "type": "object"
+      },
+      "OnboardingOut": {
+        "properties": {
+          "brands": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "Schneider",
+                    "ABB",
+                    "Hager",
+                    "other"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "description": "Breakers and RCDs; `other` and null set no preference",
+            "propertyNames": {
+              "enum": [
+                "circuit_breaker",
+                "rcd"
+              ]
+            },
+            "title": "Brands",
+            "type": "object"
+          },
+          "markup": {
+            "anyOf": [
+              {
+                "examples": [
+                  "0.15"
+                ],
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The `default` rule's markup, 0.25 is 25%",
+            "title": "Markup"
+          },
+          "required": {
+            "description": "The flag is on and the terms are not accepted: uploads answer 409 until then",
+            "title": "Required",
+            "type": "boolean"
+          },
+          "terms_accepted_at": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Terms Accepted At"
+          },
+          "terms_version": {
+            "title": "Terms Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "required",
+          "terms_version",
+          "terms_accepted_at",
+          "markup",
+          "brands"
+        ],
+        "title": "OnboardingOut",
         "type": "object"
       },
       "PageKindIn": {
@@ -4771,6 +5015,11 @@
             "title": "Findings",
             "type": "array"
           },
+          "first_quote": {
+            "description": "The factory has sent no quote yet: the banner says its prices are kept (10 §5.2, `onboarding`)",
+            "title": "First Quote",
+            "type": "boolean"
+          },
           "input_kind": {
             "anyOf": [
               {
@@ -4894,7 +5143,8 @@
           "line_floor",
           "quote_floor",
           "derived_note",
-          "can_see_costs"
+          "can_see_costs",
+          "first_quote"
         ],
         "title": "QuoteOut",
         "type": "object"
@@ -5174,6 +5424,25 @@
         "title": "RecalculationOut",
         "type": "object"
       },
+      "RejectIn": {
+        "additionalProperties": false,
+        "properties": {
+          "reason": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          }
+        },
+        "title": "RejectIn",
+        "type": "object"
+      },
       "RemovedLineOut": {
         "properties": {
           "description": {
@@ -5320,6 +5589,22 @@
             "title": "Brand Preferences",
             "type": "object"
           },
+          "default_markup": {
+            "anyOf": [
+              {
+                "examples": [
+                  "0.15"
+                ],
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The `default` margin rule as a markup on cost, 0.25 is 25% (07 §7.3); null when it is a margin",
+            "title": "Default Markup"
+          },
           "enclosure_includes_default": {
             "additionalProperties": {
               "type": "boolean"
@@ -5381,6 +5666,7 @@
           }
         },
         "required": [
+          "default_markup",
           "brand_preferences",
           "attribute_defaults",
           "enclosure_includes_default",
@@ -5454,6 +5740,21 @@
               }
             ],
             "title": "Brand Preferences"
+          },
+          "default_markup": {
+            "anyOf": [
+              {
+                "examples": [
+                  "0.15"
+                ],
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Default Markup"
           },
           "enclosure_includes_default": {
             "anyOf": [
@@ -7036,6 +7337,149 @@
         ]
       }
     },
+    "/knowledge-candidates": {
+      "get": {
+        "description": "Pending first, oldest first; then the decided ones, newest decision first.",
+        "operationId": "list_candidates_knowledge_candidates_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CandidateList"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Candidates",
+        "tags": [
+          "knowledge"
+        ]
+      }
+    },
+    "/knowledge-candidates/{candidate_id}/approve": {
+      "post": {
+        "operationId": "approve_knowledge_candidates__candidate_id__approve_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "candidate_id",
+            "required": true,
+            "schema": {
+              "pattern": "^kc_[0-9A-Z]{26}$",
+              "title": "Candidate Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CandidateOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Approve",
+        "tags": [
+          "knowledge"
+        ]
+      }
+    },
+    "/knowledge-candidates/{candidate_id}/reject": {
+      "post": {
+        "operationId": "reject_knowledge_candidates__candidate_id__reject_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "candidate_id",
+            "required": true,
+            "schema": {
+              "pattern": "^kc_[0-9A-Z]{26}$",
+              "title": "Candidate Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RejectIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CandidateOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Reject",
+        "tags": [
+          "knowledge"
+        ]
+      }
+    },
     "/me": {
       "get": {
         "operationId": "me_me_get",
@@ -7069,6 +7513,86 @@
         "summary": "Me",
         "tags": [
           "account"
+        ]
+      }
+    },
+    "/onboarding": {
+      "get": {
+        "operationId": "get_onboarding_onboarding_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OnboardingOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Onboarding",
+        "tags": [
+          "onboarding"
+        ]
+      },
+      "post": {
+        "operationId": "answer_onboarding_onboarding_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OnboardingIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OnboardingOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Answer Onboarding",
+        "tags": [
+          "onboarding"
         ]
       }
     },

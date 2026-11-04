@@ -94,6 +94,9 @@ class CatalogItem(Base, Timestamps, KnowledgeSource):
     status: Mapped[str] = mapped_column(server_default="active")
     replaced_by: Mapped[str | None] = mapped_column(ForeignKey("catalog_items.id"))
     includes: Mapped[dict[str, Any] | None]
+    # Per attribute, who set it when it was not the row's own source: `{name: {source, source_tenant_id, approved_by,
+    # approved_at}}`, written by `konboro_promote` for a `catalog_attribute` candidate (00 §14.2, migration 0020).
+    attribute_provenance: Mapped[dict[str, Any]] = mapped_column(server_default="{}")
 
 
 class CatalogKit(Base, Created, KnowledgeSource):
@@ -166,6 +169,20 @@ class Abbreviation(Base, Created, KnowledgeSource):
     symbol_class: Mapped[str | None] = mapped_column(ForeignKey("symbol_classes.id"))
     family: Mapped[str | None]
     display_he: Mapped[str | None]
+
+
+class SpellingPattern(Base, Created, KnowledgeSource):
+    """A way designers write something, and what it means ("SAVE" is a spare circuit; "INC=" is the load current), 04
+    §11. Only the pilot queue writes it so far (S24); stage 4 reads its grammar from `association/grammar.json`."""
+
+    __tablename__ = "spelling_patterns"
+    __table_args__ = (UniqueConstraint("pattern"), one_of("source", GLOBAL_SOURCES))
+
+    id: Mapped[str] = pk()
+    pattern: Mapped[str]
+    meaning_he: Mapped[str]
+    family: Mapped[str | None]
+    attribute: Mapped[str | None]
 
 
 class ValidatorRule(Base, Created):

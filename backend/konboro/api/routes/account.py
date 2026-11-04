@@ -6,8 +6,8 @@ from fastapi import APIRouter, Depends
 
 from konboro.db.models import Plan, Tenant, User
 from konboro.domain.permissions import Permission
+from konboro.services import onboarding, quota
 from konboro.services import plan as plan_limits
-from konboro.services import quota
 
 from ..deps import Actor, require
 from ..errors import ERROR_RESPONSES
@@ -54,6 +54,7 @@ def me(actor: Annotated[Actor, Depends(require(Permission.ACCOUNT_READ))]) -> Me
         ),
         flags=actor.flags,
         quota=quota_out(actor),
+        onboarding_required=onboarding.required(s, actor.tenant_id),
     )
 
 

@@ -11,7 +11,7 @@ from konboro.pipeline.intake import corrections
 from konboro.pipeline.intake.routing import CONFIRM_THRESHOLD
 from konboro.pipeline.stages import NAMES
 from konboro.pipeline.stages.s1_intake import thumbnail_key
-from konboro.services import drawings, quota
+from konboro.services import drawings, onboarding, quota
 from konboro.services.intake import MB, Limits
 from konboro.services.queue import Queue, StageMessage
 from konboro.services.storage import Storage
@@ -55,6 +55,8 @@ def upload(
     revision_of: Annotated[str | None, Form(pattern=r"^drw_[0-9A-Z]{26}$")] = None,
 ) -> UploadOut:
     """Checks run in the order of 01 §4.3: quota, size, format, pages. One failing file rejects the upload."""
+    if onboarding.required(actor.session, actor.tenant_id):  # the data terms come first (10 §5.1)
+        raise ApiError(409, "data_terms_required")
     received = [(f.filename or "file", f.file.read(_READ_LIMIT)) for f in files]
     try:
         new = drawings.create_upload(
@@ -79,6 +81,7 @@ def upload(
         raise ApiError(422, "upload_rejected", details) from e
 
     d = new.drawing
+    onboarding.note_drawing(actor.session, actor.tenant_id)
     # After the commit (the tenant transaction ends with this function), so the worker finds the rows.
     message = StageMessage(drawing_id=d.id, tenant_id=d.tenant_id, stage=1, trace_id=str(d.trace_id))
     queue: Queue = request.app.state.queue

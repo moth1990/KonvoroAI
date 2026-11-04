@@ -1943,3 +1943,97 @@ table.tbl {
   border-radius: var(--r-sm);
   flex-wrap: wrap;
 }
+
+/* ---------- approval queue and settings (S24, prototype lines 296–302, 315) ---------- */
+.qcard {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  padding: 14px 16px;
+  border-top: 1px solid var(--line);
+  align-items: start;
+}
+.qcard:first-child {
+  border-top: 0;
+}
+.qcard .acts {
+  display: flex;
+  gap: 6px;
+}
+@media (max-width: 620px) {
+  .qcard {
+    grid-template-columns: 1fr;
+  }
+}
+.set-sec {
+  display: grid;
+  gap: 0;
+}
+.set-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 16px;
+  border-top: 1px solid var(--line);
+}
+.set-row:first-child {
+  border-top: 0;
+}
+.toggle[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.v2 {
+  font-size: 10.5px;
+  font-weight: 600;
+  border-radius: 4px;
+  padding: 0 5px;
+  background: var(--copper);
+  color: #fff;
+  letter-spacing: 0.02em;
+}
+
+/* ---------- onboarding (S24, 10 §5.1; no prototype screen: its card, input and chip classes) ---------- */
+.welcome-page {
+  min-height: 100dvh;
+  background: var(--bg);
+  padding: 32px 16px calc(32px + env(safe-area-inset-bottom, 0px));
+}
+.welcome {
+  width: min(560px, 100%);
+  margin-inline: auto;
+  display: grid;
+  gap: 16px;
+}
+.welcome .q {
+  display: grid;
+  gap: 10px;
+  padding: 16px;
+}
+.welcome .q h2 {
+  margin: 0;
+  font-size: 16px;
+}
+.welcome .choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.welcome .choices .btn[aria-pressed="true"] {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.welcome .terms {
+  display: flex;
+  gap: 10px;
+  align-items: start;
+}
+.first-quote {
+  background: var(--accent-soft);
+  border-color: transparent;
+  display: grid;
+  gap: 4px;
+  padding: 10px 14px;
+}

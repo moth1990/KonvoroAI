@@ -61,6 +61,8 @@ The full data model for Konboro v1.0. This document was listed as missing in [00
 
    - `konboro_sweeper` (migration 0004) has no login and owns one function, `konboro_unsent_stages(interval)`. That function is the only read across tenants. It is `SECURITY DEFINER`, only `konboro_app` may execute it, and it returns `(tenant_id, drawing_id, stage, trace_id)` for stages whose message was sent that long ago and never claimed. The role has no `BYPASSRLS`. It reads through its own `requeue_sweep` policies (`FOR SELECT`) and a column-level `SELECT` on those columns of `stage_runs` and `drawings`. The worker re-checks each row inside `tenant_session` before it sends anything (S07 decision, BUG-006).
 
+   - `konboro_promoter` (migration 0020, S24 decision 4) has no login and owns one function, `konboro_promote(candidate_id, record_id)`. It is the only path from a tenant to the global layer: the pilot approval queue's approval (00 §14.2). It is `SECURITY DEFINER`, only `konboro_app` may execute it, and the role has no `BYPASSRLS`: it reads the candidate through the tenant's own `tenant_isolation` policy (the caller's `app.tenant_id`), promotes only an `approved` one, copies only the fields each kind's global record has (so a price, a cost, a supplier, a customer or a designer cannot travel, even in a payload that carried one), and stamps `source='pilot_engineer'`, `source_tenant_id`, `approved_by` and `approved_at`. Its grants: `SELECT, INSERT` on `catalog_items`, `abbreviations`, `symbol_classes` and `spelling_patterns`; `UPDATE (attributes, attribute_provenance, updated_at)` on `catalog_items`; `SELECT, UPDATE (promoted_id)` on `knowledge_candidates`. The app role keeps `SELECT` only on every global table.
+
    Postgres superusers and table owners bypass RLS. That is why this split matters.
 
 **Tenant context:**
@@ -119,6 +121,7 @@ System limits (20 MB per file, 20 files, 200 pages per drawing, 2 m² per page) 
 | `status` | `active` or `discontinued`; `replaced_by → catalog_items` |
 | `includes jsonb` | For enclosures and kits (07 §7.4) |
 | `source`, `source_tenant_id`, `approved_by`, `approved_at` | Where the record came from. `source` is one of `curated`, `pilot_engineer`, `import` (00 §14.2). The CSV loader writes `import` rows ([catalog-import.md](catalog-import.md), S18) |
+| `attribute_provenance jsonb default '{}'` | Per attribute, who set it when it is not the row's own source: `{name: {source, source_tenant_id, approved_by, approved_at}}`. Written by `konboro_promote` for a `catalog_attribute` candidate, which only fills an attribute the item lacks (migration 0020, S24) |
 
 Two global tables hang off the catalog (05 §5.9.1, S20; migration 0015), loaded with it ([catalog-import.md](catalog-import.md)):
 - **`catalog_kits`** (`ckt_`): `item_id → catalog_items` (the main item), `part_id → catalog_items`, `quantity` (per unit, at least 1), `when_text` (the phrase in the component's text that calls for the part, "משולב פחת"; empty: always), `reason_he`, plus the source columns. Unique `(item_id, part_id, when_text)`.
@@ -129,6 +132,7 @@ The remaining global tables:
 - **`symbol_classes`** (03 §4.3): `id text pk` (e.g. `mcb`), `family`, `display_name_he`, `billable bool`, `standard_ref`, `attribute_schema → attribute_schemas.family`, plus the source columns. Seeded by `seed_global` from `konboro/pipeline/detection/library.py` (S12); a row already there is kept, and gets its family's `attribute_schema` when it has none (S13).
 - **`reference_crops`** (03 §4.3), global scope only: `id` (`ref_`), `symbol_class → symbol_classes`, `image_key`, `source`, `approved_count`. The `embedding vector` column is added with the similarity index in phase 4. The `vector` extension is enabled now. The curated rows (S12) have `image_key` = `reference/<file>.png`, a file in `konboro/pipeline/detection/reference/`, not an S3 key.
 - **`abbreviations`** (03 §4.6), global: `id` (`abr_`), `text`, `symbol_class`, `family`, `display_he`, plus the source columns. Seeded from the same module (S12).
+- **`spelling_patterns`** (04 §11), global: `id` (`spl_`), `pattern` (unique, "SAVE", "INC="), `meaning_he`, `family null`, `attribute null`, plus the source columns. Only the approval queue writes it so far (migration 0020, S24); stage 4 still reads its grammar from `association/grammar.json`.
 - **`validator_rules`** (06 §6.2): PK `(rule_id, version)`, `category` (A–E), `applies_to text[]`, `requires text null` (`wire_graph`, `bom_table`, `front_view`, `text_layer`; migration 0016), `severity`, `params jsonb`, `title_he` and `message_he` (templates; migration 0016), `enabled bool`, `approval text null` (`pending_expert`: category A until the electrical expert signs it off, S21 decision 7). Seeded by `seed_global` from `konboro/pipeline/validation/rules.json` (S21); a row already there is kept, so a new wording or threshold is a new version.
 - **`vat_rates`** (07 §4.3): `id` (`vat_`), `rate numeric(7,4)`, `valid_from date`. The VAT rate is data, never a constant in code.
 - **`fx_rates`**: `currency`, `rate_date`, `rate numeric(14,6)`, `source`, with PK `(currency, rate_date)`. The rate is how many ILS one unit costs. A quote uses the latest rate on or before its date, at most 7 days old (S18 decision 4). Locally, `make seed` writes fixed USD and EUR rates, one a week through 2027 (`source` = `seed`).
@@ -159,8 +163,8 @@ The remaining global tables:
 | `stale_days int default 90` | When a supplier price counts as stale |
 | `labor jsonb` | Hourly rate and hours per family (07 §4.2) |
 | `rounding text default 'agora'` | |
-| `data_terms_accepted jsonb` | `{version, by, at}` |
-| `onboarding jsonb` | 10 §9.1 |
+| `data_terms_accepted jsonb` | `{version, by, at}`, written by `POST /onboarding` (S24). While it is null and `onboarding` is on, uploads answer 409 |
+| `onboarding jsonb` | 10 §9.1's counters (`first_drawing_at`, `first_quote_sent_at`, `quotes_sent`, `price_coverage_last`, `accelerators_*`), plus the answers: `answered_at`, `markup_source`, `brands` (S24). The markup itself is the `default` margin rule |
 | `auxiliary_families text[] default '{terminal}'` | Families the factory counts as auxiliary material: the audit shows them as `not_a_difference` (11 §5.4, S15 decision 4, migration 0011), and stage 5 gives them no SKU (S20 decision 3) |
 | `matching jsonb default '{}'` | Stage 5's settings (05 §5.4–5.7, §13 item 1; migration 0015): `series` (family → preferred series), `alternate_brands` (family or `*` → brands allowed instead), `tie_break` (`frequency`, the default, `price` or `ask`), `inference_off` (rule ids of 05 §5.5.1 turned off). `brand_preferences` takes `*` for every family too |
 
@@ -360,11 +364,12 @@ The rest of the price-list tables:
 - **`tenant_rule_overrides`**: `rule_id`, `enabled`, `params jsonb`, with PK `(tenant_id, rule_id)` (06 §6.2).
 - **`knowledge_candidates`** (`kc_`) is the pilot approval queue (00 §14.2).
   - `kind`: `symbol`, `abbreviation`, `spelling`, `catalog_item` or `catalog_attribute`.
-  - `payload jsonb`, `evidence jsonb`.
+  - `payload jsonb`: only the fields the kind's global record takes (`services/knowledge.py`'s `FIELDS`), never a price, a supplier, a customer, a project or a designer (10 §11). `evidence jsonb`: the factory's own (its product's name, the quote, `what` and `origin` for the card), never copied.
   - `status`: `pending`, `approved` or `rejected`.
   - `decided_by`, `decided_at`, `reason`.
+  - `dedupe_key` (migration 0020): unique `(tenant_id, kind, dedupe_key)`, so the same thing (a brand's SKU, a text, a pattern, a class, an item's attribute) is queued once, pending or decided. `promoted_id`: the global record the approval wrote or found.
 
-  An approval does not write to the global layer directly. A promotion job running as the owner role copies the record and stamps `source='pilot_engineer'`.
+  An approval does not write to the global layer directly: `konboro_promote` does, in the same transaction (§2, S24 decision 4). A refused promotion (another value for the same attribute) rolls the approval back and the candidate stays pending. Since S24 a factory product with a SKU and a brand the master catalog lacks is a `catalog_item` candidate (behind `approval_queue`); an approved one links the product to its new catalog item.
 - **`chat_conversations`** (`cnv_`, 08 §5.2.1):
   - `quote_id`, `status` (`active` or `closed`; one active conversation per quote), `summary`.
   - The summary never contains money (08 §5.4).
@@ -415,7 +420,7 @@ Added here:
 | `trf_` | reference crop (tenant) | `abr_` | abbreviation (global) |
 | `tab_` | abbreviation (tenant) | `vat_` | VAT rate |
 | `spf_` | supplier preference | `ckt_` | catalog kit part (global) |
-| `cac_` | catalog accessory fit (global) | | |
+| `cac_` | catalog accessory fit (global) | `spl_` | spelling pattern (global) |
 
 ## 8. Indexes beyond keys
 

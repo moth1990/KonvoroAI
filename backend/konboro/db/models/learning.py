@@ -95,16 +95,23 @@ class KnowledgeCandidate(Base, TenantScoped, Timestamps):
         one_of("kind", ("symbol", "abbreviation", "spelling", "catalog_item", "catalog_attribute")),
         one_of("status", ("pending", "approved", "rejected")),
         Index(None, "tenant_id", "status"),
+        # One candidate per thing: a product proposed again, or after a rejection, is not queued twice (S24).
+        UniqueConstraint("tenant_id", "kind", "dedupe_key"),
     )
 
     id: Mapped[str] = pk()
     kind: Mapped[str]
+    # Only the fields the global record takes (`services/knowledge.py`'s whitelist): never a price, a supplier, a
+    # customer, a project or a designer (10 §11, 00 §9). Evidence is the tenant's own and is never copied.
     payload: Mapped[dict[str, Any]]
     evidence: Mapped[dict[str, Any]] = mapped_column(server_default="{}")
     status: Mapped[str] = mapped_column(server_default="pending")
     decided_by: Mapped[str | None]
     decided_at: Mapped[datetime | None]
     reason: Mapped[str | None]
+    dedupe_key: Mapped[str]
+    # The global record an approval wrote or found (`konboro_promote`, migration 0020).
+    promoted_id: Mapped[str | None]
 
 
 class ChatConversation(Base, TenantScoped, Timestamps):

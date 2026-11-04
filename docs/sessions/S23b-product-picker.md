@@ -5,7 +5,7 @@
 | **Track** | R |
 | **Branch** | `s23b-product-picker` |
 | **Depends on** | S23 |
-| **Status** | in review |
+| **Status** | done |
 | **PR** | [moth1990/KonvoroAI#28](https://github.com/moth1990/KonvoroAI/pull/28) |
 
 ## Goal

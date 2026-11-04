@@ -194,7 +194,56 @@ const SCREENS: Screen[] = [
   ...reviewScreens(),
   ...auditScreens(),
   ...priceScreens(),
+  ...s24Screens(),
 ];
+
+/** S24: the settings screen and the approval queue, in a tenant nothing changes; and the onboarding page, which the
+ * prototype does not have (compared with its settings screen, whose classes it uses). */
+function s24Screens(): Screen[] {
+  return [
+    {
+      id: "prefs",
+      title: "Settings",
+      prototype: { hash: "#prefs", authed: true },
+      app: { path: "/prefs", tenant: TENANTS.s24Shots, setup: (page) => page.getByLabel("תוספת באחוזים").waitFor() },
+      notes: [
+        "S24 decision 2: two brand selects, breakers and RCDs, each with 'ללא העדפה' (the spec's two families); the " +
+          "prototype has one select for both.",
+        "S03 decision: the flags are shown as switches that cannot be changed (the server sets them per factory); the " +
+          "prototype's switches toggle in the browser. The section's note says so.",
+        "The plan chip is the tenant's plan ('ניסיון'); the prototype says 'פיילוט'. The quota is the E2E tenant's 12 / 50.",
+        "The E2E tenant has no RCD default, so the 30 mA switch is off; the prototype's is on.",
+        "Fixed: the prototype's quota reads '50 / 12' (its numbers are not isolated from the RTL row); the app's is '12 / 50'.",
+      ],
+    },
+    {
+      id: "queue",
+      title: "Approval queue",
+      prototype: { hash: "#queue", authed: true },
+      app: { path: "/queue", tenant: TENANTS.s24Shots, setup: (page) => page.getByTestId("qcard").last().waitFor() },
+      notes: [
+        "The six candidates are the prototype's (devtools/fixtures/queue.py), pending oldest first, so the order " +
+          "differs; the source line gives each a date ('28.10') where the prototype says 'היום' for two.",
+        "The prototype's 'ייבוא מהצעה 10271' card has no date; the app's has one.",
+      ],
+    },
+    {
+      id: "welcome",
+      title: "Onboarding: two questions and the data terms (no prototype screen; compared with settings)",
+      prototype: { hash: "#prefs", authed: true },
+      app: {
+        path: "/welcome",
+        tenant: TENANTS.welcomeDesktop,
+        setup: (page) => page.getByTestId("welcome-start").waitFor(),
+      },
+      notes: [
+        "10 §5.1 asks for two questions and the data terms before the first drawing; the prototype has no screen for " +
+          "them. S24 decision 1: a full page on first login, built from the prototype's card, input and button classes.",
+        "Shot before the welcome tests answer it; after them the tenant is answered and the page sends it home.",
+      ],
+    },
+  ];
+}
 
 /** The price list (S19), in a tenant nothing changes: the demo's products (the prototype's `CATALOG`). */
 function priceScreens(): Screen[] {

@@ -212,7 +212,11 @@ def build_tenant_graph(s: Session, tenant_id: str) -> dict[str, str]:
         )
     )
     add(m.TenantRuleOverride(tenant_id=tenant_id, rule_id="PANEL_OUTGOING_GT_MAIN", enabled=False))
-    add(m.KnowledgeCandidate(id=new_id("kc"), tenant_id=tenant_id, kind="abbreviation", payload={"text": "מ.פ."}))
+    add(
+        m.KnowledgeCandidate(
+            id=new_id("kc"), tenant_id=tenant_id, kind="abbreviation", payload={"text": "מ.פ."}, dedupe_key="מ.פ."
+        )
+    )
     add(cnv := m.ChatConversation(id=new_id("cnv"), tenant_id=tenant_id, quote_id=quo.id))
     add(
         m.ChatMessage(

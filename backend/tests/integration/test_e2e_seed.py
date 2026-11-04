@@ -6,7 +6,7 @@ from sqlalchemy import Engine
 
 from konboro.db.session import tenant_session
 from konboro.devtools import e2e
-from konboro.services import auth, flags, home, price_list, quota
+from konboro.services import auth, flags, home, onboarding, price_list, quota
 
 
 def test_e2e_tenants_have_their_states(migrated_db: dict[str, Engine]) -> None:
@@ -50,6 +50,14 @@ def test_e2e_tenants_have_their_states(migrated_db: dict[str, Engine]) -> None:
         "review-mobile@e2e.konboro.local": (False, 12, "ok"),
         "picker-desktop@e2e.konboro.local": (False, 12, "ok"),
         "picker-mobile@e2e.konboro.local": (False, 12, "ok"),
+        "welcome-desktop@e2e.konboro.local": (False, 0, "ok"),
+        "welcome-mobile@e2e.konboro.local": (False, 0, "ok"),
+        "prefs-desktop@e2e.konboro.local": (False, 12, "ok"),
+        "prefs-mobile@e2e.konboro.local": (False, 12, "ok"),
+        "queue-desktop@e2e.konboro.local": (False, 12, "ok"),
+        "queue-mobile@e2e.konboro.local": (False, 12, "ok"),
+        "s24-shots@e2e.konboro.local": (False, 12, "ok"),
+        "s24-off@e2e.konboro.local": (False, 12, "ok"),
     }
     sample = states["classic@e2e.konboro.local"][3]
     assert sample.queue_pending == 3
@@ -64,6 +72,12 @@ def test_e2e_tenants_have_their_states(migrated_db: dict[str, Engine]) -> None:
     review = next(t for t in e2e.TENANTS if t.nursery)
     with tenant_session(review.tenant_id, migrated_db["app"]) as s:
         assert [q.name for q in home.recent_quotes(s, review.tenant_id, 10)] == ["NURSERY"]
+    # S24: the prototype's six queue candidates, once; a new factory must answer first, an established one has
+    for t in e2e.TENANTS:
+        expected = 6 if t.queue else 3 if t.sample_data else 0
+        assert states[t.email][3].queue_pending == expected, t.email
+        with tenant_session(t.tenant_id, migrated_db["app"]) as s:
+            assert onboarding.required(s, t.tenant_id) is (not t.terms and "onboarding" not in t.off), t.email
     # the 26-993 audit (S16), once per audit tenant, under the id the Playwright tests open
     for t in (t for t in e2e.TENANTS if t.audit):
         omissions = states[t.email][3].audit_omissions
@@ -80,7 +94,7 @@ def test_every_e2e_tenant_can_log_in(migrated_db: dict[str, Engine]) -> None:
         user = auth.dev_login(settings, migrated_db["app"], t.email, e2e.PASSWORD)
         assert (user.tenant_id, user.id) == (t.tenant_id, t.user_id)
     # the price list (S19): the demo's products, linked to the sample catalog, used by the NURSERY draft
-    for t in (t for t in e2e.TENANTS if t.prices):
+    for t in (t for t in e2e.TENANTS if t.prices and t.nursery):
         with tenant_session(t.tenant_id, migrated_db["app"]) as s:
             products = price_list.list_products(s, t.tenant_id)
             assert len(products) == 24
