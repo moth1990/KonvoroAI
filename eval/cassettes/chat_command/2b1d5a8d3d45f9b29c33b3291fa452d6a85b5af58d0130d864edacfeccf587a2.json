@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 2,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 283,
+    "payload": {
+      "clarification_options": [],
+      "text": "הכנתי הצעה CH1 שמשנה ל-20A את שני המא\"זים של 16A: {{line:L1}} (3P, כמות 5) ו-{{line:L2}} (1P, כמות 1). שום דבר לא משתנה עד שתאשר את הכרטיס.\n\nאזהרה: אחרי השינוי יש 7 שורות בלי מחיר. לפני האישור כדאי לבדוק למה, כי ייתכן שאין מק\"ט 20A מתאים בקטלוג. סך ההצעה יעבור מ-{{$T6}} ל-{{$T7}}. בעיה אחת קיימת נפתרת."
+    },
+    "text": null,
+    "tool_calls": []
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

@@ -1,0 +1,27 @@
+{
+  "answer": {
+    "input_tokens": 4,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 163,
+    "payload": null,
+    "text": null,
+    "tool_calls": [
+      {
+        "args": {
+          "changes": [
+            {
+              "pct": "5",
+              "target": {},
+              "type": "set_customer_discount"
+            }
+          ],
+          "summary_he": "הנחת לקוח 5%"
+        },
+        "id": "toolu_01QQrNUKpXR2nZGiPYvbz7BK",
+        "name": "propose_change"
+      }
+    ]
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

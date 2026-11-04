@@ -1451,6 +1451,448 @@
         "title": "CandidateOut",
         "type": "object"
       },
+      "ChatApplyOut": {
+        "description": "Applying a proposal (08 §7.5): the quote as it now is, the toast, and the event \"בטל\" undoes.",
+        "properties": {
+          "count": {
+            "title": "Count",
+            "type": "integer"
+          },
+          "event_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Event Id"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "proposal": {
+            "$ref": "#/components/schemas/ChatProposalOut"
+          },
+          "quote": {
+            "$ref": "#/components/schemas/QuoteOut"
+          }
+        },
+        "required": [
+          "quote",
+          "message",
+          "event_id",
+          "count",
+          "proposal"
+        ],
+        "title": "ChatApplyOut",
+        "type": "object"
+      },
+      "ChatBlockOut": {
+        "description": "08 §8.1. `text`: `{{line:ln_…}}` and `{{$T1}}` references in `content`; `clarification`: `options`;\n`proposal`: `proposal_id`; `ui_action`: `action` with `line_ids`, `panel_id`, `statuses`; `settings_link`: `kind`,\n`route`, `values`.",
+        "properties": {
+          "action": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Action"
+          },
+          "content": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Content"
+          },
+          "kind": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Kind"
+          },
+          "line_ids": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Line Ids"
+          },
+          "options": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Options"
+          },
+          "panel_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Panel Id"
+          },
+          "proposal_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Proposal Id"
+          },
+          "route": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Route"
+          },
+          "statuses": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Statuses"
+          },
+          "type": {
+            "enum": [
+              "text",
+              "clarification",
+              "proposal",
+              "ui_action",
+              "settings_link"
+            ],
+            "title": "Type",
+            "type": "string"
+          },
+          "values": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Values"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "title": "ChatBlockOut",
+        "type": "object"
+      },
+      "ChatMessageIn": {
+        "additionalProperties": false,
+        "properties": {
+          "message": {
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Message",
+            "type": "string"
+          },
+          "ui_context": {
+            "$ref": "#/components/schemas/ChatUiContextIn"
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "title": "ChatMessageIn",
+        "type": "object"
+      },
+      "ChatMessageOut": {
+        "properties": {
+          "blocks": {
+            "items": {
+              "$ref": "#/components/schemas/ChatBlockOut"
+            },
+            "title": "Blocks",
+            "type": "array"
+          },
+          "message_id": {
+            "title": "Message Id",
+            "type": "string"
+          },
+          "money": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/ChatMoneyOut"
+            },
+            "title": "Money",
+            "type": "object"
+          },
+          "role": {
+            "enum": [
+              "user",
+              "assistant"
+            ],
+            "title": "Role",
+            "type": "string"
+          }
+        },
+        "required": [
+          "message_id",
+          "role",
+          "blocks",
+          "money"
+        ],
+        "title": "ChatMessageOut",
+        "type": "object"
+      },
+      "ChatMoneyOut": {
+        "description": "A money reference's amount, for the screen only; never sent to the model (08 §5.4).",
+        "properties": {
+          "kind": {
+            "enum": [
+              "ils",
+              "pct"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "value": {
+            "examples": [
+              "0.15"
+            ],
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Value",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "value"
+        ],
+        "title": "ChatMoneyOut",
+        "type": "object"
+      },
+      "ChatOut": {
+        "description": "The quote's active conversation (08 §5.2.1). `closed_count`: earlier ones, kept read only.",
+        "properties": {
+          "closed_count": {
+            "title": "Closed Count",
+            "type": "integer"
+          },
+          "conversation_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Conversation Id"
+          },
+          "messages": {
+            "items": {
+              "$ref": "#/components/schemas/ChatMessageOut"
+            },
+            "title": "Messages",
+            "type": "array"
+          },
+          "proposals": {
+            "items": {
+              "$ref": "#/components/schemas/ChatProposalOut"
+            },
+            "title": "Proposals",
+            "type": "array"
+          }
+        },
+        "required": [
+          "conversation_id",
+          "messages",
+          "proposals",
+          "closed_count"
+        ],
+        "title": "ChatOut",
+        "type": "object"
+      },
+      "ChatProposalOut": {
+        "description": "08 §7.1. `diff` carries money references; `money` their amounts.",
+        "properties": {
+          "affected_line_count": {
+            "title": "Affected Line Count",
+            "type": "integer"
+          },
+          "base_version": {
+            "title": "Base Version",
+            "type": "integer"
+          },
+          "diff": {
+            "additionalProperties": true,
+            "title": "Diff",
+            "type": "object"
+          },
+          "money": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/ChatMoneyOut"
+            },
+            "title": "Money",
+            "type": "object"
+          },
+          "proposal_id": {
+            "title": "Proposal Id",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "pending",
+              "applied",
+              "dismissed",
+              "expired",
+              "undone"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "summary_he": {
+            "title": "Summary He",
+            "type": "string"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "proposal_id",
+          "summary_he",
+          "status",
+          "affected_line_count",
+          "warnings",
+          "diff",
+          "base_version",
+          "money"
+        ],
+        "title": "ChatProposalOut",
+        "type": "object"
+      },
+      "ChatTurnOut": {
+        "properties": {
+          "assistant": {
+            "$ref": "#/components/schemas/ChatMessageOut"
+          },
+          "proposals": {
+            "description": "The proposals this turn made",
+            "items": {
+              "$ref": "#/components/schemas/ChatProposalOut"
+            },
+            "title": "Proposals",
+            "type": "array"
+          },
+          "user": {
+            "$ref": "#/components/schemas/ChatMessageOut"
+          }
+        },
+        "required": [
+          "user",
+          "assistant",
+          "proposals"
+        ],
+        "title": "ChatTurnOut",
+        "type": "object"
+      },
+      "ChatUiContextIn": {
+        "additionalProperties": false,
+        "description": "08 §5.1: what the screen shows when the message is sent. \"הלוח הזה\" is the panel, \"השורות האלה\" the lines.",
+        "properties": {
+          "active_filter": {
+            "anyOf": [
+              {
+                "enum": [
+                  "green",
+                  "yellow",
+                  "red"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Active Filter"
+          },
+          "panel_id": {
+            "anyOf": [
+              {
+                "maxLength": 40,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Panel Id"
+          },
+          "selected_line_ids": {
+            "default": [],
+            "items": {
+              "maxLength": 40,
+              "type": "string"
+            },
+            "maxItems": 200,
+            "title": "Selected Line Ids",
+            "type": "array"
+          }
+        },
+        "title": "ChatUiContextIn",
+        "type": "object"
+      },
       "CorrectedQuoteOut": {
         "properties": {
           "created": {
@@ -6907,6 +7349,103 @@
         ]
       }
     },
+    "/chat/proposals/{proposal_id}/apply": {
+      "post": {
+        "description": "08 §7.5: the estimator approved the card. The same actions as the screen's, as one undoable change; a sent\nversion opens N+1 first. A proposal the quote has moved past answers 409 `proposal_expired`.",
+        "operationId": "apply_proposal_chat_proposals__proposal_id__apply_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "proposal_id",
+            "required": true,
+            "schema": {
+              "pattern": "^prp_[0-9A-Z]{26}$",
+              "title": "Proposal Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChatApplyOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Apply Proposal",
+        "tags": [
+          "chat"
+        ]
+      }
+    },
+    "/chat/proposals/{proposal_id}/dismiss": {
+      "post": {
+        "operationId": "dismiss_proposal_chat_proposals__proposal_id__dismiss_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "proposal_id",
+            "required": true,
+            "schema": {
+              "pattern": "^prp_[0-9A-Z]{26}$",
+              "title": "Proposal Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChatProposalOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Dismiss Proposal",
+        "tags": [
+          "chat"
+        ]
+      }
+    },
     "/drawings": {
       "post": {
         "description": "Checks run in the order of 01 §4.3: quota, size, format, pages. One failing file rejects the upload.",
@@ -8769,6 +9308,163 @@
         "summary": "Get Quote",
         "tags": [
           "quotes"
+        ]
+      }
+    },
+    "/quotes/{quote_id}/chat": {
+      "get": {
+        "description": "The active conversation, its messages and proposals; pending proposals the quote has moved past come back\n`expired` (08 §7.5).",
+        "operationId": "get_chat_quotes__quote_id__chat_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "quote_id",
+            "required": true,
+            "schema": {
+              "pattern": "^quo_[0-9A-Z]{26}$",
+              "title": "Quote Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChatOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Chat",
+        "tags": [
+          "chat"
+        ]
+      }
+    },
+    "/quotes/{quote_id}/chat/messages": {
+      "post": {
+        "description": "One turn (08 §4–§8): the answer's blocks, with the amounts of the money references they use.",
+        "operationId": "send_message_quotes__quote_id__chat_messages_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "quote_id",
+            "required": true,
+            "schema": {
+              "pattern": "^quo_[0-9A-Z]{26}$",
+              "title": "Quote Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChatMessageIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChatTurnOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Send Message",
+        "tags": [
+          "chat"
+        ]
+      }
+    },
+    "/quotes/{quote_id}/chat/new": {
+      "post": {
+        "description": "\"שיחה חדשה\": the active conversation is closed and kept read only; its pending proposals expire.",
+        "operationId": "new_conversation_quotes__quote_id__chat_new_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "quote_id",
+            "required": true,
+            "schema": {
+              "pattern": "^quo_[0-9A-Z]{26}$",
+              "title": "Quote Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChatOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "New Conversation",
+        "tags": [
+          "chat"
         ]
       }
     },

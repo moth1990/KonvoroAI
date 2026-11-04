@@ -18,7 +18,8 @@ from .app import create_app
 def spec() -> dict[str, Any]:
     # A lazy engine that is never connected: building the spec must not need Postgres.
     engine = create_engine("postgresql+psycopg://unused@localhost/unused")
-    return create_app(Settings(_env_file=None, env="local"), engine=engine).openapi()  # type: ignore[call-arg]
+    settings = Settings(_env_file=None, env="local")  # type: ignore[call-arg]
+    return create_app(settings, engine=engine, llm_providers={}).openapi()
 
 
 def main(path: str) -> None:

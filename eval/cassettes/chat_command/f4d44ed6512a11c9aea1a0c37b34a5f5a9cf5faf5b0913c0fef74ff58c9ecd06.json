@@ -1,0 +1,19 @@
+{
+  "answer": {
+    "input_tokens": 4,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 153,
+    "payload": {
+      "clarification_options": [
+        "הצג את השורות האדומות",
+        "הרץ בדיקת ולידציה",
+        "הצג את סיכום ההצעה"
+      ],
+      "text": "אני לא יכול לשלוח הצעות ללקוח, אני עובד רק על ההצעה הפתוחה. אפשר לעזור לבדוק אותה לפני שליחה. יש בה 4 ממצאים פתוחים ו-5 שורות באדום."
+    },
+    "text": null,
+    "tool_calls": []
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

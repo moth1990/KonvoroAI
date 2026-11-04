@@ -277,7 +277,7 @@ This table answers the customer's question "why was this counted?".
 | --- | --- |
 | `quote_id`, `version int` | |
 | `status` | `draft` or `sent`. A sent version never changes; a trigger rejects updates to its lines and to the version row |
-| `revision int not null default 0` | Increases on every edit. Used for the optimistic check (09 §11) and proposal expiry (08 §7.5) |
+| `revision int not null default 0` | Increases on every edit: each run of stage 7 bumps it (`pricing.run`, `pricing.stored`). Used for the optimistic check (09 §11) and proposal expiry (08 §7.5, S25) |
 | `quote_date`, `currency` | |
 | `discount_pct`, `totals jsonb` | `totals` follows the 07 §6.1 shape, with decimal strings |
 | `snapshot jsonb` | What priced this version (07 §7.7, S22): `price_list_ids` (the `product_suppliers` rows its lines used), `products`, `margin_rules_version`, `derived_rules_version`, `fx_rates`, `vat_rate_id`, `rounding`, the panels' `notes` (supply scope `prepare_only` / `by_others`), and `deleted_line_keys` (lines the user deleted, carried into later versions, S22 decision 5) |
@@ -316,7 +316,7 @@ This table answers the customer's question "why was this counted?".
 **`correction_events`** (`evt_`, 09 §10) is append-only. The app may update only `undone`, and a trigger enforces this. So an event is written once, whole: a review action keeps what undo needs to put back in `before.restore` (the lines' state, the findings, the price-list product, the match memory, S23).
 - `quote_id`, `quote_version`, `user_id`.
 - `source`: `review_screen`, `chat`, `price_list`, or `new_quote` (a page kind changed on the new-quote screen, S08).
-- `type`: the 09 §10 list, plus `price_changed` and `supplier_selected` from 09 §7.14–7.15, and `bom_columns_mapped` (the user set a BOM spreadsheet's column roles, 01 §5.8; migration 0010, S14).
+- `type`: the 09 §10 list, plus `price_changed` and `supplier_selected` from 09 §7.14–7.15, `bom_columns_mapped` (the user set a BOM spreadsheet's column roles, 01 §5.8; migration 0010, S14), and `discount_set` (the customer discount on the quote, 08 §6.7, from the chat; migration 0021, S25).
 - `line_id`, `component_id`, `instance_ids`, `page_id`.
 - `before jsonb`, `after jsonb`, `reason`, `undone bool`.
 
@@ -372,12 +372,18 @@ The rest of the price-list tables:
   An approval does not write to the global layer directly: `konboro_promote` does, in the same transaction (§2, S24 decision 4). A refused promotion (another value for the same attribute) rolls the approval back and the candidate stays pending. Since S24 a factory product with a SKU and a brand the master catalog lacks is a `catalog_item` candidate (behind `approval_queue`); an approved one links the product to its new catalog item.
 - **`chat_conversations`** (`cnv_`, 08 §5.2.1):
   - `quote_id`, `status` (`active` or `closed`; one active conversation per quote), `summary`.
-  - The summary never contains money (08 §5.4).
+  - The summary never contains money (08 §5.4): `chat.history` strips amounts and references before saving it.
+  - `state jsonb` (migration 0021, S25): `names`, the short names the model was given (`L3` → `ln_…`, `B1`, `F2`, `CH1`); `money`, each money reference with its amount (`$T1` → `{kind: ils, value}`, `$P1` for a percentage), which only the screen gets; `counters`; and `compacted_through`, the last message the summary covers.
 - **`chat_messages`** (`msg_`): `conversation_id`, `role`, `content jsonb`, `tokens`.
+  - A user message's `content`: `seq`, `text`, `model_text` (with the screen context, as the model got it), `ui_context`.
+  - An assistant message's: `seq`, `blocks` (08 §8.1, line references as ids), `answer_text` (as the model wrote it), `tool_summaries` (one line per call, what later turns get, 08 §5.2.1), `tool_calls` (each tool with its arguments, 08 §10's log), `money_refs`, `errors` (`invalid_ref`, `amount_removed`, `tool_failed`).
 - **`chat_proposals`** (`prp_`, 08 §7.1):
   - `quote_id`, `conversation_id`, `base_version`, `base_revision`, `summary_he`, `changes jsonb`, `diff jsonb`, `remember_default`.
-  - `status`: `pending`, `applied`, `dismissed` or `expired`.
+  - `changes`: each change with the lines it applies to, as ids and line keys, resolved once by code (`chat.proposals.resolve`). `diff`: lines changed, added, removed and derived, totals before and after and new and resolved findings, every amount a money reference of the conversation.
+  - `warnings jsonb`, `affected_line_count`, `alias` (`CH1`), migration 0021.
+  - `status`: `pending`, `applied`, `dismissed`, `expired`, or `undone` (applied, then taken back by the review screen's undo).
   - `resolved_at`.
+  - Applying writes the review actions' correction events with `source` = `chat` and `after.proposal` = the proposal's id; `review.undo` on any of them undoes them all, newest first.
 - **`audits`** (`aud_`, 11 §6): written by `POST /audits` (`processing`) and the audit step (S15).
   - `drawing_id` (the drawing has `purpose` = `audit`), `quote_file_id → drawing_files`, `quote_ref jsonb` (`number`, `date`, `total_before_vat` as a string), `input_kind`, `summary jsonb` (11 §6), `issues jsonb` (reading the quote: `quote_no_lines`, `quote_unreadable`, `quote_mapping_unsure`).
   - `status`: `processing`, `ready` or `failed` (the drawing failed, was cancelled, or its quota ran out).

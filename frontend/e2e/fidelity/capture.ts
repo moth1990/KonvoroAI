@@ -195,7 +195,56 @@ const SCREENS: Screen[] = [
   ...auditScreens(),
   ...priceScreens(),
   ...s24Screens(),
+  ...chatScreens(),
 ];
+
+/** S25: the chat drawer (prototype `vChat`, `propCard`), on the desktop over the drawing, on the phone its tab. The
+ * app's answers come from the stand-in model, so the words differ; the layout, the chips and the card are compared. */
+function chatScreens(): Screen[] {
+  const isPhone = (page: Page) => (page.viewportSize()?.width ?? 0) <= 860;
+  const protoAsk = (q: string) => async (page: Page) => {
+    await page.locator(isPhone(page) ? '[data-act="tab"][data-tab="chat"]' : '.rv-head [data-act="chat"]').click();
+    await page.locator(`[data-act="ask"][data-q='${q}']`).click();
+  };
+  const appAsk = (q: string, wait: string) => async (page: Page) => {
+    await appReview(page);
+    if (isPhone(page)) await page.getByRole("tab", { name: "צ'אט" }).click();
+    else await page.getByTestId("chat-toggle").click();
+    await page.getByTestId("newchat").click(); // each shot starts its own conversation
+    await page.getByTestId("ask").filter({ hasText: q }).click();
+    await page.locator(wait).last().waitFor({ timeout: 15_000 });
+  };
+  const notes = [
+    "The answers come from the stand-in model (devtools/fake_llm.py): its words differ from the prototype's demo " +
+      "text. Line names are chips that select the line; amounts are the server's, never the model's.",
+    'Each shot starts a new conversation, so the note "שיחות קודמות נשמרו לקריאה בלבד" shows under the header.',
+    'S25 decision 6: the fourth suggestion is "תראה לי את השורות האדומות"; the prototype\'s closes a finding, which ' +
+      "is not one of 08 §6.7's changes.",
+  ];
+  return [
+    {
+      id: "chat-answer",
+      title: "Chat: an answer with line chips",
+      prototype: { hash: "#review", authed: true, setup: protoAsk("מה חסר כדי לשלוח?") },
+      app: { path: "/home", tenant: TENANTS.chatShots, setup: appAsk("מה חסר כדי לשלוח?", "[data-testid=line-ref]") },
+      notes,
+      window: true,
+    },
+    {
+      id: "chat-proposal",
+      title: "Chat: a proposal card",
+      prototype: { hash: "#review", authed: true, setup: protoAsk('החלף את כל מא"זי ABB ל-Schneider') },
+      app: { path: "/home", tenant: TENANTS.chatShots, setup: appAsk("Schneider", "[data-testid=proposal]") },
+      notes: [
+        ...notes,
+        "S25 decision 2: the card adds the totals before and after (08 §7.3) under its rows, and a reason under each " +
+          "line that does not change. The prototype's card says every line turns red; the app's says what the " +
+          "catalog and the price list give.",
+      ],
+      window: true,
+    },
+  ];
+}
 
 /** S24: the settings screen and the approval queue, in a tenant nothing changes; and the onboarding page, which the
  * prototype does not have (compared with its settings screen, whose classes it uses). */

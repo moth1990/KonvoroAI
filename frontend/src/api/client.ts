@@ -558,3 +558,51 @@ export async function rejectCandidate(
     }),
   );
 }
+
+// --- the chat (08, S25) ----------------------------------------------------------------------------------------------
+
+export type Chat = Schemas["ChatOut"];
+export type ChatMessage = Schemas["ChatMessageOut"];
+export type ChatBlock = Schemas["ChatBlockOut"];
+export type ChatProposal = Schemas["ChatProposalOut"];
+export type ChatTurn = Schemas["ChatTurnOut"];
+export type ChatApply = Schemas["ChatApplyOut"];
+export type ChatUiContext = Schemas["ChatUiContextIn"];
+export type ChatMoney = Schemas["ChatMoneyOut"];
+
+export async function fetchChat(quoteId: string, client = api): Promise<Chat> {
+  return unwrap(await client.GET("/quotes/{quote_id}/chat", { params: { path: { quote_id: quoteId } } }));
+}
+
+/** One turn (08 §4–§8): the answer's blocks, with the amounts of the money references they use. */
+export async function sendChatMessage(
+  quoteId: string,
+  message: string,
+  uiContext: ChatUiContext,
+  client = api,
+): Promise<ChatTurn> {
+  return unwrap(
+    await client.POST("/quotes/{quote_id}/chat/messages", {
+      params: { path: { quote_id: quoteId } },
+      body: { message, ui_context: uiContext },
+    }),
+  );
+}
+
+/** "שיחה חדשה": the active conversation is closed and kept read only. */
+export async function newChat(quoteId: string, client = api): Promise<Chat> {
+  return unwrap(await client.POST("/quotes/{quote_id}/chat/new", { params: { path: { quote_id: quoteId } } }));
+}
+
+/** 08 §7.5: the estimator's approval. The answer has the quote as it now is and the event "בטל" undoes. */
+export async function applyProposal(proposalId: string, client = api): Promise<ChatApply> {
+  return unwrap(
+    await client.POST("/chat/proposals/{proposal_id}/apply", { params: { path: { proposal_id: proposalId } } }),
+  );
+}
+
+export async function dismissProposal(proposalId: string, client = api): Promise<ChatProposal> {
+  return unwrap(
+    await client.POST("/chat/proposals/{proposal_id}/dismiss", { params: { path: { proposal_id: proposalId } } }),
+  );
+}

@@ -34,12 +34,14 @@ import {
   type QuoteLine,
   type Recalculation,
 } from "../../api/client";
+import { useMe } from "../../api/QueryProvider";
 import { Shell } from "../../shell/Shell";
 import { MOBILE_MAX_PX } from "../../theme/tokens";
 import { Icon } from "../../ui/Icon";
 import { Modal } from "../../ui/Modal";
 import { useToast } from "../../ui/Toast";
 import { INPUT_KINDS } from "../newQuote/model";
+import { ChatPanel, type ChatFocus } from "./Chat";
 import { DrawingPane } from "./Drawing";
 import { boxOnPage, canMark, findingBox, firstPage, overlays, pageForLine, stepPage, tooSmall } from "./drawingModel";
 import { DismissControl, LineDetail, type DetailActions } from "./LineDetail";
@@ -99,7 +101,8 @@ function readMarginPref(): boolean {
 
 /**
  * The review screen (09 §5–6.5, §8, prototype `vReview`): header, filters, findings, the grouped lines table and
- * line detail (S09), the drawing pane and undo (S11), and the actions (S23, 09 §7). Chat is S25.
+ * line detail (S09), the drawing pane and undo (S11), the actions (S23, 09 §7), and the chat (S25, 08), a drawer over
+ * the drawing on the desktop and the third tab on the phone, behind `chat_layer`.
  *
  * An action goes to the server and the screen shows what it answers: the server prices and colours every line
  * (09 principle 7), within 500 ms (09 §14), so the screen never guesses an amount it would have to take back.
@@ -139,6 +142,10 @@ function Review({ quote }: { quote: Quote }) {
   const focusCount = useRef(0);
   const undo = useUndo(quote.quote_id);
   const toast = useToast();
+  const me = useMe();
+  const chatOn = !!me.data?.flags?.chat_layer;
+  const [chatOpen, setChatOpen] = useState(false);
+  const chatInput = useRef<HTMLInputElement>(null);
   const qc = useQueryClient();
   const locked = quote.status === "sent";
   const [saveToList, setSaveToList] = useState<Record<string, boolean>>({});
@@ -512,6 +519,14 @@ function Review({ quote }: { quote: Quote }) {
         void undo.undo();
         return;
       }
+      if (e.key === "/" && chatOnRef.current) {
+        // 09 §8, prototype line 1584: "/" moves the focus to the chat's field
+        e.preventDefault();
+        if (phone) setTab("chat");
+        else setChatOpen(true);
+        requestAnimationFrame(() => chatInput.current?.focus());
+        return;
+      }
       if (e.key === "Escape" && drawingRef.current) {
         // 09 §8: Esc leaves draw mode before it closes a sheet or drops the selection
         setDrawing(false);
@@ -544,9 +559,55 @@ function Review({ quote }: { quote: Quote }) {
     return () => document.removeEventListener("keydown", onKey);
   }, [phone, lineIds, selected, open, select, undo, quote.pages, pageId]);
   const drawingRef = useRef(drawing);
+  const chatOnRef = useRef(chatOn);
   useEffect(() => {
     drawingRef.current = drawing;
+    chatOnRef.current = chatOn;
   });
+
+  // --- the chat (08, 09 §6.7) ------------------------------------------------------------------------------------
+  const chatUi = {
+    panel_id: panel?.panel_id ?? null,
+    selected_line_ids: selected ? [selected] : [],
+    active_filter: filter === "red" || filter === "yellow" || filter === "green" ? filter : null,
+  };
+  // A line chip: the line selected in its panel; on the phone, the lines tab with its sheet open (09 §5.2)
+  const chatSelect = (id: string) => {
+    selectFromDrawing(id);
+    if (phone) setTab("lines");
+  };
+  const chatFocus = (f: ChatFocus) => {
+    const status = f.statuses?.length === 1 ? f.statuses[0] : null;
+    if (status === "red" || status === "yellow" || status === "green") setFilter(status);
+    if (f.panelId && !f.lineIds.length) selectPanel(f.panelId);
+    if (f.lineIds[0]) chatSelect(f.lineIds[0]);
+    else if (phone && status) setTab("lines");
+  };
+  const chatApplied = (done: { quote: Quote; message: string; event_id?: string | null }) => {
+    show(done.quote);
+    const eventId = done.event_id;
+    if (eventId)
+      undo.record({
+        label: done.message,
+        undo: async () => {
+          show((await undoAction(quoteId, eventId)).quote);
+          void qc.invalidateQueries({ queryKey: ["chat", quoteId] });
+        },
+      });
+    else toast(done.message);
+  };
+  const chatPanel = chatOn ? (
+    <ChatPanel
+      quote={quote}
+      ui={chatUi}
+      inputRef={chatInput}
+      onClose={phone ? undefined : () => setChatOpen(false)}
+      onSelectLine={chatSelect}
+      onFocus={chatFocus}
+      onApplied={chatApplied}
+      toast={toast}
+    />
+  ) : null;
 
   const kind = quote.input_kind ? INPUT_KINDS[quote.input_kind]?.[0] : null;
   const sub = [quote.drawing_number, kind, `גרסה ${quote.version}`, quote.status === "sent" ? "נשלחה" : "טיוטה"];
@@ -590,6 +651,18 @@ function Review({ quote }: { quote: Quote }) {
         >
           <Icon name="undo" />
         </button>
+        {chatOn ? (
+          <button
+            type="button"
+            className="btn sm chat-toggle"
+            data-testid="chat-toggle"
+            aria-pressed={chatOpen}
+            onClick={() => setChatOpen((o) => !o)}
+          >
+            <Icon name="chat" />
+            צ'אט
+          </button>
+        ) : null}
         {locked ? (
           <button type="button" className="btn primary sm" data-testid="newver" onClick={() => void openNext()}>
             פתח גרסה {quote.version + 1}
@@ -813,11 +886,15 @@ function Review({ quote }: { quote: Quote }) {
             mark={{ available: markable, on: drawing, onToggle: () => setDrawing((d) => !d), onDrawn: drawn }}
           />
         </section>
-        <section className="pane chat-pane" aria-label="צ'אט">
-          <div className="drawing-soon">
-            <span className="small">הצ'אט יגיע בקרוב</span>
-          </div>
-        </section>
+        {chatPanel && (phone ? tab === "chat" : chatOpen) ? (
+          chatPanel
+        ) : chatOn ? null : (
+          <section className="pane chat-pane" aria-label="צ'אט">
+            <div className="drawing-soon">
+              <span className="small">הצ'אט כבוי בהגדרות</span>
+            </div>
+          </section>
+        )}
       </div>
       {sheetLine ? (
         <Modal onClose={() => setOpen(null)} labelledBy="sheet-title" className="sheet" backdropClassName="sheet-bg">

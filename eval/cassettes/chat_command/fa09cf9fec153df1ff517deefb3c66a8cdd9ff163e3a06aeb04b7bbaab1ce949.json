@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 2,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 220,
+    "payload": {
+      "clarification_options": [],
+      "text": "סך ההצעה לפני מע\"מ הוא {{$T1}}. הסכום חלקי, כי 5 מתוך 14 השורות עדיין בלי מחיר ולכן לא נכללות בו: {{line:L1}}, {{line:L2}}, {{line:L3}}, {{line:L4}} ו-{{line:L5}}. יש גם שורה אחת בלי עלות. ההצעה תעלה כשהשורות האלה יקבלו מחיר."
+    },
+    "text": null,
+    "tool_calls": []
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

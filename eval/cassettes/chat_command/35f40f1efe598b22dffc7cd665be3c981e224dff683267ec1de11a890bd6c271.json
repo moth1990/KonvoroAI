@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 2,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 245,
+    "payload": {
+      "clarification_options": [],
+      "text": "העלות שלנו ליחידה עבור {{line:L1}} (מא\"ז ABB S201M 1P 16A, כמות 1) היא {{$T2}}. מחיר המכירה ליחידה והסכום לשורה הם {{$T1}}, והמרווח הוא {{$P1}}. המחיר בשורה הגיע מייבוא ההצעה, והסטטוס שלה ירוק."
+    },
+    "text": null,
+    "tool_calls": []
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

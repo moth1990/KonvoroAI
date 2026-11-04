@@ -1,0 +1,31 @@
+{
+  "answer": {
+    "input_tokens": 2,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 116,
+    "payload": null,
+    "text": null,
+    "tool_calls": [
+      {
+        "args": {
+          "changes": [
+            {
+              "qty": 2,
+              "target": {
+                "lines": [
+                  "L1"
+                ]
+              },
+              "type": "set_quantity"
+            }
+          ],
+          "summary_he": "כמות 2 למגען"
+        },
+        "id": "toolu_01Wc55L9o6emUBZpqWiwa2SS",
+        "name": "propose_change"
+      }
+    ]
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

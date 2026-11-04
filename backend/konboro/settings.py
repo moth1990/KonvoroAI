@@ -35,6 +35,9 @@ class Settings(BaseSettings):
         default=None, validation_alias=AliasChoices("ANTHROPIC_API_KEY", "KONBORO_ANTHROPIC_API_KEY")
     )
 
+    # 08 §5.2.1: the tokens one chat turn may send; the instructions and the quote brief first, then the history
+    chat_context_budget_tokens: int = 30_000
+
     # S3 and SQS (12 §3). Locally the endpoints point at S3Mock and ElasticMQ (docker-compose.yml), which accept
     # any credentials; in AWS the endpoints are unset and the IAM role signs requests.
     aws_region: str = "eu-central-1"

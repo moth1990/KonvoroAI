@@ -58,6 +58,10 @@ def test_e2e_tenants_have_their_states(migrated_db: dict[str, Engine]) -> None:
         "queue-mobile@e2e.konboro.local": (False, 12, "ok"),
         "s24-shots@e2e.konboro.local": (False, 12, "ok"),
         "s24-off@e2e.konboro.local": (False, 12, "ok"),
+        "chat-desktop@e2e.konboro.local": (False, 12, "ok"),
+        "chat-mobile@e2e.konboro.local": (False, 12, "ok"),
+        "chat-off@e2e.konboro.local": (False, 12, "ok"),
+        "chat-shots@e2e.konboro.local": (False, 12, "ok"),
     }
     sample = states["classic@e2e.konboro.local"][3]
     assert sample.queue_pending == 3
@@ -105,3 +109,7 @@ def test_every_e2e_tenant_can_log_in(migrated_db: dict[str, Engine]) -> None:
     off = next(t for t in e2e.TENANTS if t.off)
     with tenant_session(off.tenant_id, migrated_db["app"]) as s:
         assert flags.tenant_flags(s, off.tenant_id)["price_list"] is False
+    # the chat (S25): on for every E2E tenant but the one that has it off
+    for t in e2e.TENANTS:
+        with tenant_session(t.tenant_id, migrated_db["app"]) as s:
+            assert flags.tenant_flags(s, t.tenant_id)["chat_layer"] is ("chat_layer" not in t.off), t.email

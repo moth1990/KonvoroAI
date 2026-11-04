@@ -1,0 +1,20 @@
+{
+  "answer": {
+    "input_tokens": 2,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 170,
+    "payload": {
+      "clarification_options": [
+        "השורות האדומות (5)",
+        "שורות עם ממצאים (6)",
+        "כל שורות הלוח (14)",
+        "אסמן שורות במסך ואחזור אליך"
+      ],
+      "text": "לא סימנת שורות במסך, ולכן לא ברור לי מה למחוק. על אילו שורות מדובר?"
+    },
+    "text": null,
+    "tool_calls": []
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}
