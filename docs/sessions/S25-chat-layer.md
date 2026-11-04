@@ -6,7 +6,7 @@
 | **Branch** | `s25-chat-layer` |
 | **Depends on** | S23 |
 | **Status** | in review |
-| **PR** | (link) |
+| **PR** | [moth1990/KonvoroAI#31](https://github.com/moth1990/KonvoroAI/pull/31) |
 
 ## Goal
 
