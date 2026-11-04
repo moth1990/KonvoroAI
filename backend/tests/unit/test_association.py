@@ -511,6 +511,17 @@ def test_a_circle_drawn_as_two_arcs_is_not_a_junction() -> None:
     assert ticked.degree(1) == 2  # a 3 pt dead end on the line is a tick, not a branch
 
 
+def test_a_copy_overlapping_the_breaker_is_not_the_next_breaker() -> None:
+    """25.26.100's eval run: a breaker found twice, the second box inside the first's lower part. The cable below is
+    the breaker's: the walk goes through its own copy."""
+    breaker = det(1, (95, 100, 105, 140))
+    copy = det(2, (99, 110, 105, 145))
+    w = _wires([(100, 140), (100, 145), (100, 320), (100, 500)])
+    cable = assign.texts([span(1, "3×1.5", (88, 300, 97, 360), rotation=90)])
+    found = circuits.cable_below(w, breaker, [breaker, copy], cable)
+    assert found is not None and found.span.text == "3×1.5"
+
+
 def test_the_walk_steps_over_a_wire_drawn_to_an_arcs_middle() -> None:
     """BUG-072: on 25.26.100 the outgoing wire starts half a point from the end circle's arc, at no node of it."""
     breaker = det(1, (95, 100, 105, 140))

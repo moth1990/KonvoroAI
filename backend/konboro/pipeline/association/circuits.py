@@ -199,7 +199,11 @@ def _to_segment(b: Bbox, p: Point, q: Point) -> float:
 def cable_below(wires: Wires, d: Detection, detections: list[Detection], texts: list[Text]) -> Text | None:
     """BUG-072: the cable written along the device's outgoing line, before the next protective device (whose line
     that is), nearest the device: 25.26.100 writes "3X1.5 N2XY" halfway down to the outlet."""
-    stop = frozenset(x.det_id for x in detections if x.det_id != d.det_id and x.family in PROTECTIVE)
+    stop = frozenset(
+        x.det_id
+        for x in detections
+        if x.det_id != d.det_id and x.family in PROTECTIVE and gap(x.bbox, d.bbox) > 0  # its own copy is no next one
+    )
     w = walk(wires, d, detections, 1, stop)
     cables = [t for t in texts_on(w, texts) if any(r.key == "cable_cores" for r in t.readings)]
     return min(cables, key=lambda t: (gap(t.span.bbox, d.bbox), t.id)) if cables else None
