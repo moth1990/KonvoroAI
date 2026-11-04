@@ -81,9 +81,12 @@ def hex_color(value: Any) -> str | None:
 
 def visual_to_logical(text: str) -> str:
     """A line in visual order (left to right on the page) with Hebrew in it, in reading order. Numbers and Latin
-    runs keep their own order: "16A" stays "16A" inside a Hebrew line."""
+    runs keep their own order: "16A" stays "16A" inside a Hebrew line. A table cell wrapped over lines keeps its
+    lines in order: each one is turned on its own (BUG-076)."""
     if not any(ord(ch) in HEBREW for ch in text):
         return text
+    if "\n" in text:
+        return "\n".join(visual_to_logical(line) for line in text.split("\n"))
     return LTR_RUN.sub(lambda m: m.group()[::-1], text[::-1])
 
 

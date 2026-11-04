@@ -203,6 +203,8 @@ def test_colours(value: Any, hex_: str | None) -> None:
 def test_hebrew_comes_back_in_reading_order() -> None:
     assert vector.visual_to_logical('16A ז"אמ') == 'מא"ז 16A'
     assert vector.visual_to_logical("C16") == "C16"
+    # BUG-076: quote 10298's cabinet cell wraps over two lines; the lines keep their order
+    assert vector.visual_to_logical("חפמ חול הנבמ\n2100/600/400 תודימב") == "מבנה לוח מפח\nבמידות 2100/600/400"
 
 
 # ---------- 2.4 normalization ----------
