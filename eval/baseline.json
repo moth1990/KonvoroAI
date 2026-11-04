@@ -570,7 +570,6 @@
         "warning QTY_RANGE_MISMATCH",
         "warning QTY_RANGE_MISMATCH",
         "warning QTY_RANGE_MISMATCH",
-        "warning QTY_RANGE_MISMATCH",
         "warning PANEL_MISSING_ROWS",
         "info CTRL_CONTACTOR_WITHOUT_COIL_CIRCUIT C",
         "info DATA_MANY_DEFAULTS",
@@ -624,15 +623,15 @@
       ],
       "matching": {
         "auxiliary": 5,
-        "components": 91,
+        "components": 90,
         "llm_signatures": 3,
         "method_llm": 6,
         "method_none": 38,
-        "method_rules_ranked": 11,
+        "method_rules_ranked": 10,
         "method_rules_unique": 31,
         "signatures": 65,
         "status_ambiguous": 11,
-        "status_matched": 42,
+        "status_matched": 41,
         "status_unmatched": 33
       },
       "merge": {
@@ -640,7 +639,7 @@
         "agent_tiles": 28,
         "citation_mismatches": 6,
         "cited_values": 123,
-        "components": 91,
+        "components": 90,
         "instances": 178,
         "missing": 3,
         "shared_labels": 0,
@@ -664,10 +663,10 @@
         },
         "לוח סככה": {
           "component_precision": {
-            "den": 32,
+            "den": 31,
             "kind": "ratio",
             "num": 17.0,
-            "value": 0.53125
+            "value": 0.548387
           },
           "component_recall": {
             "den": 29,
@@ -692,8 +691,8 @@
         }
       },
       "predicted": {
-        "products": 91,
-        "units": 245
+        "products": 90,
+        "units": 253
       },
       "predicted_total": "0",
       "predicted_value_at_risk": null,
@@ -903,10 +902,10 @@
             "value": 0.04878
           },
           "component_precision": {
-            "den": 84,
+            "den": 83,
             "kind": "ratio",
             "num": 47.0,
-            "value": 0.559524
+            "value": 0.566265
           },
           "component_recall": {
             "den": 73,
@@ -929,14 +928,14 @@
           "quantity_accuracy": {
             "den": 47,
             "kind": "ratio",
-            "num": 27.0,
-            "value": 0.574468
+            "num": 28.0,
+            "value": 0.595745
           },
           "unit_recall": {
             "den": 184,
             "kind": "ratio",
-            "num": 106.0,
-            "value": 0.576087
+            "num": 114.0,
+            "value": 0.619565
           },
           "values_without_evidence": {
             "den": 1,
@@ -965,10 +964,10 @@
             "value": null
           },
           "with_sku": {
-            "den": 86,
+            "den": 85,
             "kind": "ratio",
-            "num": 53.0,
-            "value": 0.616279
+            "num": 52.0,
+            "value": 0.611765
           }
         },
         "s5_labelled": {
@@ -1013,8 +1012,8 @@
           "warnings": {
             "den": 1,
             "kind": "average",
-            "num": 12.0,
-            "value": 12.0
+            "num": 11.0,
+            "value": 11.0
           }
         },
         "s6_labelled": {
@@ -1099,7 +1098,7 @@
         "checks_skipped": 19,
         "severity_error": 0,
         "severity_info": 17,
-        "severity_warning": 12
+        "severity_warning": 11
       }
     },
     "BOM-HW-1": {
@@ -3279,10 +3278,10 @@
           "value": 0.043269
         },
         "component_precision": {
-          "den": 184,
+          "den": 183,
           "kind": "ratio",
           "num": 123.0,
-          "value": 0.668478
+          "value": 0.672131
         },
         "component_recall": {
           "den": 165,
@@ -3305,14 +3304,14 @@
         "quantity_accuracy": {
           "den": 123,
           "kind": "ratio",
-          "num": 90.0,
-          "value": 0.731707
+          "num": 91.0,
+          "value": 0.739837
         },
         "unit_recall": {
           "den": 454,
           "kind": "ratio",
-          "num": 329.0,
-          "value": 0.72467
+          "num": 337.0,
+          "value": 0.742291
         },
         "values_without_evidence": {
           "den": 6,
@@ -3341,10 +3340,10 @@
           "value": 1.0
         },
         "with_sku": {
-          "den": 186,
+          "den": 185,
           "kind": "ratio",
-          "num": 135.0,
-          "value": 0.725806
+          "num": 134.0,
+          "value": 0.724324
         }
       },
       "s5_labelled": {
@@ -3389,8 +3388,8 @@
         "warnings": {
           "den": 6,
           "kind": "average",
-          "num": 22.0,
-          "value": 3.666667
+          "num": 21.0,
+          "value": 3.5
         }
       },
       "s6_labelled": {
@@ -3935,10 +3934,10 @@
             "value": 0.04878
           },
           "component_precision": {
-            "den": 84,
+            "den": 83,
             "kind": "ratio",
             "num": 47.0,
-            "value": 0.559524
+            "value": 0.566265
           },
           "component_recall": {
             "den": 73,
@@ -3961,14 +3960,14 @@
           "quantity_accuracy": {
             "den": 47,
             "kind": "ratio",
-            "num": 27.0,
-            "value": 0.574468
+            "num": 28.0,
+            "value": 0.595745
           },
           "unit_recall": {
             "den": 184,
             "kind": "ratio",
-            "num": 106.0,
-            "value": 0.576087
+            "num": 114.0,
+            "value": 0.619565
           },
           "values_without_evidence": {
             "den": 1,
@@ -3997,10 +3996,10 @@
             "value": null
           },
           "with_sku": {
-            "den": 86,
+            "den": 85,
             "kind": "ratio",
-            "num": 53.0,
-            "value": 0.616279
+            "num": 52.0,
+            "value": 0.611765
           }
         },
         "s5_labelled": {
@@ -4045,8 +4044,8 @@
           "warnings": {
             "den": 1,
             "kind": "average",
-            "num": 12.0,
-            "value": 12.0
+            "num": 11.0,
+            "value": 11.0
           }
         },
         "s6_labelled": {
