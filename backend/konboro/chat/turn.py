@@ -13,6 +13,7 @@ Every turn is kept (08 §10 `יומן`): the message, the tools called with thei
 """
 
 import logging
+import re
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -28,7 +29,7 @@ from konboro_llm.stages import chat_command as cc
 
 from . import history, proposals
 from .brief import brief
-from .check import MONEY_REF, check, strip_amounts
+from .check import MONEY_REF, check, for_model, strip_amounts
 from .lines import load
 from .state import ChatState
 from .tools import Tools, specs
@@ -152,7 +153,7 @@ def _user_text(text: str, ui: UiContext, state: ChatState) -> str:
     if ui.active_filter and ui.active_filter in STATUS_HE:
         parts.append(f"table filtered to {ui.active_filter}")
     screen = f"[screen: {'; '.join(parts)}]\n" if parts else "[screen: nothing selected]\n"
-    return screen + text.strip()
+    return screen + for_model(text.strip(), state)
 
 
 def _seq(rows: list[m.ChatMessage]) -> int:
@@ -221,7 +222,7 @@ def run(
             tokens=history.tokens(model_text),
         )
     )
-    tools = Tools(session, storage, actor, role, quote_id, conv, state)
+    tools = Tools(session, storage, actor, role, quote_id, conv, state, llm=llm)
     context = "Quote brief (counts only):\n" + brief(ql, state)
     fixed = history.tokens(cc.SYSTEM) + history.tokens(context) + history.tokens(model_text) + 3000  # tools' schemas
     past = history.build(conv, earlier, fixed, budget, llm, actor.tenant_id)
@@ -261,12 +262,13 @@ def run(
     # 08 §8.2: the answer check
     ql = load(session, actor.tenant_id, quote_id) or ql
     live = {ln.line_id for ln in ql.lines}
-    checked = check(answer.text, state, live)
+    located = set(tools.instances)
+    checked = check(answer.text, state, live, live_instances=located)
     if checked.amounts:
         again = _ask_without_amounts(llm, request, answer, checked.amounts, tools)
         if again is not None:
             answer = again
-            checked = check(answer.text, state, live)
+            checked = check(answer.text, state, live, live_instances=located)
         if checked.amounts:
             checked.text = strip_amounts(checked.text)
             errors.append("amount_removed")
@@ -275,13 +277,18 @@ def run(
         log.info("chat invalid_ref %s", checked.invalid_refs)
 
     blocks: list[dict[str, Any]] = [{"type": "text", "content": checked.text}]
-    options = [o.strip() for o in answer.clarification_options if o.strip()][:4]
+    options = []
+    for o in [o.strip() for o in answer.clarification_options if o.strip()][:4]:
+        opt = check(strip_amounts(MONEY_REF.sub("", o)), state, live, live_instances=located)
+        checked.invalid_refs += opt.invalid_refs
+        if opt.text:
+            options.append(opt.text)
     if options:
-        blocks.append({"type": "clarification", "options": [strip_amounts(MONEY_REF.sub("", o)) for o in options]})
+        blocks.append({"type": "clarification", "options": options})
     blocks += [{"type": "proposal", "proposal_id": pid} for pid in tools.proposals]
     for a in tools.ui_actions:
         a["line_ids"] = [i for i in a["line_ids"] if i in live]
-        if a["line_ids"] or a.get("panel_id") or a.get("statuses"):
+        if a["line_ids"] or a.get("panel_id") or a.get("statuses") or a.get("instance_ids"):
             blocks.append(a)
     blocks += tools.settings_links
 
@@ -298,6 +305,8 @@ def run(
             "tool_summaries": tools.summaries,
             "tool_calls": calls,
             "money_refs": sorted(refs_in(blocks, session, actor.tenant_id)),
+            # where each instance the answer points at is, for the drawing pane (S25b, 08 §6.4 `focus`)
+            "instances": {i: tools.instances[i] for i in checked.instance_ids if i in tools.instances},
             "errors": errors,
         },
         tokens=history.tokens(answer.text),
@@ -335,18 +344,40 @@ def _diff_refs(value: Any) -> set[str]:
 def message_out(session: Session, tenant_id: str, row: m.ChatMessage, state: ChatState) -> dict[str, Any]:
     c = row.content
     if row.role == "user":
+        blocks = [{"type": "text", "content": c.get("text", "")}]  # a clicked option may name a quote
         return {
             "message_id": row.id,
             "role": "user",
-            "blocks": [{"type": "text", "content": c.get("text", "")}],
+            "blocks": blocks,
             "money": {},
+            "quotes": quote_names(session, tenant_id, blocks),
+            "instances": {},
         }
     return {
         "message_id": row.id,
         "role": "assistant",
         "blocks": c.get("blocks", []),
         "money": state.resolve(set(c.get("money_refs", []))),
+        "quotes": quote_names(session, tenant_id, c.get("blocks", [])),
+        "instances": dict(c.get("instances", {})),
     }
+
+
+SCREEN_QUOTE = re.compile(r"\{\{\s*quote:\s*(quo_[0-9A-Z]+)\s*\}\}")
+
+
+def quote_names(session: Session, tenant_id: str, blocks: list[dict[str, Any]]) -> dict[str, str]:
+    """The names of the quotes an answer points at, for the screen only (S25b decision 1): the model never sees them.
+    Read when the message is shown, under the tenant's RLS."""
+    ids: set[str] = set()
+    for b in blocks:
+        texts = [b.get("content", "")] if b["type"] == "text" else list(b.get("options", []))
+        for t in texts:
+            ids |= set(SCREEN_QUOTE.findall(t))
+    if not ids:
+        return {}
+    rows = session.execute(select(m.Quote.id, m.Quote.name).where(m.Quote.tenant_id == tenant_id, m.Quote.id.in_(ids)))
+    return {qid: name for qid, name in rows}
 
 
 def proposal_out(p: m.ChatProposal, state: ChatState) -> dict[str, Any]:
@@ -359,4 +390,6 @@ def proposal_out(p: m.ChatProposal, state: ChatState) -> dict[str, Any]:
         "diff": p.diff,
         "base_version": p.base_version,
         "money": state.resolve(_diff_refs(p.diff)),
+        "remember_options": list(p.remember_options or ["quote_only"]),
+        "remembered": p.remembered,
     }

@@ -7,6 +7,7 @@ export async function openNursery(page: Page) {
   await page
     .getByTestId("recent")
     .getByRole("link", { name: /NURSERY/ })
+    .filter({ hasNotText: "הצעה קודמת" }) // the chat tenants' earlier quote, for compare (S25b)
     .click();
   await expect(page).toHaveURL(/\/review\/quo_[0-9A-Z]{26}$/);
   await expect(page.getByRole("heading", { name: "NURSERY" })).toBeVisible();

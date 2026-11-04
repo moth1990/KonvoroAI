@@ -1,0 +1,32 @@
+{
+  "answer": {
+    "input_tokens": 2222,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 278,
+    "payload": {
+      "answer": "אין לי מספיק מידע בעקבות כדי להסביר את זה. בעקבות אין שום הסבר לגבי ממסר, לא נוסף ולא נדחה, ובשרטוט סביב F31 לא רואים ממסר. מה שכן מופיע: מא\"ז ABB S201M קוטב אחד 16A, שנקרא מהשרטוט (F31, 1X16A, S201M ABB). כדאי לבדוק ברכיב בשרטוט אם אמור להיות ממסר במעגל הזה.",
+      "cites": {
+        "instance_ids": [
+          "I1"
+        ],
+        "line_ids": [
+          "L1"
+        ],
+        "span_ids": [
+          "S1",
+          "S2",
+          "S4"
+        ]
+      },
+      "confidence": 0.8,
+      "focus": {
+        "instance_ids": [
+          "I1"
+        ]
+      },
+      "trace_supported": false
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "line_explanation"
+}

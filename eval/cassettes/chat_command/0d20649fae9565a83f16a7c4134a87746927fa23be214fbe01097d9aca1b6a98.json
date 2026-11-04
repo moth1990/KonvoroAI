@@ -1,0 +1,25 @@
+{
+  "answer": {
+    "input_tokens": 4,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 87,
+    "payload": null,
+    "text": null,
+    "tool_calls": [
+      {
+        "args": {
+          "families": [
+            "circuit_breaker"
+          ],
+          "manufacturers": [
+            "ABB"
+          ]
+        },
+        "id": "toolu_013baFnP8rzZRX5BnmJhEpDf",
+        "name": "query_lines"
+      }
+    ]
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

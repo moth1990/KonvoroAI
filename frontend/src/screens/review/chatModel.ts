@@ -16,22 +16,40 @@ export const SUGGESTIONS = [
 ];
 
 export type Segment =
-  { kind: "text"; text: string } | { kind: "line"; lineId: string } | { kind: "money"; ref: string };
+  | { kind: "text"; text: string }
+  | { kind: "line"; lineId: string }
+  | { kind: "money"; ref: string }
+  | { kind: "quote"; quoteId: string }
+  | { kind: "instance"; instanceId: string };
 
-const REF = /\{\{\s*(line:ln_[0-9A-Z]+|\$[A-Z]\d+)\s*\}\}/g;
+const REF = /\{\{\s*(line:ln_[0-9A-Z]+|quote:quo_[0-9A-Z]+|instance:[^\s{}]+|\$[A-Z]\d+)\s*\}\}/g;
 
-/** A text block's content as text, line chips and amounts. */
+function segment(ref: string): Segment {
+  if (ref.startsWith("line:")) return { kind: "line", lineId: ref.slice(5) };
+  if (ref.startsWith("quote:")) return { kind: "quote", quoteId: ref.slice(6) };
+  if (ref.startsWith("instance:")) return { kind: "instance", instanceId: ref.slice(9) };
+  return { kind: "money", ref };
+}
+
+/** A text block's content as text, line chips, amounts, other quotes' names and the drawing's instances (S25b). */
 export function segments(content: string): Segment[] {
   const out: Segment[] = [];
   let at = 0;
   for (const m of content.matchAll(REF)) {
     if (m.index > at) out.push({ kind: "text", text: content.slice(at, m.index) });
-    const ref = m[1] ?? "";
-    out.push(ref.startsWith("line:") ? { kind: "line", lineId: ref.slice(5) } : { kind: "money", ref });
+    out.push(segment(m[1] ?? ""));
     at = m.index + m[0].length;
   }
   if (at < content.length) out.push({ kind: "text", text: content.slice(at) });
   return out;
+}
+
+/** An option's text as its chip shows it: a quote by its name (the model only knew it as QT2, S25b decision 1). */
+export function optionLabel(option: string, quotes: Record<string, string | undefined>): string {
+  return segments(option)
+    .map((s) => (s.kind === "text" ? s.text : s.kind === "quote" ? (quotes[s.quoteId] ?? "הצעה אחרת") : ""))
+    .join("")
+    .trim();
 }
 
 /** A money reference as the screen shows it; "—" when the server sent no amount for it. */
@@ -131,6 +149,28 @@ export function warningTexts(p: ChatProposal): string[] {
 
 export function deletedCount(p: ChatProposal): number {
   return Number((p.diff as { deleted_count?: number }).deleted_count ?? 0);
+}
+
+export type Remember = "quote_only" | "customer" | "tenant";
+
+/** 08 §7.3–7.4, S25b decision 2: the card's memory chips, "רק בהצעה הזו" first and selected by default. */
+export const REMEMBER: Record<Remember, string> = {
+  quote_only: "רק בהצעה הזו",
+  customer: "לזכור ללקוח הזה",
+  tenant: "לזכור למפעל",
+};
+
+/** The chips a proposal offers; none when it offers only this quote (prices, margins, quantities). */
+export function rememberChoices(p: ChatProposal): Remember[] {
+  const offered = p.remember_options ?? ["quote_only"];
+  return offered.length > 1 ? (["quote_only", "customer", "tenant"] as const).filter((r) => offered.includes(r)) : [];
+}
+
+/** An applied card's note when it was remembered. */
+export function rememberedText(p: ChatProposal): string | null {
+  if (p.remembered === "customer") return "נשמר בזיכרון ההתאמות של הלקוח";
+  if (p.remembered === "tenant") return "נשמר בזיכרון ההתאמות של המפעל";
+  return null;
 }
 
 /** 08 §9: deleting more than 5 lines says so on the button. */

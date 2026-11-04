@@ -1,0 +1,21 @@
+{
+  "answer": {
+    "input_tokens": 4,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 75,
+    "payload": null,
+    "text": null,
+    "tool_calls": [
+      {
+        "args": {
+          "line": "L1",
+          "question": "למה IP55?"
+        },
+        "id": "toolu_0148YsXBMazJeBZ4v1fBsPG7",
+        "name": "explain_line"
+      }
+    ]
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

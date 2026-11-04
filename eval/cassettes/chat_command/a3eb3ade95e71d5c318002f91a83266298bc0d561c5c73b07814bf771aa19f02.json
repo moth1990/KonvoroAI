@@ -1,0 +1,32 @@
+{
+  "answer": {
+    "input_tokens": 2,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 130,
+    "payload": null,
+    "text": null,
+    "tool_calls": [
+      {
+        "args": {
+          "changes": [
+            {
+              "attribute": "current_a",
+              "target": {
+                "lines": [
+                  "L1"
+                ]
+              },
+              "type": "set_attribute",
+              "value": "25"
+            }
+          ],
+          "summary_he": "שינוי זרם ל-25A בשורה L1"
+        },
+        "id": "toolu_01SmSCUSMSfeca7hJKhZYu8N",
+        "name": "propose_change"
+      }
+    ]
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

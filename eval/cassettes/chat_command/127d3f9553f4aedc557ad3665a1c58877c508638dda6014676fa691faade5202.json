@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 2,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 218,
+    "payload": {
+      "clarification_options": [],
+      "text": "בלוח B1 יש שני מא\"זים של 16A, ושניהם ירוקים:\n- {{line:L1}}: ABB S203M 3P, מק\"ט S203M-C16, כמות 5.\n- {{line:L2}}: ABB S201M 1P, מק\"ט S201M-C16, כמות 1.\n\nסימנתי אותם במסך. {{line:L3}} הוא 160A ולא 16A, ולכן הוא לא ברשימה."
+    },
+    "text": null,
+    "tool_calls": []
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

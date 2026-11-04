@@ -29,6 +29,7 @@ from typing import Any
 
 from PIL import Image
 from sqlalchemy import func, select
+from sqlalchemy.orm import Session
 
 from konboro.contracts.matching import ComponentMatch
 from konboro.contracts.merge import AttributeValue, Component, MissingInstance
@@ -218,6 +219,11 @@ def component_of(ctx: Ctx, row: m.QuoteLine) -> Component | None:
     cmp = ctx.session.get(m.Component, row.component_id) if row.component_id else None
     if cmp is None or cmp.tenant_id != ctx.tid:
         return None
+    return component_from_row(cmp)
+
+
+def component_from_row(cmp: m.Component) -> Component:
+    """A `components` row as stage 4's contract, for a quote with no stage outputs (the fixtures)."""
     attrs: dict[str, AttributeValue] = {}
     for key, a in (cmp.attributes or {}).items():
         name = FIXTURE_KEYS.get(key, key)
@@ -246,6 +252,39 @@ def component_of(ctx: Ctx, row: m.QuoteLine) -> Component | None:
         confidence=cmp.confidence if cmp.confidence is not None else 1.0,
         status="accepted",
     )
+
+
+def sign_rows(
+    session: Session, tenant_id: str, customer_id: str | None, rows: Iterable[m.QuoteLine]
+) -> dict[str, tuple[str, str | None]]:
+    """Each component line's signature and brand context as stage 5 would sign it (05 §5.1, §5.3), from the
+    `components` rows: for the lines of a quote with no stage outputs, which stage 7 did not write (the fixtures'
+    seed, S25b decision 5). Line id → (signature, brand context). Kit parts (a child line) are not signed."""
+    todo: dict[str, Component] = {}
+    for row in rows:
+        if row.component_id is None or row.parent_line_id is not None or row.line_type != "component":
+            continue
+        cmp = session.get(m.Component, row.component_id)
+        if cmp is not None and cmp.tenant_id == tenant_id:
+            todo[row.id] = component_from_row(cmp)
+    if not todo:
+        return {}
+    cat = catalog.load(session)
+    inp = match.Inputs(
+        catalog=cat,
+        factory=factory.load(session, tenant_id, cat, customer_id),
+        schemas=schemas.load(session),
+        notes=notes.read([]),
+        components={c.component_id: c for c in todo.values()},
+        ask=None,
+    )
+    out = {}
+    for line_id, c in todo.items():
+        if not inp.schemas.attributes(c.family):
+            continue  # a family with no schema ("device") signs every such line alike: it pairs by SKU instead
+        pr = match.prepare(c, inp, {}, {})
+        out[line_id] = (pr.sig, pr.requested)
+    return out
 
 
 def _match_one(ctx: Ctx, component: Component) -> tuple[ComponentMatch, match.Inputs]:

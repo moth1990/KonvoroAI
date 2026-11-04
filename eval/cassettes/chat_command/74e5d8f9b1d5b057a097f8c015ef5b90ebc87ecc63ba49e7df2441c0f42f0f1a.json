@@ -1,0 +1,19 @@
+{
+  "answer": {
+    "input_tokens": 4,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 247,
+    "payload": {
+      "clarification_options": [
+        "השורות האדומות (5)",
+        "כל שורות הלוח NURSERY (14)",
+        "אסמן שורות על המסך ואחזור אליך"
+      ],
+      "text": "לא סימנת שורות על המסך, אז לא ברור מה למחוק. מה למחוק? שום דבר לא ישתנה עד שתאשר הצעה."
+    },
+    "text": null,
+    "tool_calls": []
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

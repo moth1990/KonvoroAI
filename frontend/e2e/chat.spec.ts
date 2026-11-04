@@ -2,14 +2,16 @@
  * The chat on the review screen (08, 09 §6.7, S25) on the NURSERY-1 fixture, desktop and phone, with the stand-in
  * model (`konboro/devtools/fake_llm.py`): opening it (the header's button and "/", the third tab on the phone), a
  * suggestion answered with line chips, a chip that selects its line, a proposal card that changes nothing until
- * "החל", undo taking it back, "בטל" on a card, "שיחה חדשה", and the chat gone with `chat_layer` off.
+ * "החל", undo taking it back, "בטל" on a card, "שיחה חדשה", and the chat gone with `chat_layer` off. S25b: a "why"
+ * answered from the line's trace with a chip that frames the component, compare with the earlier quote shown by its
+ * name, and a brand swap remembered for the factory and undone.
  *
  * Applying changes the quote, so each project has its own tenant, and the tests run in order.
  */
 import { expect, test, type Page } from "@playwright/test";
 
 import { isMobile, signIn, TENANTS } from "./fixtures";
-import { openNursery } from "./review-helpers";
+import { lineWith, openNursery } from "./review-helpers";
 
 test.describe.configure({ mode: "serial", timeout: 60_000 });
 
@@ -82,6 +84,57 @@ test.describe("chat_layer on", () => {
     await expect(chat(page).getByTestId("proposal")).toHaveCount(0);
     const width = await page.evaluate(() => document.documentElement.scrollWidth);
     expect(width).toBeLessThanOrEqual(isMobile(page) ? 375 : 10_000); // no sideways page scroll on the phone
+  });
+});
+
+test.describe("S25b: why, compare and remember", () => {
+  test.beforeEach(async ({ page, request }, info) => {
+    await signIn(page, request, info.project.name === "mobile" ? TENANTS.chatMobile : TENANTS.chatDesktop);
+    await openNursery(page);
+  });
+
+  test("a why about a line is answered from its trace, and its chip frames the component", async ({ page }) => {
+    const row = await lineWith(page, "S203M 3P ‏16A");
+    await row.click();
+    if (isMobile(page)) await page.keyboard.press("Escape"); // the line's sheet; the line stays selected
+    await openChat(page);
+    await page.getByTestId("chat-input").fill("למה 3 קטבים?");
+    await page.getByTestId("chat-input").press("Enter");
+    const answer = chat(page).locator(".msg.a", { hasText: "נקרא מהשרטוט" });
+    await expect(answer).toBeVisible();
+    await expect(chat(page).getByTestId("show-instance")).toBeVisible();
+    await answer.getByTestId("instance-ref").click();
+    if (isMobile(page)) await expect(page.getByRole("tab", { name: "שרטוט" })).toHaveAttribute("aria-selected", "true");
+    else await expect(chat(page)).toHaveCount(0); // the drawer makes way for the drawing
+    await expect(page.locator("[data-testid=hl].sel").first()).toBeVisible();
+  });
+
+  test("compare with the earlier quote names it, as only the screen knows it", async ({ page }) => {
+    await openChat(page);
+    await page.getByTestId("chat-input").fill("תשווה להצעה הקודמת");
+    await page.getByTestId("chat-input").press("Enter");
+    const answer = chat(page).locator(".msg.a", { hasText: "שורות שונות" });
+    await expect(answer).toBeVisible();
+    await expect(answer.getByTestId("quote-ref")).toHaveText("NURSERY, הצעה קודמת");
+    await expect(answer).toContainText("3 שורות שונות");
+    await expect(answer.locator("b.num")).toContainText("₪");
+  });
+
+  test("a brand swap remembered for the factory, then undone", async ({ page }) => {
+    await openChat(page);
+    await chat(page).getByTestId("ask").filter({ hasText: "Schneider" }).click();
+    const card = chat(page).getByTestId("proposal").last();
+    const choice = card.getByTestId("remember");
+    await expect(choice.getByRole("radio")).toHaveText(["רק בהצעה הזו", "לזכור למפעל"]); // NURSERY has no customer
+    await expect(card.getByTestId("remember-quote_only")).toHaveAttribute("aria-checked", "true");
+    await card.getByTestId("remember-tenant").click();
+    await expect(card.getByTestId("remember-tenant")).toHaveAttribute("aria-checked", "true");
+    await card.getByTestId("apply").click();
+    await expect(card.getByTestId("proposal-state")).toHaveText("הוחל");
+    await expect(card.getByTestId("remembered")).toHaveText("נשמר בזיכרון ההתאמות של המפעל");
+    await expect(page.getByTestId("toast")).toContainText("נזכור את זה במפעל");
+    await page.getByTestId("undo-last").click();
+    await expect(card.getByTestId("proposal-state")).toHaveText("בוטל אחרי שהוחל");
   });
 });
 

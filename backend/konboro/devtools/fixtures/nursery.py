@@ -10,7 +10,7 @@ the fixture drawing is left alone. No customer, factory or person name from the 
 """
 
 from dataclasses import dataclass, field
-from datetime import date
+from datetime import UTC, date, datetime
 from decimal import Decimal
 from pathlib import Path
 from typing import Any
@@ -22,16 +22,20 @@ from sqlalchemy.orm import Session
 from konboro.db import models as m
 from konboro.db.ids import new_id
 from konboro.db.seed import PRODUCTS, SUPPLIERS
+from konboro.domain.totals import line_amounts
 from konboro.pipeline.extraction import deepzoom
 from konboro.pipeline.extraction.config import DEFAULT as EXTRACTION
 from konboro.pipeline.intake.pages import png
 from konboro.pipeline.pricing import stored
 from konboro.pipeline.stages.s1_intake import THUMB_PX, thumbnail_key
+from konboro.services import review_picker
+from konboro.services.quote_versions import COPIED
 from konboro.services.quotes import LineIn, store_totals, write_lines
 from konboro.services.storage import Storage, drawing_key
 
 MARKER = "fixture:NURSERY-1"  # drawings.trace_id of the fixture drawing
 QUOTE_DATE = date(2026, 10, 13)
+EARLIER_DATE = date(2026, 9, 14)  # the earlier quote compare reads (S25b)
 PRICE_DATE = "2026-10-01"
 
 # The drawing pane's pages (S11 decision 2): the prototype's own page images, 1400 × 989, title block blanked. The
@@ -484,6 +488,7 @@ def seed_nursery(session: Session, tenant_id: str) -> str | None:
         m.QuoteVersion(id=new_id("qv"), tenant_id=tenant_id, quote_id=quote.id, version=1, quote_date=QUOTE_DATE)
     )
     line_ids = write_lines(session, version, panel.id, lines)
+    sign(session, tenant_id, version)
     for f in FINDINGS:
         page = f.get("page")
         session.add(
@@ -507,6 +512,105 @@ def seed_nursery(session: Session, tenant_id: str) -> str | None:
     # stage 7's colour and pricing findings ("5 שורות בלי מחיר"), from the lines as written (S23): the same code
     # prices the fixture again after each review action
     stored.reprice(session, quote, version, frozenset())
+    return str(quote.id)
+
+
+def sign(session: Session, tenant_id: str, version: m.QuoteVersion) -> None:
+    """Each component line's signature and brand context, as stage 5 would sign it (S25b decision 5): stage 7 writes
+    them on a real run, and a fixture has no stage 5."""
+    rows = list(
+        session.scalars(
+            select(m.QuoteLine).where(m.QuoteLine.tenant_id == tenant_id, m.QuoteLine.quote_version_id == version.id)
+        )
+    )
+    quote = session.get(m.Quote, version.quote_id)
+    signed = review_picker.sign_rows(session, tenant_id, quote.customer_id if quote else None, rows)
+    for row in rows:
+        if row.id in signed:
+            row.signature, row.brand_context = signed[row.id]
+    session.flush()
+
+
+EARLIER_NAME = "NURSERY, הצעה קודמת"
+# what the earlier quote had otherwise (S25b): `compare` with another quote pairs its lines with NURSERY's by
+# signature (08 §6.5), with no component ids, since that quote has no drawing
+# by the line's first designator, which a demo tenant seeded before `line_key` also has
+EARLIER_QTY = {"F22": Decimal(4)}  # F30 came later
+EARLIER_PRICE = {"Q01": Decimal("720")}  # the price list moved since
+EARLIER_DROPPED = ("FNV",)
+
+
+def seed_earlier_quote(session: Session, tenant_id: str) -> str | None:
+    """A sent quote from before NURSERY, on the same panel, for the chat's compare with another quote (S25b): NURSERY's
+    lines with a quantity and a price changed and one line it did not have. Returns its id, or None if the tenant
+    has it already or has no NURSERY quote."""
+    if session.scalar(select(m.Quote.id).where(m.Quote.tenant_id == tenant_id, m.Quote.name == EARLIER_NAME)):
+        return None
+    source = session.scalars(
+        select(m.QuoteVersion)
+        .join(m.Quote, (m.Quote.tenant_id == m.QuoteVersion.tenant_id) & (m.Quote.id == m.QuoteVersion.quote_id))
+        .where(m.QuoteVersion.tenant_id == tenant_id, m.Quote.name == "NURSERY")
+        .order_by(m.QuoteVersion.version)
+    ).first()
+    if source is None:
+        return None
+    nursery = session.get(m.Quote, source.quote_id)
+    quote = m.Quote(
+        id=new_id("quo"), tenant_id=tenant_id, customer_id=nursery.customer_id if nursery else None, name=EARLIER_NAME
+    )
+    session.add(quote)
+    session.flush()
+    # written as a draft and then sent: a trigger refuses lines on a sent version
+    version = m.QuoteVersion(
+        id=new_id("qv"), tenant_id=tenant_id, quote_id=quote.id, version=1, quote_date=EARLIER_DATE
+    )
+    session.add(version)
+    session.flush()
+    rows = session.scalars(
+        select(m.QuoteLine)
+        .where(
+            m.QuoteLine.tenant_id == tenant_id,
+            m.QuoteLine.quote_version_id == source.id,
+            m.QuoteLine.deleted_at.is_(None),
+        )
+        .order_by(m.QuoteLine.position)
+    ).all()
+    ids = {r.id: new_id("ln") for r in rows}
+    if source.status == "draft" and any(r.signature is None and r.component_id for r in rows):
+        sign(session, tenant_id, source)  # a demo tenant seeded before the signature was kept
+    tags = {
+        c.id: (c.designators or [""])[0]
+        for c in session.scalars(
+            select(m.Component).where(
+                m.Component.tenant_id == tenant_id, m.Component.id.in_([r.component_id for r in rows if r.component_id])
+            )
+        )
+    }
+    for r in sorted(rows, key=lambda r: r.parent_line_id is not None):
+        tag = tags.get(r.component_id or "", "") if r.parent_line_id is None else ""
+        if tag in EARLIER_DROPPED or r.line_type == "missing" or (r.parent_line_id and r.parent_line_id not in ids):
+            continue
+        values = {c: getattr(r, c) for c in COPIED}
+        values |= {"component_id": None, "issue_ids": [], "approved_at": None, "override": None, "edits": {}}
+        if tag in EARLIER_QTY:
+            values["qty"] = EARLIER_QTY[tag]
+        if tag in EARLIER_PRICE:
+            values["unit_price"] = values["unit_price_raw"] = EARLIER_PRICE[tag]
+        amounts = line_amounts(values["qty"], values["unit_price"], values["unit_cost"])
+        values |= {"line_cost": amounts.line_cost, "line_total": amounts.line_total, "margin_pct": amounts.margin_pct}
+        session.add(
+            m.QuoteLine(
+                id=ids[r.id],
+                tenant_id=tenant_id,
+                quote_version_id=version.id,
+                parent_line_id=ids.get(r.parent_line_id) if r.parent_line_id else None,
+                **values,
+            )
+        )
+        session.flush()
+    store_totals(session, version)
+    version.status, version.sent_at = "sent", datetime(2026, 9, 14, 9, 0, tzinfo=UTC)
+    session.flush()
     return str(quote.id)
 
 

@@ -1,0 +1,26 @@
+{
+  "answer": {
+    "input_tokens": 2,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 265,
+    "payload": null,
+    "text": null,
+    "tool_calls": [
+      {
+        "args": {
+          "kind": "brand_preference",
+          "values": [
+            {
+              "name": "manufacturer",
+              "value": "Schneider"
+            }
+          ]
+        },
+        "id": "toolu_01Hd9LdJLj9pFyWGGZ7T4hAD",
+        "name": "open_settings"
+      }
+    ]
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

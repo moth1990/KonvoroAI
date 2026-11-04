@@ -1,0 +1,38 @@
+{
+  "answer": {
+    "input_tokens": 2548,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 302,
+    "payload": {
+      "answer": "3 הקטבים נקראו מהשרטוט: ליד המא\"ז כתוב \"3X16A\" וגם \"S203M ABB\", ובעקבות מופיע poles=3 ממקור \"שרטוט\" ברמת ביטחון 0.95. בתמונה רואים ארבעה מא\"זים (F22–F25) מסומנים באדום, עם אותו טקסט, והקו מחובר לפס L1,L2,L3,N. המופע החמישי (F30) נמצא בעמוד 9 ואינו בתמונה.",
+      "cites": {
+        "instance_ids": [
+          "I1",
+          "I2",
+          "I3",
+          "I4",
+          "I5"
+        ],
+        "line_ids": [
+          "L1"
+        ],
+        "span_ids": [
+          "S2",
+          "S4"
+        ]
+      },
+      "confidence": 0.93,
+      "focus": {
+        "instance_ids": [
+          "I1",
+          "I2",
+          "I3",
+          "I4"
+        ]
+      },
+      "trace_supported": true
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "line_explanation"
+}

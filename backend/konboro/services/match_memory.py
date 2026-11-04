@@ -1,5 +1,6 @@
-"""The match memory's writes (05 §11): what the review screen calls when the estimator swaps a SKU, picks one for a
-line stage 5 left without, or approves a quote with the line unchanged (S23). Stage 5 reads the memory
+"""The match memory's writes (05 §11): approving a line with its SKU unchanged strengthens it (S23), and a chat proposal
+approved with "לזכור ללקוח הזה" or "לזכור למפעל" writes it (08 §7.4, S25b; `review.save_memory`). A SKU swapped in a
+row is for that quote only (09 §7). Stage 5 reads the memory
 (`pipeline/matching/factory.py`); nothing else writes it.
 
 A memory belongs to one factory, and to one of its customers or all of them (`customer_id` null). It never leaves the
@@ -13,6 +14,13 @@ from sqlalchemy.orm import Session
 
 from konboro.db import models as m
 from konboro.db.ids import new_id
+
+
+def find(
+    session: Session, tenant_id: str, signature: str, customer_id: str | None, brand_context: str | None
+) -> m.MatchMemory | None:
+    """The memory for this signature in this context, for this customer or all of them (`customer_id` None)."""
+    return _row(session, tenant_id, signature, customer_id, brand_context)
 
 
 def _row(

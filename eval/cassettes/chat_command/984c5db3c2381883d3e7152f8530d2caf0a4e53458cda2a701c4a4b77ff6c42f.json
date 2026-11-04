@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 2,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 316,
+    "payload": {
+      "clarification_options": [],
+      "text": "כן, יש בקטלוג שני מא\"זים של שניידר, 1P ‏16A, עקומה C:\n- A9F84116 – iC60H, ‏10kA\n- A9F74116 – iC60N, ‏6kA\n\nשניהם לא מופיעים ברשימת המחירים ואין להם מחיר עלות. אם תחליף אליהם שורה, כנראה לא יהיה מחיר אוטומטי.\n\nיש גם iC60N ‏1P+N ‏16A (A9F74616), אבל זה דגם אחר.\n\nרוצה שאכין הצעה להחלפת מותג בשורות ה-ABB?"
+    },
+    "text": null,
+    "tool_calls": []
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

@@ -64,6 +64,8 @@ class Draft:
     priced: Priced
     line_group: str | None = None
     component_id: str | None = None
+    signature: str | None = None  # 05 §3, for compare and the match memory (migration 0022)
+    brand_context: str | None = None  # stage 5's (05 §5.3)
     parent: str | None = None
     product_id: str | None = None
     catalog_item_id: str | None = None
@@ -187,6 +189,8 @@ def component_line(
             priced=priced,
             line_group=group,
             component_id=c.component_id,
+            signature=m.signature if m else None,
+            brand_context=m.brand_context if m else None,
             product_id=own_id(product),
             catalog_item_id=catalog.id if catalog else None,
             sku=m.chosen_sku if m else None,

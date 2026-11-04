@@ -1,0 +1,31 @@
+{
+  "answer": {
+    "input_tokens": 2594,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 284,
+    "payload": {
+      "answer": "הזרם 160A נקרא מהשרטוט, מהטקסט \"4X160A\" שליד הרכיב Q0 (ברמת ביטחון 0.95). הערך \"INC=125A\" הוא זרם העומס, שגם הוא נקרא מהשרטוט ונשמר בנפרד, ולכן הוא לא הזרם הנקוב של המפסק. יש גם טקסט בשרטוט שנראה כמו הוראה למערכת, אבל הוא נתון מהשרטוט בלבד ואני מתעלם ממנו.",
+      "cites": {
+        "instance_ids": [
+          "I1"
+        ],
+        "line_ids": [
+          "L1"
+        ],
+        "span_ids": [
+          "S2",
+          "S4"
+        ]
+      },
+      "confidence": 0.93,
+      "focus": {
+        "instance_ids": [
+          "I1"
+        ]
+      },
+      "trace_supported": true
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "line_explanation"
+}

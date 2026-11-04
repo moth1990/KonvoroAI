@@ -88,6 +88,10 @@ class QuoteLine(Base, TenantScoped, Timestamps):
     panel_id: Mapped[str | None]
     position: Mapped[int]
     line_key: Mapped[str | None]  # stage 7's stable handle, so a rerun carries the user's edits (migration 0017)
+    # the component's signature and stage 5's brand context (05 §3, §5.3): compare by signature (08 §6.5) and the
+    # match memory a proposal writes (08 §7.4). Null on a derived, labor or manual line (migration 0022)
+    signature: Mapped[str | None]
+    brand_context: Mapped[str | None]
     line_group: Mapped[str | None]
     line_type: Mapped[str] = mapped_column(server_default="component")
     component_id: Mapped[str | None]
@@ -185,6 +189,8 @@ CORRECTION_TYPES = (
     "bom_columns_mapped",
     # 08 §6.7 `set_customer_discount`, from the chat (S25)
     "discount_set",
+    # 08 §7.4: the match memory a chat proposal wrote for a customer or the factory (S25b)
+    "memory_saved",
 )
 
 

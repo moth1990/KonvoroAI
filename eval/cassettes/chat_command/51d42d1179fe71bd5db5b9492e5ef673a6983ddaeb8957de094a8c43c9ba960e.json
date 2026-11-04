@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 2,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 340,
+    "payload": {
+      "clarification_options": [],
+      "text": "הכנתי הצעה (CH1) לשורה {{line:L1}} (מא\"ז ABB S201M 1P 16A): רווח של 18%. פירשתי \"רווח\" כשיעור מהמחיר (margin) ולא כתוספת על העלות (markup). אם התכוונת לתוספת על העלות, אגיד לך ואכין הצעה אחרת.\n\nסה\"כ הנקי של ההצעה ישתנה מ-{{$T3}} ל-{{$T4}}, והאחוז הכולל מ-{{$P1}} ל-{{$P2}}. אין אזהרות ולא נוצרו ממצאים חדשים.\n\nשום דבר לא משתנה עד שתאשר את הכרטיס."
+    },
+    "text": null,
+    "tool_calls": []
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

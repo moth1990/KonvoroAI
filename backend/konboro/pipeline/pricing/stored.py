@@ -42,6 +42,8 @@ def draft_of(row: m.QuoteLine, keys: dict[str, str]) -> Draft:
         priced=load.priced_as_stored(row),
         line_group=row.line_group,
         component_id=row.component_id,
+        signature=row.signature,
+        brand_context=row.brand_context,
         parent=keys.get(row.parent_line_id or ""),
         product_id=row.product_id,
         catalog_item_id=row.catalog_item_id,

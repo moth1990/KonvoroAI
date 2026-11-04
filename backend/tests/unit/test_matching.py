@@ -261,6 +261,19 @@ def test_memory_never_over_a_brand_the_drawing_names() -> None:
     assert m.chosen_sku == "S203M-C16"
 
 
+def test_the_memory_context_is_the_customers_brand_or_none() -> None:
+    """S25b decision 6: a memory written for this match ("לזכור", 08 §7.4) belongs to the customer's brand when the
+    customer's preference chose it, else to none: a brand the drawing names wins over memory anyway."""
+    c = comp("circuit_breaker", "mcb", MCB_3X16)
+    assert one(c, fac=factory(customer_brands={"circuit_breaker": "Schneider"})).brand_context == "Schneider"
+    assert one(comp("circuit_breaker", "mcb", MCB_3X16, brand="ABB")).brand_context is None
+    assert one(c, fac=factory()).brand_context is None  # the factory's own preference (ABB)
+    # and a memory under that context is recalled for the next drawing in the same situation
+    sig = one(c).signature or ""
+    fac = factory(customer_brands={"circuit_breaker": "Schneider"}, memory=[Memory(None, sig, "Schneider", "A9F84316")])
+    assert one(c, fac=fac).method == "memory"
+
+
 # --- 5.4 brand --------------------------------------------------------------------------------------------------------
 
 

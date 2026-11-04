@@ -12,6 +12,7 @@ import {
   type Chat as ChatData,
   type ChatApply,
   type ChatBlock,
+  type ChatInstance,
   type ChatMessage,
   type ChatProposal,
   type ChatUiContext,
@@ -25,7 +26,12 @@ import {
   diffRows,
   greeting,
   lineLabel,
+  optionLabel,
+  REMEMBER,
+  rememberChoices,
+  rememberedText,
   segments,
+  type Remember,
   STATE,
   SUGGESTIONS,
   totals,
@@ -33,7 +39,12 @@ import {
   warningTexts,
 } from "./chatModel";
 
-export type ChatFocus = { lineIds: string[]; panelId?: string | null; statuses?: string[] | null };
+export type ChatFocus = {
+  lineIds: string[];
+  panelId?: string | null;
+  statuses?: string[] | null;
+  instances?: ChatInstance[]; // 08 §6.4 `focus`: the components to frame on the drawing
+};
 
 type Props = {
   quote: Quote;
@@ -42,16 +53,30 @@ type Props = {
   onClose?: () => void;
   onSelectLine: (lineId: string) => void;
   onFocus: (f: ChatFocus) => void;
+  onShowInstance: (instance: ChatInstance) => void;
   onApplied: (done: ChatApply) => void;
   toast: (text: string) => void;
 };
+
+const placed = (m: ChatMessage, ids: string[] | null | undefined): ChatInstance[] =>
+  (ids ?? []).map((i) => m.instances?.[i]).filter((x): x is ChatInstance => !!x);
 
 /**
  * The chat on the review screen (08, 09 §6.7; prototype `vChat`, `propCard`, lines 1007–1064): a drawer over the
  * drawing on the desktop, the third tab on the phone. Every answer comes from the server's tools; a change is a card
  * that only "החל" applies, as one action the screen's undo takes back.
  */
-export function ChatPanel({ quote, ui, inputRef, onClose, onSelectLine, onFocus, onApplied, toast }: Props) {
+export function ChatPanel({
+  quote,
+  ui,
+  inputRef,
+  onClose,
+  onSelectLine,
+  onFocus,
+  onShowInstance,
+  onApplied,
+  toast,
+}: Props) {
   const quoteId = quote.quote_id;
   const qc = useQueryClient();
   const chat = useQuery({ queryKey: ["chat", quoteId], queryFn: () => fetchChat(quoteId) });
@@ -76,7 +101,13 @@ export function ChatPanel({ quote, ui, inputRef, onClose, onSelectLine, onFocus,
         proposals: [...c.proposals, ...turn.proposals],
       }));
       for (const b of turn.assistant.blocks)
-        if (b.type === "ui_action") onFocus({ lineIds: b.line_ids ?? [], panelId: b.panel_id, statuses: b.statuses });
+        if (b.type === "ui_action")
+          onFocus({
+            lineIds: b.line_ids ?? [],
+            panelId: b.panel_id,
+            statuses: b.statuses,
+            instances: placed(turn.assistant, b.instance_ids),
+          });
     },
     onError: (e) => toast(e instanceof ApiError ? e.message : "לא הצלחתי לבצע את זה. אפשר לנסות שוב, או לבצע במסך."),
     onSettled: () => setPending(null),
@@ -103,9 +134,9 @@ export function ChatPanel({ quote, ui, inputRef, onClose, onSelectLine, onFocus,
     ask(q);
   };
 
-  const apply = async (p: ChatProposal) => {
+  const apply = async (p: ChatProposal, remember: Remember) => {
     try {
-      const done = await applyProposal(p.proposal_id);
+      const done = await applyProposal(p.proposal_id, remember);
       putProposal(done.proposal);
       onApplied(done);
     } catch (e) {
@@ -160,6 +191,7 @@ export function ChatPanel({ quote, ui, inputRef, onClose, onSelectLine, onFocus,
             proposals={proposals}
             onSelectLine={onSelectLine}
             onFocus={onFocus}
+            onShowInstance={onShowInstance}
             onAsk={ask}
             onApply={apply}
             onDismiss={dismiss}
@@ -217,24 +249,51 @@ type MessageProps = {
   proposals: Map<string, ChatProposal>;
   onSelectLine: (id: string) => void;
   onFocus: (f: ChatFocus) => void;
+  onShowInstance: (instance: ChatInstance) => void;
   onAsk: (q: string) => void;
-  onApply: (p: ChatProposal) => void;
+  onApply: (p: ChatProposal, remember: Remember) => void;
   onDismiss: (p: ChatProposal) => void;
 };
 
-function Message({ m, lines, proposals, onSelectLine, onFocus, onAsk, onApply, onDismiss }: MessageProps) {
-  if (m.role === "user") return <div className="msg u">{m.blocks[0]?.content}</div>;
+function Message({
+  m,
+  lines,
+  proposals,
+  onSelectLine,
+  onFocus,
+  onShowInstance,
+  onAsk,
+  onApply,
+  onDismiss,
+}: MessageProps) {
+  if (m.role === "user") {
+    const b = m.blocks[0];
+    return b ? (
+      <Text b={b} m={m} who="u" lines={lines} onSelectLine={onSelectLine} onShowInstance={onShowInstance} />
+    ) : null;
+  }
   const out = [];
   let i = 0;
   for (const b of m.blocks) {
     const key = `${m.message_id}-${i++}`;
-    if (b.type === "text") out.push(<Text key={key} b={b} m={m} lines={lines} onSelectLine={onSelectLine} />);
+    if (b.type === "text")
+      out.push(
+        <Text
+          key={key}
+          b={b}
+          m={m}
+          who="a"
+          lines={lines}
+          onSelectLine={onSelectLine}
+          onShowInstance={onShowInstance}
+        />,
+      );
     else if (b.type === "clarification")
       out.push(
         <div key={key} className="sugg clar" role="group" aria-label="אפשרויות">
           {(b.options ?? []).map((o) => (
             <button key={o} type="button" className="fchip" onClick={() => onAsk(o)}>
-              {o}
+              {optionLabel(o, m.quotes ?? {})}
             </button>
           ))}
         </div>,
@@ -253,6 +312,21 @@ function Message({ m, lines, proposals, onSelectLine, onFocus, onAsk, onApply, o
             onAsk={onAsk}
           />,
         );
+    } else if (b.type === "ui_action" && placed(m, b.instance_ids).length) {
+      const first = placed(m, b.instance_ids)[0];
+      out.push(
+        <button
+          key={key}
+          type="button"
+          className="btn sm"
+          style={{ justifySelf: "end" }}
+          data-testid="show-instance"
+          onClick={() => first && onShowInstance(first)}
+        >
+          <Icon name="eye" />
+          הצג בשרטוט
+        </button>,
+      );
     } else if (b.type === "ui_action" && (b.line_ids?.length || b.statuses?.length))
       out.push(
         <button
@@ -279,19 +353,45 @@ function Message({ m, lines, proposals, onSelectLine, onFocus, onAsk, onApply, o
 function Text({
   b,
   m,
+  who,
   lines,
   onSelectLine,
+  onShowInstance,
 }: {
   b: ChatBlock;
   m: ChatMessage;
+  who: "a" | "u";
   lines: Map<string, QuoteLine>;
   onSelectLine: (id: string) => void;
+  onShowInstance: (instance: ChatInstance) => void;
 }) {
   return (
-    <div className="msg a">
+    <div className={`msg ${who}`}>
       {segments(b.content ?? "").map((s, i) =>
         s.kind === "text" ? (
           <span key={i}>{s.text}</span>
+        ) : s.kind === "quote" ? (
+          // another quote by its name, which only the screen knows (S25b decision 1)
+          <span key={i} className="chip quote-ref" data-testid="quote-ref">
+            {m.quotes?.[s.quoteId] ?? "הצעה אחרת"}
+          </span>
+        ) : s.kind === "instance" ? (
+          m.instances?.[s.instanceId] ? (
+            <button
+              key={i}
+              type="button"
+              className="chip acc line-ref"
+              data-testid="instance-ref"
+              aria-label="הצג את הרכיב בשרטוט"
+              onClick={() => {
+                const inst = m.instances?.[s.instanceId];
+                if (inst) onShowInstance(inst);
+              }}
+            >
+              <Icon name="eye" />
+              בשרטוט
+            </button>
+          ) : null
         ) : s.kind === "line" ? (
           lines.has(s.lineId) ? (
             <button
@@ -325,19 +425,22 @@ function ProposalCard({
   p: ChatProposal;
   lines: Map<string, QuoteLine>;
   onSelectLine: (id: string) => void;
-  onApply: (p: ChatProposal) => void;
+  onApply: (p: ChatProposal, remember: Remember) => void;
   onDismiss: (p: ChatProposal) => void;
   onAsk: (q: string) => void;
 }) {
   const [busy, setBusy] = useState(false);
+  const [remember, setRemember] = useState<Remember>("quote_only"); // always this quote first (S25b decision 3)
+  const choices = rememberChoices(p);
+  const remembered = rememberedText(p);
   const state = STATE[p.status];
   const rows = diffRows(p);
   const sums = totals(p);
   const warnings = [...unchanged(p), ...warningTexts(p)];
-  const act = async (fn: (p: ChatProposal) => void | Promise<void>) => {
+  const act = async (fn: (p: ChatProposal, remember: Remember) => void | Promise<void>) => {
     setBusy(true);
     try {
-      await fn(p);
+      await fn(p, remember);
     } finally {
       setBusy(false);
     }
@@ -396,6 +499,29 @@ function ProposalCard({
           {w}
         </span>
       ))}
+      {p.status === "pending" && choices.length ? (
+        <div className="sugg remember" role="radiogroup" aria-label="מה לזכור" data-testid="remember">
+          {choices.map((r) => (
+            <button
+              key={r}
+              type="button"
+              role="radio"
+              aria-checked={remember === r}
+              className="fchip"
+              data-testid={`remember-${r}`}
+              disabled={busy}
+              onClick={() => setRemember(r)}
+            >
+              {REMEMBER[r]}
+            </button>
+          ))}
+        </div>
+      ) : null}
+      {p.status === "applied" && remembered ? (
+        <span className="small muted" data-testid="remembered">
+          {remembered}
+        </span>
+      ) : null}
       {p.status === "pending" ? (
         <div className="row">
           <button

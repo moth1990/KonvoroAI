@@ -1,0 +1,31 @@
+{
+  "answer": {
+    "input_tokens": 2481,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 308,
+    "payload": {
+      "answer": "בשרטוט כתוב S204M (דגם 4 קטבים) ליד \"3X6A\", כלומר יש סתירה בין הדגם לכמות הקטבים. הקטבים (3) והזרם (6A) נקראו מהשרטוט. את הסדרה S203M הערכה לקחה מזיכרון ההתאמות ולא נקראה מהשרטוט: אותו צירוף הופיע ב-NEVIS-1, וההצעה 10288 אישרה 3P. כושר הניתוק חסר ולא נקבע. מומלץ לוודא מול השרטוט שהרכיב אכן 3P.",
+      "cites": {
+        "instance_ids": [
+          "I1"
+        ],
+        "line_ids": [
+          "L1"
+        ],
+        "span_ids": [
+          "S2",
+          "S4"
+        ]
+      },
+      "confidence": 0.85,
+      "focus": {
+        "instance_ids": [
+          "I1"
+        ]
+      },
+      "trace_supported": true
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "line_explanation"
+}

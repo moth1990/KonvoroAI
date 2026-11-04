@@ -369,6 +369,7 @@
   "missing_attributes": [],
   "warnings": ["defaulted_attribute"],
   "signature": "circuit_breaker|mcb|current_a=16|poles=3|curve=C|bc_ka>=6",
+  "brand_context": null,
   "llm_decision": null
 }
 ```
@@ -395,6 +396,7 @@
 | `missing_attributes` | string[] | מה חסר כדי להתאים או להכריע |
 | `warnings` | string[] | ראו סעיף 8 |
 | `signature` | string | החתימה המנורמלת |
+| `brand_context` | string \| null | ההקשר של זיכרון התאמות שייכתב להתאמה הזו ("לזכור", [08 §7.4](08-chat-layer.md)): המותג של הלקוח כשהעדפת הלקוח בחרה את המותג (5.4), אחרת `null`. מותג שהשרטוט או ההערות קובעים גובר על הזיכרון בכל מקרה (5.3), ולכן זיכרון בהקשר שלו לא היה חל אף פעם. ב-`null` הוא חל כשהשרטוט הבא לא קובע מותג. שלב 7 שומר אותו על השורה |
 | `llm_decision` | object \| null | התשובה של הסוכן, אם הופעל |
 | `bundle_lines` | object[] | חלקי ערכה שהפריט הראשי צריך (5.9.1): מק"ט, יצרן, תיאור, כמות ליחידה, סיבה ו-`has_cost_price` |
 

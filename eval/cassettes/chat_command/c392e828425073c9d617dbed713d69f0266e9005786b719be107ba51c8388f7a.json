@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 2,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 286,
+    "payload": {
+      "clarification_options": [],
+      "text": "ההפרש בין המחיר לעלות בהצעה (המרווח) הוא {{$T5}}, כלומר {{$P1}}. סך המחיר לפני מע\"מ הוא {{$T1}} וסך העלות הוא {{$T4}}.\n\nשימו לב שהחישוב חלקי: 5 שורות מתוך 14 ללא מחיר (אדומות), ובשורה אחת אין עלות. המרווח ישתנה כשהשורות האלה יושלמו."
+    },
+    "text": null,
+    "tool_calls": []
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

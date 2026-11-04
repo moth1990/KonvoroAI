@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 4,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 134,
+    "payload": {
+      "clarification_options": [],
+      "text": "אני לא יכול לשלוח הצעות ללקוח. אני עוזר רק בשאלות, בניווט ובהכנת שינויים בהצעה הזו. אם תרצה, אפשר לעבור על 5 השורות האדומות ועל 4 הממצאים הפתוחים של הוולידטור לפני השליחה."
+    },
+    "text": null,
+    "tool_calls": []
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

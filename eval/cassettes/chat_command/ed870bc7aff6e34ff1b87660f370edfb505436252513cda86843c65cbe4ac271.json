@@ -1,0 +1,30 @@
+{
+  "answer": {
+    "input_tokens": 4,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 163,
+    "payload": null,
+    "text": null,
+    "tool_calls": [
+      {
+        "args": {
+          "changes": [
+            {
+              "target": {
+                "lines": [
+                  "L1"
+                ]
+              },
+              "type": "delete_lines"
+            }
+          ],
+          "summary_he": "מחיקת השורה L1"
+        },
+        "id": "toolu_01HE2GTfnXFb242xjUqzKhrx",
+        "name": "propose_change"
+      }
+    ]
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

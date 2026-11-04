@@ -1,0 +1,28 @@
+{
+  "answer": {
+    "input_tokens": 4,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 131,
+    "payload": null,
+    "text": null,
+    "tool_calls": [
+      {
+        "args": {
+          "line": "L1",
+          "question": "מאיפה הגיע ה-160A?"
+        },
+        "id": "toolu_016aG68WmNjo2FiAJ1PpGXHf",
+        "name": "explain_line"
+      },
+      {
+        "args": {
+          "line": "L1"
+        },
+        "id": "toolu_019NB7SzMCMLUkE4rijtQpcx",
+        "name": "get_line_details"
+      }
+    ]
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

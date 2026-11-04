@@ -18,7 +18,7 @@ from konboro.db.ids import new_id
 from konboro.db.seed import seed_global, seed_price_list
 from konboro.db.session import tenant_session
 from konboro.devtools import fake_llm
-from konboro.devtools.fixtures.nursery import seed_nursery
+from konboro.devtools.fixtures.nursery import EARLIER_PRICE, seed_earlier_quote, seed_nursery
 from konboro_llm.providers import FakeProvider
 
 from .api import Api, ApiTenant, add_tenant, set_tenant_flag
@@ -90,6 +90,7 @@ def chat(api: Api, seeded: dict[str, Engine]) -> Iterator[Chat]:
             )
         )
         qid = seed_nursery(s, tenant.tenant_id)
+        seed_earlier_quote(s, tenant.tenant_id)  # compare with another quote (S25b)
     assert qid is not None
     set_tenant_flag(api.engine, tenant.tenant_id, "chat_layer", True)
     c = Chat(api, tenant, qid)
@@ -433,6 +434,9 @@ def test_no_amount_from_the_quote_reaches_the_model(chat: Chat, monkeypatch: pyt
     )  # every older turn is compacted
     for text in ("מה חסר כדי לשלוח?", "למה המגענים צהובים?", 'החלף את כל מא"זי ABB ל-Schneider', "כמה מפסקי פחת יש?"):
         chat.say(text)
+    chat.say("למה 3 קטבים?", selected_line_ids=[priced[0]])  # explain_line and its sub-agent (S25b)
+    chat.say("תשווה להצעה הקודמת")  # list_quotes and compare with another quote (S25b)
+    assert any(r.stage == "line_explanation" for r in spy.requests), "the explanation did not run"
     script = [
         {"tool_calls": [{"name": "get_totals", "args": {}}]},
         {"tool_calls": [{"name": "get_line_details", "args": {"line": names[priced[0]]}}]},
@@ -452,6 +456,7 @@ def test_no_amount_from_the_quote_reaches_the_model(chat: Chat, monkeypatch: pyt
         for v in (ln["unit_price"], ln["line_total"], ln["unit_cost"], ln["line_cost"])
         if v
     } | {Decimal(v) for v in (q["totals"]["net_total"], q["totals"]["gross_total"], q["totals"]["vat"]) if v}
+    amounts |= set(EARLIER_PRICE.values())  # the other quote's own price
     leaked = []
     for a in amounts:
         if a < 100 and a == a.to_integral_value():

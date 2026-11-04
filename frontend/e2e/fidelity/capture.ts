@@ -214,6 +214,20 @@ function chatScreens(): Screen[] {
     await page.getByTestId("ask").filter({ hasText: q }).click();
     await page.locator(wait).last().waitFor({ timeout: 15_000 });
   };
+  // S25b: a typed question, with a line selected first when it is about one line
+  const appType = (q: string, wait: string, line?: string) => async (page: Page) => {
+    await appReview(page);
+    if (line) {
+      await (await lineWith(page, line)).click();
+      if (isPhone(page)) await page.keyboard.press("Escape");
+    }
+    if (isPhone(page)) await page.getByRole("tab", { name: "צ'אט" }).click();
+    else await page.getByTestId("chat-toggle").click();
+    await page.getByTestId("newchat").click();
+    await page.getByTestId("chat-input").fill(q);
+    await page.getByTestId("chat-input").press("Enter");
+    await page.locator(wait).last().waitFor({ timeout: 15_000 });
+  };
   const notes = [
     "The answers come from the stand-in model (devtools/fake_llm.py): its words differ from the prototype's demo " +
       "text. Line names are chips that select the line; amounts are the server's, never the model's.",
@@ -240,6 +254,41 @@ function chatScreens(): Screen[] {
         "S25 decision 2: the card adds the totals before and after (08 §7.3) under its rows, and a reason under each " +
           "line that does not change. The prototype's card says every line turns red; the app's says what the " +
           "catalog and the price list give.",
+        'S25b decision 2: the memory choice, three of the prototype\'s chips under the rows, "רק בהצעה הזו" selected; ' +
+          'NURSERY has no customer, so "לזכור ללקוח הזה" is not offered. The prototype\'s card has none.',
+      ],
+      window: true,
+    },
+    {
+      id: "chat-explain",
+      title: "Chat: why, about one line (S25b)",
+      prototype: { hash: "#review", authed: true, setup: protoAsk("למה המגענים צהובים?") },
+      app: {
+        path: "/home",
+        tenant: TENANTS.chatShots,
+        setup: appType("למה 3 קטבים?", "[data-testid=instance-ref]", "S203M 3P ‏16A"),
+      },
+      notes: [
+        ...notes,
+        "S25b: explain_line answers from the line's trace and the drawing around it (08 §6.4). The prototype's " +
+          'answer to its first suggestion is the closest it has: its "פתח את C1–C4" button is the app\'s "בשרטוט" ' +
+          'chip and "הצג בשרטוט" button, which frame the component on the drawing.',
+      ],
+      window: true,
+    },
+    {
+      id: "chat-compare",
+      title: "Chat: compare with another quote (S25b)",
+      prototype: { hash: "#review", authed: true, setup: protoAsk("למה המגענים צהובים?") },
+      app: {
+        path: "/home",
+        tenant: TENANTS.chatShots,
+        setup: appType("תשווה להצעה הקודמת", "[data-testid=quote-ref]"),
+      },
+      notes: [
+        ...notes,
+        "S25b decision 1: the other quote is a chip with its name, which only the screen knows; the model knew it as " +
+          "QT1. The prototype has no compare; its first answer is shown for the bubble's layout.",
       ],
       window: true,
     },
@@ -399,6 +448,7 @@ async function appReview(page: Page) {
   await page
     .getByTestId("recent")
     .getByRole("link", { name: /NURSERY/ })
+    .filter({ hasNotText: "הצעה קודמת" }) // the chat tenants' earlier quote, for compare (S25b)
     .click();
   await page.getByTestId("rv-totals").waitFor();
 }

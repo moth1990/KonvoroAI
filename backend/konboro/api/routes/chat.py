@@ -18,7 +18,7 @@ from konboro_llm import LLMClient
 
 from ..deps import Actor, require, require_flag
 from ..errors import ERROR_RESPONSES, ApiError
-from ..schemas import ChatApplyOut, ChatMessageIn, ChatMessageOut, ChatOut, ChatProposalOut, ChatTurnOut
+from ..schemas import ChatApplyIn, ChatApplyOut, ChatMessageIn, ChatMessageOut, ChatOut, ChatProposalOut, ChatTurnOut
 from .quotes import quote_out
 
 FLAG = "chat_layer"
@@ -119,13 +119,25 @@ def _proposal_out(actor: Actor, p: m.ChatProposal) -> ChatProposalOut:
 
 
 @router.post("/chat/proposals/{proposal_id}/apply")
-def apply_proposal(actor: Writer, proposal_id: ProposalId, request: Request) -> ChatApplyOut:
+def apply_proposal(
+    actor: Writer, proposal_id: ProposalId, request: Request, body: ChatApplyIn | None = None
+) -> ChatApplyOut:
     """08 §7.5: the estimator approved the card. The same actions as the screen's, as one undoable change; a sent
-    version opens N+1 first. A proposal the quote has moved past answers 409 `proposal_expired`."""
+    version opens N+1 first. A proposal the quote has moved past answers 409 `proposal_expired`. `remember` (08 §7.4):
+    `customer` or `tenant` writes the match memory too; a scope the proposal does not offer answers 422, and `tenant`
+    without the settings permission 403."""
     storage = request.app.state.storage
+    remember = body.remember if body is not None else "quote_only"
 
     def run() -> ChatApplyOut:
-        p, done = proposals.apply(actor.session, storage, review.Actor(actor.tenant_id, actor.user_id), proposal_id)
+        p, done = proposals.apply(
+            actor.session,
+            storage,
+            review.Actor(actor.tenant_id, actor.user_id),
+            proposal_id,
+            remember=remember,
+            role=actor.role,
+        )
         return ChatApplyOut(
             quote=quote_out(actor, p.quote_id, storage),
             message=done.message,

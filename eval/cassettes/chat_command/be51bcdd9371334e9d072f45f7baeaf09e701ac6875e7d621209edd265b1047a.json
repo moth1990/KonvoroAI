@@ -1,0 +1,23 @@
+{
+  "answer": {
+    "input_tokens": 2,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 134,
+    "payload": null,
+    "text": null,
+    "tool_calls": [
+      {
+        "args": {
+          "lines": [
+            "L1",
+            "L2"
+          ]
+        },
+        "id": "toolu_017Qnkv12FLgqTAB2xXoESYs",
+        "name": "focus_ui"
+      }
+    ]
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

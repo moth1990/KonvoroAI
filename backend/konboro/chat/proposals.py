@@ -13,7 +13,11 @@ would (07 §7.7).
 proposal's id on every event, so the review screen's undo takes the whole proposal back. A proposal made on a revision
 the quote has since moved past is expired (`proposal_expired`).
 
-**Remember** is `quote_only` in this session (S25 decision 3): `customer` and `tenant` are S25b's.
+**Remember** (08 §7.4, S25b). A proposal that swaps a brand or a SKU offers "לזכור ללקוח הזה" (when the quote has a
+customer) and "לזכור למפעל" beside `quote_only`, the default, which the model cannot change (S25b decision 3).
+Approved with one of them, each line that changed SKU and has a signature writes the match memory under its signature
+and the brand context it was matched in (S25b decisions 5–6), and the proposal's undo takes it back. Prices, margins
+and the discount are always `quote_only`.
 """
 
 from collections.abc import Callable
@@ -26,6 +30,7 @@ from sqlalchemy.orm import Session
 
 from konboro.db import models as m
 from konboro.db.ids import new_id
+from konboro.domain.permissions import Permission, allowed
 from konboro.pipeline.pricing.edits import Replaced
 from konboro.services import quote_versions, review
 from konboro.services import review_picker as picker
@@ -38,6 +43,8 @@ from .lines import ChatLine, QuoteLines, load, select_lines
 from .overlay import OverlayStorage
 from .state import ChatState
 
+MEMORY_TYPES = ("replace_brand", "replace_sku")  # 08 §7.4: what a match memory can hold, a SKU for a signature
+SCOPES = ("quote_only", "customer", "tenant")
 MANY_LINES = 30  # 08 §9: a prominent warning with the count
 MANY_DELETES = 5  # 08 §9: the button says "מחק X שורות"
 LINE_FIELDS = ("sku", "manufacturer", "description", "qty", "status", "unit_price", "line_total")
@@ -398,6 +405,7 @@ def propose(
         changes=changes,
         diff=d,
         remember_default="quote_only",
+        remember_options=remember_options(session, actor.tenant_id, quote_id, changes, d),
         warnings=outcome.warnings,
         affected_line_count=count,
         alias=state.name("proposal", pid),
@@ -430,8 +438,37 @@ def expire_stale(session: Session, tenant_id: str, rows: list[m.ChatProposal]) -
     session.flush()
 
 
-def apply(session: Session, storage: Storage, actor: review.Actor, proposal_id: str) -> tuple[m.ChatProposal, Done]:
+def remember_options(
+    session: Session, tenant_id: str, quote_id: str, changes: list[dict[str, Any]], d: dict[str, Any]
+) -> list[str]:
+    """08 §7.1 `remember_options`: more than `quote_only` only for a brand or SKU swap that moves a signed line."""
+    if not any(ch.get("type") in MEMORY_TYPES for ch in changes):
+        return ["quote_only"]
+    moved = [x["line_id"] for x in d["lines_changed"] if x["after"]["sku"] and x["before"]["sku"] != x["after"]["sku"]]
+    signed = session.scalar(
+        select(m.QuoteLine.id)
+        .where(m.QuoteLine.tenant_id == tenant_id, m.QuoteLine.id.in_(moved), m.QuoteLine.signature.is_not(None))
+        .limit(1)
+    )
+    if signed is None:
+        return ["quote_only"]
+    quote = session.scalar(select(m.Quote).where(m.Quote.tenant_id == tenant_id, m.Quote.id == quote_id))
+    return ["quote_only", *(["customer"] if quote is not None and quote.customer_id else []), "tenant"]
+
+
+def apply(
+    session: Session,
+    storage: Storage,
+    actor: review.Actor,
+    proposal_id: str,
+    remember: str = "quote_only",
+    role: str = "owner",
+) -> tuple[m.ChatProposal, Done]:
     p = get(session, actor.tenant_id, proposal_id)
+    if remember not in SCOPES or remember not in (p.remember_options or ["quote_only"]):
+        raise ProposalError(422, "remember_not_offered")
+    if remember == "tenant" and not allowed(role, Permission.SETTINGS_WRITE):
+        raise ProposalError(403, "forbidden")  # 08 §7.4: "לזכור למפעל" is managing the preferences
     if p.status == "expired" or (p.status == "pending" and is_stale(session, actor.tenant_id, p)):
         p.status, p.resolved_at = "expired", review.now()
         session.flush()
@@ -441,7 +478,17 @@ def apply(session: Session, storage: Storage, actor: review.Actor, proposal_id: 
     ctx, _ = _draft(session, storage, actor, p.quote_id)
     ctx.source = "chat"
     ctx.tags = {"proposal": p.id}
+    before = {r.line_key or r.id: (r.sku, r.signature, r.brand_context) for r in ctx.lines()}
+    saved: Done | None = None
     run_all(ctx, list(p.changes))
+    if remember != "quote_only":
+        entries = []
+        for r in ctx.lines():
+            sku, sig, context = before.get(r.line_key or r.id, (None, None, None))
+            if sig and r.sku and r.sku != sku:  # the line's signature and context before the swap (S25b decision 6)
+                entries.append((sig, context, r.sku))
+        saved = review.save_memory(ctx, entries, ctx.quote.customer_id if remember == "customer" else None)
+    p.remembered = remember
     p.status, p.resolved_at = "applied", review.now()
     session.flush()
     event = session.scalar(
@@ -458,6 +505,8 @@ def apply(session: Session, storage: Storage, actor: review.Actor, proposal_id: 
     message = "השינוי הוחל" if n != 1 else "השינוי הוחל על שורה אחת"
     if n > 1:
         message = f"השינוי הוחל על {n} שורות"
+    if remember != "quote_only" and saved is not None:
+        message += ". נזכור את זה ללקוח הזה" if remember == "customer" else ". נזכור את זה במפעל"
     return p, Done(message, event.id if event else None, n)
 
 

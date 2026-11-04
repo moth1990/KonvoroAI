@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 2,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 259,
+    "payload": {
+      "clarification_options": [],
+      "text": "הכנתי הצעה לשנות את הכמות ב-{{line:L1}} מ-1 ל-2. ההצעה לא כוללת אזהרות ולא יוצרת ממצאים חדשים. סכום הרשת ישתנה מ-{{$T3}} ל-{{$T4}}.\n\nבטעות נוצרו שני כרטיסים זהים, CH1 ו-CH2. מספיק לאשר אחד מהם. שום דבר לא משתנה עד שתאשר."
+    },
+    "text": null,
+    "tool_calls": []
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

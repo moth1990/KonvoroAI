@@ -151,7 +151,9 @@ export interface paths {
         /**
          * Apply Proposal
          * @description 08 §7.5: the estimator approved the card. The same actions as the screen's, as one undoable change; a sent
-         *     version opens N+1 first. A proposal the quote has moved past answers 409 `proposal_expired`.
+         *     version opens N+1 first. A proposal the quote has moved past answers 409 `proposal_expired`. `remember` (08 §7.4):
+         *     `customer` or `tenant` writes the match memory too; a scope the proposal does not offer answers 422, and `tenant`
+         *     without the settings permission 403.
          */
         post: operations["apply_proposal_chat_proposals__proposal_id__apply_post"];
         delete?: never;
@@ -1784,6 +1786,18 @@ export interface components {
             what: string;
         };
         /**
+         * ChatApplyIn
+         * @description 08 §7.4: what the estimator chose on the card. Only a scope the proposal offers.
+         */
+        ChatApplyIn: {
+            /**
+             * Remember
+             * @default quote_only
+             * @enum {string}
+             */
+            remember: "quote_only" | "customer" | "tenant";
+        };
+        /**
          * ChatApplyOut
          * @description Applying a proposal (08 §7.5): the quote as it now is, the toast, and the event "בטל" undoes.
          */
@@ -1808,6 +1822,8 @@ export interface components {
             action?: string | null;
             /** Content */
             content?: string | null;
+            /** Instance Ids */
+            instance_ids?: string[] | null;
             /** Kind */
             kind?: string | null;
             /** Line Ids */
@@ -1832,21 +1848,53 @@ export interface components {
                 [key: string]: string;
             } | null;
         };
+        /**
+         * ChatInstanceOut
+         * @description Where an instance the answer points at is (`{{instance:ins_…}}`, 08 §6.4), for the drawing pane.
+         */
+        ChatInstanceOut: {
+            /**
+             * Bbox
+             * @description x0, y0, x1, y1 in PDF points, origin top left
+             */
+            bbox: number[];
+            /** Line Id */
+            line_id?: string | null;
+            /** Page Id */
+            page_id: string;
+        };
         /** ChatMessageIn */
         ChatMessageIn: {
             /** Message */
             message: string;
             ui_context?: components["schemas"]["ChatUiContextIn"];
         };
-        /** ChatMessageOut */
+        /**
+         * ChatMessageOut
+         * @description `quotes`: the name of each quote a `{{quote:quo_…}}` points at, for the screen only (S25b decision 1).
+         */
         ChatMessageOut: {
             /** Blocks */
             blocks: components["schemas"]["ChatBlockOut"][];
+            /**
+             * Instances
+             * @default {}
+             */
+            instances: {
+                [key: string]: components["schemas"]["ChatInstanceOut"];
+            };
             /** Message Id */
             message_id: string;
             /** Money */
             money: {
                 [key: string]: components["schemas"]["ChatMoneyOut"];
+            };
+            /**
+             * Quotes
+             * @default {}
+             */
+            quotes: {
+                [key: string]: string;
             };
             /**
              * Role
@@ -1903,6 +1951,16 @@ export interface components {
             };
             /** Proposal Id */
             proposal_id: string;
+            /**
+             * Remember Options
+             * @description 08 §7.4: the card's chips; "quote_only" is always first and the default
+             * @default [
+             *       "quote_only"
+             *     ]
+             */
+            remember_options: ("quote_only" | "customer" | "tenant")[];
+            /** Remembered */
+            remembered?: ("quote_only" | "customer" | "tenant") | null;
             /**
              * Status
              * @enum {string}
@@ -3962,7 +4020,11 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["ChatApplyIn"] | null;
+            };
+        };
         responses: {
             /** @description Successful Response */
             200: {

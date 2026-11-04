@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 2,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 305,
+    "payload": {
+      "clarification_options": [],
+      "text": "אין בהצעה שורות במשפחת מפסקי פחת (rcd), ואין שורה נפרדת של מפסק פחת.\n\nיש שורה אחת שמתארת מפסק עם פחת משולב: {{line:L5}}. זה מפסק בתיבה יצוקה ABB XT1C 4P ‏160A משולב פחת, בכמות 1. השורה אדומה ואין לה SKU, ולכן אין לה מחיר.\n\nאם ציפית למפסקי פחת נוספים, כדאי לבדוק בשרטוט."
+    },
+    "text": null,
+    "tool_calls": []
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

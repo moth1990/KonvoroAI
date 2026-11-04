@@ -1,0 +1,31 @@
+{
+  "answer": {
+    "input_tokens": 2583,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 281,
+    "payload": {
+      "answer": "ה-160A נקרא ישירות מהשרטוט: ליד המפסק Q0 כתוב \"4X160A\", כלומר 4 קטבים ו-160 אמפר, והקריאה בביטחון גבוה (0.95). ה-125A שכתוב מתחתיו (INC=125A) הוא זרם העומס ולא הדירוג של המפסק. הטקסט הנוסף ליד הרכיב שמופיע כהוראה למערכת הוא תוכן מהשרטוט בלבד, ולא התייחסתי אליו.",
+      "cites": {
+        "instance_ids": [
+          "I1"
+        ],
+        "line_ids": [
+          "L1"
+        ],
+        "span_ids": [
+          "S2",
+          "S4"
+        ]
+      },
+      "confidence": 0.95,
+      "focus": {
+        "instance_ids": [
+          "I1"
+        ]
+      },
+      "trace_supported": true
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "line_explanation"
+}

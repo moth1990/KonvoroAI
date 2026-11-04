@@ -1,0 +1,21 @@
+{
+  "answer": {
+    "input_tokens": 2,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 80,
+    "payload": null,
+    "text": null,
+    "tool_calls": [
+      {
+        "args": {
+          "line": "L1",
+          "question": "למה המגענים צהובים?"
+        },
+        "id": "toolu_01BewjenWwc29M1e2s6zZBWZ",
+        "name": "explain_line"
+      }
+    ]
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

@@ -966,7 +966,8 @@ a.list-item:hover {
   align-items: center;
   color: inherit;
 }
-.fchip[aria-pressed="true"] {
+.fchip[aria-pressed="true"],
+.fchip[aria-checked="true"] {
   background: var(--fg);
   color: var(--bg);
   border-color: var(--fg);
@@ -1706,6 +1707,13 @@ a.list-item:hover {
 .msgs .sugg.clar {
   padding: 0;
   justify-content: flex-end;
+}
+/* the proposal card's memory choice (08 §7.3, S25b decision 2): the prototype's chips, one selected */
+.prop .sugg.remember {
+  padding: 0;
+}
+.msg .chip.quote-ref {
+  margin-inline: 2px;
 }
 .chat-in {
   display: flex;

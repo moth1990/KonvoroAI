@@ -1,0 +1,20 @@
+{
+  "answer": {
+    "input_tokens": 2,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 276,
+    "payload": {
+      "clarification_options": [
+        "להחליף מותג בכל 8 המפסקים (ABB)",
+        "להחליף מק\"ט בשורה מסוימת",
+        "להחליף בשורות האדומות (5)",
+        "לשנות ערך (זרם או כושר ניתוק)"
+      ],
+      "text": "מה לשנות? יש 5 שורות אדומות בלוח NURSERY, ובהן {{line:L1}} ו-{{line:L2}}. אפשר להחליף מותג, להחליף מק\"ט או לשנות ערך כמו זרם. תגיד לי מה להחליף ובאילו שורות."
+    },
+    "text": null,
+    "tool_calls": []
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

@@ -1,0 +1,20 @@
+{
+  "answer": {
+    "input_tokens": 2,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 109,
+    "payload": null,
+    "text": null,
+    "tool_calls": [
+      {
+        "args": {
+          "quote": "Q1"
+        },
+        "id": "toolu_01N6hPpBdCPbPX2oyvW7bqGj",
+        "name": "compare"
+      }
+    ]
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

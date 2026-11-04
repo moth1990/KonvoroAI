@@ -1,0 +1,28 @@
+{
+  "answer": {
+    "input_tokens": 4,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 132,
+    "payload": null,
+    "text": null,
+    "tool_calls": [
+      {
+        "args": {
+          "line": "L1"
+        },
+        "id": "toolu_01QB91HjyDuphAHw4cYs9Hk6",
+        "name": "get_line_details"
+      },
+      {
+        "args": {
+          "line": "L1",
+          "question": "למה השורה הזו בצבע הזה?"
+        },
+        "id": "toolu_01Coy1qcQkx3WG88NRyU2csM",
+        "name": "explain_line"
+      }
+    ]
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

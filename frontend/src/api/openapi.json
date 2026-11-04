@@ -1451,6 +1451,24 @@
         "title": "CandidateOut",
         "type": "object"
       },
+      "ChatApplyIn": {
+        "additionalProperties": false,
+        "description": "08 §7.4: what the estimator chose on the card. Only a scope the proposal offers.",
+        "properties": {
+          "remember": {
+            "default": "quote_only",
+            "enum": [
+              "quote_only",
+              "customer",
+              "tenant"
+            ],
+            "title": "Remember",
+            "type": "string"
+          }
+        },
+        "title": "ChatApplyIn",
+        "type": "object"
+      },
       "ChatApplyOut": {
         "description": "Applying a proposal (08 §7.5): the quote as it now is, the toast, and the event \"בטל\" undoes.",
         "properties": {
@@ -1514,6 +1532,20 @@
               }
             ],
             "title": "Content"
+          },
+          "instance_ids": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Instance Ids"
           },
           "kind": {
             "anyOf": [
@@ -1633,6 +1665,42 @@
         "title": "ChatBlockOut",
         "type": "object"
       },
+      "ChatInstanceOut": {
+        "description": "Where an instance the answer points at is (`{{instance:ins_…}}`, 08 §6.4), for the drawing pane.",
+        "properties": {
+          "bbox": {
+            "description": "x0, y0, x1, y1 in PDF points, origin top left",
+            "items": {
+              "type": "number"
+            },
+            "maxItems": 4,
+            "minItems": 4,
+            "title": "Bbox",
+            "type": "array"
+          },
+          "line_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Line Id"
+          },
+          "page_id": {
+            "title": "Page Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "page_id",
+          "bbox"
+        ],
+        "title": "ChatInstanceOut",
+        "type": "object"
+      },
       "ChatMessageIn": {
         "additionalProperties": false,
         "properties": {
@@ -1653,6 +1721,7 @@
         "type": "object"
       },
       "ChatMessageOut": {
+        "description": "`quotes`: the name of each quote a `{{quote:quo_…}}` points at, for the screen only (S25b decision 1).",
         "properties": {
           "blocks": {
             "items": {
@@ -1660,6 +1729,14 @@
             },
             "title": "Blocks",
             "type": "array"
+          },
+          "instances": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/ChatInstanceOut"
+            },
+            "default": {},
+            "title": "Instances",
+            "type": "object"
           },
           "message_id": {
             "title": "Message Id",
@@ -1670,6 +1747,14 @@
               "$ref": "#/components/schemas/ChatMoneyOut"
             },
             "title": "Money",
+            "type": "object"
+          },
+          "quotes": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "default": {},
+            "title": "Quotes",
             "type": "object"
           },
           "role": {
@@ -1785,6 +1870,38 @@
           "proposal_id": {
             "title": "Proposal Id",
             "type": "string"
+          },
+          "remember_options": {
+            "default": [
+              "quote_only"
+            ],
+            "description": "08 §7.4: the card's chips; \"quote_only\" is always first and the default",
+            "items": {
+              "enum": [
+                "quote_only",
+                "customer",
+                "tenant"
+              ],
+              "type": "string"
+            },
+            "title": "Remember Options",
+            "type": "array"
+          },
+          "remembered": {
+            "anyOf": [
+              {
+                "enum": [
+                  "quote_only",
+                  "customer",
+                  "tenant"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Remembered"
           },
           "status": {
             "enum": [
@@ -7351,7 +7468,7 @@
     },
     "/chat/proposals/{proposal_id}/apply": {
       "post": {
-        "description": "08 §7.5: the estimator approved the card. The same actions as the screen's, as one undoable change; a sent\nversion opens N+1 first. A proposal the quote has moved past answers 409 `proposal_expired`.",
+        "description": "08 §7.5: the estimator approved the card. The same actions as the screen's, as one undoable change; a sent\nversion opens N+1 first. A proposal the quote has moved past answers 409 `proposal_expired`. `remember` (08 §7.4):\n`customer` or `tenant` writes the match memory too; a scope the proposal does not offer answers 422, and `tenant`\nwithout the settings permission 403.",
         "operationId": "apply_proposal_chat_proposals__proposal_id__apply_post",
         "parameters": [
           {
@@ -7365,6 +7482,23 @@
             }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/ChatApplyIn"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Body"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "content": {

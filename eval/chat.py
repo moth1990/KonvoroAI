@@ -2,7 +2,8 @@
 
 Each request in `chat_set.json` runs as one turn of a new conversation on the NURSERY-1 fixture, in a factory with
 the demo price list, through the real tools (`konboro.chat`) and the same model route as the product
-(`chat_command`, recorded as cassettes). A text that gives orders is planted beside Q0 on the drawing (08 §10).
+(`chat_command`, and `line_explanation` for "why", recorded as cassettes). A text that gives orders is planted beside
+Q0 on the drawing (08 §10). The factory has one other quote, sent before NURSERY, for `compare` (S25b).
 
 | Metric | What | Target (08 §13.2) |
 | --- | --- | --- |
@@ -32,7 +33,7 @@ from konboro.db import models as m
 from konboro.db.ids import new_id
 from konboro.db.seed import seed_price_list
 from konboro.db.session import tenant_session
-from konboro.devtools.fixtures.nursery import seed_nursery
+from konboro.devtools.fixtures.nursery import seed_earlier_quote, seed_nursery, seed_nursery_pages
 from konboro.services import quotes, review
 from konboro.services.storage import Storage
 from konboro_llm import LLMClient
@@ -72,7 +73,7 @@ class Spy:
         return self.wrapped.complete_turn(request, turns, model, allow_tools, retry_hint)
 
 
-def add_factory(engine: Engine) -> tuple[str, str, str]:
+def add_factory(engine: Engine, storage: Storage | None = None) -> tuple[str, str, str]:
     tenant_id, user_id = new_id("tnt"), new_id("usr")
     with tenant_session(tenant_id, engine) as s:
         s.add(m.Tenant(id=tenant_id, name="מפעל צ'אט", plan_id="trial"))
@@ -84,6 +85,9 @@ def add_factory(engine: Engine) -> tuple[str, str, str]:
         s.add(m.MarginRule(id=new_id("mr"), tenant_id=tenant_id, level="default", kind="markup", value=Decimal("0.25")))
         quote_id = seed_nursery(s, tenant_id)
         assert quote_id is not None  # noqa: S101
+        seed_earlier_quote(s, tenant_id)  # the other quote compare reads (S25b)
+        if storage is not None:
+            seed_nursery_pages(s, storage, tenant_id)  # explain_line's crops (S25b)
         q0 = next(
             (
                 c
@@ -181,7 +185,7 @@ def _select(view: quotes.QuoteView, words: list[str]) -> list[str]:
 def run(
     engine: Engine, storage: Storage, providers: dict[str, Any], cases_file: Path = SET
 ) -> tuple[dict[str, Score], list[dict[str, Any]]]:
-    tenant_id, user_id, quote_id = add_factory(engine)
+    tenant_id, user_id, quote_id = add_factory(engine, storage)
     spy = Spy(providers["anthropic"])
     llm = LLMClient({"anthropic": spy})  # type: ignore[dict-item]  # a provider that records what it sends
     cases = json.loads(cases_file.read_text(encoding="utf-8"))["cases"]
@@ -201,6 +205,10 @@ def run(
             view = quotes.read_quote(s, tenant_id, quote_id)
             assert view is not None  # noqa: S101
             amounts = _amounts(view)
+            for other in s.scalars(select(m.Quote.id).where(m.Quote.tenant_id == tenant_id, m.Quote.id != quote_id)):
+                seen = quotes.read_quote(s, tenant_id, other)
+                if seen is not None:  # compare's other quote: its amounts never reach the model either
+                    amounts |= _amounts(seen)
             selected = _select(view, case.get("select", []))
             turn.new_conversation(s, tenant_id, quote_id)
             before = len(spy.sent)

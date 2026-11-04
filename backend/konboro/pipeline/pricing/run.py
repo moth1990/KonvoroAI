@@ -288,6 +288,8 @@ def line_in(ln: Draft) -> qs.LineIn:
         line_group=ln.line_group,
         parent=ln.parent,
         component_id=ln.component_id,
+        signature=ln.signature,
+        brand_context=ln.brand_context,
         product_id=ln.product_id,
         sku=ln.sku,
         manufacturer=ln.manufacturer,

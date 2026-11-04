@@ -1,0 +1,19 @@
+{
+  "answer": {
+    "input_tokens": 2,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 190,
+    "payload": {
+      "clarification_options": [
+        "שורה מסוימת, למשל L1",
+        "ההשוואה להצעה אחרת",
+        "השורות האדומות (5)"
+      ],
+      "text": "לא מצאתי שורה בשם Q0. בהצעה הזו יש שורות L1 עד L13, ו-Q0 גם לא מתאים לשם של הצעה אחרת. למה התכוונת?"
+    },
+    "text": null,
+    "tool_calls": []
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

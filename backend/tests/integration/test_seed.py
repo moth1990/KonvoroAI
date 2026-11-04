@@ -3,6 +3,7 @@ from sqlalchemy import Engine, func, select, update
 from konboro.db import models as m
 from konboro.db.seed import DEMO_TENANT, FLAGS, PRODUCTS, seed
 from konboro.db.session import tenant_session
+from konboro.devtools.fixtures.nursery import EARLIER_NAME
 from konboro.services.storage import Storage
 
 
@@ -46,10 +47,16 @@ def test_the_demo_tenant_gets_the_review_fixture_once(migrated_db: dict[str, Eng
         quotes = s.execute(select(func.count()).select_from(m.Quote).where(m.Quote.name == "NURSERY")).scalar_one()
         # the demo price list links the lines to its products
         linked = s.execute(
-            select(func.count()).select_from(m.QuoteLine).where(m.QuoteLine.product_id.is_not(None))
+            select(func.count())
+            .select_from(m.QuoteLine)
+            .join(m.QuoteVersion, m.QuoteVersion.id == m.QuoteLine.quote_version_id)
+            .join(m.Quote, m.Quote.id == m.QuoteVersion.quote_id)
+            .where(m.Quote.name == "NURSERY", m.QuoteLine.product_id.is_not(None))
         ).scalar_one()
+        earlier = s.execute(select(func.count()).select_from(m.Quote).where(m.Quote.name == EARLIER_NAME)).scalar_one()
     assert quotes == 1
     assert linked == 8
+    assert earlier == 1  # the sent quote compare reads (S25b), once
 
 
 def test_seed_links_the_demo_price_list(migrated_db: dict[str, Engine], storage: Storage) -> None:

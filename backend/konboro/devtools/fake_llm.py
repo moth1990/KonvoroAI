@@ -31,6 +31,7 @@ headers map by position: the first column is the item, the second the quantity.
 """
 
 import io
+import json
 import re
 from typing import Any
 
@@ -42,6 +43,7 @@ from konboro_llm.stages.catalog_disambiguation import STAGE as CATALOG
 from konboro_llm.stages.chat_command import STAGE as CHAT
 from konboro_llm.stages.chat_compaction import STAGE as COMPACT
 from konboro_llm.stages.context_extraction import GeneralNotes
+from konboro_llm.stages.line_explanation import STAGE as EXPLAIN
 from konboro_llm.stages.ocr_transcription import STAGE as OCR
 from konboro_llm.stages.page_classification import STAGE as CLASSIFY
 from konboro_llm.stages.page_classification import TitleBlockAnswer
@@ -227,6 +229,10 @@ def _chat_decide(text: str) -> dict[str, Any]:
     if re.search(r"כמות", message) and selected and qty:
         change = {"type": "set_quantity", "target": {"lines": selected}, "qty": int(qty[1])}
         return {"tool_calls": [{"name": "propose_change", "args": {"changes": [change], "summary_he": "שינוי כמות"}}]}
+    if re.search(r"למה|מאיפה|איך הגעת", message) and selected and not re.search(r"צהוב", message):
+        return {"tool_calls": [{"name": "explain_line", "args": {"line": selected[0], "question": message}}]}
+    if re.search(r"השווה|תשווה|השוואה|מול ההצעה", message):
+        return {"tool_calls": [{"name": "list_quotes", "args": {}}]}
     if re.search(r"צהוב", message):
         return {"tool_calls": [{"name": "query_lines", "args": {"statuses": ["yellow"]}}]}
     if re.search(r"חסר|לשלוח", message):
@@ -256,6 +262,22 @@ def _chat_answer(name: str, result: dict[str, Any]) -> dict[str, Any]:
         return {"answer": {"text": text}}
     if name == "focus_ui":
         return {"answer": {"text": "סימנתי את השורות בטבלה."}}
+    if name == "explain_line":
+        text = result["answer"]
+        if result.get("focus"):
+            text += " " + " ".join("{{instance:" + i + "}}" for i in result["focus"])
+        return {"answer": {"text": text}}
+    if name == "list_quotes":
+        quotes = result.get("quotes", [])
+        if not quotes:
+            return {"answer": {"text": "אין הצעות אחרות להשוות אליהן."}}
+        return {"tool_calls": [{"name": "compare", "args": {"quote": quotes[0]["quote"]}}]}
+    if name == "compare":
+        n = len(result.get("lines", []))
+        text = "מול {{quote:" + str(result.get("other_quote")) + "}}: " + f"{n} שורות שונות."
+        if result.get("difference"):
+            text += " ההפרש בסך ההצעה: {{" + result["difference"] + "}}."
+        return {"answer": {"text": text}}
     return {"answer": {"text": "בוצע."}}
 
 
@@ -273,9 +295,39 @@ def chat_turn(turn: Any) -> dict[str, Any]:
     return _chat_answer(call.name, after[-1].tool_results[-1].content)
 
 
+def explanation(request: LLMRequest[Any]) -> dict[str, Any]:
+    """08 §6.4's sub-agent: the first value of the trace, read or filled in, and the line's first instance."""
+    raw = request.user_text.split("The line's trace:\n", 1)[-1].rsplit("\n\n", 1)[0]
+    try:
+        trace = json.loads(raw)
+    except ValueError:
+        trace = {}
+    values = [v for v in trace.get("values", []) if v.get("value") is not None]
+    instances = [i["instance"] for i in trace.get("instances", [])]
+    if not values:
+        return {"answer": "אין לי מספיק מידע בעקבות כדי להסביר את זה.", "confidence": 0.3, "trace_supported": False}
+    v = values[0]
+    said = (
+        "לא כתוב בשרטוט, נלקח מברירת המחדל של המפעל"
+        if v["source"] == "tenant_default"
+        else "נקרא מהשרטוט"
+        if v["source"] in ("drawing", "cad_attrib", "graphic", "shared_label", "bom")
+        else f"מקור: {v['source']}"
+    )
+    return {
+        "answer": f"{v['attribute']} = {v['value']}: {said} (תשובה של מודל הדמה).",
+        "cites": {"line_ids": [trace.get("line")], "instance_ids": instances[:1], "span_ids": []},
+        "focus": {"instance_ids": instances[:1]},
+        "confidence": 0.8,
+        "trace_supported": True,
+    }
+
+
 def answer(request: Any) -> dict[str, Any]:
     if request.stage == CHAT:
         return chat_turn(request)
+    if request.stage == EXPLAIN:
+        return explanation(request)
     if request.stage == COMPACT:
         return {"summary": "סיכום של מודל הדמה."}
     if request.stage == CLASSIFY:

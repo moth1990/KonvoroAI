@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 2,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 263,
+    "payload": {
+      "clarification_options": [],
+      "text": "הרווח בהצעה כרגע הוא {{$T5}}, כלומר {{$P1}} מהמחיר. עלות הרכיבים היא {{$T4}} והסכום לפני מע\"מ הוא {{$T1}}.\n\nהמספר חלקי, כי 5 שורות אדומות עדיין בלי מחיר ושורה אחת בלי עלות. הרווח ישתנה כשהן יתמלאו. אפשר להציג את השורות האדומות."
+    },
+    "text": null,
+    "tool_calls": []
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

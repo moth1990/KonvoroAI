@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 2,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 311,
+    "payload": {
+      "clarification_options": [],
+      "text": "F31 היא השורה {{line:L6}}: מא\"ז ABB S201M, קוטב אחד, 16A. ה-16A נקרא מהשרטוט ולא הושלם אוטומטית. ליד F31 כתוב \"1X16A\" ולידו הדגם S201M ABB, כפי שמסומן ב-{{instance:I1}}. הערך current_a=16A מסומן כמקור \"שרטוט\" ברמת ביטחון 0.95.\n\nהערך INC=12.8A שכתוב ליד המא\"ז לא קבע את הגודל. קיבולת הניתוק (kA) לא מופיעה בשרטוט ולכן חסרה בשורה.\n\nהשורה ירוקה וללא ממצאים. סימנתי אותה על המסך."
+    },
+    "text": null,
+    "tool_calls": []
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

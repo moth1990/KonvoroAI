@@ -1,0 +1,31 @@
+{
+  "answer": {
+    "input_tokens": 2,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 124,
+    "payload": null,
+    "text": null,
+    "tool_calls": [
+      {
+        "args": {
+          "changes": [
+            {
+              "target": {
+                "lines": [
+                  "L1"
+                ]
+              },
+              "type": "set_line_price",
+              "unit_price": "120"
+            }
+          ],
+          "summary_he": "מחיר יחידה 120 לשורה L1"
+        },
+        "id": "toolu_01MHtj9Jb5gW8egkxsgmmTq3",
+        "name": "propose_change"
+      }
+    ]
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

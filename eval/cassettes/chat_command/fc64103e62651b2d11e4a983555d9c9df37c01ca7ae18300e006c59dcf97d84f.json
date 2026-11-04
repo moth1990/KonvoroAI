@@ -1,0 +1,32 @@
+{
+  "answer": {
+    "input_tokens": 4,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 290,
+    "payload": null,
+    "text": null,
+    "tool_calls": [
+      {
+        "args": {
+          "changes": [
+            {
+              "margin_kind": "margin",
+              "pct": "18",
+              "target": {
+                "lines": [
+                  "L1"
+                ]
+              },
+              "type": "set_line_margin"
+            }
+          ],
+          "summary_he": "שינוי רווח ל-18% בשורה L1"
+        },
+        "id": "toolu_01NTp9zCy8Aha5roR7oRHgXH",
+        "name": "propose_change"
+      }
+    ]
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

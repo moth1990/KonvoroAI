@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 2,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 204,
+    "payload": {
+      "clarification_options": [],
+      "text": "בלוח B1 יש 2 שורות של מא\"ז 16A, והן מסומנות במסך:\n- {{line:L1}}: ABB S203M 3 קטבים, מק\"ט S203M-C16, כמות 5, סטטוס ירוק.\n- {{line:L2}}: ABB S201M קוטב אחד, מק\"ט S201M-C16, כמות 1, סטטוס ירוק.\n\nבסך הכול 6 מא\"זים של 16A."
+    },
+    "text": null,
+    "tool_calls": []
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

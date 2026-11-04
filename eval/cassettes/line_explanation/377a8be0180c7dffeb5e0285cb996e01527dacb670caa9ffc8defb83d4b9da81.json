@@ -1,0 +1,36 @@
+{
+  "answer": {
+    "input_tokens": 3184,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 293,
+    "payload": {
+      "answer": "הסטטוס הצהוב נובע מכך שהזרם של המגענים לא כתוב בשרטוט והוסק מהמעגל: נבחר 16A לפחות לפי המא\"זים F22–F25 (3X16A). זו הסקה ולא קריאה, ולכן הביטחון בה נמוך יחסית (0.7). חשוב לציין שהשורה כולה אדומה, כי אין מחיר זהה במחירון, ולא בגלל ההסקה. מומלץ לוודא את הזרם מול השרטוט.",
+      "cites": {
+        "instance_ids": [
+          "I1",
+          "I2",
+          "I3",
+          "I4"
+        ],
+        "line_ids": [
+          "L1"
+        ],
+        "span_ids": [
+          "S2"
+        ]
+      },
+      "confidence": 0.85,
+      "focus": {
+        "instance_ids": [
+          "I1",
+          "I2",
+          "I3",
+          "I4"
+        ]
+      },
+      "trace_supported": true
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "line_explanation"
+}

@@ -410,6 +410,7 @@ def seed_demo_fixtures(session: Session, storage: "Storage") -> None:
     session.execute(text("SELECT set_config('app.tenant_id', :t, true)"), {"t": DEMO_TENANT})
     nursery.seed_nursery(session, DEMO_TENANT)
     nursery.seed_nursery_pages(session, storage, DEMO_TENANT)
+    nursery.seed_earlier_quote(session, DEMO_TENANT)
     audit_993.enable_flag(session, DEMO_TENANT)
     audit_993.seed_audit_993(session, DEMO_TENANT, DEMO_USER)
     audit_993.seed_audit_993_pages(session, storage, DEMO_TENANT)

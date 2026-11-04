@@ -196,7 +196,8 @@ def matches(ln: ChatLine, f: LineFilter, state: ChatState, issue_lines: set[str]
     if any(not _same_value(ln.attribute(a.name), a.value) for a in f.attributes):
         return False
     if f.text:
-        hay = f"{ln.description} {ln.sku or ''} {ln.manufacturer or ''}".casefold()
+        tags = " ".join(ln.view.designators) if ln.view else ""  # "Q0", "F22": the drawing's tags (S25b)
+        hay = f"{ln.description} {ln.sku or ''} {ln.manufacturer or ''} {tags}".casefold()
         if not all(w in hay for w in f.text.casefold().split()):
             return False
     return True
