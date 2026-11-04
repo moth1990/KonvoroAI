@@ -1,0 +1,63 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 165,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            320,
+            239,
+            640,
+            316
+          ],
+          "legible": "clear",
+          "text": "בטיחות"
+        },
+        {
+          "box": [
+            725,
+            239,
+            870,
+            316
+          ],
+          "legible": "unsure",
+          "text": "עפ״ר"
+        },
+        {
+          "box": [
+            577,
+            389,
+            898,
+            470
+          ],
+          "legible": "unsure",
+          "text": "העידכון"
+        },
+        {
+          "box": [
+            383,
+            596,
+            872,
+            745
+          ],
+          "legible": "clear",
+          "text": "אשקלון"
+        },
+        {
+          "box": [
+            500,
+            929,
+            688,
+            1010
+          ],
+          "legible": "clear",
+          "text": "גנים"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

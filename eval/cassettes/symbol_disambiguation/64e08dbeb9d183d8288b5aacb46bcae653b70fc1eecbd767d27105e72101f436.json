@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1718,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 148,
+    "payload": {
+      "confidence": 0.6,
+      "decision": "none_of_these",
+      "reason": "הסמל מציג מגע מתג עם פס רוחב בקצה הקבוע, חץ שחור ואלמנט תרמי מזיגזג, ללא איקס של מא\"ז, ולכן הוא דומה למנתק עם הגנה תרמית ואינו תואם במדויק אף מועמד.",
+      "symbol_class": null
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

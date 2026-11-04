@@ -1,0 +1,83 @@
+{
+  "answer": {
+    "input_tokens": 6780,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 679,
+    "payload": {
+      "issues": [
+        {
+          "bbox": [
+            28,
+            760,
+            95,
+            800
+          ],
+          "component_ids": [
+            "c20"
+          ],
+          "confidence": 0.4,
+          "message": "בשרטוט מופיע נתיך HRC 3x100A אחד (שלושה נתיכים) ואילו בטבלה הכמות 3, וגם מגן הברק מוגדר 3 יחידות כשבשרטוט יש 4P אחד. יש לבדוק את הכמויות.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": [
+            40,
+            820,
+            95,
+            880
+          ],
+          "component_ids": [
+            "c21"
+          ],
+          "confidence": 0.5,
+          "message": "בשרטוט מגן ברק אחד 4P 100kA B+C, אך בטבלה הכמות 3. יש לבדוק.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": [
+            1060,
+            845,
+            1115,
+            925
+          ],
+          "component_ids": [
+            "c23"
+          ],
+          "confidence": 0.3,
+          "message": "מא\"ז 25A מסומן x3 בשרטוט (מעגלים 21–23), אך בטבלה מופיע כ-3 קוטבים בכמות 3 – יש לוודא שלא נספר כפול.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": null,
+          "component_ids": [
+            "c14",
+            "c15",
+            "c16",
+            "c17",
+            "c18",
+            "c19",
+            "c13",
+            "c11"
+          ],
+          "confidence": 0.35,
+          "message": "מפסקי הכוח בתיבה יצוקה: חלקם 25kA/36kA TMD וחלקם 6kA בלי קטלוג, ובשרטוט 80A/100A LSI ו-160A LSI. יש לבדוק התאמת ערכי הניתוק והקטלוג.",
+          "type": "inconsistent_attributes"
+        },
+        {
+          "bbox": [
+            948,
+            840,
+            972,
+            863
+          ],
+          "component_ids": [],
+          "confidence": 0.3,
+          "message": "בשרטוט מופיע שעון פקד (שעון/בורר ידני) ליד מעגל 20 שאינו מופיע בטבלה כרכיב נפרד. יש לבדוק.",
+          "type": "missing_component"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "validator_review"
+}

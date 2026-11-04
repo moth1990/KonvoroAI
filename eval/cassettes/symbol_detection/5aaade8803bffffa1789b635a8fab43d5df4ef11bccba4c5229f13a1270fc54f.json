@@ -1,0 +1,118 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 445,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            46,
+            160,
+            74,
+            186
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "terminal",
+          "tag": null
+        },
+        {
+          "box": [
+            348,
+            151,
+            376,
+            179
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "terminal",
+          "tag": null
+        },
+        {
+          "box": [
+            792,
+            157,
+            820,
+            185
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "terminal",
+          "tag": null
+        },
+        {
+          "box": [
+            348,
+            291,
+            376,
+            318
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "terminal",
+          "tag": null
+        },
+        {
+          "box": [
+            792,
+            296,
+            820,
+            324
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "terminal",
+          "tag": null
+        },
+        {
+          "box": [
+            245,
+            183,
+            377,
+            285
+          ],
+          "box_text": null,
+          "family": "push_button",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "push_button",
+          "tag": null
+        },
+        {
+          "box": [
+            689,
+            189,
+            820,
+            271
+          ],
+          "box_text": null,
+          "family": "push_button",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "push_button",
+          "tag": null
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

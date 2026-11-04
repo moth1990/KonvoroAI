@@ -1,0 +1,69 @@
+{
+  "answer": {
+    "input_tokens": 4198,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 560,
+    "payload": {
+      "issues": [
+        {
+          "bbox": [
+            1265,
+            265,
+            1440,
+            335
+          ],
+          "component_ids": [
+            "c04"
+          ],
+          "confidence": 0.7,
+          "message": "FB2 בציור הוא מפסק פחת 4x40A 30mA סוג A (כמו FB1), אך בטבלה הוא סווג כ-RCBO ובלי פריט קטלוגי. יש לבדוק סיווג ולהשלים פריט מסוג F204.",
+          "type": "wrong_family"
+        },
+        {
+          "bbox": [
+            135,
+            150,
+            275,
+            240
+          ],
+          "component_ids": [
+            "c03"
+          ],
+          "confidence": 0.35,
+          "message": "Q1 בציור הוא ABB XT1 3x80A עם INC=64A, ובטבלה מופיע XT1C160 80A עם 25kA. יש לוודא את הדגם ואת קיבולת הניתוק.",
+          "type": "inconsistent_attributes"
+        },
+        {
+          "bbox": [
+            1290,
+            125,
+            1380,
+            220
+          ],
+          "component_ids": [
+            "c01",
+            "c02"
+          ],
+          "confidence": 0.2,
+          "message": "מא\"זים FC1 ו-FC2 הם S203M 3P ללא נייטרל, אך הם מזינים מפסקי פחת 4P. יש לבדוק שהקריאה נכונה.",
+          "type": "other"
+        },
+        {
+          "bbox": null,
+          "component_ids": [
+            "c12",
+            "c13",
+            "c11",
+            "c09",
+            "c10"
+          ],
+          "confidence": 0.4,
+          "message": "רכיבים c09–c13 (סליל הפסקה, לחצן חירום, ממסר, הגנת מנוע, ממסר תרמי) לא מופיעים בציור שמוצג. יש לוודא שהם שייכים ללוח הזה ושהכמויות נכונות.",
+          "type": "other"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "validator_review"
+}

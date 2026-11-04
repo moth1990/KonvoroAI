@@ -1,0 +1,28 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 81,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            424,
+            245,
+            482,
+            343
+          ],
+          "box_text": null,
+          "family": "socket_outlet",
+          "orientation": 0,
+          "role": "front_view",
+          "sure": false,
+          "symbol_class": "socket_outlet",
+          "tag": null
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

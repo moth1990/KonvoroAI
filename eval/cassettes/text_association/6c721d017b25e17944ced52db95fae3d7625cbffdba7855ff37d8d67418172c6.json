@@ -1,0 +1,81 @@
+{
+  "answer": {
+    "input_tokens": 5251,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 421,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "confidence": 0.85,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s7"
+              ],
+              "value": 10
+            },
+            {
+              "confidence": 0.6,
+              "evidence": "graphic",
+              "graphic_note": "one line with a single stroke across it, no multiple poles drawn",
+              "name": "poles",
+              "span_ids": [],
+              "value": 1
+            },
+            {
+              "confidence": 0.8,
+              "evidence": null,
+              "name": "coil_voltage_v",
+              "span_ids": [],
+              "value": null
+            }
+          ],
+          "brand_hint": null,
+          "det": "d1",
+          "explicit_texts": [
+            "s7",
+            "s4",
+            "s8"
+          ],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          },
+          "uses_shared_label": false
+        }
+      ],
+      "possible_missed": [],
+      "shared_labels": [],
+      "unassigned_spans": [
+        {
+          "reason": "belongs to neighbour c1",
+          "span_id": "s1"
+        },
+        {
+          "reason": "Hebrew label for a field, not a device value",
+          "span_id": "s2"
+        },
+        {
+          "reason": "belongs to neighbour c3",
+          "span_id": "s3"
+        },
+        {
+          "reason": "belongs to neighbour c2",
+          "span_id": "s5"
+        },
+        {
+          "reason": "belongs to neighbour c2",
+          "span_id": "s6"
+        },
+        {
+          "reason": "load name, not a device value",
+          "span_id": "s9"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

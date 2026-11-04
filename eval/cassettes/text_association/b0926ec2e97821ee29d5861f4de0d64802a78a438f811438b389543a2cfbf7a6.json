@@ -1,0 +1,131 @@
+{
+  "answer": {
+    "input_tokens": 5602,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 677,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "confidence": 0.95,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s2"
+              ],
+              "value": 16
+            },
+            {
+              "confidence": 0.7,
+              "evidence": "graphic",
+              "graphic_note": "three short slanted strokes across the line of d1",
+              "name": "poles",
+              "span_ids": [],
+              "value": 3
+            }
+          ],
+          "brand_hint": null,
+          "det": "d1",
+          "explicit_texts": [
+            "s2"
+          ],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          },
+          "uses_shared_label": false
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.95,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s3"
+              ],
+              "value": 16
+            },
+            {
+              "confidence": 0.7,
+              "evidence": "graphic",
+              "graphic_note": "one short slanted stroke across the line of d2",
+              "name": "poles",
+              "span_ids": [],
+              "value": 1
+            }
+          ],
+          "brand_hint": null,
+          "det": "d2",
+          "explicit_texts": [
+            "s3"
+          ],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          },
+          "uses_shared_label": false
+        }
+      ],
+      "possible_missed": [],
+      "shared_labels": [],
+      "unassigned_spans": [
+        {
+          "reason": "belongs to a neighbouring symbol",
+          "span_id": "s1"
+        },
+        {
+          "reason": "belongs to c3",
+          "span_id": "s4"
+        },
+        {
+          "reason": "belongs to a neighbour",
+          "span_id": "s5"
+        },
+        {
+          "reason": "circuit/terminal label for neighbour",
+          "span_id": "s6"
+        },
+        {
+          "reason": "belongs to rcd c4",
+          "span_id": "s7"
+        },
+        {
+          "reason": "belongs to rcd c4",
+          "span_id": "s8"
+        },
+        {
+          "reason": "belongs to rcd c4",
+          "span_id": "s9"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s10"
+        },
+        {
+          "reason": "belongs to c6",
+          "span_id": "s11"
+        },
+        {
+          "reason": "terminal label",
+          "span_id": "s12"
+        },
+        {
+          "reason": "cable description",
+          "span_id": "s13"
+        },
+        {
+          "reason": "cable",
+          "span_id": "s14"
+        },
+        {
+          "reason": "cable description",
+          "span_id": "s15"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

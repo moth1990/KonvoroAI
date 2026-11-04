@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1351,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 148,
+    "payload": {
+      "confidence": 0.8,
+      "decision": "none_of_these",
+      "reason": "הסמל הוא מפסק הגנה (מא\"זר/מפסק מוגן-מנוע) עם מנגנון ניתוק תרמי ומגנטי וחץ, ללא ידית לחיצה, ולכן אינו לחצן ואף אחד מהמועמדים לא מתאים.\"}",
+      "symbol_class": null
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

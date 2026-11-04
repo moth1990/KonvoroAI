@@ -1,0 +1,53 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 121,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            10,
+            378,
+            97,
+            433
+          ],
+          "legible": "clear",
+          "text": "100"
+        },
+        {
+          "box": [
+            290,
+            375,
+            375,
+            430
+          ],
+          "legible": "clear",
+          "text": "101"
+        },
+        {
+          "box": [
+            579,
+            366,
+            666,
+            421
+          ],
+          "legible": "clear",
+          "text": "102"
+        },
+        {
+          "box": [
+            619,
+            596,
+            883,
+            712
+          ],
+          "legible": "unsure",
+          "text": "מקווה"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

@@ -1,0 +1,106 @@
+{
+  "answer": {
+    "input_tokens": 5649,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 465,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "confidence": 0.8,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s6"
+              ],
+              "value": "10"
+            }
+          ],
+          "det": "d1",
+          "explicit_texts": [
+            "s6"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.85,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s8"
+              ],
+              "value": 10
+            }
+          ],
+          "det": "d2",
+          "explicit_texts": [
+            "s8"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.7,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s9"
+              ],
+              "value": 10
+            }
+          ],
+          "det": "d3",
+          "explicit_texts": [
+            "s9"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.6,
+              "evidence": null,
+              "name": "current_a",
+              "value": null
+            }
+          ],
+          "det": "d4",
+          "explicit_texts": []
+        }
+      ],
+      "unassigned_spans": [
+        {
+          "reason": "belongs to neighbour c3",
+          "span_id": "s1"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s2"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s3"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s4"
+        },
+        {
+          "reason": "belongs to a symbol outside the tile",
+          "span_id": "s5"
+        },
+        {
+          "reason": "sits between d1 and d2; it is closer to d2's left side but d2 already uses s8, so it is assigned to d1",
+          "span_id": "s7"
+        },
+        {
+          "reason": "belongs to c6",
+          "span_id": "s10"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

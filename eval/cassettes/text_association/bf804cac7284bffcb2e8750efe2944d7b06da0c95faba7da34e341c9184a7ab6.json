@@ -1,0 +1,128 @@
+{
+  "answer": {
+    "input_tokens": 6257,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 512,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "evidence": null,
+              "name": "color",
+              "value": null
+            }
+          ],
+          "det": "d1",
+          "explicit_texts": [
+            "s8"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "evidence": null,
+              "name": "color",
+              "value": null
+            }
+          ],
+          "det": "d2",
+          "explicit_texts": [
+            "s9"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "evidence": null,
+              "name": "cross_section_mm2",
+              "value": null
+            }
+          ],
+          "det": "d3",
+          "explicit_texts": [
+            "s26"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.85,
+              "evidence": "text",
+              "name": "range_min_a",
+              "span_ids": [
+                "s40"
+              ],
+              "value": 4
+            },
+            {
+              "confidence": 0.85,
+              "evidence": "text",
+              "name": "range_max_a",
+              "span_ids": [
+                "s40"
+              ],
+              "value": 6.3
+            },
+            {
+              "evidence": null,
+              "name": "poles",
+              "value": null
+            }
+          ],
+          "det": "d4",
+          "explicit_texts": [
+            "s39",
+            "s40"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "evidence": null,
+              "name": "range_min_a",
+              "value": null
+            },
+            {
+              "evidence": null,
+              "name": "range_max_a",
+              "value": null
+            }
+          ],
+          "det": "d5",
+          "explicit_texts": []
+        }
+      ],
+      "possible_missed": [],
+      "shared_labels": [],
+      "unassigned_spans": [
+        {
+          "reason": "terminal c1 tag",
+          "span_id": "s5"
+        },
+        {
+          "reason": "terminal tag",
+          "span_id": "s31"
+        },
+        {
+          "reason": "description of d1",
+          "span_id": "s20"
+        },
+        {
+          "reason": "description of d2",
+          "span_id": "s33"
+        },
+        {
+          "reason": "bus label",
+          "span_id": "s42"
+        },
+        {
+          "reason": "bus label",
+          "span_id": "s41"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

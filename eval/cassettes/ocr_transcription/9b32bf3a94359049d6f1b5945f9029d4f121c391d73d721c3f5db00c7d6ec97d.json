@@ -1,0 +1,83 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 219,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            424,
+            124,
+            482,
+            177
+          ],
+          "legible": "clear",
+          "text": "\"0\""
+        },
+        {
+          "box": [
+            506,
+            131,
+            643,
+            177
+          ],
+          "legible": "clear",
+          "text": "230VAC"
+        },
+        {
+          "box": [
+            106,
+            249,
+            232,
+            293
+          ],
+          "legible": "clear",
+          "text": "R,S,T,0"
+        },
+        {
+          "box": [
+            439,
+            367,
+            484,
+            409
+          ],
+          "legible": "clear",
+          "text": "ES"
+        },
+        {
+          "box": [
+            455,
+            495,
+            559,
+            541
+          ],
+          "legible": "clear",
+          "text": "לחצן"
+        },
+        {
+          "box": [
+            366,
+            497,
+            451,
+            541
+          ],
+          "legible": "clear",
+          "text": "חרום"
+        },
+        {
+          "box": [
+            989,
+            391,
+            1019,
+            445
+          ],
+          "legible": "unsure",
+          "text": "3"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

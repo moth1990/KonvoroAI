@@ -1,0 +1,113 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 309,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            820,
+            365,
+            1024,
+            452
+          ],
+          "legible": "unsure",
+          "text": "ניסות"
+        },
+        {
+          "box": [
+            536,
+            365,
+            788,
+            452
+          ],
+          "legible": "clear",
+          "text": "כבלים"
+        },
+        {
+          "box": [
+            228,
+            365,
+            508,
+            452
+          ],
+          "legible": "clear",
+          "text": "ללוחות"
+        },
+        {
+          "box": [
+            64,
+            533,
+            730,
+            620
+          ],
+          "legible": "unsure",
+          "text": "להשאיר"
+        },
+        {
+          "box": [
+            527,
+            537,
+            679,
+            617
+          ],
+          "legible": "clear",
+          "text": "30%"
+        },
+        {
+          "box": [
+            298,
+            533,
+            470,
+            620
+          ],
+          "legible": "clear",
+          "text": "מקום"
+        },
+        {
+          "box": [
+            64,
+            533,
+            262,
+            620
+          ],
+          "legible": "clear",
+          "text": "שמור"
+        },
+        {
+          "box": [
+            708,
+            768,
+            910,
+            848
+          ],
+          "legible": "clear",
+          "text": "לוודא"
+        },
+        {
+          "box": [
+            455,
+            768,
+            682,
+            860
+          ],
+          "legible": "clear",
+          "text": "איזון"
+        },
+        {
+          "box": [
+            190,
+            768,
+            412,
+            848
+          ],
+          "legible": "clear",
+          "text": "פאזות"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

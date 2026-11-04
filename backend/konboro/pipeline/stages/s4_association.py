@@ -81,6 +81,7 @@ class PageWork:
     detections: list[Detection] = field(default_factory=list)
     wires: circuits.Wires | None = None
     multiplicity: dict[str, quantity.Multiplicity] = field(default_factory=dict)
+    texts: list[assign.Text] = field(default_factory=list)
 
 
 def _panel(d: Detection, page: Page, drawing_panels: list[str]) -> str | None:
@@ -130,7 +131,8 @@ def associate_page(
     live = [d for d in dets if d.det_id not in absorbed]
     by_det = {d.det_id: d for d in dets}
     tags = {d.designator for d in dets if d.designator}
-    texts = assign.texts(pe.text_spans, tags)
+    texts = assign.texts(pe.text_spans, tags, {d.designator_span_id for d in dets if d.designator_span_id})
+    work.texts = texts
     by_span = {t.id: t for t in texts}
     class_family = {c.symbol_class: c.family for c in lib.classes.values()}
     families = {f for f, cs in lib.families.items() if any(c.billable for c in cs)}
@@ -399,10 +401,10 @@ def _final_values(
 def _multiplicity(
     d: Detection, r: assign.Read, from_agent: tuple[int, list[str]] | None, page_lines: list[quantity.Line]
 ) -> quantity.Multiplicity:
-    if from_agent is not None:
-        count, spans = from_agent
-        return quantity.Multiplicity(count=count, span_ids=spans)
     marks = r.context.get("multiplicity", [])
+    if from_agent is not None and (from_agent[0] > 1 or not marks):
+        count, spans = from_agent
+        return quantity.Multiplicity(count=count, span_ids=spans)  # a count of 1 cites nothing: code's mark stands
     if not marks:
         return quantity.Multiplicity()
     v = marks[0]
@@ -446,7 +448,8 @@ def _panel_at(b: Any, page: Page, drawing_panels: list[str]) -> str | None:
 
 def chains(works: list[PageWork], cfg: AssociationConfig = DEFAULT) -> None:
     """5.1.1 rule 3 and 5.8 item 4, on each page's wire graph: a device right below a device with a count takes
-    it; every device learns the protective device above it."""
+    it; every device learns the protective device above it, and a protective device the cable on its outgoing line
+    (BUG-072)."""
     built_by_det = {b.instance.det_id: b for w in works for b in w.built}
     for w in works:
         if w.wires is None:
@@ -458,6 +461,16 @@ def chains(works: list[PageWork], cfg: AssociationConfig = DEFAULT) -> None:
             up = circuits.upstream(w.wires, d, w.detections)
             if up is not None and b.circuit_context is not None:
                 b.circuit_context.upstream_designator = up.designator
+            if b.circuit_context is not None and b.circuit_context.cable is None and d.family in circuits.PROTECTIVE:
+                cable = circuits.cable_below(w.wires, d, w.detections, w.texts)
+                if cable is not None:
+                    read = {r.key: r.value for r in cable.readings}
+                    section = read.get("cable_cross_section_mm2")
+                    b.circuit_context.cable = Cable(
+                        cores=int(read["cable_cores"]),
+                        cross_section_mm2=float(section) if isinstance(section, int | float) else None,
+                        raw=cable.span.text,
+                    )
             mult = w.multiplicity.get(d.det_id)
             if mult is None or mult.count <= 1 or d.family not in circuits.PROTECTIVE:
                 continue

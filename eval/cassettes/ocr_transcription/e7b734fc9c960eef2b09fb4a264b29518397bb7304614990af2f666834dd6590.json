@@ -1,0 +1,123 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 337,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            414,
+            251,
+            458,
+            292
+          ],
+          "legible": "clear",
+          "text": "FS"
+        },
+        {
+          "box": [
+            398,
+            298,
+            592,
+            350
+          ],
+          "legible": "clear",
+          "text": "3(2.4-4)A"
+        },
+        {
+          "box": [
+            871,
+            298,
+            946,
+            335
+          ],
+          "legible": "clear",
+          "text": "25A"
+        },
+        {
+          "box": [
+            320,
+            529,
+            452,
+            572
+          ],
+          "legible": "clear",
+          "text": "ELENET"
+        },
+        {
+          "box": [
+            355,
+            577,
+            419,
+            620
+          ],
+          "legible": "clear",
+          "text": "LTC"
+        },
+        {
+          "box": [
+            751,
+            757,
+            862,
+            799
+          ],
+          "legible": "clear",
+          "text": "למע'"
+        },
+        {
+          "box": [
+            617,
+            757,
+            748,
+            799
+          ],
+          "legible": "clear",
+          "text": "ניתוקים"
+        },
+        {
+          "box": [
+            699,
+            812,
+            839,
+            853
+          ],
+          "legible": "clear",
+          "text": "מגילוי"
+        },
+        {
+          "box": [
+            651,
+            812,
+            695,
+            853
+          ],
+          "legible": "clear",
+          "text": "אש"
+        },
+        {
+          "box": [
+            135,
+            927,
+            185,
+            972
+          ],
+          "legible": "clear",
+          "text": "Q0"
+        },
+        {
+          "box": [
+            483,
+            968,
+            527,
+            1013
+          ],
+          "legible": "clear",
+          "text": "TC"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

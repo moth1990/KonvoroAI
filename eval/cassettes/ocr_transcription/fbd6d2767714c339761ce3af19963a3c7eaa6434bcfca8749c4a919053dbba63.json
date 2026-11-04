@@ -1,0 +1,53 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 127,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            496,
+            89,
+            626,
+            158
+          ],
+          "legible": "clear",
+          "text": "חיישן"
+        },
+        {
+          "box": [
+            354,
+            89,
+            442,
+            154
+          ],
+          "legible": "clear",
+          "text": "אור"
+        },
+        {
+          "box": [
+            206,
+            370,
+            282,
+            433
+          ],
+          "legible": "unsure",
+          "text": "אתא"
+        },
+        {
+          "box": [
+            70,
+            371,
+            163,
+            433
+          ],
+          "legible": "unsure",
+          "text": "פוט"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

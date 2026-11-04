@@ -1,0 +1,53 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 132,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            190,
+            0,
+            415,
+            92
+          ],
+          "legible": "unsure",
+          "text": "פאזות"
+        },
+        {
+          "box": [
+            437,
+            0,
+            650,
+            92
+          ],
+          "legible": "unsure",
+          "text": "איזון"
+        },
+        {
+          "box": [
+            672,
+            0,
+            910,
+            82
+          ],
+          "legible": "unsure",
+          "text": "לוודא"
+        },
+        {
+          "box": [
+            84,
+            858,
+            385,
+            936
+          ],
+          "legible": "clear",
+          "text": "לביצוע"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

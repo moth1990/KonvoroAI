@@ -40,15 +40,18 @@ class Candidate:
     designator: str | None = None
     designator_span_id: str | None = None
     flags: list[str] = field(default_factory=list)
+    floor: float | None = None  # code's evidence for the class after the model (`evidence.py`): at least this
 
     @property
     def confidence(self) -> float:
         """03 §6.3, with the interim method (S12): the first look's rating stands for both scores."""
         if self.method == "llm_vision":
-            return self.detector_score
-        if self.method == "orphan_recovery":
-            return self.detector_score * 0.9
-        return self.detector_score * self.class_score  # detector_llm: detector × the disambiguation's confidence
+            raw = self.detector_score
+        elif self.method == "orphan_recovery":
+            raw = self.detector_score * 0.9
+        else:
+            raw = self.detector_score * self.class_score  # detector_llm: detector × the disambiguation's confidence
+        return max(raw, self.floor) if self.floor is not None else raw
 
     @property
     def height(self) -> float:

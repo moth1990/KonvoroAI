@@ -99,6 +99,21 @@ def test_a_tenants_and_a_designers_abbreviations_reach_only_that_tenant(seeded: 
         assert library.load(s, "רמאור").classify_text("TC").symbol_class == "shunt_trip"  # type: ignore[union-attr]
 
 
+def test_a_factorys_designator_prefixes_reach_only_that_factory(seeded: dict[str, Engine]) -> None:
+    """BUG-070: the prefix table is data; a factory replaces a prefix, or turns one off with an empty list."""
+    engine = seeded["app"]
+    mine, theirs = add_tenant(engine), add_tenant(engine)
+    with tenant_session(mine.tenant_id, engine) as s:
+        settings = s.get(m.TenantSettings, mine.tenant_id) or m.TenantSettings(tenant_id=mine.tenant_id)
+        settings.matching = {**(settings.matching or {}), "designator_prefixes": {"Q": ["mcb"], "K": []}}
+        s.add(settings)
+    with tenant_session(mine.tenant_id, engine) as s:
+        lib = library.load(s, None)
+        assert lib.prefixes["Q"] == ("mcb",) and "K" not in lib.prefixes and lib.prefixes["F"][0] == "mcb"
+    with tenant_session(theirs.tenant_id, engine) as s:
+        assert library.load(s, None).prefixes["Q"][0] == "mccb"
+
+
 def test_the_run_step_shows_the_stage_3_line(api: Api, seeded: dict[str, Engine], pipeline: Pipeline) -> None:  # noqa: F811
     tenant = add_tenant(seeded["app"])
     drawing_id = send(api, tenant, NURSERY)

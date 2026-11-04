@@ -1,0 +1,82 @@
+{
+  "answer": {
+    "input_tokens": 6046,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 375,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [],
+          "brand_hint": null,
+          "det": "d1",
+          "explicit_texts": [
+            "s7"
+          ],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          }
+        },
+        {
+          "attributes": [],
+          "brand_hint": null,
+          "det": "d2",
+          "explicit_texts": [],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          }
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s9"
+              ],
+              "value": 80
+            },
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "poles",
+              "span_ids": [
+                "s9"
+              ],
+              "value": 4
+            }
+          ],
+          "brand_hint": "ABB",
+          "det": "d3",
+          "explicit_texts": [
+            "s8",
+            "s9",
+            "s10",
+            "s11"
+          ],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          },
+          "uses_shared_label": false
+        }
+      ],
+      "possible_missed": [],
+      "shared_labels": [],
+      "unassigned_spans": [
+        {
+          "reason": "Hebrew description (residual-current combined), not a value",
+          "span_id": "s13"
+        },
+        {
+          "reason": "Hebrew description (combined), not a value",
+          "span_id": "s14"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

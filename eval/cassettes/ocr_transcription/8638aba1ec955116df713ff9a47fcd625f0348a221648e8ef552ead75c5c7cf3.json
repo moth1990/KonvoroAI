@@ -1,0 +1,103 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 283,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            231,
+            137,
+            578,
+            201
+          ],
+          "legible": "clear",
+          "text": "AVENUE"
+        },
+        {
+          "box": [
+            285,
+            262,
+            452,
+            346
+          ],
+          "legible": "clear",
+          "text": "בע\"מ"
+        },
+        {
+          "box": [
+            567,
+            383,
+            801,
+            442
+          ],
+          "legible": "clear",
+          "text": "M-TOWER"
+        },
+        {
+          "box": [
+            820,
+            393,
+            964,
+            438
+          ],
+          "legible": "clear",
+          "text": "מגדלי"
+        },
+        {
+          "box": [
+            435,
+            459,
+            462,
+            505
+          ],
+          "legible": "unsure",
+          "text": "6"
+        },
+        {
+          "box": [
+            487,
+            460,
+            610,
+            505
+          ],
+          "legible": "clear",
+          "text": "קומה"
+        },
+        {
+          "box": [
+            634,
+            462,
+            784,
+            507
+          ],
+          "legible": "clear",
+          "text": "9/604"
+        },
+        {
+          "box": [
+            468,
+            528,
+            777,
+            584
+          ],
+          "legible": "clear",
+          "text": "08-9197861"
+        },
+        {
+          "box": [
+            512,
+            601,
+            880,
+            659
+          ],
+          "legible": "clear",
+          "text": "050-9499333"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

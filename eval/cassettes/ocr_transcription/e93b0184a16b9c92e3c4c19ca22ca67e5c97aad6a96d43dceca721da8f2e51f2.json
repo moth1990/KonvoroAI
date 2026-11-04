@@ -1,0 +1,53 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 125,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            238,
+            399,
+            333,
+            460
+          ],
+          "legible": "clear",
+          "text": "20A"
+        },
+        {
+          "box": [
+            83,
+            438,
+            203,
+            483
+          ],
+          "legible": "clear",
+          "text": "מפסק"
+        },
+        {
+          "box": [
+            835,
+            553,
+            980,
+            600
+          ],
+          "legible": "clear",
+          "text": "תאורה"
+        },
+        {
+          "box": [
+            777,
+            815,
+            870,
+            872
+          ],
+          "legible": "clear",
+          "text": "10A"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

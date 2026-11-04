@@ -163,7 +163,9 @@ def test_the_class_narrows_the_family() -> None:
     """5.1 item 2: an MCB never comes back as a moulded-case breaker of the same current."""
     m = one(comp("circuit_breaker", "mccb", {"current_a": 80, "poles": 3}))
     assert m.chosen_sku == "XT1C160 TMD80 3P"
-    assert one(comp("circuit_breaker", "mcb", {"current_a": 80, "poles": 3})).status == "unmatched"
+    # an MCB written as such stays one (an 80A one not in the catalog matches nothing); one only drawn is typed by
+    # its current above the catalog's MCB range (BUG-070, `test_a_breaker_above_the_catalogs_mcb_range_…`)
+    assert one(comp("circuit_breaker", "mcb", {"current_a": 80, "poles": 3}, ("MCB",))).status == "unmatched"
 
 
 # --- 5.2 explicit sku -------------------------------------------------------------------------------------------------
@@ -439,6 +441,17 @@ def test_an_untyped_breaker_is_typed_by_its_current() -> None:
     assert m.confidence <= DEFAULT.yellow_max
     m = one(comp("circuit_breaker", "unknown_symbol", {"current_a": 40, "poles": 3}))
     assert m.chosen_sku == "S203M-C40"
+
+
+def test_a_breaker_above_the_catalogs_mcb_range_is_not_an_mcb() -> None:
+    """BUG-070: 25.26.100's Q0 "3×80A" came out an MCB and matched nothing ("מא"ז 3X80A"). The catalog's MCBs stop
+    at 63A, so an 80A breaker is typed by its current, whether stage 4 left it untyped or called it an MCB."""
+    for cls in ("mcb", "unknown_symbol"):
+        m = one(comp("circuit_breaker", cls, {"current_a": 80, "poles": 3}))
+        assert m.chosen_sku is not None and "breaker_type_inferred" in m.warnings
+        assert m.chosen_sku.startswith("XT1")  # the moulded-case one
+    m = one(comp("circuit_breaker", "mcb", {"current_a": 63, "poles": 3}))
+    assert m.chosen_sku == "S203M-C63" and "breaker_type_inferred" not in m.warnings
 
 
 def test_an_overload_relays_range_holds_the_load() -> None:

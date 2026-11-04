@@ -204,6 +204,20 @@ def test_stage4_no_prediction() -> None:
     assert set(per_panel) == {"A", "B"}
 
 
+def test_stage4_skips_a_panel_nobody_verified() -> None:
+    """S24b, 25.26.100: the sub-panel is not checked, so what was found there is neither extra nor missed."""
+    main = CanonPanel(name="לוח ראשי", components=(comp("rcd", 2, current_a=40, poles=4),))
+    sub = CanonPanel(name="לוח משנה", components=(), verified=False)
+    found = (comp("rcd", 2, current_a=40, poles=4),)
+    extra = (comp("circuit_breaker", 3, current_a=10, poles=1),)
+    total_, per_panel = stage4.score(
+        drawing(main, sub),
+        predicted(CanonPanel(name="לוח ראשי", components=found), CanonPanel(name="לוח משנה", components=extra)),
+    )
+    assert values(total_)["component_precision"] == 1.0 and values(total_)["component_recall"] == 1.0
+    assert set(per_panel) == {"לוח ראשי"}
+
+
 def test_panels_pair_by_name_then_in_order() -> None:
     a, b, c = (CanonPanel(name=n, components=()) for n in ("לוח ראשי", "לוח סככה", "לוח ביתן"))
     x = CanonPanel(name="  לוח   ראשי ", components=())

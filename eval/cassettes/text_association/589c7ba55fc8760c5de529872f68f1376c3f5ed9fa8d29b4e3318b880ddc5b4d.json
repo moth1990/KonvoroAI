@@ -1,0 +1,191 @@
+{
+  "answer": {
+    "input_tokens": 6072,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 800,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s2"
+              ],
+              "value": 40
+            }
+          ],
+          "det": "d1",
+          "explicit_texts": [
+            "s2"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.85,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s4"
+              ],
+              "value": 40
+            },
+            {
+              "confidence": 0.85,
+              "evidence": "text",
+              "name": "poles",
+              "span_ids": [
+                "s4"
+              ],
+              "value": 4
+            },
+            {
+              "confidence": 0.85,
+              "evidence": "text",
+              "name": "residual_ma",
+              "span_ids": [
+                "s6"
+              ],
+              "value": 30
+            }
+          ],
+          "det": "d2",
+          "explicit_texts": [
+            "s4",
+            "s6"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.85,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s14"
+              ],
+              "value": 16
+            }
+          ],
+          "det": "d3",
+          "explicit_texts": [
+            "s14"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s15"
+              ],
+              "value": 16
+            }
+          ],
+          "det": "d4",
+          "explicit_texts": [
+            "s15"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s16"
+              ],
+              "value": 16
+            }
+          ],
+          "det": "d5",
+          "explicit_texts": [
+            "s16"
+          ]
+        }
+      ],
+      "unassigned_spans": [
+        {
+          "reason": "belongs to neighbour on left",
+          "span_id": "s1"
+        },
+        {
+          "reason": "label for left rcd c3",
+          "span_id": "s3"
+        },
+        {
+          "reason": "label for left rcd c3",
+          "span_id": "s5"
+        },
+        {
+          "reason": "model label",
+          "span_id": "s7"
+        },
+        {
+          "reason": "model label",
+          "span_id": "s8"
+        },
+        {
+          "reason": "model label",
+          "span_id": "s9"
+        },
+        {
+          "reason": "description",
+          "span_id": "s10"
+        },
+        {
+          "reason": "description",
+          "span_id": "s11"
+        },
+        {
+          "reason": "neighbour c6",
+          "span_id": "s12"
+        },
+        {
+          "reason": "belongs to c6",
+          "span_id": "s13"
+        },
+        {
+          "reason": "load multiplier",
+          "span_id": "s17"
+        },
+        {
+          "reason": "load multiplier",
+          "span_id": "s18"
+        },
+        {
+          "reason": "cable",
+          "span_id": "s19"
+        },
+        {
+          "reason": "description",
+          "span_id": "s20"
+        },
+        {
+          "reason": "cable",
+          "span_id": "s21"
+        },
+        {
+          "reason": "cable",
+          "span_id": "s22"
+        },
+        {
+          "reason": "cable",
+          "span_id": "s23"
+        },
+        {
+          "reason": "cable",
+          "span_id": "s24"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

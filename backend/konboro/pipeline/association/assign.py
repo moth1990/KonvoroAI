@@ -20,6 +20,7 @@ symbols with no value of their own for what it says. The tile agent confirms or 
 """
 
 import math
+import re
 from collections import defaultdict
 from dataclasses import dataclass, field
 from typing import Any
@@ -69,10 +70,25 @@ class Text:
         return self.span.span_id
 
 
-def texts(spans: list[TextSpan], designators: set[str] = frozenset()) -> list[Text]:  # type: ignore[assignment]
+_COUNT = re.compile(r"^\(?[xX×]\d{1,2}\)?$")
+
+
+def texts(
+    spans: list[TextSpan],
+    designators: set[str] = frozenset(),  # type: ignore[assignment]
+    linked: set[str] | None = None,
+) -> list[Text]:
     """The page's spans and their readings. A span that is a device's tag on this page (C1, C3: contactors, not
-    curve C at 1 A) is read as nothing: stage 3 linked it (03 §3.7)."""
-    return [Text(s, [] if s.text.strip() in designators else parse(s.text)) for s in spans]
+    curve C at 1 A) is read as nothing: stage 3 linked it (03 §3.7). A count ("X11") is a tag only where stage 3
+    linked that span (`linked`, a terminal strip): elsewhere it is a device's count (BUG-067)."""
+
+    def tag(s: TextSpan) -> bool:
+        t = s.text.strip()
+        if t not in designators:
+            return False
+        return linked is None or s.span_id in linked or not _COUNT.match(t)
+
+    return [Text(s, [] if tag(s) else parse(s.text)) for s in spans]
 
 
 def fit(readings: list[Reading], family: str, schemas: Schemas, cfg: AssociationConfig = DEFAULT) -> float:
@@ -385,6 +401,8 @@ def absorb_neutral(
         for h in hosts:
             if h.det_id == g.det_id or (g.designator and g.designator != h.designator):
                 continue
+            if (height(h, cfg), h.confidence) < (height(g, cfg), g.confidence):
+                continue  # the breaker hosts its N contact, never the other way (NURSERY-1 F1, S24b)
             top, bottom = max(g.bbox[1], h.bbox[1]), min(g.bbox[3], h.bbox[3])
             overlap = bottom - top
             if overlap < 0.5 * min(g.bbox[3] - g.bbox[1], h.bbox[3] - h.bbox[1]):

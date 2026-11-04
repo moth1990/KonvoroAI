@@ -1,0 +1,90 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 275,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            119,
+            562,
+            163,
+            714
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3X2.5"
+        },
+        {
+          "box": [
+            119,
+            385,
+            163,
+            524
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "N2XY"
+        },
+        {
+          "box": [
+            203,
+            573,
+            245,
+            702
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "מקווה"
+        },
+        {
+          "box": [
+            190,
+            464,
+            245,
+            544
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "ח\"ק"
+        },
+        {
+          "box": [
+            432,
+            562,
+            477,
+            714
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3X2.5"
+        },
+        {
+          "box": [
+            432,
+            385,
+            477,
+            524
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "N2XY"
+        },
+        {
+          "box": [
+            513,
+            530,
+            561,
+            638
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "עמוד"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

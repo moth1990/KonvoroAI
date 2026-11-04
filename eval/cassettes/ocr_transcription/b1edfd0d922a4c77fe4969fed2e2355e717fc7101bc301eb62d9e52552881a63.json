@@ -1,0 +1,53 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 130,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            98,
+            46,
+            466,
+            108
+          ],
+          "legible": "clear",
+          "text": "050-6926383"
+        },
+        {
+          "box": [
+            497,
+            46,
+            626,
+            108
+          ],
+          "legible": "unsure",
+          "text": ":ניד"
+        },
+        {
+          "box": [
+            156,
+            585,
+            355,
+            625
+          ],
+          "legible": "clear",
+          "text": "9001:2015"
+        },
+        {
+          "box": [
+            136,
+            436,
+            371,
+            528
+          ],
+          "legible": "clear",
+          "text": "ISO"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

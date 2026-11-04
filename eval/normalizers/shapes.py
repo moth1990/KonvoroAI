@@ -72,7 +72,8 @@ def component_list(folder: str, labels: Labels, quote: Quote) -> GoldenDrawing:
 def panel_list(folder: str, labels: Labels, quote: Quote) -> GoldenDrawing:
     """6199-2-50: `panels[].components[]`, scored by family and attributes since a designer plan has no designators
     (S06 decision). `outside_panel[]` is drawn in another location. Each panel's merged `bom[]` only gives the
-    product checksum."""
+    product checksum. A panel with `verified: false` (25.26.100's sub-panel, S24b) is listed, so stage 1 counts it,
+    and has no components to score."""
     panels, products, units = [], 0, 0
     for p in labels["panels"]:
         components = [
@@ -85,7 +86,7 @@ def panel_list(folder: str, labels: Labels, quote: Quote) -> GoldenDrawing:
             )
             for row in p["components"]
         ]
-        panels.append(CanonPanel(name=p["name"], components=tuple(components)))
+        panels.append(CanonPanel(name=p["name"], components=tuple(components), verified=p.get("verified", True)))
         products += len(p["bom"])
         units += sum(row["qty"] for row in p["bom"])
     return _drawing(folder, labels, quote, panels, Checksums(products=products, units=units))

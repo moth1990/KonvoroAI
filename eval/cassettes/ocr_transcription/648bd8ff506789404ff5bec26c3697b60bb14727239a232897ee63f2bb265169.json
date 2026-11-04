@@ -1,0 +1,112 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 345,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            295,
+            477,
+            341,
+            806
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3X1.5"
+        },
+        {
+          "box": [
+            295,
+            477,
+            341,
+            806
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "N2XY"
+        },
+        {
+          "box": [
+            520,
+            477,
+            566,
+            806
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3X1.5"
+        },
+        {
+          "box": [
+            794,
+            452,
+            840,
+            781
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3X1.5"
+        },
+        {
+          "box": [
+            584,
+            470,
+            628,
+            597
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "מאור"
+        },
+        {
+          "box": [
+            584,
+            607,
+            628,
+            712
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "חדר"
+        },
+        {
+          "box": [
+            858,
+            470,
+            902,
+            597
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "מאור"
+        },
+        {
+          "box": [
+            858,
+            607,
+            902,
+            712
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "חדר"
+        },
+        {
+          "box": [
+            359,
+            365,
+            404,
+            474
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "מאור"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

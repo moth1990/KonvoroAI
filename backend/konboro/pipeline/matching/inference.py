@@ -17,6 +17,7 @@ from pathlib import Path
 from typing import Any
 
 from konboro.contracts.merge import Component
+from konboro.pipeline.association.grammar import parse
 
 from . import text
 from .notes import Notes
@@ -44,6 +45,35 @@ def rules() -> tuple[Rule, ...]:
     return tuple(out)
 
 
+def outranged(component: Component, have: dict[str, Need], tops: dict[str, float], off: frozenset[str]) -> bool:
+    """BUG-070: a component typed as the lower class of a `class_by_current` rule, rated above the catalog's largest
+    of that class: typed again by its current, as an untyped one."""
+    current = _num(have["current_a"].value) if "current_a" in have else None
+    written = {r.value for t in component.explicit_texts for r in parse(t) if r.key == "symbol_class"}
+    if component.symbol_class in written:
+        return False  # "MCB" written beside it: the class narrows (05 §5.1 item 2), even to nothing
+    for rule in rules():
+        p = rule.params
+        if rule.kind != "class_by_current" or rule.id in off or component.family not in rule.families:
+            continue
+        top = tops.get(p["below"])
+        if p.get("or_above_catalog_range") and component.symbol_class == p["below"] and current and top:
+            return current > top
+    return False
+
+
+def class_tops(top_current: Any) -> dict[str, float]:
+    """The largest current per lower class of the `class_by_current` rules, by `top_current(family, class)`."""
+    out: dict[str, float] = {}
+    for rule in rules():
+        if rule.kind == "class_by_current" and rule.params.get("or_above_catalog_range"):
+            for family in rule.families:
+                top = top_current(family, rule.params["below"])
+                if top is not None:
+                    out[rule.params["below"]] = top
+    return out
+
+
 @dataclass
 class Inferred:
     needs: list[Need] = field(default_factory=list)
@@ -63,9 +93,10 @@ def infer(
     notes: Notes,
     off: frozenset[str] = frozenset(),
     untyped: bool = False,
+    tops: dict[str, float] | None = None,
 ) -> Inferred:
     """What the rules give for the attributes `have` lacks. `upstream` is the protective device above the component,
-    from stage 4's `circuit_context`, when it is known."""
+    from stage 4's `circuit_context`, when it is known. `tops`: the catalog's largest current per class."""
     out = Inferred()
     ctx = component.circuit_context
     for rule in rules():
@@ -125,7 +156,9 @@ def infer(
             current = _num(have["current_a"].value) if "current_a" in have else None
             if current is None:
                 continue
-            out.symbol_class = p["above"] if current >= p["at_least_a"] else p["below"]
+            top = (tops or {}).get(p["below"]) if p.get("or_above_catalog_range") else None
+            above = current >= p["at_least_a"] or (top is not None and current > top)
+            out.symbol_class = p["above"] if above else p["below"]
             out.warnings.append("breaker_type_inferred")
             out.used.append(rule.id)
     return out

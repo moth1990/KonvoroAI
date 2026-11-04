@@ -1,0 +1,24 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 48,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            852,
+            868,
+            1024,
+            936
+          ],
+          "legible": "unsure",
+          "rotation": 0,
+          "text": "עוצ"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

@@ -1,0 +1,53 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 134,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            137,
+            236,
+            270,
+            290
+          ],
+          "legible": "clear",
+          "text": "מצבי"
+        },
+        {
+          "box": [
+            0,
+            236,
+            127,
+            290
+          ],
+          "legible": "unsure",
+          "text": "מפסק"
+        },
+        {
+          "box": [
+            100,
+            314,
+            236,
+            364
+          ],
+          "legible": "clear",
+          "text": "1-ידני"
+        },
+        {
+          "box": [
+            62,
+            373,
+            248,
+            425
+          ],
+          "legible": "unsure",
+          "text": "2-מופסק"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

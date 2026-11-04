@@ -1,0 +1,163 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 482,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            58,
+            259,
+            151,
+            317
+          ],
+          "legible": "clear",
+          "text": "16A"
+        },
+        {
+          "box": [
+            307,
+            560,
+            452,
+            605
+          ],
+          "legible": "clear",
+          "text": "1x10AC"
+        },
+        {
+          "box": [
+            514,
+            857,
+            554,
+            905
+          ],
+          "legible": "clear",
+          "text": "T1"
+        },
+        {
+          "box": [
+            914,
+            237,
+            1010,
+            288
+          ],
+          "legible": "clear",
+          "text": "מצבי"
+        },
+        {
+          "box": [
+            774,
+            237,
+            893,
+            288
+          ],
+          "legible": "clear",
+          "text": "מפסק"
+        },
+        {
+          "box": [
+            630,
+            237,
+            757,
+            291
+          ],
+          "legible": "clear",
+          "text": "פיקוד:"
+        },
+        {
+          "box": [
+            878,
+            312,
+            1013,
+            363
+          ],
+          "legible": "unsure",
+          "text": "1-ידני"
+        },
+        {
+          "box": [
+            836,
+            371,
+            1015,
+            422
+          ],
+          "legible": "unsure",
+          "text": "2-מופסק"
+        },
+        {
+          "box": [
+            836,
+            430,
+            1015,
+            481
+          ],
+          "legible": "unsure",
+          "text": "3-שעון"
+        },
+        {
+          "box": [
+            641,
+            430,
+            825,
+            481
+          ],
+          "legible": "clear",
+          "text": "אסטרונומי"
+        },
+        {
+          "box": [
+            836,
+            490,
+            1015,
+            541
+          ],
+          "legible": "unsure",
+          "text": "4-שעון"
+        },
+        {
+          "box": [
+            641,
+            490,
+            825,
+            541
+          ],
+          "legible": "clear",
+          "text": "אסטרונומי"
+        },
+        {
+          "box": [
+            541,
+            490,
+            619,
+            541
+          ],
+          "legible": "clear",
+          "text": "ותא"
+        },
+        {
+          "box": [
+            686,
+            553,
+            956,
+            605
+          ],
+          "legible": "clear",
+          "text": "פוטואלקטרי"
+        },
+        {
+          "box": [
+            548,
+            553,
+            672,
+            605
+          ],
+          "legible": "clear",
+          "text": "במקביל"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

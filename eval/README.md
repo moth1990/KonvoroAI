@@ -17,6 +17,8 @@ Every run needs `make up`. Two runs cannot overlap, `make check`'s included: eac
 
 A missing cassette fails the run with "no cassette for stage …". This happens when a prompt, a schema, an input or a model changed. To fix it, record again in live mode.
 
+The tile agent (`text_association`, stage 4) and `validator_review` (stage 6) are the exceptions: a missing cassette makes them fall back to code's reading without an error, so a miss shows only as a lower `agent_instances` or `cited_values`. **Replay can differ by platform.** pdfium can render a page a few pixels differently on macOS and on CI's Linux amd64; stage 3's ink-shrunk boxes then move a pixel, and a tile's prompt with them (BUG-073, on 25.26.100). When CI's numbers differ from a local replay, replay the drawing in a `linux/amd64` `python:3.12-slim` container, compare the missed requests with the local ones, and when a box's pixel is the only difference, store the recorded answer under the Linux key as well.
+
 ## Layout
 
 | Path | What |
@@ -47,4 +49,4 @@ A missing cassette fails the run with "no cassette for stage …". This happens 
 
 ## Adding a drawing
 
-Put it in `golden/<id>/` with a `README.md`, `labels.json` and, if there is one, `actual_quote.json`. If the labels use a known shape, nothing else is needed. Otherwise add a normalizer to `normalizers/shapes.py` and a case to `normalizer_for`. Then run `make eval-baseline` and commit the new baseline with the drawing.
+Put it in `golden/<id>/` with a `README.md`, `labels.json` and, if there is one, `actual_quote.json`. A panel the user has not checked yet goes in with `verified: false` and no components (25.26.100's sub-panel): stage 1 counts it as a panel, stage 4 does not score it. If the labels use a known shape, nothing else is needed. Otherwise add a normalizer to `normalizers/shapes.py` and a case to `normalizer_for`. Then run `make eval-baseline` and commit the new baseline with the drawing.

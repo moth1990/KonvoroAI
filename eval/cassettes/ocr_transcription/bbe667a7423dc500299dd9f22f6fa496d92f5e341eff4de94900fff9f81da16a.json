@@ -1,0 +1,79 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 239,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            257,
+            163,
+            721,
+            263
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "17.7.25"
+        },
+        {
+          "box": [
+            704,
+            293,
+            852,
+            356
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "בדק:"
+        },
+        {
+          "box": [
+            276,
+            300,
+            613,
+            358
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "איתי-משה"
+        },
+        {
+          "box": [
+            312,
+            366,
+            554,
+            426
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "אבוקרט"
+        },
+        {
+          "box": [
+            624,
+            463,
+            866,
+            521
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "לביצוע:"
+        },
+        {
+          "box": [
+            230,
+            904,
+            578,
+            970
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "AVENUE"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

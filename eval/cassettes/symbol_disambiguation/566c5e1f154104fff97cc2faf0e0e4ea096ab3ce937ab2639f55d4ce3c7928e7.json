@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1079,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 100,
+    "payload": {
+      "confidence": 0.8,
+      "decision": "choose",
+      "reason": "הסמל הוא עיגול גדול שהקו עובר דרכו, ללא קו אלכסוני, ולכן זה משנה זרם ולא מהדק.\"}",
+      "symbol_class": "current_transformer"
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

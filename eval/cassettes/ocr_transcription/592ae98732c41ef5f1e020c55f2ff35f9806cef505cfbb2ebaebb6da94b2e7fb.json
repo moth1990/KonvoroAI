@@ -1,0 +1,94 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 256,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            331,
+            164,
+            414,
+            203
+          ],
+          "legible": "clear",
+          "text": "LTD"
+        },
+        {
+          "box": [
+            0,
+            262,
+            410,
+            347
+          ],
+          "legible": "unsure",
+          "text": "אבניו"
+        },
+        {
+          "box": [
+            50,
+            390,
+            196,
+            438
+          ],
+          "legible": "clear",
+          "text": "מגדלי"
+        },
+        {
+          "box": [
+            217,
+            522,
+            272,
+            584
+          ],
+          "legible": "clear",
+          "text": "טל'"
+        },
+        {
+          "box": [
+            62,
+            527,
+            201,
+            585
+          ],
+          "legible": "unsure",
+          "text": "פקס:"
+        },
+        {
+          "box": [
+            157,
+            602,
+            272,
+            658
+          ],
+          "legible": "clear",
+          "text": "נייד:"
+        },
+        {
+          "box": [
+            0,
+            603,
+            112,
+            660
+          ],
+          "legible": "unsure",
+          "text": "9333"
+        },
+        {
+          "box": [
+            855,
+            290,
+            997,
+            398
+          ],
+          "legible": "unsure",
+          "rotation": 0,
+          "text": "CERT"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

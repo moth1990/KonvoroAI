@@ -1,0 +1,156 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 497,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            12,
+            0,
+            68,
+            36
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "X2"
+        },
+        {
+          "box": [
+            877,
+            0,
+            933,
+            36
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "X2"
+        },
+        {
+          "box": [
+            248,
+            286,
+            291,
+            419
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "N2XY"
+        },
+        {
+          "box": [
+            248,
+            466,
+            291,
+            614
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3X2.5"
+        },
+        {
+          "box": [
+            534,
+            286,
+            577,
+            419
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "N2XY"
+        },
+        {
+          "box": [
+            534,
+            466,
+            577,
+            614
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3X2.5"
+        },
+        {
+          "box": [
+            824,
+            286,
+            867,
+            419
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "N2XY"
+        },
+        {
+          "box": [
+            824,
+            466,
+            867,
+            614
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3X2.5"
+        },
+        {
+          "box": [
+            24,
+            396,
+            70,
+            503
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "אולם"
+        },
+        {
+          "box": [
+            326,
+            424,
+            374,
+            540
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "מח\"מ"
+        },
+        {
+          "box": [
+            613,
+            404,
+            664,
+            557
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "מסחרי"
+        },
+        {
+          "box": [
+            895,
+            262,
+            949,
+            460
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "מקורחים"
+        },
+        {
+          "box": [
+            895,
+            488,
+            949,
+            641
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "מסחרי"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

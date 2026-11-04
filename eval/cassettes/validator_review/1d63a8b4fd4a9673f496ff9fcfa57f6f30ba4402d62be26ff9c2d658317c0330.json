@@ -1,0 +1,55 @@
+{
+  "answer": {
+    "input_tokens": 3570,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 461,
+    "payload": {
+      "issues": [
+        {
+          "bbox": [
+            1130,
+            40,
+            1200,
+            130
+          ],
+          "component_ids": [
+            "c01"
+          ],
+          "confidence": 0.4,
+          "message": "בטבלה כמות 2 למפסק בתיבה יצוקה 40A, אך בשרטוט נראה מפסק 40A אחד בכל הזנה (שדה תאורה ושדה שקעים) ובנוסף מנתק 20A ראשי. יש לוודא את הכמות ואת סוג המפסקים.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": [
+            620,
+            40,
+            690,
+            115
+          ],
+          "component_ids": [
+            "c01"
+          ],
+          "confidence": 0.3,
+          "message": "המפסקים 40A בשרטוט נראים כמפסקי זרם רגילים ולא בהכרח בתיבה יצוקה 160A עם קיבולת 25kA. יש לבדוק את הפריט בקטלוג.",
+          "type": "inconsistent_attributes"
+        },
+        {
+          "bbox": [
+            1120,
+            140,
+            1330,
+            210
+          ],
+          "component_ids": [
+            "c03"
+          ],
+          "confidence": 0.2,
+          "message": "מפסק הפחת מסומן 4x40A 0.03A סוג A ונראה מתאים, אך הוא מותקן אחרי מפסק 40A בשדה שקעים בלבד. יש לוודא שהכמות 1 נכונה והחיבור נכון.",
+          "type": "inconsistent_attributes"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "validator_review"
+}

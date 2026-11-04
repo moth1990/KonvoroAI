@@ -1,0 +1,103 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 396,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            548,
+            52,
+            570,
+            182
+          ],
+          "box_text": null,
+          "family": "switch_disconnector",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "switch_disconnector",
+          "tag": "T1"
+        },
+        {
+          "box": [
+            200,
+            508,
+            355,
+            574
+          ],
+          "box_text": null,
+          "family": "timer",
+          "orientation": 0,
+          "role": "coil",
+          "sure": false,
+          "symbol_class": "timer",
+          "tag": "T1"
+        },
+        {
+          "box": [
+            454,
+            318,
+            570,
+            470
+          ],
+          "box_text": null,
+          "family": "selector_switch",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "selector_switch",
+          "tag": null
+        },
+        {
+          "box": [
+            480,
+            513,
+            652,
+            577
+          ],
+          "box_text": "C130,131",
+          "family": "relay",
+          "orientation": 0,
+          "role": "coil",
+          "sure": false,
+          "symbol_class": "relay",
+          "tag": null
+        },
+        {
+          "box": [
+            749,
+            874,
+            777,
+            904
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "terminal",
+          "tag": "0"
+        },
+        {
+          "box": [
+            601,
+            857,
+            667,
+            890
+          ],
+          "box_text": null,
+          "family": "ground",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "ground",
+          "tag": null
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

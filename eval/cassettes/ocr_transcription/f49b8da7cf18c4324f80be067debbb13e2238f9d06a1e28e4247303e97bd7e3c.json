@@ -1,0 +1,53 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 117,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            52,
+            374,
+            143,
+            430
+          ],
+          "legible": "clear",
+          "text": "109"
+        },
+        {
+          "box": [
+            385,
+            405,
+            473,
+            463
+          ],
+          "legible": "clear",
+          "text": "110"
+        },
+        {
+          "box": [
+            613,
+            405,
+            700,
+            463
+          ],
+          "legible": "clear",
+          "text": "111"
+        },
+        {
+          "box": [
+            887,
+            405,
+            975,
+            463
+          ],
+          "legible": "clear",
+          "text": "112"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

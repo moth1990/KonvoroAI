@@ -1,0 +1,167 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 537,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            109,
+            0,
+            164,
+            36
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "X2"
+        },
+        {
+          "box": [
+            55,
+            462,
+            102,
+            616
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3X2.5"
+        },
+        {
+          "box": [
+            58,
+            286,
+            102,
+            426
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "N2XY"
+        },
+        {
+          "box": [
+            127,
+            491,
+            180,
+            646
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "מטבחון"
+        },
+        {
+          "box": [
+            127,
+            262,
+            180,
+            462
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "מקררחים"
+        },
+        {
+          "box": [
+            438,
+            67,
+            485,
+            364
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "5x2.5-ø20"
+        },
+        {
+          "box": [
+            522,
+            313,
+            570,
+            437
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "מטבח"
+        },
+        {
+          "box": [
+            522,
+            181,
+            570,
+            290
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "פאז'"
+        },
+        {
+          "box": [
+            522,
+            56,
+            570,
+            157
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "תלת"
+        },
+        {
+          "box": [
+            770,
+            453,
+            815,
+            602
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3X2.5"
+        },
+        {
+          "box": [
+            772,
+            278,
+            816,
+            414
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "N2XY"
+        },
+        {
+          "box": [
+            850,
+            578,
+            897,
+            656
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "נשים"
+        },
+        {
+          "box": [
+            850,
+            457,
+            897,
+            553
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "עזרה"
+        },
+        {
+          "box": [
+            850,
+            287,
+            897,
+            368
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "ח\"נ"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

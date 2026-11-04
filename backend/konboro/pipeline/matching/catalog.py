@@ -99,6 +99,17 @@ class Catalog:
     def classes(self, family: str) -> set[str]:
         return {i.symbol_class for i in self.by_family.get(family, []) if i.symbol_class}
 
+    def top_current(self, family: str, symbol_class: str) -> float | None:
+        """The largest rated current the catalog has for a class (BUG-070: where its MCBs stop)."""
+        currents = [
+            float(v)
+            for i in self.by_family.get(family, [])
+            if i.symbol_class == symbol_class and i.status == "active"
+            for v in [i.attributes.get("current_a")]
+            if isinstance(v, int | float) and not isinstance(v, bool)
+        ]
+        return max(currents) if currents else None
+
     def active(self, item: Item) -> Item | None:
         """An active item, or what replaced a discontinued one (05 §5.6), or None."""
         seen: set[str] = set()

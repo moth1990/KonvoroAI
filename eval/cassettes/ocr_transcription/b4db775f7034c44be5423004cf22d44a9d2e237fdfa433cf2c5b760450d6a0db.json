@@ -1,0 +1,103 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 268,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            603,
+            406,
+            689,
+            444
+          ],
+          "legible": "clear",
+          "text": "40A"
+        },
+        {
+          "box": [
+            876,
+            488,
+            999,
+            522
+          ],
+          "legible": "clear",
+          "text": "4x40A"
+        },
+        {
+          "box": [
+            871,
+            536,
+            985,
+            570
+          ],
+          "legible": "clear",
+          "text": "0.03A"
+        },
+        {
+          "box": [
+            858,
+            578,
+            884,
+            609
+          ],
+          "legible": "clear",
+          "text": "A"
+        },
+        {
+          "box": [
+            910,
+            578,
+            983,
+            609
+          ],
+          "legible": "clear",
+          "text": "דגם"
+        },
+        {
+          "box": [
+            322,
+            583,
+            455,
+            634
+          ],
+          "legible": "clear",
+          "text": "שקעים"
+        },
+        {
+          "box": [
+            463,
+            583,
+            594,
+            634
+          ],
+          "legible": "clear",
+          "text": "שדה"
+        },
+        {
+          "box": [
+            208,
+            703,
+            299,
+            757
+          ],
+          "legible": "clear",
+          "text": "16A"
+        },
+        {
+          "box": [
+            523,
+            703,
+            612,
+            757
+          ],
+          "legible": "clear",
+          "text": "16A"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

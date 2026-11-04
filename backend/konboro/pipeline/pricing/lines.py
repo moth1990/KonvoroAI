@@ -26,8 +26,8 @@ from typing import Any
 from konboro.contracts.matching import Alternative, ComponentMatch
 from konboro.contracts.merge import Component, MissingInstance
 from konboro.contracts.validation import Issue
-from konboro.pipeline.audit.differences import describe
 from konboro.pipeline.matching.match import ACCESSORY_FAMILIES
+from konboro.pipeline.matching.text import describe
 
 from .book import INCLUDED, Book, Priced, Product, own_id, price
 
@@ -112,6 +112,20 @@ def values_of(c: Component | MissingInstance) -> dict[str, Any]:
     return {k: a.value for k, a in c.attributes.items() if a.value is not None}
 
 
+DEFAULTED = ("tenant_default", "system_default")
+
+
+def unmatched_description(c: Component, m: ComponentMatch | None) -> str:
+    """BUG-071: a line with no catalog item, in the catalog items' format (`matching.text.describe`): the drawing's
+    values, and what stage 5 took from the circuit or the notes (a default is not known, so it is left out). The
+    audit keeps its own short form ("מא"ז 3X80A", `audit.differences.describe`)."""
+    values = values_of(c)
+    for name, used in (m.attributes_used if m else {}).items():
+        if name not in values and used.value is not None and used.source not in DEFAULTED:
+            values[name] = used.value
+    return describe(c.family, c.symbol_class, c.brand_hint, None, values)
+
+
 def match_reasons(m: ComponentMatch) -> list[dict[str, Any]]:
     """07 §7.5 "סטטוס ההתאמה": matched is green, ambiguous yellow, unmatched and conflict red. The chips the review
     screen shows (09 §6.3) ride along as green reasons: they explain, they don't colour."""
@@ -184,7 +198,7 @@ def component_line(
             key=f"c:{c.component_id}",
             panel_id=c.panel_id,
             line_type="component",
-            description=item.description if item else describe(c.family, c.symbol_class, values_of(c)),
+            description=item.description if item else unmatched_description(c, m),
             qty=Decimal(c.quantity),
             priced=priced,
             line_group=group,
@@ -239,7 +253,7 @@ def missing_line(x: MissingInstance) -> Draft:
         key=f"m:{x.instance_id}",
         panel_id=x.panel_id,
         line_type="missing",
-        description=describe(x.family, x.family, values_of(x)),
+        description=describe(x.family, None, None, None, values_of(x)),
         qty=Decimal(1),
         priced=NO_SKU,
         line_group=None,
@@ -269,7 +283,11 @@ def panel_lines(
         m = matches.get(c.component_id)
         if c.supply_scope in ("prepare_only", "by_others"):
             what = "הכנה בלבד" if c.supply_scope == "prepare_only" else "באחריות אחרים"
-            name = m.catalog_item.description if m and m.catalog_item else describe(c.family, c.symbol_class, {})
+            name = (
+                m.catalog_item.description
+                if m and m.catalog_item
+                else describe(c.family, c.symbol_class, None, None, {})
+            )
             notes.append(f"{what}: {name} ({', '.join(c.designators)})" if c.designators else f"{what}: {name}")
             continue
         line, product = component_line(c, m, book, group_of(c, main_ids), issues_by_component.get(c.component_id, []))

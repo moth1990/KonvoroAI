@@ -1,0 +1,69 @@
+{
+  "answer": {
+    "input_tokens": 4460,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 453,
+    "payload": {
+      "issues": [
+        {
+          "bbox": [
+            20,
+            400,
+            1390,
+            500
+          ],
+          "component_ids": [
+            "c06"
+          ],
+          "confidence": 0.55,
+          "message": "בטבלה 17 מא\"זים מסוג SN201M 10A, אך בציור נראים רק F1–F7 (7 יציאות). יש לבדוק את הכמות.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": [
+            120,
+            428,
+            185,
+            480
+          ],
+          "component_ids": [
+            "c06"
+          ],
+          "confidence": 0.6,
+          "message": "בציור מסומן INC=8A עבור F1–F7, ובטבלה זרם 10A. יש לבדוק את הערך מול הציור.",
+          "type": "inconsistent_attributes"
+        },
+        {
+          "bbox": [
+            920,
+            100,
+            1145,
+            260
+          ],
+          "component_ids": [
+            "c02"
+          ],
+          "confidence": 0.4,
+          "message": "בציור המפסק ABB XT1C עם INC=125A, ובטבלה זרם 160A. יש לבדוק את הערך.",
+          "type": "inconsistent_attributes"
+        },
+        {
+          "bbox": [
+            525,
+            200,
+            620,
+            285
+          ],
+          "component_ids": [
+            "c05"
+          ],
+          "confidence": 0.35,
+          "message": "FNV בציור הוא S204M 3X6A עם INC=4A, ובטבלה מופיע מא\"ז 6A ללא קוד קטלוגי. יש לבדוק את הדגם והערך.",
+          "type": "inconsistent_attributes"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "validator_review"
+}

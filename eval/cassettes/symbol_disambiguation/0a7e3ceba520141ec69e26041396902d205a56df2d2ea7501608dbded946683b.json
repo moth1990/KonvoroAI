@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1718,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 125,
+    "payload": {
+      "confidence": 0.72,
+      "decision": "choose",
+      "reason": "המתג מצויר עם פס קצר חוצה במגע הקבוע (מנתק) ועם סימן תרמי ומגנטי, ואין איקס של מא\"ז, ולכן זהו מנתק או מפסק עומס.}",
+      "symbol_class": "switch_disconnector"
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

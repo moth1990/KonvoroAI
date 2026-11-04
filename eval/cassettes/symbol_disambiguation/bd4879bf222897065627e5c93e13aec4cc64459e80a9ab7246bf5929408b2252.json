@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1079,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 140,
+    "payload": {
+      "confidence": 0.6,
+      "decision": "choose",
+      "reason": "הסמל בתוך המסגרת האדומה הוא עיגול קטן על הקו, עם קו אלכסוני חוצה, ולכן הוא מתאים ביותר למהדק ולא למשנה זרם, שבו העיגול גדול יותר ויש יחס זרם לידו.",
+      "symbol_class": "terminal"
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

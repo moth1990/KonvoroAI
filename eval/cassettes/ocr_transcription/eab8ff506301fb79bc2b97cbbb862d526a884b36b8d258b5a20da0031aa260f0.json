@@ -1,0 +1,123 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 384,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            3,
+            452,
+            47,
+            604
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3X2.5"
+        },
+        {
+          "box": [
+            5,
+            276,
+            47,
+            438
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "N2XY"
+        },
+        {
+          "box": [
+            296,
+            471,
+            340,
+            620
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3X2.5"
+        },
+        {
+          "box": [
+            297,
+            293,
+            340,
+            431
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "N2XY"
+        },
+        {
+          "box": [
+            740,
+            473,
+            783,
+            622
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3X2.5"
+        },
+        {
+          "box": [
+            741,
+            296,
+            784,
+            431
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "N2XY"
+        },
+        {
+          "box": [
+            396,
+            922,
+            722,
+            984
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "211,212,213"
+        },
+        {
+          "box": [
+            81,
+            285,
+            131,
+            401
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "נשים"
+        },
+        {
+          "box": [
+            81,
+            405,
+            131,
+            519
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "עדרת"
+        },
+        {
+          "box": [
+            81,
+            523,
+            131,
+            655
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "חדר"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

@@ -15,7 +15,16 @@ from konboro.contracts.extraction import PageExtraction, Render, TextSpan, Tile
 from konboro.contracts.intake import Page, PagePanel
 from konboro.db.ids import new_id
 from konboro.devtools import fake_llm
-from konboro.pipeline.detection import candidates, designators, disambiguate, library, orphans, reference, search
+from konboro.pipeline.detection import (
+    candidates,
+    designators,
+    disambiguate,
+    evidence,
+    library,
+    orphans,
+    reference,
+    search,
+)
 from konboro.pipeline.detection.candidates import Candidate
 from konboro.pipeline.detection.config import DEFAULT, DetectionConfig
 from konboro.pipeline.detection.sheets import abbreviations_text, families_text, reference_sheet
@@ -310,6 +319,54 @@ def test_a_list_of_tags_on_one_symbol(family: str, text: str, read: bool, expect
     assert designators.tags(expected) == (expected.split("/") if expected else [])
 
 
+def test_a_count_beside_a_breaker_is_never_its_tag() -> None:
+    """BUG-067 (25.26.100): "x2" under a 16A breaker and "X11" under another's rating are counts. A tag of that
+    shape needs a terminal to own it, and not one beside a breaker or a circuit range of the same size."""
+    breaker = cand((100, 100, 144, 137), tag="X2")  # the model read it as the tag
+    rating = span("16A", (150, 97, 179, 108), {"current_a": 16}, n=1)
+    under = span("X2", (128, 152, 145, 163), n=2)
+    terminal = cand((128, 400, 146, 418), family="terminal", cls="terminal")
+    above_range = span("X2", (128, 368, 145, 379), n=3)
+    circuit_range = span("201-202", (130, 383, 208, 398), n=4)
+    strip = cand((300, 400, 318, 418), family="terminal", cls="terminal")
+    strip_tag = span("X11", (300, 385, 325, 396), n=5)
+    spans = [rating, under, above_range, circuit_range, strip_tag]
+    found = [breaker, terminal, strip]
+    counts = designators.counts(found, spans, DEFAULT)
+    assert counts == {"ts_001_0002", "ts_001_0003"}
+    for c in found:
+        designators.link(c, spans, DEFAULT, counts)
+    assert breaker.designator is None and terminal.designator is None
+    assert strip.designator == "X11"  # a terminal strip's tag
+    second = cand((100, 100, 144, 137))
+    designators.link(second, [span("X11", (148, 110, 172, 121))], DEFAULT)
+    assert second.designator is None  # an X tag belongs to terminals only
+
+
+@pytest.mark.parametrize(
+    ("family", "text", "read", "expected", "split"),
+    [
+        ("current_transformer", "T1-T3", False, "T1-T3", ["T1", "T2", "T3"]),  # BUG-069: three CTs, 100/5A
+        ("circuit_breaker", "F1–F4", True, "F1-F4", ["F1", "F2", "F3", "F4"]),
+        ("terminal", "T1-T3", False, None, []),  # a range by nearness alone is not a terminal's
+        ("circuit_breaker", "Q1-2", False, "Q1-2", ["Q1-2"]),  # a tag with a sub-number, not a range
+        ("circuit_breaker", "F3-F1", True, "F3-F1", ["F3-F1"]),  # backwards: not a range
+    ],
+)
+def test_a_range_of_tags_is_each_tag(
+    family: str, text: str, read: bool, expected: str | None, split: list[str]
+) -> None:
+    c = cand(
+        (100, 100, 110, 110),
+        family=family,
+        cls=family if family != "circuit_breaker" else "mcb",
+        tag=text if read else None,
+    )
+    designators.link(c, [span(text, (113, 100, 140, 107))], DEFAULT)
+    assert c.designator == expected
+    assert designators.tags(expected) == split
+
+
 def test_a_box_labelled_with_letters_takes_them_and_an_aux_contact_takes_only_what_the_model_read() -> None:
     coil = cand((100, 100, 140, 120), family="voltage_relay", cls="voltage_relay")
     designators.link(coil, [span("NVR", (110, 104, 130, 116))], DEFAULT)
@@ -557,3 +614,139 @@ def test_the_prompt_does_not_depend_on_the_order_the_database_returns_rows_in() 
     shuffled = library.build(rows, list(library.ABBREVIATIONS), references=refs)
     assert shuffled.version == LIB.version and families_text(shuffled) == families_text(LIB)
     assert reference_sheet(shuffled).tobytes() == reference_sheet(LIB).tobytes()
+
+
+# ---------- what code knows about the class after the model (BUG-068, BUG-070) ----------
+
+
+def test_a_breakers_end_circles_are_part_of_it() -> None:
+    """BUG-068 (25.26.100): the designer draws each breaker with a small circle at both ends. They are not terminals
+    or current transformers of their own. A real terminal at the line's end, or one away from the wire, stays."""
+    breaker = cand((1627.4, 464.3, 1671.8, 501.3))
+    top = cand((1662.4, 453.9, 1671.5, 463.0), family="terminal", cls="terminal")
+    bottom = cand(
+        (1662.4, 501.3, 1671.5, 510.1), family="current_transformer", cls="current_transformer", detector_score=0.56
+    )
+    output = cand((1657.7, 929.3, 1676.9, 950.2), family="terminal", cls="terminal")  # the outgoing terminal
+    aside = cand((1600.0, 470.0, 1609.0, 479.0), family="terminal", cls="terminal")  # beside it, not on its wire
+    ct = cand((258.4, 435.7, 290.0, 468.3), family="current_transformer", cls="current_transformer")  # T1-T3
+    q0 = cand((249.3, 468.4, 293.7, 524.9), cls=library.UNKNOWN)
+    kept, absorbed = evidence.absorb_end_circles([breaker, top, bottom, output, aside, ct, q0])
+    assert absorbed == 2 and kept == [breaker, output, aside, ct, q0]
+    em1 = cand((1662.4, 453.9, 1671.5, 463.0), family="terminal", cls="terminal", tag="EM1")  # 26-993: its own tag
+    x2 = cand((1662.4, 453.9, 1671.5, 463.0), family="terminal", cls="terminal", tag="X2")  # a count, not a tag
+    assert evidence.absorb_end_circles([breaker, em1, x2]) == ([breaker, em1], 1)
+
+
+def test_a_residual_rating_beside_a_breaker_makes_it_an_rcd() -> None:
+    """BUG-068: "4×40A 0.03A A" beside the socket fields' RCD, which the model left a switch or an unknown."""
+    rcd = cand((2271.1, 389.6, 2322.2, 423.2), family="switch_disconnector", cls=library.UNKNOWN, detector_score=0.42)
+    below = cand((2285.8, 464.3, 2329.5, 501.3), detector_score=0.9)  # a 16A breaker under the busbar
+    spans = [
+        span("4×40A", (2374.7, 389.9, 2415.4, 399.7), {"poles": 4, "current_a": 40}, n=1),
+        span("0.03A", (2373.0, 405.8, 2411.0, 415.9), n=2),
+    ]
+    evidence.residual_is_rcd([rcd, below], spans, LIB, DEFAULT)
+    assert (rcd.family, rcd.symbol_class) == ("rcd", "rcd") and 0.5 <= rcd.confidence < DEFAULT.accepted_from
+    assert (below.family, below.symbol_class) == ("circuit_breaker", "mcb")
+    # the live run: an unsure 16A breaker right under the label is nearer than the RCD it is written beside
+    rcd2 = cand((2271.1, 389.6, 2322.2, 423.2), family="switch_disconnector", cls=library.UNKNOWN, detector_score=0.42)
+    under = cand((2388.8, 464.6, 2432.5, 496.9), detector_score=0.7)
+    evidence.residual_is_rcd([rcd2, under], spans, LIB, DEFAULT)
+    assert rcd2.family == "rcd" and under.family == "circuit_breaker"
+    # and peers in a row leave an RCD an RCD
+    sure = cand((2194.3, 389.6, 2245.4, 423.2))
+    evidence.peers([sure, rcd2], [span("40A", (2250, 392, 2270, 400), {"current_a": 40}, n=7)], LIB, DEFAULT)
+    assert rcd2.family == "rcd"
+    # 6199-2-50: "4×40A/0,03A" is the label of the "מ.פ." box nearest it, not of the unsure breaker in line with it
+    box = cand((2397, 996, 2420, 1007), family="rcd", cls="rcd")
+    breaker = cand((2478, 1004, 2531, 1029), detector_score=0.56)
+    evidence.residual_is_rcd([box, breaker], [span("4×40A/0,03A", (2414, 1013, 2462, 1021), n=3)], LIB, DEFAULT)
+    assert breaker.family == "circuit_breaker"
+
+
+def test_breakers_in_one_row_with_one_rating_and_one_drawing_are_one_class() -> None:
+    """BUG-070: four 10A lighting breakers read as switch-disconnectors beside mcbs of the same row and rating, and
+    two 16A breakers read as push buttons. A sure one gives its class to the unsure ones; a different rating or a
+    differently drawn symbol doesn't."""
+    sure = [cand((1627.4 + 76 * i, 464.3, 1671.8 + 76 * i, 501.3)) for i in range(2)]
+    unsure = [
+        cand(
+            (1227.4 + 92 * i, 464.3, 1271.8 + 92 * i, 491.2),
+            family="switch_disconnector",
+            cls="switch_disconnector",
+            detector_score=0.42,
+            candidates=[("switch_disconnector", 0.6), ("mcb", 0.7)],
+        )
+        for i in range(2)
+    ]
+    other_rating = cand(
+        (1100.0, 464.3, 1144.4, 491.2), family="switch_disconnector", cls="switch_disconnector", detector_score=0.42
+    )
+    wider = cand((950.0, 464.3, 1020.0, 491.2), family="push_button", cls=library.UNKNOWN, detector_score=0.49)
+    spans = [
+        span("10A", (c.bbox[2] + 1, 498.6, c.bbox[2] + 30, 509), {"current_a": 10}, n=i)
+        for i, c in enumerate([*sure, *unsure, wider])
+    ]
+    spans.append(span("16A", (1145.0, 498.6, 1174.0, 509), {"current_a": 16}, n=9))
+    evidence.peers([*sure, *unsure, other_rating, wider], spans, LIB, DEFAULT)
+    assert all((c.family, c.symbol_class) == ("circuit_breaker", "mcb") for c in unsure)
+    assert all(0.5 <= c.confidence < DEFAULT.accepted_from for c in unsure)
+    assert other_rating.family == "switch_disconnector" and wider.family == "push_button"
+    # NURSERY-1: a 1P+N breaker's N contact, half its height, is not a breaker of its own (stage 4 absorbs it)
+    neutral = cand(
+        (1605.0, 466.0, 1615.6, 482.0), family="switch_disconnector", cls="switch_disconnector", detector_score=0.56
+    )
+    n_rating = span("10A", (1615.0, 470.0, 1640.0, 480.0), {"current_a": 10}, n=20)
+    host = cand((1627.4, 464.3, 1638.0, 501.3))
+    evidence.peers([host, neutral], [n_rating], LIB, DEFAULT)
+    assert neutral.family == "switch_disconnector"
+
+
+@pytest.mark.parametrize(
+    ("tag", "cls", "score", "candidates", "expected"),
+    [
+        ("Q0", library.UNKNOWN, 0.42, [("mccb", 0.7), ("selector_switch", 0.7)], "mccb"),  # 25.26.100's main switch
+        ("Q1", "mcb", 0.56, [], "mccb"),  # Q is not an MCB: the family's class that Q allows
+        ("Q1", "mcb", 0.9, [], "mcb"),  # a sure reading stands: the prefix only weighs
+        ("F3", "switch_disconnector", 0.42, [("switch_disconnector", 0.6), ("mcb", 0.7)], "mcb"),
+        ("F3", "contactor", 0.42, [("contactor", 0.6)], "contactor"),  # nothing F allows among what was seen
+        ("T1", "timer", 0.6, [("timer", 0.85), ("switch_disconnector", 0.7)], "timer"),
+        (None, library.UNKNOWN, 0.42, [("mccb", 0.7)], library.UNKNOWN),
+    ],
+)
+def test_the_designators_letter_weighs_the_class(
+    tag: str | None, cls: str, score: float, candidates: list[tuple[str, float]], expected: str
+) -> None:
+    """BUG-070: the factory's convention, as data (`prefixes.json`): Q is a switching device or an MCCB, F an MCB."""
+    family = next((c.family for c in library.CLASSES if c.symbol_class == cls), "circuit_breaker")
+    c = cand((0, 0, 10, 10), family=family, cls=cls, detector_score=score, candidates=candidates)
+    c.designator = tag
+    evidence.weigh_by_prefix(c, LIB, DEFAULT)
+    assert c.symbol_class == expected
+    if expected != library.UNKNOWN:
+        assert c.family == next(x.family for x in library.CLASSES if x.symbol_class == expected)
+
+
+def test_a_part_of_a_tagged_breakers_drawing_keeps_its_reading() -> None:
+    """NEVIS-1 F5: the N contact beside the breaker carries its tag; the letter says nothing about the contact."""
+    breaker = cand((708, 242, 719, 281))
+    contact = cand(
+        (684, 251, 693, 265),
+        family="switch_disconnector",
+        cls="switch_disconnector",
+        detector_score=0.56,
+        candidates=[("switch_disconnector", 0.56), ("mcb", 0.5)],
+    )
+    breaker.designator = contact.designator = "F5"
+    evidence.weigh_by_prefix(contact, LIB, DEFAULT, [breaker, contact])
+    assert contact.symbol_class == "switch_disconnector"
+
+
+def test_a_factory_overrides_a_prefix() -> None:
+    lib = library.build(list(library.CLASSES), list(library.ABBREVIATIONS), prefixes_override={"Q": ["mcb"]})
+    assert lib.prefixes["Q"] == ("mcb",) and lib.prefixes["F"][0] == "mcb"
+    plain = library.build(list(library.CLASSES), list(library.ABBREVIATIONS))
+    assert lib.version == plain.version  # the model is shown the same: the cassettes don't move
+    off = library.build(list(library.CLASSES), list(library.ABBREVIATIONS), prefixes_override={"Q": []})
+    assert "Q" not in off.prefixes

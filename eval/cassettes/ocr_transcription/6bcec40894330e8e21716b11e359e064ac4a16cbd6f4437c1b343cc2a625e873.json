@@ -1,0 +1,73 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 175,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            151,
+            387,
+            167,
+            429
+          ],
+          "legible": "clear",
+          "text": "1"
+        },
+        {
+          "box": [
+            190,
+            357,
+            213,
+            401
+          ],
+          "legible": "clear",
+          "text": "2"
+        },
+        {
+          "box": [
+            241,
+            345,
+            264,
+            390
+          ],
+          "legible": "clear",
+          "text": "3"
+        },
+        {
+          "box": [
+            293,
+            358,
+            316,
+            399
+          ],
+          "legible": "clear",
+          "text": "4"
+        },
+        {
+          "box": [
+            355,
+            857,
+            441,
+            922
+          ],
+          "legible": "clear",
+          "text": "אור"
+        },
+        {
+          "box": [
+            487,
+            856,
+            628,
+            927
+          ],
+          "legible": "clear",
+          "text": "חיישן"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

@@ -1,0 +1,43 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 106,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            501,
+            164,
+            690,
+            243
+          ],
+          "legible": "clear",
+          "text": "גנים"
+        },
+        {
+          "box": [
+            402,
+            458,
+            1010,
+            555
+          ],
+          "legible": "unsure",
+          "text": "25.26.100"
+        },
+        {
+          "box": [
+            328,
+            602,
+            1024,
+            699
+          ],
+          "legible": "unsure",
+          "text": "25.26.100.1"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

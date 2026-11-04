@@ -36,8 +36,14 @@ _RATING = re.compile(r"^[BCDKZ]\d{2,3}A?$")  # C16, B10: a breaker's curve and c
 _PHASE = re.compile(r"^(?:L[1-3]|N|PE|W\d)$")
 PHASE_OK = {"indicator_lamp": re.compile(r"^L[1-3]$"), "busbar": re.compile(r"^W\d$")}
 BREAKERS = ("circuit_breaker", "rcd", "rcbo")
+PROTECTIVE = ("circuit_breaker", "rcd", "rcbo", "switch_disconnector", "fuse")
+NOT_DEVICES = ("busbar", "ground", "junction", "motor_load")  # drawn, never billed: they don't own text
 LIST_MAX = 6  # tags in one list on one symbol
+RANGE_MAX = 12  # tags in one range ("T1-T3", "R1-R7")
 _DIGIT = re.compile(r"\d")
+COUNT = re.compile(r"^\(?[X×](?P<n>\d{1,2})\)?$")  # "x2", "X11": a count beside a device, or a terminal strip
+_RANGE = re.compile(r"^(?P<p>[A-Z]{1,4})(?P<a>\d{1,3})-(?P=p)(?P<b>\d{1,3})$")  # one prefix both ends
+_CIRCUITS = re.compile(r"^(?P<a>\d{1,3})[-–'’](?P<b>\d{1,3})$")  # "201-202", OCR'd "207'208"
 
 
 def _canon(text: str) -> str:
@@ -45,8 +51,60 @@ def _canon(text: str) -> str:
 
 
 def tags(designator: str | None) -> list[str]:
-    """The tags a designator names: one, or each of a list (item 5)."""
-    return designator.split("/") if designator else []
+    """The tags a designator names: one, each of a list (item 5), or each of a range of one prefix (BUG-069:
+    25.26.100's three current transformers "T1-T3")."""
+    out: list[str] = []
+    for part in designator.split("/") if designator else []:
+        r = _RANGE.match(part)
+        if r and int(r["a"]) < int(r["b"]) <= int(r["a"]) + RANGE_MAX - 1:
+            out += [f"{r['p']}{n}" for n in range(int(r["a"]), int(r["b"]) + 1)]
+        else:
+            out.append(part)
+    return out
+
+
+def _is_range(t: str) -> bool:
+    return "/" not in t and len(tags(t)) > 1
+
+
+def _beside(a: TextSpan, b: TextSpan) -> bool:
+    """Two texts written together: no more than a line and a half apart."""
+    h = max(a.bbox[3] - a.bbox[1], b.bbox[3] - b.bbox[1], 1.0)
+    return gap(a.bbox, b.bbox) <= 1.5 * h
+
+
+def counts(found: list[Candidate], spans: list[TextSpan], cfg: DetectionConfig) -> set[str]:
+    """BUG-067: the spans that are a count, not a tag. "x2" or "X11" is a count when the nearest device is a
+    protective one, or when it is written beside a rating ("16A") or beside a range of that many circuits
+    ("X2" over "201-202", 04 §5.1.1 rule 4). Stage 4 reads it as the device's multiplicity."""
+    ratings = [s for s in spans if "current_a" in s.tags]
+    ranges = []
+    for s in spans:
+        r = _CIRCUITS.match(s.text.strip())
+        if r and int(r["a"]) < int(r["b"]):
+            ranges.append((s, int(r["b"]) - int(r["a"]) + 1))
+    out: set[str] = set()
+    for s in spans:
+        m = COUNT.match(_canon(s.text))
+        if not m:
+            continue
+        near = [
+            (gap(c.bbox, s.bbox), c)
+            for c in found
+            if c.family not in NOT_DEVICES and gap(c.bbox, s.bbox) <= _radius(c, cfg)
+        ]
+        nearest = min(near, key=lambda it: it[0])[1] if near else None
+        if (
+            (nearest is not None and nearest.family in PROTECTIVE)
+            or any(_beside(s, r) for r in ratings)
+            or any(size == int(m["n"]) and _beside(s, r) for r, size in ranges)
+        ):
+            out.add(s.span_id)
+    return out
+
+
+def _radius(c: Candidate, cfg: DetectionConfig) -> float:
+    return max(cfg.designator_min_radius_pt, cfg.designator_radius * c.height)
 
 
 def _one_tag(t: str) -> bool:
@@ -54,6 +112,8 @@ def _one_tag(t: str) -> bool:
 
 
 def tag_shaped(span: TextSpan) -> bool:
+    if _is_range(_canon(span.text)):
+        return True
     parts = tags(_canon(span.text))
     if len(parts) == 1:
         return _one_tag(parts[0])
@@ -63,9 +123,15 @@ def tag_shaped(span: TextSpan) -> bool:
 def acceptable(text: str, c: Candidate, model_read: bool, inside: bool = False) -> bool:
     """`inside`: the span lies in the symbol's own box (a coil labelled with its tag)."""
     t = _canon(text)
+    if _is_range(t):  # a range by nearness too, but never a terminal's (they stand beside every device)
+        return (model_read or c.family not in ("terminal", *NOT_DEVICES)) and acceptable(
+            t.split("-")[0], c, model_read, inside
+        )
     parts = tags(t)
     if len(parts) > 1:
         return model_read and all(_DIGIT.search(p) and acceptable(p, c, model_read, inside) for p in parts)
+    if COUNT.match(t):
+        return c.family == "terminal"  # BUG-067: a terminal strip's tag; beside any other device, a count
     if _PHASE.match(t):
         rule = PHASE_OK.get(c.family)
         return bool(rule and rule.match(t))
@@ -74,10 +140,11 @@ def acceptable(text: str, c: Candidate, model_read: bool, inside: bool = False) 
     return model_read or inside or not _LETTERS.match(t)
 
 
-def link(c: Candidate, spans: list[TextSpan], cfg: DetectionConfig) -> None:
-    radius = max(cfg.designator_min_radius_pt, cfg.designator_radius * c.height)
+def link(c: Candidate, spans: list[TextSpan], cfg: DetectionConfig, counts: set[str] = frozenset()) -> None:  # type: ignore[assignment]
+    """`counts`: the spans that are counts on this page (`counts`), never a tag."""
+    radius = _radius(c, cfg)
     wanted = _canon(c.tag) if c.tag else None
-    near = [(gap(c.bbox, s.bbox), s) for s in spans if tag_shaped(s)]
+    near = [(gap(c.bbox, s.bbox), s) for s in spans if tag_shaped(s) and s.span_id not in counts]
     if wanted:
         read = [(d, s) for d, s in near if d <= 2 * radius and _canon(s.text) == wanted]
         if read and acceptable(wanted, c, model_read=True):

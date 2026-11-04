@@ -1,0 +1,42 @@
+{
+  "answer": {
+    "input_tokens": 5297,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 211,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "confidence": 0.85,
+              "evidence": null,
+              "name": "cross_section_mm2",
+              "span_ids": [],
+              "value": null
+            }
+          ],
+          "det": "d1",
+          "explicit_texts": []
+        }
+      ],
+      "possible_missed": [],
+      "shared_labels": [],
+      "unassigned_spans": [
+        {
+          "reason": "X2 is a terminal strip designation, not a cross-section",
+          "span_id": "s4"
+        },
+        {
+          "reason": "terminal numbers 130-131, not a cross-section",
+          "span_id": "s6"
+        },
+        {
+          "reason": "cable 3×1.5 above the line, a cable and not a device value",
+          "span_id": "s3"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

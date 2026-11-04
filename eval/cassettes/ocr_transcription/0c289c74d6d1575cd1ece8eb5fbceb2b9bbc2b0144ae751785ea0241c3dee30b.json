@@ -1,0 +1,105 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 289,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            136,
+            160,
+            184,
+            205
+          ],
+          "legible": "clear",
+          "text": "Q0"
+        },
+        {
+          "box": [
+            480,
+            202,
+            527,
+            247
+          ],
+          "legible": "clear",
+          "text": "TC"
+        },
+        {
+          "box": [
+            523,
+            478,
+            568,
+            520
+          ],
+          "legible": "clear",
+          "text": "ES"
+        },
+        {
+          "box": [
+            424,
+            897,
+            482,
+            940
+          ],
+          "legible": "clear",
+          "text": "\"0\""
+        },
+        {
+          "box": [
+            506,
+            899,
+            643,
+            942
+          ],
+          "legible": "clear",
+          "text": "230VAC"
+        },
+        {
+          "box": [
+            897,
+            462,
+            942,
+            603
+          ],
+          "legible": "clear",
+          "rotation": 270,
+          "text": "5X6"
+        },
+        {
+          "box": [
+            897,
+            297,
+            943,
+            438
+          ],
+          "legible": "clear",
+          "rotation": 270,
+          "text": "N2XY"
+        },
+        {
+          "box": [
+            651,
+            51,
+            697,
+            86
+          ],
+          "legible": "unsure",
+          "text": "אש"
+        },
+        {
+          "box": [
+            703,
+            43,
+            841,
+            87
+          ],
+          "legible": "unsure",
+          "text": "מגילוי"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

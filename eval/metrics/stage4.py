@@ -153,6 +153,8 @@ def score(label: GoldenDrawing, pred: Prediction) -> tuple[Scores, dict[str, Sco
     per_panel: dict[str, Scores] = {}
     total: Scores = {}
     for lab, p in pair_panels(label.panels, pred.panels):
+        if lab is not None and not lab.verified:
+            continue  # nobody checked it (25.26.100's sub-panel): what was found there is neither extra nor missed
         scores = match_panel(list(lab.components) if lab else [], list(p.components) if p else []).scores()
         if lab is not None:
             per_panel[lab.name] = {k: scores[k] for k in ("component_precision", "component_recall")}
