@@ -106,7 +106,12 @@ def add_candidates(engine: Engine, tenant: ApiTenant, statuses: list[str]) -> No
         for status in statuses:
             s.add(
                 m.KnowledgeCandidate(
-                    id=new_id("kc"), tenant_id=tenant.tenant_id, kind="abbreviation", payload={}, status=status
+                    id=(cid := new_id("kc")),
+                    tenant_id=tenant.tenant_id,
+                    kind="abbreviation",
+                    payload={},
+                    status=status,
+                    dedupe_key=cid,
                 )
             )
 

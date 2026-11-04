@@ -85,6 +85,9 @@ class MeOut(BaseModel):
     plan: PlanOut
     flags: dict[str, bool] = Field(description="Every flag, evaluated on the server (13 §3.1)")
     quota: QuotaOut
+    onboarding_required: bool = Field(
+        description="`onboarding` is on and the data terms are not accepted: the app opens /welcome (10 §5.1)"
+    )
 
 
 # --- quotes and home ----------------------------------------------------------------------------
@@ -363,6 +366,9 @@ class QuoteOut(BaseModel):
     quote_floor: DecimalStr | None = Field(description="The factory's quote margin floor (07 §7.3)")
     derived_note: str | None = Field(description="What the enclosure's price covers, under the lines")
     can_see_costs: bool = Field(description="09 §12: without it, every cost and margin is null")
+    first_quote: bool = Field(
+        description="The factory has sent no quote yet: the banner says its prices are kept (10 §5.2, `onboarding`)"
+    )
 
 
 class ActionOut(BaseModel):
@@ -538,9 +544,13 @@ class RevisableOut(BaseModel):
 EnclosurePart = Literal["busbar", "n", "pe", "panels", "doors"]
 AttributeValue = str | int | bool
 Margin = Annotated[DecimalStr, Field(ge=0, lt=1)]
+Markup = Annotated[DecimalStr, Field(ge=0, le=5, description="On cost: 0.25 is 25%. Up to 500%")]
 
 
 class SettingsOut(BaseModel):
+    default_markup: DecimalStr | None = Field(
+        description="The `default` margin rule as a markup on cost, 0.25 is 25% (07 §7.3); null when it is a margin"
+    )
     brand_preferences: dict[str, str]
     attribute_defaults: dict[str, dict[str, AttributeValue]]
     enclosure_includes_default: dict[EnclosurePart, bool]
@@ -558,6 +568,7 @@ class SettingsPatch(Strict):
     `null` clears a margin floor; the other fields cannot be null.
     """
 
+    default_markup: Markup | None = None
     brand_preferences: dict[str, str] | None = None
     attribute_defaults: dict[str, dict[str, AttributeValue]] | None = None
     enclosure_includes_default: dict[EnclosurePart, bool] | None = None
@@ -574,6 +585,55 @@ class SettingsPatch(Strict):
             if getattr(self, name) is None:
                 raise ValueError(f"{name} cannot be null")
         return self
+
+
+# --- onboarding (10 §5.1, §9.1) and the approval queue (00 §14.2) ------------------------------
+
+OnboardingBrand = Literal["Schneider", "ABB", "Hager", "other"]
+BrandFamily = Literal["circuit_breaker", "rcd"]
+
+
+class OnboardingOut(BaseModel):
+    required: bool = Field(description="The flag is on and the terms are not accepted: uploads answer 409 until then")
+    terms_version: str
+    terms_accepted_at: str | None
+    markup: DecimalStr | None = Field(description="The `default` rule's markup, 0.25 is 25%")
+    brands: dict[BrandFamily, OnboardingBrand | None] = Field(
+        description="Breakers and RCDs; `other` and null set no preference"
+    )
+
+
+class OnboardingIn(Strict):
+    """The two questions and the terms, in one request. The brand question can be skipped (null)."""
+
+    markup: Markup
+    brands: dict[BrandFamily, OnboardingBrand | None] = Field(default_factory=dict)
+    accept_terms: bool
+
+
+CandidateKind = Literal["symbol", "abbreviation", "spelling", "catalog_item", "catalog_attribute"]
+
+
+class CandidateOut(BaseModel):
+    id: str
+    kind: CandidateKind
+    what: str = Field(description="What would join the shared layer")
+    evidence: str = Field(description="The factory's own evidence; it is never copied")
+    origin: str = Field(description="Where it came from: a manual entry, a correction in a quote…")
+    status: Literal["pending", "approved", "rejected"]
+    created_at: datetime
+    decided_at: datetime | None
+    reason: str | None
+    promoted: bool = Field(description="The approval wrote, or found, the global record (source `pilot_engineer`)")
+
+
+class CandidateList(BaseModel):
+    items: list[CandidateOut]
+    pending: int
+
+
+class RejectIn(Strict):
+    reason: Annotated[str, Field(max_length=500)] | None = None
 
 
 class HealthOut(BaseModel):

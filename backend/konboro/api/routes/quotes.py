@@ -13,7 +13,7 @@ from fastapi import APIRouter, Depends, Path, Query, Request
 
 from konboro.domain.permissions import Permission, allowed
 from konboro.domain.totals import QuoteSums, Sums
-from konboro.services import price_list, quote_versions, quotes, review, review_picker
+from konboro.services import onboarding, price_list, quote_versions, quotes, review, review_picker
 from konboro.services.storage import Storage
 
 from ..deps import Actor, require
@@ -312,12 +312,13 @@ def quote_out(actor: Actor, quote_id: str, storage: Storage) -> QuoteOut:
     if view is None:
         raise ApiError(404, "not_found")
     costs = allowed(actor.role, Permission.COSTS_READ)
-    nested = ("panels", "totals", "findings", "pages", "can_see_costs")
+    nested = ("panels", "totals", "findings", "pages", "can_see_costs", "first_quote")
     fields = {k: getattr(view, k) for k in QuoteOut.model_fields if k not in nested}
     return QuoteOut.model_validate(
         {
             **fields,
             "can_see_costs": costs,
+            "first_quote": view.status == "draft" and onboarding.first_quote(actor.session, actor.tenant_id),
             "findings": [f.__dict__ for f in view.findings],
             "panels": [
                 {

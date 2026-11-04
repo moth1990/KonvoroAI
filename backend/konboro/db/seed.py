@@ -74,7 +74,18 @@ FLAGS = [
     {"key": "quote_audit", "description": "בדיקת הצעה קיימת (11)", "depends_on": []},
     # S18 decision 5: the price list's API while its screen is built (S19), then removed.
     {"key": PRICE_LIST_FLAG, "description": "מחירון המפעל (07 §7.2). יוסר אחרי S19", "depends_on": []},
+    # S24 decision 5: a new factory's entry, the settings screen, and the pilot approval queue.
+    {
+        "key": "onboarding",
+        "description": "שתי שאלות ותנאי השימוש בנתונים לפני השרטוט הראשון (10 §5.1)",
+        "depends_on": [],
+    },
+    {"key": "settings_screen", "description": "מסך ההגדרות (10 §9.1)", "depends_on": []},
+    {"key": "approval_queue", "description": "תור אישור לשכבה המשותפת (00 §14.2)", "depends_on": []},
 ]
+S24_FLAGS = ("onboarding", "settings_screen", "approval_queue")
+# The demo factory has answered the two questions, and its price list came from two quotes it sent (10288, 10271).
+DEMO_TERMS = {"version": "2026-10", "by": DEMO_USER, "at": "2026-10-01T09:00:00+00:00"}
 
 SUPPLIERS = {
     "a": "ספק א׳ · מפיץ ABB",
@@ -211,6 +222,19 @@ def demo_matching(session: Session, tenant_id: str) -> None:
     settings.brand_preferences = settings.brand_preferences or DEMO_BRANDS
     if settings.attribute_defaults == {"rcd": {"residual_ma": 30}}:
         settings.attribute_defaults = DEMO_DEFAULTS
+
+
+def demo_onboarding(session: Session) -> None:
+    """A demo tenant from before S24 answered nothing: it has, and it sent the two quotes its price list came from."""
+    settings = session.get(TenantSettings, DEMO_TENANT)
+    if settings is None:
+        return
+    if not settings.data_terms_accepted:
+        settings.data_terms_accepted = DEMO_TERMS
+    counters = dict(settings.onboarding or {})
+    if not counters.get("quotes_sent"):
+        settings.onboarding = {**counters, "quotes_sent": 2}
+    session.flush()
 
 
 def link_demo_catalog(session: Session, tenant_id: str) -> None:
@@ -353,7 +377,8 @@ def seed_demo_tenant(session: Session) -> bool:
             brand_preferences=DEMO_BRANDS,
             matching=DEMO_MATCHING,
             enclosure_includes_default={"busbar": True, "n": True, "pe": True, "panels": True, "doors": True},
-            onboarding={"first_drawing_at": None, "quotes_sent": 0},
+            data_terms_accepted=DEMO_TERMS,
+            onboarding={"first_drawing_at": None, "quotes_sent": 2},
             rounding="shekel",  # the prototype's whole-shekel sale prices (S22 decision 2)
         )
     )
@@ -377,6 +402,7 @@ def seed_demo_fixtures(session: Session, storage: "Storage") -> None:
     time, so a demo tenant from before them gets them too, and a bucket that lost the images gets them again."""
     # they read this module's price list
     from konboro.devtools.fixtures import audit_993, nursery
+    from konboro.devtools.fixtures.queue import seed_queue
 
     session.execute(text("SELECT set_config('app.tenant_id', :t, true)"), {"t": DEMO_TENANT})
     nursery.seed_nursery(session, DEMO_TENANT)
@@ -384,11 +410,14 @@ def seed_demo_fixtures(session: Session, storage: "Storage") -> None:
     audit_993.enable_flag(session, DEMO_TENANT)
     audit_993.seed_audit_993(session, DEMO_TENANT, DEMO_USER)
     audit_993.seed_audit_993_pages(session, storage, DEMO_TENANT)
-    session.execute(
-        insert(TenantFeatureOverride)
-        .values(tenant_id=DEMO_TENANT, flag_key=PRICE_LIST_FLAG, enabled=True, reason="demo")
-        .on_conflict_do_nothing(index_elements=["tenant_id", "flag_key"])
-    )
+    for key in (PRICE_LIST_FLAG, *S24_FLAGS):
+        session.execute(
+            insert(TenantFeatureOverride)
+            .values(tenant_id=DEMO_TENANT, flag_key=key, enabled=True, reason="demo")
+            .on_conflict_do_nothing(index_elements=["tenant_id", "flag_key"])
+        )
+    demo_onboarding(session)
+    seed_queue(session, DEMO_TENANT)
     link_demo_catalog(session, DEMO_TENANT)
     demo_matching(session, DEMO_TENANT)
     from konboro.pipeline.pricing.load import ensure_rules

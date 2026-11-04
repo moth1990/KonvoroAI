@@ -509,3 +509,52 @@ export async function deleteBrandDiscount(brand: string, client = api): Promise<
 export async function fetchSettings(client = api): Promise<TenantSettings> {
   return unwrap(await client.GET("/settings"));
 }
+
+// --- onboarding, settings and the approval queue (S24: 10 §5.1, §9.1; 00 §14.2) ---------------------------------------
+
+export type Onboarding = Schemas["OnboardingOut"];
+export type OnboardingAnswer = Schemas["OnboardingIn"];
+export type SettingsPatch = Schemas["SettingsPatch"];
+export type Candidate = Schemas["CandidateOut"];
+export type CandidateList = Schemas["CandidateList"];
+
+export async function fetchOnboarding(client = api): Promise<Onboarding> {
+  return unwrap(await client.GET("/onboarding"));
+}
+
+/** The two questions and the data terms, in one step. Until then uploads answer 409 `data_terms_required`. */
+export async function answerOnboarding(body: OnboardingAnswer, client = api): Promise<Onboarding> {
+  return unwrap(await client.POST("/onboarding", { body }));
+}
+
+/** Only the fields sent change. Flags are not here: they are read-only (S03 decision). */
+export async function patchSettings(body: SettingsPatch, client = api): Promise<TenantSettings> {
+  return unwrap(await client.PATCH("/settings", { body }));
+}
+
+export async function fetchCandidates(client = api): Promise<CandidateList> {
+  return unwrap(await client.GET("/knowledge-candidates"));
+}
+
+/** "אשר לשכבה המשותפת": the only way a candidate reaches the shared layer (00 §14.2). */
+export async function approveCandidate(candidateId: string, client = api): Promise<Candidate> {
+  return unwrap(
+    await client.POST("/knowledge-candidates/{candidate_id}/approve", {
+      params: { path: { candidate_id: candidateId } },
+    }),
+  );
+}
+
+/** "דחה": it stays with the factory. */
+export async function rejectCandidate(
+  candidateId: string,
+  reason: string | null = null,
+  client = api,
+): Promise<Candidate> {
+  return unwrap(
+    await client.POST("/knowledge-candidates/{candidate_id}/reject", {
+      params: { path: { candidate_id: candidateId } },
+      body: { reason },
+    }),
+  );
+}

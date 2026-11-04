@@ -41,6 +41,7 @@ from konboro.db.seed import FLAGS, link_demo_catalog, seed_global, seed_price_li
 from konboro.db.session import app_engine
 from konboro.devtools.fixtures.audit_993 import seed_audit_993, seed_audit_993_pages
 from konboro.devtools.fixtures.nursery import seed_missing_line, seed_nursery, seed_nursery_pages
+from konboro.devtools.fixtures.queue import seed_queue
 from konboro.pipeline.context import StageContext
 from konboro.pipeline.extraction.config import ExtractionConfig
 from konboro.pipeline.stages import Stage, s2_extraction
@@ -63,6 +64,10 @@ class E2eTenant:
     prices: bool = False  # the demo price list (S19), before the NURSERY fixture so its lines use the products
     off: tuple[str, ...] = ()  # flags this tenant has off; every other flag is on
     missing: bool = False  # a missing line in the NURSERY draft (S23b): the fixture has none of its own
+    # S24: an established factory has answered the two questions and sent quotes; a new one (`terms=False`) has not,
+    # so it lands on /welcome and its first quote shows the banner (10 §5.1–5.2).
+    terms: bool = True
+    queue: bool = False  # the prototype's six approval-queue candidates (devtools/fixtures/queue.py)
 
     @property
     def tenant_id(self) -> str:
@@ -115,7 +120,26 @@ TENANTS = (
     # tenant per project.
     E2eTenant(23, "picker-desktop@e2e.konboro.local", False, 12, False, nursery=True, prices=True, missing=True),
     E2eTenant(24, "picker-mobile@e2e.konboro.local", False, 12, False, nursery=True, prices=True, missing=True),
+    # S24. Onboarding, settings and queue actions change the tenant, so one per project; the screenshots read a third
+    # that nothing changes; and one tenant has the three flags off.
+    E2eTenant(25, "welcome-desktop@e2e.konboro.local", False, 0, False, terms=False),
+    E2eTenant(26, "welcome-mobile@e2e.konboro.local", False, 0, False, terms=False),
+    E2eTenant(27, "prefs-desktop@e2e.konboro.local", False, 12, False, prices=True),
+    E2eTenant(28, "prefs-mobile@e2e.konboro.local", False, 12, False, prices=True),
+    E2eTenant(29, "queue-desktop@e2e.konboro.local", False, 12, False, queue=True),
+    E2eTenant(30, "queue-mobile@e2e.konboro.local", False, 12, False, queue=True),
+    E2eTenant(31, "s24-shots@e2e.konboro.local", False, 12, False, prices=True, queue=True),
+    E2eTenant(
+        32,
+        "s24-off@e2e.konboro.local",
+        False,
+        12,
+        False,
+        terms=False,
+        off=("onboarding", "settings_screen", "approval_queue"),
+    ),
 )
+TERMS = {"version": "2026-10", "at": "2026-10-01T09:00:00+00:00"}
 
 # A project with this name runs slowly, so a test can cancel it mid-run; every other upload runs at full speed.
 SLOW_PROJECT = "E2E איטי"
@@ -186,7 +210,11 @@ def _sample_data(s: Session, t: E2eTenant) -> None:
             version.status, version.sent_at = "sent", datetime.now(UTC)
             s.flush()
     for text_ in ("מ.פ.", 'ממ"ג', "פ.צ."):
-        s.add(KnowledgeCandidate(id=new_id("kc"), tenant_id=tid, kind="abbreviation", payload={"text": text_}))
+        s.add(
+            KnowledgeCandidate(
+                id=new_id("kc"), tenant_id=tid, kind="abbreviation", payload={"text": text_}, dedupe_key=text_
+            )
+        )
     add(drawing := Drawing(id=new_id("drw"), tenant_id=tid, purpose="audit", created_by=t.user_id))
     add(
         audit := Audit(
@@ -223,15 +251,21 @@ def seed_e2e(owner: Engine, storage: Storage | None = None) -> None:
             s.add(Tenant(id=t.tenant_id, name=f"מפעל בדיקה {t.number}", plan_id="trial"))
             s.flush()
             s.add(User(id=t.user_id, tenant_id=t.tenant_id, email=t.email, display_name="בעלים"))
+            entry = (
+                {"data_terms_accepted": {**TERMS, "by": t.user_id}, "onboarding": {"quotes_sent": 2}} if t.terms else {}
+            )
             if t.prices:  # the prototype's settings: floor 15%, a cabinet includes everything
                 everything = {k: True for k in ("busbar", "n", "pe", "panels", "doors")}
                 s.add(
                     TenantSettings(
-                        tenant_id=t.tenant_id, min_line_margin=Decimal("0.15"), enclosure_includes_default=everything
+                        tenant_id=t.tenant_id,
+                        min_line_margin=Decimal("0.15"),
+                        enclosure_includes_default=everything,
+                        **entry,
                     )
                 )
             else:
-                s.add(TenantSettings(tenant_id=t.tenant_id))
+                s.add(TenantSettings(tenant_id=t.tenant_id, **entry))
             s.add(QuotaUsage(tenant_id=t.tenant_id, month=month, used=t.used))
             for flag in FLAGS:
                 enabled = t.home_chat if flag["key"] == "home_chat" else flag["key"] not in t.off
@@ -239,6 +273,8 @@ def seed_e2e(owner: Engine, storage: Storage | None = None) -> None:
             s.flush()
             if t.sample_data:
                 _sample_data(s, t)
+            if t.queue:
+                seed_queue(s, t.tenant_id)
             if t.prices:
                 s.add(MarginRule(id=new_id("mr"), tenant_id=t.tenant_id, level="default", value=Decimal("0.25")))
                 seed_price_list(s, t.tenant_id)

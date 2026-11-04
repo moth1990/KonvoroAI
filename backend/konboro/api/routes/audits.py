@@ -8,7 +8,7 @@ from fastapi import APIRouter, BackgroundTasks, Depends, File, Form, Path, Reque
 from konboro.db import models as m
 from konboro.domain.permissions import Permission
 from konboro.pipeline.audit.differences import SHOWN_FROM
-from konboro.services import audits, drawings, quota, quotes
+from konboro.services import audits, drawings, onboarding, quota, quotes
 from konboro.services.queue import Queue, StageMessage
 
 from ..deps import Actor, require, require_flag
@@ -48,6 +48,8 @@ def upload_audit(
 ) -> AuditUploadOut:
     """The drawing is checked as any upload is (01 §4.3), the quote as one more file. Stages 1–4 run, then the
     audit step (S15 decision 2)."""
+    if onboarding.required(actor.session, actor.tenant_id):  # the data terms come first (10 §5.1)
+        raise ApiError(409, "data_terms_required")
     received = [(f.filename or "file", f.file.read(_READ_LIMIT)) for f in files]
     quote_file = (quote.filename or "quote", quote.file.read(_READ_LIMIT))
     try:
@@ -71,6 +73,7 @@ def upload_audit(
         raise ApiError(422, "upload_rejected", details) from e
 
     d = new.drawing
+    onboarding.note_drawing(actor.session, actor.tenant_id)
     assert new.audit is not None and new.quote_file is not None  # noqa: S101
     message = StageMessage(drawing_id=d.id, tenant_id=d.tenant_id, stage=1, trace_id=str(d.trace_id))
     queue: Queue = request.app.state.queue

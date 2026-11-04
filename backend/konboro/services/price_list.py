@@ -34,6 +34,7 @@ from konboro.domain.pricing.fx import MAX_AGE_DAYS, FxRate, FxRateMissing, conve
 from konboro.domain.pricing.rounding import Rounding, round_price
 from konboro.domain.pricing.rounding import mode as rounding_mode
 from konboro.domain.pricing.sanity import check_cost
+from konboro.services import knowledge
 
 MAX_MONEY = Decimal("10000000000")  # numeric(14,4)
 PRODUCT_FIELDS = (
@@ -646,6 +647,7 @@ def create_product(session: Session, actor: Actor, data: ProductIn, quote_id: st
     session.flush()
     log(session, actor, "created", None, product_snapshot(product), product_id=product.id, quote_id=quote_id)
     set_suppliers(session, actor, product, data.suppliers, quote_id)
+    knowledge.propose_product(session, product)  # a SKU the master catalog lacks is a candidate for it (10 §5.4)
     return reread(session, actor.tenant_id, product.id)
 
 
@@ -673,6 +675,8 @@ def update_product(
     session.flush()
     if suppliers is not None:
         set_suppliers(session, actor, product, suppliers, quote_id)
+    if changes.keys() & {"manufacturer_sku", "brand", "catalog_item_id"}:
+        knowledge.propose_product(session, product)
     return reread(session, actor.tenant_id, product.id)
 
 

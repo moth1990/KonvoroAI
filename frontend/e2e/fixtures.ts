@@ -39,6 +39,19 @@ export const TENANTS = {
   // The product picker (S23b): the NURSERY draft with a missing line; actions change it, so one tenant per project.
   pickerDesktop: "picker-desktop@e2e.konboro.local",
   pickerMobile: "picker-mobile@e2e.konboro.local",
+  // S24. A new factory (no terms accepted): onboarding first, then its first quote shows the banner. Answering changes
+  // it, so one tenant per project.
+  welcomeDesktop: "welcome-desktop@e2e.konboro.local",
+  welcomeMobile: "welcome-mobile@e2e.konboro.local",
+  // The settings screen, with the demo price list's 25% default markup; saves change it, so one per project.
+  prefsDesktop: "prefs-desktop@e2e.konboro.local",
+  prefsMobile: "prefs-mobile@e2e.konboro.local",
+  // The prototype's six queue candidates; decisions are final, so one tenant per project.
+  queueDesktop: "queue-desktop@e2e.konboro.local",
+  queueMobile: "queue-mobile@e2e.konboro.local",
+  // The settings and queue screenshots, which change nothing; and a tenant with the three S24 flags off.
+  s24Shots: "s24-shots@e2e.konboro.local",
+  s24Off: "s24-off@e2e.konboro.local",
 } as const;
 
 /** The fixture audit's id in each audit tenant (`E2eTenant.audit_id` in devtools/e2e.py). */

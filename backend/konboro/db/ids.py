@@ -33,6 +33,7 @@ PREFIXES = frozenset(
         "spf",
         "ckt",
         "cac",
+        "spl",
     }
 )
 

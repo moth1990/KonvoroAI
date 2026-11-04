@@ -87,6 +87,7 @@ export function quote(panels: Quote["panels"], findings: Finding[] = [], pages: 
     quote_floor: "0.1500",
     derived_note: null,
     can_see_costs: true,
+    first_quote: false,
     totals: {
       cost_total: "0",
       price_total: "0",

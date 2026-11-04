@@ -680,6 +680,12 @@ function Review({ quote }: { quote: Quote }) {
               </span>
             ) : null}
           </div>
+          {quote.first_quote ? (
+            <div className="card first-quote" role="status" data-testid="first-quote">
+              <b>זו ההצעה הראשונה שלכם.</b>
+              <span className="small">המחירים שתקלידו יישמרו וישמשו בכל ההצעות הבאות.</span>
+            </div>
+          ) : null}
           <div className="rv-progress" data-testid="progress">
             <span>{prog.text}</span>
             <div

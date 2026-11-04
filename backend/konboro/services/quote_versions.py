@@ -27,6 +27,7 @@ from konboro.db.ids import new_id
 from konboro.pipeline.pricing import run as pricing
 from konboro.pipeline.pricing import stored
 from konboro.pipeline.pricing.diff import diff
+from konboro.services import onboarding
 from konboro.services import quotes as qs
 from konboro.services.storage import Storage
 
@@ -117,6 +118,7 @@ def send(session: Session, actor: Actor, quote_id: str) -> m.QuoteVersion:
         )
     )
     session.flush()
+    onboarding.note_quote_sent(session, actor.tenant_id, qs.coverage_pct(qs.live_lines(session, version)))
     return version
 
 

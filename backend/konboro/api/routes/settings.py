@@ -7,6 +7,7 @@ from sqlalchemy import select
 
 from konboro.db.models import AttributeSchema, TenantSettings
 from konboro.domain.permissions import Permission
+from konboro.services import onboarding
 
 from ..deps import Actor, require
 from ..errors import ERROR_RESPONSES, ApiError
@@ -18,8 +19,11 @@ router = APIRouter(prefix="/settings", tags=["settings"], responses=ERROR_RESPON
 NEVER_DEFAULT = frozenset({"current_a", "poles"})
 
 
-def settings_out(row: TenantSettings) -> SettingsOut:
-    return SettingsOut.model_validate(row, from_attributes=True)
+def settings_out(actor: Actor, row: TenantSettings) -> SettingsOut:
+    fields = {k: getattr(row, k) for k in SettingsOut.model_fields if k != "default_markup"}
+    return SettingsOut.model_validate(
+        {**fields, "default_markup": onboarding.default_markup(actor.session, actor.tenant_id)}
+    )
 
 
 def settings_row(actor: Actor) -> TenantSettings:
@@ -49,7 +53,7 @@ def check_attribute_defaults(actor: Actor, defaults: dict[str, dict[str, Any]]) 
 
 @router.get("")
 def get_settings(actor: Annotated[Actor, Depends(require(Permission.SETTINGS_READ))]) -> SettingsOut:
-    return settings_out(settings_row(actor))
+    return settings_out(actor, settings_row(actor))
 
 
 @router.patch("")
@@ -60,8 +64,12 @@ def patch_settings(
     if changes.get("attribute_defaults"):
         check_attribute_defaults(actor, changes["attribute_defaults"])
     row = settings_row(actor)
+    if "default_markup" in changes:  # the `default` margin rule, as the onboarding question sets it (07 §7.3)
+        changes.pop("default_markup")
+        assert body.default_markup is not None  # noqa: S101  (the patch refuses null for it)
+        onboarding.set_default_markup(actor.session, actor.tenant_id, actor.user_id, body.default_markup)
     for name, value in changes.items():
         setattr(row, name, value)
     actor.session.flush()
     actor.session.refresh(row)
-    return settings_out(row)
+    return settings_out(actor, row)

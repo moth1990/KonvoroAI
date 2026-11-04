@@ -315,6 +315,60 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/knowledge-candidates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Candidates
+         * @description Pending first, oldest first; then the decided ones, newest decision first.
+         */
+        get: operations["list_candidates_knowledge_candidates_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/knowledge-candidates/{candidate_id}/approve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Approve */
+        post: operations["approve_knowledge_candidates__candidate_id__approve_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/knowledge-candidates/{candidate_id}/reject": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Reject */
+        post: operations["reject_knowledge_candidates__candidate_id__reject_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/me": {
         parameters: {
             query?: never;
@@ -326,6 +380,24 @@ export interface paths {
         get: operations["me_me_get"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/onboarding": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Onboarding */
+        get: operations["get_onboarding_onboarding_get"];
+        put?: never;
+        /** Answer Onboarding */
+        post: operations["answer_onboarding_onboarding_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1561,6 +1633,57 @@ export interface components {
              */
             priced_products: number;
         };
+        /** CandidateList */
+        CandidateList: {
+            /** Items */
+            items: components["schemas"]["CandidateOut"][];
+            /** Pending */
+            pending: number;
+        };
+        /** CandidateOut */
+        CandidateOut: {
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Decided At */
+            decided_at: string | null;
+            /**
+             * Evidence
+             * @description The factory's own evidence; it is never copied
+             */
+            evidence: string;
+            /** Id */
+            id: string;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "symbol" | "abbreviation" | "spelling" | "catalog_item" | "catalog_attribute";
+            /**
+             * Origin
+             * @description Where it came from: a manual entry, a correction in a quote…
+             */
+            origin: string;
+            /**
+             * Promoted
+             * @description The approval wrote, or found, the global record (source `pilot_engineer`)
+             */
+            promoted: boolean;
+            /** Reason */
+            reason: string | null;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "pending" | "approved" | "rejected";
+            /**
+             * What
+             * @description What would join the shared layer
+             */
+            what: string;
+        };
         /** CorrectedQuoteOut */
         CorrectedQuoteOut: {
             /**
@@ -2041,6 +2164,11 @@ export interface components {
             flags: {
                 [key: string]: boolean;
             };
+            /**
+             * Onboarding Required
+             * @description `onboarding` is on and the data terms are not accepted: the app opens /welcome (10 §5.1)
+             */
+            onboarding_required: boolean;
             plan: components["schemas"]["PlanOut"];
             quota: components["schemas"]["QuotaOut"];
             tenant: components["schemas"]["TenantOut"];
@@ -2071,6 +2199,48 @@ export interface components {
              * @enum {string}
              */
             severity: "info" | "warning" | "error";
+        };
+        /**
+         * OnboardingIn
+         * @description The two questions and the terms, in one request. The brand question can be skipped (null).
+         */
+        OnboardingIn: {
+            /** Accept Terms */
+            accept_terms: boolean;
+            /** Brands */
+            brands?: {
+                [key: string]: ("Schneider" | "ABB" | "Hager" | "other") | null;
+            };
+            /**
+             * Markup
+             * @description On cost: 0.25 is 25%. Up to 500%
+             * @example 0.15
+             */
+            markup: string;
+        };
+        /** OnboardingOut */
+        OnboardingOut: {
+            /**
+             * Brands
+             * @description Breakers and RCDs; `other` and null set no preference
+             */
+            brands: {
+                [key: string]: ("Schneider" | "ABB" | "Hager" | "other") | null;
+            };
+            /**
+             * Markup
+             * @description The `default` rule's markup, 0.25 is 25%
+             */
+            markup: string | null;
+            /**
+             * Required
+             * @description The flag is on and the terms are not accepted: uploads answer 409 until then
+             */
+            required: boolean;
+            /** Terms Accepted At */
+            terms_accepted_at: string | null;
+            /** Terms Version */
+            terms_version: string;
         };
         /** PageKindIn */
         PageKindIn: {
@@ -2735,6 +2905,11 @@ export interface components {
              * @description Open findings, errors first
              */
             findings: components["schemas"]["FindingOut"][];
+            /**
+             * First Quote
+             * @description The factory has sent no quote yet: the banner says its prices are kept (10 §5.2, `onboarding`)
+             */
+            first_quote: boolean;
             /** Input Kind */
             input_kind: ("factory_drawing" | "designer_plan" | "bom_only" | "mixed") | null;
             /**
@@ -2876,6 +3051,11 @@ export interface components {
              */
             net_before: string;
         };
+        /** RejectIn */
+        RejectIn: {
+            /** Reason */
+            reason?: string | null;
+        };
         /** RemovedLineOut */
         RemovedLineOut: {
             /** Description */
@@ -2941,6 +3121,11 @@ export interface components {
             brand_preferences: {
                 [key: string]: string;
             };
+            /**
+             * Default Markup
+             * @description The `default` margin rule as a markup on cost, 0.25 is 25% (07 §7.3); null when it is a margin
+             */
+            default_markup: string | null;
             /** Enclosure Includes Default */
             enclosure_includes_default: {
                 [key: string]: boolean;
@@ -2977,6 +3162,8 @@ export interface components {
             brand_preferences?: {
                 [key: string]: string;
             } | null;
+            /** Default Markup */
+            default_markup?: string | null;
             /** Enclosure Includes Default */
             enclosure_includes_default?: {
                 [key: string]: boolean;
@@ -3788,6 +3975,101 @@ export interface operations {
             };
         };
     };
+    list_candidates_knowledge_candidates_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CandidateList"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    approve_knowledge_candidates__candidate_id__approve_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                candidate_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CandidateOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    reject_knowledge_candidates__candidate_id__reject_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                candidate_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RejectIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CandidateOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     me_me_get: {
         parameters: {
             query?: never;
@@ -3804,6 +4086,68 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["MeOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_onboarding_onboarding_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OnboardingOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    answer_onboarding_onboarding_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OnboardingIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OnboardingOut"];
                 };
             };
             /** @description Error */
