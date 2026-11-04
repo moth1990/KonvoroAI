@@ -46,6 +46,8 @@
       "kind": "class_by_current",
       "families": ["circuit_breaker"],
       "at_least_a": 100,
+      "or_above_catalog_range": true,
+      "about": "BUG-070: an mcb is no mcb above the largest current the catalog has for one (25.26.100's Q0, 3×80A); typed again by its current",
       "above": "mccb",
       "below": "mcb",
       "explain": "סוג המפסק לא כתוב: {kind} לפי הזרם ({current}A)"

@@ -72,8 +72,14 @@ def value(name: str, v: Any) -> str:
     return f"{number(v)}{UNITS.get(name, '')}"
 
 
+# A breaker whose class nobody wrote or read (an MCB or an MCCB): the factory's word for any of them (BUG-071)
+UNTYPED_NAMES = {"circuit_breaker": "מפסק"}
+
+
 def class_name(family: str, symbol_class: str | None) -> str:
     """The Hebrew name of the class, or of the family's first class (the library's display names, 03 §4.3)."""
+    if symbol_class == library.UNKNOWN and family in UNTYPED_NAMES:
+        return UNTYPED_NAMES[family]
     for f in library.FAMILIES:
         if f.family == family:
             names = dict(f.classes)
@@ -81,9 +87,12 @@ def class_name(family: str, symbol_class: str | None) -> str:
     return family
 
 
-def describe(family: str, symbol_class: str | None, brand: str, model: str | None, attrs: dict[str, Any]) -> str:
-    """'מא"ז ABB S203M 3P 16A עקומה C 10kA', the shape of the demo price list's names (S18)."""
-    parts = [class_name(family, symbol_class), brand]
+def describe(family: str, symbol_class: str | None, brand: str | None, model: str | None, attrs: dict[str, Any]) -> str:
+    """'מפסק זרם אוטומטי (מא"ז) ABB S203M 3P 16A עקומה C 10kA', the shape of the demo price list's names (S18), for
+    every quote line (BUG-071): a catalog item's, and an unmatched component's with what is known of it."""
+    parts = [class_name(family, symbol_class)]
+    if brand:
+        parts.append(brand)
     if model:
         parts.append(model)
     poles = attrs.get("poles")

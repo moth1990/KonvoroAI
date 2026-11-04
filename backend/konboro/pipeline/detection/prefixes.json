@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "note": "BUG-070 (S24b): what a designator's letters say about the class, as the factory reads a drawing (the user's finding 2 on 25.26.100). Each prefix lists the classes it may name, the likeliest first. Stage 3 uses it as a weight, never over a sure reading: among the classes the model saw for an unsure symbol, it picks one the prefix allows, else the one class of its family the prefix allows. The longest prefix wins (KT before K). A factory replaces a prefix's list, or turns it off with an empty list, in tenant_settings.matching.designator_prefixes. Global starter rows, before the electrical expert's review (roadmap B2).",
+  "prefixes": {
+    "Q": ["mccb", "switch_disconnector", "changeover_switch", "ats"],
+    "F": ["mcb", "rcbo", "rcd", "motor_protection", "fuse", "fuse_base", "overload_relay", "surge_protector"],
+    "K": ["contactor", "relay", "relay_coil"],
+    "KM": ["contactor"],
+    "KA": ["relay", "relay_coil"],
+    "KT": ["timer"],
+    "H": ["indicator_lamp"],
+    "X": ["terminal"]
+  }
+}

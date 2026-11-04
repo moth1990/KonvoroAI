@@ -221,6 +221,12 @@
       "build": "cable"
     },
     {
+      "id": "cable_bare",
+      "about": "BUG-072: 25.26.100 writes the cable as two spans along the line, \"3X1.5\" and \"N2XY\". Alone, cores × a cross-section only a cable has (1.5, 2.5, 4, 6 mm²; never with A, never 10 or more, which a breaker's poles × current may be), with its conduit (\"5X2.5-ø20\") or without",
+      "re": "^(?P<cores>[1-5])×(?P<cross_section_mm2>1[.,]5|2[.,]5|4|6)(?:\\s?[—–-]\\s?[øØ⌀]\\d{1,3})?$",
+      "build": "cable"
+    },
+    {
       "id": "circuit_range",
       "re": "^(?P<range_from>\\d{1,3})[-–](?P<range_to>\\d{1,3})$",
       "build": "circuit_range",
