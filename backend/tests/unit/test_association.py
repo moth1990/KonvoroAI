@@ -398,6 +398,16 @@ def test_a_mark_on_the_cable_is_outlets_not_devices() -> None:
     assert not quantity.on_cable_line("ts_001_0001", quantity.lines(alone))
 
 
+def test_a_count_code_read_stands_when_the_agent_cites_none() -> None:
+    """BUG-067: on 25.26.100's live run the tile agent answered count 1, with no span, for the breakers marked "x2"
+    and "X11": that is no reading, not a reading of 1. A count the agent cites wins."""
+    d = det(1, (100, 100, 144, 137))
+    r = assign.Read(context={"multiplicity": [Value(2, "drawing", ["ts_001_0002"], 1.0, 1.0, 1.0)]})
+    assert s4_association._multiplicity(d, r, (1, []), []).count == 2
+    assert s4_association._multiplicity(d, r, (3, ["ts_001_0002"]), []).count == 3
+    assert s4_association._multiplicity(d, assign.Read(), (1, []), []).count == 1
+
+
 def test_a_range_of_circuit_numbers_goes_to_the_device_in_its_column() -> None:
     a = det(1, (100, 100, 120, 130))
     b = det(2, (200, 100, 220, 130))
@@ -871,6 +881,23 @@ def test_breakers_with_unknown_poles_and_different_cables_do_not_merge() -> None
     comps, _, _ = components("drw_01X", [*built, known], SCH)
     by_cores = sorted((c.quantity, c.circuit_context.cable.cores) for c in comps if c.attributes["poles"].value is None)
     assert by_cores == [(1, 5), (2, 3)]
+
+
+def test_breakers_whose_cable_gives_the_poles_the_others_read_are_one_component() -> None:
+    """BUG-072 (25.26.100's live run): the agent read the pole mark on 10 of the 13 10A lighting breakers. The other
+    three, on the same 3×1.5 cables, are the same product by 05 §5.5.1 (3 cores: 1P): one line, not two. Their own
+    poles stay unread (stage 5 fills in, 00 §5.3); a 5-core one or a 2P one stays apart."""
+    read = [_built(n, values={"current_a": 10, "poles": 1}) for n in (1, 2)]
+    unread = [_built(n, values={"current_a": 10}) for n in (3, 4)]
+    other = _built(5, values={"current_a": 10})
+    two = _built(6, values={"current_a": 10, "poles": 2})
+    for b in [*read, *unread, two]:
+        b.circuit_context = CircuitContext(cable=Cable(cores=3))
+    other.circuit_context = CircuitContext(cable=Cable(cores=5))
+    comps, _, _ = components("drw_01X", [*read, *unread, other, two], SCH)
+    by_poles = sorted((c.attributes["poles"].value or 0, c.quantity) for c in comps)
+    assert by_poles == [(0, 1), (1, 4), (2, 1)]
+    assert all(b.instance.attributes["poles"].value is None for b in unread)
 
 
 def test_two_brands_for_one_component() -> None:

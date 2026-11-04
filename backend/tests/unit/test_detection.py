@@ -649,6 +649,15 @@ def test_a_residual_rating_beside_a_breaker_makes_it_an_rcd() -> None:
     evidence.residual_is_rcd([rcd, below], spans, LIB, DEFAULT)
     assert (rcd.family, rcd.symbol_class) == ("rcd", "rcd") and 0.5 <= rcd.confidence < DEFAULT.accepted_from
     assert (below.family, below.symbol_class) == ("circuit_breaker", "mcb")
+    # the live run: an unsure 16A breaker right under the label is nearer than the RCD it is written beside
+    rcd2 = cand((2271.1, 389.6, 2322.2, 423.2), family="switch_disconnector", cls=library.UNKNOWN, detector_score=0.42)
+    under = cand((2388.8, 464.6, 2432.5, 496.9), detector_score=0.7)
+    evidence.residual_is_rcd([rcd2, under], spans, LIB, DEFAULT)
+    assert rcd2.family == "rcd" and under.family == "circuit_breaker"
+    # and peers in a row leave an RCD an RCD
+    sure = cand((2194.3, 389.6, 2245.4, 423.2))
+    evidence.peers([sure, rcd2], [span("40A", (2250, 392, 2270, 400), {"current_a": 40}, n=7)], LIB, DEFAULT)
+    assert rcd2.family == "rcd"
     # 6199-2-50: "4×40A/0,03A" is the label of the "מ.פ." box nearest it, not of the unsure breaker in line with it
     box = cand((2397, 996, 2420, 1007), family="rcd", cls="rcd")
     breaker = cand((2478, 1004, 2531, 1029), detector_score=0.56)

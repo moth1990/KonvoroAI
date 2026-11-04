@@ -401,10 +401,10 @@ def _final_values(
 def _multiplicity(
     d: Detection, r: assign.Read, from_agent: tuple[int, list[str]] | None, page_lines: list[quantity.Line]
 ) -> quantity.Multiplicity:
-    if from_agent is not None:
-        count, spans = from_agent
-        return quantity.Multiplicity(count=count, span_ids=spans)
     marks = r.context.get("multiplicity", [])
+    if from_agent is not None and (from_agent[0] > 1 or not marks):
+        count, spans = from_agent
+        return quantity.Multiplicity(count=count, span_ids=spans)  # a count of 1 cites nothing: code's mark stands
     if not marks:
         return quantity.Multiplicity()
     v = marks[0]

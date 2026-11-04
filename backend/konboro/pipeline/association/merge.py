@@ -283,6 +283,37 @@ def _signature(d: Device) -> tuple[Any, ...]:
     return (d.panel_id, d.family, d.symbol_class, d.supply_scope, d.multiplicity_inherited, values, _cores(d))
 
 
+def _cable_poles() -> dict[int, int]:
+    """05 §5.5.1's cores → poles, from stage 5's rule data (`matching/inference.json`, `poles_from_cable_cores`)."""
+    from konboro.pipeline.matching.inference import rules  # the rule's data; stage 5 does the filling in
+
+    rule = next((r for r in rules() if r.kind == "cable_cores"), None)
+    return {int(k): int(v) for k, v in (rule.params["cores"] if rule else {}).items()}
+
+
+def _join_by_cable(groups: dict[tuple[Any, ...], list[Device]]) -> None:
+    """BUG-072: protective devices whose poles are not written join the identical component whose poles are what
+    their own cable's cores give (25.26.100: three 10A breakers on 3×1.5 beside ten read as 1P). Their instances
+    keep the poles unread; the component's come from the ones that were read."""
+    implied = _cable_poles()
+    for sig in list(groups):
+        cores = sig[-1]
+        if len(cores) != 1 or cores[0] not in implied:
+            continue
+        values = tuple((k, repr(implied[cores[0]]) if k == "poles" else v) for k, v in sig[5])
+        target = (*sig[:5], values, ())
+        if target == sig or target not in groups:
+            continue
+        cables = {c for d in groups[target] for b in d.built if (c := _cable_cores(b)) is not None}
+        if cables <= {cores[0]}:
+            groups[target].extend(groups.pop(sig))
+
+
+def _cable_cores(b: Built) -> int | None:
+    cable = b.circuit_context.cable if b.circuit_context else None
+    return cable.cores if cable else None
+
+
 def _cores(d: Device) -> tuple[int, ...]:
     """With the poles not written, a protective device's cable cores tell 1P from 3P (05 §5.5.1): devices on
     cables of different cores are not one component (BUG-072)."""
@@ -300,6 +331,7 @@ def components(
     groups: dict[tuple[Any, ...], list[Device]] = defaultdict(list)
     for d in devices(built, schemas, cfg):
         groups[_signature(d)].append(d)
+    _join_by_cable(groups)
     out: list[Component] = []
     owner: dict[str, str] = {}
     issues: list[StageIssue] = []

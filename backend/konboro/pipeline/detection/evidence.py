@@ -92,6 +92,12 @@ def absorb_end_circles(found: list[Candidate]) -> tuple[list[Candidate], int]:
     return kept, absorbed
 
 
+def _beside(c: Candidate, s: TextSpan) -> bool:
+    """Written beside the symbol: across its line, level with it (a label to the side, not above or below)."""
+    cx, cy = centre(s.bbox)
+    return c.bbox[1] <= cy <= c.bbox[3] if c.orientation % 180 == 0 else c.bbox[0] <= cx <= c.bbox[2]
+
+
 def _aligned(c: Candidate, s: TextSpan) -> bool:
     cx, cy = centre(s.bbox)
     return c.bbox[0] <= cx <= c.bbox[2] or c.bbox[1] <= cy <= c.bbox[3]
@@ -113,12 +119,12 @@ def residual_is_rcd(found: list[Candidate], spans: list[TextSpan], lib: Library,
         ]
         if not devices or min(devices, key=lambda it: it[0])[1].family in ("rcd", "rcbo"):
             continue  # the rating of the RCD nearest it (6199-2-50's "מ.פ." box)
-        near = [(g, c) for g, c in devices if _aligned(c, s)]
+        near = [(not _beside(c, s), g, c) for g, c in devices if _aligned(c, s)]
         if not near:
             continue
-        g, c = min(near, key=lambda it: it[0])
+        _, g, c = min(near, key=lambda it: (it[0], it[1]))  # the one it is written beside, before one under it
         if _sure(c, cfg):  # the rating beside a block of labels may be nearest the device under it
-            unsure = [(x, d) for x, d in near if not _sure(d, cfg) and x <= NEAR_SHARE * g]
+            unsure = [(x, d) for _, x, d in near if not _sure(d, cfg) and x <= NEAR_SHARE * g]
             if not unsure:
                 continue
             c = min(unsure, key=lambda it: it[0])[1]
@@ -137,8 +143,8 @@ def _rating(c: Candidate, spans: list[TextSpan], cfg: DetectionConfig) -> float 
 
 def peers(found: list[Candidate], spans: list[TextSpan], lib: Library, cfg: DetectionConfig) -> None:
     """Rule 3."""
-    devices = [c for c in found if c.role == "device" and c.family not in ("terminal", *NOT_DEVICES)]
-    rating = {id(c): _rating(c, spans, cfg) for c in devices}
+    devices = [c for c in found if c.role == "device" and c.family not in ("terminal", "rcd", "rcbo", *NOT_DEVICES)]
+    rating = {id(c): _rating(c, spans, cfg) for c in devices}  # an RCD in the row is no breaker's peer
     sure = [c for c in devices if _sure(c, cfg) and c.family in PROTECTIVE and rating[id(c)] is not None]
     for c in devices:
         if _sure(c, cfg) or rating[id(c)] is None:
