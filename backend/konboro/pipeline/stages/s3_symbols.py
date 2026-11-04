@@ -84,7 +84,8 @@ def after_model(found: list[Candidate], spans: list[TextSpan], lib: library.Libr
     counts = designators.counts(found, spans, cfg)
     for c in found:
         designators.link(c, spans, cfg, counts)
-        evidence.weigh_by_prefix(c, lib, cfg)
+    for c in found:
+        evidence.weigh_by_prefix(c, lib, cfg, found)
 
 
 def detect_page(

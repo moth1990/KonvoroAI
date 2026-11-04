@@ -104,14 +104,16 @@ def residual_is_rcd(found: list[Candidate], spans: list[TextSpan], lib: Library,
     for s in spans:
         if "residual_ma" not in s.tags and not any(r.key == "residual_ma" for r in parse(s.text)):
             continue
-        near = [
+        devices = [
             (gap(c.bbox, s.bbox), c)
             for c in found
             if c.role == "device"
             and (c.family in PROTECTIVE or c.symbol_class == UNKNOWN)
-            and _aligned(c, s)
             and gap(c.bbox, s.bbox) <= _radius(c, cfg)
         ]
+        if not devices or min(devices, key=lambda it: it[0])[1].family in ("rcd", "rcbo"):
+            continue  # the rating of the RCD nearest it (6199-2-50's "מ.פ." box)
+        near = [(g, c) for g, c in devices if _aligned(c, s)]
         if not near:
             continue
         g, c = min(near, key=lambda it: it[0])
@@ -175,10 +177,20 @@ def _allowed(designator: str | None, lib: Library) -> tuple[str, ...]:
     return ()
 
 
-def weigh_by_prefix(c: Candidate, lib: Library, cfg: DetectionConfig) -> None:
-    """Rule 4, after the designator is linked."""
+def weigh_by_prefix(c: Candidate, lib: Library, cfg: DetectionConfig, page: list[Candidate] = ()) -> None:  # type: ignore[assignment]
+    """Rule 4, after the designator is linked. `page`: the page's symbols. A smaller one beside a sure device with
+    the same tag is a part of its drawing (NEVIS-1 F5's N contact, its cross): the letter names the device, not it."""
     allowed = _allowed(c.designator, lib)
     if not allowed or c.symbol_class in allowed or _sure(c, cfg):
+        return
+    if any(
+        o is not c
+        and o.designator == c.designator
+        and _sure(o, cfg)
+        and o.height > c.height
+        and gap(o.bbox, c.bbox) <= o.height
+        for o in page
+    ):
         return
     seen = [(score, -allowed.index(cls), cls) for cls, score in c.candidates if cls in allowed and cls in lib.classes]
     if seen:

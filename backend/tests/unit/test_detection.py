@@ -649,6 +649,11 @@ def test_a_residual_rating_beside_a_breaker_makes_it_an_rcd() -> None:
     evidence.residual_is_rcd([rcd, below], spans, LIB, DEFAULT)
     assert (rcd.family, rcd.symbol_class) == ("rcd", "rcd") and 0.5 <= rcd.confidence < DEFAULT.accepted_from
     assert (below.family, below.symbol_class) == ("circuit_breaker", "mcb")
+    # 6199-2-50: "4×40A/0,03A" is the label of the "מ.פ." box nearest it, not of the unsure breaker in line with it
+    box = cand((2397, 996, 2420, 1007), family="rcd", cls="rcd")
+    breaker = cand((2478, 1004, 2531, 1029), detector_score=0.56)
+    evidence.residual_is_rcd([box, breaker], [span("4×40A/0,03A", (2414, 1013, 2462, 1021), n=3)], LIB, DEFAULT)
+    assert breaker.family == "circuit_breaker"
 
 
 def test_breakers_in_one_row_with_one_rating_and_one_drawing_are_one_class() -> None:
@@ -712,6 +717,21 @@ def test_the_designators_letter_weighs_the_class(
     assert c.symbol_class == expected
     if expected != library.UNKNOWN:
         assert c.family == next(x.family for x in library.CLASSES if x.symbol_class == expected)
+
+
+def test_a_part_of_a_tagged_breakers_drawing_keeps_its_reading() -> None:
+    """NEVIS-1 F5: the N contact beside the breaker carries its tag; the letter says nothing about the contact."""
+    breaker = cand((708, 242, 719, 281))
+    contact = cand(
+        (684, 251, 693, 265),
+        family="switch_disconnector",
+        cls="switch_disconnector",
+        detector_score=0.56,
+        candidates=[("switch_disconnector", 0.56), ("mcb", 0.5)],
+    )
+    breaker.designator = contact.designator = "F5"
+    evidence.weigh_by_prefix(contact, LIB, DEFAULT, [breaker, contact])
+    assert contact.symbol_class == "switch_disconnector"
 
 
 def test_a_factory_overrides_a_prefix() -> None:
