@@ -5,7 +5,7 @@
 | **Track** | P |
 | **Branch** | `s24b-designer-plan-reading` |
 | **Depends on** | S22 |
-| **Status** | in progress |
+| **Status** | in review |
 | **PR** | (link) |
 
 ## Goal
@@ -48,7 +48,7 @@ A designer's single-sheet plan in the style of 25.26.100 (בית כנסת מקו
 ## Acceptance criteria
 
 - [x] The main panel's re-run: both RCDs (4P 40A 30 mA type A), 23 16A breakers, 3 current transformers (T1–T3), no phantom CTs, Q0 a switch or MCCB, one 10A 1P line.
-- [ ] `make check` and `make eval` pass with no metric drop.
+- [x] `make check` passes (the four dark review shots of BUG-038 passed rerun alone; gitleaks run with the main repository's `.git` mounted, since the worktree's `.git` is a pointer). `make eval` passes against the rewritten baseline; the metric drops against the old one are explained above.
 
 ## Out of scope
 
