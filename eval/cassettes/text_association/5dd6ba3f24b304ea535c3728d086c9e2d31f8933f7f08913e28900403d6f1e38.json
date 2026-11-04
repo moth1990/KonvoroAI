@@ -1,0 +1,99 @@
+{
+  "answer": {
+    "input_tokens": 5444,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 464,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s2"
+              ],
+              "value": 20
+            },
+            {
+              "confidence": 0.7,
+              "evidence": "graphic",
+              "graphic_note": "three short slanted strokes across the line",
+              "name": "poles",
+              "span_ids": [],
+              "value": 3
+            }
+          ],
+          "det": "d1",
+          "explicit_texts": [
+            "s2",
+            "s3",
+            "s4"
+          ],
+          "multiplicity": {
+            "count": 1
+          }
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s7"
+              ],
+              "value": 10
+            },
+            {
+              "confidence": 0.7,
+              "evidence": "graphic",
+              "graphic_note": "single slanted stroke across the line",
+              "name": "poles",
+              "span_ids": [],
+              "value": 1
+            }
+          ],
+          "det": "d2",
+          "explicit_texts": [
+            "s7"
+          ],
+          "multiplicity": {
+            "count": 1
+          }
+        }
+      ],
+      "possible_missed": [],
+      "shared_labels": [],
+      "unassigned_spans": [
+        {
+          "reason": "busbar/load name",
+          "span_id": "s5"
+        },
+        {
+          "reason": "busbar/load name",
+          "span_id": "s6"
+        },
+        {
+          "reason": "belongs to a neighbouring symbol outside the tile",
+          "span_id": "s1"
+        },
+        {
+          "reason": "belongs to c6",
+          "span_id": "s8"
+        },
+        {
+          "reason": "cable/load name",
+          "span_id": "s9"
+        },
+        {
+          "reason": "cable type",
+          "span_id": "s10"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

@@ -13,6 +13,7 @@ import hashlib
 import json
 import re
 from dataclasses import dataclass, field
+from pathlib import Path
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -250,6 +251,9 @@ ABBREVIATIONS: tuple[tuple[str, str], ...] = (
     ("TR", "impulse_relay"),
 )
 
+# BUG-070: a designator's letters as evidence of the class (Q a switching device or MCCB, F an MCB), as data.
+PREFIXES: dict[str, list[str]] = json.loads(Path(__file__).with_name("prefixes.json").read_text("utf-8"))["prefixes"]
+
 _DESIGNATOR = re.compile(r"^([A-Z]{1,4})(?:-[A-Z])?\d{1,3}(?:[.\-]\d{1,3})?$")
 
 
@@ -288,6 +292,7 @@ class Library:
     written: dict[str, str] = field(default_factory=dict)  # normalized text → as the dictionary writes it
     references: list[ReferenceImage] = field(default_factory=list)
     version: str = ""
+    prefixes: dict[str, tuple[str, ...]] = field(default_factory=dict)  # designator letters → classes (BUG-070)
 
     @property
     def families(self) -> dict[str, list[SymbolClass]]:
@@ -315,8 +320,11 @@ def build(
     tenant_abbr: list[tuple[str, str]] = (),  # type: ignore[assignment]
     designer_abbr: list[tuple[str, str]] = (),  # type: ignore[assignment]
     references: list[ReferenceImage] = (),  # type: ignore[assignment]
+    prefixes_override: dict[str, list[str]] | None = None,
 ) -> Library:
-    """The library from its parts; later levels win (03 §4.6). The version names what the model is shown.
+    """The library from its parts; later levels win (03 §4.6). The version names what the model is shown, so the
+    designator prefixes (`prefixes.json`, the factory's `prefixes_override` on top) are not in it: code uses them
+    after the model has answered.
 
     Classes and examples come out in this module's order whatever order the database returned them in (rows it
     doesn't know go last, by name): the prompt lists them, and its cassette key must not change between runs."""
@@ -337,7 +345,11 @@ def build(
         "references": sorted((r.symbol_class, r.image_key, r.scope) for r in references),
     }
     digest = hashlib.sha256(json.dumps(material, ensure_ascii=False).encode()).hexdigest()[:10]
-    return Library(by_id, abbreviations, written, list(references), f"lib-{digest}")
+    prefixes = {k: tuple(v) for k, v in PREFIXES.items()}
+    for k, v in (prefixes_override or {}).items():
+        prefixes[k.strip().upper()] = tuple(v)
+    prefixes = {k: tuple(c for c in v if c in by_id) for k, v in prefixes.items() if v}
+    return Library(by_id, abbreviations, written, list(references), f"lib-{digest}", prefixes)
 
 
 def default() -> Library:
@@ -377,4 +389,5 @@ def load(session: Session, designer: str | None) -> Library:
         ReferenceImage(c, key, "global")
         for c, key in session.execute(select(m.ReferenceCrop.symbol_class, m.ReferenceCrop.image_key))
     ]
-    return build(classes, global_abbr, tenant_abbr, designer_abbr, refs)
+    matching = session.scalar(select(m.TenantSettings.matching)) or {}
+    return build(classes, global_abbr, tenant_abbr, designer_abbr, refs, matching.get("designator_prefixes"))

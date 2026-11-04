@@ -1,0 +1,33 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 75,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            12,
+            1003,
+            119,
+            1024
+          ],
+          "legible": "unsure",
+          "text": "מערכת"
+        },
+        {
+          "box": [
+            142,
+            1003,
+            241,
+            1024
+          ],
+          "legible": "unsure",
+          "text": "מחסן"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

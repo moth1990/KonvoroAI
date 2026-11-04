@@ -1,0 +1,53 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 129,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            745,
+            153,
+            990,
+            246
+          ],
+          "legible": "clear",
+          "text": "כנסת"
+        },
+        {
+          "box": [
+            527,
+            153,
+            730,
+            290
+          ],
+          "legible": "clear",
+          "text": "מקווה"
+        },
+        {
+          "box": [
+            374,
+            771,
+            524,
+            845
+          ],
+          "legible": "clear",
+          "text": "לוח"
+        },
+        {
+          "box": [
+            205,
+            950,
+            402,
+            1016
+          ],
+          "legible": "clear",
+          "text": "תאריך"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

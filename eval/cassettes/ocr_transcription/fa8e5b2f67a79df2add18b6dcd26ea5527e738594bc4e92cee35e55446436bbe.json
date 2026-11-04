@@ -1,0 +1,57 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 160,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            609,
+            198,
+            726,
+            244
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "3X80A"
+        },
+        {
+          "box": [
+            903,
+            161,
+            952,
+            205
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "Q0"
+        },
+        {
+          "box": [
+            694,
+            964,
+            811,
+            1010
+          ],
+          "legible": "unsure",
+          "rotation": 0,
+          "text": "מונה"
+        },
+        {
+          "box": [
+            565,
+            964,
+            662,
+            1010
+          ],
+          "legible": "unsure",
+          "rotation": 0,
+          "text": "חח\"י"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

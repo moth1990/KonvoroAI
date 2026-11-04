@@ -1,0 +1,84 @@
+{
+  "answer": {
+    "input_tokens": 5515,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 665,
+    "payload": {
+      "issues": [
+        {
+          "bbox": [
+            183,
+            535,
+            210,
+            567
+          ],
+          "component_ids": [
+            "c08",
+            "c14"
+          ],
+          "confidence": 0.5,
+          "message": "בציור יש מפסק בתיבה יצוקה אחד 160A עם LSI בכניסה (וגם ברכיב נוסף 160A באלקטרוני), אך בטבלה שני מפסקים 160A בנתונים שונים (10kA לעומת 36kA). יש לבדוק אם זו כפילות.",
+          "type": "inconsistent_attributes"
+        },
+        {
+          "bbox": [
+            660,
+            540,
+            700,
+            575
+          ],
+          "component_ids": [
+            "c16"
+          ],
+          "confidence": 0.4,
+          "message": "בטבלה 6 מא\"ז 63A, אך בציור 63A מופיע רק ביציאה אחת (x6) ובמפסק 4x63A של בתי התקע. יש לבדוק אם הכמות מתאימה.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": [
+            1075,
+            540,
+            1105,
+            575
+          ],
+          "component_ids": [
+            "c18"
+          ],
+          "confidence": 0.4,
+          "message": "בטבלה 14 מא\"ז 6A, אך בציור נראים רק מעט מא\"ז 6A (מגענים ויציאות x6). הכמות נראית גבוהה.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": [
+            262,
+            672,
+            285,
+            695
+          ],
+          "component_ids": [
+            "c03"
+          ],
+          "confidence": 0.45,
+          "message": "C1 ו-C2 מסומנים כמגענים בציור, אך בטבלה C1 הוא מפסק מעבר ו-C2 בורר. יש לבדוק את הסיווג.",
+          "type": "wrong_family"
+        },
+        {
+          "bbox": [
+            1420,
+            545,
+            1500,
+            595
+          ],
+          "component_ids": [
+            "c22"
+          ],
+          "confidence": 0.3,
+          "message": "בטבלה 10 מא\"ז 10A, בציור יש 4+5 יציאות 10A בשני מא\"ז MCB. יש לבדוק אם הכמות נכונה.",
+          "type": "suspicious_quantity"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "validator_review"
+}

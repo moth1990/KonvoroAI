@@ -6,8 +6,9 @@ For each page, in this order:
 2. De-duplication across overlapping tiles (3.5, `detection/candidates.py`).
 3. Text with no symbol near it (3.6, `detection/orphans.py`): one more search around it, else an `orphan_text`.
 4. The disambiguation call for what the first look left open (3.4, `detection/disambiguate.py`), within budget.
-5. Designators (3.7, `detection/designators.py`), the owner tile, the panel, the crop, the confidence and status
-   (6.3), and the page's issues (8).
+5. What code knows about an unsure class (`detection/evidence.py`, S24b: a device's end circles, a residual rating,
+   peers in a row, the designator's letter), designators (3.7, `detection/designators.py`), the owner tile, the
+   panel, the crop, the confidence and status (6.3), and the page's issues (8).
 
 The dedicated family detector and the similarity index (3.2–3.3) arrive in phase 4; CAD blocks (3.1) with 2.0.
 """
@@ -21,13 +22,13 @@ from PIL import Image
 
 from konboro.contracts.common import StageIssue
 from konboro.contracts.detection import ClassCandidate, Detection, DetectionResult, DetectionStats, PageDetections
-from konboro.contracts.extraction import ExtractionResult, PageExtraction
+from konboro.contracts.extraction import ExtractionResult, PageExtraction, TextSpan
 from konboro.contracts.intake import IntakeResult, Page
 from konboro.db import models as m
 from konboro_llm import ImageInput
 
 from ..context import StageContext
-from ..detection import designators, disambiguate, library, orphans, search
+from ..detection import designators, disambiguate, evidence, library, orphans, search
 from ..detection.candidates import Candidate, centre, deduplicate, owner_tile
 from ..detection.config import DEFAULT, DEVICE_TAGS, DetectionConfig
 from ..detection.sheets import load_curated, png, reference_sheet
@@ -72,6 +73,19 @@ def _crop(render: Image.Image, c: Candidate, px_per_pt: float, cfg: DetectionCon
     out = io.BytesIO()
     render.crop(box).convert("RGB").save(out, "PNG", compress_level=6)
     return out.getvalue()
+
+
+def after_model(found: list[Candidate], spans: list[TextSpan], lib: library.Library, cfg: DetectionConfig) -> None:
+    """Step 5's code on the page's symbols once the model has answered: a residual rating and peers in a row weigh
+    an unsure class (`detection/evidence.py`), counts are told from tags, each symbol's designator is linked, and the
+    designator's letter weighs the class (BUG-067–070)."""
+    evidence.residual_is_rcd(found, spans, lib, cfg)
+    evidence.peers(found, spans, lib, cfg)
+    counts = designators.counts(found, spans, cfg)
+    for c in found:
+        designators.link(c, spans, cfg, counts)
+    for c in found:
+        evidence.weigh_by_prefix(c, lib, cfg, found)
 
 
 def detect_page(
@@ -131,9 +145,11 @@ def detect_page(
         left = sum(1 for c in found if c.needs_decision)
         issues.append(_issue("llm_budget_exceeded", page, count=left))
 
-    # 5. designators, owner tile, panel, crops
-    for c in found:
-        designators.link(c, extraction.text_spans, cfg)
+    # 5. a device's end circles are the device (BUG-068); what the text and the rows say about the class (BUG-068,
+    # BUG-070), designators, owner tile, panel, crops
+    found, end_circles = evidence.absorb_end_circles(found)
+    removed += end_circles
+    after_model(found, extraction.text_spans, lib, cfg)
     tiles = [(t.tile_id, t.bbox_pt) for t in extraction.tiles]
     found.sort(key=lambda c: (round(c.bbox[1]), c.bbox[0]))
     uploads = Uploads()

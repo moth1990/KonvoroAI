@@ -425,8 +425,13 @@ def prepare(component: Component, inp: Inputs, done: dict[str, ComponentMatch], 
             if name in attrs and name not in needs:
                 needs[name] = Need(name, value, attrs[name].match_mode, "series", False, f"לפי הדגם {ex.token}")
     needs = fill(component, needs, attrs, inp)
-    untyped = component.symbol_class in (UNTYPED, "", None)
-    inferred = inference.infer(component, needs, _upstream(component, inp), inp.notes, factory.inference_off, untyped)
+    tops = inference.class_tops(catalog.top_current)
+    untyped = component.symbol_class in (UNTYPED, "", None) or inference.outranged(
+        component, needs, tops, factory.inference_off
+    )
+    inferred = inference.infer(
+        component, needs, _upstream(component, inp), inp.notes, factory.inference_off, untyped, tops
+    )
     for n in inferred.needs:  # a unit slip read from the drawing's text replaces a default (BUG-052)
         if n.name not in needs or needs[n.name].source in FILLED:
             needs[n.name] = n

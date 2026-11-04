@@ -21,6 +21,7 @@ def golden(folder: str) -> GoldenDrawing:
         ("26-993", 22, 47),
         ("NURSERY-1", 13, 42),
         ("BOM-HW-1", 19, 91),
+        ("25.26.100", 16, 58),
     ],
 )
 def test_product_and_unit_counts(folder: str, products: int, units: int) -> None:
@@ -41,11 +42,22 @@ def test_6199_scores_components_and_checks_the_merged_bom() -> None:
     assert any(c.supply_scope == "by_others" for p in drawing.panels for c in p.components)
 
 
+def test_25_26_100_labels_the_main_panel_only() -> None:
+    """S24b: the user checked the main panel; the sub-panel is listed, unverified, with no components."""
+    drawing = golden("25.26.100")
+    main, sub = drawing.panels
+    assert (main.name, main.verified, sub.name, sub.verified) == ("לוח ראשי-בית כנסת", True, "לוח משנה-מקווה", False)
+    assert sub.components == ()
+    sixteen = sum(c.qty for c in main.components if c.family == "circuit_breaker" and c.current_a == 16)
+    assert sixteen == 23 and sum(c.qty for c in main.components if c.family == "rcd") == 2
+
+
 def test_each_shape_has_its_normalizer() -> None:
     expected = {
         "26-993": shapes.bom_list,
         "NEVIS-1": shapes.component_list,
         "6199-2-50": shapes.panel_list,
+        "25.26.100": shapes.panel_list,
         "BOM-HW-1": shapes.handwritten_rows,
         "NURSERY-1": shapes.priced_rows,
     }

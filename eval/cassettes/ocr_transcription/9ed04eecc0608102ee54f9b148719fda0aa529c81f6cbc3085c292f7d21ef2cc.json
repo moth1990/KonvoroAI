@@ -1,0 +1,23 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 40,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            415,
+            1016,
+            456,
+            1024
+          ],
+          "legible": "unsure",
+          "text": "E2"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

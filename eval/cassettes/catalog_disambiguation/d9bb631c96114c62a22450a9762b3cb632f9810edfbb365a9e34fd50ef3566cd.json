@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 808,
+    "model": "claude-haiku-5-5",
+    "output_tokens": 401,
+    "payload": {
+      "chosen_sku": "MPET4-10R",
+      "confidence": 0.8,
+      "missing_attributes": [],
+      "reason": "הכיתוב 'לחצן חירום' מתאים בדרך כלל ללחצן עצירת חירום אדום, ולכן נבחר MPET4-10R של ABB. הכיתוב אינו מציין צבע במפורש, ולכן הביטחון אינו מלא."
+    }
+  },
+  "model": "claude-haiku-5-5",
+  "stage": "catalog_disambiguation"
+}

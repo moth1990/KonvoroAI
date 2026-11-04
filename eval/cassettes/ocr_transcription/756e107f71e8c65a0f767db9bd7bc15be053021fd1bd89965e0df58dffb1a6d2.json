@@ -1,0 +1,43 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 90,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            51,
+            390,
+            141,
+            446
+          ],
+          "legible": "clear",
+          "text": "101"
+        },
+        {
+          "box": [
+            339,
+            378,
+            430,
+            437
+          ],
+          "legible": "clear",
+          "text": "102"
+        },
+        {
+          "box": [
+            581,
+            386,
+            674,
+            442
+          ],
+          "legible": "clear",
+          "text": "103"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

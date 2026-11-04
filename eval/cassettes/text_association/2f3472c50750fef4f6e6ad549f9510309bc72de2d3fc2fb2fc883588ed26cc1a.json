@@ -1,0 +1,102 @@
+{
+  "answer": {
+    "input_tokens": 5522,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 454,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s1"
+              ],
+              "value": 40
+            },
+            {
+              "confidence": 0.6,
+              "evidence": "graphic",
+              "graphic_note": "three short slanted strokes across the line on the breaker",
+              "name": "poles",
+              "span_ids": [],
+              "value": 3
+            }
+          ],
+          "det": "d1",
+          "explicit_texts": [
+            "s1"
+          ],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          }
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.5,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s4"
+              ],
+              "value": 10
+            }
+          ],
+          "det": "d2",
+          "explicit_texts": [
+            "s4"
+          ],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          }
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.6,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s5"
+              ],
+              "value": 10
+            }
+          ],
+          "det": "d3",
+          "explicit_texts": [
+            "s5"
+          ],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          }
+        }
+      ],
+      "unassigned_spans": [
+        {
+          "reason": "load name (lighting field)",
+          "span_id": "s2"
+        },
+        {
+          "reason": "load name (lighting field)",
+          "span_id": "s3"
+        },
+        {
+          "reason": "belongs to the neighbouring breaker",
+          "span_id": "s6"
+        },
+        {
+          "reason": "belongs to c7",
+          "span_id": "s7"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

@@ -12,7 +12,7 @@ from PIL import Image
 from konboro.contracts.common import Bbox
 from konboro.contracts.detection import Detection
 from konboro.contracts.extraction import TextSpan, Tile
-from konboro.contracts.merge import AttributeValue, Instance
+from konboro.contracts.merge import AttributeValue, Cable, CircuitContext, Instance
 from konboro.pipeline.association import agent, assign, circuits, grammar, quantity, schemas
 from konboro.pipeline.association.assign import Value
 from konboro.pipeline.association.config import DEFAULT
@@ -249,6 +249,14 @@ def test_a_tag_on_the_page_reads_as_nothing() -> None:
     assert texts[0].readings == [] and texts[1].readings
 
 
+def test_a_count_is_read_where_no_symbol_took_it_as_its_tag() -> None:
+    """BUG-067: 25.26.100's "X11" is a terminal's tag at the line's end and the count under the breaker's rating."""
+    spans = [span(1, "X11", (0, 0, 5, 5)), span(2, "X11", (0, 100, 5, 105)), span(3, "C1", (0, 200, 5, 205))]
+    texts = assign.texts(spans, {"X11", "C1"}, {"ts_001_0001"})
+    assert texts[0].readings == [] and [(r.key, r.value) for r in texts[1].readings] == [("multiplicity", 11)]
+    assert texts[2].readings == []  # any other tag reads as nothing wherever it is written
+
+
 def test_a_close_competitor_lowers_the_association_and_unresolves() -> None:
     a1 = det(1, (100, 100, 110, 140))
     a2 = det(2, (130, 100, 140, 140))
@@ -333,6 +341,9 @@ def test_the_neutral_pole_on_its_own_line_joins_its_breaker() -> None:
     out = assign.absorb_neutral([breaker, contact, tagged, host, aux], spans)
     assert out == {contact.det_id: breaker.det_id, tagged.det_id: host.det_id}
     assert assign.absorb_neutral([breaker, contact], []) == {}  # no N line, no neutral
+    # NURSERY-1 F1: the N contact read as a breaker too, with the breaker's tag; the breaker is never its guest
+    small = det(6, (365, 250, 374, 265), tag="F3", confidence=0.7)
+    assert assign.absorb_neutral([breaker, small], spans[:1]) == {small.det_id: breaker.det_id}
 
 
 # ---------- multiplicity, circuit numbers, supply scope (04 §5.1.1–5.1.2) ----------
@@ -385,6 +396,16 @@ def test_a_mark_on_the_cable_is_outlets_not_devices() -> None:
     assert quantity.on_cable_line("ts_001_0001", found)
     alone = assign.texts([span(1, "(x4)", (100, 300, 112, 306))])
     assert not quantity.on_cable_line("ts_001_0001", quantity.lines(alone))
+
+
+def test_a_count_code_read_stands_when_the_agent_cites_none() -> None:
+    """BUG-067: on 25.26.100's live run the tile agent answered count 1, with no span, for the breakers marked "x2"
+    and "X11": that is no reading, not a reading of 1. A count the agent cites wins."""
+    d = det(1, (100, 100, 144, 137))
+    r = assign.Read(context={"multiplicity": [Value(2, "drawing", ["ts_001_0002"], 1.0, 1.0, 1.0)]})
+    assert s4_association._multiplicity(d, r, (1, []), []).count == 2
+    assert s4_association._multiplicity(d, r, (3, ["ts_001_0002"]), []).count == 3
+    assert s4_association._multiplicity(d, assign.Read(), (1, []), []).count == 1
 
 
 def test_a_range_of_circuit_numbers_goes_to_the_device_in_its_column() -> None:
@@ -444,6 +465,73 @@ def test_a_junction_ends_the_circuit() -> None:
     )
     below, _ = circuits.downstream(w, main, [main, left, right])
     assert below == []
+
+
+def test_a_bare_cable_is_read_and_a_rating_is_not_a_cable() -> None:
+    """BUG-072: 25.26.100 writes "3X1.5" and "N2XY" as two spans along the line; "3×80A" is a breaker."""
+    assert keys("3×1.5") == {"cable_cores": [3], "cable_cross_section_mm2": [1.5], "cable_raw": ["3×1.5"]}
+    assert keys("5×6")["cable_cores"] == [5] and keys("5×2.5—ø20")["cable_cores"] == [5]
+    assert "cable_cores" not in keys("3×80A") and "cable_cores" not in keys("3×16")
+
+
+def test_the_cable_along_its_outgoing_line_is_the_breakers() -> None:
+    """BUG-072: the cable is written halfway down the line to the outlet, far from the breaker. The walk down its
+    line finds it (05 §5.5.1's poles from the cable cores). A cable past the next breaker is that breaker's."""
+    breaker = det(1, (95, 100, 105, 140), cls="mcb")
+    outlet = det(2, (90, 500, 110, 520), family="terminal", cls="terminal")
+    feeder = det(3, (295, 100, 305, 140), cls="mcb")
+    sub = det(4, (295, 250, 305, 290), cls="mcb")
+    w = _wires([(100, 140), (100, 320), (100, 500)], [(300, 140), (300, 250)], [(300, 290), (300, 500)])
+    spans = [
+        span(1, "3×1.5", (88, 300, 97, 360), rotation=90),
+        span(2, "N2XY", (88, 240, 97, 280), rotation=90),
+        span(3, "5×6", (288, 380, 297, 420), rotation=90),
+    ]
+    work = s4_association.PageWork(detections=[breaker, outlet, feeder, sub], wires=w, texts=assign.texts(spans))
+    for d in [*work.detections[::2], sub]:
+        work.built.append(_built(int(d.det_id[-4:]), values={"current_a": 10}))
+        work.built[-1].instance.det_id = d.det_id
+        work.built[-1].circuit_context = CircuitContext()
+    s4_association.chains([work])
+    by_det = {b.instance.det_id: b for b in work.built}
+    assert by_det[breaker.det_id].circuit_context.cable.cores == 3
+    assert by_det[breaker.det_id].circuit_context.cable.raw == "3×1.5"
+    assert by_det[feeder.det_id].circuit_context.cable is None  # the 5×6 is below the next breaker: its
+    assert by_det[sub.det_id].circuit_context.cable.cores == 5
+
+
+def test_a_circle_drawn_as_two_arcs_is_not_a_junction() -> None:
+    """BUG-072: 25.26.100's breaker ends are circles of two arcs between the same two nodes."""
+    w = circuits.Wires.build(
+        [(100, 140), (100, 150), (100, 400), (60, 400), (140, 400)],
+        [(0, 1, [(104, 145)]), (0, 1, [(96, 145)]), (1, 2, []), (2, 3, []), (2, 4, [])],
+    )
+    assert w.degree(1) == 2 and w.degree(2) == 3
+    ticked = circuits.Wires.build([(0, 0), (0, 10), (0, 100), (2, 12)], [(0, 1, []), (1, 2, []), (1, 3, [])])
+    assert ticked.degree(1) == 2  # a 3 pt dead end on the line is a tick, not a branch
+
+
+def test_a_copy_overlapping_the_breaker_is_not_the_next_breaker() -> None:
+    """25.26.100's eval run: a breaker found twice, the second box inside the first's lower part. The cable below is
+    the breaker's: the walk goes through its own copy."""
+    breaker = det(1, (95, 100, 105, 140))
+    copy = det(2, (99, 110, 105, 145))
+    w = _wires([(100, 140), (100, 145), (100, 320), (100, 500)])
+    cable = assign.texts([span(1, "3×1.5", (88, 300, 97, 360), rotation=90)])
+    found = circuits.cable_below(w, breaker, [breaker, copy], cable)
+    assert found is not None and found.span.text == "3×1.5"
+
+
+def test_the_walk_steps_over_a_wire_drawn_to_an_arcs_middle() -> None:
+    """BUG-072: on 25.26.100 the outgoing wire starts half a point from the end circle's arc, at no node of it."""
+    breaker = det(1, (95, 100, 105, 140))
+    outlet = det(2, (90, 400, 110, 420), family="terminal", cls="terminal")
+    w = circuits.Wires.build(
+        [(100, 140), (96, 145), (100.5, 150.0), (100.5, 400)],
+        [(0, 1, [(100, 150)]), (0, 1, []), (2, 3, [])],  # the circle: two arcs 0–1; the wire from (100.5, 150)
+    )
+    below, walk = circuits.downstream(w, breaker, [breaker, outlet])
+    assert [d.det_id for d in below] == [outlet.det_id] and max(q[1] for _, q in walk.segments) == 400
 
 
 def test_the_wire_graph_reads_back_from_stage_2s_file() -> None:
@@ -723,9 +811,43 @@ def test_a_device_drawing_gives_the_family_and_disagreeing_values_are_a_conflict
     ]
     built[0].instance.confidence = 0.4
     comps, _, _ = components("drw_01X", built, SCH)
-    assert len(comps) == 1 and comps[0].family == "circuit_breaker"
+    assert len(comps) == 1 and comps[0].family == "circuit_breaker"  # an unsure part of its drawing, beside it
     assert comps[0].attributes["current_a"].value == 80
     assert comps[0].attributes["current_a"].confidence == round(0.95 * DEFAULT.conflict_penalty, 4)
+    # BUG-066: the same transformer drawn away from the breaker is a device of its own, to review
+    built[0].instance.bbox = (400, 0, 410, 10)
+    built[0].instance.issues = []
+    comps, _, _ = components("drw_01X", built, SCH)
+    ct = next(c for c in comps if c.family == "current_transformer")
+    assert ct.designators == [] and ct.quantity == 1 and ct.status == "uncertain"
+    assert [i.code for i in built[0].instance.issues] == ["tag_conflict"]
+
+
+def test_one_tag_merges_one_family_never_a_terminal_over_breakers() -> None:
+    """BUG-066 (25.26.100): "X2" read as the tag of terminals, 16A breakers and an RCD made one terminal × 76. A tag
+    merges the drawings of one device; a symbol of another family under it stays itself, untagged, for review."""
+    built = [
+        _built(1, "terminal", tag="X2"),
+        _built(2, "terminal", tag="X2"),
+        _built(3, tag="X2", values={"current_a": 16, "poles": 1}),
+        _built(4, tag="X2", values={"current_a": 16, "poles": 1}),
+        _built(5, tag="X2", values={"current_a": 16, "poles": 1}),
+        _built(6, "rcd", tag="X2", values={"current_a": 40, "poles": 4}),
+        _built(7, "contactor", tag="X2", role="coil"),  # a coil or contacts are a device's drawings: no conflict
+        _built(8, "shunt_trip", tag="X2"),  # an accessory under a device's tag sits on that device
+    ]
+    built[5].instance.confidence = 0.42
+    for n, b in enumerate(built):  # each drawn in its own place, 60 pt apart
+        b.instance.bbox = (60.0 * n, 0, 60.0 * n + 10, 10)
+    comps, owner, _ = components("drw_01X", built, SCH)
+    by_family = {c.family: c for c in comps}
+    assert by_family["terminal"].designators == ["X2"] and by_family["terminal"].quantity == 1
+    assert len(by_family["terminal"].instance_ids) == 3  # the two terminals and the coil
+    assert by_family["circuit_breaker"].quantity == 3 and by_family["circuit_breaker"].designators == []
+    assert by_family["rcd"].quantity == 1 and by_family["rcd"].attributes["current_a"].value == 40
+    assert by_family["shunt_trip"].parent_designators == ["X2"] and by_family["shunt_trip"].designators == []
+    assert all(c.status == "uncertain" for c in (by_family["circuit_breaker"], by_family["rcd"]))
+    assert len(owner) == 8
 
 
 def test_what_never_merges() -> None:
@@ -757,6 +879,36 @@ def test_an_aux_contact_is_an_accessory_and_an_untagged_contact_joins_its_device
     relay = next(c for c in comps if c.family == "relay")
     assert relay.quantity == 1 and len(relay.instance_ids) == 2
     assert len(owner) == 4
+
+
+def test_breakers_with_unknown_poles_and_different_cables_do_not_merge() -> None:
+    """BUG-072: a 16A breaker on 3×2.5 and one on 5×2.5 are 1P and 3P by their cables (05 §5.5.1); with the poles
+    not written they stay two components, so each takes its own cable's poles."""
+    built = [_built(n, values={"current_a": 16}) for n in (1, 2, 3)]
+    for b, cores in zip(built, (3, 3, 5), strict=True):
+        b.circuit_context = CircuitContext(cable=Cable(cores=cores))
+    known = _built(4, values={"current_a": 16, "poles": 1})
+    known.circuit_context = CircuitContext(cable=Cable(cores=5))
+    comps, _, _ = components("drw_01X", [*built, known], SCH)
+    by_cores = sorted((c.quantity, c.circuit_context.cable.cores) for c in comps if c.attributes["poles"].value is None)
+    assert by_cores == [(1, 5), (2, 3)]
+
+
+def test_breakers_whose_cable_gives_the_poles_the_others_read_are_one_component() -> None:
+    """BUG-072 (25.26.100's live run): the agent read the pole mark on 10 of the 13 10A lighting breakers. The other
+    three, on the same 3×1.5 cables, are the same product by 05 §5.5.1 (3 cores: 1P): one line, not two. Their own
+    poles stay unread (stage 5 fills in, 00 §5.3); a 5-core one or a 2P one stays apart."""
+    read = [_built(n, values={"current_a": 10, "poles": 1}) for n in (1, 2)]
+    unread = [_built(n, values={"current_a": 10}) for n in (3, 4)]
+    other = _built(5, values={"current_a": 10})
+    two = _built(6, values={"current_a": 10, "poles": 2})
+    for b in [*read, *unread, two]:
+        b.circuit_context = CircuitContext(cable=Cable(cores=3))
+    other.circuit_context = CircuitContext(cable=Cable(cores=5))
+    comps, _, _ = components("drw_01X", [*read, *unread, other, two], SCH)
+    by_poles = sorted((c.attributes["poles"].value or 0, c.quantity) for c in comps)
+    assert by_poles == [(0, 1), (1, 4), (2, 1)]
+    assert all(b.instance.attributes["poles"].value is None for b in unread)
 
 
 def test_two_brands_for_one_component() -> None:

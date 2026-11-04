@@ -1,0 +1,103 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 264,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            641,
+            307,
+            726,
+            345
+          ],
+          "legible": "clear",
+          "text": "40A"
+        },
+        {
+          "box": [
+            473,
+            483,
+            631,
+            535
+          ],
+          "legible": "clear",
+          "text": "שדה"
+        },
+        {
+          "box": [
+            360,
+            483,
+            475,
+            535
+          ],
+          "legible": "unsure",
+          "text": "שקעים"
+        },
+        {
+          "box": [
+            245,
+            600,
+            337,
+            658
+          ],
+          "legible": "clear",
+          "text": "16A"
+        },
+        {
+          "box": [
+            518,
+            600,
+            609,
+            658
+          ],
+          "legible": "clear",
+          "text": "16A"
+        },
+        {
+          "box": [
+            792,
+            600,
+            883,
+            658
+          ],
+          "legible": "clear",
+          "text": "16A"
+        },
+        {
+          "box": [
+            500,
+            765,
+            555,
+            802
+          ],
+          "legible": "clear",
+          "text": "X2"
+        },
+        {
+          "box": [
+            781,
+            765,
+            835,
+            802
+          ],
+          "legible": "clear",
+          "text": "X2"
+        },
+        {
+          "box": [
+            897,
+            479,
+            919,
+            508
+          ],
+          "legible": "clear",
+          "text": "A"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

@@ -1,0 +1,103 @@
+{
+  "answer": {
+    "input_tokens": 5362,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 585,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "confidence": 0.85,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s5"
+              ],
+              "value": 16
+            },
+            {
+              "confidence": 0.6,
+              "evidence": "graphic",
+              "graphic_note": "one line with a single slanted stroke, no multiple strokes",
+              "name": "poles",
+              "span_ids": [],
+              "value": 1
+            }
+          ],
+          "brand_hint": null,
+          "det": "d1",
+          "explicit_texts": [
+            "s5"
+          ],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          },
+          "uses_shared_label": false
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.85,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s6"
+              ],
+              "value": 16
+            },
+            {
+              "confidence": 0.6,
+              "evidence": "graphic",
+              "graphic_note": "one line with a single slanted stroke, no multiple strokes",
+              "name": "poles",
+              "span_ids": [],
+              "value": 1
+            }
+          ],
+          "brand_hint": null,
+          "det": "d2",
+          "explicit_texts": [
+            "s6"
+          ],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          },
+          "uses_shared_label": false
+        }
+      ],
+      "possible_missed": [],
+      "shared_labels": [],
+      "unassigned_spans": [
+        {
+          "reason": "Large 16A to the right of d1 is the neighbouring label for the line; duplicate of s5, kept off d1",
+          "span_id": "s1"
+        },
+        {
+          "reason": "Large 16A to the right of d2, duplicate of s6",
+          "span_id": "s2"
+        },
+        {
+          "reason": "belongs to c1/c2 neighbour",
+          "span_id": "s3"
+        },
+        {
+          "reason": "belongs to neighbour c2",
+          "span_id": "s4"
+        },
+        {
+          "reason": "terminal designation X11, not a device value",
+          "span_id": "s7"
+        },
+        {
+          "reason": "belongs to c3",
+          "span_id": "s8"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

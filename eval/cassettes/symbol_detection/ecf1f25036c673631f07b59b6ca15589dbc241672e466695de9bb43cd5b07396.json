@@ -1,0 +1,43 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 146,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            190,
+            532,
+            288,
+            650
+          ],
+          "box_text": null,
+          "family": "switch_disconnector",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "switch_disconnector",
+          "tag": null
+        },
+        {
+          "box": [
+            517,
+            820,
+            602,
+            950
+          ],
+          "box_text": null,
+          "family": "relay",
+          "orientation": 0,
+          "role": "relay_contact",
+          "sure": false,
+          "symbol_class": "relay",
+          "tag": "T1"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

@@ -1,0 +1,73 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 181,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            118,
+            406,
+            209,
+            466
+          ],
+          "legible": "clear",
+          "text": "112"
+        },
+        {
+          "box": [
+            329,
+            365,
+            383,
+            402
+          ],
+          "legible": "clear",
+          "text": "X2"
+        },
+        {
+          "box": [
+            343,
+            406,
+            570,
+            466
+          ],
+          "legible": "clear",
+          "text": "130-131"
+        },
+        {
+          "box": [
+            686,
+            574,
+            842,
+            690
+          ],
+          "legible": "clear",
+          "text": "לוח"
+        },
+        {
+          "box": [
+            377,
+            588,
+            610,
+            692
+          ],
+          "legible": "clear",
+          "text": "ראשי"
+        },
+        {
+          "box": [
+            107,
+            588,
+            278,
+            692
+          ],
+          "legible": "unsure",
+          "text": "בית"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

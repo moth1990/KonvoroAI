@@ -1,0 +1,33 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 71,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            631,
+            371,
+            930,
+            452
+          ],
+          "legible": "clear",
+          "text": "מלמעלה"
+        },
+        {
+          "box": [
+            524,
+            530,
+            768,
+            615
+          ],
+          "legible": "clear",
+          "text": "במבנה"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

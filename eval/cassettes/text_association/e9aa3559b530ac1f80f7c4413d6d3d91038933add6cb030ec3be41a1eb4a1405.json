@@ -1,0 +1,199 @@
+{
+  "answer": {
+    "input_tokens": 6864,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 915,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "confidence": 0.7,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s8"
+              ],
+              "value": 6
+            },
+            {
+              "confidence": 0.6,
+              "evidence": "graphic",
+              "graphic_note": "three slanted strokes across the line",
+              "name": "poles",
+              "span_ids": [],
+              "value": 3
+            }
+          ],
+          "det": "d1",
+          "explicit_texts": [
+            "s8"
+          ]
+        },
+        {
+          "det": "d2"
+        },
+        {
+          "det": "d3"
+        },
+        {
+          "det": "d4"
+        },
+        {
+          "det": "d5"
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s15"
+              ],
+              "value": 16
+            },
+            {
+              "confidence": 0.6,
+              "evidence": "graphic",
+              "graphic_note": "one stroke across the line",
+              "name": "poles",
+              "span_ids": [],
+              "value": 1
+            }
+          ],
+          "det": "d6",
+          "explicit_texts": [
+            "s15",
+            "s22"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s16"
+              ],
+              "value": 20
+            },
+            {
+              "confidence": 0.6,
+              "evidence": "graphic",
+              "graphic_note": "one stroke across the line",
+              "name": "poles",
+              "span_ids": [],
+              "value": 1
+            }
+          ],
+          "det": "d7",
+          "explicit_texts": [
+            "s16",
+            "s23"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s17"
+              ],
+              "value": 16
+            },
+            {
+              "confidence": 0.6,
+              "evidence": "graphic",
+              "graphic_note": "one stroke across the line",
+              "name": "poles",
+              "span_ids": [],
+              "value": 1
+            }
+          ],
+          "det": "d8",
+          "explicit_texts": [
+            "s17",
+            "s24"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s19"
+              ],
+              "value": 16
+            },
+            {
+              "confidence": 0.6,
+              "evidence": "graphic",
+              "graphic_note": "one stroke across the line",
+              "name": "poles",
+              "span_ids": [],
+              "value": 1
+            }
+          ],
+          "det": "d9",
+          "explicit_texts": [
+            "s19",
+            "s13"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s18"
+              ],
+              "value": 10
+            },
+            {
+              "confidence": 0.8,
+              "evidence": null,
+              "name": "breaking_capacity_ka",
+              "value": null
+            },
+            {
+              "confidence": 0.6,
+              "evidence": "graphic",
+              "graphic_note": "three strokes across the line",
+              "name": "poles",
+              "span_ids": [],
+              "value": 3
+            }
+          ],
+          "det": "d10",
+          "explicit_texts": [
+            "s18",
+            "s21"
+          ]
+        },
+        {
+          "det": "d11"
+        }
+      ],
+      "unassigned_spans": [
+        {
+          "reason": "incomer rating, not for d10",
+          "span_id": "s11"
+        },
+        {
+          "reason": "busbar short-circuit rating, not for d10",
+          "span_id": "s7"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

@@ -1,0 +1,133 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 344,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            514,
+            91,
+            554,
+            137
+          ],
+          "legible": "clear",
+          "text": "T1"
+        },
+        {
+          "box": [
+            457,
+            385,
+            473,
+            430
+          ],
+          "legible": "clear",
+          "text": "1"
+        },
+        {
+          "box": [
+            493,
+            352,
+            520,
+            394
+          ],
+          "legible": "clear",
+          "text": "2"
+        },
+        {
+          "box": [
+            546,
+            346,
+            570,
+            391
+          ],
+          "legible": "clear",
+          "text": "3"
+        },
+        {
+          "box": [
+            599,
+            351,
+            621,
+            397
+          ],
+          "legible": "clear",
+          "text": "4"
+        },
+        {
+          "box": [
+            320,
+            450,
+            359,
+            494
+          ],
+          "legible": "clear",
+          "text": "T1"
+        },
+        {
+          "box": [
+            481,
+            520,
+            646,
+            570
+          ],
+          "legible": "clear",
+          "text": "C130,131"
+        },
+        {
+          "box": [
+            919,
+            387,
+            935,
+            429
+          ],
+          "legible": "clear",
+          "text": "1"
+        },
+        {
+          "box": [
+            950,
+            352,
+            980,
+            395
+          ],
+          "legible": "clear",
+          "text": "2"
+        },
+        {
+          "box": [
+            709,
+            860,
+            733,
+            902
+          ],
+          "legible": "clear",
+          "text": "0"
+        },
+        {
+          "box": [
+            52,
+            347,
+            99,
+            402
+          ],
+          "legible": "unsure",
+          "text": "T1T"
+        },
+        {
+          "box": [
+            52,
+            447,
+            99,
+            518
+          ],
+          "legible": "unsure",
+          "text": "ללא"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

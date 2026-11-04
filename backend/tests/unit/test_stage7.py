@@ -226,8 +226,38 @@ def test_unmatched_and_ambiguous_lines() -> None:
     lines = by_key(q)
     assert lines["c:cmp_1"].status == "yellow" and lines["c:cmp_1"].priced.unit_price == D("172.50")
     two = lines["c:cmp_2"]
-    assert (two.status, two.priced.unit_price, two.description) == ("red", None, 'מא"ז 1X10A')
+    assert (two.status, two.priced.unit_price, two.description) == ("red", None, 'מפסק זרם אוטומטי (מא"ז) 1P 10A')
     assert "missing_cost" not in two.priced.issues  # no SKU is a match problem, not a price-list one
+
+
+def test_an_unmatched_line_is_described_like_a_matched_one() -> None:
+    """BUG-071: one format for every line (the user's finding 3): the full name, the brand and model when known,
+    then poles, current, curve and breaking capacity, leaving out what is unknown. What stage 5 took from the circuit
+    counts as known; a default does not."""
+    used = {
+        "poles": UsedAttribute(value=1, source="inferred"),
+        "curve": UsedAttribute(value="C", source="tenant_default"),
+        "current_a": UsedAttribute(value=10, source="drawing"),
+    }
+    q = quote(
+        [
+            comp("cmp_1", attrs={"current_a": 10}, brand_hint="ABB"),
+            comp("cmp_2", cls="unknown_symbol", attrs={"current_a": 80, "poles": 3}),
+            comp("cmp_3", family="switch_disconnector", cls="switch_disconnector", attrs={"current_a": 10}),
+            comp("cmp_4", family="rcd", cls="rcd", attrs={"current_a": 40, "poles": 4, "residual_ma": 30}),
+        ],
+        [
+            match("cmp_1", None, "unmatched", method=None, attributes_used=used),
+            match("cmp_2", None, "unmatched", method=None),
+            match("cmp_3", None, "unmatched", method=None),
+            match("cmp_4", None, "unmatched", method=None),
+        ],
+    )
+    lines = by_key(q)
+    assert lines["c:cmp_1"].description == 'מפסק זרם אוטומטי (מא"ז) ABB 1P 10A'
+    assert lines["c:cmp_2"].description == "מפסק 3P 80A"  # not typed: neither an MCB nor an MCCB
+    assert lines["c:cmp_3"].description == "מנתק / מפסק עומס 10A"
+    assert lines["c:cmp_4"].description == "מפסק פחת 4P 40A 30mA"
 
 
 def test_rounding_to_the_shekel_and_a_fixed_product_price() -> None:

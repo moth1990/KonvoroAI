@@ -1,0 +1,123 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 333,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            55,
+            132,
+            311,
+            193
+          ],
+          "legible": "clear",
+          "text": "17.7.25"
+        },
+        {
+          "box": [
+            556,
+            138,
+            592,
+            190
+          ],
+          "legible": "clear",
+          "text": "2"
+        },
+        {
+          "box": [
+            44,
+            252,
+            313,
+            313
+          ],
+          "legible": "clear",
+          "text": "23.4.25"
+        },
+        {
+          "box": [
+            553,
+            248,
+            578,
+            301
+          ],
+          "legible": "clear",
+          "text": "1"
+        },
+        {
+          "box": [
+            41,
+            383,
+            311,
+            470
+          ],
+          "legible": "clear",
+          "text": "תאריך"
+        },
+        {
+          "box": [
+            388,
+            386,
+            715,
+            461
+          ],
+          "legible": "clear",
+          "text": "מהדורה"
+        },
+        {
+          "box": [
+            352,
+            540,
+            603,
+            607
+          ],
+          "legible": "clear",
+          "text": "המזמין"
+        },
+        {
+          "box": [
+            610,
+            541,
+            707,
+            594
+          ],
+          "legible": "clear",
+          "text": "שם"
+        },
+        {
+          "box": [
+            282,
+            817,
+            603,
+            880
+          ],
+          "legible": "clear",
+          "text": "הפרויקט"
+        },
+        {
+          "box": [
+            610,
+            818,
+            707,
+            868
+          ],
+          "legible": "clear",
+          "text": "שם"
+        },
+        {
+          "box": [
+            310,
+            930,
+            482,
+            1007
+          ],
+          "legible": "clear",
+          "text": "בית"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

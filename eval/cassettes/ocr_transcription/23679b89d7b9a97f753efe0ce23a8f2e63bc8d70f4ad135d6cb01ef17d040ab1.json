@@ -1,0 +1,156 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 487,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            128,
+            476,
+            175,
+            577
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "5X6"
+        },
+        {
+          "box": [
+            128,
+            296,
+            175,
+            432
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "N2XY"
+        },
+        {
+          "box": [
+            203,
+            349,
+            259,
+            418
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "לוח"
+        },
+        {
+          "box": [
+            213,
+            440,
+            259,
+            556
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "משנה"
+        },
+        {
+          "box": [
+            213,
+            577,
+            259,
+            693
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "מקווה"
+        },
+        {
+          "box": [
+            457,
+            654,
+            503,
+            805
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3X1.5"
+        },
+        {
+          "box": [
+            457,
+            476,
+            503,
+            612
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "N2XY"
+        },
+        {
+          "box": [
+            532,
+            449,
+            585,
+            547
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "מאור"
+        },
+        {
+          "box": [
+            532,
+            590,
+            585,
+            712
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "כניסה"
+        },
+        {
+          "box": [
+            752,
+            654,
+            798,
+            805
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3X1.5"
+        },
+        {
+          "box": [
+            752,
+            476,
+            798,
+            612
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "N2XY"
+        },
+        {
+          "box": [
+            826,
+            490,
+            877,
+            589
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "מאור"
+        },
+        {
+          "box": [
+            826,
+            626,
+            877,
+            736
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "אולם"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

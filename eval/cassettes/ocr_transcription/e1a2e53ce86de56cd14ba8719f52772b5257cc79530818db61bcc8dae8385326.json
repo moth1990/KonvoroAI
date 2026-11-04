@@ -1,0 +1,46 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 120,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            63,
+            389,
+            158,
+            446
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "250"
+        },
+        {
+          "box": [
+            709,
+            91,
+            732,
+            135
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "0"
+        },
+        {
+          "box": [
+            606,
+            368,
+            931,
+            439
+          ],
+          "legible": "unsure",
+          "rotation": 0,
+          "text": "פוטואלקטרי"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

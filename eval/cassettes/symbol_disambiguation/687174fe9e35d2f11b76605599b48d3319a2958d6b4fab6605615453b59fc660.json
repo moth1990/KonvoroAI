@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1718,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 142,
+    "payload": {
+      "confidence": 0.8,
+      "decision": "none_of_these",
+      "reason": "הסמל מציג מגע מתג עם סרגל חוצה בנקודת המגע וחץ תרמי/מגנטי בצורת מדרגות, בלי x ובלי טבעת פחת, ולכן הוא אינו מא\"ז ואינו תואם בבירור אף מועמד.",
+      "symbol_class": null
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

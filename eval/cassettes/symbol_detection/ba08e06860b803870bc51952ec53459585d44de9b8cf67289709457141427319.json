@@ -1,0 +1,28 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 79,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            741,
+            122,
+            873,
+            290
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "mccb",
+          "tag": "Q0"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

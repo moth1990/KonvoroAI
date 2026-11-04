@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1718,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 150,
+    "payload": {
+      "confidence": 0.6,
+      "decision": "none_of_these",
+      "reason": "הסמל הוא מגע מתג עם עיגולים בקצוות, חץ בכיוון הפעלה וקו קצר מוצלב במגע הקבוע, בלי איקס של מא\"ז ובלי שני מגעים קבועים של מחליף, ולכן אף מועמד לא מתאים במדויק.",
+      "symbol_class": null
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

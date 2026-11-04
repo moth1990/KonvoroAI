@@ -1,0 +1,313 @@
+{
+  "drawing": "25.26.100",
+  "file": "25.26.100.pdf",
+  "input_kind": "designer_plan",
+  "labelled_by": "פענוח הלוח הראשי מתוך התמונות, עם התיקונים של המשתמש (7 ממצאים, S24b). כל פריט בלוח הראשי אושר בידי המשתמש. לוח המשנה לא אומת",
+  "verified_with_factory": false,
+  "title_block": {
+    "project": "בית כנסת מקווה בבאר גנים",
+    "drawing_name": "לוח",
+    "drawing_number": "25.26.100",
+    "revision": 2,
+    "date": "2025-07-17",
+    "status": "for_execution",
+    "designer": "משרד תכנון חשמל (שם בטבלת הכותרת)",
+    "customer": "לא נשמר",
+    "people": "לא נשמרים"
+  },
+  "file_facts": {
+    "pages": 1,
+    "page_size_pt": [
+      4394,
+      2069
+    ],
+    "creator": "AutoCAD LT 2024",
+    "geometry_source": "vector",
+    "text_source": "ocr",
+    "note": "הטקסט הומר לקווים: אין שכבת טקסט"
+  },
+  "pages": [
+    {
+      "no": 1,
+      "kind": "single_line_diagram",
+      "route": "process",
+      "regions": [
+        {
+          "kind": "panel",
+          "name": "לוח ראשי-בית כנסת"
+        },
+        {
+          "kind": "panel",
+          "name": "לוח משנה-מקווה"
+        },
+        {
+          "kind": "notes_block",
+          "items": [
+            "כניסת כבלים ללוחות מלמעלה",
+            "במבנה הלוח לשמור 30% מקום שמור",
+            "נדרש לוודא איזון פאזות"
+          ]
+        }
+      ]
+    }
+  ],
+  "panels": [
+    {
+      "name": "לוח ראשי-בית כנסת",
+      "verified": true,
+      "spare_space_pct": 30,
+      "components": [
+        {
+          "item": "מפסק בתיבה יצוקה 3X80A, ראשי (Q0)",
+          "family": "circuit_breaker",
+          "qty": 1,
+          "designators": [
+            "Q0"
+          ],
+          "attributes": {
+            "current_a": 80,
+            "poles": 3
+          },
+          "note": "תיקון המשתמש: Q הוא מנתק או מפסק בתיבה יצוקה, לא מא\"ז (ממצא 2)"
+        },
+        {
+          "item": "סליל הפסקה TC על המפסק הראשי",
+          "family": "shunt_trip",
+          "qty": 1,
+          "designators": [
+            "TC"
+          ]
+        },
+        {
+          "item": "לחצן חירום ES",
+          "family": "push_button",
+          "qty": 1,
+          "designators": [
+            "ES"
+          ],
+          "note": "מצויר פעמיים: במעגל סליל ההפסקה, ו\"לחצן חרום\" למטה. תג אחד, לחצן אחד"
+        },
+        {
+          "item": "משני זרם 100/5A (T1-T3)",
+          "family": "current_transformer",
+          "qty": 3,
+          "designators": [
+            "T1-T3"
+          ],
+          "attributes": {
+            "ratio_primary_a": 100,
+            "ratio_secondary_a": 5
+          },
+          "note": "טווח של שלושה תגים (ממצא 1)"
+        },
+        {
+          "item": "מונה ELENET LTC",
+          "family": "energy_meter",
+          "qty": 1,
+          "designators": [
+            "LTC"
+          ]
+        },
+        {
+          "item": "מפסק FS ‏3(2.4–4)A, להזנת מערכת ניתוקים מגילוי אש",
+          "family": "circuit_breaker",
+          "qty": 1,
+          "designators": [
+            "FS"
+          ],
+          "attributes": {
+            "poles": 3,
+            "range_min_a": 2.4,
+            "range_max_a": 4
+          }
+        },
+        {
+          "item": "מפסק 25A להזנת לוח משנה מקווה (מעגל 300, כבל 5X6 N2XY)",
+          "family": "circuit_breaker",
+          "qty": 1,
+          "attributes": {
+            "current_a": 25,
+            "poles": 3
+          },
+          "poles_source": "user",
+          "note": "אין סימון קטבים בשרטוט. 3P: הכבל 5X6 ולוח המשנה התלת-פאזי, ואושר בידי המשתמש"
+        },
+        {
+          "item": "מא\"ז 3P ‏40A לשדה (3 שדות תאורה ו-2 שדות שקעים)",
+          "family": "circuit_breaker",
+          "qty": 5,
+          "attributes": {
+            "current_a": 40,
+            "poles": 3
+          },
+          "poles_source": "graphic",
+          "note": "אושר בידי המשתמש: מא\"זים, לא מפסקים בתיבה יצוקה (אין מפסק בתיבה יצוקה של 40A)",
+          "source": "user"
+        },
+        {
+          "item": "מפסק פחת 4X40A ‏0.03A דגם A, בשדות השקעים",
+          "family": "rcd",
+          "qty": 2,
+          "attributes": {
+            "current_a": 40,
+            "poles": 4,
+            "residual_ma": 30,
+            "rcd_type": "A"
+          },
+          "note": "ממצא 7"
+        },
+        {
+          "item": "מא\"ז 1P ‏10A, שדות התאורה",
+          "family": "circuit_breaker",
+          "qty": 15,
+          "attributes": {
+            "current_a": 10,
+            "poles": 1
+          },
+          "poles_source": "cable",
+          "note": "מעגלים 100–103, 104–108, 109–112, ו-x2 למעגלים 130–131. כבל 3X1.5 N2XY. מוצר אחד (ממצא 4)"
+        },
+        {
+          "item": "מא\"ז 1P ‏16A",
+          "family": "circuit_breaker",
+          "qty": 22,
+          "attributes": {
+            "current_a": 16,
+            "poles": 1
+          },
+          "poles_source": "cable",
+          "note": "שדות השקעים: 200, x2 201–202, x2 203–204, 205, 206, x2 207–208 (9); 230 (1); X11 ‏211–223 (11); 250 (1). כבל 3X2.5 N2XY. x2 ו-X11 הם כמויות (ממצא 5). X11 נספר 11 כפי שסומן, אף שמתחתיו כתובים 12 מספרי מעגלים (211–219, 221–223): הכמות שסומנה גוברת, והמשתמש מתקן בבדיקה אם צריך (אושר בידי המשתמש)"
+        },
+        {
+          "item": "מא\"ז 3P ‏16A, תלת-פאזי למטבח (209, 210)",
+          "family": "circuit_breaker",
+          "qty": 1,
+          "attributes": {
+            "current_a": 16,
+            "poles": 3
+          },
+          "poles_source": "graphic",
+          "note": "כבל 5X2.5-ø20"
+        },
+        {
+          "item": "מא\"ז 1P ‏10A עקומה C (1X10AC) בראש מעגל הפיקוד של התאורה",
+          "family": "circuit_breaker",
+          "qty": 1,
+          "attributes": {
+            "current_a": 10,
+            "poles": 1,
+            "curve": "C"
+          },
+          "note": "אושר בידי המשתמש: מא\"ז 1P ‏10A עקומה C",
+          "source": "user"
+        },
+        {
+          "item": "שעון אסטרונומי T1",
+          "family": "time_switch",
+          "qty": 1,
+          "designators": [
+            "T1"
+          ],
+          "note": "לפי מקרא מצבי מפסק הפיקוד (\"שעון אסטרונומי\")"
+        },
+        {
+          "item": "מפסק פיקוד 4 מצבים: 1-ידני, 2-מופסק, 3-שעון אסטרונומי, 4-שעון אסטרונומי ותא פוטואלקטרי במקביל",
+          "family": "selector_switch",
+          "qty": 1,
+          "note": "אושר בידי המשתמש: בורר אחד (שתי קומות של מגעים)",
+          "source": "user"
+        },
+        {
+          "item": "מגען C130,131 לתאורה הדקורטיבית",
+          "family": "contactor",
+          "qty": 1,
+          "designators": [
+            "C130,131"
+          ]
+        }
+      ],
+      "outside_panel": [
+        "תא פוטואלקטרי וחיישן אור: מחוץ ללוח (אושר בידי המשתמש)"
+      ],
+      "bom": [
+        {
+          "product": "מפסק בתיבה יצוקה 3X80A, ראשי (Q0)",
+          "qty": 1
+        },
+        {
+          "product": "סליל הפסקה TC על המפסק הראשי",
+          "qty": 1
+        },
+        {
+          "product": "לחצן חירום ES",
+          "qty": 1
+        },
+        {
+          "product": "משני זרם 100/5A (T1-T3)",
+          "qty": 3
+        },
+        {
+          "product": "מונה ELENET LTC",
+          "qty": 1
+        },
+        {
+          "product": "מפסק FS ‏3(2.4–4)A, להזנת מערכת ניתוקים מגילוי אש",
+          "qty": 1
+        },
+        {
+          "product": "מפסק 25A להזנת לוח משנה מקווה (מעגל 300, כבל 5X6 N2XY)",
+          "qty": 1
+        },
+        {
+          "product": "מפסק 3X40A לשדה (3 שדות תאורה ו-2 שדות שקעים)",
+          "qty": 5
+        },
+        {
+          "product": "מפסק פחת 4X40A ‏0.03A דגם A, בשדות השקעים",
+          "qty": 2
+        },
+        {
+          "product": "מא\"ז 1P ‏10A, שדות התאורה",
+          "qty": 15
+        },
+        {
+          "product": "מא\"ז 1P ‏16A",
+          "qty": 22
+        },
+        {
+          "product": "מא\"ז 3P ‏16A, תלת-פאזי למטבח (209, 210)",
+          "qty": 1
+        },
+        {
+          "product": "1X10AC בראש מעגל הפיקוד של התאורה",
+          "qty": 1
+        },
+        {
+          "product": "שעון אסטרונומי T1",
+          "qty": 1
+        },
+        {
+          "product": "מפסק פיקוד 4 מצבים: 1-ידני, 2-מופסק, 3-שעון אסטרונומי, 4-שעון אסטרונומי ותא פוטואלקטרי במקביל",
+          "qty": 1
+        },
+        {
+          "product": "מגען C130,131 לתאורה הדקורטיבית",
+          "qty": 1
+        }
+      ]
+    },
+    {
+      "name": "לוח משנה-מקווה",
+      "verified": false,
+      "note": "לא אומת. לא נספר בציון של שלב 4",
+      "components": [],
+      "bom": []
+    }
+  ],
+  "not_components": [
+    "כבלים (N2XY) עם חתכים: נתוני הקשר לקטבים",
+    "מהדקי היציאה ועיגולי הקצה של המא\"זים",
+    "פסי צבירה והארקה"
+  ],
+  "to_verify": []
+}

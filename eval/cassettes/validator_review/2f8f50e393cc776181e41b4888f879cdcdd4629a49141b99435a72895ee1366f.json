@@ -1,0 +1,77 @@
+{
+  "answer": {
+    "input_tokens": 5648,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 687,
+    "payload": {
+      "issues": [
+        {
+          "bbox": [
+            180,
+            540,
+            210,
+            580
+          ],
+          "component_ids": [
+            "c14",
+            "c08"
+          ],
+          "confidence": 0.45,
+          "message": "באיור יש מפסק אלקטרוני 160A אחד בכניסה (250A MCCB) ומפסק 160A נוסף ב-LSI בשדה השמאלי; בטבלה שני מפסקים בתיבה יצוקה עם נתונים שונים (36kA מול 10kA). יש לבדוק אם אלו אותו רכיב או כפילות.",
+          "type": "inconsistent_attributes"
+        },
+        {
+          "bbox": null,
+          "component_ids": [
+            "c21"
+          ],
+          "confidence": 0.4,
+          "message": "בטבלה 3 נתיכים 100A, אך באיור לא רואים נתיכים בלוח. יש לבדוק אם הרכיב קיים.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": [
+            665,
+            540,
+            700,
+            580
+          ],
+          "component_ids": [
+            "c16"
+          ],
+          "confidence": 0.35,
+          "message": "בטבלה 6 מא\"ז 63A, אך באיור 63A מופיע פעם אחת עם (x6) ועוד מא\"ז 63A בשדה מגני הברק. יש לבדוק שהכמות לא כפולה.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": [
+            470,
+            340,
+            500,
+            365
+          ],
+          "component_ids": [
+            "c07"
+          ],
+          "confidence": 0.3,
+          "message": "לחצן ירוק בכמות 2; באיור יש לחצן 'לחץ על הלוח' אחד ושני לחצנים 'לחצן בלוח' שנראים כמגעי פיקוד. יש לבדוק את הכמות והסוג.",
+          "type": "wrong_family"
+        },
+        {
+          "bbox": [
+            1080,
+            585,
+            1120,
+            685
+          ],
+          "component_ids": [],
+          "confidence": 0.25,
+          "message": "באיור יש מגען C עם ממסר ומא\"ז 6A בשדה בין המא\"זים 6A ו-20A, לא ברור שהוא מופיע בטבלה. יש לבדוק.",
+          "type": "missing_component"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "validator_review"
+}

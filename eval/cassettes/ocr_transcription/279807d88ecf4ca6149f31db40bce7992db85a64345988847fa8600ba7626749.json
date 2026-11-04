@@ -1,0 +1,153 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 447,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            527,
+            19,
+            680,
+            79
+          ],
+          "legible": "clear",
+          "text": "שם"
+        },
+        {
+          "box": [
+            360,
+            19,
+            500,
+            92
+          ],
+          "legible": "clear",
+          "text": "גיליון"
+        },
+        {
+          "box": [
+            551,
+            183,
+            707,
+            254
+          ],
+          "legible": "clear",
+          "text": "קנ\"מ:"
+        },
+        {
+          "box": [
+            582,
+            299,
+            709,
+            376
+          ],
+          "legible": "clear",
+          "text": "תכנן"
+        },
+        {
+          "box": [
+            187,
+            299,
+            555,
+            376
+          ],
+          "legible": "clear",
+          "text": "איתי-משה"
+        },
+        {
+          "box": [
+            262,
+            370,
+            503,
+            430
+          ],
+          "legible": "clear",
+          "text": "אבוקרט"
+        },
+        {
+          "box": [
+            500,
+            465,
+            709,
+            520
+          ],
+          "legible": "clear",
+          "text": "סטטוס:"
+        },
+        {
+          "box": [
+            166,
+            463,
+            343,
+            525
+          ],
+          "legible": "clear",
+          "text": "לעיון:"
+        },
+        {
+          "box": [
+            420,
+            642,
+            689,
+            712
+          ],
+          "legible": "clear",
+          "text": "איתי-משה"
+        },
+        {
+          "box": [
+            245,
+            645,
+            420,
+            710
+          ],
+          "legible": "clear",
+          "text": "אבוקרט"
+        },
+        {
+          "box": [
+            527,
+            727,
+            625,
+            787
+          ],
+          "legible": "clear",
+          "text": "מספר"
+        },
+        {
+          "box": [
+            78,
+            727,
+            525,
+            791
+          ],
+          "legible": "unsure",
+          "text": "רישיון:1003107"
+        },
+        {
+          "box": [
+            508,
+            805,
+            626,
+            873
+          ],
+          "legible": "clear",
+          "text": "נייד:"
+        },
+        {
+          "box": [
+            99,
+            807,
+            467,
+            876
+          ],
+          "legible": "clear",
+          "text": "050-6926383"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

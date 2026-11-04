@@ -1,0 +1,103 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 404,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            683,
+            183,
+            823,
+            288
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "mccb",
+          "tag": null
+        },
+        {
+          "box": [
+            643,
+            390,
+            795,
+            517
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "mccb",
+          "tag": null
+        },
+        {
+          "box": [
+            188,
+            613,
+            319,
+            722
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "mcb",
+          "tag": null
+        },
+        {
+          "box": [
+            474,
+            613,
+            605,
+            722
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "mcb",
+          "tag": null
+        },
+        {
+          "box": [
+            752,
+            613,
+            883,
+            722
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "mcb",
+          "tag": null
+        },
+        {
+          "box": [
+            524,
+            530,
+            1024,
+            541
+          ],
+          "box_text": null,
+          "family": "busbar",
+          "orientation": 90,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "busbar",
+          "tag": null
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

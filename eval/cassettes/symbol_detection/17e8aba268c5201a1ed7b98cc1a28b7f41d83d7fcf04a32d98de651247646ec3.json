@@ -1,0 +1,73 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 269,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            93,
+            268,
+            236,
+            415
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "mccb",
+          "tag": null
+        },
+        {
+          "box": [
+            637,
+            683,
+            769,
+            849
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "mcb",
+          "tag": null
+        },
+        {
+          "box": [
+            0,
+            198,
+            1024,
+            210
+          ],
+          "box_text": null,
+          "family": "busbar",
+          "orientation": 90,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "busbar",
+          "tag": null
+        },
+        {
+          "box": [
+            660,
+            619,
+            1024,
+            633
+          ],
+          "box_text": null,
+          "family": "busbar",
+          "orientation": 90,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "busbar",
+          "tag": null
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

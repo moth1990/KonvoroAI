@@ -1,0 +1,189 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 602,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            12,
+            46,
+            103,
+            103
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "10A"
+        },
+        {
+          "box": [
+            317,
+            46,
+            407,
+            103
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "10A"
+        },
+        {
+          "box": [
+            603,
+            46,
+            694,
+            103
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "10A"
+        },
+        {
+          "box": [
+            9,
+            548,
+            55,
+            823
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "כניסה"
+        },
+        {
+          "box": [
+            9,
+            548,
+            55,
+            630
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "אור"
+        },
+        {
+          "box": [
+            220,
+            810,
+            267,
+            910
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3X1.5"
+        },
+        {
+          "box": [
+            220,
+            575,
+            267,
+            775
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "N2XY"
+        },
+        {
+          "box": [
+            283,
+            573,
+            340,
+            880
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "מקווה"
+        },
+        {
+          "box": [
+            283,
+            573,
+            340,
+            720
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "מאור"
+        },
+        {
+          "box": [
+            510,
+            810,
+            557,
+            910
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3X1.5"
+        },
+        {
+          "box": [
+            510,
+            575,
+            557,
+            775
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "N2XY"
+        },
+        {
+          "box": [
+            583,
+            480,
+            630,
+            905
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "מטבח"
+        },
+        {
+          "box": [
+            583,
+            480,
+            630,
+            640
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "חדר"
+        },
+        {
+          "box": [
+            888,
+            630,
+            935,
+            715
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3X2.5"
+        },
+        {
+          "box": [
+            888,
+            395,
+            935,
+            515
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "N2XY"
+        },
+        {
+          "box": [
+            962,
+            460,
+            1022,
+            705
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "מקווה"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

@@ -5,6 +5,11 @@ An instance is one symbol with what was read for it. The merge, once per drawing
    representation (FP1 on two pages; C1's power contacts and its coil). The device takes the family of its device
    drawing, else its coil, else its contacts (03 §4.5); the attributes join from all of them, and two that disagree
    keep the first representation's value, flagged `attribute_conflict` (× 0.8).
+   A tag merges one device's drawings only (BUG-066): a device drawing of another family under the same tag stays a
+   device of its own, untagged and yellow, flagged `tag_conflict` (25.26.100's "X2" took 16A breakers and two RCDs
+   into one terminal × 76). Unless it is unsure and beside one of the device's drawings, within its length: then it
+   is a misread part of that drawing (Q0's ring read as a current transformer, QLG1's thermal release as an overload
+   relay). An accessory (a shunt trip) under a device's tag sits on that device.
 2. An auxiliary contact (family `aux_contact`) is an accessory of its own: its tag is the device it sits on
    (`parent_designators`), not a device of its own tag. An untagged contact or coil of a family that has tagged
    devices in the panel is another drawing of one of them, and joins the nearest (no quantity of its own).
@@ -27,7 +32,8 @@ from konboro.contracts.merge import (
     Instance,
     MissingInstance,
 )
-from konboro.pipeline.detection.designators import tags
+from konboro.pipeline.detection.designators import PROTECTIVE, tags
+from konboro.pipeline.detection.library import FAMILIES
 
 from .assign import Value
 from .config import DEFAULT, AssociationConfig
@@ -43,6 +49,7 @@ INSTANCE_ISSUES = {
     "multiplicity_inherited": "×{count} לפי {upstream} שמעליו",
     "range_mismatch": "טווח המעגלים {range} לא תואם לכמות {count}. בדקו את הכמות.",
     "brand_conflict": "שני מותגים שונים ברכיבים זהים: {brands}.",
+    "tag_conflict": "התג {tag} כתוב גם ליד רכיב מסוג אחר ({family}). בדקו לאיזה רכיב הוא שייך.",
 }
 
 
@@ -138,15 +145,29 @@ def devices(built: list[Built], schemas: Schemas, cfg: AssociationConfig = DEFAU
     """5.8 items 1–3: one device per tag in a panel; an auxiliary contact on its own; an untagged symbol alone."""
     by_tag: dict[tuple[str, str], list[Built]] = defaultdict(list)
     alone: list[Built] = []
+    accessories: list[tuple[Built, str]] = []  # an accessory under another device's tag, and that tag
     for b in sorted(built, key=lambda b: b.order):
         if b.designator and len(tags(b.designator)) == 1 and b.instance.family != "aux_contact" and b.instance.panel_id:
             by_tag[(b.instance.panel_id, b.designator)].append(b)
         else:
             alone.append(b)
     out: list[Device] = []
-    for (panel_id, tag), members in by_tag.items():
-        lead = min(members, key=lambda b: (ROLE_RANK.get(b.role, 9), -b.instance.confidence, b.order))
+    for (panel_id, tag), group in by_tag.items():
+        lead = min(group, key=lambda b: (ROLE_RANK.get(b.role, 9), -b.instance.confidence, b.order))
         family, cls = lead.instance.family, lead.instance.symbol_class
+        members = []
+        for b in group:
+            if b.instance.family == family or b.role != "device":
+                members.append(b)  # the device's own drawings: its coil, its contacts, its front view (03 §4.5)
+            elif b.instance.family in ACCESSORIES:
+                accessories.append((b, tag))  # sits on the tag's device, like an auxiliary contact
+            elif b.instance.confidence < cfg.accepted_from and _part_of(
+                b, [x for x in group if x.instance.family == family]
+            ):
+                members.append(b)  # an unsure reading of a part of the device's own drawing (Q0's ring, a CT)
+            else:
+                _conflict(b, tag, family, cfg)  # BUG-066: another device under one tag is a conflict, not a merge
+                alone.append(b)
         same_family = [b for b in members if b.instance.family == family]
         ordered = [lead] + [b for b in same_family if b is not lead]
         attrs, conflicts, penalty = _join_attributes(ordered, schemas.names(family), cfg)
@@ -170,9 +191,27 @@ def devices(built: list[Built], schemas: Schemas, cfg: AssociationConfig = DEFAU
     tagged: dict[tuple[str, str], list[Device]] = defaultdict(list)
     for d in out:
         tagged[(d.panel_id, d.family)].append(d)
+    for b, tag in accessories:
+        i = b.instance
+        out.append(
+            Device(
+                i.family,
+                i.symbol_class,
+                i.panel_id or "",
+                {n: i.attributes.get(n) or attribute(None) for n in schemas.names(i.family)},
+                [],
+                [tag],
+                i.multiplicity,
+                [b],
+                i.confidence,
+                b.supply_scope,
+                b.multiplicity_inherited,
+            )
+        )
     for b in alone:
         i = b.instance
         aux = i.family == "aux_contact"
+        own = [] if aux or _conflicted(b) else tags(b.designator)
         # An untagged contact or coil of a family that has tagged devices in the panel is another drawing of one of
         # them (03 §4.5), not a device of its own: it joins the nearest one on its page, else the first.
         hosts = tagged.get((i.panel_id or "", i.family), [])
@@ -186,7 +225,7 @@ def devices(built: list[Built], schemas: Schemas, cfg: AssociationConfig = DEFAU
                 i.symbol_class,
                 i.panel_id or "",
                 {n: i.attributes.get(n) or attribute(None) for n in schemas.names(i.family)},
-                [] if aux else tags(b.designator),
+                own,
                 tags(b.designator) if aux else [],
                 i.multiplicity,
                 [b],
@@ -199,6 +238,34 @@ def devices(built: list[Built], schemas: Schemas, cfg: AssociationConfig = DEFAU
 
 
 REPRESENTATIONS = frozenset({"coil", "power_contact", "relay_contact"})
+ACCESSORIES = frozenset({"aux_contact", "shunt_trip"})  # mounted on the device whose tag they carry (03 §4.5)
+
+
+def _conflict(b: Built, tag: str, family: str, cfg: AssociationConfig) -> None:
+    """BUG-066: a device of another family under a tag. It keeps its own family and values, loses the tag (one tag
+    names one device), and stays yellow with the reason, for the user to decide."""
+    i = b.instance
+    name = next((f.classes[0][1] for f in FAMILIES if f.family == family), family)
+    i.issues.append(issue("tag_conflict", "warning", i.page_id, tag=tag, family=name))
+    i.confidence = round(min(i.confidence, cfg.accepted_from - 0.01), 4)
+    i.status = status(i.confidence, cfg)  # type: ignore[assignment]
+
+
+def _part_of(b: Built, drawings: list[Built]) -> bool:
+    """Within one of the device's drawings' reach on its page: no farther than that drawing is long."""
+    x0, y0, x1, y1 = b.instance.bbox or (0, 0, 0, 0)
+    for d in drawings:
+        if d.instance.page_id != b.instance.page_id or d.instance.bbox is None:
+            continue
+        a0, b0, a1, b1 = d.instance.bbox
+        dx, dy = max(a0 - x1, 0.0, x0 - a1), max(b0 - y1, 0.0, y0 - b1)
+        if (dx * dx + dy * dy) ** 0.5 <= max(a1 - a0, b1 - b0):
+            return True
+    return False
+
+
+def _conflicted(b: Built) -> bool:
+    return any(x.code == "tag_conflict" for x in b.instance.issues)
 
 
 def _distance(d: Device, b: Built) -> tuple[int, float]:
@@ -213,7 +280,48 @@ def _distance(d: Device, b: Built) -> tuple[int, float]:
 
 def _signature(d: Device) -> tuple[Any, ...]:
     values = tuple((k, repr(v.value)) for k, v in sorted(d.attributes.items()))
-    return (d.panel_id, d.family, d.symbol_class, d.supply_scope, d.multiplicity_inherited, values)
+    return (d.panel_id, d.family, d.symbol_class, d.supply_scope, d.multiplicity_inherited, values, _cores(d))
+
+
+def _cable_poles() -> dict[int, int]:
+    """05 §5.5.1's cores → poles, from stage 5's rule data (`matching/inference.json`, `poles_from_cable_cores`)."""
+    from konboro.pipeline.matching.inference import rules  # the rule's data; stage 5 does the filling in
+
+    rule = next((r for r in rules() if r.kind == "cable_cores"), None)
+    return {int(k): int(v) for k, v in (rule.params["cores"] if rule else {}).items()}
+
+
+def _join_by_cable(groups: dict[tuple[Any, ...], list[Device]]) -> None:
+    """BUG-072: protective devices whose poles are not written join the identical component whose poles are what
+    their own cable's cores give (25.26.100: three 10A breakers on 3×1.5 beside ten read as 1P). Their instances
+    keep the poles unread; the component's come from the ones that were read."""
+    implied = _cable_poles()
+    for sig in list(groups):
+        cores = sig[-1]
+        if len(cores) != 1 or cores[0] not in implied:
+            continue
+        values = tuple((k, repr(implied[cores[0]]) if k == "poles" else v) for k, v in sig[5])
+        target = (*sig[:5], values, ())
+        if target == sig or target not in groups:
+            continue
+        cables = {c for d in groups[target] for b in d.built if (c := _cable_cores(b)) is not None}
+        if cables <= {cores[0]}:
+            groups[target].extend(groups.pop(sig))
+
+
+def _cable_cores(b: Built) -> int | None:
+    cable = b.circuit_context.cable if b.circuit_context else None
+    return cable.cores if cable else None
+
+
+def _cores(d: Device) -> tuple[int, ...]:
+    """With the poles not written, a protective device's cable cores tell 1P from 3P (05 §5.5.1): devices on
+    cables of different cores are not one component (BUG-072)."""
+    poles = d.attributes.get("poles")
+    if poles is None or poles.value is not None or d.family not in PROTECTIVE:
+        return ()
+    cables = {b.circuit_context.cable.cores for b in d.built if b.circuit_context and b.circuit_context.cable}
+    return tuple(sorted(c for c in cables if c is not None))
 
 
 def components(
@@ -223,6 +331,7 @@ def components(
     groups: dict[tuple[Any, ...], list[Device]] = defaultdict(list)
     for d in devices(built, schemas, cfg):
         groups[_signature(d)].append(d)
+    _join_by_cable(groups)
     out: list[Component] = []
     owner: dict[str, str] = {}
     issues: list[StageIssue] = []

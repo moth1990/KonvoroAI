@@ -1,0 +1,238 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 959,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            0,
+            196,
+            1024,
+            210
+          ],
+          "box_text": null,
+          "family": "busbar",
+          "orientation": 90,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "busbar",
+          "tag": null
+        },
+        {
+          "box": [
+            0,
+            618,
+            600,
+            632
+          ],
+          "box_text": null,
+          "family": "busbar",
+          "orientation": 90,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "busbar",
+          "tag": null
+        },
+        {
+          "box": [
+            807,
+            629,
+            1024,
+            641
+          ],
+          "box_text": null,
+          "family": "busbar",
+          "orientation": 90,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "busbar",
+          "tag": null
+        },
+        {
+          "box": [
+            417,
+            250,
+            443,
+            276
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "terminal",
+          "tag": null
+        },
+        {
+          "box": [
+            417,
+            391,
+            443,
+            417
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "terminal",
+          "tag": null
+        },
+        {
+          "box": [
+            313,
+            282,
+            452,
+            386
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "mccb",
+          "tag": null
+        },
+        {
+          "box": [
+            273,
+            683,
+            299,
+            709
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "terminal",
+          "tag": null
+        },
+        {
+          "box": [
+            553,
+            683,
+            579,
+            709
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "terminal",
+          "tag": null
+        },
+        {
+          "box": [
+            932,
+            681,
+            958,
+            707
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "terminal",
+          "tag": null
+        },
+        {
+          "box": [
+            168,
+            713,
+            300,
+            820
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "mcb",
+          "tag": null
+        },
+        {
+          "box": [
+            448,
+            713,
+            580,
+            820
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "mcb",
+          "tag": null
+        },
+        {
+          "box": [
+            827,
+            713,
+            958,
+            820
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "mcb",
+          "tag": null
+        },
+        {
+          "box": [
+            273,
+            822,
+            299,
+            848
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "terminal",
+          "tag": null
+        },
+        {
+          "box": [
+            553,
+            822,
+            579,
+            848
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "terminal",
+          "tag": null
+        },
+        {
+          "box": [
+            932,
+            822,
+            958,
+            848
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "terminal",
+          "tag": null
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

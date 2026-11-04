@@ -1,0 +1,148 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 604,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            291,
+            267,
+            388,
+            345
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "motor_protection",
+          "tag": "FS"
+        },
+        {
+          "box": [
+            848,
+            192,
+            980,
+            290
+          ],
+          "box_text": null,
+          "family": "circuit_breaker",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "motor_protection",
+          "tag": null
+        },
+        {
+          "box": [
+            281,
+            509,
+            484,
+            634
+          ],
+          "box_text": "ELENET LTC",
+          "family": "measuring_instrument",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "measuring_instrument",
+          "tag": null
+        },
+        {
+          "box": [
+            427,
+            962,
+            570,
+            1024
+          ],
+          "box_text": "TC",
+          "family": "shunt_trip",
+          "orientation": 0,
+          "role": "device",
+          "sure": true,
+          "symbol_class": "shunt_trip",
+          "tag": null
+        },
+        {
+          "box": [
+            367,
+            246,
+            387,
+            264
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "terminal",
+          "tag": null
+        },
+        {
+          "box": [
+            952,
+            160,
+            978,
+            187
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "terminal",
+          "tag": null
+        },
+        {
+          "box": [
+            367,
+            347,
+            387,
+            367
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "terminal",
+          "tag": null
+        },
+        {
+          "box": [
+            952,
+            300,
+            978,
+            327
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "terminal",
+          "tag": null
+        },
+        {
+          "box": [
+            58,
+            910,
+            80,
+            932
+          ],
+          "box_text": null,
+          "family": "terminal",
+          "orientation": 0,
+          "role": "device",
+          "sure": false,
+          "symbol_class": "terminal",
+          "tag": null
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

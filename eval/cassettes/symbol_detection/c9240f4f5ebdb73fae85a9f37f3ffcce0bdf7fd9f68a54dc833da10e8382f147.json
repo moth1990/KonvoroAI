@@ -1,0 +1,38 @@
+{
+  "answer": {
+    "input_tokens": 5617,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 109,
+    "payload": {
+      "symbols": [
+        {
+          "box": [
+            205,
+            583,
+            337,
+            742
+          ],
+          "family": "contactor",
+          "orientation": 0,
+          "role": "power_contact",
+          "sure": false,
+          "symbol_class": "contactor",
+          "tag": "C130,131"
+        },
+        {
+          "box": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "family": "terminal",
+          "sure": false,
+          "symbol_class": "terminal"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_detection"
+}

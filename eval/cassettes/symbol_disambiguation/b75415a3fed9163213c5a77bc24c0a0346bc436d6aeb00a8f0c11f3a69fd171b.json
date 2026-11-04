@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1737,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 164,
+    "payload": {
+      "confidence": 0.8,
+      "decision": "choose",
+      "reason": "הסמל הוא מפסק עם מגע מוטה, וו תרמי וסימון מגנטי, ולצידו כתוב 40A. בדרך כלל זה מא\"ז, אבל הזיהוי הראשוני כ-mccb נשמר כי הסמל מצויר כמכשיר עצמו ואין כיתוב שסותר זאת.}",
+      "symbol_class": "mccb"
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

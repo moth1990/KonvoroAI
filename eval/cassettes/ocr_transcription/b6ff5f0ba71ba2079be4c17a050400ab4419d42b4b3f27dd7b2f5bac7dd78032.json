@@ -1,0 +1,123 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 342,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            610,
+            47,
+            707,
+            104
+          ],
+          "legible": "clear",
+          "text": "שם"
+        },
+        {
+          "box": [
+            279,
+            47,
+            589,
+            104
+          ],
+          "legible": "clear",
+          "text": "הפרויקט"
+        },
+        {
+          "box": [
+            307,
+            160,
+            484,
+            243
+          ],
+          "legible": "clear",
+          "text": "בית"
+        },
+        {
+          "box": [
+            0,
+            160,
+            265,
+            243
+          ],
+          "legible": "unsure",
+          "text": "כנס"
+        },
+        {
+          "box": [
+            580,
+            376,
+            707,
+            430
+          ],
+          "legible": "clear",
+          "text": "מספר"
+        },
+        {
+          "box": [
+            193,
+            376,
+            550,
+            432
+          ],
+          "legible": "clear",
+          "text": "הפרויקט:"
+        },
+        {
+          "box": [
+            580,
+            603,
+            704,
+            657
+          ],
+          "legible": "clear",
+          "text": "מספר"
+        },
+        {
+          "box": [
+            305,
+            603,
+            545,
+            675
+          ],
+          "legible": "clear",
+          "text": "גיליון"
+        },
+        {
+          "box": [
+            585,
+            788,
+            680,
+            843
+          ],
+          "legible": "clear",
+          "text": "שם"
+        },
+        {
+          "box": [
+            360,
+            785,
+            545,
+            857
+          ],
+          "legible": "clear",
+          "text": "גיליון"
+        },
+        {
+          "box": [
+            545,
+            953,
+            707,
+            1013
+          ],
+          "legible": "unsure",
+          "text": "קנ\"מ:"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

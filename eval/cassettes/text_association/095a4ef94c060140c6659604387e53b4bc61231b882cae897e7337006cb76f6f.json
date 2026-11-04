@@ -1,0 +1,73 @@
+{
+  "answer": {
+    "input_tokens": 5485,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 389,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "confidence": 0.95,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s8"
+              ],
+              "value": 10
+            },
+            {
+              "confidence": 0.6,
+              "evidence": "graphic",
+              "graphic_note": "single line with one slash stroke across the breaker, no pole strokes beyond one",
+              "name": "poles",
+              "span_ids": [],
+              "value": 1
+            }
+          ],
+          "brand_hint": null,
+          "det": "d1",
+          "explicit_texts": [
+            "s5",
+            "s8"
+          ],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          },
+          "uses_shared_label": false
+        }
+      ],
+      "possible_missed": [],
+      "shared_labels": [],
+      "unassigned_spans": [
+        {
+          "reason": "(x5) is written on the outgoing line below the breaker, meaning outlets fed, not a device count",
+          "span_id": "s11"
+        },
+        {
+          "reason": "cable designation",
+          "span_id": "s14"
+        },
+        {
+          "reason": "busbar short-circuit rating, belongs to busbar",
+          "span_id": "s1"
+        },
+        {
+          "reason": "busbar rating",
+          "span_id": "s2"
+        },
+        {
+          "reason": "busbar rating",
+          "span_id": "s3"
+        },
+        {
+          "reason": "busbar rating",
+          "span_id": "s4"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

@@ -1,0 +1,132 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 405,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            500,
+            0,
+            555,
+            36
+          ],
+          "legible": "clear",
+          "text": "X2"
+        },
+        {
+          "box": [
+            781,
+            0,
+            836,
+            36
+          ],
+          "legible": "clear",
+          "text": "X2"
+        },
+        {
+          "box": [
+            156,
+            436,
+            201,
+            588
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3X2.5"
+        },
+        {
+          "box": [
+            160,
+            288,
+            201,
+            420
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "N2XY"
+        },
+        {
+          "box": [
+            445,
+            436,
+            490,
+            588
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3X2.5"
+        },
+        {
+          "box": [
+            447,
+            288,
+            490,
+            420
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "N2XY"
+        },
+        {
+          "box": [
+            715,
+            436,
+            760,
+            588
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3X2.5"
+        },
+        {
+          "box": [
+            717,
+            288,
+            760,
+            420
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "N2XY"
+        },
+        {
+          "box": [
+            518,
+            402,
+            568,
+            506
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "אולם"
+        },
+        {
+          "box": [
+            789,
+            398,
+            837,
+            502
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "אולם"
+        },
+        {
+          "box": [
+            236,
+            330,
+            285,
+            636
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "מסדרון+אולם"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

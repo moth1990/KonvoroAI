@@ -1,0 +1,145 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 462,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            146,
+            631,
+            189,
+            782
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3X1.5"
+        },
+        {
+          "box": [
+            149,
+            453,
+            189,
+            588
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "N2XY"
+        },
+        {
+          "box": [
+            224,
+            632,
+            271,
+            737
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "אורלם"
+        },
+        {
+          "box": [
+            224,
+            490,
+            271,
+            597
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "מאור"
+        },
+        {
+          "box": [
+            384,
+            631,
+            427,
+            782
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3X1.5"
+        },
+        {
+          "box": [
+            387,
+            452,
+            427,
+            588
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "N2XY"
+        },
+        {
+          "box": [
+            458,
+            632,
+            505,
+            737
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "אורלם"
+        },
+        {
+          "box": [
+            458,
+            490,
+            505,
+            597
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "מאור"
+        },
+        {
+          "box": [
+            756,
+            655,
+            799,
+            804
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "3X1.5"
+        },
+        {
+          "box": [
+            758,
+            475,
+            799,
+            611
+          ],
+          "legible": "clear",
+          "rotation": 90,
+          "text": "N2XY"
+        },
+        {
+          "box": [
+            829,
+            624,
+            882,
+            776
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "מטבחון"
+        },
+        {
+          "box": [
+            829,
+            455,
+            879,
+            590
+          ],
+          "legible": "unsure",
+          "rotation": 90,
+          "text": "מזכירות"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

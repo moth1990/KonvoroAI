@@ -1,0 +1,113 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 319,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            376,
+            10,
+            524,
+            78
+          ],
+          "legible": "clear",
+          "text": "לוח"
+        },
+        {
+          "box": [
+            205,
+            180,
+            402,
+            240
+          ],
+          "legible": "clear",
+          "text": "תאריך"
+        },
+        {
+          "box": [
+            587,
+            296,
+            780,
+            383
+          ],
+          "legible": "clear",
+          "text": "שרטט:"
+        },
+        {
+          "box": [
+            117,
+            296,
+            583,
+            383
+          ],
+          "legible": "unsure",
+          "text": "ליעד-תהילה"
+        },
+        {
+          "box": [
+            333,
+            366,
+            483,
+            412
+          ],
+          "legible": "clear",
+          "text": "ירדני"
+        },
+        {
+          "box": [
+            441,
+            466,
+            661,
+            518
+          ],
+          "legible": "clear",
+          "text": "למכרז:"
+        },
+        {
+          "box": [
+            716,
+            641,
+            892,
+            704
+          ],
+          "legible": "unsure",
+          "text": "מהנדס"
+        },
+        {
+          "box": [
+            550,
+            641,
+            707,
+            704
+          ],
+          "legible": "unsure",
+          "text": "חשמל"
+        },
+        {
+          "box": [
+            862,
+            812,
+            1024,
+            873
+          ],
+          "legible": "unsure",
+          "text": "050-6"
+        },
+        {
+          "box": [
+            330,
+            933,
+            413,
+            972
+          ],
+          "legible": "clear",
+          "text": "LTD"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

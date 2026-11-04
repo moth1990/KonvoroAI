@@ -1,0 +1,44 @@
+{
+  "answer": {
+    "input_tokens": 5074,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 234,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [],
+          "brand_hint": null,
+          "det": "d1",
+          "explicit_texts": [],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          },
+          "uses_shared_label": false
+        }
+      ],
+      "possible_missed": [],
+      "shared_labels": [],
+      "unassigned_spans": [
+        {
+          "reason": "Hebrew label 'light sensor' (חיישן אור), names a load/device, not a value for the socket",
+          "span_id": "s1"
+        },
+        {
+          "reason": "part of the 'light sensor' name",
+          "span_id": "s2"
+        },
+        {
+          "reason": "name of the photoelectric device, not the socket",
+          "span_id": "s3"
+        },
+        {
+          "reason": "part of a device name label",
+          "span_id": "s4"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

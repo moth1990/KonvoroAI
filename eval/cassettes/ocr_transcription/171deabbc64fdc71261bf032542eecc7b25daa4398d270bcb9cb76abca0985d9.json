@@ -1,0 +1,133 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 353,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            678,
+            308,
+            764,
+            346
+          ],
+          "legible": "clear",
+          "text": "40A"
+        },
+        {
+          "box": [
+            145,
+            391,
+            269,
+            424
+          ],
+          "legible": "clear",
+          "text": "4x40A"
+        },
+        {
+          "box": [
+            140,
+            437,
+            255,
+            471
+          ],
+          "legible": "clear",
+          "text": "0.03A"
+        },
+        {
+          "box": [
+            128,
+            480,
+            153,
+            510
+          ],
+          "legible": "clear",
+          "text": "A"
+        },
+        {
+          "box": [
+            180,
+            480,
+            252,
+            511
+          ],
+          "legible": "clear",
+          "text": "דגם"
+        },
+        {
+          "box": [
+            508,
+            482,
+            780,
+            536
+          ],
+          "legible": "unsure",
+          "text": "שעיקה"
+        },
+        {
+          "box": [
+            22,
+            601,
+            116,
+            659
+          ],
+          "legible": "clear",
+          "text": "16A"
+        },
+        {
+          "box": [
+            336,
+            601,
+            428,
+            659
+          ],
+          "legible": "clear",
+          "text": "16A"
+        },
+        {
+          "box": [
+            623,
+            601,
+            714,
+            659
+          ],
+          "legible": "clear",
+          "text": "16A"
+        },
+        {
+          "box": [
+            894,
+            601,
+            986,
+            659
+          ],
+          "legible": "clear",
+          "text": "16A"
+        },
+        {
+          "box": [
+            14,
+            765,
+            68,
+            802
+          ],
+          "legible": "clear",
+          "text": "X2"
+        },
+        {
+          "box": [
+            878,
+            765,
+            932,
+            802
+          ],
+          "legible": "clear",
+          "text": "X2"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

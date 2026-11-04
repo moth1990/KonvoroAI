@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1718,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 131,
+    "payload": {
+      "confidence": 0.6,
+      "decision": "choose",
+      "reason": "הסמל מציג מגע מתג עם פס קצר חוצה במגע הקבוע, ובנוסף סימון של שחרור תרמי/הפעלה, ללא x של מא\"ז, ולכן זה מנתק או מפסק עומס.}",
+      "symbol_class": "switch_disconnector"
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

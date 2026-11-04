@@ -1,0 +1,33 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 69,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            715,
+            437,
+            826,
+            483
+          ],
+          "legible": "clear",
+          "text": "ראשי"
+        },
+        {
+          "box": [
+            851,
+            437,
+            970,
+            487
+          ],
+          "legible": "clear",
+          "text": "מפסק"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

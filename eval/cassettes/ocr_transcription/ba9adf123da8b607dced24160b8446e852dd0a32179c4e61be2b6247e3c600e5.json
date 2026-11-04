@@ -1,0 +1,53 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 126,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            771,
+            377,
+            863,
+            434
+          ],
+          "legible": "clear",
+          "text": "100"
+        },
+        {
+          "box": [
+            272,
+            514,
+            343,
+            555
+          ],
+          "legible": "clear",
+          "text": "הזנה"
+        },
+        {
+          "box": [
+            165,
+            514,
+            252,
+            555
+          ],
+          "legible": "clear",
+          "text": "מלוח"
+        },
+        {
+          "box": [
+            75,
+            514,
+            150,
+            555
+          ],
+          "legible": "clear",
+          "text": "ראשי"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

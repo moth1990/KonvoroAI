@@ -1,0 +1,57 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 149,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            196,
+            393,
+            288,
+            451
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "200"
+        },
+        {
+          "box": [
+            513,
+            393,
+            602,
+            451
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "201"
+        },
+        {
+          "box": [
+            534,
+            596,
+            688,
+            700
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "לוח"
+        },
+        {
+          "box": [
+            212,
+            596,
+            452,
+            700
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "משנה"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}

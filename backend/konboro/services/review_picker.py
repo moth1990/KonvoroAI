@@ -35,13 +35,12 @@ from konboro.contracts.merge import AttributeValue, Component, MissingInstance
 from konboro.db import models as m
 from konboro.db.ids import new_id
 from konboro.pipeline.association import schemas
-from konboro.pipeline.audit.differences import describe
 from konboro.pipeline.bom.terms import UNTYPED
 from konboro.pipeline.detection.library import FAMILIES
 from konboro.pipeline.matching import catalog, factory, match, notes
 from konboro.pipeline.pricing import load as pricing_load
 from konboro.pipeline.pricing.edits import Rematch, Replaced
-from konboro.pipeline.pricing.lines import alternative, confidence_reason, match_reasons, values_of
+from konboro.pipeline.pricing.lines import alternative, confidence_reason, match_reasons, unmatched_description
 from konboro.services import price_list as pl
 from konboro.services.review import (
     Ctx,
@@ -285,9 +284,7 @@ def rematch(ctx: Ctx, row: m.QuoteLine, values: dict[str, Any], brand: str | Non
     return Rematch(
         sku=x.chosen_sku,
         manufacturer=item.manufacturer if item else None,
-        description=item.description
-        if item
-        else describe(component.family, component.symbol_class, values_of(component)),
+        description=item.description if item else unmatched_description(component, x),
         catalog_item_id=match.item_of(x, inp.catalog),
         reasons=tuple(reasons),
         alternatives=tuple(alternative(a) for a in x.alternatives),

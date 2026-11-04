@@ -1,0 +1,35 @@
+{
+  "answer": {
+    "input_tokens": 2364,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 84,
+    "payload": {
+      "words": [
+        {
+          "box": [
+            841,
+            512,
+            925,
+            557
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "ראשי"
+        },
+        {
+          "box": [
+            935,
+            512,
+            1016,
+            557
+          ],
+          "legible": "clear",
+          "rotation": 0,
+          "text": "מלוח"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "ocr_transcription"
+}
