@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  canMark,
   confidenceText,
+  dragRect,
   findingBox,
   firstPage,
   focusRect,
@@ -16,6 +18,7 @@ import {
   stripLabel,
   stripTag,
   toViewport,
+  tooSmall,
 } from "./drawingModel";
 import { finding, line, page, panel, quote } from "./fixtures";
 
@@ -193,5 +196,34 @@ describe("paging (09 §8)", () => {
       pageId: p5.page_id,
       bbox: [1, 2, 3, 4],
     });
+  });
+});
+
+describe("draw mode (09 §6.6, S23b)", () => {
+  const size = { width: 842, height: 595 };
+
+  it("a drag is a rectangle in PDF points, whichever corner it started from, inside the page", () => {
+    expect(dragRect({ x: 200.123, y: 150 }, { x: 120, y: 90.456 }, size)).toEqual([120, 90.46, 200.12, 150]);
+    expect(dragRect({ x: -5, y: 10 }, { x: 900, y: 700 }, size)).toEqual([0, 10, 842, 595]);
+  });
+
+  it("a rectangle under 10 points either way is not a mark", () => {
+    expect(tooSmall([0, 0, 9.99, 40])).toBe(true);
+    expect(tooSmall([0, 0, 40, 9])).toBe(true);
+    expect(tooSmall([0, 0, 10, 10])).toBe(false);
+  });
+
+  it("only a parsed page with its image, on a draft", () => {
+    expect(canMark(p5, false)).toBe(true);
+    expect(canMark(p5, true)).toBe(false);
+    expect(canMark(p4, false)).toBe(false);
+    expect(canMark(page(9, { has_viewer: false }), false)).toBe(false);
+    expect(canMark(undefined, false)).toBe(false);
+  });
+
+  it("a line the estimator added is drawn in the accent color, whatever its status", () => {
+    const added = line({ line_type: "manual", status: "red", boxes: [at(p5, [10, 10, 40, 40])] });
+    const [box] = overlays(quote([panel("A", [added])]), p5, { selected: null, filter: "all", activePanelId: null });
+    expect(box?.tone).toBe("m");
   });
 });

@@ -4,7 +4,7 @@ import { createPortal } from "react-dom";
 
 import { API_BASE } from "../../api/client";
 import { getToken } from "../../api/token";
-import { focusRect, toViewport, type Overlay, type Page, type PanelFrame } from "./drawingModel";
+import { dragRect, focusRect, toViewport, type Overlay, type Page, type PanelFrame } from "./drawingModel";
 
 // OpenSeadragon logs whole objects in its warnings ("Ignoring tile %s"), a tile's ajax headers included, and so the
 // bearer token: in the browser's console, and in `make dev`'s terminal, which Vite forwards it to. Keep the text only.
@@ -47,6 +47,9 @@ export interface ViewerProps {
   focus: FocusRequest | null;
   onSelectLine: (lineId: string) => void;
   onSelectPanel: (panelId: string) => void;
+  /** 09 §6.6 draw mode: a drag draws a rectangle instead of moving the page; its corners come back in PDF points. */
+  drawing?: boolean;
+  onDrawn?: (bbox: number[]) => void;
 }
 
 function reducedMotion(): boolean {
@@ -222,30 +225,110 @@ export const Viewer = forwardRef<ViewerHandle, ViewerProps>(function Viewer(prop
     [],
   );
 
+  // Draw mode: the page stays still under the pointer (and under a finger on the phone, S23b decision 6).
+  const drawing = !!props.drawing && !!size;
+  useEffect(() => {
+    osd.current?.setMouseNavEnabled(!drawing);
+  }, [drawing]);
+  const toPoints = (clientX: number, clientY: number) => {
+    const viewer = osd.current;
+    const el = host.current;
+    const item = viewer?.world.getItemAt(0);
+    if (!viewer || !el || !item || !size) return null;
+    const r = el.getBoundingClientRect();
+    const px = viewer.viewport.viewerElementToImageCoordinates(
+      new OpenSeadragon.Point(clientX - r.left, clientY - r.top),
+    );
+    const scale = size.w / item.getContentSize().x;
+    return { x: px.x * scale, y: px.y * scale };
+  };
+
   return (
-    <div
-      className="osd"
-      ref={host}
-      dir="ltr"
-      data-testid="viewer"
-      data-page={pageId}
-      data-state={hasViewer ? (ready ? "ready" : "loading") : "none"}
-    >
-      {size
-        ? createPortal(
-            <Boxes
-              width={size.w}
-              height={size.h}
-              overlays={props.overlays}
-              frames={props.frames}
-              findingBox={props.findingBox}
-            />,
-            layer,
-          )
-        : null}
-    </div>
+    <>
+      {drawing ? <DrawLayer toPoints={toPoints} size={size} onDrawn={(b) => props.onDrawn?.(b)} /> : null}
+      <div
+        className={`osd${drawing ? " drawing" : ""}`}
+        ref={host}
+        dir="ltr"
+        data-testid="viewer"
+        data-page={pageId}
+        data-state={hasViewer ? (ready ? "ready" : "loading") : "none"}
+      >
+        {size
+          ? createPortal(
+              <Boxes
+                width={size.w}
+                height={size.h}
+                overlays={props.overlays}
+                frames={props.frames}
+                findingBox={props.findingBox}
+              />,
+              layer,
+            )
+          : null}
+      </div>
+    </>
   );
 });
+
+/**
+ * 09 §6.6 steps 1–2: over the page, a crosshair; a drag draws the rectangle and its release gives its corners in PDF
+ * points. A pointer, so a mouse and a finger draw the same way.
+ */
+function DrawLayer(props: {
+  toPoints: (x: number, y: number) => { x: number; y: number } | null;
+  size: { w: number; h: number } | null;
+  onDrawn: (bbox: number[]) => void;
+}) {
+  const [band, setBand] = useState<{ x0: number; y0: number; x1: number; y1: number } | null>(null);
+  const start = useRef<{ clientX: number; clientY: number } | null>(null);
+  const local = (el: HTMLElement, x: number, y: number) => {
+    const r = el.getBoundingClientRect();
+    return { x: x - r.left, y: y - r.top };
+  };
+  return (
+    <div
+      className="draw-layer"
+      data-testid="draw-layer"
+      onPointerDown={(e) => {
+        e.currentTarget.setPointerCapture(e.pointerId);
+        start.current = { clientX: e.clientX, clientY: e.clientY };
+        const p = local(e.currentTarget, e.clientX, e.clientY);
+        setBand({ x0: p.x, y0: p.y, x1: p.x, y1: p.y });
+      }}
+      onPointerMove={(e) => {
+        if (!start.current) return;
+        const p = local(e.currentTarget, e.clientX, e.clientY);
+        setBand((b) => (b ? { ...b, x1: p.x, y1: p.y } : b));
+      }}
+      onPointerUp={(e) => {
+        const from = start.current;
+        start.current = null;
+        setBand(null);
+        if (!from || !props.size) return;
+        const a = props.toPoints(from.clientX, from.clientY);
+        const b = props.toPoints(e.clientX, e.clientY);
+        if (a && b) props.onDrawn(dragRect(a, b, { width: props.size.w, height: props.size.h }));
+      }}
+      onPointerCancel={() => {
+        start.current = null;
+        setBand(null);
+      }}
+    >
+      {band ? (
+        <div
+          className="draw-band"
+          style={{
+            left: Math.min(band.x0, band.x1),
+            top: Math.min(band.y0, band.y1),
+            width: Math.abs(band.x1 - band.x0),
+            height: Math.abs(band.y1 - band.y0),
+          }}
+        />
+      ) : null}
+    </div>
+  );
+}
 
 function zoomBy(viewer: OpenSeadragon.Viewer | null, factor: number): void {
   if (!viewer) return;

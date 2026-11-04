@@ -1372,6 +1372,11 @@ a.list-item:hover {
   stroke-dasharray: 6 4;
   fill: color-mix(in srgb, var(--bad) 8%, transparent);
 }
+/* A line the estimator added (09 §6.5): the accent color, like the prototype's manual rows. */
+.hl-layer .hl.m {
+  stroke: var(--accent);
+  fill: color-mix(in srgb, var(--accent) 8%, transparent);
+}
 .hl-layer .hl.dim {
   opacity: 0.3;
 }
@@ -1856,4 +1861,85 @@ table.tbl {
   padding: 8px 14px;
   color: var(--muted);
   font-size: 13px;
+}
+
+/* --- S23b: the product picker, draw mode (09 §6.4, §6.6; no prototype screen, built from its classes) --- */
+.viewer .osd.drawing {
+  cursor: crosshair;
+}
+.viewer .draw-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  cursor: crosshair;
+  touch-action: none;
+}
+.viewer .draw-band {
+  position: absolute;
+  border: 2px solid var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  border-radius: 2px;
+  pointer-events: none;
+}
+.viewer .draw-hint {
+  position: absolute;
+  top: 52px;
+  inset-inline-start: 50%;
+  transform: translateX(50%);
+  z-index: 4;
+  background: var(--fg);
+  color: var(--bg);
+  border-radius: var(--r);
+  padding: 6px 12px;
+  font-size: 13px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+[dir="ltr"] .viewer .draw-hint {
+  transform: translateX(-50%);
+}
+.modal.picker {
+  width: min(560px, 100%);
+  max-height: calc(100vh - 32px);
+  grid-template-rows: auto auto auto minmax(0, 1fr) auto;
+}
+.picker-list {
+  display: grid;
+  align-content: start;
+  gap: 2px;
+  overflow: auto;
+  min-height: 120px;
+  max-height: 50vh;
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  padding: 4px;
+}
+.picker-list > .small {
+  padding: 10px;
+}
+.picker-list .pick {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  border-radius: var(--r-sm);
+  cursor: pointer;
+}
+.picker-list .pick > .num {
+  white-space: nowrap;
+}
+.picker-list .pick[aria-selected="true"] {
+  background: var(--accent-soft);
+}
+.detail .attr-sel {
+  width: auto;
+  padding: 3px 8px;
+  font-weight: 600;
+}
+.detail .brand-bulk {
+  background: var(--surface-2);
+  padding: 6px 8px;
+  border-radius: var(--r-sm);
+  flex-wrap: wrap;
 }

@@ -68,6 +68,7 @@ class LineIn:
     override: dict[str, Any] | None = None
     edits: dict[str, Any] = field(default_factory=dict)  # the review screen's (migration 0018)
     approved_at: datetime | None = None
+    boxes: list[dict[str, Any]] = field(default_factory=list)  # a line with no component (migration 0019)
 
 
 def write_lines(
@@ -128,6 +129,7 @@ def write_lines(
                 override=line.override,
                 edits=line.edits,
                 approved_at=line.approved_at,
+                boxes=line.boxes,
             )
         )
         session.flush()  # a child line's foreign key needs its parent's row
@@ -230,6 +232,8 @@ class LineView:
     supplier_id: str | None = None  # chosen for this quote only; None: the list's order (07 §7.2.2)
     price_hints: list["PriceHint"] = field(default_factory=list)  # "קרובים במחירון: …", on a line with no price
     qty_editable: bool = False  # 09 §7.5: a component or manual line, not a kit's part
+    attribute_options: dict[str, list[str]] = field(default_factory=dict)  # 09 §6.4: an editable value's list
+    list_price_brand: str | None = None  # 09 §7.13: the brand of an unpriced line whose item has a list price
 
 
 @dataclass(frozen=True)
@@ -371,6 +375,8 @@ def read_quote(session: Session, tenant_id: str, quote_id: str) -> QuoteView | N
     settings = session.get(m.TenantSettings, tenant_id)
     floor = settings.min_line_margin if settings else None
     extra = _pricing_details(session, quote, version, lines) if version.status == "draft" else PricingDetails()
+    if version.status == "draft":
+        _picker_details(session, lines, components, extra)
     removed = _removed(session, version)
 
     by_panel: dict[str | None, list[m.QuoteLine]] = {}
@@ -427,6 +433,8 @@ class PricingDetails:
     fresh: dict[str, Decimal] = field(default_factory=dict)
     suppliers: dict[str, list[SupplierChoice]] = field(default_factory=dict)
     hints: dict[str, list[PriceHint]] = field(default_factory=dict)
+    options: dict[str, dict[str, list[str]]] = field(default_factory=dict)  # line id → attribute → values (S23b)
+    list_brands: dict[str, str] = field(default_factory=dict)  # line id → its item's brand, for a bulk discount
 
 
 HINTS = 3
@@ -436,6 +444,34 @@ CURRENT = re.compile(r"(\d+(?:\.\d+)?)\s*A\b")
 def _current(text: str) -> float | None:
     found = CURRENT.search(text)
     return float(found.group(1)) if found else None
+
+
+def _picker_details(
+    session: Session, lines: Sequence[m.QuoteLine], components: Mapping[str, m.Component], out: PricingDetails
+) -> None:
+    """S23b: on a draft, the values an editable attribute can take (09 §6.4, a component line only), and for an
+    unpriced line whose catalog item has a list price, its brand for "כל המוצרים של X" (09 §7.13)."""
+    from konboro.services.review_picker import attribute_options  # it reads this module's views
+
+    heads = [ln for ln in lines if ln.line_type == "component" and not ln.parent_line_id and ln.component_id]
+    families = {components[ln.component_id or ""].family for ln in heads if ln.component_id in components}
+    options = attribute_options(session, families)
+    for ln in heads:
+        cmp = components.get(ln.component_id or "")
+        if cmp is not None and cmp.family in options:
+            out.options[ln.id] = options[cmp.family]
+    unpriced = {ln.catalog_item_id for ln in lines if ln.unit_price is None and ln.catalog_item_id}
+    if unpriced:
+        listed = dict(
+            session.execute(
+                select(m.CatalogItem.id, m.CatalogItem.brand).where(
+                    m.CatalogItem.id.in_(unpriced), m.CatalogItem.list_price.is_not(None)
+                )
+            ).all()
+        )
+        for ln in lines:
+            if ln.unit_price is None and ln.catalog_item_id in listed and not ln.override:
+                out.list_brands[ln.id] = listed[ln.catalog_item_id]
 
 
 def _pricing_details(
@@ -620,6 +656,12 @@ def _by_id(session: Session, model: type[Any], tenant_id: str, ids: set[str]) ->
 
 # Attribute keys that are not a family attribute: the circuit's load is shown beside the tags, not as a source.
 NOTE_ATTRIBUTE = "load"
+# The S09 fixture's key for the current, named as the schema names it so the screen can edit it (09 §6.4)
+EDITABLE_ALIASES = {"current": "current_a"}
+
+
+def _plain(v: Any) -> str:
+    return format(Decimal(str(v)).normalize(), "f")
 
 
 def _line_view(
@@ -628,7 +670,7 @@ def _line_view(
     attributes: dict[str, Any] = cmp.attributes if cmp else {}
     sources = [
         SourceView(
-            attribute=name,
+            attribute=EDITABLE_ALIASES.get(name, name),
             value=None if a.get("value") is None else str(a["value"]),
             source=a.get("source") or "missing",
             detail=a.get("detail"),
@@ -636,6 +678,15 @@ def _line_view(
         )
         for name, a in attributes.items()
         if name != NOTE_ATTRIBUTE
+    ]
+    options = extra.options.get(ln.id, {}) if extra else {}
+    user = (ln.edits or {}).get("attrs") or {}
+    for name in options:  # 09 §6.4 "שורה בלי התאמה": an editable value not read at all is an empty list
+        if not any(x.attribute == name for x in sources):
+            sources.append(SourceView(name, None, "missing", None, None))
+    sources = [  # 09 §7.4: the user's value, "נקבע ידנית"
+        SourceView(x.attribute, _plain(user[x.attribute]), "user", None, None) if x.attribute in user else x
+        for x in sources
     ]
     note = attributes.get(NOTE_ATTRIBUTE, {}).get("value")
     return LineView(
@@ -670,7 +721,7 @@ def _line_view(
         alternatives=list(ln.alternatives),
         derived=ln.derived,
         approved=ln.approved_at is not None,
-        boxes=[BoxView(i["page_id"], list(i["bbox"])) for i in (cmp.instances if cmp else []) if i.get("bbox")],
+        boxes=[BoxView(i["page_id"], list(i["bbox"])) for i in (cmp.instances if cmp else ln.boxes) if i.get("bbox")],
         product_id=ln.product_id,
         override=bool(ln.override),
         fresh_price=extra.fresh.get(ln.id) if extra else None,
@@ -679,6 +730,8 @@ def _line_view(
         supplier_id=(ln.edits or {}).get("supplier_id"),
         price_hints=extra.hints.get(ln.id, []) if extra else [],
         qty_editable=ln.line_type in ("component", "manual") and ln.parent_line_id is None,
+        attribute_options=options,
+        list_price_brand=extra.list_brands.get(ln.id) if extra else None,
     )
 
 

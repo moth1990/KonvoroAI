@@ -68,7 +68,6 @@ FLAGS = [
     {"key": "home_chat", "description": "מסך בית כשיחה (13 §4.3)", "depends_on": []},
     {"key": "voice_input", "description": "הקלטה קולית (13 §4.2)", "depends_on": ["chat_quote_builder"]},
     # S09 decision 2: on while the screen is being built, removed when it is complete (S23).
-    {"key": "review_screen", "description": "מסך הבדיקה, בבנייה (09). יוסר ב-S23", "depends_on": []},
     # S14 decision 1: an unsure BOM column mapping stops for the user on the confirmation step.
     {"key": "bom_column_mapping", "description": "אישור מיפוי עמודות בכתב כמויות (01 §5.8)", "depends_on": []},
     # S15: the quote audit's API (11); its screen is S16's.
@@ -380,7 +379,6 @@ def seed_demo_fixtures(session: Session, storage: "Storage") -> None:
     from konboro.devtools.fixtures import audit_993, nursery
 
     session.execute(text("SELECT set_config('app.tenant_id', :t, true)"), {"t": DEMO_TENANT})
-    nursery.enable_flag(session, DEMO_TENANT)
     nursery.seed_nursery(session, DEMO_TENANT)
     nursery.seed_nursery_pages(session, storage, DEMO_TENANT)
     audit_993.enable_flag(session, DEMO_TENANT)

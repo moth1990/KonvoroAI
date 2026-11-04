@@ -10,6 +10,8 @@ A line's edits are carried by its key (S22 decision 5), through a recalculation 
 | a supplier for this quote (07 §7.2.2 step 1) | the cost from that supplier; the sale price too when a rule makes it |
 | an approval (09 §7.2) | green, tagged "אושר": every other reason is kept, as green, except the price's |
 | a dismissed finding (09 §7.7) | the finding's reason leaves the line |
+| an attribute (09 §7.4, S23b) | stage 5's answer with the user's value (`match`); the line priced anew |
+| a missing line resolved (09 §7.8) | a component line with the product picked, approved |
 
 After an action the quote is priced again with every line the action did not touch keeping its price (`Kept`): a draft
 never changes by itself when the price list does (07 §7.2.3), only the lines the estimator acted on do. A kept price
@@ -22,7 +24,7 @@ from datetime import datetime
 from decimal import Decimal
 from typing import Any
 
-from .book import NO_PRODUCT, Book, Priced, price
+from .book import NO_PRODUCT, Book, Priced, own_id, price
 from .lines import NO_SKU, Draft
 
 APPROVED: dict[str, Any] = {"source": "user", "value": "approved", "status": "green"}
@@ -36,6 +38,36 @@ class Replaced:
     manufacturer: str | None
     description: str
     catalog_item_id: str | None = None
+    product_id: str | None = None  # a price-list product picked with no catalog item (09 §7.8, S23b)
+
+    def as_json(self) -> dict[str, Any]:
+        out = {
+            "sku": self.sku,
+            "manufacturer": self.manufacturer,
+            "description": self.description,
+            "catalog_item_id": self.catalog_item_id,
+        }
+        if self.product_id:
+            out["product_id"] = self.product_id
+        return out
+
+    @classmethod
+    def of(cls, r: Mapping[str, Any]) -> "Replaced":
+        return cls(r.get("sku"), r.get("manufacturer"), r["description"], r.get("catalog_item_id"), r.get("product_id"))
+
+
+@dataclass(frozen=True)
+class Rematch:
+    """Stage 5 again for the line after the user set an attribute (09 §7.4), in code (S23b decision 3): what it
+    chose, why, and the reasons it gives the line (07 §7.5)."""
+
+    sku: str | None
+    manufacturer: str | None
+    description: str
+    catalog_item_id: str | None
+    reasons: tuple[Mapping[str, Any], ...]
+    alternatives: tuple[Mapping[str, Any], ...] = ()
+    explanation: str | None = None
 
     def as_json(self) -> dict[str, Any]:
         return {
@@ -43,7 +75,22 @@ class Replaced:
             "manufacturer": self.manufacturer,
             "description": self.description,
             "catalog_item_id": self.catalog_item_id,
+            "reasons": [dict(r) for r in self.reasons],
+            "alternatives": [dict(a) for a in self.alternatives],
+            "explanation": self.explanation,
         }
+
+    @classmethod
+    def of(cls, r: Mapping[str, Any]) -> "Rematch":
+        return cls(
+            r.get("sku"),
+            r.get("manufacturer"),
+            r["description"],
+            r.get("catalog_item_id"),
+            tuple(r.get("reasons", ())),
+            tuple(r.get("alternatives", ())),
+            r.get("explanation"),
+        )
 
 
 @dataclass(frozen=True)
@@ -52,6 +99,9 @@ class LineEdits:
     supplier_id: str | None = None
     replaced: Replaced | None = None
     approved_at: datetime | None = None
+    attrs: Mapping[str, Any] | None = None  # attribute → the value the user set (09 §7.4)
+    match: Rematch | None = None  # stage 5's answer with those values
+    resolved: bool = False  # a missing line the user picked a product for (09 §7.8)
 
     @classmethod
     def of(cls, edits: Mapping[str, Any] | None, approved_at: datetime | None = None) -> "LineEdits":
@@ -60,10 +110,11 @@ class LineEdits:
         return cls(
             qty=Decimal(str(e["qty"])) if e.get("qty") is not None else None,
             supplier_id=e.get("supplier_id"),
-            replaced=Replaced(r.get("sku"), r.get("manufacturer"), r["description"], r.get("catalog_item_id"))
-            if r
-            else None,
+            replaced=Replaced.of(r) if r else None,
             approved_at=approved_at,
+            attrs=e.get("attrs") or None,
+            match=Rematch.of(e["match"]) if e.get("match") else None,
+            resolved=bool(e.get("resolved")),
         )
 
     def as_json(self) -> dict[str, Any]:
@@ -75,11 +126,22 @@ class LineEdits:
             out["supplier_id"] = self.supplier_id
         if self.replaced is not None:
             out["replaced"] = self.replaced.as_json()
+        if self.attrs:
+            out["attrs"] = dict(self.attrs)
+        if self.match is not None:
+            out["match"] = self.match.as_json()
+        if self.resolved:
+            out["resolved"] = True
         return out
 
     @property
     def empty(self) -> bool:
         return self == LineEdits()
+
+    @property
+    def reprices(self) -> bool:
+        """The edit changes the line's product, so its price comes from the list again."""
+        return self.replaced is not None or self.supplier_id is not None or self.match is not None
 
 
 @dataclass(frozen=True)
@@ -116,16 +178,39 @@ def apply(
     out = line
     if e.qty is not None:
         out = replace(out, qty=e.qty)
+    if e.match is not None:
+        x = e.match
+        product = book.find(None, x.catalog_item_id, x.sku, x.manufacturer) if x.sku else None
+        out = replace(
+            out,
+            sku=x.sku,
+            manufacturer=x.manufacturer,
+            description=x.description,
+            catalog_item_id=x.catalog_item_id,
+            product_id=own_id(product),
+            unit=product.unit if product else out.unit,
+            alternatives=[dict(a) for a in x.alternatives],
+            explanation=x.explanation,
+            # the match's reasons are stage 5's new answer; the validator's stay until the rules run again
+            reasons=[dict(r) for r in x.reasons] + [r for r in out.reasons if r.get("source") == "validator"],
+        )
+    if e.resolved:
+        out = replace(
+            out,
+            line_type="component",
+            reasons=[{"source": "match", "value": "resolved", "status": "green"}],
+            explanation=None,
+        )
     if e.replaced is not None:
         r = e.replaced
-        product = book.product(r.catalog_item_id, r.sku) if r.sku else None
+        product = book.find(r.product_id, r.catalog_item_id, r.sku, r.manufacturer) if r.sku or r.product_id else None
         out = replace(
             out,
             sku=r.sku,
             manufacturer=r.manufacturer,
             description=r.description,
             catalog_item_id=r.catalog_item_id,
-            product_id=product.product_id if product else None,
+            product_id=own_id(product),
             unit=product.unit if product else out.unit,
             alternatives=[a for a in out.alternatives if a.get("sku") != r.sku or not r.sku],
         )
@@ -144,17 +229,15 @@ def _priced(line: Draft, e: LineEdits, book: Book, kept: Kept | None) -> Priced:
         return line.priced  # "included": the device's product prices it (05 §5.9.1)
     if kept is not None and kept.product_id == line.product_id and kept.sku == line.sku:
         return kept.priced
-    if e.replaced is None and e.supplier_id is None:
+    if not e.reprices:
         return line.priced  # stage 7's own price stands
     return price_line(line, book, e.supplier_id)
 
 
 def price_line(line: Draft, book: Book, supplier_id: str | None = None) -> Priced:
-    """The line's price from the list today: its product (by id, else by catalog item or SKU), from the supplier
-    chosen for the line when there is one."""
-    product = book.product_by_id(line.product_id) or (
-        book.product(line.catalog_item_id, line.sku) if line.sku else None
-    )
+    """The line's price from the list today: its product (by id, else by catalog item or SKU, else the catalog item at
+    the brand discount), from the supplier chosen for the line when there is one."""
+    product = book.find(line.product_id, line.catalog_item_id, line.sku, line.manufacturer)
     if product is None:
         return NO_SKU if not line.sku else NO_PRODUCT
     return price(product, book, supplier_id)

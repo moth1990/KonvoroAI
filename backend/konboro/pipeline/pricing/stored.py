@@ -54,6 +54,7 @@ def draft_of(row: m.QuoteLine, keys: dict[str, str]) -> Draft:
         reasons=stored_reasons(row.status_reasons),
         issue_ids=list(row.issue_ids),
         override=row.override,
+        boxes=list(row.boxes),
         query_failed=any(r.get("source") == "match" and r.get("value") == "unmatched" for r in row.status_reasons)
         and row.line_type in ("derived", "labor"),
     )
@@ -68,12 +69,18 @@ def book_for(
 ) -> Book:
     """The products the lines point at, by id or SKU, and the alternatives chosen on them; `also`: more products,
     by id."""
-    skus = {r.sku for r in rows if r.sku} | {
-        str(r.edits["replaced"]["sku"]) for r in rows if (r.edits or {}).get("replaced", {}).get("sku")
-    }
+    skus = {r.sku for r in rows if r.sku}
+    picked = set(also)
+    for r in rows:
+        for edit in ("replaced", "match"):
+            x = (r.edits or {}).get(edit) or {}
+            if x.get("sku"):
+                skus.add(str(x["sku"]))
+            if x.get("product_id"):
+                picked.add(str(x["product_id"]))
     items = load.catalog_items_by_sku(session, skus)
     found = load.products(
-        session, version.tenant_id, items, skus, {r.product_id for r in rows if r.product_id} | set(also)
+        session, version.tenant_id, items, skus, {r.product_id for r in rows if r.product_id} | picked
     )
     on = version.quote_date or date.today()
     return load.book_of(session, version.tenant_id, on, quote.customer_id, items, found)[0]
@@ -145,6 +152,7 @@ def _write_back(row: m.QuoteLine, d: Draft) -> None:
     p = d.priced
     a = t.line_amounts(d.qty, p.unit_price, p.unit_cost)
     values: dict[str, Any] = {
+        "line_type": d.line_type,  # a missing line the user resolved is a component line (09 §7.8)
         "qty": d.qty,
         "sku": d.sku,
         "description": d.description,

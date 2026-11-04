@@ -15,7 +15,7 @@ from konboro.db.seed import seed_global
 from konboro.db.session import tenant_session
 from konboro.devtools.fixtures.nursery import seed_nursery
 
-from .api import Api, set_tenant_flag
+from .api import Api
 
 pytestmark = pytest.mark.integration
 
@@ -27,8 +27,6 @@ def quote_id(api: Api, migrated_db: dict[str, Engine]) -> Iterator[str]:
     with tenant_session(api.a.tenant_id, api.engine) as s:
         qid = seed_nursery(s, api.a.tenant_id)
     assert qid is not None
-    for t in (api.a, api.b):
-        set_tenant_flag(api.engine, t.tenant_id, "review_screen", True)
     yield qid
 
 
@@ -109,11 +107,6 @@ def test_refusals(api: Api, quote_id: str) -> None:
     assert (
         change(api, quote_id, no_product["line_id"], {"unit_price": "10", "scope": "quote"}, api.b).status_code == 404
     )
-    set_tenant_flag(api.engine, api.a.tenant_id, "review_screen", False)
-    try:
-        assert change(api, quote_id, no_product["line_id"], {"unit_price": "10", "scope": "quote"}).status_code == 404
-    finally:
-        set_tenant_flag(api.engine, api.a.tenant_id, "review_screen", True)
 
 
 def test_a_sent_quote_never_changes(api: Api, quote_id: str) -> None:

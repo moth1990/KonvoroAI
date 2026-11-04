@@ -733,6 +733,66 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/quotes/{quote_id}/lines/{line_id}/attribute": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Set Attribute
+         * @description 09 §7.4: current or breaking capacity set by hand; stage 5 for the line in code, then stages 6 and 7.
+         */
+        post: operations["set_attribute_quotes__quote_id__lines__line_id__attribute_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/quotes/{quote_id}/lines/{line_id}/brand-discount": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Set Brand Discount
+         * @description 09 §7.13: "כל המוצרים של X: מחירון יצרן פחות __%", from an unpriced line.
+         */
+        post: operations["set_brand_discount_quotes__quote_id__lines__line_id__brand_discount_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/quotes/{quote_id}/lines/{line_id}/candidates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Missing Candidates
+         * @description 09 §6.4: up to three products for a missing line, by what was read beside it (stage 5's code, no model).
+         */
+        get: operations["missing_candidates_quotes__quote_id__lines__line_id__candidates_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/quotes/{quote_id}/lines/{line_id}/cost": {
         parameters: {
             query?: never;
@@ -834,6 +894,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/quotes/{quote_id}/lines/{line_id}/resolve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Resolve Missing
+         * @description 09 §7.8: a product for a missing line, which becomes an approved component line.
+         */
+        post: operations["resolve_missing_quotes__quote_id__lines__line_id__resolve_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/quotes/{quote_id}/lines/{line_id}/supplier": {
         parameters: {
             query?: never;
@@ -868,6 +948,46 @@ export interface paths {
          * @description 09 §7.15 "הפוך למועדף במחירון".
          */
         post: operations["make_preferred_quotes__quote_id__lines__line_id__supplier_preferred_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/quotes/{quote_id}/marks": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Mark Component
+         * @description 09 §6.6: a component the detection missed, marked on the drawing: a manual line there.
+         */
+        post: operations["mark_component_quotes__quote_id__marks_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/quotes/{quote_id}/products": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Search Products
+         * @description 09 §6.6 step 3, §6.4 "מוצר אחר…": the master catalog and the factory's products, priced ones first.
+         */
+        get: operations["search_products_quotes__quote_id__products_get"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -1022,6 +1142,21 @@ export interface components {
             manufacturer?: string | null;
             /** Sku */
             sku?: string | null;
+        };
+        /** AttributeIn */
+        AttributeIn: {
+            /**
+             * Attribute
+             * @description 09 §6.4: the editable values
+             * @enum {string}
+             */
+            attribute: "current_a" | "breaking_capacity_ka";
+            /**
+             * Value
+             * @description Amperes or kiloamperes, as the catalog keeps them
+             * @example 0.15
+             */
+            value: string;
         };
         /**
          * AuditDecisionIn
@@ -1613,6 +1748,15 @@ export interface components {
              */
             queue_pending: number;
         };
+        /** LineBrandDiscountIn */
+        LineBrandDiscountIn: {
+            /**
+             * Discount Pct
+             * @description Off the manufacturer's list price: 0.32 is 32%
+             * @example 0.15
+             */
+            discount_pct: string;
+        };
         /** LineCountsOut */
         LineCountsOut: {
             /** Green */
@@ -1631,6 +1775,13 @@ export interface components {
             alternatives: components["schemas"]["AlternativeOut"][];
             /** Approved */
             approved: boolean;
+            /**
+             * Attribute Options
+             * @description 09 §6.4: current and breaking capacity, the values the catalog has for the family (S23b)
+             */
+            attribute_options: {
+                [key: string]: string[];
+            };
             /**
              * Below Floor
              * @description The line's margin is under the factory's floor (07 §7.3)
@@ -1680,6 +1831,11 @@ export interface components {
              * @enum {string}
              */
             line_type: "component" | "derived" | "labor" | "manual" | "missing";
+            /**
+             * List Price Brand
+             * @description 09 §7.13: an unpriced line whose item has a list price: "כל המוצרים של X: מחירון יצרן פחות __%"
+             */
+            list_price_brand: string | null;
             /** Manufacturer */
             manufacturer: string | null;
             /** Margin Pct */
@@ -1855,6 +2011,26 @@ export interface components {
             valid_to?: string | null;
             /** Value */
             value?: string | null;
+        };
+        /**
+         * MarkIn
+         * @description 09 §6.6: a rectangle drawn on a page, and the product picked for it.
+         */
+        MarkIn: {
+            /**
+             * Bbox
+             * @description x0, y0, x1, y1 in PDF points, origin top left
+             */
+            bbox: number[];
+            /** Page Id */
+            page_id: string;
+            /**
+             * Panel Id
+             * @description The panel the screen shows, for a page with no panel areas
+             */
+            panel_id?: string | null;
+            /** Ref */
+            ref: string;
         };
         /** MeOut */
         MeOut: {
@@ -2110,6 +2286,30 @@ export interface components {
             /** Value */
             value?: string | null;
         };
+        /**
+         * ProductChoiceOut
+         * @description One product the picker offers (09 §6.6 step 3): from the master catalog or the factory's price list.
+         */
+        ProductChoiceOut: {
+            /** Description */
+            description: string;
+            /** Family */
+            family: string | null;
+            /** Manufacturer */
+            manufacturer: string | null;
+            /**
+             * Ref
+             * @description cat:<catalog item> or prd:<product>, for the action that picks it
+             */
+            ref: string;
+            /** Sku */
+            sku: string | null;
+            /**
+             * Unit Price
+             * @description The factory's sale price today; null: no price yet
+             */
+            unit_price: string | null;
+        };
         /** ProductIn */
         ProductIn: {
             /** Brand */
@@ -2290,6 +2490,14 @@ export interface components {
             suppliers?: components["schemas"]["SupplierPriceIn"][] | null;
             /** Unit */
             unit?: string | null;
+        };
+        /** ProductRefIn */
+        ProductRefIn: {
+            /**
+             * Ref
+             * @description A choice from the picker
+             */
+            ref: string;
         };
         /** ProgressFileOut */
         ProgressFileOut: {
@@ -4509,6 +4717,110 @@ export interface operations {
             };
         };
     };
+    set_attribute_quotes__quote_id__lines__line_id__attribute_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                quote_id: string;
+                line_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AttributeIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ActionOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    set_brand_discount_quotes__quote_id__lines__line_id__brand_discount_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                quote_id: string;
+                line_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LineBrandDiscountIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ActionOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    missing_candidates_quotes__quote_id__lines__line_id__candidates_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                quote_id: string;
+                line_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductChoiceOut"][];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     enter_cost_quotes__quote_id__lines__line_id__cost_post: {
         parameters: {
             query?: never;
@@ -4685,6 +4997,42 @@ export interface operations {
             };
         };
     };
+    resolve_missing_quotes__quote_id__lines__line_id__resolve_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                quote_id: string;
+                line_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProductRefIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ActionOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     choose_supplier_quotes__quote_id__lines__line_id__supplier_post: {
         parameters: {
             query?: never;
@@ -4740,6 +5088,75 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ActionOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    mark_component_quotes__quote_id__marks_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                quote_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MarkIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ActionOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    search_products_quotes__quote_id__products_get: {
+        parameters: {
+            query?: {
+                q?: string | null;
+                family?: string | null;
+            };
+            header?: never;
+            path: {
+                quote_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductChoiceOut"][];
                 };
             };
             /** @description Error */

@@ -201,7 +201,7 @@ export async function fetchRevisable(client = api): Promise<Revisable[]> {
   return unwrap(await client.GET("/drawings/revisable"));
 }
 
-/** The review screen's quote (09 §4). 404 when it is another tenant's, does not exist, or `review_screen` is off. */
+/** The review screen's quote (09 §4). 404 when it is another tenant's or does not exist. */
 export async function fetchQuote(quoteId: string, client = api): Promise<Quote> {
   return unwrap(await client.GET("/quotes/{quote_id}", { params: { path: { quote_id: quoteId } } }));
 }
@@ -226,7 +226,13 @@ export type LineAction =
   | { kind: "cost"; unit_cost: string; supplier: string | null }
   | { kind: "list-price" }
   | { kind: "supplier"; supplier_price_id: string }
-  | { kind: "preferred" };
+  | { kind: "preferred" }
+  | { kind: "attribute"; attribute: EditableAttribute; value: string }
+  | { kind: "resolve"; ref: string }
+  | { kind: "brand-discount"; discount_pct: string };
+
+export type EditableAttribute = Schemas["AttributeIn"]["attribute"];
+export type ProductChoice = Schemas["ProductChoiceOut"];
 
 export async function lineAction(
   quoteId: string,
@@ -283,7 +289,62 @@ export async function lineAction(
       );
     case "preferred":
       return unwrap(await client.POST("/quotes/{quote_id}/lines/{line_id}/supplier/preferred", { params: { path } }));
+    case "attribute":
+      return unwrap(
+        await client.POST("/quotes/{quote_id}/lines/{line_id}/attribute", {
+          params: { path },
+          body: { attribute: action.attribute, value: action.value },
+        }),
+      );
+    case "resolve":
+      return unwrap(
+        await client.POST("/quotes/{quote_id}/lines/{line_id}/resolve", {
+          params: { path },
+          body: { ref: action.ref },
+        }),
+      );
+    case "brand-discount":
+      return unwrap(
+        await client.POST("/quotes/{quote_id}/lines/{line_id}/brand-discount", {
+          params: { path },
+          body: { discount_pct: action.discount_pct },
+        }),
+      );
   }
+}
+
+// --- the product picker (09 §6.4, §6.6, §7.8; S23b) ------------------------------------------------------------------
+
+/** The master catalog and the factory's products, priced first; `family` narrows to the line's. */
+export async function searchProducts(
+  quoteId: string,
+  q: string,
+  family?: string | null,
+  client = api,
+): Promise<ProductChoice[]> {
+  return unwrap(
+    await client.GET("/quotes/{quote_id}/products", {
+      params: { path: { quote_id: quoteId }, query: { q: q || undefined, family: family || undefined } },
+    }),
+  );
+}
+
+/** Up to three products for a missing line, by what was read beside it. */
+export async function missingCandidates(quoteId: string, lineId: string, client = api): Promise<ProductChoice[]> {
+  return unwrap(
+    await client.GET("/quotes/{quote_id}/lines/{line_id}/candidates", {
+      params: { path: { quote_id: quoteId, line_id: lineId } },
+    }),
+  );
+}
+
+/** 09 §6.6: a rectangle on a page, in PDF points, and the product for it: a manual line there. */
+export async function markComponent(
+  quoteId: string,
+  mark: { page_id: string; bbox: number[]; ref: string; panel_id?: string | null },
+  client = api,
+): Promise<ActionResult> {
+  return unwrap(await client.POST("/quotes/{quote_id}/marks", { params: { path: { quote_id: quoteId } }, body: mark }));
 }
 
 /** 09 §6.3 "החזר": derived lines removed from the quote, back. */

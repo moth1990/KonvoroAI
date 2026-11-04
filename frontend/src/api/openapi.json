@@ -103,6 +103,35 @@
         "title": "AlternativeOut",
         "type": "object"
       },
+      "AttributeIn": {
+        "additionalProperties": false,
+        "properties": {
+          "attribute": {
+            "description": "09 §6.4: the editable values",
+            "enum": [
+              "current_a",
+              "breaking_capacity_ka"
+            ],
+            "title": "Attribute",
+            "type": "string"
+          },
+          "value": {
+            "description": "Amperes or kiloamperes, as the catalog keeps them",
+            "examples": [
+              "0.15"
+            ],
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Value",
+            "type": "string"
+          }
+        },
+        "required": [
+          "attribute",
+          "value"
+        ],
+        "title": "AttributeIn",
+        "type": "object"
+      },
       "AuditDecisionIn": {
         "additionalProperties": false,
         "description": "11 §7: \"נכון, זה הבדל\" / \"לא נכון\" with a reason, or back to open.",
@@ -1813,6 +1842,25 @@
         "title": "HomeSummaryOut",
         "type": "object"
       },
+      "LineBrandDiscountIn": {
+        "additionalProperties": false,
+        "properties": {
+          "discount_pct": {
+            "description": "Off the manufacturer's list price: 0.32 is 32%",
+            "examples": [
+              "0.15"
+            ],
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Discount Pct",
+            "type": "string"
+          }
+        },
+        "required": [
+          "discount_pct"
+        ],
+        "title": "LineBrandDiscountIn",
+        "type": "object"
+      },
       "LineCountsOut": {
         "properties": {
           "green": {
@@ -1849,6 +1897,17 @@
           "approved": {
             "title": "Approved",
             "type": "boolean"
+          },
+          "attribute_options": {
+            "additionalProperties": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "description": "09 §6.4: current and breaking capacity, the values the catalog has for the family (S23b)",
+            "title": "Attribute Options",
+            "type": "object"
           },
           "below_floor": {
             "description": "The line's margin is under the factory's floor (07 §7.3)",
@@ -1990,6 +2049,18 @@
             ],
             "title": "Line Type",
             "type": "string"
+          },
+          "list_price_brand": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "09 §7.13: an unpriced line whose item has a list price: \"כל המוצרים של X: מחירון יצרן פחות __%\"",
+            "title": "List Price Brand"
           },
           "manufacturer": {
             "anyOf": [
@@ -2266,7 +2337,9 @@
           "suppliers",
           "supplier_id",
           "price_hints",
-          "qty_editable"
+          "qty_editable",
+          "attribute_options",
+          "list_price_brand"
         ],
         "title": "LineOut",
         "type": "object"
@@ -2642,6 +2715,51 @@
           }
         },
         "title": "MarginRulePatch",
+        "type": "object"
+      },
+      "MarkIn": {
+        "additionalProperties": false,
+        "description": "09 §6.6: a rectangle drawn on a page, and the product picked for it.",
+        "properties": {
+          "bbox": {
+            "description": "x0, y0, x1, y1 in PDF points, origin top left",
+            "items": {
+              "type": "number"
+            },
+            "maxItems": 4,
+            "minItems": 4,
+            "title": "Bbox",
+            "type": "array"
+          },
+          "page_id": {
+            "pattern": "^pg_[0-9A-Z]{26}$",
+            "title": "Page Id",
+            "type": "string"
+          },
+          "panel_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The panel the screen shows, for a page with no panel areas",
+            "title": "Panel Id"
+          },
+          "ref": {
+            "pattern": "^(cat|prd):[A-Za-z0-9_\\-]{1,64}$",
+            "title": "Ref",
+            "type": "string"
+          }
+        },
+        "required": [
+          "page_id",
+          "bbox",
+          "ref"
+        ],
+        "title": "MarkIn",
         "type": "object"
       },
       "MeOut": {
@@ -3323,6 +3441,79 @@
         "title": "PriceSourceOut",
         "type": "object"
       },
+      "ProductChoiceOut": {
+        "description": "One product the picker offers (09 §6.6 step 3): from the master catalog or the factory's price list.",
+        "properties": {
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "family": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Family"
+          },
+          "manufacturer": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Manufacturer"
+          },
+          "ref": {
+            "description": "cat:<catalog item> or prd:<product>, for the action that picks it",
+            "title": "Ref",
+            "type": "string"
+          },
+          "sku": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sku"
+          },
+          "unit_price": {
+            "anyOf": [
+              {
+                "examples": [
+                  "0.15"
+                ],
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The factory's sale price today; null: no price yet",
+            "title": "Unit Price"
+          }
+        },
+        "required": [
+          "ref",
+          "description",
+          "sku",
+          "manufacturer",
+          "family",
+          "unit_price"
+        ],
+        "title": "ProductChoiceOut",
+        "type": "object"
+      },
       "ProductIn": {
         "additionalProperties": false,
         "properties": {
@@ -3956,6 +4147,22 @@
           }
         },
         "title": "ProductPatch",
+        "type": "object"
+      },
+      "ProductRefIn": {
+        "additionalProperties": false,
+        "properties": {
+          "ref": {
+            "description": "A choice from the picker",
+            "pattern": "^(cat|prd):[A-Za-z0-9_\\-]{1,64}$",
+            "title": "Ref",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ref"
+        ],
+        "title": "ProductRefIn",
         "type": "object"
       },
       "ProgressFileOut": {
@@ -8356,6 +8563,207 @@
         ]
       }
     },
+    "/quotes/{quote_id}/lines/{line_id}/attribute": {
+      "post": {
+        "description": "09 §7.4: current or breaking capacity set by hand; stage 5 for the line in code, then stages 6 and 7.",
+        "operationId": "set_attribute_quotes__quote_id__lines__line_id__attribute_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "quote_id",
+            "required": true,
+            "schema": {
+              "pattern": "^quo_[0-9A-Z]{26}$",
+              "title": "Quote Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "line_id",
+            "required": true,
+            "schema": {
+              "pattern": "^ln_[0-9A-Z]{26}$",
+              "title": "Line Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AttributeIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Set Attribute",
+        "tags": [
+          "quotes"
+        ]
+      }
+    },
+    "/quotes/{quote_id}/lines/{line_id}/brand-discount": {
+      "post": {
+        "description": "09 §7.13: \"כל המוצרים של X: מחירון יצרן פחות __%\", from an unpriced line.",
+        "operationId": "set_brand_discount_quotes__quote_id__lines__line_id__brand_discount_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "quote_id",
+            "required": true,
+            "schema": {
+              "pattern": "^quo_[0-9A-Z]{26}$",
+              "title": "Quote Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "line_id",
+            "required": true,
+            "schema": {
+              "pattern": "^ln_[0-9A-Z]{26}$",
+              "title": "Line Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LineBrandDiscountIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Set Brand Discount",
+        "tags": [
+          "quotes"
+        ]
+      }
+    },
+    "/quotes/{quote_id}/lines/{line_id}/candidates": {
+      "get": {
+        "description": "09 §6.4: up to three products for a missing line, by what was read beside it (stage 5's code, no model).",
+        "operationId": "missing_candidates_quotes__quote_id__lines__line_id__candidates_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "quote_id",
+            "required": true,
+            "schema": {
+              "pattern": "^quo_[0-9A-Z]{26}$",
+              "title": "Quote Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "line_id",
+            "required": true,
+            "schema": {
+              "pattern": "^ln_[0-9A-Z]{26}$",
+              "title": "Line Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ProductChoiceOut"
+                  },
+                  "title": "Response Missing Candidates Quotes  Quote Id  Lines  Line Id  Candidates Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Missing Candidates",
+        "tags": [
+          "quotes"
+        ]
+      }
+    },
     "/quotes/{quote_id}/lines/{line_id}/cost": {
       "post": {
         "description": "09 §6.4 \"שמור עלות\": to the price list, for every line of the product (09 §7.13).",
@@ -8691,6 +9099,75 @@
         ]
       }
     },
+    "/quotes/{quote_id}/lines/{line_id}/resolve": {
+      "post": {
+        "description": "09 §7.8: a product for a missing line, which becomes an approved component line.",
+        "operationId": "resolve_missing_quotes__quote_id__lines__line_id__resolve_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "quote_id",
+            "required": true,
+            "schema": {
+              "pattern": "^quo_[0-9A-Z]{26}$",
+              "title": "Quote Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "line_id",
+            "required": true,
+            "schema": {
+              "pattern": "^ln_[0-9A-Z]{26}$",
+              "title": "Line Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProductRefIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Resolve Missing",
+        "tags": [
+          "quotes"
+        ]
+      }
+    },
     "/quotes/{quote_id}/lines/{line_id}/supplier": {
       "post": {
         "description": "09 §7.15: another of the product's suppliers, for this quote only.",
@@ -8814,6 +9291,153 @@
           }
         ],
         "summary": "Make Preferred",
+        "tags": [
+          "quotes"
+        ]
+      }
+    },
+    "/quotes/{quote_id}/marks": {
+      "post": {
+        "description": "09 §6.6: a component the detection missed, marked on the drawing: a manual line there.",
+        "operationId": "mark_component_quotes__quote_id__marks_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "quote_id",
+            "required": true,
+            "schema": {
+              "pattern": "^quo_[0-9A-Z]{26}$",
+              "title": "Quote Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MarkIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Mark Component",
+        "tags": [
+          "quotes"
+        ]
+      }
+    },
+    "/quotes/{quote_id}/products": {
+      "get": {
+        "description": "09 §6.6 step 3, §6.4 \"מוצר אחר…\": the master catalog and the factory's products, priced ones first.",
+        "operationId": "search_products_quotes__quote_id__products_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "quote_id",
+            "required": true,
+            "schema": {
+              "pattern": "^quo_[0-9A-Z]{26}$",
+              "title": "Quote Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "q",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 100,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Q"
+            }
+          },
+          {
+            "in": "query",
+            "name": "family",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 64,
+                  "pattern": "^[a-z_]+$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Family"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ProductChoiceOut"
+                  },
+                  "title": "Response Search Products Quotes  Quote Id  Products Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Search Products",
         "tags": [
           "quotes"
         ]

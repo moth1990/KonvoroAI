@@ -18,13 +18,6 @@ function BuildRoute() {
   return me.data.flags.chat_quote_builder ? <Placeholder screen="build" /> : <Navigate to="/home" replace />;
 }
 
-/** The review screen is behind `review_screen` while it is built (S09 decision 2); off, it stays a placeholder. */
-function ReviewRoute() {
-  const me = useMe();
-  if (!me.data) return null;
-  return me.data.flags.review_screen ? <ReviewScreen /> : <Placeholder screen="review" />;
-}
-
 /** The audit (S16) is behind `quote_audit`, evaluated on the server (13 §3); off, `/audit` stays a placeholder. */
 function AuditRoute({ results = false }: { results?: boolean }) {
   const me = useMe();
@@ -50,7 +43,7 @@ export default function App() {
         <Route element={<RequireAuth />}>
           <Route path="/home" element={<HomeScreen />} />
           <Route path="/new" element={<NewQuoteScreen />} />
-          <Route path="/review/:quoteId?" element={<ReviewRoute />} />
+          <Route path="/review/:quoteId?" element={<ReviewScreen />} />
           <Route path="/audit" element={<AuditRoute />} />
           <Route path="/audit/:auditId" element={<AuditRoute results />} />
           <Route path="/prices" element={<PricesRoute />} />

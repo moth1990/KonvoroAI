@@ -5,7 +5,9 @@ Pure: `load.py` reads the rows into these dataclasses, so the same book always g
 
 A price is looked up for the identical product only (07 §7.2): the price-list product linked to the catalog item
 stage 5 chose, else the one with the same manufacturer SKU. A neighbouring rating is another product, so NURSERY-1's
-3X20A stays without a price even when 3X16A and 3X25A have one.
+3X20A stays without a price even when 3X16A and 3X25A have one. With neither, the catalog item itself is priced by its
+maker's list price less the factory's brand discount (07 §7.2 priority 2 is by SKU, not by product; `listed`), so a
+new factory's empty price list still prices a brand it set a discount for (09 §7.13, BUG-058).
 
 `price_status` follows the cost only when the sale price comes from it: a fixed product price (07 §7.2.1) is a price
 whatever its cost, and a missing or stale cost only leaves its margin unknown or old.
@@ -40,6 +42,7 @@ class Product:
     suppliers: Sequence[pc.SupplierPrice] = ()
     list_price: Decimal | None = None
     list_currency: str | None = None
+    listed: bool = False  # not in the price list: a catalog item priced by its list price and the brand discount
 
     @property
     def costs(self) -> pc.ProductCosts:
@@ -62,6 +65,11 @@ class Item:
     module_width: Decimal | None = None
     list_price: Decimal | None = None
     list_currency: str | None = None
+
+
+def own_id(product: "Product | None") -> str | None:
+    """The price-list product's id for the line; a catalog item priced at the brand discount has none."""
+    return product.product_id if product is not None and not product.listed else None
 
 
 def sku_key(sku: str) -> str:
@@ -106,6 +114,34 @@ class Book:
         if catalog_item_id and catalog_item_id in self._by_item:
             return self._by_item[catalog_item_id]
         return self._by_sku.get(sku_key(sku)) if sku else None
+
+    def listed(self, catalog_item_id: str | None, brand: str | None, sku: str | None) -> Product | None:
+        """07 §7.2 priority 2 for a catalog item with no price-list product: its list price less the brand's discount.
+        None when the brand has no discount or the item no list price."""
+        item = self.item(catalog_item_id) or (self.item_by_sku(brand, sku) if sku else None)
+        if item is None or item.list_price is None or item.brand not in self.cost.brand_discounts:
+            return None
+        return Product(
+            product_id=f"item:{item.id}",
+            name=item.description,
+            family=item.family,
+            brand=item.brand,
+            manufacturer_sku=item.sku,
+            catalog_item_id=item.id,
+            list_price=item.list_price,
+            list_currency=item.list_currency,
+            listed=True,
+        )
+
+    def find(
+        self, product_id: str | None, catalog_item_id: str | None, sku: str | None, brand: str | None
+    ) -> Product | None:
+        """The line's product (by id, else by catalog item or SKU), else its catalog item at the brand discount."""
+        return (
+            self.product_by_id(product_id)
+            or (self.product(catalog_item_id, sku) if sku or catalog_item_id else None)
+            or self.listed(catalog_item_id, brand, sku)
+        )
 
     def item(self, catalog_item_id: str | None) -> Item | None:
         return self._items.get(catalog_item_id) if catalog_item_id else None

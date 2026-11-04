@@ -1,11 +1,24 @@
+import { useQuery } from "@tanstack/react-query";
 import { useId, useState } from "react";
 
-import type { DismissReason, Finding, LineAction, QuoteLine } from "../../api/client";
+import {
+  missingCandidates,
+  type DismissReason,
+  type EditableAttribute,
+  type Finding,
+  type LineAction,
+  type QuoteLine,
+} from "../../api/client";
 import { Icon } from "../../ui/Icon";
 import { Modal } from "../../ui/Modal";
 import {
+  attributeChoice,
   attributeLabel,
+  attributeValue,
+  choiceMeta,
+  discountFraction,
   lineFindings,
+  missingText,
   parseAmount,
   percent,
   priceSourceText,
@@ -14,8 +27,9 @@ import {
   sourceText,
 } from "./model";
 
-/** What the detail can do (S23). Without it the detail is read-only, as on a sent version. */
+/** What the detail can do (S23, S23b). Without it the detail is read-only, as on a sent version. */
 export interface DetailActions {
+  quoteId: string;
   locked: boolean;
   lineFloor: string | null;
   /** "שמור למחירון להצעות הבאות" for this line's price cell (prototype `savelist`), on unless turned off. */
@@ -24,13 +38,17 @@ export interface DetailActions {
   /** Resolves true when the server took it. */
   onAction: (line: QuoteLine, action: LineAction) => Promise<boolean>;
   onDismiss: (finding: Finding, reason: DismissReason, text?: string) => Promise<boolean>;
+  /** "מוצר אחר…": the product picker, for this missing line (09 §6.4). */
+  onPickProduct: (line: QuoteLine) => void;
 }
 
 /**
  * Line detail (09 §6.4, prototype `lineDetail`): what the drawing says, where each value comes from, why, the price
  * and its source, cost and margin, the line's findings and its alternatives, and since S23 what can be done about
  * each: a price ("לעדכן גם במחירון?"), a cost, a supplier, a finding dismissed with a reason, an alternative, the
- * quantity, approve and delete. "הצג בשרטוט" frames the line on the drawing (S11).
+ * quantity, approve and delete. "הצג בשרטוט" frames the line on the drawing (S11). Since S23b: current and breaking
+ * capacity from a list (09 §7.4), a missing line's products ("מוצר אחר…", "אין כאן רכיב", 09 §7.8) and the bulk brand
+ * discount on a line with no price (09 §7.13).
  */
 export function LineDetail(props: {
   line: QuoteLine;
@@ -42,7 +60,12 @@ export function LineDetail(props: {
   const own = lineFindings(line, findings);
   const editable = actions && !actions.locked ? actions : null;
   const derived = line.line_type === "derived" || line.line_type === "labor";
+  const missing = line.line_type === "missing";
   const hasError = own.some((f) => f.severity === "error");
+  const setAttribute = (attribute: string, value: string) =>
+    editable &&
+    value &&
+    void editable.onAction(line, { kind: "attribute", attribute: attribute as EditableAttribute, value });
   return (
     <div className="detail" data-testid="line-detail" id={`detail-${line.line_id}`}>
       <div className="dgrid">
@@ -53,7 +76,7 @@ export function LineDetail(props: {
           ) : (
             <span className="small muted">אין טקסט בשרטוט לשורה הזו</span>
           )}
-          {line.explanation ? <div className="small why">{line.explanation}</div> : null}
+          {line.explanation && !missing ? <div className="small why">{line.explanation}</div> : null}
           {line.derived ? (
             <div className="small">
               <span className="muted">איך חושב: </span>
@@ -67,7 +90,19 @@ export function LineDetail(props: {
             <dl className="kv">
               {line.sources.map((s) => {
                 const src = sourceText(s);
-                return <SourceRow key={s.attribute} label={attributeLabel(s.attribute)} value={s.value} {...src} />;
+                const options = editable ? line.attribute_options?.[s.attribute] : undefined; // an older API has none
+                return (
+                  <SourceRow
+                    key={s.attribute}
+                    label={attributeLabel(s.attribute)}
+                    value={attributeValue(s.attribute, s.value)}
+                    {...src}
+                    options={options}
+                    chosen={options ? attributeChoice(s.value, options) : ""}
+                    unit={(v) => attributeValue(s.attribute, v) ?? v}
+                    onChoose={(v) => setAttribute(s.attribute, v)}
+                  />
+                );
               })}
             </dl>
           ) : (
@@ -80,18 +115,21 @@ export function LineDetail(props: {
           ) : null}
         </div>
       </div>
-      <div className="dgrid">
-        <div style={{ display: "grid", gap: 6, alignContent: "start" }}>
-          <span className="eyebrow">מחיר</span>
-          <PriceBox line={line} actions={editable} />
-        </div>
-        {line.included ? null : (
+      {missing ? <MissingBox line={line} actions={editable} /> : null}
+      {missing ? null : (
+        <div className="dgrid">
           <div style={{ display: "grid", gap: 6, alignContent: "start" }}>
-            <span className="eyebrow">עלות ורווח</span>
-            <CostBox line={line} actions={editable} floor={actions?.lineFloor ?? null} />
+            <span className="eyebrow">מחיר</span>
+            <PriceBox line={line} actions={editable} />
           </div>
-        )}
-      </div>
+          {line.included ? null : (
+            <div style={{ display: "grid", gap: 6, alignContent: "start" }}>
+              <span className="eyebrow">עלות ורווח</span>
+              <CostBox line={line} actions={editable} floor={actions?.lineFloor ?? null} />
+            </div>
+          )}
+        </div>
+      )}
       {own.length ? (
         <div style={{ display: "grid", gap: 6 }}>
           <span className="eyebrow">ממצאי הבודק</span>
@@ -111,7 +149,7 @@ export function LineDetail(props: {
           ))}
         </div>
       ) : null}
-      {derived ? null : (
+      {derived || missing ? null : (
         <div style={{ display: "grid", gap: 6 }}>
           <span className="eyebrow">חלופות</span>
           {line.alternatives.length ? (
@@ -155,7 +193,7 @@ export function LineDetail(props: {
           </button>
         ) : null}
         <span className="spacer" />
-        {editable ? (
+        {editable && !missing ? (
           <button
             type="button"
             className="btn ghost sm danger"
@@ -170,15 +208,140 @@ export function LineDetail(props: {
   );
 }
 
-function SourceRow(props: { label: string; value: string | null; text: string; warn: boolean }) {
+function SourceRow(props: {
+  label: string;
+  value: string | null;
+  text: string;
+  warn: boolean;
+  /** 09 §6.4: current and breaking capacity, from the catalog's values; choosing one matches the line again. */
+  options?: string[] | undefined;
+  chosen?: string;
+  unit?: (v: string) => string;
+  onChoose?: (v: string) => void;
+}) {
+  const id = useId();
   return (
     <>
-      <dt>{props.label}</dt>
+      <dt>{props.options ? <label htmlFor={id}>{props.label}</label> : props.label}</dt>
       <dd>
-        <b>{props.value ?? "—"}</b>
+        {props.options ? (
+          <select
+            id={id}
+            className="input attr-sel"
+            data-testid="attr"
+            value={props.chosen ?? ""}
+            onChange={(e) => props.onChoose?.(e.target.value)}
+          >
+            {props.chosen ? null : <option value="">{props.value ?? "—"}</option>}
+            {props.options.map((v) => (
+              <option key={v} value={v}>
+                {props.unit ? props.unit(v) : v}
+              </option>
+            ))}
+          </select>
+        ) : (
+          <b>{props.value ?? "—"}</b>
+        )}
       </dd>
       <dd className={`small ${props.warn ? "warn-t" : "muted"}`}>{props.text}</dd>
     </>
+  );
+}
+
+/**
+ * 09 §6.4 "שורה חסרה": what was read beside the symbol the detection missed, up to three products by it (keys 1–3),
+ * "מוצר אחר…" for the picker, and "אין כאן רכיב", which deletes the line.
+ */
+function MissingBox({ line, actions }: { line: QuoteLine; actions: DetailActions | null }) {
+  const found = useQuery({
+    queryKey: ["candidates", actions?.quoteId, line.line_id],
+    queryFn: () => missingCandidates(actions?.quoteId ?? "", line.line_id),
+    enabled: !!actions,
+    staleTime: 60_000,
+  });
+  return (
+    <div style={{ display: "grid", gap: 6 }} data-testid="missing">
+      <span className="eyebrow">איזה רכיב זה?</span>
+      <div className="small why">{missingText(line)}</div>
+      {(found.data ?? []).map((c, i) => (
+        <div key={c.ref} className="alt">
+          <span style={{ flex: 1, display: "grid", gap: 2 }}>
+            <span>{c.description}</span>
+            <span className="small muted mono" dir="ltr">
+              {choiceMeta(c)}
+            </span>
+          </span>
+          <span className={`num${c.unit_price == null ? " small muted" : ""}`}>
+            {c.unit_price == null ? "אין מחיר" : shekels(c.unit_price)}
+          </span>
+          {actions ? (
+            <button
+              type="button"
+              className="btn sm"
+              data-testid="candidate"
+              aria-keyshortcuts={String(i + 1)}
+              onClick={() => void actions.onAction(line, { kind: "resolve", ref: c.ref })}
+            >
+              בחר <span className="kbd">{i + 1}</span>
+            </button>
+          ) : null}
+        </div>
+      ))}
+      {actions ? (
+        <div className="row">
+          <button
+            type="button"
+            className="btn sm"
+            data-testid="other-product"
+            onClick={() => actions.onPickProduct(line)}
+          >
+            מוצר אחר…
+          </button>
+          <span className="spacer" />
+          <button
+            type="button"
+            className="btn ghost sm danger"
+            data-testid="no-component"
+            onClick={() => void actions.onAction(line, { kind: "delete" })}
+          >
+            אין כאן רכיב
+          </button>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+/** 09 §7.13 "הזנה מרוכזת לפי מותג": every unpriced line of the brand, from its list price less the discount. */
+function BrandBulk({ line, actions }: { line: QuoteLine; actions: DetailActions }) {
+  const [pct, setPct] = useState("");
+  const [bad, setBad] = useState(false);
+  const id = useId();
+  const save = async () => {
+    const fraction = discountFraction(pct);
+    setBad(fraction === null);
+    if (fraction === null) return;
+    if (await actions.onAction(line, { kind: "brand-discount", discount_pct: fraction })) setPct("");
+  };
+  return (
+    <div className="row small brand-bulk" data-testid="brand-bulk">
+      <label htmlFor={id}>כל המוצרים של {line.list_price_brand}: מחירון יצרן פחות</label>
+      <input
+        id={id}
+        className={`input num${bad ? " err" : ""}`}
+        style={{ width: 56, padding: "4px 8px", textAlign: "end" }}
+        inputMode="decimal"
+        value={pct}
+        onChange={(e) => setPct(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") void save();
+        }}
+      />
+      <span>%</span>
+      <button type="button" className="btn sm" data-testid="brand-save" onClick={() => void save()}>
+        שמור
+      </button>
+    </div>
   );
 }
 
@@ -284,6 +447,7 @@ function PriceBox({ line, actions }: { line: QuoteLine; actions: DetailActions |
             שמור למחירון להצעות הבאות
           </label>
         ) : null}
+        {actions && line.list_price_brand ? <BrandBulk line={line} actions={actions} /> : null}
       </>
     );
   const submit = () => {

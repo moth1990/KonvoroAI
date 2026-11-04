@@ -36,6 +36,9 @@ export const TENANTS = {
   // The review screen's actions (S23): they change the NURSERY draft, and sending locks it, so one tenant per project.
   reviewDesktop: "review-desktop@e2e.konboro.local",
   reviewMobile: "review-mobile@e2e.konboro.local",
+  // The product picker (S23b): the NURSERY draft with a missing line; actions change it, so one tenant per project.
+  pickerDesktop: "picker-desktop@e2e.konboro.local",
+  pickerMobile: "picker-mobile@e2e.konboro.local",
 } as const;
 
 /** The fixture audit's id in each audit tenant (`E2eTenant.audit_id` in devtools/e2e.py). */

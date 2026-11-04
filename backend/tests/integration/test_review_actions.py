@@ -23,7 +23,7 @@ from konboro.domain import permissions
 from konboro.services import price_list as pl
 from konboro.services import quotes as qs
 
-from .api import Api, ApiTenant, add_tenant, set_tenant_flag
+from .api import Api, ApiTenant, add_tenant
 
 pytestmark = pytest.mark.integration
 
@@ -97,7 +97,6 @@ def quote(api: Api, seeded: dict[str, Engine]) -> Iterator[Quote]:
         s.flush()
         qid = seed_nursery(s, tenant.tenant_id)
     assert qid is not None
-    set_tenant_flag(api.engine, tenant.tenant_id, "review_screen", True)
     yield Quote(api, tenant, qid)
 
 

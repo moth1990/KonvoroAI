@@ -2,7 +2,7 @@
 
 OpenSeadragon asks for `page.dzi`, then `page_files/{level}/{col}_{row}.png`, with the bearer token on every request
 (`ajaxHeaders`). Another tenant's page, a page stage 2 has not rendered, and a tile outside the pyramid are all 404.
-Behind `review_screen` until S23, like the screen (S09 decision 2).
+Gated by `review_screen` while the screen was built (S09 decision 2), until S23b.
 """
 
 from typing import Annotated, Any
@@ -13,10 +13,10 @@ from konboro.domain.permissions import Permission
 from konboro.services import viewer
 from konboro.services.storage import Storage
 
-from ..deps import Actor, require, require_flag
+from ..deps import Actor, require
 from ..errors import ERROR_RESPONSES, ApiError
 
-router = APIRouter(tags=["pages"], responses=ERROR_RESPONSES, dependencies=[Depends(require_flag("review_screen"))])
+router = APIRouter(tags=["pages"], responses=ERROR_RESPONSES)
 
 Reader = Annotated[Actor, Depends(require(Permission.DRAWINGS_READ))]
 PageId = Annotated[str, Path(pattern=r"^pg_[0-9A-Z]{26}$")]

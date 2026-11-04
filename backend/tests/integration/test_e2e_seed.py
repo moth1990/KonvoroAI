@@ -48,6 +48,8 @@ def test_e2e_tenants_have_their_states(migrated_db: dict[str, Engine]) -> None:
         "prices-off@e2e.konboro.local": (False, 12, "ok"),
         "review-desktop@e2e.konboro.local": (False, 12, "ok"),
         "review-mobile@e2e.konboro.local": (False, 12, "ok"),
+        "picker-desktop@e2e.konboro.local": (False, 12, "ok"),
+        "picker-mobile@e2e.konboro.local": (False, 12, "ok"),
     }
     sample = states["classic@e2e.konboro.local"][3]
     assert sample.queue_pending == 3
@@ -62,7 +64,6 @@ def test_e2e_tenants_have_their_states(migrated_db: dict[str, Engine]) -> None:
     review = next(t for t in e2e.TENANTS if t.nursery)
     with tenant_session(review.tenant_id, migrated_db["app"]) as s:
         assert [q.name for q in home.recent_quotes(s, review.tenant_id, 10)] == ["NURSERY"]
-        assert flags.tenant_flags(s, review.tenant_id)["review_screen"] is True
     # the 26-993 audit (S16), once per audit tenant, under the id the Playwright tests open
     for t in (t for t in e2e.TENANTS if t.audit):
         omissions = states[t.email][3].audit_omissions
@@ -90,4 +91,3 @@ def test_every_e2e_tenant_can_log_in(migrated_db: dict[str, Engine]) -> None:
     off = next(t for t in e2e.TENANTS if t.off)
     with tenant_session(off.tenant_id, migrated_db["app"]) as s:
         assert flags.tenant_flags(s, off.tenant_id)["price_list"] is False
-        assert flags.tenant_flags(s, off.tenant_id)["review_screen"] is True

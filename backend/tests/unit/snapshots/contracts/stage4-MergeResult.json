@@ -24,7 +24,8 @@
                 "cad_attrib",
                 "graphic",
                 "shared_label",
-                "bom"
+                "bom",
+                "user"
               ],
               "type": "string"
             },

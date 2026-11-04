@@ -17,7 +17,6 @@ from typing import Any
 
 from PIL import Image
 from sqlalchemy import select
-from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
 from konboro.db import models as m
@@ -28,11 +27,10 @@ from konboro.pipeline.extraction.config import DEFAULT as EXTRACTION
 from konboro.pipeline.intake.pages import png
 from konboro.pipeline.pricing import stored
 from konboro.pipeline.stages.s1_intake import THUMB_PX, thumbnail_key
-from konboro.services.quotes import LineIn, write_lines
+from konboro.services.quotes import LineIn, store_totals, write_lines
 from konboro.services.storage import Storage, drawing_key
 
 MARKER = "fixture:NURSERY-1"  # drawings.trace_id of the fixture drawing
-FLAG = "review_screen"
 QUOTE_DATE = date(2026, 10, 13)
 PRICE_DATE = "2026-10-01"
 
@@ -69,6 +67,7 @@ class Item:
     why: str | None = None
     parent: str | None = None
     finding: str | None = None
+    catalog_sku: str | None = None  # an unpriced line's item in the sample catalog, with its list price (S23b)
 
 
 def a(value: str, source: str = "drawing", detail: str | None = None, confidence: float = 0.95) -> dict[str, Any]:
@@ -155,6 +154,7 @@ ITEMS = [
         {"current": a("20A"), "poles": a("3"), "load": a("שקעי שירות")},
         col(7, [800, 928, 1078, 1190], 252, 360),
         reasons=[EXPLICIT, NO_PRICE],
+        catalog_sku="S203M-C20",
     ),
     Item(
         "f22",
@@ -340,15 +340,6 @@ def _bbox(x0: float, y0: float, x1: float, y1: float) -> list[float]:
     return [round(v * PX_TO_PT, 1) for v in (x0, y0, x1, y1)]
 
 
-def enable_flag(session: Session, tenant_id: str) -> None:
-    """Turns the review screen on for a tenant that existed before the flag (S09 decision 2)."""
-    session.execute(
-        insert(m.TenantFeatureOverride)
-        .values(tenant_id=tenant_id, flag_key=FLAG, enabled=True, reason="fixture")
-        .on_conflict_do_nothing(index_elements=["tenant_id", "flag_key"])
-    )
-
-
 def seed_nursery(session: Session, tenant_id: str) -> str | None:
     """Writes the fixture into the tenant (the session already set `app.tenant_id`). Returns the new quote's id,
     or None if the tenant has it already."""
@@ -431,7 +422,7 @@ def seed_nursery(session: Session, tenant_id: str) -> str | None:
                     tenant_id=tenant_id,
                     drawing_id=drawing.id,
                     panel_id=panel.id,
-                    family="enclosure" if item.group == "enclosure" else "device",
+                    family=_family(item),
                     attributes=item.attributes,
                     quantity=Decimal(item.qty),
                     designators=item.designators,
@@ -443,7 +434,12 @@ def seed_nursery(session: Session, tenant_id: str) -> str | None:
                     explicit_texts=item.raw.split("\n") if item.raw else [],
                 )
             ).id
-        sku, cost, supplier = None, None, None
+        sku, cost, supplier = item.catalog_sku, None, None
+        catalog_item_id = (
+            session.scalar(select(m.CatalogItem.id).where(m.CatalogItem.sku == item.catalog_sku).limit(1))
+            if item.catalog_sku
+            else None
+        )
         if item.product:
             sku, sups = _PRODUCTS[item.product]
             preferred = next((s for s in sups if s[3]), None)
@@ -477,6 +473,7 @@ def seed_nursery(session: Session, tenant_id: str) -> str | None:
                 status_reasons=item.reasons,
                 issue_ids=[finding_ids[item.finding]] if item.finding else [],
                 alternatives=[{"description": alt} for alt in item.alternatives],
+                catalog_item_id=catalog_item_id,
                 explanation=item.why,
                 line_key=f"fixture:{item.key}",
             )
@@ -511,6 +508,60 @@ def seed_nursery(session: Session, tenant_id: str) -> str | None:
     # prices the fixture again after each review action
     stored.reprice(session, quote, version, frozenset())
     return str(quote.id)
+
+
+# The prototype's page 7, beside F18–F21: a breaker the detection did not box, with "C20" read beside it (S23b)
+MISSING_PAGE, MISSING_BOX, MISSING_TEXT = 7, (1300.0, 252.0, 1395.0, 360.0), "C20"
+
+
+def seed_missing_line(session: Session, tenant_id: str) -> str:
+    """A missing line (07 §7.1 `missing`) in the fixture's draft, for the picker's tests: the fixture has none."""
+    version = session.scalars(
+        select(m.QuoteVersion)
+        .join(m.Quote, (m.Quote.tenant_id == m.QuoteVersion.tenant_id) & (m.Quote.id == m.QuoteVersion.quote_id))
+        .where(m.QuoteVersion.tenant_id == tenant_id, m.Quote.name == "NURSERY")
+    ).one()
+    page = session.scalars(
+        select(m.Page.id)
+        .join(m.Drawing, (m.Drawing.tenant_id == m.Page.tenant_id) & (m.Drawing.id == m.Page.drawing_id))
+        .where(m.Page.tenant_id == tenant_id, m.Drawing.trace_id == MARKER, m.Page.page_no == MISSING_PAGE)
+    ).one()
+    panel = session.scalar(
+        select(m.QuoteLine.panel_id)
+        .where(m.QuoteLine.tenant_id == tenant_id, m.QuoteLine.quote_version_id == version.id)
+        .limit(1)
+    )
+    key = f"m:{new_id('ins')}"
+    ids = write_lines(
+        session,
+        version,
+        panel,
+        [
+            LineIn(
+                key=key,
+                line_key=key,
+                description='רכיב שלא זוהה (נראה כמו מא"ז 3P 20A)',
+                qty=Decimal(1),
+                status="red",
+                line_type="missing",
+                status_reasons=[
+                    {"source": "confidence", "value": 0.6, "status": "yellow"},
+                    {"source": "missing", "value": MISSING_TEXT, "status": "red"},
+                ],
+                explanation=MISSING_TEXT,
+                boxes=[{"page_id": page, "bbox": _bbox(*MISSING_BOX)}],
+            )
+        ],
+    )
+    store_totals(session, version)
+    return ids[key]
+
+
+def _family(item: Item) -> str:
+    """The schema's family for a breaker (04 §6.3), so its current can be set by hand (S23b); the rest stay devices."""
+    if item.group == "enclosure":
+        return "enclosure"
+    return "circuit_breaker" if item.description.startswith(('מא"ז', "מפסק")) else "device"
 
 
 def _worst(reasons: list[dict[str, Any]]) -> str:

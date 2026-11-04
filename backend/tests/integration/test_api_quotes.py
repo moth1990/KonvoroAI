@@ -1,4 +1,4 @@
-"""GET /quotes/{id}: the review screen's quote (09 §4), tenant-scoped and behind `review_screen` (S09)."""
+"""GET /quotes/{id}: the review screen's quote (09 §4), tenant-scoped (S09)."""
 
 from collections.abc import Iterator
 from decimal import Decimal
@@ -12,9 +12,7 @@ from konboro.db.session import tenant_session
 from konboro.devtools.fixtures.nursery import PX_TO_PT, seed_nursery, seed_nursery_pages
 from konboro.services.storage import Storage
 
-from .api import Api, set_tenant_flag
-
-FLAG = "review_screen"
+from .api import Api
 
 
 @pytest.fixture(scope="module")
@@ -25,8 +23,6 @@ def quote_id(api: Api, migrated_db: dict[str, Engine], storage: Storage) -> Iter
         qid = seed_nursery(s, api.a.tenant_id)
         seed_nursery_pages(s, storage, api.a.tenant_id)
     assert qid is not None
-    for t in (api.a, api.b):
-        set_tenant_flag(api.engine, t.tenant_id, FLAG, True)
     yield qid
 
 
@@ -100,15 +96,6 @@ def test_another_tenants_quote_is_not_found(api: Api, quote_id: str) -> None:
 def test_an_unknown_or_malformed_id(api: Api, quote_id: str) -> None:
     assert api.client.get("/quotes/quo_01JD0000000000000000000000", headers=api.as_(api.a)).status_code == 404
     assert api.client.get("/quotes/not-an-id", headers=api.as_(api.a)).status_code == 422
-
-
-def test_with_the_flag_off_the_route_does_not_exist(api: Api, quote_id: str) -> None:
-    set_tenant_flag(api.engine, api.a.tenant_id, FLAG, False)
-    try:
-        r = api.client.get(f"/quotes/{quote_id}", headers=api.as_(api.a))
-        assert r.status_code == 404
-    finally:
-        set_tenant_flag(api.engine, api.a.tenant_id, FLAG, True)
 
 
 def test_without_a_token(api: Api, quote_id: str) -> None:

@@ -40,7 +40,7 @@ from konboro.db.models import (
 from konboro.db.seed import FLAGS, link_demo_catalog, seed_global, seed_price_list
 from konboro.db.session import app_engine
 from konboro.devtools.fixtures.audit_993 import seed_audit_993, seed_audit_993_pages
-from konboro.devtools.fixtures.nursery import seed_nursery, seed_nursery_pages
+from konboro.devtools.fixtures.nursery import seed_missing_line, seed_nursery, seed_nursery_pages
 from konboro.pipeline.context import StageContext
 from konboro.pipeline.extraction.config import ExtractionConfig
 from konboro.pipeline.stages import Stage, s2_extraction
@@ -62,6 +62,7 @@ class E2eTenant:
     audit: bool = False  # the 26-993 audit fixture (S16), under `audit_id`
     prices: bool = False  # the demo price list (S19), before the NURSERY fixture so its lines use the products
     off: tuple[str, ...] = ()  # flags this tenant has off; every other flag is on
+    missing: bool = False  # a missing line in the NURSERY draft (S23b): the fixture has none of its own
 
     @property
     def tenant_id(self) -> str:
@@ -110,6 +111,10 @@ TENANTS = (
     # project, with the demo price list for its prices, costs and suppliers.
     E2eTenant(21, "review-desktop@e2e.konboro.local", False, 12, False, nursery=True, prices=True),
     E2eTenant(22, "review-mobile@e2e.konboro.local", False, 12, False, nursery=True, prices=True),
+    # The product picker (S23b): an attribute, a missing line, a mark and a brand discount change the draft, so one
+    # tenant per project.
+    E2eTenant(23, "picker-desktop@e2e.konboro.local", False, 12, False, nursery=True, prices=True, missing=True),
+    E2eTenant(24, "picker-mobile@e2e.konboro.local", False, 12, False, nursery=True, prices=True, missing=True),
 )
 
 # A project with this name runs slowly, so a test can cancel it mid-run; every other upload runs at full speed.
@@ -241,6 +246,8 @@ def seed_e2e(owner: Engine, storage: Storage | None = None) -> None:
                 s.flush()
             if t.nursery:
                 seed_nursery(s, t.tenant_id)
+                if t.missing:
+                    seed_missing_line(s, t.tenant_id)
                 if storage is not None:
                     seed_nursery_pages(s, storage, t.tenant_id)
             if t.audit:

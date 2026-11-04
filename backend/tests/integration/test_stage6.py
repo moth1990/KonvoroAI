@@ -31,7 +31,7 @@ from konboro_llm import LLMClient
 from konboro_llm.providers import FakeProvider
 from konboro_llm.stages.validator_review import STAGE as REVIEW
 
-from .api import Api, ApiTenant, add_tenant, set_tenant_flag
+from .api import Api, ApiTenant, add_tenant
 from .test_api_drawings import progress
 from .test_api_upload import upload
 from .test_pipeline import pipeline  # noqa: F401  (fixture)
@@ -155,7 +155,6 @@ def test_stage_6_findings_reach_the_review_screen(
 ) -> None:
     engine = seeded["app"]
     tenant = add_tenant(engine)
-    set_tenant_flag(engine, tenant.tenant_id, "review_screen", True)
     response = upload(api, tenant, [("NURSERY-1.pdf", NURSERY.read_bytes())], customer="לקוח סודי", project="פרויקט")
     drawing_id = str(response.json()["drawing_id"])
     Worker(pipeline).run_until_idle()

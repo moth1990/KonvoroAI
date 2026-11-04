@@ -27,7 +27,7 @@ from konboro.domain.pricing import margin as pm
 
 from .book import Book
 from .derived import DerivedRule, Labor, PanelContext, Requirement, derive
-from .edits import Kept, LineEdits, apply_all
+from .edits import Kept, LineEdits, apply_all, price_line
 from .lines import Draft, panel_lines, values_of
 from .status import finalize
 
@@ -155,6 +155,22 @@ def requirement_for(inp: QuoteInput, panel_id: str) -> Requirement | None:
     return inp.requirements.get(None) if len(inp.panels) == 1 else None
 
 
+def manual_line(ln: Draft, inp: QuoteInput) -> Draft:
+    """A line the user added (09 §6.6) keeps its stored price after a review action that did not touch it, like any
+    other line (07 §7.2.3); otherwise it is priced from the list by its product or SKU. One with neither keeps the
+    price it was added with. Its edits (a quantity, a supplier) apply as on any line."""
+    e = inp.carry.edits.get(ln.key)
+    kept = inp.carry.kept.get(ln.key)
+    if kept is not None:
+        priced = kept.priced
+    elif ln.product_id or ln.sku:
+        priced = price_line(ln, inp.book, e.supplier_id if e else None)
+    else:
+        priced = ln.priced
+    out = replace(ln, priced=priced, qty=e.qty if e and e.qty is not None else ln.qty)
+    return replace(out, edits=e.as_json() if e else {}, approved_at=e.approved_at if e else None)
+
+
 def price_quote(inp: QuoteInput) -> PricedQuote:
     matches = {m.component_id: m for m in inp.matching.matches}
     auxiliary = set(inp.matching.auxiliary)
@@ -192,7 +208,7 @@ def price_quote(inp: QuoteInput) -> PricedQuote:
         derived = derive(ctx, inp.rules, inp.labor, inp.book, set(inp.carry.deleted))
         consumable = set(derived.consumable_ids)
         lines = [ln for ln in built.lines if ln.key not in consumable] + derived.lines
-        lines += [ln for ln in inp.carry.manual if ln.panel_id == panel_id]
+        lines += [manual_line(ln, inp) for ln in inp.carry.manual if ln.panel_id == panel_id]
         lines = [ln for ln in lines if ln.key not in inp.carry.deleted]
         kept = {ln.key for ln in lines}
         lines = [ln for ln in lines if ln.parent is None or ln.parent in kept]  # a deleted device takes its children

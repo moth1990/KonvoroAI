@@ -2,7 +2,12 @@ import { describe, expect, it } from "vitest";
 
 import { line, panel, quote, red } from "./fixtures";
 import {
+  attributeChoice,
+  attributeValue,
   buildRows,
+  choiceMeta,
+  discountFraction,
+  missingText,
   compactDesignators,
   filterCounts,
   matches,
@@ -395,5 +400,52 @@ describe("review actions (S23)", () => {
       false,
       false,
     ]);
+  });
+});
+
+describe("the product picker's wording (S23b)", () => {
+  it("a bare number gets its unit; a value read with one keeps it", () => {
+    expect(attributeValue("current_a", "16")).toBe("16A");
+    expect(attributeValue("breaking_capacity_ka", "4.5")).toBe("4.5kA");
+    expect(attributeValue("current_a", "20A")).toBe("20A");
+    expect(attributeValue("poles", "3")).toBe("3");
+    expect(attributeValue("current_a", null)).toBeNull();
+  });
+
+  it("the dropdown shows the line's value when the catalog has it", () => {
+    const options = ["6", "10", "16", "20"];
+    expect(attributeChoice("20A", options)).toBe("20");
+    expect(attributeChoice("16", options)).toBe("16");
+    expect(attributeChoice("37A", options)).toBe("");
+    expect(attributeChoice(null, options)).toBe("");
+  });
+
+  it("a discount typed in percent is sent as a fraction (07 §7.2: 0.32 is 32%)", () => {
+    expect(discountFraction("30")).toBe("0.3");
+    expect(discountFraction(" 32.5% ")).toBe("0.325");
+    for (const bad of ["", "0", "100", "-5", "abc", "12.345"]) expect(discountFraction(bad)).toBeNull();
+  });
+
+  it("a missing line says what was read beside it (09 §6.4)", () => {
+    expect(missingText(line({ line_type: "missing", explanation: "C20" }))).toBe(
+      "בשרטוט כתוב ״C20״ ליד סימן שהזיהוי לא סימן. אם יש כאן רכיב, בחרו מוצר. אם לא, מחקו את השורה.",
+    );
+    expect(missingText(line({ line_type: "missing", explanation: null }))).toMatch(/^בשרטוט יש כאן סימן/);
+  });
+
+  it("a product's maker and SKU", () => {
+    expect(choiceMeta({ manufacturer: "ABB", sku: "S203M-C16" })).toBe("ABB · S203M-C16");
+    expect(choiceMeta({ manufacturer: null, sku: null })).toBe("");
+  });
+
+  it("the new reasons have words", () => {
+    const chips = reasonChips(
+      line({
+        status: "red",
+        status_reasons: [{ source: "match", status: "red", value: "not_in_catalog", issue_id: null }],
+      }),
+      [],
+    );
+    expect(chips).toEqual([{ text: "אין בקטלוג מוצר עם הערכים האלה", tone: "bad" }]);
   });
 });

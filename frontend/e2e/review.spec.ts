@@ -209,16 +209,6 @@ test.describe("states the fixture lacks (mocked answer)", () => {
     expect(took).toBeLessThan(5_000);
   });
 
-  test("with review_screen off the route stays a placeholder", async ({ page }) => {
-    await page.route("**/me", async (route) => {
-      const response = await route.fetch();
-      const me = (await response.json()) as { flags: Record<string, boolean> };
-      await route.fulfill({ response, json: { ...me, flags: { ...me.flags, review_screen: false } } });
-    });
-    await page.goto(`/review/${fakeId}`);
-    await expect(page.getByText("המסך הזה עוד בבנייה.")).toBeVisible();
-  });
-
   test("an unknown quote says so", async ({ page }) => {
     await page.goto("/review/quo_01JD0000000000000000000009");
     await expect(page.getByRole("alert")).toHaveText("ההצעה לא נמצאה");

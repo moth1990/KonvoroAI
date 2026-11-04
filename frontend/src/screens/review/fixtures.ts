@@ -49,6 +49,8 @@ export function line(over: Partial<QuoteLine> = {}): QuoteLine {
     supplier_id: null,
     price_hints: [],
     qty_editable: true,
+    attribute_options: {},
+    list_price_brand: null,
     ...over,
   };
 }

@@ -64,7 +64,7 @@ export interface Overlay {
   key: string;
   lineId: string;
   bbox: number[];
-  tone: "g" | "y" | "r";
+  tone: "g" | "y" | "r" | "m"; // m: a line the estimator added, in the accent color (09 §6.5)
   selected: boolean;
   dimmed: boolean;
   label: string;
@@ -91,7 +91,7 @@ export function overlays(
           key: `${line.line_id}:${i}`,
           lineId: line.line_id,
           bbox: b.bbox,
-          tone: TONES[line.status],
+          tone: line.line_type === "manual" ? "m" : TONES[line.status],
           selected: line.line_id === opts.selected,
           dimmed: !active || !matches(line, opts.filter),
           label: overlayLabel(line),
@@ -103,6 +103,34 @@ export function overlays(
 }
 
 const TONES = { green: "g", yellow: "y", red: "r" } as const;
+
+/** 09 §6.6: a rectangle under 10 points is not a mark ("גררו מלבן סביב הרכיב"). */
+export const MIN_MARK_PT = 10;
+
+/** Two corners of a drag, in PDF points, as x0, y0, x1, y1 (00 §6.2), kept inside the page and to 0.01 pt. */
+export function dragRect(
+  a: { x: number; y: number },
+  b: { x: number; y: number },
+  page: { width: number; height: number },
+): number[] {
+  const clamp = (v: number, max: number) => Math.round(Math.min(max, Math.max(0, v)) * 100) / 100;
+  return [
+    clamp(Math.min(a.x, b.x), page.width),
+    clamp(Math.min(a.y, b.y), page.height),
+    clamp(Math.max(a.x, b.x), page.width),
+    clamp(Math.max(a.y, b.y), page.height),
+  ];
+}
+
+export function tooSmall(bbox: number[]): boolean {
+  const [x0 = 0, y0 = 0, x1 = 0, y1 = 0] = bbox;
+  return x1 - x0 < MIN_MARK_PT || y1 - y0 < MIN_MARK_PT;
+}
+
+/** 09 §6.5: "סמן רכיב שפוספס" works on a parsed page with its image, on a draft. */
+export function canMark(page: Page | undefined, locked: boolean): boolean {
+  return !!page && !locked && page.route === "process" && page.has_viewer;
+}
 
 /** The hover title: the line's name and its tags (09 §6.5 "ריחוף"). */
 export function overlayLabel(line: QuoteLine): string {
