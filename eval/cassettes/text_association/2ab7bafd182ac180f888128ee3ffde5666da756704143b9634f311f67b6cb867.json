@@ -1,0 +1,140 @@
+{
+  "answer": {
+    "input_tokens": 6115,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 658,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "confidence": 0.85,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s5"
+              ],
+              "value": 80
+            },
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "trip_unit",
+              "span_ids": [
+                "s17"
+              ],
+              "value": "LSI"
+            },
+            {
+              "confidence": 0.6,
+              "evidence": "graphic",
+              "graphic_note": "three short slanted strokes across the line",
+              "name": "poles",
+              "span_ids": [],
+              "value": 3
+            }
+          ],
+          "det": "d1",
+          "explicit_texts": [
+            "s5",
+            "s8",
+            "s12",
+            "s15",
+            "s17"
+          ],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          }
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.95,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s6"
+              ],
+              "value": 160
+            },
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "trip_unit",
+              "span_ids": [
+                "s16"
+              ],
+              "value": "LSI"
+            },
+            {
+              "confidence": 0.6,
+              "evidence": "graphic",
+              "graphic_note": "three short slanted strokes across the line",
+              "name": "poles",
+              "span_ids": [],
+              "value": 3
+            }
+          ],
+          "det": "d2",
+          "explicit_texts": [
+            "s6",
+            "s11",
+            "s13",
+            "s16"
+          ],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          }
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.95,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s7"
+              ],
+              "value": 25
+            },
+            {
+              "confidence": 0.6,
+              "evidence": "graphic",
+              "graphic_note": "three short slanted strokes across the line",
+              "name": "poles",
+              "span_ids": [],
+              "value": 3
+            }
+          ],
+          "det": "d3",
+          "explicit_texts": [
+            "s7",
+            "s9"
+          ],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          }
+        }
+      ],
+      "unassigned_spans": [
+        {
+          "reason": "belongs to neighbour c2",
+          "span_id": "s10"
+        },
+        {
+          "reason": "belongs to neighbour c2",
+          "span_id": "s14"
+        },
+        {
+          "reason": "belongs to neighbour c2",
+          "span_id": "s4"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

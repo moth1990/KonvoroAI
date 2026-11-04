@@ -1,0 +1,128 @@
+{
+  "answer": {
+    "input_tokens": 6370,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 541,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "confidence": 0.95,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s3"
+              ],
+              "value": 6
+            }
+          ],
+          "det": "d1",
+          "explicit_texts": [
+            "s3",
+            "s9"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.95,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s4"
+              ],
+              "value": 20
+            }
+          ],
+          "det": "d2",
+          "explicit_texts": [
+            "s4",
+            "s10"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.5,
+              "evidence": null,
+              "name": "current_a",
+              "value": null
+            },
+            {
+              "confidence": 0.5,
+              "evidence": null,
+              "name": "poles",
+              "value": null
+            },
+            {
+              "confidence": 0.5,
+              "evidence": null,
+              "name": "residual_ma",
+              "value": null
+            }
+          ],
+          "det": "d3",
+          "explicit_texts": []
+        },
+        {
+          "attributes": [],
+          "det": "d4",
+          "explicit_texts": []
+        },
+        {
+          "attributes": [],
+          "det": "d5",
+          "explicit_texts": []
+        },
+        {
+          "attributes": [],
+          "det": "d6",
+          "explicit_texts": [
+            "s22"
+          ]
+        }
+      ],
+      "unassigned_spans": [
+        {
+          "reason": "belongs to the RCD c5 on the left",
+          "span_id": "s17"
+        },
+        {
+          "reason": "label of c5",
+          "span_id": "s15"
+        },
+        {
+          "reason": "(x4) on outgoing line/cable",
+          "span_id": "s29"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s18"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s19"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s20"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s21"
+        },
+        {
+          "reason": "cable",
+          "span_id": "s32"
+        },
+        {
+          "reason": "load name",
+          "span_id": "s33"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

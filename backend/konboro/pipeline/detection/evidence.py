@@ -5,14 +5,17 @@ A class changed here keeps the line yellow at most: code's evidence is good, not
 1. **A device's end circles** (BUG-068). Some designers draw a breaker as a contact with a small circle at each end
    (25.26.100). A circle a third the device's size or less, touching its box on its wire (or a short way off it: the
    model's box may stop short of the ends), is part of the device, not a
-   terminal or a current transformer of its own. A terminal at the line's end, or beside the wire, stays. Runs right
-   after de-duplication, so the circles cost no disambiguation call.
+   terminal or a current transformer of its own. A terminal at the line's end, beside the wire, or with a tag of its
+   own (26-993's EM1) stays. Runs after
+   the disambiguation call, so the call sees the page as before (its budget and cassettes do not move).
 2. **A residual-current rating beside it** (BUG-068). "0.03A" or "30mA" written beside an unsure protective symbol (in
    line with it, within the designator radius) says it is an RCD: 25.26.100's "4×40A 0.03A A" RCDs were read as a
    switch-disconnector and an unknown. When a sure breaker is nearest, an unsure one about as near is meant.
 3. **Peers** (BUG-070). Breakers hanging from one bus in a row, drawn the same (same width and top) with the same
-   rating beside them, are one class: an unsure one takes the class of the surest one. 25.26.100's four 10A lighting
-   breakers read as switch-disconnectors beside mcbs, and two 16A breakers read as push buttons.
+   rating beside them, are one class: an unsure one takes the class of the surest one. A symbol under 60% of the
+   other's height is not drawn the same: NURSERY-1's 1P+N breakers draw the N contact small beside the breaker.
+   25.26.100's four 10A lighting breakers read as switch-disconnectors beside mcbs, and two 16A breakers read as
+   push buttons.
 4. **The designator's letter** (BUG-070, `prefixes.json`, the factory's own on top). Q is a switching device or an
    MCCB, F an MCB. Among the classes the model saw for an unsure symbol, the one the prefix allows wins; else the one
    class of its family the prefix allows ("Q" on a breaker: an MCCB). A prefix never brings in a family the model
@@ -26,7 +29,7 @@ from konboro.pipeline.association.grammar import parse
 
 from .candidates import Candidate, centre, gap
 from .config import DetectionConfig
-from .designators import NOT_DEVICES, PROTECTIVE, tags
+from .designators import COUNT, NOT_DEVICES, PROTECTIVE, tags
 from .library import UNKNOWN, Library
 
 SMALL = 0.35  # an end circle is at most this share of its device's size
@@ -35,6 +38,7 @@ TOUCH_SHARE = 0.3
 NEAR_SHARE = 1.25  # a residual rating nearest a sure breaker still names an unsure one about as near
 ROW_PT = 3.0  # peers: their tops this close (hanging from one bus)
 WIDTH_SHARE = 0.15  # and their widths this close (drawn the same)
+HEIGHT_SHARE = 0.6  # and at least this share of the other's height: a 1P+N breaker's N contact is not a peer
 PEER_SHARE = 0.9  # a peer's class at this share of the sure one's confidence
 TEXT_FLOOR = 0.7  # a class from a residual rating, or from a prefix with the class seen by the model
 CIRCLES = ("terminal", "current_transformer")
@@ -80,7 +84,8 @@ def absorb_end_circles(found: list[Candidate]) -> tuple[list[Candidate], int]:
     kept: list[Candidate] = []
     absorbed = 0
     for c in found:
-        if c.family in CIRCLES and any(c.height <= SMALL * h.height and _on_wire(c, h) for h in hosts):
+        own_tag = bool(c.tag) and not COUNT.match(c.tag.strip().upper())  # 26-993's EM1: a terminal of its own
+        if c.family in CIRCLES and not own_tag and any(c.height <= SMALL * h.height and _on_wire(c, h) for h in hosts):
             absorbed += 1
             continue
         kept.append(c)
@@ -142,6 +147,7 @@ def peers(found: list[Candidate], spans: list[TextSpan], lib: Library, cfg: Dete
             for a in sure
             if abs(a.bbox[1] - c.bbox[1]) <= ROW_PT
             and abs((a.bbox[2] - a.bbox[0]) - width) <= WIDTH_SHARE * (a.bbox[2] - a.bbox[0])
+            and _height_alike(a, c)
             and a.orientation == c.orientation
             and rating[id(a)] == rating[id(c)]
         ]
@@ -150,6 +156,11 @@ def peers(found: list[Candidate], spans: list[TextSpan], lib: Library, cfg: Dete
         best = max(like, key=lambda a: (a.confidence, -abs(a.bbox[0] - c.bbox[0])))
         if (best.family, best.symbol_class) != (c.family, c.symbol_class):
             _adopt(c, best.family, best.symbol_class, min(_cap(cfg), max(c.confidence, best.confidence * PEER_SHARE)))
+
+
+def _height_alike(a: Candidate, b: Candidate) -> bool:
+    ha, hb = a.bbox[3] - a.bbox[1], b.bbox[3] - b.bbox[1]
+    return min(ha, hb) >= HEIGHT_SHARE * max(ha, hb)
 
 
 def _allowed(designator: str | None, lib: Library) -> tuple[str, ...]:

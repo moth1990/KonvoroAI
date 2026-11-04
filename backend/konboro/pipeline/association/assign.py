@@ -401,6 +401,8 @@ def absorb_neutral(
         for h in hosts:
             if h.det_id == g.det_id or (g.designator and g.designator != h.designator):
                 continue
+            if (height(h, cfg), h.confidence) < (height(g, cfg), g.confidence):
+                continue  # the breaker hosts its N contact, never the other way (NURSERY-1 F1, S24b)
             top, bottom = max(g.bbox[1], h.bbox[1]), min(g.bbox[3], h.bbox[3])
             overlap = bottom - top
             if overlap < 0.5 * min(g.bbox[3] - g.bbox[1], h.bbox[3] - h.bbox[1]):

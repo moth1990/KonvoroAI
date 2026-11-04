@@ -341,6 +341,9 @@ def test_the_neutral_pole_on_its_own_line_joins_its_breaker() -> None:
     out = assign.absorb_neutral([breaker, contact, tagged, host, aux], spans)
     assert out == {contact.det_id: breaker.det_id, tagged.det_id: host.det_id}
     assert assign.absorb_neutral([breaker, contact], []) == {}  # no N line, no neutral
+    # NURSERY-1 F1: the N contact read as a breaker too, with the breaker's tag; the breaker is never its guest
+    small = det(6, (365, 250, 374, 265), tag="F3", confidence=0.7)
+    assert assign.absorb_neutral([breaker, small], spans[:1]) == {small.det_id: breaker.det_id}
 
 
 # ---------- multiplicity, circuit numbers, supply scope (04 §5.1.1–5.1.2) ----------
@@ -787,11 +790,13 @@ def test_a_device_drawing_gives_the_family_and_disagreeing_values_are_a_conflict
     ]
     built[0].instance.confidence = 0.4
     comps, _, _ = components("drw_01X", built, SCH)
-    breaker = next(c for c in comps if c.family == "circuit_breaker")
-    assert breaker.designators == ["Q0"] and len(breaker.instance_ids) == 2
-    assert breaker.attributes["current_a"].value == 80
-    assert breaker.attributes["current_a"].confidence == round(0.95 * DEFAULT.conflict_penalty, 4)
-    # BUG-066: the transformer is not folded into the breaker, nor the breaker into it: it is a conflict to review
+    assert len(comps) == 1 and comps[0].family == "circuit_breaker"  # an unsure part of its drawing, beside it
+    assert comps[0].attributes["current_a"].value == 80
+    assert comps[0].attributes["current_a"].confidence == round(0.95 * DEFAULT.conflict_penalty, 4)
+    # BUG-066: the same transformer drawn away from the breaker is a device of its own, to review
+    built[0].instance.bbox = (400, 0, 410, 10)
+    built[0].instance.issues = []
+    comps, _, _ = components("drw_01X", built, SCH)
     ct = next(c for c in comps if c.family == "current_transformer")
     assert ct.designators == [] and ct.quantity == 1 and ct.status == "uncertain"
     assert [i.code for i in built[0].instance.issues] == ["tag_conflict"]
@@ -811,6 +816,8 @@ def test_one_tag_merges_one_family_never_a_terminal_over_breakers() -> None:
         _built(8, "shunt_trip", tag="X2"),  # an accessory under a device's tag sits on that device
     ]
     built[5].instance.confidence = 0.42
+    for n, b in enumerate(built):  # each drawn in its own place, 60 pt apart
+        b.instance.bbox = (60.0 * n, 0, 60.0 * n + 10, 10)
     comps, owner, _ = components("drw_01X", built, SCH)
     by_family = {c.family: c for c in comps}
     assert by_family["terminal"].designators == ["X2"] and by_family["terminal"].quantity == 1

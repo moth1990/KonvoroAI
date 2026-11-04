@@ -530,7 +530,7 @@ fixed:   unit_price = fixed_price
 | `line_id` | string | מזהה ייחודי |
 | `line_type` | enum | `component`, `derived`, `labor`, `manual`, `missing` |
 | `component_id` | string \| null | מהשלבים הקודמים. **דרכו השורה מצביעה על המקום בשרטוט** |
-| `sku`, `description`, `manufacturer` | string | מתמונת המצב של פריט הקטלוג |
+| `sku`, `description`, `manufacturer` | string | מתמונת המצב של פריט הקטלוג. לשורה בלי פריט קטלוג, **אותו מבנה** (S24b, BUG-071, ממצא 3 של המשתמש): שם הסוג המלא, יצרן אם כתוב, ואחריהם קטבים, זרם, עקומה וכושר ניתוק, בלי מה שלא ידוע. ערך שהוסק מהמעגל נכנס; ברירת מחדל לא. "מפסק זרם אוטומטי (מא"ז) 1P 10A", "מפסק 3P 80A" למפסק בלי סוג. הביקורת על הצעה קיימת שומרת על הצורה הקצרה שלה ("מא"ז 3X80A", [11](11-quote-audit.md)) |
 | `qty` | decimal | כמות. לרוב שלמה, אבל מוצר שנמכר לפי מטר (`unit`, 7.2.1) יכול להיות שבר. נשמר כ-`numeric(12,3)` ([db-schema](../docs/db-schema.md)) |
 | `unit_cost` | decimal \| null | `null` כשאין מחיר |
 | `cost_source` | object | מקור העלות (7.2): `type`, `price_list_id` (שורת הספק במחירון), `supplier`, `supplier_id`, `via` (איזה שלב בסדר של 7.2.2 בחר), `price_date`, ובהמרה `original_currency`, `original_cost`, `fx_rate`, `fx_date`. בהנחת מותג: `list_price`, `discount_pct` |

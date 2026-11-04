@@ -1,0 +1,75 @@
+{
+  "answer": {
+    "input_tokens": 4058,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 571,
+    "payload": {
+      "issues": [
+        {
+          "bbox": null,
+          "component_ids": [
+            "c04"
+          ],
+          "confidence": 0.5,
+          "message": "ממסר תרמי בכמות 5 – בשרטוט אין ממסרים תרמיים; נראה שהכמות או הרכיב שגויים. לבדוק.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": [
+            285,
+            905,
+            382,
+            935
+          ],
+          "component_ids": [
+            "c08"
+          ],
+          "confidence": 0.5,
+          "message": "נורות סימון בכמות 5, בשרטוט רואים 3 נורות בשעון וגם נורה אחת ליד המגען. לבדוק את הכמות.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": null,
+          "component_ids": [
+            "c06"
+          ],
+          "confidence": 0.4,
+          "message": "משנה זרם מחובר ל-MCB 25A, אך בשרטוט אין משנה זרם. ייתכן שזהו רכיב אחר או שאינו קיים.",
+          "type": "wrong_family"
+        },
+        {
+          "bbox": [
+            700,
+            1000,
+            760,
+            1100
+          ],
+          "component_ids": [
+            "c10",
+            "c12"
+          ],
+          "confidence": 0.45,
+          "message": "מא\"ז 16A מופיע בשתי שורות (3 ו-6). בשרטוט 2 בודדים ועוד קבוצה x6; לבדוק כפילות וסכום כמויות.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": [
+            475,
+            1085,
+            530,
+            1135
+          ],
+          "component_ids": [
+            "c13",
+            "c15"
+          ],
+          "confidence": 0.45,
+          "message": "מא\"ז 10A מופיע פעמיים (3 קטבים וללא קטבים) אף שבשרטוט יש רק אחד. לבדוק כפילות.",
+          "type": "inconsistent_attributes"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "validator_review"
+}

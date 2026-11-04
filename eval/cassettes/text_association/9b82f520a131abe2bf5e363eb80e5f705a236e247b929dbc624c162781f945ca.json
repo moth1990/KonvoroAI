@@ -1,0 +1,111 @@
+{
+  "answer": {
+    "input_tokens": 6204,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 419,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "confidence": 0.7,
+              "evidence": "text",
+              "name": "poles",
+              "span_ids": [
+                "s8"
+              ],
+              "value": 1
+            }
+          ],
+          "det": "d1",
+          "explicit_texts": [
+            "s8",
+            "s11",
+            "s14"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.7,
+              "evidence": "text",
+              "name": "poles",
+              "span_ids": [
+                "s9"
+              ],
+              "value": 1
+            }
+          ],
+          "det": "d2",
+          "explicit_texts": [
+            "s9",
+            "s12",
+            "s15"
+          ]
+        },
+        {
+          "attributes": [],
+          "det": "d3",
+          "explicit_texts": [
+            "s18"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.6,
+              "evidence": "text",
+              "name": "cross_section_mm2",
+              "span_ids": [
+                "s16"
+              ],
+              "value": 1.5
+            }
+          ],
+          "det": "d4",
+          "explicit_texts": [
+            "s22",
+            "s16"
+          ]
+        },
+        {
+          "attributes": [],
+          "det": "d5",
+          "explicit_texts": [
+            "s19"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.6,
+              "evidence": "text",
+              "name": "cross_section_mm2",
+              "span_ids": [
+                "s17"
+              ],
+              "value": 1.5
+            }
+          ],
+          "det": "d6",
+          "explicit_texts": [
+            "s23",
+            "s17"
+          ]
+        }
+      ],
+      "unassigned_spans": [
+        {
+          "reason": "circuit name",
+          "span_id": "s25"
+        },
+        {
+          "reason": "circuit name",
+          "span_id": "s27"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

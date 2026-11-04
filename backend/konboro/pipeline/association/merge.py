@@ -7,7 +7,9 @@ An instance is one symbol with what was read for it. The merge, once per drawing
    keep the first representation's value, flagged `attribute_conflict` (× 0.8).
    A tag merges one device's drawings only (BUG-066): a device drawing of another family under the same tag stays a
    device of its own, untagged and yellow, flagged `tag_conflict` (25.26.100's "X2" took 16A breakers and two RCDs
-   into one terminal × 76). An accessory (a shunt trip) under a device's tag sits on that device.
+   into one terminal × 76). Unless it is unsure and beside one of the device's drawings, within its length: then it
+   is a misread part of that drawing (Q0's ring read as a current transformer, QLG1's thermal release as an overload
+   relay). An accessory (a shunt trip) under a device's tag sits on that device.
 2. An auxiliary contact (family `aux_contact`) is an accessory of its own: its tag is the device it sits on
    (`parent_designators`), not a device of its own tag. An untagged contact or coil of a family that has tagged
    devices in the panel is another drawing of one of them, and joins the nearest (no quantity of its own).
@@ -159,6 +161,10 @@ def devices(built: list[Built], schemas: Schemas, cfg: AssociationConfig = DEFAU
                 members.append(b)  # the device's own drawings: its coil, its contacts, its front view (03 §4.5)
             elif b.instance.family in ACCESSORIES:
                 accessories.append((b, tag))  # sits on the tag's device, like an auxiliary contact
+            elif b.instance.confidence < cfg.accepted_from and _part_of(
+                b, [x for x in group if x.instance.family == family]
+            ):
+                members.append(b)  # an unsure reading of a part of the device's own drawing (Q0's ring, a CT)
             else:
                 _conflict(b, tag, family, cfg)  # BUG-066: another device under one tag is a conflict, not a merge
                 alone.append(b)
@@ -243,6 +249,19 @@ def _conflict(b: Built, tag: str, family: str, cfg: AssociationConfig) -> None:
     i.issues.append(issue("tag_conflict", "warning", i.page_id, tag=tag, family=name))
     i.confidence = round(min(i.confidence, cfg.accepted_from - 0.01), 4)
     i.status = status(i.confidence, cfg)  # type: ignore[assignment]
+
+
+def _part_of(b: Built, drawings: list[Built]) -> bool:
+    """Within one of the device's drawings' reach on its page: no farther than that drawing is long."""
+    x0, y0, x1, y1 = b.instance.bbox or (0, 0, 0, 0)
+    for d in drawings:
+        if d.instance.page_id != b.instance.page_id or d.instance.bbox is None:
+            continue
+        a0, b0, a1, b1 = d.instance.bbox
+        dx, dy = max(a0 - x1, 0.0, x0 - a1), max(b0 - y1, 0.0, y0 - b1)
+        if (dx * dx + dy * dy) ** 0.5 <= max(a1 - a0, b1 - b0):
+            return True
+    return False
 
 
 def _conflicted(b: Built) -> bool:

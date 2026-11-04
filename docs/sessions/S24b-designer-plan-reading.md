@@ -22,28 +22,28 @@ A designer's single-sheet plan in the style of 25.26.100 (בית כנסת מקו
 ## Tasks
 
 ### Backend
-- [ ] BUG-066: `association/merge.py::devices`: a tag merges symbols of one family, or a parent with its coil, contacts and accessories. Another family under the same tag is a conflict, never a terminal that swallows breakers and RCDs.
-- [ ] BUG-067: `detection/designators.py`: `x2` / `X11` beside a protective device's rating is a count, not a tag; stage 4's circuit range confirms it.
-- [ ] BUG-069: `designators.tags()` expands a range of one prefix ("T1-T3" → T1, T2, T3).
-- [ ] BUG-070: a designator-prefix table as data (Q a switching device or MCCB, F an MCB), overridable per factory, that weighs the class in stage 3. A breaker above the catalog's MCB range is not an MCB. Breakers on one field's busbar with the same rating and the same drawn symbol are one class.
-- [ ] BUG-068: a small circle touching a device's box on its wire is part of that device. A residual-current reading beside a protective symbol is evidence for `rcd`.
-- [ ] BUG-072: the cable written along a circuit's outgoing line reaches its breaker (`poles_from_cable_cores`).
-- [ ] BUG-071: stage 7 describes an unmatched line with `matching/text.py::describe`; the audit keeps its own short form.
+- [x] BUG-066: `association/merge.py::devices`: a tag merges symbols of one family, or a parent with its coil, contacts and accessories. Another family under the same tag is a conflict, never a terminal that swallows breakers and RCDs.
+- [x] BUG-067: `detection/designators.py`: `x2` / `X11` beside a protective device's rating is a count, not a tag; stage 4's circuit range confirms it.
+- [x] BUG-069: `designators.tags()` expands a range of one prefix ("T1-T3" → T1, T2, T3).
+- [x] BUG-070: a designator-prefix table as data (Q a switching device or MCCB, F an MCB), overridable per factory, that weighs the class in stage 3. A breaker above the catalog's MCB range is not an MCB. Breakers on one field's busbar with the same rating and the same drawn symbol are one class.
+- [x] BUG-068: a small circle touching a device's box on its wire is part of that device. A residual-current reading beside a protective symbol is evidence for `rcd`.
+- [x] BUG-072: the cable written along a circuit's outgoing line reaches its breaker (`poles_from_cable_cores`).
+- [x] BUG-071: stage 7 describes an unmatched line with `matching/text.py::describe`; the audit keeps its own short form.
 
 ### Unit tests
-- [ ] A failing test first for each bug, then the fix.
-- [ ] A fixture of 25.26.100's main panel from the dev run's stage 2–4 outputs (`tests/unit/fixtures/`), with the whole-panel counts.
+- [x] A failing test first for each bug, then the fix.
+- [x] A fixture of 25.26.100's main panel from the dev run's stage 2–4 outputs (`tests/unit/fixtures/`), with the whole-panel counts.
 
 ### Integration tests
-- [ ] Whatever the factory override of the prefix table touches (tenant table or settings).
+- [x] The factory's prefix override reaches only that factory (`tests/integration/test_stage3.py`).
 
 ### Eval (pipeline sessions)
 - [ ] `make eval` run; numbers recorded under Outcome. Cassettes re-recorded where the change moves a request.
 
 ### Docs
-- [ ] Spec notes for the rules added (03 §3.7, 04 §5.8, 05 §5.5.1)
+- [x] Spec notes for the rules added (03 §3.7, 04 §5.8, 05 §5.5.1)
 - [ ] `docs/bugs.md`: BUG-066 to BUG-072 closed, BUG-051 / BUG-036 updated
-- [ ] CLAUDE.md if a rule or a data file is added
+- [x] CLAUDE.md if a rule or a data file is added
 
 ## Acceptance criteria
 

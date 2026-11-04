@@ -1,0 +1,84 @@
+{
+  "answer": {
+    "input_tokens": 6795,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 638,
+    "payload": {
+      "issues": [
+        {
+          "bbox": [
+            28,
+            760,
+            95,
+            795
+          ],
+          "component_ids": [
+            "c21"
+          ],
+          "confidence": 0.3,
+          "message": "בשרטוט מופיע נתיך HRC 3x100A אחד (שלושה נתיכים בקבוצה אחת). יש לוודא שהכמות 3 נכונה ולא נספרה פעמיים מהסימון 3x.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": [
+            1310,
+            745,
+            1385,
+            850
+          ],
+          "component_ids": [
+            "c17"
+          ],
+          "confidence": 0.35,
+          "message": "המפסק 80A/100A עם יחידת LSI מוגדר ללא קטלוג ועם 6kA, בעוד שאר המפסקים בלוח הם 25-36kA. יש לבדוק את הערכים.",
+          "type": "inconsistent_attributes"
+        },
+        {
+          "bbox": [
+            830,
+            645,
+            935,
+            705
+          ],
+          "component_ids": [
+            "c12",
+            "c13"
+          ],
+          "confidence": 0.5,
+          "message": "מגן מנוע PKZM 1–2.4A מופיע פעמיים בטבלה אך בשרטוט רק אחד, ויש לו trip_unit=LSI שלא מתאים למגן מנוע. יש לבדוק כפילות וערכים.",
+          "type": "inconsistent_attributes"
+        },
+        {
+          "bbox": [
+            828,
+            607,
+            906,
+            640
+          ],
+          "component_ids": [
+            "c10"
+          ],
+          "confidence": 0.2,
+          "message": "הקטלוג הוא SATEC PM135E אך בשרטוט כתוב SATEC 135E. יש לוודא את הדגם.",
+          "type": "wrong_family"
+        },
+        {
+          "bbox": [
+            685,
+            545,
+            745,
+            580
+          ],
+          "component_ids": [
+            "c09"
+          ],
+          "confidence": 0.3,
+          "message": "בשרטוט מופיע מא\"ז 6A אחד בפיקוד, והכמות בטבלה 3 (כולל 6A של C1/C2). יש לוודא את הכמות.",
+          "type": "suspicious_quantity"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "validator_review"
+}

@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1287,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 118,
+    "payload": {
+      "confidence": 0.5,
+      "decision": "choose",
+      "reason": "זהו מגע מתג עם תווית T2 וקו מקווקו מכני, ללא חצי עיגול של מגען כוח, ולכן כנראה מגע של ממסר עזר או ממסר זמן ולא מגען.}",
+      "symbol_class": "relay"
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

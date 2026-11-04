@@ -633,6 +633,9 @@ def test_a_breakers_end_circles_are_part_of_it() -> None:
     q0 = cand((249.3, 468.4, 293.7, 524.9), cls=library.UNKNOWN)
     kept, absorbed = evidence.absorb_end_circles([breaker, top, bottom, output, aside, ct, q0])
     assert absorbed == 2 and kept == [breaker, output, aside, ct, q0]
+    em1 = cand((1662.4, 453.9, 1671.5, 463.0), family="terminal", cls="terminal", tag="EM1")  # 26-993: its own tag
+    x2 = cand((1662.4, 453.9, 1671.5, 463.0), family="terminal", cls="terminal", tag="X2")  # a count, not a tag
+    assert evidence.absorb_end_circles([breaker, em1, x2]) == ([breaker, em1], 1)
 
 
 def test_a_residual_rating_beside_a_breaker_makes_it_an_rcd() -> None:
@@ -676,6 +679,14 @@ def test_breakers_in_one_row_with_one_rating_and_one_drawing_are_one_class() -> 
     assert all((c.family, c.symbol_class) == ("circuit_breaker", "mcb") for c in unsure)
     assert all(0.5 <= c.confidence < DEFAULT.accepted_from for c in unsure)
     assert other_rating.family == "switch_disconnector" and wider.family == "push_button"
+    # NURSERY-1: a 1P+N breaker's N contact, half its height, is not a breaker of its own (stage 4 absorbs it)
+    neutral = cand(
+        (1605.0, 466.0, 1615.6, 482.0), family="switch_disconnector", cls="switch_disconnector", detector_score=0.56
+    )
+    n_rating = span("10A", (1615.0, 470.0, 1640.0, 480.0), {"current_a": 10}, n=20)
+    host = cand((1627.4, 464.3, 1638.0, 501.3))
+    evidence.peers([host, neutral], [n_rating], LIB, DEFAULT)
+    assert neutral.family == "switch_disconnector"
 
 
 @pytest.mark.parametrize(

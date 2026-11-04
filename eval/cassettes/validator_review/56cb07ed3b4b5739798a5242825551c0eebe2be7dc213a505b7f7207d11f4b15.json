@@ -1,0 +1,69 @@
+{
+  "answer": {
+    "input_tokens": 5202,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 548,
+    "payload": {
+      "issues": [
+        {
+          "bbox": [
+            1040,
+            140,
+            1220,
+            265
+          ],
+          "component_ids": [
+            "c02"
+          ],
+          "confidence": 0.4,
+          "message": "בציור Q0 מסומן ABB XT1C 4X80A עם INC=63A, ואילו בטבלה 80A עם דגם XT1C160. יש לבדוק את הזרם הנקוב ואת הדגם.",
+          "type": "inconsistent_attributes"
+        },
+        {
+          "bbox": [
+            1480,
+            455,
+            1568,
+            515
+          ],
+          "component_ids": [
+            "c07"
+          ],
+          "confidence": 0.3,
+          "message": "F3 ו-F5 מקובצים כ-1P+N 16A, ובציור F3 הוא 16+N עם INC=12.8A. יש לוודא ש-F5 זהה ל-F3 ושהזרם נקרא נכון.",
+          "type": "inconsistent_attributes"
+        },
+        {
+          "bbox": [
+            765,
+            10,
+            860,
+            95
+          ],
+          "component_ids": [
+            "c01"
+          ],
+          "confidence": 0.35,
+          "message": "נורות סימון בכמות 9, אך בציור נראות 3 נורות L1–L3 ועוד HNV. יש לבדוק שהנורות HT1–HT5 קיימות בלוח.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": [
+            700,
+            605,
+            860,
+            650
+          ],
+          "component_ids": [
+            "c10"
+          ],
+          "confidence": 0.35,
+          "message": "C2 ו-C3 מקובצים עם C5 באותו ערך 16A ובלי מספר קטבים, אף שהם שונים בציור: C2 תלת-פאזי ואילו C3 דו-פאזי. יש לבדוק קטבים וזרם.",
+          "type": "inconsistent_attributes"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "validator_review"
+}

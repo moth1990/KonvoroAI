@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1325,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 128,
+    "payload": {
+      "confidence": 0.72,
+      "decision": "choose",
+      "reason": "הסמל מציג מתג מסתובב עם מגע מוטה ושלוש נקודות חיבור (שתיים למעלה ואחת באמצע), בדומה לבורר, ואין בו מפעיל לחיצה כמו בלחצן.}",
+      "symbol_class": "selector_switch"
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "symbol_disambiguation"
+}

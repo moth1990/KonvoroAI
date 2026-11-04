@@ -1,0 +1,172 @@
+{
+  "answer": {
+    "input_tokens": 6331,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 741,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "confidence": 0.3,
+              "evidence": "graphic",
+              "graphic_note": "lamp symbol filled green",
+              "name": "color",
+              "value": "green"
+            },
+            {
+              "evidence": null,
+              "name": "coil_voltage_v",
+              "value": null
+            }
+          ],
+          "det": "d1",
+          "explicit_texts": [
+            "s2"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.3,
+              "evidence": "graphic",
+              "graphic_note": "lamp symbol filled green",
+              "name": "color",
+              "value": "green"
+            },
+            {
+              "evidence": null,
+              "name": "coil_voltage_v",
+              "value": null
+            }
+          ],
+          "det": "d2",
+          "explicit_texts": [
+            "s3"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.3,
+              "evidence": "graphic",
+              "graphic_note": "lamp symbol filled green",
+              "name": "color",
+              "value": "green"
+            },
+            {
+              "evidence": null,
+              "name": "coil_voltage_v",
+              "value": null
+            }
+          ],
+          "det": "d3",
+          "explicit_texts": [
+            "s4"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "evidence": null,
+              "name": "coil_voltage_v",
+              "value": null
+            }
+          ],
+          "det": "d4"
+        },
+        {
+          "attributes": [
+            {
+              "evidence": null,
+              "name": "coil_voltage_v",
+              "value": null
+            }
+          ],
+          "det": "d5",
+          "explicit_texts": [
+            "s5"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s10"
+              ],
+              "value": 6
+            },
+            {
+              "confidence": 0.95,
+              "evidence": "text",
+              "name": "poles",
+              "span_ids": [
+                "s10"
+              ],
+              "value": 3
+            },
+            {
+              "confidence": 0.6,
+              "evidence": "text",
+              "name": "neutral",
+              "span_ids": [
+                "s10"
+              ],
+              "value": false
+            },
+            {
+              "evidence": null,
+              "name": "curve",
+              "value": null
+            },
+            {
+              "evidence": null,
+              "name": "breaking_capacity_ka",
+              "value": null
+            },
+            {
+              "evidence": null,
+              "name": "setting_a",
+              "value": null
+            },
+            {
+              "evidence": null,
+              "name": "trip_unit",
+              "value": null
+            },
+            {
+              "evidence": null,
+              "name": "range_min_a",
+              "value": null
+            },
+            {
+              "evidence": null,
+              "name": "range_max_a",
+              "value": null
+            }
+          ],
+          "brand_hint": "ABB",
+          "det": "d6",
+          "explicit_texts": [
+            "s8",
+            "s10",
+            "s11",
+            "s12",
+            "s13"
+          ]
+        }
+      ],
+      "unassigned_spans": [
+        {
+          "reason": "INC is load current",
+          "span_id": "s11"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

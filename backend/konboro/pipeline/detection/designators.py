@@ -41,7 +41,7 @@ NOT_DEVICES = ("busbar", "ground", "junction", "motor_load")  # drawn, never bil
 LIST_MAX = 6  # tags in one list on one symbol
 RANGE_MAX = 12  # tags in one range ("T1-T3", "R1-R7")
 _DIGIT = re.compile(r"\d")
-_COUNT = re.compile(r"^\(?[X×](?P<n>\d{1,2})\)?$")  # "x2", "X11": a count beside a device, or a terminal strip
+COUNT = re.compile(r"^\(?[X×](?P<n>\d{1,2})\)?$")  # "x2", "X11": a count beside a device, or a terminal strip
 _RANGE = re.compile(r"^(?P<p>[A-Z]{1,4})(?P<a>\d{1,3})-(?P=p)(?P<b>\d{1,3})$")  # one prefix both ends
 _CIRCUITS = re.compile(r"^(?P<a>\d{1,3})[-–'’](?P<b>\d{1,3})$")  # "201-202", OCR'd "207'208"
 
@@ -85,7 +85,7 @@ def counts(found: list[Candidate], spans: list[TextSpan], cfg: DetectionConfig) 
             ranges.append((s, int(r["b"]) - int(r["a"]) + 1))
     out: set[str] = set()
     for s in spans:
-        m = _COUNT.match(_canon(s.text))
+        m = COUNT.match(_canon(s.text))
         if not m:
             continue
         near = [
@@ -130,7 +130,7 @@ def acceptable(text: str, c: Candidate, model_read: bool, inside: bool = False) 
     parts = tags(t)
     if len(parts) > 1:
         return model_read and all(_DIGIT.search(p) and acceptable(p, c, model_read, inside) for p in parts)
-    if _COUNT.match(t):
+    if COUNT.match(t):
         return c.family == "terminal"  # BUG-067: a terminal strip's tag; beside any other device, a count
     if _PHASE.match(t):
         rule = PHASE_OK.get(c.family)

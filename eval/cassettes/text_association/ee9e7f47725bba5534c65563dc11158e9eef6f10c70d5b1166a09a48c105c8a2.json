@@ -1,0 +1,195 @@
+{
+  "answer": {
+    "input_tokens": 6270,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 852,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s13",
+                "s15"
+              ],
+              "value": 160
+            },
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "trip_unit",
+              "span_ids": [
+                "s11"
+              ],
+              "value": "LSI"
+            },
+            {
+              "confidence": 0.9,
+              "evidence": null,
+              "name": "breaking_capacity_ka",
+              "span_ids": [],
+              "value": null
+            }
+          ],
+          "brand_hint": null,
+          "det": "d1",
+          "explicit_texts": [
+            "s13",
+            "s15",
+            "s11",
+            "s10"
+          ],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          }
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.95,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s19"
+              ],
+              "value": 16
+            }
+          ],
+          "brand_hint": null,
+          "det": "d2",
+          "explicit_texts": [
+            "s19",
+            "s21"
+          ],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          }
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.95,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s20"
+              ],
+              "value": 32
+            }
+          ],
+          "brand_hint": null,
+          "det": "d3",
+          "explicit_texts": [
+            "s20",
+            "s22"
+          ],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          }
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.95,
+              "evidence": "text",
+              "name": "poles",
+              "span_ids": [
+                "s25"
+              ],
+              "value": 4
+            },
+            {
+              "confidence": 0.95,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s25"
+              ],
+              "value": 63
+            },
+            {
+              "confidence": 0.95,
+              "evidence": "text",
+              "name": "residual_ma",
+              "span_ids": [
+                "s25"
+              ],
+              "value": 30
+            }
+          ],
+          "brand_hint": null,
+          "det": "d4",
+          "explicit_texts": [
+            "s25",
+            "s23"
+          ],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          }
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.95,
+              "evidence": "text",
+              "name": "poles",
+              "span_ids": [
+                "s26"
+              ],
+              "value": 4
+            },
+            {
+              "confidence": 0.95,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s26"
+              ],
+              "value": 40
+            },
+            {
+              "confidence": 0.95,
+              "evidence": "text",
+              "name": "residual_ma",
+              "span_ids": [
+                "s26"
+              ],
+              "value": 30
+            }
+          ],
+          "brand_hint": null,
+          "det": "d5",
+          "explicit_texts": [
+            "s26",
+            "s24"
+          ],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          }
+        }
+      ],
+      "possible_missed": [],
+      "shared_labels": [],
+      "unassigned_spans": [
+        {
+          "reason": "Ik belongs to busbar",
+          "span_id": "s5"
+        },
+        {
+          "reason": "title text",
+          "span_id": "s2"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

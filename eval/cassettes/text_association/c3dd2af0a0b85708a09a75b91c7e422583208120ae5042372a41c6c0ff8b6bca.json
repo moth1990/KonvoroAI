@@ -1,0 +1,210 @@
+{
+  "answer": {
+    "input_tokens": 6248,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 1011,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "confidence": 0.95,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s2"
+              ],
+              "value": 63
+            },
+            {
+              "confidence": 0.6,
+              "evidence": "graphic",
+              "graphic_note": "three slanted strokes across the line",
+              "name": "poles",
+              "span_ids": [],
+              "value": 3
+            }
+          ],
+          "det": "d1",
+          "explicit_texts": [
+            "s2",
+            "s6"
+          ],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          }
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.95,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s3"
+              ],
+              "value": 80
+            },
+            {
+              "confidence": 0.6,
+              "evidence": "graphic",
+              "graphic_note": "three slanted strokes across the line",
+              "name": "poles",
+              "span_ids": [],
+              "value": 3
+            }
+          ],
+          "det": "d2",
+          "explicit_texts": [
+            "s3",
+            "s7",
+            "s9"
+          ],
+          "multiplicity": {
+            "count": 2,
+            "span_ids": [
+              "s7"
+            ]
+          }
+        },
+        {
+          "attributes": [],
+          "det": "d3",
+          "explicit_texts": [],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          }
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.95,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s14"
+              ],
+              "value": 25
+            },
+            {
+              "confidence": 0.6,
+              "evidence": "graphic",
+              "graphic_note": "three slanted strokes across the line",
+              "name": "poles",
+              "span_ids": [],
+              "value": 3
+            }
+          ],
+          "det": "d4",
+          "explicit_texts": [
+            "s14",
+            "s17",
+            "s18"
+          ],
+          "multiplicity": {
+            "count": 3,
+            "span_ids": [
+              "s18"
+            ]
+          }
+        },
+        {
+          "attributes": [],
+          "det": "d5",
+          "explicit_texts": [],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          }
+        },
+        {
+          "attributes": [],
+          "det": "d6",
+          "explicit_texts": [],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          }
+        }
+      ],
+      "unassigned_spans": [
+        {
+          "reason": "belongs to neighbour c1",
+          "span_id": "s1"
+        },
+        {
+          "reason": "outside tile / other symbol",
+          "span_id": "s4"
+        },
+        {
+          "reason": "other symbol",
+          "span_id": "s5"
+        },
+        {
+          "reason": "other symbol",
+          "span_id": "s8"
+        },
+        {
+          "reason": "other symbol",
+          "span_id": "s10"
+        },
+        {
+          "reason": "other symbol",
+          "span_id": "s11"
+        },
+        {
+          "reason": "Hebrew label (clock control)",
+          "span_id": "s12"
+        },
+        {
+          "reason": "Hebrew label (clock control)",
+          "span_id": "s16"
+        },
+        {
+          "reason": "neighbour",
+          "span_id": "s13"
+        },
+        {
+          "reason": "neighbour",
+          "span_id": "s15"
+        },
+        {
+          "reason": "belongs to c3",
+          "span_id": "s19"
+        },
+        {
+          "reason": "belongs to c4",
+          "span_id": "s21"
+        },
+        {
+          "reason": "belongs to c5",
+          "span_id": "s30"
+        },
+        {
+          "reason": "ground marking",
+          "span_id": "s32"
+        },
+        {
+          "reason": "cable",
+          "span_id": "s25"
+        },
+        {
+          "reason": "cable",
+          "span_id": "s26"
+        },
+        {
+          "reason": "cable",
+          "span_id": "s24"
+        },
+        {
+          "reason": "cable length",
+          "span_id": "s20"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}
