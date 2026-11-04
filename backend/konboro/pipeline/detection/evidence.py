@@ -22,15 +22,13 @@ A class changed here keeps the line yellow at most: code's evidence is good, not
    did not see.
 """
 
-import re
-
 from konboro.contracts.extraction import TextSpan
 from konboro.pipeline.association.grammar import parse
 
 from .candidates import Candidate, centre, gap
 from .config import DetectionConfig
 from .designators import COUNT, NOT_DEVICES, PROTECTIVE, tags
-from .library import UNKNOWN, Library
+from .library import UNKNOWN, Library, prefix_classes
 
 SMALL = 0.35  # an end circle is at most this share of its device's size
 TOUCH_PT = 6.0  # and this close to the device's box, or this share of its size (a box drawn short of its ends)
@@ -42,7 +40,6 @@ HEIGHT_SHARE = 0.6  # and at least this share of the other's height: a 1P+N brea
 PEER_SHARE = 0.9  # a peer's class at this share of the sure one's confidence
 TEXT_FLOOR = 0.7  # a class from a residual rating, or from a prefix with the class seen by the model
 CIRCLES = ("terminal", "current_transformer")
-_LETTERS = re.compile(r"^([A-Z]{1,4})")
 
 
 def _cap(cfg: DetectionConfig) -> float:
@@ -172,15 +169,7 @@ def _height_alike(a: Candidate, b: Candidate) -> bool:
 
 
 def _allowed(designator: str | None, lib: Library) -> tuple[str, ...]:
-    first = tags(designator)[0] if designator else ""
-    m = _LETTERS.match(first)
-    if not m:
-        return ()
-    letters = m[1]
-    for n in range(len(letters), 0, -1):
-        if letters[:n] in lib.prefixes:
-            return lib.prefixes[letters[:n]]
-    return ()
+    return prefix_classes(tags(designator)[0], lib.prefixes) if designator else ()
 
 
 def weigh_by_prefix(c: Candidate, lib: Library, cfg: DetectionConfig, page: list[Candidate] = ()) -> None:  # type: ignore[assignment]

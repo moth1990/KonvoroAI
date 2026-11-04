@@ -172,3 +172,23 @@ def test_the_16a_breakers_take_their_poles_from_their_cables() -> None:
     for c in sixteens:
         skus[run(c)[0].chosen_sku] += c.quantity
     assert skus == {"S201M-C16": 22, "S203M-C16": 1}
+
+
+def test_the_five_40a_field_breakers_are_mcbs() -> None:
+    """BUG-077: one sure MCCB in the row spread to its peers, and the row came out MCCBs. MCBs and MCCBs are drawn
+    alike, so the row stays one class (one line) and stage 5 types it by its current: no 40A MCCB here (S24b
+    decision 14)."""
+    forties = [c for c in COMPONENTS if c.family == "circuit_breaker" and _value(c, "current_a") == 40]
+    assert len(forties) == 1 and forties[0].quantity == 5
+    m = run(forties[0])[0]
+    assert m.signature is not None and m.signature.startswith("circuit_breaker|mcb|")
+
+
+def test_t1_is_the_clock_and_the_selector_stands_alone() -> None:
+    """BUG-081: "T1" written beside the clock's box was linked to the selector and to C130,131's coil too, and the
+    selector became T1's device ("בורר" × 2 tagged T1, no clock). A tag written beside symbols of different families
+    names the nearest. The clock's class (timer, not time_switch) and the selector's two decks (× 2) are follow-ups."""
+    t1 = [c for c in COMPONENTS if "T1" in c.designators and c.family != "current_transformer"]  # not "T1-T3"
+    assert [(c.family, c.quantity) for c in t1] == [("timer", 1)]
+    selectors = [c for c in COMPONENTS if c.family == "selector_switch"]
+    assert selectors and not any(c.designators for c in selectors)

@@ -1,0 +1,17 @@
+{
+  "answer": {
+    "input_tokens": 820,
+    "model": "claude-haiku-5-5",
+    "output_tokens": 257,
+    "payload": {
+      "chosen_sku": null,
+      "confidence": 0.3,
+      "missing_attributes": [
+        "positions"
+      ],
+      "reason": "הסימון \"0\" מופיע בשני הבוררים (0-1 ו-1-0-2), ולכן אינו מכריע ביניהם. יש לקבוע את מספר המצבים הנדרש לפי התכנון."
+    }
+  },
+  "model": "claude-haiku-5-5",
+  "stage": "catalog_disambiguation"
+}

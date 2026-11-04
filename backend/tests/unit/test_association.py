@@ -16,7 +16,7 @@ from konboro.contracts.merge import AttributeValue, Cable, CircuitContext, Insta
 from konboro.pipeline.association import agent, assign, circuits, grammar, quantity, schemas
 from konboro.pipeline.association.assign import Value
 from konboro.pipeline.association.config import DEFAULT
-from konboro.pipeline.association.merge import Built, components, instance_confidence, status
+from konboro.pipeline.association.merge import Built, components, instance_confidence, one_name_per_tag, status
 from konboro.pipeline.detection import library
 from konboro.pipeline.stages import s4_association
 from konboro_llm import LLMError
@@ -123,6 +123,8 @@ def test_an_unknown_builder_or_a_repeated_id_is_refused() -> None:
         ("16+N", "circuit_breaker", {"current_a": [16], "poles": [1], "neutral": [True]}),
         ("S203M", "circuit_breaker", {"model_token": ["S203M"]}),
         ("INC=12.8A", "circuit_breaker", {"load_current_a": [12.8]}),
+        ("3(2.4-4)A", "circuit_breaker", {"poles": [3], "range_min_a": [2.4], "range_max_a": [4]}),  # BUG-080
+        ("1×10AC", "circuit_breaker", {"poles": [1], "current_a": [10], "curve": ["C"]}),  # BUG-080
         ("Ib=10A", "circuit_breaker", {"load_current_a": [10]}),
         ("500A/630A", "circuit_breaker", {"current_a": [630], "setting_a": [500]}),
         ("4×63A/0,03A", "rcd", {"poles": [4], "current_a": [63], "residual_ma": [30]}),
@@ -130,6 +132,7 @@ def test_an_unknown_builder_or_a_repeated_id_is_refused() -> None:
         ("800/5A", "current_transformer", {"ratio_primary_a": [800], "ratio_secondary_a": [5]}),
         ("LSI", "circuit_breaker", {"trip_unit": ["LSI"]}),
         ("MCCB", "circuit_breaker", {"symbol_class": ["mccb"]}),
+        ("מפסק בתיבה יצוקה 25A", "circuit_breaker", {"symbol_class": ["mccb"], "current_a": [25]}),  # BUG-077
         ("4P 100kA B+C", "surge_protector", {"poles": [4], "imax_ka": [100], "spd_class": ["B+C"]}),
         ("CEE 5×16A", "socket_outlet", {"poles": [3], "neutral": [True], "current_a": [16]}),
         ("36-40", "circuit_breaker", {"circuit_range": [(36, 40)]}),
@@ -821,6 +824,42 @@ def test_a_device_drawing_gives_the_family_and_disagreeing_values_are_a_conflict
     ct = next(c for c in comps if c.family == "current_transformer")
     assert ct.designators == [] and ct.quantity == 1 and ct.status == "uncertain"
     assert [i.code for i in built[0].instance.issues] == ["tag_conflict"]
+
+
+def test_a_tag_beside_symbols_of_two_families_names_the_nearest() -> None:
+    """BUG-081: 25.26.100's "T1" under the clock's box was linked to the selector beside it and to C130,131's coil
+    too, and the selector became T1's device. One written tag names the nearest symbol; one touching it (Q0's ring
+    read as a current transformer, S24b decision 4) keeps it, and so do the nearest's own family (a coil and its
+    contacts) and an accessory on it."""
+    t1 = ("ts_001_0156", (3209.0, 669.0, 3220.0, 682.0))
+
+    def at(b: Built, box: tuple[float, float, float, float], span: tuple[str, Bbox] | None = t1) -> Built:
+        b.instance.bbox, b.designator_span = box, span
+        return b
+
+    clock = at(_built(1, "timer", tag="T1", role="coil"), (3168, 688, 3220, 710))
+    contact = at(
+        _built(2, "timer", tag="T1", role="relay_contact"), (3274, 534, 3293, 579), ("ts_001_0062", (0, 0, 1, 1))
+    )
+    selector = at(_built(3, "selector_switch", tag="T1"), (3253, 628, 3293, 675))
+    coil = at(_built(4, "contactor", tag="T1", role="coil"), (3262, 689, 3320, 711))
+    ring = at(_built(5, "current_transformer", tag="T1"), (3221, 690, 3232, 700))
+    trip = at(_built(6, "shunt_trip", tag="T1"), (3330, 690, 3340, 700))
+    built = [clock, contact, selector, coil, ring, trip]
+    one_name_per_tag(built)
+    assert [b.designator for b in built] == ["T1", "T1", None, None, "T1", "T1"]
+    # a tag nearest a device drawing is the merge's to weigh (Q0's ring read as a CT joins Q0, S24b decision 4)
+    q0 = ("ts_001_0001", (100.0, 100.0, 110.0, 107.0))
+    breaker = at(_built(7, tag="Q0"), (112, 100, 130, 130), q0)
+    far_ring = at(_built(8, "current_transformer", tag="Q0"), (112, 140, 130, 150), q0)
+    one_name_per_tag([breaker, far_ring])
+    assert (breaker.designator, far_ring.designator) == ("Q0", "Q0")
+    comps, _, _ = components("drw_01X", [clock, contact, selector, coil], SCH)
+    assert {(c.family, tuple(c.designators), c.quantity) for c in comps} == {
+        ("timer", ("T1",), 1),
+        ("selector_switch", (), 1),
+        ("contactor", (), 1),
+    }
 
 
 def test_one_tag_merges_one_family_never_a_terminal_over_breakers() -> None:

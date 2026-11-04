@@ -387,6 +387,7 @@ class Prepared:
 
     kit_phrases: tuple[str, ...] = ()
     has_text: bool = False
+    cable_conflict: inference.CableConflict | None = None  # BUG-079
 
     @property
     def key(self) -> tuple[Any, ...]:
@@ -404,6 +405,7 @@ class Prepared:
             self.parents is not None,
             self.parent_fit,
             self.parent_statuses,
+            self.cable_conflict,
         )
 
 
@@ -426,8 +428,9 @@ def prepare(component: Component, inp: Inputs, done: dict[str, ComponentMatch], 
                 needs[name] = Need(name, value, attrs[name].match_mode, "series", False, f"לפי הדגם {ex.token}")
     needs = fill(component, needs, attrs, inp)
     tops = inference.class_tops(catalog.top_current)
+    model_written = ex.sku_item is not None or ex.series_items is not None
     untyped = component.symbol_class in (UNTYPED, "", None) or inference.outranged(
-        component, needs, tops, factory.inference_off
+        component, needs, tops, factory.inference_off, factory.designator_prefixes, model_written
     )
     inferred = inference.infer(
         component, needs, _upstream(component, inp), inp.notes, factory.inference_off, untyped, tops
@@ -470,6 +473,7 @@ def prepare(component: Component, inp: Inputs, done: dict[str, ComponentMatch], 
         frozenset(statuses),
         tuple(phrases),
         bool(beside) or bool(inp.notes.applying(component.family, component.panel_id)),
+        inferred.conflict,
     )
 
 
@@ -529,6 +533,15 @@ def decide_prepared(pr: Prepared, inp: Inputs) -> Decided:
             sig,
             pool,
             first,
+        )
+
+    # an unsure pole mark the cable contradicts: the reviewer's to settle, both readings offered (BUG-079, 05 §5.5.1)
+    if pr.cable_conflict is not None:
+        return Decided(
+            _cable_conflict(component, inp, needs, cls, sig, pr.cable_conflict, warnings, plan, brand),
+            0.0,
+            False,
+            False,
         )
 
     # a series that contradicts the text: the memory may settle it, else a conflict
@@ -752,6 +765,44 @@ def _conflict(
         ),
     ]
     return _empty(component, "conflict", needs, sig, reason, ["attribute_conflict"], sorted(conflicting), alts, brand)
+
+
+def _cable_conflict(
+    component: Component,
+    inp: Inputs,
+    needs: dict[str, Need],
+    cls: str | None,
+    sig: str,
+    conflict: inference.CableConflict,
+    warnings: list[str],
+    plan: BrandPlan,
+    brand: BrandDecision,
+) -> ComponentMatch:
+    """Nothing is chosen, red; the best item for each reading is offered, the mark's first. The reading stays as it
+    was read: no value is filled in (05 §4.4)."""
+    alts: list[Alternative] = []
+    for value, where in ((conflict.read, "לפי הסימון בשרטוט"), (conflict.cable, "לפי הכבל ביציאה")):
+        reading = [n for n in needs.values() if n.name != conflict.attribute]
+        reading.append(Need(conflict.attribute, value, "exact", "drawing", True))
+        best = rank(
+            alternatives_pool(inp.catalog, component.family, cls, reading),
+            reading,
+            plan,
+            inp.factory,
+            component.family,
+        )
+        if best:
+            item = best[0].item
+            alts.append(
+                Alternative(
+                    sku=item.sku,
+                    manufacturer=item.brand,
+                    diff=f"{where}: {item.description}",
+                    has_cost_price=inp.factory.has_cost(item),
+                )
+            )
+    w = [*warnings, "attribute_conflict"]
+    return _empty(component, "conflict", needs, sig, conflict.reason, w, [conflict.attribute], alts, brand)
 
 
 def _penalties(needs: dict[str, Need], substituted: bool, cfg: MatchingConfig) -> float:

@@ -441,6 +441,43 @@ def test_a_breaker_above_the_catalogs_mcb_range_is_not_an_mcb() -> None:
     assert m.chosen_sku == "S203M-C63" and "breaker_type_inferred" not in m.warnings
 
 
+def test_an_mccb_within_the_catalogs_mcb_range_is_typed_by_its_current() -> None:
+    """BUG-077, BUG-078: 25.26.100's five 40A field breakers and two 10A ones came out MCCBs, from one sure reading
+    spread to its peers and a disambiguation that never offered `mcb`. The user: no 40A MCCB exists there. A breaker
+    read as an MCCB within the catalog's MCB range is typed again by its current (the converse of BUG-070)."""
+    m = one(comp("circuit_breaker", "mccb", {"current_a": 40, "poles": 3}, designators=()))
+    assert m.chosen_sku == "S203M-C40" and "breaker_type_inferred" in m.warnings
+    assert m.confidence <= DEFAULT.yellow_max
+    assert one(comp("circuit_breaker", "mccb", {"current_a": 10, "poles": 1}, designators=())).chosen_sku == "S201M-C10"
+
+    # an MCCB it stays: written beside it (in Hebrew too, two words: 6199-2-50's 25A and 63A ones), by a prefix that
+    # names one (Q), by its series, by the factory's own prefixes, or above the MCB range
+    def forty(texts: tuple[str, ...] = (), designators: tuple[str, ...] = (), fac: Factory | None = None) -> str | None:
+        c = comp("circuit_breaker", "mccb", {"current_a": 40, "poles": 3}, texts, designators=designators)
+        return one(c, fac=fac).chosen_sku
+
+    moulded = "XT1C160 TMD40 3P"
+    assert forty(("MCCB",)) == forty(("בתיבה", "יצוקה")) == forty(designators=("Q2",)) == forty(("XT1",)) == moulded
+    assert forty(designators=("F2",), fac=factory(designator_prefixes={"F": ("mcb", "mccb")})) == moulded
+    m = one(comp("circuit_breaker", "mccb", {"current_a": 80, "poles": 3}, designators=()))
+    assert m.chosen_sku == "XT1C160 TMD80 3P" and "breaker_type_inferred" not in m.warnings
+
+
+def test_an_unsure_pole_mark_the_cable_contradicts_is_a_conflict() -> None:
+    """BUG-079: 25.26.100's 25A feeder (5X6 cable) came out 1P from a pole mark read at 0.5, and matched S201M 1P
+    25A. An unsure graphic reading the cable contradicts is the reviewer's to settle: nothing is chosen, both offered
+    (05 §5.5.1, the user's answer). A sure one still stands, yellow (`test_poles_from_the_cable_only_…`)."""
+    c = comp("circuit_breaker", "mcb", {"current_a": 25}, circuit=CircuitContext(cable=Cable(cores=5)))
+    c.attributes["poles"] = AttributeValue(value=1, source="graphic", confidence=0.5)
+    m = one(c)
+    assert (m.status, m.chosen_sku) == ("conflict", None)
+    assert "poles_cable_conflict" in m.warnings and m.missing_attributes == ["poles"]
+    assert [a.sku for a in m.alternatives] == ["S201M-C25", "S203M-C25"]
+    assert "1P" in m.reason and "3P" in m.reason
+    # nothing filled in: the reading stays what was read
+    assert m.attributes_used["poles"].value == 1 and m.attributes_used["poles"].source == "graphic"
+
+
 def test_an_overload_relays_range_holds_the_load() -> None:
     m = one(comp("overload_relay", "overload_relay", {}, circuit=CircuitContext(load_current_a=5.0)))
     assert m.chosen_sku == "TF42-5.7"
