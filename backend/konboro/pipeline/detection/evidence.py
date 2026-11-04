@@ -84,7 +84,7 @@ def absorb_end_circles(found: list[Candidate]) -> tuple[list[Candidate], int]:
     kept: list[Candidate] = []
     absorbed = 0
     for c in found:
-        own_tag = bool(c.tag) and not COUNT.match(c.tag.strip().upper())  # 26-993's EM1: a terminal of its own
+        own_tag = bool(c.tag) and not COUNT.match((c.tag or "").strip().upper())  # 26-993's EM1: its own terminal
         if c.family in CIRCLES and not own_tag and any(c.height <= SMALL * h.height and _on_wire(c, h) for h in hosts):
             absorbed += 1
             continue
