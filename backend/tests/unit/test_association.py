@@ -899,6 +899,45 @@ def test_a_breaker_takes_the_poles_read_on_its_alike_peers() -> None:
     assert sorted((c.quantity, c.attributes["poles"].value or 0) for c in comps) == [(1, 0), (1, 1), (1, 3)]
 
 
+def test_the_majority_pole_mark_of_alike_peers_wins() -> None:
+    """BUG-088 (live run `drw_01M6N7AYFVQG8MDSXYKZXB8KPM`): the tile agent read 3P on two of the five 40A field
+    breakers (0.6) and 4P on one (0.5), and none on two. The user: the two unread take the majority's 3P; the one that
+    disagreed keeps its 4P and its own line, flagged (outvoting it made 6199-2-50's real 1P breaker a 3P one). A tie
+    gives nothing, a pole count written in text is never overruled, and the 4P RCDs beside them never vote."""
+
+    def at(b: Built, x: float, poles: int | None = None, conf: float = 0.6, source: str = "graphic") -> Built:
+        b.instance.bbox = (x, 319.0, x + 47.0, 355.0)
+        if poles is not None:
+            b.instance.attributes["poles"] = AttributeValue(value=poles, source=source, confidence=conf, span_ids=[])  # type: ignore[arg-type]
+        return b
+
+    forty = {"current_a": 40}
+    row = [
+        at(_built(1, values=forty), 800, 3),
+        at(_built(2, values=forty), 1286, 3),
+        at(_built(3, values=forty), 1762, 4, conf=0.5),
+        at(_built(4, values=forty), 2283),
+        at(_built(5, values=forty), 2555),
+        at(_built(6, "rcd", values={"current_a": 40, "poles": 4, "residual_ma": 30}), 2650),
+        at(_built(7, "rcd", values={"current_a": 40, "poles": 4, "residual_ma": 30}), 2750),
+    ]
+    comps, _, _ = components("drw_01X", row, SCH)
+    breakers = [c for c in comps if c.family == "circuit_breaker"]
+    assert sorted((c.quantity, c.attributes["poles"].value) for c in breakers) == [(1, 4), (4, 3)]
+    assert row[2].instance.attributes["poles"].value == 4  # kept as read, its own line, flagged
+    assert [i.code for i in row[2].instance.issues] == ["poles_peer_conflict"]
+    assert all(i.code == "poles_from_peers" for b in row[3:5] for i in b.instance.issues)
+
+    def outcome(marks: list[tuple[int | None, str]]) -> list[tuple[int, int]]:
+        built = [at(_built(20 + n, values=forty), 800 + 100 * n, p, source=src) for n, (p, src) in enumerate(marks)]
+        comps, _, _ = components("drw_01X", built, SCH)
+        return sorted((c.quantity, c.attributes["poles"].value or 0) for c in comps)
+
+    assert outcome([(3, "graphic"), (4, "graphic"), (None, "graphic")]) == [(1, 0), (1, 3), (1, 4)]  # a tie
+    # a count written in text is never overruled: 4P written beside one, 3P marked on two
+    assert outcome([(3, "graphic"), (3, "graphic"), (4, "drawing")]) == [(1, 4), (2, 3)]
+
+
 def test_one_tag_merges_one_family_never_a_terminal_over_breakers() -> None:
     """BUG-066 (25.26.100): "X2" read as the tag of terminals, 16A breakers and an RCD made one terminal × 76. A tag
     merges the drawings of one device; a symbol of another family under it stays itself, untagged, for review."""

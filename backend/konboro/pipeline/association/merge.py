@@ -51,7 +51,8 @@ INSTANCE_ISSUES = {
     "range_mismatch": "טווח המעגלים {range} לא תואם לכמות {count}. בדקו את הכמות.",
     "brand_conflict": "שני מותגים שונים ברכיבים זהים: {brands}.",
     "tag_conflict": "התג {tag} כתוב גם ליד רכיב מסוג אחר ({family}). בדקו לאיזה רכיב הוא שייך.",
-    "poles_from_peers": "לא סומנו קטבים: {poles} כמו המפסקים הזהים לידו בשורה. בדקו.",
+    "poles_from_peers": "לא סומנו קטבים: רוב המפסקים הזהים בשורה סומנו {poles}. בדקו.",
+    "poles_peer_conflict": "סומן {read}, אבל רוב המפסקים הזהים בשורה סומנו {poles}. בדקו את הקטבים.",
 }
 
 
@@ -361,55 +362,103 @@ def _alike(a: Bbox, b: Bbox) -> bool:
     return level and abs(wa - wb) <= PEER_WIDTH_SHARE * wa and min(ha, hb) >= PEER_HEIGHT_SHARE * max(ha, hb)
 
 
+SURE_MARK = 0.85  # a pole mark read at least this sure is never outvoted (00 §6.3's green)
+
+
+def _row_key(sig: tuple[Any, ...]) -> tuple[Any, ...]:
+    """What alike peers share: panel, family, class, scope, multiplicity and every value but the poles."""
+    return (*sig[:5], tuple((k, v) for k, v in sig[5] if k != "poles"))
+
+
+def _touching(a: Device, b: Device) -> bool:
+    return any(
+        x.instance.page_id == y.instance.page_id
+        and x.instance.bbox is not None
+        and y.instance.bbox is not None
+        and _alike(x.instance.bbox, y.instance.bbox)
+        for x in a.built
+        for y in b.built
+    )
+
+
 def _join_by_peers(groups: dict[tuple[Any, ...], list[Device]]) -> None:
-    """BUG-088 (the user: breakers drawn alike in one row with one rating "are all the same"): protective devices with
-    no poles read and no cable on their circuit join the identical component whose instances beside them, drawn
-    alike, had their poles read, when every instance of the device has such peers and the peers agree. Like
-    `_join_by_cable`, each instance keeps its poles unread (no value without evidence, 00 §5.3); it carries why it
-    joined, and the line stays as unsure as it was. Peers are the same family, class and values: an RCD's 4P beside
-    the breakers never counts."""
-    for sig in list(groups):
-        values = dict(sig[5])
-        if sig[1] not in PROTECTIVE or values.get("poles") != repr(None) or sig[-1]:
-            continue  # a cable read on its circuit is `_join_by_cable`'s evidence, not its peers'
-        others = [
-            (other, b)
-            for other in groups
-            if other != sig
-            and other[:5] == sig[:5]
-            and {k: v for k, v in other[5] if k != "poles"} == {k: v for k, v in values.items() if k != "poles"}
-            and dict(other[5]).get("poles") != repr(None)
-            for d in groups[other]
-            for b in d.built
-        ]
-        stay: list[Device] = []
-        for d in groups[sig]:
-            found: set[str] = set()
-            for b in d.built:
-                near = {
-                    o
-                    for o, x in others
-                    if x.instance.page_id == b.instance.page_id
-                    and x.instance.bbox is not None
-                    and b.instance.bbox is not None
-                    and _alike(x.instance.bbox, b.instance.bbox)
-                }
-                if not near:
-                    found = set()
-                    break
-                found |= {dict(o[5])["poles"] for o in near}
-            target = next((o for o, _ in others if dict(o[5])["poles"] in found), None) if len(found) == 1 else None
-            if target is None:
-                stay.append(d)
-                continue
-            poles = next(iter(found))
-            for b in d.built:
-                b.instance.issues.append(issue("poles_from_peers", "info", b.instance.page_id, poles=f"{poles}P"))
-            groups[target].append(d)
-        if stay:
-            groups[sig] = stay
-        else:
+    """BUG-088 (the user: breakers drawn alike in one row with one rating "are all the same"). The identical protective
+    devices of a row, drawn alike, take the poles most of them were read as:
+    - one with no poles read, and no cable on its circuit (that is `_join_by_cable`'s evidence), joins their component;
+      like `_join_by_cable`, each instance keeps its poles unread (00 §5.3) and carries why it joined;
+    - one whose unsure pole mark (`graphic`) disagrees keeps its reading and its own line, flagged for the reviewer
+      (`poles_peer_conflict`), unless its own cable backs what was marked. Outvoting it made 6199-2-50's real 1P
+      breaker among five 3P a 3P one (the user chose the flag).
+    A tie, a sure mark or a count written in text that disagrees gives nothing. Peers are the same family, class and
+    values: an RCD's 4P beside the breakers never votes."""
+    rows: dict[tuple[Any, ...], list[tuple[tuple[Any, ...], Device]]] = defaultdict(list)
+    for sig, devs in groups.items():
+        if sig[1] in PROTECTIVE:
+            rows[_row_key(sig)] += [(sig, d) for d in devs]
+    for members in rows.values():
+        if len({sig for sig, _ in members}) < 2:
+            continue
+        for cluster in _clusters(members):
+            _vote_poles(groups, cluster)
+
+
+def _clusters(members: list[tuple[tuple[Any, ...], Device]]) -> list[list[tuple[tuple[Any, ...], Device]]]:
+    """The rows among `members`: devices drawn alike side by side, chained."""
+    left = list(members)
+    out = []
+    while left:
+        cluster = [left.pop(0)]
+        grew = True
+        while grew:
+            grew = False
+            for m in list(left):
+                if any(_touching(m[1], c[1]) for c in cluster):
+                    cluster.append(m)
+                    left.remove(m)
+                    grew = True
+        if len(cluster) > 1:
+            out.append(cluster)
+    return out
+
+
+def _vote_poles(groups: dict[tuple[Any, ...], list[Device]], cluster: list[tuple[tuple[Any, ...], Device]]) -> None:
+    def poles(d: Device) -> AttributeValue | None:
+        a = d.attributes.get("poles")
+        return a if a is not None and a.value is not None else None
+
+    votes: dict[str, int] = defaultdict(int)
+    for _, d in cluster:
+        if (a := poles(d)) is not None:
+            votes[repr(a.value)] += 1
+    if not votes:
+        return
+    ranked = sorted(votes.items(), key=lambda it: -it[1])
+    if len(ranked) > 1 and ranked[0][1] == ranked[1][1]:
+        return  # a tie
+    winner = ranked[0][0]
+    dissent = [(sig, d) for sig, d in cluster if (a := poles(d)) is not None and repr(a.value) != winner]
+    implied = _cable_poles()
+    flagged = []
+    for _, d in dissent:
+        a = poles(d)
+        if a is None or a.source != "graphic" or (a.confidence or 0.0) >= SURE_MARK:
+            return  # written in text, or a sure mark: the row is not one product
+        if not any(implied.get(c) == a.value for b in d.built if (c := _cable_cores(b)) is not None):
+            flagged.append(d)  # its own cable doesn't back it (25.26.100's kitchen 3P on 5×2.5 does)
+    target = next(sig for sig, d in cluster if (a := poles(d)) is not None and repr(a.value) == winner)
+    shown = f"{winner}P"
+    for d in flagged:  # kept as read, on its own line: 6199-2-50's shed has a real 1P among five 3P (the user's choice)
+        for b in d.built:
+            b.instance.issues.append(
+                issue("poles_peer_conflict", "warning", b.instance.page_id, poles=shown, read=f"{poles(d).value}P")  # type: ignore[union-attr]
+            )
+    for sig, d in [(sig, d) for sig, d in cluster if sig != target and poles(d) is None and not sig[-1]]:
+        for b in d.built:
+            b.instance.issues.append(issue("poles_from_peers", "info", b.instance.page_id, poles=shown))
+        groups[sig] = [x for x in groups[sig] if x is not d]
+        if not groups[sig]:
             del groups[sig]
+        groups[target].append(d)
 
 
 def _cable_cores(b: Built) -> int | None:
