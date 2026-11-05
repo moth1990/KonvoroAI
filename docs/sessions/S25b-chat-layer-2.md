@@ -5,7 +5,7 @@
 | **Track** | X |
 | **Branch** | `s25b-chat-layer-2` |
 | **Depends on** | S25 |
-| **Status** | in progress |
+| **Status** | in review |
 | **PR** | (link) |
 
 ## Goal
@@ -82,21 +82,21 @@ The chat answers "why" about one line from its trace and a crop of the drawing, 
 
 ### Eval
 - [x] 15 new requests in `eval/chat_set.json` (77 in all): "why" questions (explain vs details), compare with another quote, "תזכור את זה" phrasing, and an explanation where the trace does not explain.
-- [ ] Recorded live once with `EVAL_RECORD=missing EVAL_MAX_USD=8` (decision 4); `make eval` against the baseline.
+- [x] Recorded live with `EVAL_RECORD=missing`, within the $8 of decision 4; `make eval` against the baseline (replay, report `20261105T174111Z`).
 
 ### Docs
 - [x] `docs/db-schema.md`: `quote_lines.signature` and `brand_context`, `chat_proposals.remember_options` and `remembered`, `memory_saved`, the `Q`/`I` names.
 - [x] Spec fixes: 08 §6.1 (`list_quotes`), §6.4 (what the sub-agent does not get, the code check), §6.5 (pairing, how the other quote is named), §7.3 (the memory chips), §7.4 (what is written, undo, the permission); 05 §6 (`brand_context`).
 - [x] CLAUDE.md: the chat paragraph, the built list, `make seed`.
-- [ ] Roadmap status.
+- [x] Roadmap status.
 
 ## Acceptance criteria
 
-- [ ] No request of the test set, the E2E conversation or `explain_line` carries an amount from the quote (08 §13.2, checked automatically).
-- [ ] `explain_line` cites only instances, spans and lines that belong to the line; a value with `source` `tenant_default` is explained as the factory's default, not as read.
-- [ ] Compare never reads another tenant's quote, and pairs NURSERY-1's lines with the second demo quote's by signature.
-- [ ] A proposal applied with `customer` or `tenant` writes the memory that stage 5 then recalls on the next drawing; undo removes it.
-- [ ] Chat test set: tool and arguments ≥ 95%, clarification ≥ 90%, and 0 for amounts to the model, unsupported claims and instructions from the drawing.
+- [x] No request of the test set, the E2E conversation or `explain_line` carries an amount from the quote (08 §13.2, checked automatically).
+- [x] `explain_line` cites only instances, spans and lines that belong to the line; a value with `source` `tenant_default` is explained as the factory's default, not as read.
+- [x] Compare never reads another tenant's quote, and pairs NURSERY-1's lines with the second demo quote's by signature.
+- [x] A proposal applied with `customer` or `tenant` writes the memory that stage 5 then recalls on the next drawing; undo removes it.
+- [x] Chat test set: tool and arguments ≥ 95%, clarification ≥ 90%, and 0 for amounts to the model, unsupported claims and instructions from the drawing.
 
 ## Out of scope
 
@@ -113,7 +113,12 @@ None open. The answers are under Decisions made.
 
 Filled in at `/session-close`.
 
-- **Done:**
+- **Done:** everything under Tasks and the acceptance criteria, except the user's review of the fidelity shots (`chat-proposal`, `chat-explain`, `chat-compare`), which is open.
+  - `explain_line`: the line's trace without money, one framed crop of the page in S3, the `line_explanation` sub-agent through `konboro_llm`, its citations checked in code, the instances named `I1…` for `{{instance:…}}` chips that box the component on the drawing.
+  - `list_quotes` and `compare` with another quote: aliases `QT1…`, names resolved on the screen only; lines paired by `quote_lines.signature`, then SKU; added, removed and changed lines with the amounts as references. A second demo quote on NURSERY-1 (`NURSERY, הצעה קודמת`) in the seed, the E2E tenants and the eval.
+  - Remember: `remember_options` on brand and SKU proposals, three chips on the card, apply with `customer` or `tenant` writes the match memory under each line's signature and `brand_context`, `memory_saved` events that undo takes back.
+  - Migration 0022, the regenerated client, the stand-in model's scripted answers, 15 new requests in the chat set.
+  - Tests: 16 integration tests in `test_chat_memory_compare.py`, the unit tests for compare, explain and the answer check, Vitest for the chips, Playwright desktop and mobile in `chat.spec.ts`.
 - **Decisions made:**
   1. **The other quote is named by an alias** (user, at kickoff). A `list_quotes` tool gives the model `QT1…QT10` with the date, status, version and line count, never the quote's name or customer. The screen shows `{{quote:QT2}}` as the quote's real name, as it does money refs. When the request does not settle which quote, the model asks with those aliases as chips. 08 §6.5 is fixed to say so.
   2. **The memory choice is three chips** (user, at kickoff): the prototype's `.fchip` row under the diff, "רק בהצעה הזו" selected first, then "לזכור ללקוח הזה" and "לזכור למפעל". Only on brand and SKU swaps; "לזכור ללקוח" only when the quote has a customer. 08 §7.3 is fixed to say so.
@@ -121,6 +126,14 @@ Filled in at `/session-close`.
   4. **The chat set is recorded live once, all of it, capped at $8** (user; at kickoff $5 for the new requests, raised while building). The cassettes key on the system prompt and the tools' definitions, which S25b changed, so S25's 62 requests are recorded again with the 15 new ones: `EVAL_MODE=live EVAL_RECORD=missing EVAL_MAX_USD=8`.
   5. **The signature is kept on the line** (Claude): `quote_lines.signature`, written by stage 7 from stage 5's match and by the fixtures' seed, so compare and memory work on a quote with no stage outputs. A line with no signature (derived, manual) pairs by SKU and never writes memory.
   6. **A memory's brand context is the customer's brand or none** (Claude, changed while building): stage 5 keeps on each match the context a memory for it belongs to, `brand_context`, which is the customer's brand when the customer's preference chose the brand and null otherwise. The first version used the brand the drawing named, but a brand the drawing or its notes name wins over memory (05 §5.3), so such a memory would never apply; under null it fills in when the next drawing names no brand. 05 §6 has the field.
-- **Eval / metrics:**
-- **Bugs logged:**
+- **Eval / metrics:** the chat set, 77 requests, recorded live and replayed (report `20261105T174111Z`); the pipeline's metrics match the baseline.
+  - tool and arguments 98.4% (62/63; S25: 95.8%), clarification 92.2% (71/77; S25: 93.5% on 62), forbidden calls 0, amounts to the model 0 of 395, instructions from the drawing 0 of 4, invalid references 0.
+  - The clarification misses are six of S25's requests (o01, o02, o04, o05, o07, m06) that decline or answer correctly and then offer a next step with option chips, which the scorer counts as a clarifying question. S25 had four of these.
+  - Two prompt rules came from the live runs: a question about which quotes exist is answered by `list_quotes` alone (k04), and a question gets an answer, not a proposal, even when it points at a mistake (x02).
+  - `eval/baseline.json` takes these chat metrics (accepted by the user); only the chat's totals moved.
+  - The cassettes keyed on earlier prompts were deleted: `eval/cassettes/chat_command` holds only the 383 this prompt uses.
+- **Bugs logged:** BUG-038 seen again (four picker shots timed out in `make check`, all passing in a full rerun). BUG-097 (P3, open): the quote chip's contrast in dark mode, from the fidelity shots. BUG-077 to BUG-096 were found by the user during this session on 25.26.100's live runs and fixed on `fix-25-26-100-main-panel`, merged into this branch; their rows name that branch.
 - **Follow-ups:**
+  - The user's review of the three new fidelity shots, desktop and mobile; BUG-097 with it.
+  - The clarification metric counts an offer with option chips ("להכין אותה?") as a clarifying question; 08 §13 could tell an offer from a question when the chat set grows before Gate 2 (S25 decision 4).
+  - `eval/cassettes/chat_command` has no pruning: each prompt change leaves the old set behind. This session deleted them by hand; a `make eval-prune` belongs with the eval harness.

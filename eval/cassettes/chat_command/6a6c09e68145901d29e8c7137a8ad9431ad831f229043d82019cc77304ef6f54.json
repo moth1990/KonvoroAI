@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 2,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 252,
+    "payload": {
+      "clarification_options": [],
+      "text": "הכנתי הצעה (CH1) להגדיר מחיר ידני של 120 ש\"ח ליחידה ב-{{line:L1}} (מא\"ז ABB S201M 1P 16A). המחיר הנוכחי של השורה הוא {{$T1}}. אחרי השינוי סך הנטו של ההצעה יעבור מ-{{$T3}} ל-{{$T4}}, והמרווח מ-{{$P1}} ל-{{$P2}}. ההצעה לא החזירה אזהרות או ממצאים חדשים. שום דבר לא ישתנה עד שתאשר את הכרטיס."
+    },
+    "text": null,
+    "tool_calls": []
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

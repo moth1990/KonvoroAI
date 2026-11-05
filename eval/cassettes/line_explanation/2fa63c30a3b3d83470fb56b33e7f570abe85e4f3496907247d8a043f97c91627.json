@@ -1,0 +1,31 @@
+{
+  "answer": {
+    "input_tokens": 2480,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 306,
+    "payload": {
+      "answer": "בשרטוט כתוב S204M (דגם 4 קטבים) ליד \"3X6A\", ולכן יש כאן אי־התאמה. המערכת בחרה S203M (3P) לפי זיכרון ההתאמות: אותו צירוף היה ב-NEVIS-1, והצעה 10288 אישרה 3P. מספר הקטבים 3 והזרם 6A נקראו מהשרטוט, והסדרה S203M לא נקראה אלא נלקחה מהזיכרון (ביטחון 0.9). השורה עדיין לא אושרה, כדאי לוודא מול השרטוט.",
+      "cites": {
+        "instance_ids": [
+          "I1"
+        ],
+        "line_ids": [
+          "L1"
+        ],
+        "span_ids": [
+          "S2",
+          "S4"
+        ]
+      },
+      "confidence": 0.85,
+      "focus": {
+        "instance_ids": [
+          "I1"
+        ]
+      },
+      "trace_supported": true
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "line_explanation"
+}

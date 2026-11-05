@@ -1,0 +1,18 @@
+{
+  "answer": {
+    "input_tokens": 4,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 167,
+    "payload": {
+      "clarification_options": [
+        "הצג את השורות האדומות (5)",
+        "הצג את ממצאי הבדיקה (4)"
+      ],
+      "text": "אני יכול לעזור רק בהצעת המחיר הפתוחה (NURSERY): שאלות על שורות, ממצאי הבדיקה, השוואות והכנת שינויים. על מזג האוויר אין לי מידע. רוצה שאציג את 5 השורות האדומות או את ממצאי הבדיקה?"
+    },
+    "text": null,
+    "tool_calls": []
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

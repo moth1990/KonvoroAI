@@ -1,0 +1,20 @@
+{
+  "answer": {
+    "input_tokens": 2,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 201,
+    "payload": {
+      "clarification_options": [
+        "שורה מסוימת (ציין איזו)",
+        "כל השורות האדומות בלוח (5)",
+        "כל המא\"זים בלוח NURSERY (8)",
+        "כל הלוח (14 שורות)"
+      ],
+      "text": "לא ברור איזו כמות לשנות. לא נבחרו שורות, והבקשה לא אומרת לאיזה שורות היא מתייחסת או לאיזו כמות. על איזה שורות לעבוד, ומה הכמות החדשה?"
+    },
+    "text": null,
+    "tool_calls": []
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

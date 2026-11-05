@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 2,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 256,
+    "payload": {
+      "clarification_options": [],
+      "text": "הכנתי הצעה CH1: שינוי הזרם של {{line:L1}} ל-25 אמפר. שורה אחת תשתנה, ושום דבר לא ישתנה עד שתאשר את הכרטיס.\n\nשימו לב לאזהרה: אחרי השינוי יופיעו 6 שורות בלי מחיר. מצד שני, ממצא אחד קיים ייפתר.\n\nסכום נטו: לפני {{$T2}}, אחרי {{$T3}}."
+    },
+    "text": null,
+    "tool_calls": []
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

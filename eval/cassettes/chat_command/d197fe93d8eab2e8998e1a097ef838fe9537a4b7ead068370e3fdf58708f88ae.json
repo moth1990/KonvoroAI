@@ -1,0 +1,19 @@
+{
+  "answer": {
+    "input_tokens": 2,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 352,
+    "payload": {
+      "clarification_options": [
+        "השורות האדומות (5 שורות)",
+        "השורות עם ממצא פתוח (6 שורות)",
+        "כל הלוח B1 (14 שורות)"
+      ],
+      "text": "לא ברור לי למה הכוונה ב\"הצעות הפתוחות\". בהצעה הזו אין הצעות שינוי פתוחות, ואני לא משנה הצעות אחרות מכאן. מה להעביר לשניידר?"
+    },
+    "text": null,
+    "tool_calls": []
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

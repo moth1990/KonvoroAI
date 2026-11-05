@@ -1,0 +1,31 @@
+{
+  "answer": {
+    "input_tokens": 2477,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 312,
+    "payload": {
+      "answer": "בשרטוט כתוב S204M (4 קטבים) ליד \"3X6A\", כלומר 3 קטבים ו-6A. אותו צירוף הופיע ב-NEVIS-1, ובהצעה 10288 אושר שם דגם 3 קטבים, ולכן נבחר S203M לפי זיכרון ההתאמות. הקטבים והזרם נקראו מהשרטוט, והסדרה S203M לא נקראה מהשרטוט אלא נלקחה מהזיכרון. כושר הניתוק חסר, והשורה עדיין לא אושרה, כדאי לבדוק מול השרטוט.",
+      "cites": {
+        "instance_ids": [
+          "I1"
+        ],
+        "line_ids": [
+          "L1"
+        ],
+        "span_ids": [
+          "S2",
+          "S4"
+        ]
+      },
+      "confidence": 0.85,
+      "focus": {
+        "instance_ids": [
+          "I1"
+        ]
+      },
+      "trace_supported": true
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "line_explanation"
+}

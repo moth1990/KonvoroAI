@@ -1,0 +1,19 @@
+{
+  "answer": {
+    "input_tokens": 4,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 334,
+    "payload": {
+      "clarification_options": [
+        "הנחת לקוח על כל ההצעה (14 שורות)",
+        "הנחה על משפחה מסוימת, למשל מפסקים (8 שורות)",
+        "הנחה על שורות שאבחר במסך"
+      ],
+      "text": "על מה ובכמה אחוזים ההנחה? אחוז אני לוקח רק מההודעה שלך. כתוב לי את האחוז ובחר על מה להחיל אותה."
+    },
+    "text": null,
+    "tool_calls": []
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

@@ -69,9 +69,7 @@ def upgrade() -> None:
         ),
     )
     op.add_column("chat_proposals", sa.Column("remembered", sa.Text(), nullable=True))
-    op.create_check_constraint(
-        "remembered", "chat_proposals", "remembered IS NULL OR " + _in("remembered", SCOPES)
-    )
+    op.create_check_constraint("remembered", "chat_proposals", "remembered IS NULL OR " + _in("remembered", SCOPES))
     op.drop_constraint("type", "correction_events", type_="check")
     op.create_check_constraint("type", "correction_events", _in("type", (*OLD_TYPES, "memory_saved")))
 

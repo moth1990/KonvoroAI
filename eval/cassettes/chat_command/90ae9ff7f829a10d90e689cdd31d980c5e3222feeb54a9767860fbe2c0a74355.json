@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 2,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 142,
+    "payload": {
+      "clarification_options": [],
+      "text": "יש במפעל הצעה אחת נוספת: {{quote:QT1}}. היא מתאריך 2026-09-14, בסטטוס \"נשלחה\", גרסה 1 ו-13 שורות. היא לא של אותו לקוח ולא מאותו שרטוט. אם תרצה, אשווה אותה להצעה הפתוחה."
+    },
+    "text": null,
+    "tool_calls": []
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

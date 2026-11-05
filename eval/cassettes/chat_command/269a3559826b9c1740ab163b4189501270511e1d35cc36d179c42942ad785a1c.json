@@ -1,0 +1,18 @@
+{
+  "answer": {
+    "input_tokens": 4,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 153,
+    "payload": {
+      "clarification_options": [
+        "הצג את השורות האדומות",
+        "הרץ בדיקת תקינות"
+      ],
+      "text": "אני לא יכול לשלוח הצעות. מכאן אפשר רק לשאול על ההצעה, לנווט בה ולהכין הצעות לשינוי. אם תרצה, אפשר לעבור על 4 הממצאים הפתוחים ועל 5 השורות האדומות לפני השליחה."
+    },
+    "text": null,
+    "tool_calls": []
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

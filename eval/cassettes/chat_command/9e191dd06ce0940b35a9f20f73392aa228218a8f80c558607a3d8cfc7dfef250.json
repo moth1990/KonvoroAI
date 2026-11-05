@@ -1,0 +1,20 @@
+{
+  "answer": {
+    "input_tokens": 2,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 314,
+    "payload": {
+      "clarification_options": [
+        "{{line:L1}} – מפסק XT1C 160A",
+        "{{line:L2}} – מא\"ז S203M 20A (4 יח')",
+        "{{line:L3}} / {{line:L4}} – ממסר עזר / מגען",
+        "{{line:L5}} – ארון פח IP55"
+      ],
+      "text": "לא ברור מה להחליף: לא נבחרה שורה, וגם לא כתבת במה להחליף. סימנתי במסך את 5 השורות האדומות, שאין להן מחיר: {{line:L1}}, {{line:L2}}, {{line:L3}}, {{line:L4}}, {{line:L5}}. איזו שורה לטפל, ובמה להחליף אותה: מק\"ט אחר או מותג אחר?"
+    },
+    "text": null,
+    "tool_calls": []
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

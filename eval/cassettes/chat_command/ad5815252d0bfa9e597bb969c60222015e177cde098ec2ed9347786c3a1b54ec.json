@@ -1,0 +1,32 @@
+{
+  "answer": {
+    "input_tokens": 2,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 160,
+    "payload": null,
+    "text": null,
+    "tool_calls": [
+      {
+        "args": {
+          "changes": [
+            {
+              "attribute": "current_a",
+              "target": {
+                "lines": [
+                  "L7"
+                ]
+              },
+              "type": "set_attribute",
+              "value": "6"
+            }
+          ],
+          "summary_he": "F31: שינוי הזרם ל-6A"
+        },
+        "id": "toolu_01MERd3YT79asnbcGWc1sSPj",
+        "name": "propose_change"
+      }
+    ]
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

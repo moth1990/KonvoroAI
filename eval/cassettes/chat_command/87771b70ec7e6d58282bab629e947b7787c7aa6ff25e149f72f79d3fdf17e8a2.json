@@ -1,0 +1,26 @@
+{
+  "answer": {
+    "input_tokens": 4,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 192,
+    "payload": null,
+    "text": null,
+    "tool_calls": [
+      {
+        "args": {
+          "kind": "margin_rule",
+          "values": [
+            {
+              "name": "pct",
+              "value": "30"
+            }
+          ]
+        },
+        "id": "toolu_015tVoYftcqy1eDiRKSyeRYg",
+        "name": "open_settings"
+      }
+    ]
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}
