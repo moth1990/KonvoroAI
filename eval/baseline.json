@@ -10,8 +10,8 @@
         "duplicates_removed": 121,
         "orphan_recovered": 1,
         "orphan_texts": 1,
-        "uncertain": 40,
-        "unknown": 4
+        "uncertain": 41,
+        "unknown": 3
       },
       "extraction": {
         "blank_tiles": 15,
@@ -26,10 +26,10 @@
         "error DATA_DESIGNATOR_FAMILY_CONFLICT T1 T1 T2 T3",
         "warning QTY_RANGE_MISMATCH",
         "warning QTY_RANGE_MISMATCH",
+        "warning TEXT_COVERAGE_LOW",
         "warning QTY_SINGLE_INSTANCE_FAMILY",
         "info AGENT_inconsistent_attributes ES",
         "info AGENT_wrong_family",
-        "info CTRL_CONTACTOR_WITHOUT_COIL_CIRCUIT",
         "info DATA_INFERRED_ATTRIBUTE",
         "info DATA_INFERRED_ATTRIBUTE",
         "info DATA_MANY_DEFAULTS",
@@ -62,22 +62,22 @@
       ],
       "matching": {
         "auxiliary": 3,
-        "components": 28,
+        "components": 26,
         "llm_signatures": 0,
-        "method_none": 12,
-        "method_rules_ranked": 4,
+        "method_none": 9,
+        "method_rules_ranked": 5,
         "method_rules_unique": 9,
-        "signatures": 21,
+        "signatures": 18,
         "status_ambiguous": 4,
-        "status_matched": 13,
-        "status_unmatched": 8
+        "status_matched": 14,
+        "status_unmatched": 5
       },
       "merge": {
-        "agent_instances": 55,
-        "agent_tiles": 19,
-        "citation_mismatches": 5,
-        "cited_values": 55,
-        "components": 28,
+        "agent_instances": 53,
+        "agent_tiles": 18,
+        "citation_mismatches": 2,
+        "cited_values": 51,
+        "components": 26,
         "instances": 92,
         "missing": 0,
         "shared_labels": 3,
@@ -87,10 +87,10 @@
       "panels": {
         "לוח ראשי-בית כנסת": {
           "component_precision": {
-            "den": 21,
+            "den": 18,
             "kind": "ratio",
             "num": 11.0,
-            "value": 0.52381
+            "value": 0.611111
           },
           "component_recall": {
             "den": 15,
@@ -101,7 +101,7 @@
         }
       },
       "predicted": {
-        "products": 28,
+        "products": 26,
         "units": 110
       },
       "predicted_total": "0",
@@ -266,20 +266,20 @@
           "agent_tile_share": {
             "den": 121,
             "kind": "ratio",
-            "num": 19.0,
-            "value": 0.157025
+            "num": 18.0,
+            "value": 0.14876
           },
           "citation_mismatch_rate": {
-            "den": 55,
+            "den": 51,
             "kind": "ratio",
-            "num": 5.0,
-            "value": 0.090909
+            "num": 2.0,
+            "value": 0.039216
           },
           "component_precision": {
-            "den": 21,
+            "den": 18,
             "kind": "ratio",
             "num": 11.0,
-            "value": 0.52381
+            "value": 0.611111
           },
           "component_recall": {
             "den": 15,
@@ -302,14 +302,14 @@
           "quantity_accuracy": {
             "den": 11,
             "kind": "ratio",
-            "num": 8.0,
-            "value": 0.727273
+            "num": 9.0,
+            "value": 0.818182
           },
           "unit_recall": {
             "den": 58,
             "kind": "ratio",
-            "num": 48.0,
-            "value": 0.827586
+            "num": 53.0,
+            "value": 0.913793
           },
           "values_without_evidence": {
             "den": 1,
@@ -326,7 +326,7 @@
             "value": 1.0
           },
           "llm_share": {
-            "den": 21,
+            "den": 18,
             "kind": "ratio",
             "num": 0.0,
             "value": 0.0
@@ -338,10 +338,10 @@
             "value": null
           },
           "with_sku": {
-            "den": 25,
+            "den": 23,
             "kind": "ratio",
-            "num": 17.0,
-            "value": 0.68
+            "num": 18.0,
+            "value": 0.782609
           }
         },
         "s5_labelled": {
@@ -386,8 +386,8 @@
           "warnings": {
             "den": 1,
             "kind": "average",
-            "num": 3.0,
-            "value": 3.0
+            "num": 4.0,
+            "value": 4.0
           }
         },
         "s6_labelled": {
@@ -471,8 +471,8 @@
         "checks_run": 28,
         "checks_skipped": 14,
         "severity_error": 1,
-        "severity_info": 10,
-        "severity_warning": 3
+        "severity_info": 9,
+        "severity_warning": 4
       }
     },
     "26-993": {
@@ -505,7 +505,6 @@
         "wire_edges": 932
       },
       "findings": [
-        "warning AGENT_wrong_family FB2",
         "warning CTRL_OVERLOAD_WITHOUT_CONTACTOR",
         "warning DATA_LOAD_CURRENT_GT_RATED FC1",
         "info DATA_INFERRED_ATTRIBUTE G1",
@@ -516,6 +515,7 @@
         "info DATA_INFERRED_ATTRIBUTE LG1 LG2 LG3",
         "info DATA_MANY_DEFAULTS",
         "info HIER_ORPHAN_DEVICE QLG2 QPM FPB",
+        "info AGENT_wrong_family FB2",
         "info DATA_INFERRED_ATTRIBUTE GIC-1",
         "info DATA_INFERRED_ATTRIBUTE TC-G1 TC-G2",
         "info DATA_MANY_DEFAULTS",
@@ -923,8 +923,8 @@
           "warnings": {
             "den": 1,
             "kind": "average",
-            "num": 3.0,
-            "value": 3.0
+            "num": 2.0,
+            "value": 2.0
           }
         },
         "s6_labelled": {
@@ -1008,8 +1008,8 @@
         "checks_run": 28,
         "checks_skipped": 20,
         "severity_error": 0,
-        "severity_info": 13,
-        "severity_warning": 3
+        "severity_info": 14,
+        "severity_warning": 2
       }
     },
     "6199-2-50": {
@@ -1052,7 +1052,6 @@
         "info HIER_ORPHAN_DEVICE MCB",
         "info QTY_INHERITED_MULTIPLICITY",
         "info QTY_INHERITED_MULTIPLICITY",
-        "info AGENT_suspicious_quantity",
         "info CTRL_CONTACTOR_WITHOUT_COIL_CIRCUIT C C1 C2 T2",
         "info DATA_INFERRED_ATTRIBUTE",
         "info DATA_MANY_DEFAULTS",
@@ -1100,23 +1099,23 @@
       ],
       "matching": {
         "auxiliary": 5,
-        "components": 90,
+        "components": 88,
         "llm_signatures": 3,
         "method_llm": 5,
-        "method_none": 39,
+        "method_none": 37,
         "method_rules_ranked": 10,
         "method_rules_unique": 31,
-        "signatures": 65,
+        "signatures": 64,
         "status_ambiguous": 11,
         "status_matched": 41,
-        "status_unmatched": 33
+        "status_unmatched": 31
       },
       "merge": {
         "agent_instances": 148,
         "agent_tiles": 28,
         "citation_mismatches": 6,
         "cited_values": 123,
-        "components": 90,
+        "components": 88,
         "instances": 178,
         "missing": 3,
         "shared_labels": 0,
@@ -1126,10 +1125,10 @@
       "panels": {
         "לוח ביתן שומר": {
           "component_precision": {
-            "den": 18,
+            "den": 17,
             "kind": "ratio",
             "num": 9.0,
-            "value": 0.5
+            "value": 0.529412
           },
           "component_recall": {
             "den": 14,
@@ -1154,10 +1153,10 @@
         },
         "לוח ראשי": {
           "component_precision": {
-            "den": 34,
+            "den": 33,
             "kind": "ratio",
             "num": 21.0,
-            "value": 0.617647
+            "value": 0.636364
           },
           "component_recall": {
             "den": 30,
@@ -1168,7 +1167,7 @@
         }
       },
       "predicted": {
-        "products": 90,
+        "products": 88,
         "units": 258
       },
       "predicted_total": "0",
@@ -1379,10 +1378,10 @@
             "value": 0.04878
           },
           "component_precision": {
-            "den": 83,
+            "den": 81,
             "kind": "ratio",
             "num": 47.0,
-            "value": 0.566265
+            "value": 0.580247
           },
           "component_recall": {
             "den": 73,
@@ -1405,14 +1404,14 @@
           "quantity_accuracy": {
             "den": 47,
             "kind": "ratio",
-            "num": 28.0,
-            "value": 0.595745
+            "num": 31.0,
+            "value": 0.659574
           },
           "unit_recall": {
             "den": 184,
             "kind": "ratio",
-            "num": 114.0,
-            "value": 0.619565
+            "num": 122.0,
+            "value": 0.663043
           },
           "values_without_evidence": {
             "den": 1,
@@ -1429,10 +1428,10 @@
             "value": 1.0
           },
           "llm_share": {
-            "den": 65,
+            "den": 64,
             "kind": "ratio",
             "num": 3.0,
-            "value": 0.046154
+            "value": 0.046875
           },
           "sku_value_accuracy": {
             "den": 0,
@@ -1441,10 +1440,10 @@
             "value": null
           },
           "with_sku": {
-            "den": 85,
+            "den": 83,
             "kind": "ratio",
             "num": 52.0,
-            "value": 0.611765
+            "value": 0.626506
           }
         },
         "s5_labelled": {
@@ -1570,11 +1569,11 @@
       },
       "validation": {
         "agent_calls": 3,
-        "agent_findings": 4,
+        "agent_findings": 3,
         "checks_run": 28,
         "checks_skipped": 19,
         "severity_error": 0,
-        "severity_info": 19,
+        "severity_info": 18,
         "severity_warning": 11
       }
     },
@@ -2979,7 +2978,6 @@
       "findings": [
         "warning DATA_MODEL_TEXT_CONFLICT FNV",
         "warning FRONT_VIEW_DESIGNATOR_MISSING",
-        "info AGENT_inconsistent_attributes F1 F2 F3 F4 F5 F6",
         "info AGENT_suspicious_quantity F1 F2 F3 F4 F5 F6",
         "info CTRL_CONTACTOR_WITHOUT_COIL_CIRCUIT C3 C4 C1 C2",
         "info DATA_INFERRED_ATTRIBUTE C1 C2",
@@ -3447,11 +3445,11 @@
       },
       "validation": {
         "agent_calls": 1,
-        "agent_findings": 2,
+        "agent_findings": 1,
         "checks_run": 31,
         "checks_skipped": 6,
         "severity_error": 0,
-        "severity_info": 12,
+        "severity_info": 11,
         "severity_warning": 2
       }
     }
@@ -3789,20 +3787,20 @@
         "agent_tile_share": {
           "den": 431,
           "kind": "ratio",
-          "num": 78.0,
-          "value": 0.180974
+          "num": 77.0,
+          "value": 0.178654
         },
         "citation_mismatch_rate": {
-          "den": 263,
+          "den": 259,
           "kind": "ratio",
-          "num": 14.0,
-          "value": 0.053232
+          "num": 11.0,
+          "value": 0.042471
         },
         "component_precision": {
-          "den": 204,
+          "den": 199,
           "kind": "ratio",
           "num": 134.0,
-          "value": 0.656863
+          "value": 0.673367
         },
         "component_recall": {
           "den": 180,
@@ -3825,14 +3823,14 @@
         "quantity_accuracy": {
           "den": 134,
           "kind": "ratio",
-          "num": 99.0,
-          "value": 0.738806
+          "num": 103.0,
+          "value": 0.768657
         },
         "unit_recall": {
           "den": 512,
           "kind": "ratio",
-          "num": 385.0,
-          "value": 0.751953
+          "num": 398.0,
+          "value": 0.777344
         },
         "values_without_evidence": {
           "den": 7,
@@ -3849,10 +3847,10 @@
           "value": 1.0
         },
         "llm_share": {
-          "den": 180,
+          "den": 176,
           "kind": "ratio",
           "num": 7.0,
-          "value": 0.038889
+          "value": 0.039773
         },
         "sku_value_accuracy": {
           "den": 31,
@@ -3861,10 +3859,10 @@
           "value": 1.0
         },
         "with_sku": {
-          "den": 210,
+          "den": 206,
           "kind": "ratio",
-          "num": 151.0,
-          "value": 0.719048
+          "num": 152.0,
+          "value": 0.737864
         }
       },
       "s5_labelled": {
@@ -4445,20 +4443,20 @@
           "agent_tile_share": {
             "den": 228,
             "kind": "ratio",
-            "num": 47.0,
-            "value": 0.20614
+            "num": 46.0,
+            "value": 0.201754
           },
           "citation_mismatch_rate": {
-            "den": 178,
+            "den": 174,
             "kind": "ratio",
-            "num": 11.0,
-            "value": 0.061798
+            "num": 8.0,
+            "value": 0.045977
           },
           "component_precision": {
-            "den": 104,
+            "den": 99,
             "kind": "ratio",
             "num": 58.0,
-            "value": 0.557692
+            "value": 0.585859
           },
           "component_recall": {
             "den": 88,
@@ -4481,14 +4479,14 @@
           "quantity_accuracy": {
             "den": 58,
             "kind": "ratio",
-            "num": 36.0,
-            "value": 0.62069
+            "num": 40.0,
+            "value": 0.689655
           },
           "unit_recall": {
             "den": 242,
             "kind": "ratio",
-            "num": 162.0,
-            "value": 0.669421
+            "num": 175.0,
+            "value": 0.72314
           },
           "values_without_evidence": {
             "den": 2,
@@ -4505,10 +4503,10 @@
             "value": 1.0
           },
           "llm_share": {
-            "den": 86,
+            "den": 82,
             "kind": "ratio",
             "num": 3.0,
-            "value": 0.034884
+            "value": 0.036585
           },
           "sku_value_accuracy": {
             "den": 0,
@@ -4517,10 +4515,10 @@
             "value": null
           },
           "with_sku": {
-            "den": 110,
+            "den": 106,
             "kind": "ratio",
-            "num": 69.0,
-            "value": 0.627273
+            "num": 70.0,
+            "value": 0.660377
           }
         },
         "s5_labelled": {
@@ -4565,8 +4563,8 @@
           "warnings": {
             "den": 2,
             "kind": "average",
-            "num": 14.0,
-            "value": 7.0
+            "num": 15.0,
+            "value": 7.5
           }
         },
         "s6_labelled": {
@@ -5015,8 +5013,8 @@
           "warnings": {
             "den": 4,
             "kind": "average",
-            "num": 8.0,
-            "value": 2.0
+            "num": 7.0,
+            "value": 1.75
           }
         },
         "s6_labelled": {
