@@ -17,6 +17,7 @@ import {
   ApiError,
   dismissFinding,
   fetchQuote,
+  fetchUnresolved,
   lineAction,
   markComponent,
   openNextVersion,
@@ -44,6 +45,7 @@ import { useToast } from "../../ui/Toast";
 import { INPUT_KINDS } from "../newQuote/model";
 import { ChatPanel, type ChatFocus } from "./Chat";
 import { DrawingPane } from "./Drawing";
+import { ExportModal } from "./ExportModal";
 import { boxOnPage, canMark, findingBox, firstPage, overlays, pageForLine, stepPage, tooSmall } from "./drawingModel";
 import { DismissControl, LineDetail, type DetailActions } from "./LineDetail";
 import { ProductPicker } from "./ProductPicker";
@@ -145,6 +147,19 @@ function Review({ quote }: { quote: Quote }) {
   const toast = useToast();
   const me = useMe();
   const chatOn = !!me.data?.flags?.chat_layer;
+  // 13 §4.4 (S26): the "לא פוענח" layer, on by default as in the prototype (`showUnresolved: true`), read again with
+  // each answer the server gives (an action moves the revision)
+  const unresolvedFlag = !!me.data?.flags?.unresolved_overlay;
+  // 13 §4.1 (S26): "הורדה", the customer PDF and the internal Excel
+  const exportOn = !!me.data?.flags?.export_doc;
+  const [exporting, setExporting] = useState(false);
+  const [showUnresolved, setShowUnresolved] = useState(true);
+  const unresolved = useQuery({
+    queryKey: ["unresolved", quote.quote_id, quote.version, quote.revision],
+    queryFn: () => fetchUnresolved(quote.quote_id),
+    enabled: unresolvedFlag,
+    placeholderData: (previous) => previous,
+  });
   const [chatOpen, setChatOpen] = useState(false);
   const chatInput = useRef<HTMLInputElement>(null);
   const qc = useQueryClient();
@@ -671,6 +686,12 @@ function Review({ quote }: { quote: Quote }) {
         >
           <Icon name="undo" />
         </button>
+        {exportOn ? (
+          <button type="button" className="btn sm" data-testid="export" onClick={() => setExporting(true)}>
+            <Icon name="down" />
+            הורדה
+          </button>
+        ) : null}
         {chatOn ? (
           <button
             type="button"
@@ -904,6 +925,11 @@ function Review({ quote }: { quote: Quote }) {
             onSelectLine={selectFromDrawing}
             onSelectPanel={selectPanel}
             mark={{ available: markable, on: drawing, onToggle: () => setDrawing((d) => !d), onDrawn: drawn }}
+            unresolved={
+              unresolvedFlag
+                ? { spots: unresolved.data ?? [], on: showUnresolved, onToggle: () => setShowUnresolved((v) => !v) }
+                : undefined
+            }
           />
         </section>
         {chatPanel && (phone ? tab === "chat" : chatOpen) ? (
@@ -945,6 +971,7 @@ function Review({ quote }: { quote: Quote }) {
       {sending ? (
         <SendDialog quote={quote} busy={busy} onSend={() => void send()} onClose={() => setSending(false)} />
       ) : null}
+      {exporting && exportOn ? <ExportModal quote={quote} onClose={() => setExporting(false)} /> : null}
       {recalc ? (
         <RecalcDialog diff={recalc} onApply={() => void applyRecalc()} onClose={() => setRecalc(null)} />
       ) : null}

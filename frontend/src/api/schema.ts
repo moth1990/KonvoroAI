@@ -1231,6 +1231,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/quotes/{quote_id}/unresolved": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Unresolved
+         * @description 13 §4.4: what the drawing shows that the system did not read, or read only in part, for the current version.
+         *     Behind `unresolved_overlay`: off, the route does not exist (13 §3).
+         */
+        get: operations["get_unresolved_quotes__quote_id__unresolved_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/quotes/{quote_id}/versions": {
         parameters: {
             query?: never;
@@ -1238,13 +1259,77 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /**
+         * List Versions
+         * @description The quote's versions, newest first, for the export modal's selector.
+         */
+        get: operations["list_versions_quotes__quote_id__versions_get"];
         put?: never;
         /**
          * Open Next Version
          * @description "פתח גרסה N+1": a draft copy of the sent version, which stays as it was sent.
          */
         post: operations["open_next_version_quotes__quote_id__versions_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/quotes/{quote_id}/versions/{version}/document": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Document
+         * @description The customer document of the version, as the PDF prints it (the modal's preview).
+         */
+        get: operations["get_document_quotes__quote_id__versions__version__document_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/quotes/{quote_id}/versions/{version}/export.pdf": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Export Pdf Route
+         * @description The customer PDF (07 §12): description, SKU by the factory's setting, quantity, prices, discount, VAT.
+         */
+        get: operations["export_pdf_route_quotes__quote_id__versions__version__export_pdf_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/quotes/{quote_id}/versions/{version}/export.xlsx": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Export Xlsx Route
+         * @description The internal Excel: every line with its cost, price source, colour and tags, the findings and the totals.
+         */
+        get: operations["export_xlsx_route_quotes__quote_id__versions__version__export_xlsx_get"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -1267,6 +1352,42 @@ export interface paths {
         head?: never;
         /** Patch Settings */
         patch: operations["patch_settings_settings_patch"];
+        trace?: never;
+    };
+    "/settings/document": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Document */
+        get: operations["get_document_settings_document_get"];
+        /** Put Document */
+        put: operations["put_document_settings_document_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/settings/document/logo": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Put Logo */
+        put: operations["put_logo_settings_document_logo_put"];
+        post?: never;
+        /** Delete Logo */
+        delete: operations["delete_logo_settings_document_logo_delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
 }
@@ -1592,6 +1713,14 @@ export interface components {
             quote_file: components["schemas"]["UploadedFileOut"];
             /** Status */
             status: string;
+        };
+        /** Body_put_logo_settings_document_logo_put */
+        Body_put_logo_settings_document_logo_put: {
+            /**
+             * File
+             * @description PNG or JPEG, up to 1 MB
+             */
+            file: string;
         };
         /** Body_upload_audit_audits_post */
         Body_upload_audit_audits_post: {
@@ -1996,6 +2125,23 @@ export interface components {
              */
             selected_line_ids: string[];
         };
+        /** CompanyDetails */
+        CompanyDetails: {
+            /** Address */
+            address?: string | null;
+            /**
+             * Company Id
+             * @description ח.פ. or עוסק מורשה
+             */
+            company_id?: string | null;
+            /**
+             * Name
+             * @description The factory's name on the document; its account name until set
+             */
+            name: string;
+            /** Phone */
+            phone?: string | null;
+        };
         /** CorrectedQuoteOut */
         CorrectedQuoteOut: {
             /**
@@ -2092,6 +2238,140 @@ export interface components {
             reason: "intended" | "checker_wrong" | "other";
             /** Text */
             text?: string | null;
+        };
+        /**
+         * DocumentOut
+         * @description The customer document of one version, as the PDF prints it (13 §4.1, 07 §12): no cost, margin, supplier, price
+         *     source or colour. The export modal's preview.
+         */
+        DocumentOut: {
+            /** Company */
+            company: string;
+            /** Customer */
+            customer: string | null;
+            /**
+             * Draft
+             * @description A draft prints "טיוטה" on every page (S26 decision 3)
+             */
+            draft: boolean;
+            /** Drawing Number */
+            drawing_number: string | null;
+            /** Name */
+            name: string;
+            /** Quote Date */
+            quote_date: string | null;
+            /** Sections */
+            sections: components["schemas"]["DocumentSectionOut"][];
+            /** Show Sku */
+            show_sku: boolean;
+            totals: components["schemas"]["DocumentTotalsOut"];
+            /**
+             * Unpriced Count
+             * @description Rows with no price: they print with no amount
+             */
+            unpriced_count: number;
+            /** Version */
+            version: number;
+        };
+        /** DocumentRowOut */
+        DocumentRowOut: {
+            /** Description */
+            description: string;
+            /** Line Total */
+            line_total: string | null;
+            /**
+             * Qty
+             * @example 0.15
+             */
+            qty: string;
+            /**
+             * Sku
+             * @description Only when the factory shows SKUs on the document (07 §12)
+             */
+            sku: string | null;
+            /**
+             * Unit Price
+             * @description Null: the row has no price and prints with no amount
+             */
+            unit_price: string | null;
+        };
+        /** DocumentSectionOut */
+        DocumentSectionOut: {
+            /** Name */
+            name: string;
+            /** Rows */
+            rows: components["schemas"]["DocumentRowOut"][];
+            /**
+             * Total
+             * @description The panel's price before the discount and VAT
+             * @example 0.15
+             */
+            total: string;
+        };
+        /** DocumentSettingsIn */
+        DocumentSettingsIn: {
+            company: components["schemas"]["CompanyDetails"];
+            /**
+             * Show Sku
+             * @default false
+             */
+            show_sku: boolean;
+            /** Terms */
+            terms?: string | null;
+        };
+        /**
+         * DocumentSettingsOut
+         * @description The customer PDF's template (13 §4.1, §6 item 2; S26 decision 1).
+         */
+        DocumentSettingsOut: {
+            company: components["schemas"]["CompanyDetails"];
+            /**
+             * Logo Url
+             * @description Short-lived; load it, don't store it
+             */
+            logo_url: string | null;
+            /**
+             * Show Sku
+             * @description A SKU column on the customer document (07 §12)
+             */
+            show_sku: boolean;
+            /**
+             * Terms
+             * @description Printed under the totals, as written
+             */
+            terms: string | null;
+        };
+        /** DocumentTotalsOut */
+        DocumentTotalsOut: {
+            /** Discount */
+            discount: string | null;
+            /** Discount Pct */
+            discount_pct: string | null;
+            /**
+             * Gross Total
+             * @example 0.15
+             */
+            gross_total: string;
+            /**
+             * Net Total
+             * @example 0.15
+             */
+            net_total: string;
+            /**
+             * Price Total
+             * @example 0.15
+             */
+            price_total: string;
+            /**
+             * Vat
+             * @example 0.15
+             */
+            vat: string;
+            /**
+             * Vat Rate
+             * @example 0.15
+             */
+            vat_rate: string;
         };
         /** DraftUseOut */
         DraftUseOut: {
@@ -3728,6 +4008,45 @@ export interface components {
              */
             token_type: "bearer";
         };
+        /** UnresolvedOut */
+        UnresolvedOut: {
+            /** Spots */
+            spots: components["schemas"]["UnresolvedSpotOut"][];
+        };
+        /**
+         * UnresolvedSpotOut
+         * @description One box of the "לא פוענח" layer (13 §4.4, prototype `UNRESOLVED`).
+         */
+        UnresolvedSpotOut: {
+            /**
+             * Bbox
+             * @description x0, y0, x1, y1 in PDF points, origin top left
+             */
+            bbox: number[];
+            /**
+             * Finding Id
+             * @description The finding a `front_only` box belongs to
+             */
+            finding_id: string | null;
+            /**
+             * Kind
+             * @description סימן לא מזוהה, טקסט בלי סימן, פוענח חלקית, בחזית בלבד
+             * @enum {string}
+             */
+            kind: "unknown_symbol" | "orphan_text" | "partial" | "front_only";
+            /**
+             * Line Id
+             * @description The line a `partial` box belongs to
+             */
+            line_id: string | null;
+            /**
+             * Note
+             * @description The box's tooltip
+             */
+            note: string;
+            /** Page Id */
+            page_id: string;
+        };
         /** UploadOut */
         UploadOut: {
             /**
@@ -3777,6 +4096,25 @@ export interface components {
             id: string;
             /** Role */
             role: string;
+        };
+        /**
+         * VersionOut
+         * @description One version of a quote, for the export's selector (S26 decision 2).
+         */
+        VersionOut: {
+            /** Current */
+            current: boolean;
+            /** Quote Date */
+            quote_date: string | null;
+            /** Sent At */
+            sent_at: string | null;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "draft" | "sent";
+            /** Version */
+            version: number;
         };
     };
     responses: never;
@@ -6114,6 +6452,68 @@ export interface operations {
             };
         };
     };
+    get_unresolved_quotes__quote_id__unresolved_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                quote_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnresolvedOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    list_versions_quotes__quote_id__versions_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                quote_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VersionOut"][];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     open_next_version_quotes__quote_id__versions_post: {
         parameters: {
             query?: never;
@@ -6132,6 +6532,102 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["QuoteOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_document_quotes__quote_id__versions__version__document_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                quote_id: string;
+                version: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DocumentOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    export_pdf_route_quotes__quote_id__versions__version__export_pdf_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                quote_id: string;
+                version: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The customer PDF */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/pdf": unknown;
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    export_xlsx_route_quotes__quote_id__versions__version__export_xlsx_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                quote_id: string;
+                version: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The internal Excel */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": unknown;
                 };
             };
             /** @description Error */
@@ -6194,6 +6690,130 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["SettingsOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_document_settings_document_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DocumentSettingsOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    put_document_settings_document_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DocumentSettingsIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DocumentSettingsOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    put_logo_settings_document_logo_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_put_logo_settings_document_logo_put"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DocumentSettingsOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    delete_logo_settings_document_logo_delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DocumentSettingsOut"];
                 };
             };
             /** @description Error */

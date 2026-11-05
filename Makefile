@@ -12,10 +12,11 @@ FRONTEND := cd frontend &&
 help:
 	@grep -E '^[a-z-]+:.*?## ' $(MAKEFILE_LIST) | awk -F':.*?## ' '{printf "  %-12s %s\n", $$1, $$2}'
 
-install: ## Install backend and frontend dependencies and the Playwright browser
+install: ## Install backend and frontend dependencies and the Playwright browser (E2E, and the customer PDF)
 	$(BACKEND) uv sync
 	$(FRONTEND) pnpm install --frozen-lockfile
 	$(FRONTEND) pnpm exec playwright install chromium
+	$(BACKEND) uv run playwright install chromium
 
 up: ## Start Postgres + pgvector, S3 (S3Mock) and SQS (ElasticMQ), and wait until healthy
 	docker compose up -d --wait

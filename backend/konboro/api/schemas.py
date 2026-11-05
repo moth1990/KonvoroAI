@@ -344,6 +344,74 @@ class PageOut(BaseModel):
     yellow_count: int
 
 
+class VersionOut(BaseModel):
+    """One version of a quote, for the export's selector (S26 decision 2)."""
+
+    version: int
+    status: Literal["draft", "sent"]
+    quote_date: date | None
+    sent_at: datetime | None
+    current: bool
+
+
+class DocumentRowOut(BaseModel):
+    description: str
+    sku: str | None = Field(description="Only when the factory shows SKUs on the document (07 §12)")
+    qty: DecimalStr
+    unit_price: DecimalStr | None = Field(description="Null: the row has no price and prints with no amount")
+    line_total: DecimalStr | None
+
+
+class DocumentSectionOut(BaseModel):
+    name: str
+    rows: list[DocumentRowOut]
+    total: DecimalStr = Field(description="The panel's price before the discount and VAT")
+
+
+class DocumentTotalsOut(BaseModel):
+    price_total: DecimalStr
+    discount_pct: DecimalStr | None
+    discount: DecimalStr | None
+    net_total: DecimalStr
+    vat_rate: DecimalStr
+    vat: DecimalStr
+    gross_total: DecimalStr
+
+
+class DocumentOut(BaseModel):
+    """The customer document of one version, as the PDF prints it (13 §4.1, 07 §12): no cost, margin, supplier, price
+    source or colour. The export modal's preview."""
+
+    name: str
+    drawing_number: str | None
+    customer: str | None
+    version: int
+    draft: bool = Field(description='A draft prints "טיוטה" on every page (S26 decision 3)')
+    quote_date: date | None
+    company: str
+    show_sku: bool
+    sections: list[DocumentSectionOut]
+    totals: DocumentTotalsOut
+    unpriced_count: int = Field(description="Rows with no price: they print with no amount")
+
+
+class UnresolvedSpotOut(BaseModel):
+    """One box of the "לא פוענח" layer (13 §4.4, prototype `UNRESOLVED`)."""
+
+    kind: Literal["unknown_symbol", "orphan_text", "partial", "front_only"] = Field(
+        description="סימן לא מזוהה, טקסט בלי סימן, פוענח חלקית, בחזית בלבד"
+    )
+    page_id: str
+    bbox: list[float] = Field(min_length=4, max_length=4, description="x0, y0, x1, y1 in PDF points, origin top left")
+    note: str = Field(description="The box's tooltip")
+    line_id: str | None = Field(description="The line a `partial` box belongs to")
+    finding_id: str | None = Field(description="The finding a `front_only` box belongs to")
+
+
+class UnresolvedOut(BaseModel):
+    spots: list[UnresolvedSpotOut]
+
+
 class QuoteOut(BaseModel):
     """The review screen's quote (09 §4): its current version, panels, lines, findings and totals."""
 
@@ -560,6 +628,28 @@ class SettingsOut(BaseModel):
     labor: dict[str, Any]
     rounding: str
     auxiliary_families: list[str] = Field(description="The audit shows these as not a difference (11 §5.4, S15)")
+
+
+class CompanyDetails(BaseModel):
+    name: str = Field(max_length=200, description="The factory's name on the document; its account name until set")
+    company_id: str | None = Field(None, max_length=40, description="ח.פ. or עוסק מורשה")
+    address: str | None = Field(None, max_length=300)
+    phone: str | None = Field(None, max_length=40)
+
+
+class DocumentSettingsOut(BaseModel):
+    """The customer PDF's template (13 §4.1, §6 item 2; S26 decision 1)."""
+
+    company: CompanyDetails
+    terms: str | None = Field(description="Printed under the totals, as written")
+    show_sku: bool = Field(description="A SKU column on the customer document (07 §12)")
+    logo_url: str | None = Field(description="Short-lived; load it, don't store it")
+
+
+class DocumentSettingsIn(Strict):
+    company: CompanyDetails
+    terms: str | None = Field(None, max_length=4000)
+    show_sku: bool = False
 
 
 class SettingsPatch(Strict):

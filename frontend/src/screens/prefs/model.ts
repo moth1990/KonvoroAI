@@ -1,6 +1,6 @@
 /** The settings screen's rows (prototype `vPrefs`, lines 1228–1251), without React. */
 
-import type { TenantSettings } from "../../api/client";
+import type { DocumentSettings, DocumentSettingsIn, TenantSettings } from "../../api/client";
 
 export type EnclosurePart = keyof TenantSettings["enclosure_includes_default"];
 type AttributeDefaults = TenantSettings["attribute_defaults"];
@@ -61,4 +61,41 @@ export function withRcd30(defaults: AttributeDefaults, on: boolean): AttributeDe
   if (Object.keys(rcd).length) next.rcd = rcd;
   else delete next.rcd;
   return next;
+}
+
+// --- "המסמך ללקוח" (13 §4.1, §6 item 2; S26 decision 1) ------------------------------------------------------------
+
+export interface DocumentForm {
+  name: string;
+  company_id: string;
+  address: string;
+  phone: string;
+  terms: string;
+  show_sku: boolean;
+}
+
+/** The section's fields from the server's template; a detail not set is an empty field. */
+export function documentForm(s: DocumentSettings): DocumentForm {
+  return {
+    name: s.company.name,
+    company_id: s.company.company_id ?? "",
+    address: s.company.address ?? "",
+    phone: s.company.phone ?? "",
+    terms: s.terms ?? "",
+    show_sku: s.show_sku,
+  };
+}
+
+export function sameForm(a: DocumentForm, b: DocumentForm): boolean {
+  return (Object.keys(a) as (keyof DocumentForm)[]).every((k) => a[k] === b[k]);
+}
+
+/** What "שמור" sends: an empty field is not set. */
+export function documentBody(f: DocumentForm): DocumentSettingsIn {
+  const or = (v: string) => v.trim() || null;
+  return {
+    company: { name: f.name.trim(), company_id: or(f.company_id), address: or(f.address), phone: or(f.phone) },
+    terms: or(f.terms),
+    show_sku: f.show_sku,
+  };
 }

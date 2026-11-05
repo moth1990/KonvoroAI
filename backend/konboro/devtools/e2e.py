@@ -40,7 +40,13 @@ from konboro.db.models import (
 from konboro.db.seed import FLAGS, link_demo_catalog, seed_global, seed_price_list
 from konboro.db.session import app_engine
 from konboro.devtools.fixtures.audit_993 import seed_audit_993, seed_audit_993_pages
-from konboro.devtools.fixtures.nursery import seed_earlier_quote, seed_missing_line, seed_nursery, seed_nursery_pages
+from konboro.devtools.fixtures.nursery import (
+    seed_earlier_quote,
+    seed_missing_line,
+    seed_nursery,
+    seed_nursery_detections,
+    seed_nursery_pages,
+)
 from konboro.devtools.fixtures.queue import seed_queue
 from konboro.pipeline.context import StageContext
 from konboro.pipeline.extraction.config import ExtractionConfig
@@ -144,6 +150,20 @@ TENANTS = (
     E2eTenant(34, "chat-mobile@e2e.konboro.local", False, 12, False, nursery=True, prices=True, earlier=True),
     E2eTenant(35, "chat-off@e2e.konboro.local", False, 12, False, nursery=True, prices=True, off=("chat_layer",)),
     E2eTenant(36, "chat-shots@e2e.konboro.local", False, 12, False, nursery=True, prices=True, earlier=True),
+    # S26. The export sends the NURSERY draft and opens version 2, and its settings section saves the template, so one
+    # tenant per project; one has `unresolved_overlay` and `export_doc` off. The overlay reads `review@`.
+    E2eTenant(37, "export-desktop@e2e.konboro.local", False, 12, False, nursery=True, prices=True),
+    E2eTenant(38, "export-mobile@e2e.konboro.local", False, 12, False, nursery=True, prices=True),
+    E2eTenant(
+        39,
+        "s26-off@e2e.konboro.local",
+        False,
+        12,
+        False,
+        nursery=True,
+        prices=True,
+        off=("unresolved_overlay", "export_doc"),
+    ),
 )
 TERMS = {"version": "2026-10", "at": "2026-10-01T09:00:00+00:00"}
 
@@ -294,6 +314,7 @@ def seed_e2e(owner: Engine, storage: Storage | None = None) -> None:
                     seed_earlier_quote(s, t.tenant_id)
                 if storage is not None:
                     seed_nursery_pages(s, storage, t.tenant_id)
+                    seed_nursery_detections(s, storage, t.tenant_id)
             if t.audit:
                 seed_audit_993(s, t.tenant_id, t.user_id, t.audit_id)
                 if storage is not None:

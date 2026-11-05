@@ -57,6 +57,10 @@ export const TENANTS = {
   chatMobile: "chat-mobile@e2e.konboro.local",
   chatOff: "chat-off@e2e.konboro.local",
   chatShots: "chat-shots@e2e.konboro.local", // the fidelity shots: proposals are made, never applied
+  // S26. The export sends the draft and saves the template, so one tenant per project; one has both S26 flags off.
+  exportDesktop: "export-desktop@e2e.konboro.local",
+  exportMobile: "export-mobile@e2e.konboro.local",
+  s26Off: "s26-off@e2e.konboro.local",
 } as const;
 
 /** The fixture audit's id in each audit tenant (`E2eTenant.audit_id` in devtools/e2e.py). */

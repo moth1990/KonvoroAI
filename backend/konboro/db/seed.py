@@ -9,7 +9,7 @@ factory name appears here.
 
 from datetime import date, datetime, timedelta
 from decimal import Decimal
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 from zoneinfo import ZoneInfo
 
 from sqlalchemy import Engine, create_engine, select, text, update
@@ -240,6 +240,27 @@ def demo_onboarding(session: Session) -> None:
     session.flush()
 
 
+# S26 decision 1: the customer PDF's template, made up like the rest of the demo factory
+DEMO_DOCUMENT: dict[str, Any] = {
+    "company": {
+        "name": 'לוחות דמו בע"מ',
+        "company_id": "510000000",
+        "address": "רח' המלאכה 7, חולון",
+        "phone": "03-5550123",
+    },
+    "terms": "ההצעה בתוקף 30 יום מתאריך ההצעה.\nתנאי תשלום: שוטף + 60.\nזמן אספקה: 4–6 שבועות מאישור ההזמנה והשרטוטים.",
+    "show_sku": False,
+}
+
+
+def demo_document(session: Session) -> None:
+    """The demo factory's template for the customer PDF, unless it wrote its own."""
+    settings = session.get(TenantSettings, DEMO_TENANT)
+    if settings is not None and not settings.document:
+        settings.document = DEMO_DOCUMENT
+        session.flush()
+
+
 def link_demo_catalog(session: Session, tenant_id: str) -> None:
     """The demo products whose manufacturer sku is in the sample catalog point at it and take its family; the rest
     get the family names stage 4 uses (BUG-039). Runs every seed, like the fixtures."""
@@ -410,6 +431,7 @@ def seed_demo_fixtures(session: Session, storage: "Storage") -> None:
     session.execute(text("SELECT set_config('app.tenant_id', :t, true)"), {"t": DEMO_TENANT})
     nursery.seed_nursery(session, DEMO_TENANT)
     nursery.seed_nursery_pages(session, storage, DEMO_TENANT)
+    nursery.seed_nursery_detections(session, storage, DEMO_TENANT)
     nursery.seed_earlier_quote(session, DEMO_TENANT)
     audit_993.enable_flag(session, DEMO_TENANT)
     audit_993.seed_audit_993(session, DEMO_TENANT, DEMO_USER)
@@ -421,6 +443,7 @@ def seed_demo_fixtures(session: Session, storage: "Storage") -> None:
             .on_conflict_do_nothing(index_elements=["tenant_id", "flag_key"])
         )
     demo_onboarding(session)
+    demo_document(session)
     seed_queue(session, DEMO_TENANT)
     link_demo_catalog(session, DEMO_TENANT)
     demo_matching(session, DEMO_TENANT)

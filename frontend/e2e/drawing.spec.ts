@@ -67,7 +67,10 @@ test.describe("the drawing pane on the NURSERY-1 fixture", () => {
     await expect(info).toContainText("וקטורי");
     await expect(page.getByTestId("page-thumb")).toHaveCount(9);
     await expect(thumb(page, 5)).toHaveAttribute("aria-current", "true");
-    await expect(thumb(page, 8)).toHaveAccessibleName("עמוד 8, חד-קווי, פענוח, 2 לא זוהו או שגויות");
+    // the "לא פוענח" layer (S26) is on for this tenant, so its page names say so
+    await expect(thumb(page, 8)).toHaveAccessibleName(
+      "עמוד 8, חד-קווי, פענוח, 2 לא זוהו או שגויות, יש בו מה שלא פוענח",
+    );
     await expect(thumb(page, 8).locator(".pg-count")).toHaveText("2");
     await expect(thumb(page, 2)).toHaveClass(/skip/);
     await expect(page.locator(".pg img").first()).toHaveAttribute("loading", "lazy");

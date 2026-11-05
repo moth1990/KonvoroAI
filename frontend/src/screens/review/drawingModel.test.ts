@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
 
+import type { UnresolvedSpot } from "../../api/client";
+
 import {
   canMark,
   confidenceText,
@@ -19,6 +21,9 @@ import {
   stripTag,
   toViewport,
   tooSmall,
+  UNRESOLVED_LABELS,
+  unresolvedOn,
+  unresolvedPages,
 } from "./drawingModel";
 import { finding, line, page, panel, quote } from "./fixtures";
 
@@ -225,5 +230,55 @@ describe("draw mode (09 §6.6, S23b)", () => {
     const added = line({ line_type: "manual", status: "red", boxes: [at(p5, [10, 10, 40, 40])] });
     const [box] = overlays(quote([panel("A", [added])]), p5, { selected: null, filter: "all", activePanelId: null });
     expect(box?.tone).toBe("m");
+  });
+});
+
+describe('the "לא פוענח" layer (13 §4.4, S26)', () => {
+  const spot = (pageId: string, kind: UnresolvedSpot["kind"], lineId: string | null = null): UnresolvedSpot => ({
+    kind,
+    page_id: pageId,
+    bbox: [10, 10, 20, 20],
+    note: "n",
+    line_id: lineId,
+    finding_id: null,
+  });
+  const spots = [
+    spot(p4.page_id, "unknown_symbol"),
+    spot(p4.page_id, "front_only"),
+    spot(p8.page_id, "orphan_text"),
+    spot(p8.page_id, "partial", "ln_c1"),
+    spot(p8.page_id, "partial", "ln_c1"),
+    spot(p8.page_id, "partial", "ln_rnv"),
+  ];
+
+  it("shows a page's spots while it is on, and none while it is off", () => {
+    expect(unresolvedOn(spots, p4.page_id, true).map((b) => b.spot.kind)).toEqual(["unknown_symbol", "front_only"]);
+    expect(unresolvedOn(spots, p5.page_id, true)).toEqual([]);
+    expect(unresolvedOn(spots, p4.page_id, false)).toEqual([]);
+  });
+
+  it("gives a line's boxes on a page one tab, on the first", () => {
+    expect(unresolvedOn(spots, p8.page_id, true).map((b) => [b.spot.line_id, b.tag])).toEqual([
+      [null, true],
+      ["ln_c1", true],
+      ["ln_c1", false],
+      ["ln_rnv", true],
+    ]);
+  });
+
+  it("marks the strip's pages that have a spot, while it is on", () => {
+    expect([...unresolvedPages(spots, true)].sort()).toEqual([p4.page_id, p8.page_id].sort());
+    expect(unresolvedPages(spots, false).size).toBe(0);
+    expect(stripLabel(p8, true)).toMatch(/יש בו מה שלא פוענח$/);
+    expect(stripLabel(p8)).not.toMatch(/לא פוענח/);
+  });
+
+  it("names each kind as the prototype does", () => {
+    expect(UNRESOLVED_LABELS).toEqual({
+      unknown_symbol: "סימן לא מזוהה",
+      orphan_text: "טקסט בלי סימן",
+      partial: "פוענח חלקית",
+      front_only: "בחזית בלבד",
+    });
   });
 });

@@ -1,10 +1,19 @@
 import OpenSeadragon from "openseadragon";
-import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
-import { API_BASE } from "../../api/client";
+import { API_BASE, type UnresolvedSpot } from "../../api/client";
 import { getToken } from "../../api/token";
-import { dragRect, focusRect, toViewport, type Overlay, type Page, type PanelFrame } from "./drawingModel";
+import {
+  dragRect,
+  focusRect,
+  toViewport,
+  UNRESOLVED_LABELS,
+  type Overlay,
+  type UnresolvedBox,
+  type Page,
+  type PanelFrame,
+} from "./drawingModel";
 
 // OpenSeadragon logs whole objects in its warnings ("Ignoring tile %s"), a tile's ajax headers included, and so the
 // bearer token: in the browser's console, and in `make dev`'s terminal, which Vite forwards it to. Keep the text only.
@@ -42,6 +51,8 @@ export interface FocusRequest {
 export interface ViewerProps {
   page: Page;
   overlays: Overlay[];
+  /** 13 §4.4 "לא פוענח": this page's spots, empty while the layer is off. */
+  unresolved?: UnresolvedBox[];
   frames: PanelFrame[];
   findingBox: number[] | null;
   focus: FocusRequest | null;
@@ -260,6 +271,7 @@ export const Viewer = forwardRef<ViewerHandle, ViewerProps>(function Viewer(prop
                 width={size.w}
                 height={size.h}
                 overlays={props.overlays}
+                unresolved={props.unresolved ?? []}
                 frames={props.frames}
                 findingBox={props.findingBox}
               />,
@@ -369,6 +381,7 @@ function Boxes(props: {
   width: number;
   height: number;
   overlays: Overlay[];
+  unresolved: UnresolvedBox[];
   frames: PanelFrame[];
   findingBox: number[] | null;
 }) {
@@ -431,6 +444,9 @@ function Boxes(props: {
           </rect>
         );
       })}
+      {props.unresolved.map((u, i) => (
+        <Unresolved key={`${u.spot.kind}:${i}`} spot={u.spot} tag={u.tag} />
+      ))}
       {props.findingBox ? (
         <rect
           className="hl find"
@@ -444,5 +460,66 @@ function Boxes(props: {
         />
       ) : null}
     </svg>
+  );
+}
+
+/** The tab's text in PDF points: the prototype's 20px label on its 1400px-wide canvas of an 842pt page. */
+const TAG_FONT_PT = 12;
+const TAG_PAD_PT = 4.8;
+
+/**
+ * 13 §4.4, prototype `.ux`: a dashed red box around what the system did not read, its kind in a red tab on top of
+ * its inline-start corner (the right one, in Hebrew). The box lets clicks through to the line's own box under it,
+ * as the prototype's `pointer-events: none`; the tab carries the note as its tooltip.
+ */
+function Unresolved({ spot, tag }: { spot: UnresolvedSpot; tag: boolean }) {
+  const [x0 = 0, y0 = 0, x1 = 0, y1 = 0] = spot.bbox;
+  const text = useRef<SVGTextElement>(null);
+  const label = UNRESOLVED_LABELS[spot.kind];
+  // the tab hugs its text; jsdom has no text layout, so a width by character count stands in there
+  const [width, setWidth] = useState(label.length * TAG_FONT_PT * 0.55);
+  useLayoutEffect(() => {
+    const measured = text.current?.getComputedTextLength?.();
+    if (measured) setWidth(measured);
+  }, [label]);
+  const h = TAG_FONT_PT * 1.3 + 2;
+  const w = width + 2 * TAG_PAD_PT;
+  const right = x1 + 1;
+  return (
+    <g
+      className="ux"
+      data-testid="ux"
+      data-kind={spot.kind}
+      data-line-id={spot.line_id ?? undefined}
+      data-tag={tag || undefined}
+    >
+      <rect
+        className="ux-box"
+        x={x0}
+        y={y0}
+        width={x1 - x0}
+        height={y1 - y0}
+        rx={2}
+        vectorEffect="non-scaling-stroke"
+      />
+      {tag ? (
+        <g className="ux-tag">
+          <title>{spot.note}</title>
+          <rect x={right - w} y={y0 - h} width={w} height={h} rx={2} />
+          <text
+            ref={text}
+            x={right - TAG_PAD_PT}
+            y={y0 - h / 2}
+            textAnchor="end"
+            dominantBaseline="central"
+            fontSize={TAG_FONT_PT}
+          >
+            {label}
+          </text>
+        </g>
+      ) : (
+        <title>{spot.note}</title>
+      )}
+    </g>
   );
 }

@@ -51,6 +51,9 @@ jobs:
         run: |
           uv run python -m konboro.api.openapi ../frontend/src/api/openapi.json
           git diff --exit-code -- ../frontend/src/api/openapi.json
+      # The customer PDF is printed by Chromium through Playwright (13 §4.1, 12; S26), in the integration tests too
+      - name: Install Playwright's Chromium for the customer PDF
+        run: uv run playwright install --with-deps chromium
       - name: Start local services
         working-directory: .
         run: docker compose up -d --wait
@@ -149,6 +152,11 @@ jobs:
         run: pnpm test
       - name: Install Playwright browser
         run: pnpm exec playwright install --with-deps chromium
+      # The E2E API prints the customer PDF with the Python Playwright; it pins the same version (1.64.1), so this
+      # finds the browser above, or fetches its own if the two ever part
+      - name: Install the backend's Playwright browser
+        run: uv run playwright install chromium
+        working-directory: backend
       - name: Start Postgres, S3 and SQS
         working-directory: .
         run: docker compose up -d --wait

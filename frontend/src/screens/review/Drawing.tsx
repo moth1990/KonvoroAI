@@ -1,5 +1,7 @@
 import { useEffect, useRef } from "react";
 
+import type { UnresolvedSpot } from "../../api/client";
+
 import { Icon } from "../../ui/Icon";
 import { ROUTES } from "../newQuote/model";
 import {
@@ -15,6 +17,8 @@ import {
   stripCount,
   stripLabel,
   stripTag,
+  unresolvedOn,
+  unresolvedPages,
   type Overlay,
   type Page,
 } from "./drawingModel";
@@ -39,6 +43,8 @@ export function DrawingPane(props: {
   finding: { pageId: string; bbox: number[] } | null;
   onSelectLine: (lineId: string) => void;
   onSelectPanel: (panelId: string) => void;
+  /** 13 §4.4 "לא פוענח" (S26): the review screen only, while `unresolved_overlay` is on. */
+  unresolved?: { spots: UnresolvedSpot[]; on: boolean; onToggle: () => void };
   /** 09 §6.5–6.6 "סמן רכיב שפוספס" (S23b): the review screen only, on a parsed page of a draft. */
   mark?: { available: boolean; on: boolean; onToggle: () => void; onDrawn: (pageId: string, bbox: number[]) => void };
 }) {
@@ -66,13 +72,19 @@ export function DrawingPane(props: {
 
   return (
     <>
-      <Strip pages={pages} current={page.page_id} onPage={props.onPage} />
+      <Strip
+        pages={pages}
+        current={page.page_id}
+        onPage={props.onPage}
+        marked={unresolvedPages(props.unresolved?.spots ?? [], !!props.unresolved?.on)}
+      />
       <div className="viewer" data-route={page.route ?? ""}>
         {page.has_viewer ? (
           <Viewer
             ref={viewer}
             page={page}
             overlays={boxes}
+            unresolved={unresolvedOn(props.unresolved?.spots ?? [], page.page_id, !!props.unresolved?.on)}
             frames={props.showPanels === false ? [] : panelFrames(page, props.activePanelId)}
             findingBox={props.finding && props.finding.pageId === page.page_id ? props.finding.bbox : null}
             focus={props.focus}
@@ -131,6 +143,21 @@ export function DrawingPane(props: {
           <button type="button" className="btn ghost sm" aria-label="התאם לחלון" onClick={() => viewer.current?.fit()}>
             <Icon name="fit" />
           </button>
+          {props.unresolved ? (
+            <>
+              <span className="vsep" aria-hidden="true" />
+              <button
+                type="button"
+                className={`btn ${props.unresolved.on ? "" : "ghost "}sm`}
+                aria-pressed={props.unresolved.on}
+                data-testid="ux-toggle"
+                onClick={props.unresolved.onToggle}
+              >
+                <Icon name="scan" />
+                לא פוענח <span className="num">{props.unresolved.spots.length}</span>
+              </button>
+            </>
+          ) : null}
           {props.mark?.available ? (
             <>
               <span className="vsep" aria-hidden="true" />
@@ -158,7 +185,18 @@ export function DrawingPane(props: {
 }
 
 /** 09 §6.5 "שורת עמודים": lazy thumbnails, the current page framed and scrolled into view. */
-function Strip({ pages, current, onPage }: { pages: Page[]; current: string; onPage: (pageId: string) => void }) {
+function Strip({
+  pages,
+  current,
+  onPage,
+  marked,
+}: {
+  pages: Page[];
+  current: string;
+  onPage: (pageId: string) => void;
+  /** Pages the "לא פוענח" layer marks with its red dot (prototype line 985). */
+  marked: Set<string>;
+}) {
   const strip = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const el = strip.current;
@@ -191,7 +229,7 @@ function Strip({ pages, current, onPage }: { pages: Page[]; current: string; onP
               data-page-id={p.page_id}
               data-testid="page-thumb"
               aria-current={p.page_id === current ? "true" : undefined}
-              aria-label={stripLabel(p)}
+              aria-label={stripLabel(p, marked.has(p.page_id))}
               onClick={() => onPage(p.page_id)}
             >
               <span className="pg-img">
@@ -200,6 +238,14 @@ function Strip({ pages, current, onPage }: { pages: Page[]; current: string; onP
               </span>
               <span>
                 {p.page_no} · {kindLabel(p)}
+                {marked.has(p.page_id) ? (
+                  <>
+                    {" "}
+                    <b className="ux-dot" aria-hidden="true" data-testid="ux-dot">
+                      ●
+                    </b>
+                  </>
+                ) : null}
               </span>
               {tag ? <span className="pg-tag">{tag}</span> : null}
             </button>

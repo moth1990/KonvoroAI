@@ -206,6 +206,84 @@ export async function fetchQuote(quoteId: string, client = api): Promise<Quote> 
   return unwrap(await client.GET("/quotes/{quote_id}", { params: { path: { quote_id: quoteId } } }));
 }
 
+// --- the quote's documents (13 §4.1, `export_doc`; S26) --------------------------------------------------------------
+
+export type QuoteVersion = Schemas["VersionOut"];
+export type CustomerDocument = Schemas["DocumentOut"];
+export type DocumentSettings = Schemas["DocumentSettingsOut"];
+export type DocumentSettingsIn = Schemas["DocumentSettingsIn"];
+export type ExportKind = "pdf" | "xlsx";
+
+export async function fetchVersions(quoteId: string, client = api): Promise<QuoteVersion[]> {
+  return unwrap(await client.GET("/quotes/{quote_id}/versions", { params: { path: { quote_id: quoteId } } }));
+}
+
+/** The customer document of one version, as the PDF prints it: the export modal's preview. */
+export async function fetchCustomerDocument(quoteId: string, version: number, client = api): Promise<CustomerDocument> {
+  return unwrap(
+    await client.GET("/quotes/{quote_id}/versions/{version}/document", {
+      params: { path: { quote_id: quoteId, version } },
+    }),
+  );
+}
+
+/** The file's name from `Content-Disposition` (its UTF-8 form), or null. */
+export function attachmentName(header: string | null): string | null {
+  const m = /filename\*=UTF-8''([^;]+)/i.exec(header ?? "");
+  if (!m?.[1]) return null;
+  try {
+    return decodeURIComponent(m[1]);
+  } catch {
+    return null;
+  }
+}
+
+/** The customer PDF or the internal Excel of one version, with the name the server gave it. */
+export async function fetchExport(
+  quoteId: string,
+  version: number,
+  kind: ExportKind,
+  client = api,
+): Promise<{ blob: Blob; name: string | null }> {
+  const params = { path: { quote_id: quoteId, version } };
+  const result =
+    kind === "pdf"
+      ? await client.GET("/quotes/{quote_id}/versions/{version}/export.pdf", { params, parseAs: "blob" })
+      : await client.GET("/quotes/{quote_id}/versions/{version}/export.xlsx", { params, parseAs: "blob" });
+  const blob = unwrap(result as { data?: Blob; error?: unknown; response: Response });
+  return { blob, name: attachmentName(result.response.headers.get("Content-Disposition")) };
+}
+
+export async function fetchDocumentSettings(client = api): Promise<DocumentSettings> {
+  return unwrap(await client.GET("/settings/document"));
+}
+
+export async function saveDocumentSettings(body: DocumentSettingsIn, client = api): Promise<DocumentSettings> {
+  return unwrap(await client.PUT("/settings/document", { body }));
+}
+
+export async function uploadLogo(file: File, client = api): Promise<DocumentSettings> {
+  const data = new FormData();
+  data.append("file", file, file.name);
+  return unwrap(
+    await client.PUT("/settings/document/logo", {
+      body: data as unknown as Schemas["Body_put_logo_settings_document_logo_put"],
+      bodySerializer: (body) => body as unknown as FormData,
+    }),
+  );
+}
+
+export async function deleteLogo(client = api): Promise<DocumentSettings> {
+  return unwrap(await client.DELETE("/settings/document/logo"));
+}
+
+export type UnresolvedSpot = Schemas["UnresolvedSpotOut"];
+
+/** 13 §4.4: the "לא פוענח" layer of the quote's current version. Behind `unresolved_overlay` (404 when off). */
+export async function fetchUnresolved(quoteId: string, client = api): Promise<UnresolvedSpot[]> {
+  return unwrap(await client.GET("/quotes/{quote_id}/unresolved", { params: { path: { quote_id: quoteId } } })).spots;
+}
+
 // --- review actions (09 §7, S23) -------------------------------------------------------------------------------------
 
 export type ActionResult = Schemas["ActionOut"];
