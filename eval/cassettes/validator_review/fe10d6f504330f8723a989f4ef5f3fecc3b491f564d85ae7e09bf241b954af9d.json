@@ -1,0 +1,54 @@
+{
+  "answer": {
+    "input_tokens": 3230,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 480,
+    "payload": {
+      "issues": [
+        {
+          "bbox": null,
+          "component_ids": [
+            "c08"
+          ],
+          "confidence": 0.5,
+          "message": "רכיב מסווג כלחצן חירום אך הצבע ירוק והדגם MP1 הוא לחצן רגיל. יש לוודא סוג הלחצן.",
+          "type": "wrong_family"
+        },
+        {
+          "bbox": null,
+          "component_ids": [
+            "c03",
+            "c01",
+            "c09"
+          ],
+          "confidence": 0.4,
+          "message": "5 סלילי הפסקה בלוח שיש בו רק שני מפסקי MCCB. יש לבדוק אם הכמות תואמת למספר המכשירים שיכולים לשאת סליל.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": null,
+          "component_ids": [
+            "c15",
+            "c13",
+            "c14"
+          ],
+          "confidence": 0.3,
+          "message": "6 מפסקי פחת 4P לעומת 9 מא\"זים תלת-פזיים בלבד. יש לבדוק שכמות מפסקי הפחת מתאימה לקבוצות המוגנות.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": null,
+          "component_ids": [
+            "c01",
+            "c04"
+          ],
+          "confidence": 0.25,
+          "message": "מפסק ראשי 250A עם משנים 250/5A ומונה בודד, ואילו מפסק c09 מסומן 125A בדגם 160A. יש לוודא את הזרם הנקוב.",
+          "type": "inconsistent_attributes"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "validator_review"
+}

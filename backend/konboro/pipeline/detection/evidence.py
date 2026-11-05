@@ -20,6 +20,12 @@ A class changed here keeps the line yellow at most: code's evidence is good, not
    read as a push button, however sure, with a current rating beside it and drawn like the breakers in its row
    (whatever their confidence) with the same rating, is a breaker, and yellow: the model was sure of two 16A
    socket breakers as push buttons ("לחצן" × 12, one with "X11"), in a row with no sure breaker for rule 3.
+   3c. **A row with no sure symbol votes** (BUG-088, BUG-090): drawn alike, rated alike, it is the family most of it
+   was read as (more than half), and that family's most-read class; another family's symbol joins only when the
+   model saw that class for it. 3b also takes an unsure contactor rated like the breakers in its row, and a row may
+   line up by its symbols' middles as well as their tops (BUG-087: a box drawn taller than its peers).
+   2b. **A curve on the rating** ("1×10AC", "C16") beside a disconnector or an unknown protective symbol, nearest it,
+   says an MCB: a written reading, like "MCB" (BUG-091).
 4. **The designator's letter** (BUG-070, `prefixes.json`, the factory's own on top). Q is a switching device or an
    MCCB, F an MCB. Among the classes the model saw for an unsure symbol, the one the prefix allows wins; else the one
    class of its family the prefix allows ("Q" on a breaker: an MCCB). A prefix never brings in a family the model
@@ -142,14 +148,21 @@ def _rating(c: Candidate, spans: list[TextSpan], cfg: DetectionConfig) -> float 
     return float(value) if isinstance(value, int | float) else None
 
 
-BUTTONS = ("push_button",)  # rule 3b: families a current rating beside them says are not what they were read as
+BUTTONS = ("push_button",)  # rule 3b: a current rating beside one says it is not what it was read as, however sure
+UNSURE_RATED = ("contactor",)  # rule 3b too, when unsure (BUG-087: 25.26.100's x2 10A breakers)
+CURVED = ("switch_disconnector",)  # rule 2b: a curve on its rating says a breaker (and an unknown protective one)
+ROW_MIN = 3  # rule 3c: a row votes from this many symbols
 
 
-def _alike(a: Candidate, c: Candidate, rating: dict[int, float | None]) -> bool:
-    """Drawn the same in one row: tops level, widths and heights alike, the same way, the same rating."""
+def _alike(a: Candidate, c: Candidate, rating: dict[int, float | None], centred: bool = False) -> bool:
+    """Drawn the same in one row: tops level (or, `centred`, their middles: a box drawn taller than its peers, BUG-087),
+    widths and heights alike, the same way, the same rating."""
     width = c.bbox[2] - c.bbox[0]
+    level = abs(a.bbox[1] - c.bbox[1]) <= ROW_PT or (
+        centred and abs((a.bbox[1] + a.bbox[3]) / 2 - (c.bbox[1] + c.bbox[3]) / 2) <= ROW_PT
+    )
     return (
-        abs(a.bbox[1] - c.bbox[1]) <= ROW_PT
+        level
         and abs((a.bbox[2] - a.bbox[0]) - width) <= WIDTH_SHARE * (a.bbox[2] - a.bbox[0])
         and _height_alike(a, c)
         and a.orientation == c.orientation
@@ -157,35 +170,112 @@ def _alike(a: Candidate, c: Candidate, rating: dict[int, float | None]) -> bool:
     )
 
 
-def _rated_buttons(
-    devices: list[Candidate], rating: dict[int, float | None], lib: Library, cfg: DetectionConfig
-) -> None:
-    """Rule 3b."""
-    for c in devices:
-        if c.family not in BUTTONS or rating[id(c)] is None:
+def _vote(a: Candidate, family: str, lib: Library) -> str | None:
+    """What one symbol says its class in `family` is: its own, else the likeliest the model saw for it."""
+    if a.family == family and a.symbol_class != UNKNOWN:
+        return a.symbol_class
+    seen = [(s, k) for k, s in a.candidates if k in lib.classes and lib.classes[k].family == family]
+    return max(seen, key=lambda it: (it[0], -_rank(k := it[1], family, lib), k))[1] if seen else None
+
+
+def _rank(cls: str, family: str, lib: Library) -> int:
+    order = [k.symbol_class for k in lib.families.get(family, [])]
+    return order.index(cls) if cls in order else len(order)
+
+
+def _class_of(family: str, like: list[Candidate], lib: Library) -> str | None:
+    """The class a row of `family` reads most; a tie goes to the family's first class (an MCB). None: no reading."""
+    votes: dict[str, int] = {}
+    for a in like:
+        if (v := _vote(a, family, lib)) is not None:
+            votes[v] = votes.get(v, 0) + 1
+    if not votes:
+        return None
+    return max(votes, key=lambda k: (votes[k], -_rank(k, family, lib)))
+
+
+def curve_is_a_breaker(found: list[Candidate], spans: list[TextSpan], cfg: DetectionConfig) -> None:
+    """Rule 2b (BUG-091): a curve written on a rating ("1×10AC", "C16") is a breaker's, like "MCB" written beside it:
+    the disconnector (or an unknown protective symbol) it is written beside, nearest it, is an MCB. A written reading
+    beats the model's class; the line stays yellow."""
+    for s in spans:
+        readings = parse(s.text)
+        if not any(r.key == "curve" for r in readings) or not any(r.key == "current_a" for r in readings):
             continue
-        like = [a for a in devices if a is not c and a.family in PROTECTIVE and _alike(a, c, rating)]
+        near = [
+            (gap(c.bbox, s.bbox), c)
+            for c in found
+            if c.role == "device"
+            and (c.family in (*PROTECTIVE, *CURVED) or c.symbol_class == UNKNOWN)
+            and gap(c.bbox, s.bbox) <= _radius(c, cfg)
+            and _aligned(c, s)
+        ]
+        if not near:
+            continue
+        _, c = min(near, key=lambda it: (it[0], it[1].bbox))
+        if c.family in CURVED or (c.family in PROTECTIVE and c.symbol_class == UNKNOWN):
+            _adopt(c, "circuit_breaker", "mcb", min(_cap(cfg), max(c.confidence, TEXT_FLOOR)))
+            c.ceiling = _cap(cfg)
+
+
+def _rated_buttons(
+    devices: list[Candidate],
+    contacts: list[Candidate],
+    rating: dict[int, float | None],
+    lib: Library,
+    cfg: DetectionConfig,
+) -> None:
+    """Rule 3b. `contacts`: unsure contactors' power contacts, how the first look draws a contactor (BUG-087)."""
+    for c in [*devices, *contacts]:
+        rated = c.family in BUTTONS or (c.family in UNSURE_RATED and not _sure(c, cfg))
+        if not rated or rating[id(c)] is None:
+            continue
+        like = [a for a in devices if a is not c and a.family in PROTECTIVE and _alike(a, c, rating, centred=True)]
         if not like:
             continue
         family = max({a.family for a in like}, key=lambda f: (sum(a.family == f for a in like), f))
-        known = [(a.confidence, a.symbol_class) for a in like if a.family == family and a.symbol_class != UNKNOWN]
-        seen = [
-            (score, cls)
-            for a in like
-            for cls, score in a.candidates
-            if cls in lib.classes and lib.classes[cls].family == family
-        ]
-        default = [k.symbol_class for k in lib.families.get(family, [])]
-        cls = max(known)[1] if known else max(seen)[1] if seen else default[0] if default else UNKNOWN
-        _adopt(c, family, cls, TEXT_FLOOR)
-        c.ceiling = _cap(cfg)  # a sure reading overturned by code is yellow at most
+        first = [k.symbol_class for k in lib.families.get(family, [])]
+        _adopt(c, family, _class_of(family, like, lib) or (first[0] if first else UNKNOWN), TEXT_FLOOR)
+        c.ceiling = _cap(cfg)  # a reading overturned by code is yellow at most
+        c.role = "device"
+
+
+def _row_vote(devices: list[Candidate], rating: dict[int, float | None], lib: Library, cfg: DetectionConfig) -> None:
+    """Rule 3c (BUG-088, BUG-090): a row of symbols drawn alike, rated alike, with no sure one for rule 3, is one
+    device type: the family most of it was read as, when that is more than half the row and protective, and that
+    family's class the row reads most. A symbol of another family joins only when the model saw that class for it too
+    (25.26.100's four 10A "disconnectors", `mcb` 0.7 among their own candidates); one of the family takes its class
+    (the 40A row read mcb × 3 and mccb × 2, drawn alike). Its confidence stays its own."""
+    done: set[int] = set()
+    for c in devices:
+        if id(c) in done or rating[id(c)] is None or _sure(c, cfg):
+            continue
+        row = [a for a in devices if a is c or (rating[id(a)] is not None and _alike(a, c, rating, centred=True))]
+        if len(row) < ROW_MIN or any(_sure(a, cfg) and a.family in PROTECTIVE for a in row):
+            continue
+        done.update(id(a) for a in row)
+        family = max({a.family for a in row}, key=lambda f: (sum(a.family == f for a in row), f))
+        if family not in PROTECTIVE or 2 * sum(a.family == family for a in row) <= len(row):
+            continue
+        cls = _class_of(family, [a for a in row if a.family == family], lib)
+        if cls is None:
+            continue
+        for a in row:
+            if (a.family == family and a.symbol_class == cls) or _sure(a, cfg):
+                continue
+            if a.family != family and all(k != cls for k, _ in a.candidates):
+                continue
+            _adopt(a, family, cls, a.confidence)
 
 
 def peers(found: list[Candidate], spans: list[TextSpan], lib: Library, cfg: DetectionConfig) -> None:
-    """Rules 3 and 3b."""
+    """Rules 3, 3b and 3c."""
     devices = [c for c in found if c.role == "device" and c.family not in ("terminal", "rcd", "rcbo", *NOT_DEVICES)]
-    rating = {id(c): _rating(c, spans, cfg) for c in devices}  # an RCD in the row is no breaker's peer
-    _rated_buttons(devices, rating, lib, cfg)
+    contacts = [c for c in found if c.role == "power_contact" and c.family in UNSURE_RATED and not _sure(c, cfg)]
+    rating = {id(c): _rating(c, spans, cfg) for c in [*devices, *contacts]}  # an RCD in the row is no breaker's peer
+    _rated_buttons(devices, contacts, rating, lib, cfg)
+    devices += [c for c in contacts if c.role == "device"]
+    _row_vote(devices, rating, lib, cfg)
     sure = [c for c in devices if _sure(c, cfg) and c.family in PROTECTIVE and rating[id(c)] is not None]
     for c in devices:
         if _sure(c, cfg) or rating[id(c)] is None:

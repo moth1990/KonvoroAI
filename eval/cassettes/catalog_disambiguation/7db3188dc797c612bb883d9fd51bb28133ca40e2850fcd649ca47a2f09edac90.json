@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 853,
+    "model": "claude-haiku-5-5",
+    "output_tokens": 507,
+    "payload": {
+      "chosen_sku": null,
+      "confidence": 0.3,
+      "missing_attributes": [],
+      "reason": "הרישום בשרטוט הוא רק 'סליל | הפסקה' ללא דגם או סדרה, ושני המועמדים זהים בערך המתח (230V) ובמותג (ABB), ולכן אין בשרטוט או בהעדפות מה להכריע ביניהם."
+    }
+  },
+  "model": "claude-haiku-5-5",
+  "stage": "catalog_disambiguation"
+}

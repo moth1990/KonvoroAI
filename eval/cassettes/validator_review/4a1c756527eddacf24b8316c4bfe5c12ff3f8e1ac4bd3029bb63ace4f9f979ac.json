@@ -1,0 +1,39 @@
+{
+  "answer": {
+    "input_tokens": 2674,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 271,
+    "payload": {
+      "issues": [
+        {
+          "bbox": [
+            130,
+            350,
+            400,
+            540
+          ],
+          "component_ids": [
+            "c02"
+          ],
+          "confidence": 0.3,
+          "message": "בציור מסומן QG2 כ-4X125A ABB-XT1C עם INC=100A, ואילו בטבלה מופיע XT1C160 125A. כדאי לבדוק שהזרם והדגם תואמים לציור.",
+          "type": "inconsistent_attributes"
+        },
+        {
+          "bbox": [
+            718,
+            420,
+            845,
+            610
+          ],
+          "component_ids": [],
+          "confidence": 0.5,
+          "message": "בצד ימין של הציור יש מפסק נוסף (4-… ABB-…) שמוזן מהנורות/הפס, ואין לו שורה בטבלה. כדאי לבדוק אם חסר מפסק בהצעה.",
+          "type": "missing_component"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "validator_review"
+}

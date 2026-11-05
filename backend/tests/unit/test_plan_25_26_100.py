@@ -52,12 +52,13 @@ def _candidate(d: Detection) -> Candidate:
     return c
 
 
-def _replay() -> tuple[list[Detection], list[Component]]:
-    body = json.loads(gzip.decompress((FIXTURE / "stages.json.gz").read_bytes()))
+def replay(fixture: Path = FIXTURE) -> tuple[list[Detection], list[Component]]:
+    """Stage 3's code after the model, stage 4 without the tile agent, from a fixture folder's stored outputs."""
+    body = json.loads(gzip.decompress((fixture / "stages.json.gz").read_bytes()))
     intake = IntakeResult.model_validate(body["intake"])
     pe = ExtractionResult.model_validate(body["extraction"]).pages[0]
     pd = DetectionResult.model_validate(body["detection"]).pages[0]
-    wires = (FIXTURE / "wires.json.gz").read_bytes()
+    wires = (fixture / "wires.json.gz").read_bytes()
     found, _ = evidence.absorb_end_circles([_candidate(d) for d in pd.detections])
     s3_symbols.after_model(found, pe.text_spans, LIB, DEFAULT)
     by_id = {d.det_id: d for d in pd.detections}
@@ -70,6 +71,7 @@ def _replay() -> tuple[list[Detection], list[Component]]:
                 update={
                     "family": c.family,
                     "symbol_class": c.symbol_class,
+                    "role": c.role,
                     "billable": cls.billable if cls else by_id[c.tile_id].billable,
                     "designator": c.designator,
                     "designator_span_id": c.designator_span_id,
@@ -95,11 +97,11 @@ def _replay() -> tuple[list[Detection], list[Component]]:
         [p.panel_id for p in intake.panels],
     )
     s4_association.chains([work])
-    comps, _, _ = components("drw_01M6JTD6P888QR919B5KM52EWX", work.built, sch)
+    comps, _, _ = components(intake.drawing_id, work.built, sch)
     return dets, comps
 
 
-DETECTIONS, COMPONENTS = _replay()
+DETECTIONS, COMPONENTS = replay()
 
 
 def _value(c: Component, name: str) -> object:
@@ -125,6 +127,7 @@ def test_three_current_transformers_from_one_range() -> None:
     ct = next(c for c in COMPONENTS if c.family == "current_transformer")
     assert ct.designators == ["T1", "T2", "T3"] and ct.quantity == 3
     assert (_value(ct, "ratio_primary_a"), _value(ct, "ratio_secondary_a")) == (100, 5)
+    assert run(ct)[0].chosen_sku == "CT4 100/5"  # a real product the sample catalog lacked (the user's approval)
 
 
 def test_both_rcds() -> None:

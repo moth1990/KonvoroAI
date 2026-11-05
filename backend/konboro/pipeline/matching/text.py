@@ -74,12 +74,17 @@ def value(name: str, v: Any) -> str:
 
 # A breaker whose class nobody wrote or read (an MCB or an MCCB): the factory's word for any of them (BUG-071)
 UNTYPED_NAMES = {"circuit_breaker": "מפסק"}
+# A quote line's name where the factory's word is not the detection library's (the user, on 25.26.100's quote: "a
+# more professional name"). The library's names stay: they are the model's words in the disambiguation prompt.
+LINE_NAMES = {"motor_protection": "מפסק מגן מנוע", "switch_disconnector": "מנתק"}
 
 
 def class_name(family: str, symbol_class: str | None) -> str:
     """The Hebrew name of the class, or of the family's first class (the library's display names, 03 §4.3)."""
     if symbol_class == library.UNKNOWN and family in UNTYPED_NAMES:
         return UNTYPED_NAMES[family]
+    if (symbol_class or family) in LINE_NAMES:
+        return LINE_NAMES[symbol_class or family]
     for f in library.FAMILIES:
         if f.family == family:
             names = dict(f.classes)
@@ -98,11 +103,15 @@ def describe(family: str, symbol_class: str | None, brand: str | None, model: st
     poles = attrs.get("poles")
     if poles is not None:
         parts.append(f"{number(poles)}P" + ("+N" if attrs.get("neutral") else ""))
-    for name in ("current_a", "residual_ma", "imax_ka", "coil_voltage_v"):
+    for name in ("current_a", "residual_ma", "imax_ka"):
         if attrs.get(name) is not None:
-            parts.append(value(name, attrs[name]))
+            # a contactor's current is its AC-3 rating (the prototype's "מגען 3P ‏16A לפחות (AC-3)")
+            ac3 = " (AC-3)" if name == "current_a" and family == "contactor" else ""
+            parts.append(value(name, attrs[name]) + ac3)
+    if attrs.get("coil_voltage_v") is not None:
+        parts.append(f"סליל {value('coil_voltage_v', attrs['coil_voltage_v'])}")
     if attrs.get("range_min_a") is not None and attrs.get("range_max_a") is not None:
-        parts.append(f"{number(attrs['range_min_a'])}–{number(attrs['range_max_a'])}A")
+        parts.append(f"טווח {number(attrs['range_min_a'])}–{number(attrs['range_max_a'])}A")
     if attrs.get("ratio_primary_a") is not None:
         parts.append(f"{number(attrs['ratio_primary_a'])}/{number(attrs.get('ratio_secondary_a', 5))}A")
     if attrs.get("curve"):

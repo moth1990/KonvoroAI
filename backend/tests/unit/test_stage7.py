@@ -259,7 +259,7 @@ def test_an_unmatched_line_is_described_like_a_matched_one() -> None:
     lines = by_key(q)
     assert lines["c:cmp_1"].description == 'מפסק זרם אוטומטי (מא"ז) ABB 1P 10A'
     assert lines["c:cmp_2"].description == "מפסק 3P 80A"  # not typed: neither an MCB nor an MCCB
-    assert lines["c:cmp_3"].description == "מנתק / מפסק עומס 10A"
+    assert lines["c:cmp_3"].description == "מנתק 10A"
     assert lines["c:cmp_4"].description == "מפסק פחת 4P 40A 30mA"
     assert lines["c:cmp_5"].description == 'מפסק זרם אוטומטי (מא"ז) 40A'
 
