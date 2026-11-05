@@ -29,7 +29,10 @@
       "families": ["circuit_breaker", "rcd", "rcbo"],
       "attribute": "poles",
       "cores": {"3": 1, "4": 3, "5": 3},
-      "explain": "לפי הכבל ביציאה: {cores} גידים"
+      "unsure_graphic_below": 0.85,
+      "about_unsure": "BUG-079: a pole mark read below 0.85 (00 §6.3's green) that the cable contradicts is a conflict for review, nothing chosen and both readings offered; a sure one is matched, yellow (25.26.100's 25A feeder on 5X6, read 1P at 0.5)",
+      "explain": "לפי הכבל ביציאה: {cores} גידים",
+      "conflict": "בשרטוט סומן {read}, אבל הכבל ביציאה ({cores} גידים) נותן {cable}. בחרו ידנית"
     },
     {
       "id": "residual_written_in_amps_as_ma",
@@ -47,7 +50,9 @@
       "families": ["circuit_breaker"],
       "at_least_a": 100,
       "or_above_catalog_range": true,
+      "or_upper_within_catalog_range": true,
       "about": "BUG-070: an mcb is no mcb above the largest current the catalog has for one (25.26.100's Q0, 3×80A); typed again by its current",
+      "about_upper": "BUG-077: the converse. An mccb within the catalog's mcb range, with no MCCB written beside it, no series or SKU written and no designator prefix that names an mccb (Q), is typed again by its current (25.26.100's five 40A field breakers; the user: no 40A MCCB there)",
       "above": "mccb",
       "below": "mcb",
       "explain": "סוג המפסק לא כתוב: {kind} לפי הזרם ({current}A)"

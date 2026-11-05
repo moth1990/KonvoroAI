@@ -9,7 +9,8 @@ An instance is one symbol with what was read for it. The merge, once per drawing
    device of its own, untagged and yellow, flagged `tag_conflict` (25.26.100's "X2" took 16A breakers and two RCDs
    into one terminal × 76). Unless it is unsure and beside one of the device's drawings, within its length: then it
    is a misread part of that drawing (Q0's ring read as a current transformer, QLG1's thermal release as an overload
-   relay). An accessory (a shunt trip) under a device's tag sits on that device.
+   relay). An accessory (a shunt trip) under a device's tag sits on that device. One written tag names one device
+   (BUG-081, `one_name_per_tag`): a span nearest a coil or a contact names that one's device, not another family's.
 2. An auxiliary contact (family `aux_contact`) is an accessory of its own: its tag is the device it sits on
    (`parent_designators`), not a device of its own tag. An untagged contact or coil of a family that has tagged
    devices in the panel is another drawing of one of them, and joins the nearest (no quantity of its own).
@@ -50,6 +51,9 @@ INSTANCE_ISSUES = {
     "range_mismatch": "טווח המעגלים {range} לא תואם לכמות {count}. בדקו את הכמות.",
     "brand_conflict": "שני מותגים שונים ברכיבים זהים: {brands}.",
     "tag_conflict": "התג {tag} כתוב גם ליד רכיב מסוג אחר ({family}). בדקו לאיזה רכיב הוא שייך.",
+    "poles_from_peers": "לא סומנו קטבים: רוב המפסקים הזהים בשורה סומנו {poles}. בדקו.",
+    "poles_peer_conflict": "סומן {read}, אבל רוב המפסקים הזהים בשורה סומנו {poles}. בדקו את הקטבים.",
+    "poles_corrected": "סומן {read}, אבל הכבל {cable} ורוב המפסקים הזהים בשורה נותנים {poles}: נספר כ-{poles}. בדקו.",
 }
 
 
@@ -95,6 +99,7 @@ class Built:
     circuit_context: CircuitContext | None = None
     extra_det_ids: list[str] = field(default_factory=list)  # absorbed symbols (the neutral pole)
     order: tuple[int, float, float] = (0, 0.0, 0.0)  # page, y, x: the merge keeps the drawing's order
+    designator_span: tuple[str, Bbox] | None = None  # the span stage 3 linked as its tag, and where it is (BUG-081)
 
 
 @dataclass
@@ -141,8 +146,46 @@ def _join_attributes(
     return out, conflicts, penalty
 
 
+SHARED_TOUCH_PT = 6.0  # a symbol this close to the tag's nearest symbol is part of its drawing (S24b decision 4)
+
+
+def _gap(a: Bbox, b: Bbox) -> float:
+    dx, dy = max(a[0] - b[2], 0.0, b[0] - a[2]), max(a[1] - b[3], 0.0, b[1] - a[3])
+    return float((dx * dx + dy * dy) ** 0.5)
+
+
+def one_name_per_tag(built: list[Built]) -> None:
+    """BUG-081: one written tag names one device. Stage 3 links each symbol to its nearest tag-shaped span, so one
+    "T1" under 25.26.100's clock was also the selector's and C130,131's coil's (the model read it beside them too),
+    and the selector became T1's device. A span nearest a coil or a contact names that coil's device (a contactor, a
+    relay, a timer): another family's symbol that took it loses it, unless it touches that coil or contact or sits on
+    the device (an accessory). A span nearest a device drawing is left to `devices` (S24b decision 4: Q0's ring read
+    as a current transformer is a part of Q0). Here, not in stage 3: the tile agent is shown stage 3's tags."""
+    takers: dict[tuple[str, str], list[Built]] = defaultdict(list)
+    for b in built:
+        if b.designator and b.designator_span and b.instance.bbox is not None:
+            takers[(b.instance.page_id, b.designator_span[0])].append(b)
+    for group in takers.values():
+        if len({b.instance.family for b in group}) < 2:
+            continue
+        where = group[0].designator_span[1]  # type: ignore[index]
+        nearest = min(group, key=lambda b: (_gap(b.instance.bbox, where), b.order))  # type: ignore[arg-type]
+        if nearest.role not in REPRESENTATIONS:
+            continue
+        for b in group:
+            i = b.instance
+            if (
+                i.family == nearest.instance.family
+                or i.family in ACCESSORIES
+                or _gap(i.bbox, nearest.instance.bbox) <= SHARED_TOUCH_PT  # type: ignore[arg-type]
+            ):
+                continue
+            b.designator = None
+
+
 def devices(built: list[Built], schemas: Schemas, cfg: AssociationConfig = DEFAULT) -> list[Device]:
     """5.8 items 1–3: one device per tag in a panel; an auxiliary contact on its own; an untagged symbol alone."""
+    one_name_per_tag(built)
     by_tag: dict[tuple[str, str], list[Built]] = defaultdict(list)
     alone: list[Built] = []
     accessories: list[tuple[Built, str]] = []  # an accessory under another device's tag, and that tag
@@ -309,6 +352,142 @@ def _join_by_cable(groups: dict[tuple[Any, ...], list[Device]]) -> None:
             groups[target].extend(groups.pop(sig))
 
 
+PEER_ROW_PT = 3.0  # alike peers (BUG-088), as stage 3's rows (`detection/evidence.py`): tops or middles this close
+PEER_WIDTH_SHARE = 0.15
+PEER_HEIGHT_SHARE = 0.6
+
+
+def _alike(a: Bbox, b: Bbox) -> bool:
+    level = abs(a[1] - b[1]) <= PEER_ROW_PT or abs((a[1] + a[3]) / 2 - (b[1] + b[3]) / 2) <= PEER_ROW_PT
+    wa, wb, ha, hb = a[2] - a[0], b[2] - b[0], a[3] - a[1], b[3] - b[1]
+    return level and abs(wa - wb) <= PEER_WIDTH_SHARE * wa and min(ha, hb) >= PEER_HEIGHT_SHARE * max(ha, hb)
+
+
+SURE_MARK = 0.85  # a pole mark read at least this sure is never outvoted (00 §6.3's green)
+
+
+def _row_key(sig: tuple[Any, ...]) -> tuple[Any, ...]:
+    """What alike peers share: panel, family, class, scope, multiplicity and every value but the poles."""
+    return (*sig[:5], tuple((k, v) for k, v in sig[5] if k != "poles"))
+
+
+def _touching(a: Device, b: Device) -> bool:
+    return any(
+        x.instance.page_id == y.instance.page_id
+        and x.instance.bbox is not None
+        and y.instance.bbox is not None
+        and _alike(x.instance.bbox, y.instance.bbox)
+        for x in a.built
+        for y in b.built
+    )
+
+
+def _join_by_peers(groups: dict[tuple[Any, ...], list[Device]]) -> None:
+    """BUG-088 (the user: breakers drawn alike in one row with one rating "are all the same"). The identical protective
+    devices of a row, drawn alike, take the poles most of them were read as:
+    - one with no poles read, and no cable on its circuit (that is `_join_by_cable`'s evidence), joins their component;
+      like `_join_by_cable`, each instance keeps its poles unread (00 §5.3) and carries why it joined;
+    - one whose unsure pole mark (`graphic`) disagrees keeps its reading and its own line, flagged for the reviewer
+      (`poles_peer_conflict`), unless its own cable backs what was marked. Outvoting it made 6199-2-50's real 1P
+      breaker among five 3P a 3P one (the user chose the flag);
+    - one whose own cable gives the majority's poles too joins them (`poles_corrected`, S24b decision 12: 25.26.100's
+      two 10A "X2" read 3P on 3×1.5 beside thirteen 1P). Its instance keeps the mark as read; stage 5 makes the
+      component's poles `inferred` (`matching.match.corrected_poles`).
+    A tie, a sure mark or a count written in text that disagrees gives nothing. Peers are the same family, class and
+    values: an RCD's 4P beside the breakers never votes."""
+    rows: dict[tuple[Any, ...], list[tuple[tuple[Any, ...], Device]]] = defaultdict(list)
+    for sig, devs in groups.items():
+        if sig[1] in PROTECTIVE:
+            rows[_row_key(sig)] += [(sig, d) for d in devs]
+    for members in rows.values():
+        if len({sig for sig, _ in members}) < 2:
+            continue
+        for cluster in _clusters(members):
+            _vote_poles(groups, cluster)
+
+
+def _clusters(members: list[tuple[tuple[Any, ...], Device]]) -> list[list[tuple[tuple[Any, ...], Device]]]:
+    """The rows among `members`: devices drawn alike side by side, chained."""
+    left = list(members)
+    out = []
+    while left:
+        cluster = [left.pop(0)]
+        grew = True
+        while grew:
+            grew = False
+            for m in list(left):
+                if any(_touching(m[1], c[1]) for c in cluster):
+                    cluster.append(m)
+                    left.remove(m)
+                    grew = True
+        if len(cluster) > 1:
+            out.append(cluster)
+    return out
+
+
+def _vote_poles(groups: dict[tuple[Any, ...], list[Device]], cluster: list[tuple[tuple[Any, ...], Device]]) -> None:
+    def poles(d: Device) -> AttributeValue | None:
+        a = d.attributes.get("poles")
+        return a if a is not None and a.value is not None else None
+
+    votes: dict[str, int] = defaultdict(int)
+    for _, d in cluster:
+        if (a := poles(d)) is not None:
+            votes[repr(a.value)] += 1
+    if not votes:
+        return
+    ranked = sorted(votes.items(), key=lambda it: -it[1])
+    if len(ranked) > 1 and ranked[0][1] == ranked[1][1]:
+        return  # a tie
+    winner = ranked[0][0]
+    dissent = [(sig, d) for sig, d in cluster if (a := poles(d)) is not None and repr(a.value) != winner]
+    implied = _cable_poles()
+    flagged: list[Device] = []
+    corrected: list[tuple[tuple[Any, ...], Device]] = []
+    for sig, d in dissent:
+        a = poles(d)
+        if a is None or a.source != "graphic" or (a.confidence or 0.0) >= SURE_MARK:
+            return  # written in text, or a sure mark: the row is not one product
+        cabled = {implied.get(c) for b in d.built if (c := _cable_cores(b)) is not None}
+        if a.value in cabled:
+            continue  # its own cable backs the mark (25.26.100's kitchen 3P on 5×2.5)
+        if cabled and all(p is not None and repr(p) == winner for p in cabled):
+            corrected.append((sig, d))  # its cable and the majority agree against the mark (decision 12)
+        else:
+            flagged.append(d)
+    target = next(sig for sig, d in cluster if (a := poles(d)) is not None and repr(a.value) == winner)
+    shown = f"{winner}P"
+    for d in flagged:  # kept as read, on its own line: 6199-2-50's shed has a real 1P among five 3P (the user's choice)
+        for b in d.built:
+            b.instance.issues.append(
+                issue("poles_peer_conflict", "warning", b.instance.page_id, poles=shown, read=f"{poles(d).value}P")  # type: ignore[union-attr]
+            )
+    majority = poles(groups[target][0])
+    for sig, d in corrected:
+        read = f"{poles(d).value}P"  # type: ignore[union-attr]
+        for b in d.built:
+            cable = b.circuit_context.cable if b.circuit_context else None
+            shown_cable = (cable.raw or f"{cable.cores} גידים") if cable else ""
+            b.instance.issues.append(
+                issue("poles_corrected", "warning", b.instance.page_id, poles=shown, read=read, cable=shown_cable)
+            )
+        d.attributes = {**d.attributes, "poles": majority.model_copy()}  # type: ignore[union-attr]
+        _move(groups, sig, d, target)
+    for sig, d in [(sig, d) for sig, d in cluster if sig != target and poles(d) is None and not sig[-1]]:
+        for b in d.built:
+            b.instance.issues.append(issue("poles_from_peers", "info", b.instance.page_id, poles=shown))
+        _move(groups, sig, d, target)
+
+
+def _move(
+    groups: dict[tuple[Any, ...], list[Device]], sig: tuple[Any, ...], d: Device, target: tuple[Any, ...]
+) -> None:
+    groups[sig] = [x for x in groups[sig] if x is not d]
+    if not groups[sig]:
+        del groups[sig]
+    groups[target].append(d)
+
+
 def _cable_cores(b: Built) -> int | None:
     cable = b.circuit_context.cable if b.circuit_context else None
     return cable.cores if cable else None
@@ -332,6 +511,7 @@ def components(
     for d in devices(built, schemas, cfg):
         groups[_signature(d)].append(d)
     _join_by_cable(groups)
+    _join_by_peers(groups)
     out: list[Component] = []
     owner: dict[str, str] = {}
     issues: list[StageIssue] = []

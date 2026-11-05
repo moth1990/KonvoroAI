@@ -1,0 +1,82 @@
+{
+  "answer": {
+    "input_tokens": 6671,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 659,
+    "payload": {
+      "issues": [
+        {
+          "bbox": [
+            702,
+            452,
+            748,
+            492
+          ],
+          "component_ids": [
+            "c06"
+          ],
+          "confidence": 0.6,
+          "message": "בשרטוט מופיע לחצן אחד על הלוח ('לחצן על הלוח'), אך בטבלה כמות 3. יש לבדוק את הכמות.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": [
+            30,
+            760,
+            95,
+            880
+          ],
+          "component_ids": [
+            "c19",
+            "c20"
+          ],
+          "confidence": 0.5,
+          "message": "בשרטוט נתיך HRC 3x100A ומגן ברק אחד (4P 100kA B+C), ובטבלה הכמות 3 לכל אחד. יש לבדוק אם המגן הוא יחידה אחת והנתיכים 3 בקוטב.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": [
+            600,
+            80,
+            730,
+            252
+          ],
+          "component_ids": [
+            "c04"
+          ],
+          "confidence": 0.35,
+          "message": "מפסק 630A בתוספת עתידית (מסגרת מקווקוו) נספר כמנתק רגיל. יש לבדוק אם הוא פריט להצעה או רק הערה.",
+          "type": "wrong_family"
+        },
+        {
+          "bbox": [
+            1228,
+            745,
+            1290,
+            835
+          ],
+          "component_ids": [
+            "c14"
+          ],
+          "confidence": 0.25,
+          "message": "בשרטוט מפסק 80A (x2) הוא MCCB, אך מפסק 80A נוסף עם LSI (100A) נקרא בנפרד. יש לבדוק התאמה בין הערכים לקיבולת ניתוק בשאר הלוח.",
+          "type": "inconsistent_attributes"
+        },
+        {
+          "bbox": [
+            944,
+            840,
+            972,
+            864
+          ],
+          "component_ids": [],
+          "confidence": 0.4,
+          "message": "מופיע רכיב אדום עם סימון '0' ליד 'שעון פקוד' (שעון/טיימר), ואין שורה מתאימה בטבלה. יש לבדוק אם חסר שעון פקוד.",
+          "type": "missing_component"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "validator_review"
+}

@@ -1,0 +1,79 @@
+{
+  "answer": {
+    "input_tokens": 6787,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 611,
+    "payload": {
+      "issues": [
+        {
+          "bbox": [
+            28,
+            760,
+            90,
+            795
+          ],
+          "component_ids": [
+            "c20"
+          ],
+          "confidence": 0.45,
+          "message": "בשרטוט מופיע נתיך HRC אחד (3x100A) אך בטבלה הכמות 3. יש לבדוק אם הכמות נספרה לפי הקטבים ולא לפי ההתקנים.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": [
+            703,
+            452,
+            747,
+            492
+          ],
+          "component_ids": [
+            "c06"
+          ],
+          "confidence": 0.55,
+          "message": "בשרטוט יש לחצן אחד על הלוח, אך בטבלה הכמות 3. יש לבדוק את הכמות.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": [
+            1065,
+            845,
+            1110,
+            920
+          ],
+          "component_ids": [
+            "c23"
+          ],
+          "confidence": 0.3,
+          "message": "בשרטוט מופיע מא\"ז 25A אחד עם סימון (x3) למעגלים 21–23, ובטבלה הכמות 3. יש לוודא שהספירה נכונה ושהמא\"ז תלת-קוטבי.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": [
+            770,
+            845,
+            860,
+            925
+          ],
+          "component_ids": [
+            "c27",
+            "c28"
+          ],
+          "confidence": 0.4,
+          "message": "המא\"זים 10A (x4) ו-16A (x6) בשרטוט, אך בטבלה 10A בכמות 5 ו-16A בכמות 6 (כולל מא\"ז 10A נוסף). יש לבדוק את הספירה.",
+          "type": "inconsistent_attributes"
+        },
+        {
+          "bbox": null,
+          "component_ids": [
+            "c22"
+          ],
+          "confidence": 0.3,
+          "message": "בטבלה יש ממסר עזר 24V שלא נראה בשרטוט. יש לוודא שהוא קיים בלוח.",
+          "type": "missing_component"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "validator_review"
+}

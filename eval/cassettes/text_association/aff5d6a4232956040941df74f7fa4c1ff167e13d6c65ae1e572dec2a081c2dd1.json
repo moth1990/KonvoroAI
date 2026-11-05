@@ -1,0 +1,80 @@
+{
+  "answer": {
+    "input_tokens": 5287,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 447,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s7"
+              ],
+              "value": 10
+            },
+            {
+              "confidence": 0.6,
+              "evidence": "graphic",
+              "graphic_note": "single line with one slanted stroke across it, no multiple strokes",
+              "name": "poles",
+              "span_ids": [],
+              "value": 1
+            }
+          ],
+          "brand_hint": null,
+          "det": "d1",
+          "explicit_texts": [
+            "s7"
+          ],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          },
+          "uses_shared_label": false
+        }
+      ],
+      "possible_missed": [],
+      "shared_labels": [],
+      "unassigned_spans": [
+        {
+          "reason": "belongs to neighbour c1",
+          "span_id": "s1"
+        },
+        {
+          "reason": "Hebrew label, not a device value for d1",
+          "span_id": "s2"
+        },
+        {
+          "reason": "belongs to a neighbour on the right (c3)",
+          "span_id": "s3"
+        },
+        {
+          "reason": "circuit/cable reference, not a device value",
+          "span_id": "s4"
+        },
+        {
+          "reason": "belongs to neighbour c2",
+          "span_id": "s5"
+        },
+        {
+          "reason": "belongs to neighbour c2 (left of d1)",
+          "span_id": "s6"
+        },
+        {
+          "reason": "terminal/circuit designation X2, not a device value",
+          "span_id": "s8"
+        },
+        {
+          "reason": "load name, not a device value",
+          "span_id": "s9"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

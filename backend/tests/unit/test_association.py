@@ -16,7 +16,7 @@ from konboro.contracts.merge import AttributeValue, Cable, CircuitContext, Insta
 from konboro.pipeline.association import agent, assign, circuits, grammar, quantity, schemas
 from konboro.pipeline.association.assign import Value
 from konboro.pipeline.association.config import DEFAULT
-from konboro.pipeline.association.merge import Built, components, instance_confidence, status
+from konboro.pipeline.association.merge import Built, components, instance_confidence, one_name_per_tag, status
 from konboro.pipeline.detection import library
 from konboro.pipeline.stages import s4_association
 from konboro_llm import LLMError
@@ -123,6 +123,8 @@ def test_an_unknown_builder_or_a_repeated_id_is_refused() -> None:
         ("16+N", "circuit_breaker", {"current_a": [16], "poles": [1], "neutral": [True]}),
         ("S203M", "circuit_breaker", {"model_token": ["S203M"]}),
         ("INC=12.8A", "circuit_breaker", {"load_current_a": [12.8]}),
+        ("3(2.4-4)A", "circuit_breaker", {"poles": [3], "range_min_a": [2.4], "range_max_a": [4]}),  # BUG-080
+        ("1×10AC", "circuit_breaker", {"poles": [1], "current_a": [10], "curve": ["C"]}),  # BUG-080
         ("Ib=10A", "circuit_breaker", {"load_current_a": [10]}),
         ("500A/630A", "circuit_breaker", {"current_a": [630], "setting_a": [500]}),
         ("4×63A/0,03A", "rcd", {"poles": [4], "current_a": [63], "residual_ma": [30]}),
@@ -130,6 +132,7 @@ def test_an_unknown_builder_or_a_repeated_id_is_refused() -> None:
         ("800/5A", "current_transformer", {"ratio_primary_a": [800], "ratio_secondary_a": [5]}),
         ("LSI", "circuit_breaker", {"trip_unit": ["LSI"]}),
         ("MCCB", "circuit_breaker", {"symbol_class": ["mccb"]}),
+        ("מפסק בתיבה יצוקה 25A", "circuit_breaker", {"symbol_class": ["mccb"], "current_a": [25]}),  # BUG-077
         ("4P 100kA B+C", "surge_protector", {"poles": [4], "imax_ka": [100], "spd_class": ["B+C"]}),
         ("CEE 5×16A", "socket_outlet", {"poles": [3], "neutral": [True], "current_a": [16]}),
         ("36-40", "circuit_breaker", {"circuit_range": [(36, 40)]}),
@@ -823,6 +826,165 @@ def test_a_device_drawing_gives_the_family_and_disagreeing_values_are_a_conflict
     assert [i.code for i in built[0].instance.issues] == ["tag_conflict"]
 
 
+def test_a_tag_beside_symbols_of_two_families_names_the_nearest() -> None:
+    """BUG-081: 25.26.100's "T1" under the clock's box was linked to the selector beside it and to C130,131's coil
+    too, and the selector became T1's device. One written tag names the nearest symbol; one touching it (Q0's ring
+    read as a current transformer, S24b decision 4) keeps it, and so do the nearest's own family (a coil and its
+    contacts) and an accessory on it."""
+    t1 = ("ts_001_0156", (3209.0, 669.0, 3220.0, 682.0))
+
+    def at(b: Built, box: tuple[float, float, float, float], span: tuple[str, Bbox] | None = t1) -> Built:
+        b.instance.bbox, b.designator_span = box, span
+        return b
+
+    clock = at(_built(1, "timer", tag="T1", role="coil"), (3168, 688, 3220, 710))
+    contact = at(
+        _built(2, "timer", tag="T1", role="relay_contact"), (3274, 534, 3293, 579), ("ts_001_0062", (0, 0, 1, 1))
+    )
+    selector = at(_built(3, "selector_switch", tag="T1"), (3253, 628, 3293, 675))
+    coil = at(_built(4, "contactor", tag="T1", role="coil"), (3262, 689, 3320, 711))
+    ring = at(_built(5, "current_transformer", tag="T1"), (3221, 690, 3232, 700))
+    trip = at(_built(6, "shunt_trip", tag="T1"), (3330, 690, 3340, 700))
+    built = [clock, contact, selector, coil, ring, trip]
+    one_name_per_tag(built)
+    assert [b.designator for b in built] == ["T1", "T1", None, None, "T1", "T1"]
+    # a tag nearest a device drawing is the merge's to weigh (Q0's ring read as a CT joins Q0, S24b decision 4)
+    q0 = ("ts_001_0001", (100.0, 100.0, 110.0, 107.0))
+    breaker = at(_built(7, tag="Q0"), (112, 100, 130, 130), q0)
+    far_ring = at(_built(8, "current_transformer", tag="Q0"), (112, 140, 130, 150), q0)
+    one_name_per_tag([breaker, far_ring])
+    assert (breaker.designator, far_ring.designator) == ("Q0", "Q0")
+    comps, _, _ = components("drw_01X", [clock, contact, selector, coil], SCH)
+    assert {(c.family, tuple(c.designators), c.quantity) for c in comps} == {
+        ("timer", ("T1",), 1),
+        ("selector_switch", (), 1),
+        ("contactor", (), 1),
+    }
+
+
+def test_a_breaker_takes_the_poles_read_on_its_alike_peers() -> None:
+    """BUG-088, the user on 25.26.100's five 40A field breakers: "they're all the same". The tile agent read a pole
+    mark on two of them; the three beside them, drawn alike and rated alike, join their component (as a breaker
+    whose cable gives the read poles does, BUG-072). Each keeps its poles unread and says why it joined. An RCD's 4P
+    beside them doesn't count, peers that disagree give nothing, and a breaker in another row stays apart."""
+
+    def at(b: Built, x: float, y: float = 320.0, h: float = 36.0) -> Built:
+        b.instance.bbox = (x, y, x + 47.0, y + h)
+        return b
+
+    read = {"current_a": 40, "poles": 3}
+    row = [
+        at(_built(1, values=read), 800),
+        at(_built(2, values={"current_a": 40}), 1286),
+        at(_built(3, values={"current_a": 40}), 1762, y=315, h=46),  # its box drawn taller, centred on the row
+        at(_built(4, values=read), 2284),
+        at(_built(5, values={"current_a": 40}), 2555),
+        at(_built(6, "rcd", values={"current_a": 40, "poles": 4, "residual_ma": 30}), 2650),
+        at(_built(7, values={"current_a": 40}), 2555, y=1128),  # another row
+    ]
+    comps, _, _ = components("drw_01X", row, SCH)
+    forty = sorted(
+        ((c.quantity, c.attributes["poles"].value) for c in comps if c.family == "circuit_breaker"), reverse=True
+    )
+    assert forty == [(5, 3), (1, None)]
+    joined = [b for b in row[1:5] if b.instance.attributes["poles"].value is None]
+    assert len(joined) == 3 and all(i.code == "poles_from_peers" for b in joined for i in b.instance.issues)
+    # peers that disagree give nothing
+    split = [
+        at(_built(11, values=read), 800),
+        at(_built(12, values={"current_a": 40}), 900),
+        at(_built(13, values={"current_a": 40, "poles": 1}), 1000),
+    ]
+    comps, _, _ = components("drw_01X", split, SCH)
+    assert sorted((c.quantity, c.attributes["poles"].value or 0) for c in comps) == [(1, 0), (1, 1), (1, 3)]
+
+
+def test_the_majority_pole_mark_of_alike_peers_wins() -> None:
+    """BUG-088 (live run `drw_01M6N7AYFVQG8MDSXYKZXB8KPM`): the tile agent read 3P on two of the five 40A field
+    breakers (0.6) and 4P on one (0.5), and none on two. The user: the two unread take the majority's 3P; the one that
+    disagreed keeps its 4P and its own line, flagged (outvoting it made 6199-2-50's real 1P breaker a 3P one). A tie
+    gives nothing, a pole count written in text is never overruled, and the 4P RCDs beside them never vote."""
+
+    def at(b: Built, x: float, poles: int | None = None, conf: float = 0.6, source: str = "graphic") -> Built:
+        b.instance.bbox = (x, 319.0, x + 47.0, 355.0)
+        if poles is not None:
+            b.instance.attributes["poles"] = AttributeValue(value=poles, source=source, confidence=conf, span_ids=[])  # type: ignore[arg-type]
+        return b
+
+    forty = {"current_a": 40}
+    row = [
+        at(_built(1, values=forty), 800, 3),
+        at(_built(2, values=forty), 1286, 3),
+        at(_built(3, values=forty), 1762, 4, conf=0.5),
+        at(_built(4, values=forty), 2283),
+        at(_built(5, values=forty), 2555),
+        at(_built(6, "rcd", values={"current_a": 40, "poles": 4, "residual_ma": 30}), 2650),
+        at(_built(7, "rcd", values={"current_a": 40, "poles": 4, "residual_ma": 30}), 2750),
+    ]
+    comps, _, _ = components("drw_01X", row, SCH)
+    breakers = [c for c in comps if c.family == "circuit_breaker"]
+    assert sorted((c.quantity, c.attributes["poles"].value) for c in breakers) == [(1, 4), (4, 3)]
+    assert row[2].instance.attributes["poles"].value == 4  # kept as read, its own line, flagged
+    assert [i.code for i in row[2].instance.issues] == ["poles_peer_conflict"]
+    assert all(i.code == "poles_from_peers" for b in row[3:5] for i in b.instance.issues)
+
+    def outcome(marks: list[tuple[int | None, str]]) -> list[tuple[int, int]]:
+        built = [at(_built(20 + n, values=forty), 800 + 100 * n, p, source=src) for n, (p, src) in enumerate(marks)]
+        comps, _, _ = components("drw_01X", built, SCH)
+        return sorted((c.quantity, c.attributes["poles"].value or 0) for c in comps)
+
+    assert outcome([(3, "graphic"), (3, "graphic"), (4, "drawing")]) == [(1, 4), (2, 3)]  # written in text
+    assert outcome([(3, "graphic"), (4, "graphic"), (None, "graphic")]) == [(1, 0), (1, 3), (1, 4)]  # a tie
+
+
+def test_a_mark_both_its_cable_and_the_majority_contradict_is_corrected() -> None:
+    """S24b decision 12 (live run `drw_01M6NFV83V6MQMWTVVMSFW6ZMD`, the user: "Yes, correct it"): main panel's two
+    10A breakers "X2" read 3P (graphic 0.6) on a 3×1.5 cable, in a row of thirteen read 1P. Their cable and their alike
+    peers' majority agree on 1P, so they join the row's component: 15 × 1P. The instance keeps what was read and says
+    why it joined (`poles_corrected`); stage 5 makes the value `inferred`. A disagreeing mark with no cable keeps its
+    own flagged line (decision 11, 6199-2-50's shed), and a sure mark or a count written in text is never changed."""
+
+    def at(
+        b: Built, x: float, poles: int | None, cores: int | None = 3, conf: float = 0.5, src: str = "graphic"
+    ) -> Built:
+        b.instance.bbox = (x, 464.3, x + 44.4, 502.3)
+        b.instance.attributes["poles"] = AttributeValue(
+            value=poles,
+            source=src if poles is not None else None,  # type: ignore[arg-type]
+            confidence=conf if poles is not None else None,
+            span_ids=[],
+        )
+        if cores is not None:
+            b.circuit_context = CircuitContext(cable=Cable(cores=cores, cross_section_mm2=1.5, raw="3×1.5"))
+        return b
+
+    ten = {"current_a": 10}
+
+    def row(mark: tuple[int, float, str], cores: int | None = 3) -> list[Built]:
+        peers = [at(_built(n, values=ten), 650 + 100 * n, 1) for n in range(1, 4)]
+        x2 = at(_built(9, values=ten, mult=2), 1877.7, mark[0], cores, conf=mark[1], src=mark[2])
+        x2.instance.bbox = (1877.7, 454.9, 1922.2, 509.1)  # drawn taller, centred on the row
+        return [*peers, x2]
+
+    built = row((3, 0.6, "graphic"))
+    comps, _, _ = components("drw_01X", built, SCH)
+    assert [(c.quantity, c.attributes["poles"].value) for c in comps] == [(5, 1)]
+    assert comps[0].attributes["poles"].source == "graphic"  # the row's marks; stage 5 says `inferred`
+    x2 = built[-1].instance
+    assert x2.attributes["poles"].value == 3  # kept as read (00 §5.3)
+    assert [i.code for i in x2.issues] == ["poles_corrected"]
+    assert "3×1.5" in x2.issues[0].message and "1P" in x2.issues[0].message
+
+    def outcome(mark: tuple[int, float, str], cores: int | None = 3) -> list[tuple[int, int]]:
+        comps, _, _ = components("drw_01X", row(mark, cores), SCH)
+        return sorted((c.quantity, c.attributes["poles"].value) for c in comps)
+
+    assert outcome((3, 0.6, "graphic"), cores=None) == [(2, 3), (3, 1)]  # no cable: its own flagged line
+    assert outcome((3, 0.6, "graphic"), cores=5) == [(2, 3), (3, 1)]  # its cable backs the mark
+    assert outcome((3, 0.9, "graphic")) == [(2, 3), (3, 1)]  # a sure mark
+    assert outcome((3, 0.6, "drawing")) == [(2, 3), (3, 1)]  # written in text
+
+
 def test_one_tag_merges_one_family_never_a_terminal_over_breakers() -> None:
     """BUG-066 (25.26.100): "X2" read as the tag of terminals, 16A breakers and an RCD made one terminal × 76. A tag
     merges the drawings of one device; a symbol of another family under it stays itself, untagged, for review."""
@@ -854,10 +1016,11 @@ def test_what_never_merges() -> None:
     built = [
         _built(1, values={"current_a": 16, "poles": 1}),
         _built(2, values={"current_a": 16, "poles": 1}, panel="pnl_02"),  # another panel
-        _built(3, values={"current_a": 16, "poles": None}),  # a null against a known value
+        _built(3, values={"current_a": 16, "poles": None}),  # a null against a known value, not drawn beside it
         _built(4, values={"current_a": 16, "poles": 1}, scope="other_location"),
         _built(5, values={"current_a": 16, "poles": 1}, mult=6),
     ]
+    built[2].instance.bbox = (0, 100, 10, 110)  # another row: BUG-088's alike peers join a null to a known value
     comps, _, _ = components("drw_01X", built, SCH)
     assert len(comps) == 4
     first = next(

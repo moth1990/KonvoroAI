@@ -665,6 +665,30 @@ def test_a_residual_rating_beside_a_breaker_makes_it_an_rcd() -> None:
     assert breaker.family == "circuit_breaker"
 
 
+def test_a_curve_on_a_rating_makes_an_unsure_contactor_a_breaker() -> None:
+    """Rule 2b (BUG-091) on a contactor (25.26.100's third live run): "1×10AC" beside a symbol read as a contactor's
+    power contacts at 0.504. A contactor's rating has no curve: it is an MCB, a device, yellow at most. A sure contactor
+    stays one, and so does a coil, whose circuit numbers ("C130,131") are no rating."""
+    ac = span("1×10AC", (3205.0, 446.8, 3251.8, 460.6), n=1)
+    unsure = cand(
+        (3164.7, 437.4, 3197.6, 477.1), family="contactor", cls="contactor", role="power_contact", detector_score=0.56
+    )
+    assert not evidence._sure(unsure, DEFAULT)
+    evidence.curve_is_a_breaker([unsure], [ac], DEFAULT)
+    assert (unsure.family, unsure.symbol_class, unsure.role) == ("circuit_breaker", "mcb", "device")
+    assert unsure.confidence < DEFAULT.accepted_from
+    sure = cand((3164.7, 437.4, 3197.6, 477.1), family="contactor", cls="contactor", role="power_contact")
+    evidence.curve_is_a_breaker([sure], [ac], DEFAULT)
+    assert (sure.family, sure.role) == ("contactor", "power_contact")
+    coil = cand((3262.2, 689.0, 3320.1, 710.9), family="contactor", cls="contactor", role="coil", detector_score=0.56)
+    evidence.curve_is_a_breaker([coil], [span("C130,131", (3262.5, 691.7, 3316.4, 708.6), n=2)], DEFAULT)
+    assert coil.family == "contactor"
+    # 6199-2-50: a contactor's own tag "C1" reads curve C, 1A; only amps written with their unit count for a contactor
+    c1 = cand((519, 1100, 532, 1128), family="contactor", cls="contactor", role="power_contact", detector_score=0.47)
+    evidence.curve_is_a_breaker([c1], [span("C1", (512, 1086, 526, 1096), n=3)], DEFAULT)
+    assert (c1.family, c1.role) == ("contactor", "power_contact")
+
+
 def test_breakers_in_one_row_with_one_rating_and_one_drawing_are_one_class() -> None:
     """BUG-070: four 10A lighting breakers read as switch-disconnectors beside mcbs of the same row and rating, and
     two 16A breakers read as push buttons. A sure one gives its class to the unsure ones; a different rating or a
@@ -701,6 +725,35 @@ def test_breakers_in_one_row_with_one_rating_and_one_drawing_are_one_class() -> 
     host = cand((1627.4, 464.3, 1638.0, 501.3))
     evidence.peers([host, neutral], [n_rating], LIB, DEFAULT)
     assert neutral.family == "switch_disconnector"
+
+
+def test_a_push_button_rated_like_the_breakers_in_its_row_is_one() -> None:
+    """25.26.100 live (`drw_01M6M9BJXK4H757VWBGAXXJPWN`): the model was sure two 16A socket breakers were push
+    buttons (`det_001_0017` with "X11", `det_001_0020`, 0.9), and with no sure breaker in their row no peer could
+    help: the quote had "לחצן" × 12. The user's exception to S24b decision 2: a push button with a current rating
+    beside it, drawn like the breakers in its row (whatever their confidence), is a breaker, yellow."""
+
+    def unsure_mcb(bbox: Bbox) -> Candidate:
+        return cand(bbox, cls=library.UNKNOWN, detector_score=0.7, class_score=0.8, candidates=[("mcb", 0.7)])
+
+    row = [unsure_mcb((2716.2, 322.0, 2762.3, 358.0)), unsure_mcb((2822.5, 321.0, 2866.9, 358.0))]
+    buttons = [
+        cand((2924.8, 320.3, 2968.8, 357.0), family="push_button", cls="push_button", method="llm_vision"),
+        cand((3074.2, 322.0, 3118.2, 358.3), family="push_button", cls="push_button", method="llm_vision"),
+    ]
+    sixteen = [(2764.6, 350.6, 2793.9, 368.1), (2869.2, 354.9, 2898.5, 372.4), (2934.5, 357.0, 2957.7, 366.7)]
+    sixteen += [(3083.9, 358.6, 3107.1, 368.8)]
+    spans = [span("16A", b, {"current_a": 16}, n=i) for i, b in enumerate(sixteen)]
+    spans.append(span("X11", (2972.9, 367.7, 2996.8, 378.5), n=9))
+    lone = cand((3400.0, 600.0, 3444.0, 637.0), family="push_button", cls="push_button", method="llm_vision")
+    spans.append(span("16A", (3410.0, 637.0, 3433.0, 647.0), {"current_a": 16}, n=10))  # a rating, no breaker row
+    unrated = cand((3200.0, 321.0, 3244.0, 358.0), family="push_button", cls="push_button", method="llm_vision")
+    evidence.peers([*row, *buttons, lone, unrated], spans, LIB, DEFAULT)
+    assert all((c.family, c.symbol_class) == ("circuit_breaker", "mcb") for c in buttons)
+    assert all(0.5 <= c.confidence < DEFAULT.accepted_from for c in buttons)
+    assert (lone.family, unrated.family) == ("push_button", "push_button")
+    # the count beside it is then a breaker's count, not a tag (BUG-067)
+    assert designators.counts([*row, *buttons], spans, DEFAULT) >= {"ts_001_0009"}
 
 
 @pytest.mark.parametrize(

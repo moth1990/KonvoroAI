@@ -1,0 +1,141 @@
+{
+  "answer": {
+    "input_tokens": 5643,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 761,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "confidence": 0.9,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s1"
+              ],
+              "value": 40
+            },
+            {
+              "confidence": 0.6,
+              "evidence": "graphic",
+              "graphic_note": "three short slanted strokes across the line on the breaker symbol",
+              "name": "poles",
+              "span_ids": [],
+              "value": 3
+            }
+          ],
+          "det": "d1",
+          "explicit_texts": [
+            "s1"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.85,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s5"
+              ],
+              "value": 10
+            },
+            {
+              "confidence": 0.6,
+              "evidence": "graphic",
+              "graphic_note": "one line with a single stroke",
+              "name": "poles",
+              "span_ids": [],
+              "value": 1
+            }
+          ],
+          "det": "d2",
+          "explicit_texts": [
+            "s5"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.85,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s6"
+              ],
+              "value": 10
+            },
+            {
+              "confidence": 0.6,
+              "evidence": "graphic",
+              "graphic_note": "one line with a single stroke",
+              "name": "poles",
+              "span_ids": [],
+              "value": 1
+            }
+          ],
+          "det": "d3",
+          "explicit_texts": [
+            "s6"
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.85,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s8"
+              ],
+              "value": 10
+            },
+            {
+              "confidence": 0.6,
+              "evidence": "graphic",
+              "graphic_note": "one line with a single stroke",
+              "name": "poles",
+              "span_ids": [],
+              "value": 1
+            }
+          ],
+          "det": "d4",
+          "explicit_texts": [
+            "s8"
+          ]
+        }
+      ],
+      "possible_missed": [],
+      "shared_labels": [],
+      "unassigned_spans": [
+        {
+          "reason": "load name (lighting field), part of Hebrew phrase",
+          "span_id": "s2"
+        },
+        {
+          "reason": "load name (lighting field), part of Hebrew phrase",
+          "span_id": "s3"
+        },
+        {
+          "reason": "circuit numbers for neighbour c3",
+          "span_id": "s4"
+        },
+        {
+          "reason": "belongs to neighbour c3",
+          "span_id": "s9"
+        },
+        {
+          "reason": "belongs to neighbour c3",
+          "span_id": "s10"
+        },
+        {
+          "reason": "sits right of d3, belongs to d3's neighbour label; the 10A at x591 is d3's rating... ambiguous, assigned s6 to d3",
+          "span_id": "s7"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

@@ -1,0 +1,17 @@
+{
+  "answer": {
+    "input_tokens": 933,
+    "model": "claude-haiku-5-5",
+    "output_tokens": 124,
+    "payload": {
+      "chosen_sku": null,
+      "confidence": 0.2,
+      "missing_attributes": [
+        "color"
+      ],
+      "reason": "הכיתוב \"0\" לא מציין צבע, ולכן אין בסימון שום דבר שמכריע בין הנורות הירוקה, האדומה והצהובה. יש לבחור את הצבע לפי התכנון."
+    }
+  },
+  "model": "claude-haiku-5-5",
+  "stage": "catalog_disambiguation"
+}

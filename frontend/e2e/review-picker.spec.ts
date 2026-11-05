@@ -103,6 +103,7 @@ test("draw mode: a rectangle and a product make a manual line there (09 §6.6)",
     .click();
   const viewer = page.getByTestId("viewer");
   await expect(viewer).toHaveAttribute("data-state", "ready", { timeout: 20_000 });
+  await expect(page.getByTestId("hl").first()).toBeVisible(); // page 7's boxes draw after the viewer is ready (BUG-096)
   const boxes = await page.getByTestId("hl").count();
   await page.getByTestId("draw").click();
   await expect(page.getByTestId("draw-hint")).toBeVisible();

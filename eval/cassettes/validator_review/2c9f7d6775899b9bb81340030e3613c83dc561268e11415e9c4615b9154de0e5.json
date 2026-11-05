@@ -1,0 +1,53 @@
+{
+  "answer": {
+    "input_tokens": 4205,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 449,
+    "payload": {
+      "issues": [
+        {
+          "bbox": [
+            1265,
+            265,
+            1440,
+            330
+          ],
+          "component_ids": [
+            "c04"
+          ],
+          "confidence": 0.6,
+          "message": "FB2 בציור הוא מפסק פחת 4x40A 30mA סוג A (כמו FB1), אך בטבלה מסווג כ-RCBO ובלי פריט קטלוגי. לבדוק אם צריך להיות מפסק פחת ABB F204 40A.",
+          "type": "wrong_family"
+        },
+        {
+          "bbox": [
+            135,
+            150,
+            275,
+            240
+          ],
+          "component_ids": [
+            "c03"
+          ],
+          "confidence": 0.3,
+          "message": "Q1 בציור הוא ABB XT1 3x80A, ובקטלוג מופיע XT1C160 עם 25kA. לבדוק שהדגם והיכולת הקטעת תואמים לשרטוט.",
+          "type": "inconsistent_attributes"
+        },
+        {
+          "component_ids": [
+            "c12",
+            "c13",
+            "c10",
+            "c11",
+            "c09"
+          ],
+          "confidence": 0.4,
+          "message": "רכיבי הגנת מנוע, ממסר תרמי, לחצן חירום, ממסר עזר וסלילי הפסקה (QRF, EMS, GIC-1, TC-G1/2) אינם מופיעים בציור של הלוח. לבדוק אם שייכים ללוח הזה ואם הכמויות נכונות.",
+          "type": "other"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "validator_review"
+}

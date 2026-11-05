@@ -1,0 +1,74 @@
+{
+  "answer": {
+    "input_tokens": 4015,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 654,
+    "payload": {
+      "issues": [
+        {
+          "bbox": [
+            285,
+            903,
+            382,
+            934
+          ],
+          "component_ids": [
+            "c08"
+          ],
+          "confidence": 0.6,
+          "message": "בטבלה 5 נורות סימון, אך בשרטוט רק 3 נורות בשורת השעון (ועוד נורה אחת בפיקוד המגען). יש לבדוק את הכמות.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": null,
+          "component_ids": [
+            "c04"
+          ],
+          "confidence": 0.55,
+          "message": "בטבלה 5 ממסרי תרמי, אך בשרטוט לא רואים ממסר תרמי כלל. יש לבדוק אם הרכיב קיים והאם הכמות נכונה.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": [
+            696,
+            1000,
+            760,
+            1090
+          ],
+          "component_ids": [
+            "c10"
+          ],
+          "confidence": 0.4,
+          "message": "בטבלה 9 מא\"זים 16A, אך בשרטוט יש 3 יציאות 16A בודדות ועוד אחת עם הערה (x6), כלומר 8 בסך הכול. יש לבדוק אם הכמות 9 נכונה.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": null,
+          "component_ids": [
+            "c06"
+          ],
+          "confidence": 0.35,
+          "message": "משנה זרם מופיע בטבלה, אך בשרטוט לא רואים אותו. יתכן שמדובר בהסקה שגויה של רכיב אחר.",
+          "type": "wrong_family"
+        },
+        {
+          "bbox": [
+            478,
+            1085,
+            528,
+            1135
+          ],
+          "component_ids": [
+            "c12",
+            "c14"
+          ],
+          "confidence": 0.5,
+          "message": "המא\"ז 10A בשרטוט הוא חד-קוטבי, אך בשורה c12 הוא 3 קטבים (S203M), ויש גם מא\"ז 10A נוסף ב-c14 בלי קטלוג. יש לבדוק כפילות וקטבים.",
+          "type": "inconsistent_attributes"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "validator_review"
+}

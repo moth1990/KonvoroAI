@@ -9,9 +9,10 @@ from typing import Any
 
 import pytest
 
+from konboro.contracts.common import StageIssue
 from konboro.contracts.intake import ContextArtifact
 from konboro.contracts.matching import ComponentMatch
-from konboro.contracts.merge import AttributeValue, Cable, CircuitContext, Component
+from konboro.contracts.merge import AttributeValue, Cable, CircuitContext, Component, Instance
 from konboro.db.catalog import SAMPLE, SAMPLE_ACCESSORIES, SAMPLE_KITS, parse, parse_accessories, parse_kits
 from konboro.pipeline.association import schemas
 from konboro.pipeline.matching import notes as notes_mod
@@ -19,7 +20,7 @@ from konboro.pipeline.matching import query as q
 from konboro.pipeline.matching.catalog import Catalog, Item, Kit, norm_sku, norm_token
 from konboro.pipeline.matching.config import DEFAULT
 from konboro.pipeline.matching.factory import Factory, Memory
-from konboro.pipeline.matching.match import Inputs, match_all, signature
+from konboro.pipeline.matching.match import Inputs, corrected_poles, match_all, signature
 from konboro.pipeline.matching.notes import NoteRule, Notes
 from konboro_llm.stages.catalog_disambiguation import CatalogAnswer
 
@@ -116,7 +117,11 @@ class Agent:
 
 
 def run(
-    *components: Component, fac: Factory | None = None, notes: Notes | None = None, ask: Any = None
+    *components: Component,
+    fac: Factory | None = None,
+    notes: Notes | None = None,
+    ask: Any = None,
+    corrected: frozenset[str] = frozenset(),
 ) -> list[ComponentMatch]:
     inp = Inputs(
         catalog=CATALOG,
@@ -125,6 +130,7 @@ def run(
         notes=notes or Notes(),
         components={c.component_id: c for c in components},
         ask=ask,
+        corrected=corrected,
     )
     return match_all(list(components), inp).matches
 
@@ -441,6 +447,78 @@ def test_a_breaker_above_the_catalogs_mcb_range_is_not_an_mcb() -> None:
     assert m.chosen_sku == "S203M-C63" and "breaker_type_inferred" not in m.warnings
 
 
+def test_an_mccb_within_the_catalogs_mcb_range_is_typed_by_its_current() -> None:
+    """BUG-077, BUG-078: 25.26.100's five 40A field breakers and two 10A ones came out MCCBs, from one sure reading
+    spread to its peers and a disambiguation that never offered `mcb`. The user: no 40A MCCB exists there. A breaker
+    read as an MCCB within the catalog's MCB range is typed again by its current (the converse of BUG-070)."""
+    m = one(comp("circuit_breaker", "mccb", {"current_a": 40, "poles": 3}, designators=()))
+    assert m.chosen_sku == "S203M-C40" and "breaker_type_inferred" in m.warnings
+    assert m.confidence <= DEFAULT.yellow_max
+    assert one(comp("circuit_breaker", "mccb", {"current_a": 10, "poles": 1}, designators=())).chosen_sku == "S201M-C10"
+
+    # an MCCB it stays: written beside it (in Hebrew too, two words: 6199-2-50's 25A and 63A ones), by a prefix that
+    # names one (Q), by its series, by the factory's own prefixes, or above the MCB range
+    def forty(texts: tuple[str, ...] = (), designators: tuple[str, ...] = (), fac: Factory | None = None) -> str | None:
+        c = comp("circuit_breaker", "mccb", {"current_a": 40, "poles": 3}, texts, designators=designators)
+        return one(c, fac=fac).chosen_sku
+
+    moulded = "XT1C160 TMD40 3P"
+    assert forty(("MCCB",)) == forty(("בתיבה", "יצוקה")) == forty(designators=("Q2",)) == forty(("XT1",)) == moulded
+    assert forty(designators=("F2",), fac=factory(designator_prefixes={"F": ("mcb", "mccb")})) == moulded
+    m = one(comp("circuit_breaker", "mccb", {"current_a": 80, "poles": 3}, designators=()))
+    assert m.chosen_sku == "XT1C160 TMD80 3P" and "breaker_type_inferred" not in m.warnings
+
+
+def test_an_unsure_pole_mark_the_cable_contradicts_is_a_conflict() -> None:
+    """BUG-079: 25.26.100's 25A feeder (5X6 cable) came out 1P from a pole mark read at 0.5, and matched S201M 1P
+    25A. An unsure graphic reading the cable contradicts is the reviewer's to settle: nothing is chosen, both offered
+    (05 §5.5.1, the user's answer). A sure one still stands, yellow (`test_poles_from_the_cable_only_…`)."""
+    c = comp("circuit_breaker", "mcb", {"current_a": 25}, circuit=CircuitContext(cable=Cable(cores=5)))
+    c.attributes["poles"] = AttributeValue(value=1, source="graphic", confidence=0.5)
+    m = one(c)
+    assert (m.status, m.chosen_sku) == ("conflict", None)
+    assert "poles_cable_conflict" in m.warnings and m.missing_attributes == ["poles"]
+    assert [a.sku for a in m.alternatives] == ["S201M-C25", "S203M-C25"]
+    assert "1P" in m.reason and "3P" in m.reason
+    # nothing filled in: the reading stays what was read
+    assert m.attributes_used["poles"].value == 1 and m.attributes_used["poles"].source == "graphic"
+
+
+def test_poles_corrected_by_the_cable_and_the_row_are_inferred() -> None:
+    """S24b decision 12: stage 4 joined two breakers read 3P (graphic 0.6) on 3×1.5 to the thirteen beside them read
+    1P, because their cable and the row's majority agree (`poles_corrected` on their instances). The component's poles
+    are `inferred`, the note names both, and the line is yellow."""
+    cable = CircuitContext(cable=Cable(cores=3, cross_section_mm2=1.5, raw="3×1.5"))
+    c = comp("circuit_breaker", "mcb", {"current_a": 10}, circuit=cable)
+    c.attributes["poles"] = AttributeValue(value=1, source="graphic", confidence=0.5)
+    plain = one(c)
+    assert plain.attributes_used["poles"].source == "graphic"
+    m = one(c, corrected=frozenset({c.component_id}))
+    assert (m.status, m.chosen_sku) == ("matched", "S201M-C10")
+    used = m.attributes_used["poles"]
+    assert (used.value, used.source) == (1, "inferred")
+    assert used.note == 'הכבל 3×1.5 ורוב המא"זים הזהים בשורה: 1P'
+    assert used.note in m.reason and m.confidence < 0.85
+    # the instances say which components: their `poles_corrected` issue
+    ins = Instance(
+        instance_id="ins_001_0034",
+        det_id="det_001_0034",
+        page_id="pg_001",
+        panel_id="pnl_01",
+        bbox=(0, 0, 1, 1),
+        family="circuit_breaker",
+        symbol_class="mcb",
+        attributes={},
+        method="agent",
+        status="uncertain",
+        confidence=0.42,
+        component_id=c.component_id,
+        issues=[StageIssue(code="poles_corrected", severity="warning", message="…")],
+    )
+    other = ins.model_copy(update={"instance_id": "ins_001_0035", "component_id": "cmp_x", "issues": []})
+    assert corrected_poles([ins, other]) == frozenset({c.component_id})
+
+
 def test_an_overload_relays_range_holds_the_load() -> None:
     m = one(comp("overload_relay", "overload_relay", {}, circuit=CircuitContext(load_current_a=5.0)))
     assert m.chosen_sku == "TF42-5.7"
@@ -730,3 +808,22 @@ def test_a_stated_preference_is_part_of_the_signature() -> None:
     sw3 = comp("selector_switch", "selector_switch", {}, (), cid="cmp_0002", designators=("SW3",))
     a, b = run(sw1, sw3)
     assert a.signature == "selector_switch|selector_switch|positions:1-0-2" and a.signature != b.signature
+
+
+def test_every_line_is_named_as_the_factory_names_it() -> None:
+    """The user, on 25.26.100's quote: professional names. A contactor's current is its AC-3 rating and its coil is
+    named (the prototype's "מגען 3P ‏16A לפחות (AC-3)"); a motor-protection breaker is "מפסק מגן מנוע" with its range;
+    a switch-disconnector is "מנתק" (the prototype's word). The detection library's names, the model's words, stay."""
+    from konboro.pipeline.matching.text import describe
+
+    contactor = describe("contactor", "contactor", "ABB", "AF09", {"poles": 3, "current_a": 9, "coil_voltage_v": 230})
+    assert contactor == "מגען ABB AF09 3P 9A (AC-3) סליל 230V"
+    mpcb = describe(
+        "circuit_breaker", "motor_protection", "ABB", "MS116", {"poles": 3, "range_min_a": 2.5, "range_max_a": 4}
+    )
+    assert mpcb == "מפסק מגן מנוע ABB MS116 3P טווח 2.5–4A"
+    assert describe("switch_disconnector", "switch_disconnector", None, None, {"poles": 4, "current_a": 125}) == (
+        "מנתק 4P 125A"
+    )
+    assert describe("relay", "relay", None, None, {"coil_voltage_v": 24}) == "ממסר עזר סליל 24V"
+    assert SKU["MS116-4"].description.startswith("מפסק מגן מנוע ABB")

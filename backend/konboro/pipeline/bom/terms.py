@@ -23,6 +23,7 @@ TERMS: tuple[tuple[str, str, str | None], ...] = (
     ("מפסק בתיבה יצוקה", "circuit_breaker", "mccb"),
     ("מפסק פחת", "rcd", "rcd"),
     ("מפסק עומס", "switch_disconnector", "switch_disconnector"),
+    ("מפסק מגן מנוע", "circuit_breaker", "motor_protection"),  # the quote's own name for it (the user, 25.26.100)
     ("מפסק", "circuit_breaker", None),
     ("מנתק", "switch_disconnector", "switch_disconnector"),
     ("מגן מנוע", "circuit_breaker", "motor_protection"),

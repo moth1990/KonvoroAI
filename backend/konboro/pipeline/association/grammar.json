@@ -1,5 +1,5 @@
 {
-  "version": "g3",
+  "version": "g4",
   "about": "04 §5.1: how electrical drawings write a device's attributes. Data, not code: a pattern found from a user's correction is added here and checked on the golden set first (04 §11). Matched against stage 2's normalized span text (units in their usual case, × between numbers). `scope` token: each word on its own; text: anywhere in the span. `values`: a group's name is the key it fills; `set`: fixed values; `build`: one of the builders in grammar.py. `families`: only these families read it (04 §5.1 rule 2: one text, several meanings, the symbol's family picks).",
   "patterns": [
     {
@@ -12,6 +12,15 @@
       "not_families": [
         "fuse",
         "socket_outlet"
+      ]
+    },
+    {
+      "id": "poles_current_curve",
+      "about": "BUG-080: poles, current and curve run together, \"1×10AC\" (25.26.100's lighting control breaker: MCB 1P 10A curve C, the user's reading). A breaker's only: elsewhere AC is the supply",
+      "re": "^(?P<poles>[1-4])×(?P<current_a>\\d{1,3}(?:\\.\\d)?)A(?P<curve>[BCDKZ])$",
+      "families": [
+        "circuit_breaker",
+        "rcbo"
       ]
     },
     {
@@ -197,6 +206,15 @@
       ]
     },
     {
+      "id": "poles_motor_range",
+      "about": "BUG-080: a motor-protection breaker's poles and setting range, \"3(2.4-4)A\" (25.26.100's FS)",
+      "re": "^(?P<poles>[1-4])×?\\((?P<range_min_a>\\d{1,2}(?:\\.\\d{1,2})?)[-–](?P<range_max_a>\\d{1,3}(?:\\.\\d{1,2})?)\\)A$",
+      "families": [
+        "circuit_breaker",
+        "overload_relay"
+      ]
+    },
+    {
       "id": "model_motor_range",
       "re": "(?:^|\\s)(?P<model_token>PKZM\\s?[0O]?|GV2|MS116|MS132)[\\s-]*(?P<range_min_a>\\d{1,2}(?:\\.\\d{1,2})?)[-–](?P<range_max_a>\\d{1,3}(?:\\.\\d{1,2})?)A?",
       "scope": "text",
@@ -321,6 +339,18 @@
     {
       "id": "hint_mccb",
       "re": "^MCCB$",
+      "set": {
+        "symbol_class": "mccb"
+      }
+    },
+    {
+      "id": "hint_mccb_he",
+      "about": "BUG-077: the Hebrew for MCCB, written in words (6199-2-50's \"מפסק בתיבה יצוקה 25A\"): an MCCB within the MCB range stays one",
+      "re": "(?:^|\\s)ב?תיבה\\s+יצוקה(?:\\s|$|[,.])",
+      "scope": "text",
+      "families": [
+        "circuit_breaker"
+      ],
       "set": {
         "symbol_class": "mccb"
       }

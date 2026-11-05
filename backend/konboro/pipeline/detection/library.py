@@ -254,6 +254,30 @@ ABBREVIATIONS: tuple[tuple[str, str], ...] = (
 # BUG-070: a designator's letters as evidence of the class (Q a switching device or MCCB, F an MCB), as data.
 PREFIXES: dict[str, list[str]] = json.loads(Path(__file__).with_name("prefixes.json").read_text("utf-8"))["prefixes"]
 
+_LETTERS = re.compile(r"^([A-Z]{1,4})")
+
+
+def prefix_table(override: dict[str, list[str]] | None = None) -> dict[str, tuple[str, ...]]:
+    """`prefixes.json` with the factory's own rows on top (`tenant_settings.matching.designator_prefixes`); an empty
+    list turns a prefix off."""
+    out = {k: tuple(v) for k, v in PREFIXES.items()}
+    for k, v in (override or {}).items():
+        out[k.strip().upper()] = tuple(v)
+    return {k: v for k, v in out.items() if v}
+
+
+def prefix_classes(tag: str | None, prefixes: dict[str, tuple[str, ...]]) -> tuple[str, ...]:
+    """The classes one tag's letters may name, by the longest prefix in the table (KT before K)."""
+    m = _LETTERS.match((tag or "").strip().upper())
+    if not m:
+        return ()
+    letters = m[1]
+    for n in range(len(letters), 0, -1):
+        if letters[:n] in prefixes:
+            return prefixes[letters[:n]]
+    return ()
+
+
 _DESIGNATOR = re.compile(r"^([A-Z]{1,4})(?:-[A-Z])?\d{1,3}(?:[.\-]\d{1,3})?$")
 
 
@@ -345,10 +369,7 @@ def build(
         "references": sorted((r.symbol_class, r.image_key, r.scope) for r in references),
     }
     digest = hashlib.sha256(json.dumps(material, ensure_ascii=False).encode()).hexdigest()[:10]
-    prefixes = {k: tuple(v) for k, v in PREFIXES.items()}
-    for k, v in (prefixes_override or {}).items():
-        prefixes[k.strip().upper()] = tuple(v)
-    prefixes = {k: tuple(c for c in v if c in by_id) for k, v in prefixes.items() if v}
+    prefixes = {k: tuple(c for c in v if c in by_id) for k, v in prefix_table(prefixes_override).items()}
     return Library(by_id, abbreviations, written, list(references), f"lib-{digest}", prefixes)
 
 

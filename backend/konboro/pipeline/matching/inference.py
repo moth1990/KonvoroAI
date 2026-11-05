@@ -18,6 +18,7 @@ from typing import Any
 
 from konboro.contracts.merge import Component
 from konboro.pipeline.association.grammar import parse
+from konboro.pipeline.detection.library import prefix_classes
 
 from . import text
 from .notes import Notes
@@ -45,20 +46,36 @@ def rules() -> tuple[Rule, ...]:
     return tuple(out)
 
 
-def outranged(component: Component, have: dict[str, Need], tops: dict[str, float], off: frozenset[str]) -> bool:
-    """BUG-070: a component typed as the lower class of a `class_by_current` rule, rated above the catalog's largest
-    of that class: typed again by its current, as an untyped one."""
+def outranged(
+    component: Component,
+    have: dict[str, Need],
+    tops: dict[str, float],
+    off: frozenset[str],
+    prefixes: dict[str, tuple[str, ...]] | None = None,
+    model_written: bool = False,
+) -> bool:
+    """A component typed by its shape alone as one class of a `class_by_current` rule, rated on the other class's
+    side of the catalog's range: typed again by its current, as an untyped one. BUG-070: an MCB above the catalog's
+    largest MCB. BUG-077: an MCCB within the MCB range, unless a designator prefix names an MCCB (Q) or a series or
+    SKU is written (`model_written`). `prefixes`: the factory's prefix table (`detection.library.prefix_table`)."""
     current = _num(have["current_a"].value) if "current_a" in have else None
-    written = {r.value for t in component.explicit_texts for r in parse(t) if r.key == "symbol_class"}
+    texts = [*component.explicit_texts, " ".join(component.explicit_texts)]  # a class in two words: "בתיבה יצוקה"
+    written = {r.value for t in texts for r in parse(t) if r.key == "symbol_class" and r.fits(component.family)}
     if component.symbol_class in written:
         return False  # "MCB" written beside it: the class narrows (05 §5.1 item 2), even to nothing
+    cls = component.symbol_class
     for rule in rules():
         p = rule.params
         if rule.kind != "class_by_current" or rule.id in off or component.family not in rule.families:
             continue
         top = tops.get(p["below"])
-        if p.get("or_above_catalog_range") and component.symbol_class == p["below"] and current and top:
+        if not current or not top:
+            continue
+        if p.get("or_above_catalog_range") and cls == p["below"]:
             return current > top
+        if p.get("or_upper_within_catalog_range") and cls == p["above"]:
+            named = any(cls in prefix_classes(d, prefixes or {}) for d in component.designators)
+            return current <= top and current < p["at_least_a"] and not named and not model_written
     return False
 
 
@@ -74,11 +91,22 @@ def class_tops(top_current: Any) -> dict[str, float]:
     return out
 
 
+@dataclass(frozen=True)
+class CableConflict:
+    """BUG-079: what was read, what the cable gives, and the sentence the reviewer sees."""
+
+    attribute: str
+    read: Any
+    cable: Any
+    reason: str
+
+
 @dataclass
 class Inferred:
     needs: list[Need] = field(default_factory=list)
     symbol_class: str | None = None  # an untyped "מפסק" given a class by its current
     warnings: list[str] = field(default_factory=list)  # poles_cable_conflict, breaker_type_inferred
+    conflict: "CableConflict | None" = None  # an unsure pole mark the cable contradicts (BUG-079)
     used: list[str] = field(default_factory=list)  # rule ids that gave something
 
 
@@ -140,6 +168,14 @@ def infer(
                 out.used.append(rule.id)
             elif read.source == "graphic" and _num(read.value) != float(poles):
                 out.warnings.append("poles_cable_conflict")  # 05 §5.5.1: yellow, `POLES_CABLE_CONFLICT` (06)
+                seen = component.attributes.get(p["attribute"])
+                sure = seen is not None and seen.confidence is not None and seen.confidence >= p["unsure_graphic_below"]
+                if not sure:  # BUG-079: an unsure mark against the cable is the reviewer's, never a value filled in
+                    name = p["attribute"]
+                    reason = p["conflict"].format(
+                        read=text.value(name, read.value), cores=cores, cable=text.value(name, poles)
+                    )
+                    out.conflict = CableConflict(name, read.value, poles, reason)
         elif rule.kind == "unit_slip":
             read = have.get(p["attribute"])
             if read is not None and read.source not in FILLED:

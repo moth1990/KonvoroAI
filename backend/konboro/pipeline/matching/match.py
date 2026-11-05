@@ -24,6 +24,7 @@ they sit on.
 
 import re
 from collections import Counter
+from collections.abc import Iterable
 from dataclasses import dataclass, field, replace
 from typing import Any
 
@@ -37,7 +38,7 @@ from konboro.contracts.matching import (
     Substitution,
     UsedAttribute,
 )
-from konboro.contracts.merge import Component
+from konboro.contracts.merge import Component, Instance
 
 from ..association.grammar import parse
 from ..association.schemas import NEVER_DEFAULT, Attribute, Schemas
@@ -66,6 +67,30 @@ class Inputs:
     components: dict[str, Component]  # every component of the drawing, for the circuit and the parents
     ask: Ask | None = None
     cfg: MatchingConfig = DEFAULT
+    corrected: frozenset[str] = frozenset()  # components whose poles stage 4 corrected (`corrected_poles`)
+
+
+def corrected_poles(instances: Iterable[Instance]) -> frozenset[str]:
+    """S24b decision 12: the components stage 4 joined a breaker to because its cable and its alike peers' majority
+    both contradicted its unsure pole mark (`poles_corrected` on the instance, which keeps the mark as read)."""
+    return frozenset(
+        i.component_id for i in instances if i.component_id and any(x.code == "poles_corrected" for x in i.issues)
+    )
+
+
+_PEERS = {"mcb": 'המא"זים'}  # how the row's breakers are named in the note; any other class: המפסקים
+
+
+def _corrected(component: Component, needs: dict[str, Need]) -> Need | None:
+    """The poles stage 4 corrected, `inferred`: the cable and the row agree (05 §5.5.1, S24b decision 12)."""
+    read = needs.get("poles")
+    cable = component.circuit_context.cable if component.circuit_context else None
+    if read is None or read.source != "graphic" or cable is None:
+        return None
+    shown = cable.raw or f"{cable.cores} גידים"
+    peers = _PEERS.get(component.symbol_class, "המפסקים")
+    note = f"הכבל {shown} ורוב {peers} הזהים בשורה: {text.value('poles', read.value)}"
+    return Need("poles", read.value, read.mode, "inferred", False, note)
 
 
 @dataclass
@@ -387,6 +412,8 @@ class Prepared:
 
     kit_phrases: tuple[str, ...] = ()
     has_text: bool = False
+    cable_conflict: inference.CableConflict | None = None  # BUG-079
+    corrected: bool = False  # S24b decision 12
 
     @property
     def key(self) -> tuple[Any, ...]:
@@ -404,6 +431,8 @@ class Prepared:
             self.parents is not None,
             self.parent_fit,
             self.parent_statuses,
+            self.cable_conflict,
+            self.corrected,
         )
 
 
@@ -425,9 +454,14 @@ def prepare(component: Component, inp: Inputs, done: dict[str, ComponentMatch], 
             if name in attrs and name not in needs:
                 needs[name] = Need(name, value, attrs[name].match_mode, "series", False, f"לפי הדגם {ex.token}")
     needs = fill(component, needs, attrs, inp)
+    corrected = _corrected(component, needs) if component.component_id in inp.corrected else None
+    if corrected is not None:
+        needs["poles"] = corrected
+        warnings.append("inferred_attribute")
     tops = inference.class_tops(catalog.top_current)
+    model_written = ex.sku_item is not None or ex.series_items is not None
     untyped = component.symbol_class in (UNTYPED, "", None) or inference.outranged(
-        component, needs, tops, factory.inference_off
+        component, needs, tops, factory.inference_off, factory.designator_prefixes, model_written
     )
     inferred = inference.infer(
         component, needs, _upstream(component, inp), inp.notes, factory.inference_off, untyped, tops
@@ -470,6 +504,8 @@ def prepare(component: Component, inp: Inputs, done: dict[str, ComponentMatch], 
         frozenset(statuses),
         tuple(phrases),
         bool(beside) or bool(inp.notes.applying(component.family, component.panel_id)),
+        inferred.conflict,
+        corrected is not None,
     )
 
 
@@ -529,6 +565,15 @@ def decide_prepared(pr: Prepared, inp: Inputs) -> Decided:
             sig,
             pool,
             first,
+        )
+
+    # an unsure pole mark the cable contradicts: the reviewer's to settle, both readings offered (BUG-079, 05 §5.5.1)
+    if pr.cable_conflict is not None:
+        return Decided(
+            _cable_conflict(component, inp, needs, cls, sig, pr.cable_conflict, warnings, plan, brand),
+            0.0,
+            False,
+            False,
         )
 
     # a series that contradicts the text: the memory may settle it, else a conflict
@@ -752,6 +797,44 @@ def _conflict(
         ),
     ]
     return _empty(component, "conflict", needs, sig, reason, ["attribute_conflict"], sorted(conflicting), alts, brand)
+
+
+def _cable_conflict(
+    component: Component,
+    inp: Inputs,
+    needs: dict[str, Need],
+    cls: str | None,
+    sig: str,
+    conflict: inference.CableConflict,
+    warnings: list[str],
+    plan: BrandPlan,
+    brand: BrandDecision,
+) -> ComponentMatch:
+    """Nothing is chosen, red; the best item for each reading is offered, the mark's first. The reading stays as it
+    was read: no value is filled in (05 §4.4)."""
+    alts: list[Alternative] = []
+    for value, where in ((conflict.read, "לפי הסימון בשרטוט"), (conflict.cable, "לפי הכבל ביציאה")):
+        reading = [n for n in needs.values() if n.name != conflict.attribute]
+        reading.append(Need(conflict.attribute, value, "exact", "drawing", True))
+        best = rank(
+            alternatives_pool(inp.catalog, component.family, cls, reading),
+            reading,
+            plan,
+            inp.factory,
+            component.family,
+        )
+        if best:
+            item = best[0].item
+            alts.append(
+                Alternative(
+                    sku=item.sku,
+                    manufacturer=item.brand,
+                    diff=f"{where}: {item.description}",
+                    has_cost_price=inp.factory.has_cost(item),
+                )
+            )
+    w = [*warnings, "attribute_conflict"]
+    return _empty(component, "conflict", needs, sig, conflict.reason, w, [conflict.attribute], alts, brand)
 
 
 def _penalties(needs: dict[str, Need], substituted: bool, cfg: MatchingConfig) -> float:

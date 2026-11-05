@@ -1,0 +1,38 @@
+{
+  "answer": {
+    "input_tokens": 2,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 387,
+    "payload": null,
+    "text": null,
+    "tool_calls": [
+      {
+        "args": {
+          "changes": [
+            {
+              "manufacturer": "Schneider",
+              "target": {
+                "families": [
+                  "circuit_breaker"
+                ],
+                "manufacturers": [
+                  "ABB"
+                ],
+                "panels": [
+                  "B1"
+                ],
+                "text": "מא\"ז"
+              },
+              "type": "replace_brand"
+            }
+          ],
+          "summary_he": "החלפת המא\"זים ל-Schneider"
+        },
+        "id": "toolu_01X8oZgyK9oGtQLYWXftFCvq",
+        "name": "propose_change"
+      }
+    ]
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

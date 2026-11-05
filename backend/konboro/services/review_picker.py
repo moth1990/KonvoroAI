@@ -193,6 +193,7 @@ def _inputs(ctx: Ctx, components: Iterable[Component]) -> match.Inputs:
         notes=notes.read(out.intake.context_artifacts if out else []),
         components={c.component_id: c for c in components},
         ask=None,  # no model from a review route: the rules' first candidate, yellow (match._ambiguous)
+        corrected=match.corrected_poles(out.merge.instances) if out else frozenset(),
     )
 
 

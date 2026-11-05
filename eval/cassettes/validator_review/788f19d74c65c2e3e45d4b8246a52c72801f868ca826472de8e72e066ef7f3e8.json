@@ -1,0 +1,78 @@
+{
+  "answer": {
+    "input_tokens": 5540,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 690,
+    "payload": {
+      "issues": [
+        {
+          "bbox": [
+            183,
+            540,
+            210,
+            568
+          ],
+          "component_ids": [
+            "c12",
+            "c06"
+          ],
+          "confidence": 0.5,
+          "message": "בתרשים יש מפסק אלקטרוני 160A LSI אחד (וגם מפסק ראשי 250A MCCB), אך בטבלה שני מפסקי 160A (c06 ו-c12) עם ערכים שונים (טווח 64–160A ו-36kA מול 10kA). יש לבדוק כפילות והאם הראשי 250A חסר.",
+          "type": "inconsistent_attributes"
+        },
+        {
+          "bbox": [
+            615,
+            540,
+            700,
+            580
+          ],
+          "component_ids": [
+            "c14",
+            "c26"
+          ],
+          "confidence": 0.35,
+          "message": "נמצאו 6 מא\"ז 63A בטבלה, כשבציור מופיעים מא\"ז 63A (x6) בקבוצה אחת ועוד 63A בפתיחת תקעים. יש לוודא שאין ספירה כפולה ושיש כפילות עם c26.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": null,
+          "component_ids": [
+            "c19"
+          ],
+          "confidence": 0.4,
+          "message": "בטבלה 3 נתיכי 100A, אך בציור לא רואים נתיכים בלוח. יש לבדוק מאיפה הגיעו.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": [
+            485,
+            445,
+            640,
+            515
+          ],
+          "component_ids": [],
+          "confidence": 0.45,
+          "message": "שנאי זרם 5/400A (3 יח') ליד המונה SATEC מופיע בציור ואינו בטבלה. יש להוסיף או לבדוק.",
+          "type": "missing_component"
+        },
+        {
+          "bbox": [
+            1058,
+            590,
+            1080,
+            605
+          ],
+          "component_ids": [
+            "c05"
+          ],
+          "confidence": 0.25,
+          "message": "לחצנים בציור מסומנים כ'לחצן בלוח' עם סמל ממסר/מגען, ובטבלה ירוק ABB MP1 x2 מבלי שנראה בציור. יש לבדוק סוג וכמות.",
+          "type": "wrong_family"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "validator_review"
+}

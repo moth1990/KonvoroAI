@@ -245,19 +245,23 @@ def test_an_unmatched_line_is_described_like_a_matched_one() -> None:
             comp("cmp_2", cls="unknown_symbol", attrs={"current_a": 80, "poles": 3}),
             comp("cmp_3", family="switch_disconnector", cls="switch_disconnector", attrs={"current_a": 10}),
             comp("cmp_4", family="rcd", cls="rcd", attrs={"current_a": 40, "poles": 4, "residual_ma": 30}),
+            comp("cmp_5", cls="mccb", attrs={"current_a": 40}),
         ],
         [
             match("cmp_1", None, "unmatched", method=None, attributes_used=used),
             match("cmp_2", None, "unmatched", method=None),
             match("cmp_3", None, "unmatched", method=None),
             match("cmp_4", None, "unmatched", method=None),
+            # BUG-077: stage 5 typed it again as an MCB by its current; the line says what stage 5 looked for
+            match("cmp_5", None, "unmatched", method=None, signature="circuit_breaker|mcb|current_a=40"),
         ],
     )
     lines = by_key(q)
     assert lines["c:cmp_1"].description == 'מפסק זרם אוטומטי (מא"ז) ABB 1P 10A'
     assert lines["c:cmp_2"].description == "מפסק 3P 80A"  # not typed: neither an MCB nor an MCCB
-    assert lines["c:cmp_3"].description == "מנתק / מפסק עומס 10A"
+    assert lines["c:cmp_3"].description == "מנתק 10A"
     assert lines["c:cmp_4"].description == "מפסק פחת 4P 40A 30mA"
+    assert lines["c:cmp_5"].description == 'מפסק זרם אוטומטי (מא"ז) 40A'
 
 
 def test_rounding_to_the_shekel_and_a_fixed_product_price() -> None:

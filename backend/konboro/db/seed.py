@@ -159,7 +159,7 @@ PRODUCTS: list[tuple[str, str | None, str | None, str, str | None, list[tuple[st
     ("מפסק ABB XT1C 3P ‏80A", "XT1C160 TMD80 3P", "ABB", "מפסק", "750", [("b", "545", 7, True, None)]),
     ("מפסק ABB XT1C 4P ‏125A", "XT1C160 TMD125 4P", "ABB", "מפסק", "1250", [("b", "905", 7, True, None)]),
     ("מנתק SOCOMEC 4P ‏125A", "SIRCO M 4P 125A", "SOCOMEC", "מנתק", "1670", [("c", "1210", 14, True, None)]),
-    ("מגן מנוע ABB MS116 ‏4–6.3A", "MS116-6.3", "ABB", "מגן מנוע", "260", [("a", "188", 2, True, None)]),
+    ("מפסק מגן מנוע ABB MS116 3P ‏טווח 4–6.3A", "MS116-6.3", "ABB", "מגן מנוע", "260", [("a", "188", 2, True, None)]),
     ('נורת סימון 22 מ"מ', "AD22-22DS", None, "נורה", None, [("c", "18", 2, True, None)]),  # sale by markup rule
     ("ממסר חוסר מתח", None, None, "ממסר", "340", []),
     ("ממסר מבודד ערוץ אחד", "GIC-1", None, "ממסר", "130", []),

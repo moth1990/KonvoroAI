@@ -41,6 +41,7 @@ class Candidate:
     designator_span_id: str | None = None
     flags: list[str] = field(default_factory=list)
     floor: float | None = None  # code's evidence for the class after the model (`evidence.py`): at least this
+    ceiling: float | None = None  # a sure reading code overturned (`evidence.py` rule 3b): at most this, yellow
 
     @property
     def confidence(self) -> float:
@@ -51,7 +52,8 @@ class Candidate:
             raw = self.detector_score * 0.9
         else:
             raw = self.detector_score * self.class_score  # detector_llm: detector × the disambiguation's confidence
-        return max(raw, self.floor) if self.floor is not None else raw
+        out = max(raw, self.floor) if self.floor is not None else raw
+        return min(out, self.ceiling) if self.ceiling is not None else out
 
     @property
     def height(self) -> float:

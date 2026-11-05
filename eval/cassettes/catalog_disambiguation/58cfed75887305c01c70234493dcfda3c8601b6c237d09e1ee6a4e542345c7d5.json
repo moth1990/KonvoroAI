@@ -1,0 +1,17 @@
+{
+  "answer": {
+    "input_tokens": 947,
+    "model": "claude-haiku-5-5",
+    "output_tokens": 297,
+    "payload": {
+      "chosen_sku": null,
+      "confidence": 0.8,
+      "missing_attributes": [
+        "color"
+      ],
+      "reason": "הרישום בשרטוט מציין נורת סימון 22 מ\"מ בלבד ללא צבע, ולכן שלושת המועמדים (ירוק, אדום, צהוב) נשארים שווים. לא ניתן לבחור ללא צבע."
+    }
+  },
+  "model": "claude-haiku-5-5",
+  "stage": "catalog_disambiguation"
+}
