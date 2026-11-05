@@ -1,0 +1,30 @@
+{
+  "answer": {
+    "input_tokens": 4,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 278,
+    "payload": null,
+    "text": null,
+    "tool_calls": [
+      {
+        "args": {
+          "family": "circuit_breaker",
+          "manufacturer": "Schneider"
+        },
+        "id": "toolu_01NMjmfB9Ti67t7ZK6EDzrqR",
+        "name": "search_catalog"
+      },
+      {
+        "args": {
+          "families": [
+            "circuit_breaker"
+          ]
+        },
+        "id": "toolu_01KsjpKzJN6889L7uYbZsNru",
+        "name": "query_lines"
+      }
+    ]
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

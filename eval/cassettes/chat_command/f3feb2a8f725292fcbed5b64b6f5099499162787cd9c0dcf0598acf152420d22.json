@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 2,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 238,
+    "payload": {
+      "clarification_options": [],
+      "text": "בלוח B1 יש שני מא\"זים של 16A, ושניהם ירוקים:\n- {{line:L1}}: ‏ABB S203M ‏3P, כמות 5.\n- {{line:L2}}: ‏ABB S201M ‏1P, כמות 1.\n\nסימנתי אותם על המסך. שאר המא\"זים בלוח הם בזרמים אחרים: 6A, 10A ו-20A, ובנוסף מפסקים יצוקים של 80A ו-160A."
+    },
+    "text": null,
+    "tool_calls": []
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

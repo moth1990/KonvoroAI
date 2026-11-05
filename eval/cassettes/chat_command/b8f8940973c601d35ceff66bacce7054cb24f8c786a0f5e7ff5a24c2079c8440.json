@@ -1,0 +1,24 @@
+{
+  "answer": {
+    "input_tokens": 2,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 104,
+    "payload": null,
+    "text": null,
+    "tool_calls": [
+      {
+        "args": {
+          "families": [
+            "circuit_breaker"
+          ],
+          "limit": 10,
+          "text": "מא\"ז"
+        },
+        "id": "toolu_0152zndEo5LJoUzqT3JRnrpT",
+        "name": "query_lines"
+      }
+    ]
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

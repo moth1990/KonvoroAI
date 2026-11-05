@@ -1,0 +1,33 @@
+{
+  "answer": {
+    "input_tokens": 2219,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 275,
+    "payload": {
+      "answer": "ה-16A נקרא מהשרטוט: ליד F31 כתוב \"1X16A\" (קוטב אחד, 16A), ולידו הדגם S201M של ABB. גם בעקבות הערך current_a=16A מסומן כמקור \"שרטוט\" ברמת ביטחון 0.95. הערך INC=12.8A שכתוב ליד המא\"ז לא קבע את הגודל. קיבולת הניתוק (kA) לא מופיעה בשרטוט ולכן חסרה.",
+      "cites": {
+        "instance_ids": [
+          "I1"
+        ],
+        "line_ids": [
+          "L6"
+        ],
+        "span_ids": [
+          "S1",
+          "S2",
+          "S3",
+          "S4"
+        ]
+      },
+      "confidence": 0.93,
+      "focus": {
+        "instance_ids": [
+          "I1"
+        ]
+      },
+      "trace_supported": true
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "line_explanation"
+}

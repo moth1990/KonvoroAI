@@ -293,12 +293,58 @@ def _restore_product(ctx: Ctx, state: dict[str, Any]) -> None:
 
 
 def _restore_memory(ctx: Ctx, state: list[dict[str, Any]]) -> None:
+    """Each memory row as it was: its count and use, its SKU when the action changed it, or gone when the action
+    made it (`absent`, a chat proposal's "לזכור", S25b)."""
     for r in state:
         row = ctx.session.get(m.MatchMemory, r["id"])
-        if row is not None and row.tenant_id == ctx.tid:
-            row.approved_count = r["approved_count"]
-            row.last_used_at = datetime.fromisoformat(r["last_used_at"]) if r["last_used_at"] else None
+        if row is None or row.tenant_id != ctx.tid:
+            continue
+        if r.get("absent"):
+            ctx.session.delete(row)
+            continue
+        if r.get("sku"):
+            row.sku = r["sku"]
+        row.approved_count = r["approved_count"]
+        row.last_used_at = datetime.fromisoformat(r["last_used_at"]) if r["last_used_at"] else None
     ctx.session.flush()
+
+
+def save_memory(ctx: Ctx, entries: Sequence[tuple[str, str | None, str]], customer_id: str | None) -> Done | None:
+    """08 §7.4, a chat proposal approved with "לזכור ללקוח הזה" or "לזכור למפעל": each (signature, brand context,
+    SKU) is written to the match memory (05 §11), for this customer or for every customer (`customer_id` None). One
+    `memory_saved` event keeps each row as it was, so undo takes the memory back with the change."""
+    seen: dict[tuple[str, str | None], str] = {}
+    for sig, context, sku in entries:
+        seen.setdefault((sig, context), sku)  # one SKU per signature: the first line's
+    if not seen:
+        return None
+    state: list[dict[str, Any]] = []
+    for (sig, context), sku in seen.items():
+        old = match_memory.find(ctx.session, ctx.tid, sig, customer_id, context)
+        before = (
+            {
+                "id": old.id,
+                "sku": old.sku,
+                "approved_count": old.approved_count,
+                "last_used_at": _json(old.last_used_at),
+            }
+            if old is not None
+            else None
+        )
+        row = match_memory.remember(ctx.session, ctx.tid, sig, sku, customer_id=customer_id, brand_context=context)
+        state.append(before or {"id": row.id, "absent": True})
+    event = _event(
+        ctx,
+        "memory_saved",
+        after={
+            "scope": "customer" if customer_id else "tenant",
+            "customer_id": customer_id,
+            "signatures": [sig for sig, _ in seen],
+            "skus": list(seen.values()),
+        },
+        restore=_restore_of(ctx, [], memory=state),
+    )
+    return Done(f"נשמר בזיכרון ההתאמות ({len(seen)})", event.id, len(seen))
 
 
 # --- events ---------------------------------------------------------------------------------------------------------

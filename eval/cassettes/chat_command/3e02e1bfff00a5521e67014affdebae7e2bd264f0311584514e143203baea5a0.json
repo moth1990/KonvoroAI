@@ -1,0 +1,39 @@
+{
+  "answer": {
+    "input_tokens": 4,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 398,
+    "payload": null,
+    "text": null,
+    "tool_calls": [
+      {
+        "args": {
+          "line": "L1"
+        },
+        "id": "toolu_013wAk1Zjn5qyxLpdo2YqrsB",
+        "name": "get_line_details"
+      },
+      {
+        "args": {
+          "changes": [
+            {
+              "margin_kind": "margin",
+              "pct": "18",
+              "target": {
+                "lines": [
+                  "L1"
+                ]
+              },
+              "type": "set_line_margin"
+            }
+          ],
+          "summary_he": "מרווח 18% על השורה L1"
+        },
+        "id": "toolu_014Vu9U2K7nmSUjon9EdtxpP",
+        "name": "propose_change"
+      }
+    ]
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

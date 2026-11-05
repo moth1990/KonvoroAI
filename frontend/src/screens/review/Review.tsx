@@ -30,6 +30,7 @@ import {
   type Finding,
   type LineAction,
   type ProductChoice,
+  type ChatInstance,
   type Quote,
   type QuoteLine,
   type Recalculation,
@@ -576,7 +577,25 @@ function Review({ quote }: { quote: Quote }) {
     selectFromDrawing(id);
     if (phone) setTab("lines");
   };
+  // 08 §6.4 `focus`: the component framed on its page, its line selected. Behind the desktop drawer until it closes.
+  const frameInstance = (inst: ChatInstance) => {
+    if (inst.line_id) setSelected(inst.line_id);
+    setShownFinding(null);
+    setPageId(inst.page_id);
+    requestFocus(inst.page_id, inst.bbox, "frame");
+  };
+  // the answer's "בשרטוט" chip: the drawing in view, on the phone its tab and on the desktop without the drawer
+  const chatShowInstance = (inst: ChatInstance) => {
+    frameInstance(inst);
+    if (phone) setTab("drawing");
+    else setChatOpen(false);
+  };
   const chatFocus = (f: ChatFocus) => {
+    const first = f.instances?.[0];
+    if (first) {
+      frameInstance(first);
+      return;
+    }
     const status = f.statuses?.length === 1 ? f.statuses[0] : null;
     if (status === "red" || status === "yellow" || status === "green") setFilter(status);
     if (f.panelId && !f.lineIds.length) selectPanel(f.panelId);
@@ -604,6 +623,7 @@ function Review({ quote }: { quote: Quote }) {
       onClose={phone ? undefined : () => setChatOpen(false)}
       onSelectLine={chatSelect}
       onFocus={chatFocus}
+      onShowInstance={chatShowInstance}
       onApplied={chatApplied}
       toast={toast}
     />

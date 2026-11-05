@@ -1,0 +1,32 @@
+{
+  "answer": {
+    "input_tokens": 2234,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 255,
+    "payload": {
+      "answer": "הערך 16A נקרא ישירות מהשרטוט: ליד המא\"ז F31 כתוב \"1X16A\" (וגם \"S201M ABB\"), והמערכת קראה אותו עם ביטחון גבוה (0.95). הטקסט \"INC=12.8A\" הוא נתון נפרד ליד הרכיב ואינו הערך הנקוב. שים לב: כושר הניתוק (kA) לא נמצא בשרטוט.",
+      "cites": {
+        "instance_ids": [
+          "I1"
+        ],
+        "line_ids": [
+          "L1"
+        ],
+        "span_ids": [
+          "S2",
+          "S3",
+          "S4"
+        ]
+      },
+      "confidence": 0.93,
+      "focus": {
+        "instance_ids": [
+          "I1"
+        ]
+      },
+      "trace_supported": true
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "line_explanation"
+}

@@ -510,6 +510,16 @@ def prepare(component: Component, inp: Inputs, done: dict[str, ComponentMatch], 
 
 
 def decide_prepared(pr: Prepared, inp: Inputs) -> Decided:
+    """The decision, with the brand context a memory written for it later belongs to (the chat's "לזכור", 08 §7.4):
+    the customer's brand when the customer's preference chose it, so the memory is recalled for that customer's
+    drawings in the same context (05 §5.3); otherwise none. A brand the drawing or its notes name wins over the memory
+    anyway, so a memory under it would never apply; under none it fills in when the next drawing names no brand."""
+    d = _decide(pr, inp)
+    context = pr.requested if pr.plan.source == "customer_preference" else None
+    return replace(d, match=d.match.model_copy(update={"brand_context": context}))
+
+
+def _decide(pr: Prepared, inp: Inputs) -> Decided:
     component, attrs, needs, ex, plan = pr.component, pr.attrs, pr.needs, pr.ex, pr.plan
     requested, note_texts, warnings, cls, sig = pr.requested, pr.note_texts, list(pr.warnings), pr.cls, pr.sig
     parents, parent_fit = pr.parents, pr.parent_fit

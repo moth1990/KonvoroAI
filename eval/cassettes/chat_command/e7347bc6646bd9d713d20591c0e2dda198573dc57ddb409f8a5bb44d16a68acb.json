@@ -1,0 +1,26 @@
+{
+  "answer": {
+    "input_tokens": 2,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 91,
+    "payload": null,
+    "text": null,
+    "tool_calls": [
+      {
+        "args": {
+          "attributes": [
+            {
+              "name": "current_a",
+              "value": "40"
+            }
+          ],
+          "family": "rcd"
+        },
+        "id": "toolu_01FygzsJH6htVHG5pSAJTP6u",
+        "name": "search_catalog"
+      }
+    ]
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

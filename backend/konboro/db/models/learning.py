@@ -164,6 +164,7 @@ class ChatProposal(Base, TenantScoped, Timestamps):
         tenant_fk("conversation_id", "chat_conversations"),
         one_of("status", ("pending", "applied", "dismissed", "expired", "undone")),
         one_of("remember_default", ("quote_only", "customer", "tenant")),
+        CheckConstraint("remembered IS NULL OR remembered IN ('quote_only', 'customer', 'tenant')", name="remembered"),
     )
 
     id: Mapped[str] = pk()
@@ -180,6 +181,8 @@ class ChatProposal(Base, TenantScoped, Timestamps):
     warnings: Mapped[list[Any]] = mapped_column(server_default="[]")
     affected_line_count: Mapped[int] = mapped_column(server_default="0")
     alias: Mapped[str | None]  # "CH1", the name the model knows it by
+    remember_options: Mapped[list[Any]] = mapped_column(server_default='["quote_only"]')  # 08 §7.1 (migration 0022)
+    remembered: Mapped[str | None]  # the scope chosen on "החל" (08 §7.4)
 
 
 class Audit(Base, TenantScoped, Timestamps):

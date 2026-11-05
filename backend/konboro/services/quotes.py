@@ -47,6 +47,8 @@ class LineIn:
     line_group: str | None = None
     parent: str | None = None
     component_id: str | None = None
+    signature: str | None = None  # 05 §3 (migration 0022)
+    brand_context: str | None = None
     product_id: str | None = None
     sku: str | None = None
     manufacturer: str | None = None
@@ -102,6 +104,8 @@ def write_lines(
                 line_group=line.line_group,
                 line_type=line.line_type,
                 component_id=line.component_id,
+                signature=line.signature,
+                brand_context=line.brand_context,
                 parent_line_id=ids[line.parent] if line.parent else None,
                 product_id=line.product_id,
                 catalog_item_id=line.catalog_item_id,

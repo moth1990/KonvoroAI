@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 2,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 253,
+    "payload": {
+      "clarification_options": [],
+      "text": "יש שורה אחת בהצעה שקשורה לפחת: {{line:L1}}, מפסק בתיבה יצוקה ABB XT1C 4P 160A משולב פחת, בכמות 1. השורה אדומה.\n\nאין שורות במשפחת מפסקי הפחת, ואין בהצעה מפסקי פחת נפרדים. חיפשתי לפי משפחה ולפי המילה \"פחת\" בתיאורים. אם אתה מצפה ליותר, כדאי לבדוק בשרטוט."
+    },
+    "text": null,
+    "tool_calls": []
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

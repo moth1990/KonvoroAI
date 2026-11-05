@@ -1,7 +1,19 @@
 import { describe, expect, it } from "vitest";
 
 import type { ChatProposal } from "../../api/client";
-import { amount, applyLabel, diffRows, segments, STATE, totals, unchanged, warningTexts } from "./chatModel";
+import {
+  amount,
+  applyLabel,
+  diffRows,
+  optionLabel,
+  rememberChoices,
+  rememberedText,
+  segments,
+  STATE,
+  totals,
+  unchanged,
+  warningTexts,
+} from "./chatModel";
 
 const money = {
   $T1: { kind: "ils" as const, value: "1250.5" },
@@ -18,6 +30,7 @@ function proposal(over: Partial<ChatProposal> = {}): ChatProposal {
     warnings: [],
     base_version: 1,
     money,
+    remember_options: ["quote_only"],
     diff: {
       lines_changed: [
         {
@@ -91,5 +104,39 @@ describe("the proposal card", () => {
     expect(applyLabel(proposal())).toBe("החל");
     expect(applyLabel(proposal({ warnings: ["many_deletes"] }))).toBe("מחק 7 שורות");
     expect(STATE.expired.text).toBe("פג תוקף");
+  });
+});
+
+describe("S25b references and memory", () => {
+  it("parses another quote and a drawing instance", () => {
+    expect(segments("מול {{quote:quo_01AB}} ברכיב {{instance:ins_01CD}} ו-{{instance:ln_01EF#0}}")).toEqual([
+      { kind: "text", text: "מול " },
+      { kind: "quote", quoteId: "quo_01AB" },
+      { kind: "text", text: " ברכיב " },
+      { kind: "instance", instanceId: "ins_01CD" },
+      { kind: "text", text: " ו-" },
+      { kind: "instance", instanceId: "ln_01EF#0" },
+    ]);
+  });
+
+  it("shows an option's quote by its name, which only the screen has", () => {
+    expect(optionLabel("{{quote:quo_01AB}}", { quo_01AB: "גן ילדים, הצעה קודמת" })).toBe("גן ילדים, הצעה קודמת");
+    expect(optionLabel("לא, {{quote:quo_01ZZ}}", {})).toBe("לא, הצעה אחרת");
+  });
+
+  it("offers the memory chips only beside this quote, in order", () => {
+    expect(rememberChoices(proposal())).toEqual([]);
+    expect(rememberChoices(proposal({ remember_options: ["tenant", "quote_only"] }))).toEqual(["quote_only", "tenant"]);
+    expect(rememberChoices(proposal({ remember_options: ["quote_only", "customer", "tenant"] }))).toEqual([
+      "quote_only",
+      "customer",
+      "tenant",
+    ]);
+  });
+
+  it("says what an applied card remembered", () => {
+    expect(rememberedText(proposal({ status: "applied", remembered: "quote_only" }))).toBeNull();
+    expect(rememberedText(proposal({ status: "applied", remembered: "tenant" }))).toContain("המפעל");
+    expect(rememberedText(proposal({ status: "applied", remembered: "customer" }))).toContain("הלקוח");
   });
 });

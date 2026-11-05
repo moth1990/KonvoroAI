@@ -1,0 +1,30 @@
+{
+  "answer": {
+    "input_tokens": 4,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 280,
+    "payload": null,
+    "text": null,
+    "tool_calls": [
+      {
+        "args": {
+          "kind": "attribute_default",
+          "values": [
+            {
+              "name": "family",
+              "value": "circuit_breaker"
+            },
+            {
+              "name": "breaking_capacity_ka",
+              "value": "10"
+            }
+          ]
+        },
+        "id": "toolu_01CrpuyYs2Lh2D7n978JP42J",
+        "name": "open_settings"
+      }
+    ]
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

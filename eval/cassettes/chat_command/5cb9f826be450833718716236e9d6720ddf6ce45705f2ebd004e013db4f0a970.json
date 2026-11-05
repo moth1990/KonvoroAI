@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 2,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 180,
+    "payload": {
+      "clarification_options": [],
+      "text": "הכנתי הצעת שינוי: הכמות של {{line:L1}} (מא\"ז ABB S201M 1P 16A) תעלה מ-1 ל-3. הסכום נטו ישתנה מ-{{$T3}} ל-{{$T4}}. ההצעה לא הציגה אזהרות או בעיות חדשות. כלום לא משתנה עד שתאשר את הכרטיס."
+    },
+    "text": null,
+    "tool_calls": []
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

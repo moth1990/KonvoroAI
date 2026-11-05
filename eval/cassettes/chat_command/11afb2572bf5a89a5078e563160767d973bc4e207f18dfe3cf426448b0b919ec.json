@@ -1,0 +1,29 @@
+{
+  "answer": {
+    "input_tokens": 4,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 150,
+    "payload": null,
+    "text": null,
+    "tool_calls": [
+      {
+        "args": {
+          "text": "מגען"
+        },
+        "id": "toolu_01J19Ta77y7T5ZbEZdUmgLkF",
+        "name": "query_lines"
+      },
+      {
+        "args": {
+          "families": [
+            "device"
+          ]
+        },
+        "id": "toolu_01NXTLdsRk9FF2NiCoK3yBVj",
+        "name": "query_lines"
+      }
+    ]
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

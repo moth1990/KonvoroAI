@@ -1,0 +1,43 @@
+{
+  "answer": {
+    "input_tokens": 3299,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 344,
+    "payload": {
+      "answer": "הקוטביות 1P+N נקראה מהשרטוט: ליד כל מא\"ז כתוב \"10+N\" (הטקסט S2), וגם ליד הסמל מצויר מוליך נטרול נוסף (מסומן \"N\"). לכן השורה היא 1P+N ולא 1P. הערך מופיע בעקבות עם מקור \"שרטוט\" ובביטחון 0.95. הערה: ליד הרכיב כתוב גם INC=8A, אבל בשורה מופיע 10A (גם הוא מהשרטוט) - כדאי לבדוק זאת מול השרטוט.",
+      "cites": {
+        "instance_ids": [
+          "I1",
+          "I2",
+          "I3",
+          "I4",
+          "I5",
+          "I6",
+          "I7"
+        ],
+        "line_ids": [
+          "L1"
+        ],
+        "span_ids": [
+          "S2",
+          "S3"
+        ]
+      },
+      "confidence": 0.85,
+      "focus": {
+        "instance_ids": [
+          "I1",
+          "I2",
+          "I3",
+          "I4",
+          "I5",
+          "I6",
+          "I7"
+        ]
+      },
+      "trace_supported": true
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "line_explanation"
+}

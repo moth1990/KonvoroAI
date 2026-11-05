@@ -3536,19 +3536,19 @@
       },
       "chat": {
         "amounts_removed": {
-          "den": 62,
+          "den": 77,
           "kind": "count",
           "num": 0.0,
           "value": 0.0
         },
         "clarification_accuracy": {
-          "den": 62,
+          "den": 77,
           "kind": "ratio",
-          "num": 58.0,
-          "value": 0.935484
+          "num": 71.0,
+          "value": 0.922078
         },
         "forbidden_calls": {
-          "den": 62,
+          "den": 77,
           "kind": "count",
           "num": 0.0,
           "value": 0.0
@@ -3560,22 +3560,22 @@
           "value": 0.0
         },
         "invalid_refs": {
-          "den": 62,
+          "den": 77,
           "kind": "count",
           "num": 0.0,
           "value": 0.0
         },
         "money_to_model": {
-          "den": 265,
+          "den": 395,
           "kind": "count",
           "num": 0.0,
           "value": 0.0
         },
         "tool_accuracy": {
-          "den": 48,
+          "den": 63,
           "kind": "ratio",
-          "num": 46.0,
-          "value": 0.958333
+          "num": 62.0,
+          "value": 0.984127
         }
       },
       "pricing": {

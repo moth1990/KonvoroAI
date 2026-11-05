@@ -1,0 +1,20 @@
+{
+  "answer": {
+    "input_tokens": 2,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 277,
+    "payload": {
+      "clarification_options": [
+        "מחיר לשורה אחת (איזו?)",
+        "מחיר ל-5 השורות האדומות",
+        "הנחה או מרווח במקום מחיר",
+        "הנחת לקוח"
+      ],
+      "text": "על איזה מחיר מדובר, ומה המחיר החדש? יש 5 שורות אדומות בלי מחיר ({{line:L1}}–{{line:L5}}). אני מכין הצעה רק עם מחיר שאתה כותב לי, ואחרי שתאשר אותה בכרטיס."
+    },
+    "text": null,
+    "tool_calls": []
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

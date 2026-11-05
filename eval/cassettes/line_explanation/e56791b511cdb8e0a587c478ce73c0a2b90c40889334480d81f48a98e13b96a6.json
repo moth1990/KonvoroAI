@@ -1,0 +1,30 @@
+{
+  "answer": {
+    "input_tokens": 2721,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 246,
+    "payload": {
+      "answer": "הערך IP55 לא נקרא ישירות מהרכיב. לפי העקבה הוא הגיע מההערות הכלליות של השרטוט (מקור notes, ביטחון 0.95). בטקסט שליד הרכיב (S1) כתוב \"IP-55\", ובטבלת המפרט שבתמונה לא מופיעה שורת IP, כך שאין לי עוד מידע על מקורו. כדאי לוודא בשרטוט.",
+      "cites": {
+        "instance_ids": [
+          "I1"
+        ],
+        "line_ids": [
+          "L1"
+        ],
+        "span_ids": [
+          "S1"
+        ]
+      },
+      "confidence": 0.8,
+      "focus": {
+        "instance_ids": [
+          "I1"
+        ]
+      },
+      "trace_supported": true
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "line_explanation"
+}

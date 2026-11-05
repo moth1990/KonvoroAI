@@ -4,6 +4,7 @@
 | --- | --- |
 | every `{{line:L3}}` is a line this conversation named and the quote still has | removed from the text, `invalid_ref` |
 | every `{{$T1}}` was created in this conversation | replaced by "—", `invalid_ref` |
+| every `{{quote:QT2}}` and `{{instance:I3}}` is one this conversation named (S25b) | removed, `invalid_ref` |
 | no amount of money written in the text (₪, ש"ח, שקל, a decimal price) | sent back once; then the number is removed |
 | a UI action points at existing lines | dropped |
 
@@ -11,13 +12,17 @@ Quantities, currents (16A), poles, line counts and percentages the estimator gav
 """
 
 import re
+from collections.abc import Callable
 from dataclasses import dataclass, field
 
 from .state import ChatState
 
 LINE_REF = re.compile(r"\{\{\s*line:\s*([A-Za-z]+\d+)\s*\}\}")
 MONEY_REF = re.compile(r"\{\{\s*(\$[A-Z]\d+)\s*\}\}")
-INSTANCE_REF = re.compile(r"\{\{\s*instance:[^}]*\}\}")
+QUOTE_REF = re.compile(r"\{\{\s*quote:\s*([A-Za-z]+\d+)\s*\}\}")
+INSTANCE_REF = re.compile(r"\{\{\s*instance:\s*([A-Za-z]+\d+)\s*\}\}")
+# a reference the screen sent back in the estimator's message (a clicked option): real ids, named again for the model
+SCREEN_REF = re.compile(r"\{\{\s*(quote|line):\s*((?:quo|ln)_[0-9A-Z]+)\s*\}\}")
 _NUM = r"\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?"
 # An amount written as money: a currency sign or word beside a number, a number with agorot, or a thousands
 # separator in a price context.
@@ -37,6 +42,8 @@ class Checked:
     text: str
     line_ids: list[str] = field(default_factory=list)  # real ids, in order of first mention
     money_refs: set[str] = field(default_factory=set)
+    quote_ids: list[str] = field(default_factory=list)
+    instance_ids: list[str] = field(default_factory=list)
     invalid_refs: list[str] = field(default_factory=list)
     amounts: list[str] = field(default_factory=list)  # amounts written as numbers (the caller asks once again)
 
@@ -51,9 +58,16 @@ def strip_amounts(text: str) -> str:
     return WORD_AMOUNT.sub("—", out)
 
 
-def check(text: str, state: ChatState, live_lines: set[str], allowed_refs: set[str] | None = None) -> Checked:
-    """`live_lines`: the ids the quote has now. Line names become real ids (`{{line:ln_…}}`) for the screen; money
-    references stay, and the screen gets their amounts."""
+def check(
+    text: str,
+    state: ChatState,
+    live_lines: set[str],
+    allowed_refs: set[str] | None = None,
+    live_instances: set[str] | None = None,
+) -> Checked:
+    """`live_lines`: the ids the quote has now. Line, quote and instance names become real ids (`{{line:ln_…}}`) for
+    the screen; money references stay, and the screen gets their amounts. `live_instances`: the instances the turn
+    may point at (those a tool located); None accepts any this conversation named."""
     out = Checked(text="")
     refs_ok = set(state.money) if allowed_refs is None else allowed_refs
 
@@ -74,9 +88,22 @@ def check(text: str, state: ChatState, live_lines: set[str], allowed_refs: set[s
         out.money_refs.add(ref)
         return "{{" + ref + "}}"
 
+    def named(kind: str, found: list[str]) -> Callable[[re.Match[str]], str]:
+        def sub(match: re.Match[str]) -> str:
+            real = state.real(match.group(1), kind)
+            if real is None or (kind == "instance" and live_instances is not None and real not in live_instances):
+                out.invalid_refs.append(match.group(0))
+                return ""
+            if real not in found:
+                found.append(real)
+            return "{{" + kind + ":" + real + "}}"
+
+        return sub
+
     text = LINE_REF.sub(line, text)
     text = MONEY_REF.sub(money, text)
-    text = INSTANCE_REF.sub("", text)  # instances come with S25b's explain_line
+    text = QUOTE_REF.sub(named("quote", out.quote_ids), text)
+    text = INSTANCE_REF.sub(named("instance", out.instance_ids), text)
     out.amounts = amounts_in(text)
     out.text = re.sub(r"[ \t]{2,}", " ", text).strip()
     return out
@@ -90,3 +117,15 @@ def valid_lines(names: list[str], state: ChatState, live_lines: set[str]) -> lis
         if real is not None and real in live_lines and real not in out:
             out.append(real)
     return out
+
+
+def for_model(text: str, state: ChatState) -> str:
+    """The estimator's message as the model gets it: a reference the screen put in it (a clicked option with
+    `{{quote:quo_…}}`) is named again (`{{quote:QT2}}`), so no id or quote name reaches the model. An id this
+    conversation never named is dropped."""
+
+    def sub(match: re.Match[str]) -> str:
+        alias = state.alias_of(match.group(2))
+        return "{{" + match.group(1) + ":" + alias + "}}" if alias else ""
+
+    return SCREEN_REF.sub(sub, text)

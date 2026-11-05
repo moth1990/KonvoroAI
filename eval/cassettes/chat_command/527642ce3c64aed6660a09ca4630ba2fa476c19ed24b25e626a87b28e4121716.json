@@ -1,0 +1,28 @@
+{
+  "answer": {
+    "input_tokens": 4,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 146,
+    "payload": null,
+    "text": null,
+    "tool_calls": [
+      {
+        "args": {
+          "line": "L1",
+          "question": "למה נבחר S203M ולא S204M כפי שכתוב בשרטוט?"
+        },
+        "id": "toolu_01QspyRdWEHMwopBwXzEJ4CA",
+        "name": "explain_line"
+      },
+      {
+        "args": {
+          "line": "L1"
+        },
+        "id": "toolu_016LqgcZX1qn923pBkBENHbH",
+        "name": "get_line_details"
+      }
+    ]
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

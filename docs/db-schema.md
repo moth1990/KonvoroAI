@@ -292,6 +292,7 @@ This table answers the customer's question "why was this counted?".
 | `line_key null` | Stage 7's stable handle: `c:<component>`, `c:<component>:kit:<n>`, `m:<instance>`, `d:<panel>:<rule>[:<item>]`, `l:<panel>`. A rerun carries what the user did on the line by it (migration 0017, S22 decision 5) |
 | `line_type` | `component`, `derived`, `labor`, `manual`, `missing` |
 | `component_id null`, `parent_line_id null` | `component_id` is how a line points back to the drawing |
+| `signature null`, `brand_context null` | The component's signature (05 §3) and the brand context a match memory for it belongs to (05 §6 `brand_context`: the customer's brand when the customer's preference chose it, else null). Stage 7 writes them from stage 5's match; the fixtures' seed signs its lines the same way. `compare` with another quote pairs lines by signature (08 §6.5), and a proposal remembered for a customer or the factory writes the memory under them (08 §7.4). Null on a kit part, a derived, labor or manual line, and a family with no schema. Migration 0022, S25b |
 | `catalog_item_id null`, `product_id null` | |
 | `sku`, `description`, `manufacturer`, `qty numeric(12,3)`, `unit` | |
 | `unit_cost null`, `cost_source jsonb`, `price_status` | `price_status` is `ok`, `stale`, `discount_based` or `missing` |
@@ -316,7 +317,7 @@ This table answers the customer's question "why was this counted?".
 **`correction_events`** (`evt_`, 09 §10) is append-only. The app may update only `undone`, and a trigger enforces this. So an event is written once, whole: a review action keeps what undo needs to put back in `before.restore` (the lines' state, the findings, the price-list product, the match memory, S23).
 - `quote_id`, `quote_version`, `user_id`.
 - `source`: `review_screen`, `chat`, `price_list`, or `new_quote` (a page kind changed on the new-quote screen, S08).
-- `type`: the 09 §10 list, plus `price_changed` and `supplier_selected` from 09 §7.14–7.15, `bom_columns_mapped` (the user set a BOM spreadsheet's column roles, 01 §5.8; migration 0010, S14), and `discount_set` (the customer discount on the quote, 08 §6.7, from the chat; migration 0021, S25).
+- `type`: the 09 §10 list, plus `price_changed` and `supplier_selected` from 09 §7.14–7.15, `bom_columns_mapped` (the user set a BOM spreadsheet's column roles, 01 §5.8; migration 0010, S14), `discount_set` (the customer discount on the quote, 08 §6.7, from the chat; migration 0021, S25), and `memory_saved` (the match memory a chat proposal wrote for a customer or the factory, 08 §7.4, with `before.restore.memory`: each row as it was, or `absent` for a row it made; migration 0022, S25b).
 - `line_id`, `component_id`, `instance_ids`, `page_id`.
 - `before jsonb`, `after jsonb`, `reason`, `undone bool`.
 
@@ -373,14 +374,15 @@ The rest of the price-list tables:
 - **`chat_conversations`** (`cnv_`, 08 §5.2.1):
   - `quote_id`, `status` (`active` or `closed`; one active conversation per quote), `summary`.
   - The summary never contains money (08 §5.4): `chat.history` strips amounts and references before saving it.
-  - `state jsonb` (migration 0021, S25): `names`, the short names the model was given (`L3` → `ln_…`, `B1`, `F2`, `CH1`); `money`, each money reference with its amount (`$T1` → `{kind: ils, value}`, `$P1` for a percentage), which only the screen gets; `counters`; and `compacted_through`, the last message the summary covers.
+  - `state jsonb` (migration 0021, S25): `names`, the short names the model was given (`L3` → `ln_…`, `B1`, `F2`, `CH1`, and since S25b `QT1` for another quote and `I1` for an instance on the drawing); `money`, each money reference with its amount (`$T1` → `{kind: ils, value}`, `$P1` for a percentage), which only the screen gets; `counters`; and `compacted_through`, the last message the summary covers.
 - **`chat_messages`** (`msg_`): `conversation_id`, `role`, `content jsonb`, `tokens`.
   - A user message's `content`: `seq`, `text`, `model_text` (with the screen context, as the model got it), `ui_context`.
-  - An assistant message's: `seq`, `blocks` (08 §8.1, line references as ids), `answer_text` (as the model wrote it), `tool_summaries` (one line per call, what later turns get, 08 §5.2.1), `tool_calls` (each tool with its arguments, 08 §10's log), `money_refs`, `errors` (`invalid_ref`, `amount_removed`, `tool_failed`).
+  - An assistant message's: `seq`, `blocks` (08 §8.1, line references as ids), `answer_text` (as the model wrote it), `tool_summaries` (one line per call, what later turns get, 08 §5.2.1), `tool_calls` (each tool with its arguments, 08 §10's log), `money_refs`, `instances` (where each instance the answer points at is, page and bbox, S25b), `errors` (`invalid_ref`, `amount_removed`, `tool_failed`).
 - **`chat_proposals`** (`prp_`, 08 §7.1):
   - `quote_id`, `conversation_id`, `base_version`, `base_revision`, `summary_he`, `changes jsonb`, `diff jsonb`, `remember_default`.
   - `changes`: each change with the lines it applies to, as ids and line keys, resolved once by code (`chat.proposals.resolve`). `diff`: lines changed, added, removed and derived, totals before and after and new and resolved findings, every amount a money reference of the conversation.
   - `warnings jsonb`, `affected_line_count`, `alias` (`CH1`), migration 0021.
+  - `remember_options jsonb` (08 §7.1): `["quote_only"]`, or with `customer` (when the quote has one) and `tenant` for a brand or SKU swap that moves a signed line. `remembered`: the scope chosen on "החל". Migration 0022, S25b.
   - `status`: `pending`, `applied`, `dismissed`, `expired`, or `undone` (applied, then taken back by the review screen's undo).
   - `resolved_at`.
   - Applying writes the review actions' correction events with `source` = `chat` and `after.proposal` = the proposal's id; `review.undo` on any of them undoes them all, newest first.

@@ -4,7 +4,7 @@ from decimal import Decimal
 
 import pytest
 
-from konboro.chat.check import amounts_in, check, strip_amounts, valid_lines
+from konboro.chat.check import amounts_in, check, for_model, strip_amounts, valid_lines
 from konboro.chat.state import ChatState
 
 
@@ -84,3 +84,30 @@ def test_the_same_amount_keeps_its_reference_and_state_round_trips():
     again = ChatState.load(s.dump())
     assert again.ref(Decimal("1250.50")) == "$T1" and again.name("line", "ln_B") == "L2"
     assert again.resolve({"$T1", "$X9"}) == {"$T1": {"kind": "ils", "value": "1250.5"}}
+
+
+def test_quote_and_instance_names_become_ids_for_the_screen():
+    state = ChatState()
+    q = state.name("quote", "quo_01ABC")
+    i = state.name("instance", "ins_01XYZ")
+    assert (q, i) == ("QT1", "I1")
+    out = check("מול {{quote:QT1}} ו-{{quote:QT4}}, ברכיב {{instance:I1}} {{instance:I2}}", state, set())
+    assert out.text == "מול {{quote:quo_01ABC}} ו-, ברכיב {{instance:ins_01XYZ}}"
+    assert out.quote_ids == ["quo_01ABC"] and out.instance_ids == ["ins_01XYZ"]
+    assert sorted(out.invalid_refs) == ["{{instance:I2}}", "{{quote:QT4}}"]
+
+
+def test_an_instance_the_turn_did_not_locate_is_removed():
+    state = ChatState()
+    state.name("instance", "ins_01OLD")
+    out = check("{{instance:I1}}", state, set(), live_instances={"ins_01NEW"})
+    assert out.text == "" and out.invalid_refs == ["{{instance:I1}}"]
+
+
+def test_a_reference_the_screen_sent_back_is_named_again_for_the_model():
+    state = ChatState()
+    state.name("quote", "quo_01ABC")
+    state.name("line", "ln_01DEF")
+    text = "תשווה ל-{{quote:quo_01ABC}} ול-{{line:ln_01DEF}} ול-{{quote:quo_01ZZZ}}"
+    assert for_model(text, state) == "תשווה ל-{{quote:QT1}} ול-{{line:L1}} ול-"
+    assert state.alias_of("quo_01ZZZ") is None  # never named by the model's side, never given a name here

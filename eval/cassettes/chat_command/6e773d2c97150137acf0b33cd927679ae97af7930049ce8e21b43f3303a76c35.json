@@ -1,0 +1,29 @@
+{
+  "answer": {
+    "input_tokens": 4,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 231,
+    "payload": null,
+    "text": null,
+    "tool_calls": [
+      {
+        "args": {
+          "changes": [
+            {
+              "panel": "B1",
+              "qty": 2,
+              "sku": "A9F74116",
+              "target": {},
+              "type": "add_line"
+            }
+          ],
+          "summary_he": "הוספת 2 יחידות של A9F74116 ללוח B1"
+        },
+        "id": "toolu_01AdUQ9yKxxATBRY8AYybuLg",
+        "name": "propose_change"
+      }
+    ]
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

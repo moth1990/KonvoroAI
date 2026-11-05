@@ -1105,6 +1105,7 @@ class ChatBlockOut(BaseModel):
     proposal_id: str | None = None
     action: str | None = None
     line_ids: list[str] | None = None
+    instance_ids: list[str] | None = None  # `focus` on the drawing (08 §6.4)
     panel_id: str | None = None
     statuses: list[str] | None = None
     kind: str | None = None
@@ -1112,11 +1113,23 @@ class ChatBlockOut(BaseModel):
     values: dict[str, str] | None = None
 
 
+class ChatInstanceOut(BaseModel):
+    """Where an instance the answer points at is (`{{instance:ins_…}}`, 08 §6.4), for the drawing pane."""
+
+    page_id: str
+    bbox: list[float] = Field(min_length=4, max_length=4, description="x0, y0, x1, y1 in PDF points, origin top left")
+    line_id: str | None = None
+
+
 class ChatMessageOut(BaseModel):
+    """`quotes`: the name of each quote a `{{quote:quo_…}}` points at, for the screen only (S25b decision 1)."""
+
     message_id: str
     role: Literal["user", "assistant"]
     blocks: list[ChatBlockOut]
     money: dict[str, ChatMoneyOut]
+    quotes: dict[str, str] = {}
+    instances: dict[str, ChatInstanceOut] = {}
 
 
 class ChatProposalOut(BaseModel):
@@ -1130,6 +1143,16 @@ class ChatProposalOut(BaseModel):
     diff: dict[str, Any]
     base_version: int
     money: dict[str, ChatMoneyOut]
+    remember_options: list[Literal["quote_only", "customer", "tenant"]] = Field(
+        default=["quote_only"], description='08 §7.4: the card\'s chips; "quote_only" is always first and the default'
+    )
+    remembered: Literal["quote_only", "customer", "tenant"] | None = None
+
+
+class ChatApplyIn(Strict):
+    """08 §7.4: what the estimator chose on the card. Only a scope the proposal offers."""
+
+    remember: Literal["quote_only", "customer", "tenant"] = "quote_only"
 
 
 class ChatOut(BaseModel):

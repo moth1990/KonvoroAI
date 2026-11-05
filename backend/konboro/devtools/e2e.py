@@ -40,7 +40,7 @@ from konboro.db.models import (
 from konboro.db.seed import FLAGS, link_demo_catalog, seed_global, seed_price_list
 from konboro.db.session import app_engine
 from konboro.devtools.fixtures.audit_993 import seed_audit_993, seed_audit_993_pages
-from konboro.devtools.fixtures.nursery import seed_missing_line, seed_nursery, seed_nursery_pages
+from konboro.devtools.fixtures.nursery import seed_earlier_quote, seed_missing_line, seed_nursery, seed_nursery_pages
 from konboro.devtools.fixtures.queue import seed_queue
 from konboro.pipeline.context import StageContext
 from konboro.pipeline.extraction.config import ExtractionConfig
@@ -68,6 +68,7 @@ class E2eTenant:
     # so it lands on /welcome and its first quote shows the banner (10 §5.1–5.2).
     terms: bool = True
     queue: bool = False  # the prototype's six approval-queue candidates (devtools/fixtures/queue.py)
+    earlier: bool = False  # a sent quote before NURSERY, for the chat's compare with another quote (S25b)
 
     @property
     def tenant_id(self) -> str:
@@ -139,10 +140,10 @@ TENANTS = (
         off=("onboarding", "settings_screen", "approval_queue"),
     ),
     # S25. Applying a proposal changes the NURSERY draft, so one tenant per project; one has the chat's flag off.
-    E2eTenant(33, "chat-desktop@e2e.konboro.local", False, 12, False, nursery=True, prices=True),
-    E2eTenant(34, "chat-mobile@e2e.konboro.local", False, 12, False, nursery=True, prices=True),
+    E2eTenant(33, "chat-desktop@e2e.konboro.local", False, 12, False, nursery=True, prices=True, earlier=True),
+    E2eTenant(34, "chat-mobile@e2e.konboro.local", False, 12, False, nursery=True, prices=True, earlier=True),
     E2eTenant(35, "chat-off@e2e.konboro.local", False, 12, False, nursery=True, prices=True, off=("chat_layer",)),
-    E2eTenant(36, "chat-shots@e2e.konboro.local", False, 12, False, nursery=True, prices=True),
+    E2eTenant(36, "chat-shots@e2e.konboro.local", False, 12, False, nursery=True, prices=True, earlier=True),
 )
 TERMS = {"version": "2026-10", "at": "2026-10-01T09:00:00+00:00"}
 
@@ -289,6 +290,8 @@ def seed_e2e(owner: Engine, storage: Storage | None = None) -> None:
                 seed_nursery(s, t.tenant_id)
                 if t.missing:
                     seed_missing_line(s, t.tenant_id)
+                if t.earlier:
+                    seed_earlier_quote(s, t.tenant_id)
                 if storage is not None:
                     seed_nursery_pages(s, storage, t.tenant_id)
             if t.audit:

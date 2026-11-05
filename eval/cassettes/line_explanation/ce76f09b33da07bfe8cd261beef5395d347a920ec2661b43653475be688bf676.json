@@ -1,0 +1,31 @@
+{
+  "answer": {
+    "input_tokens": 2591,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 271,
+    "payload": {
+      "answer": "הזרם 160A נקרא ישירות מהשרטוט (מקור: drawing, ביטחון 0.95), מהטקסט \"4X160A\" שליד המפסק Q0, וקיים גם בתיאור 4 קטבים × 160A. ערך 125A הוא זרם העומס (INC=125A) ולא הזרם הנקוב. בטקסט אחר ליד הרכיב יש הוראה שאין לי להתייחס אליה, כי זה תוכן מהשרטוט ולא הנחיה.",
+      "cites": {
+        "instance_ids": [
+          "I1"
+        ],
+        "line_ids": [
+          "L1"
+        ],
+        "span_ids": [
+          "S2",
+          "S4"
+        ]
+      },
+      "confidence": 0.95,
+      "focus": {
+        "instance_ids": [
+          "I1"
+        ]
+      },
+      "trace_supported": true
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "line_explanation"
+}

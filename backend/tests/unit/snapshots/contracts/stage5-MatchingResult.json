@@ -178,6 +178,18 @@
           "title": "Attributes Used",
           "type": "object"
         },
+        "brand_context": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Brand Context"
+        },
         "brand_decision": {
           "anyOf": [
             {

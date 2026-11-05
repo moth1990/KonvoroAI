@@ -1,0 +1,33 @@
+{
+  "answer": {
+    "input_tokens": 2222,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 273,
+    "payload": {
+      "answer": "אין לי מספיק מידע בעקבות כדי להסביר למה לא נוסף ממסר: העקבה לא מכילה שום החלטה או כלל לגבי ממסר. בשרטוט רואים רק את F31, מא\"ז ABB S201M חד-קוטבי 16A (כך כתוב בשרטוט, כולל INC=12.8A), בלי סימן של ממסר לידו. מומלץ לבדוק את הרכיב בשרטוט ולראות אם נדרש ממסר.",
+      "cites": {
+        "instance_ids": [
+          "I1"
+        ],
+        "line_ids": [
+          "L1"
+        ],
+        "span_ids": [
+          "S1",
+          "S2",
+          "S3",
+          "S4"
+        ]
+      },
+      "confidence": 0.6,
+      "focus": {
+        "instance_ids": [
+          "I1"
+        ]
+      },
+      "trace_supported": false
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "line_explanation"
+}

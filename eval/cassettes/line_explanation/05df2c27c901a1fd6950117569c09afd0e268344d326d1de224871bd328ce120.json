@@ -1,0 +1,31 @@
+{
+  "answer": {
+    "input_tokens": 2478,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 342,
+    "payload": {
+      "answer": "בשרטוט כתוב ליד הרכיב S204M (דגם 4 קטבים) יחד עם \"3X6A\", כלומר 3 קטבים ו-6A. אותו צירוף הופיע ב-NEVIS-1 וההצעה 10288 אישרה שם 3P, ולכן נבחר S203M לפי זיכרון ההתאמות ולא לפי הכתוב בשרטוט. הקטבים והזרם נקראו מהשרטוט, והסדרה S203M לא נקראה אלא נלקחה מהזיכרון (ביטחון 0.9). כושר הניתוק לא צוין. ההצעה עדיין לא אושרה, מומלץ לוודא מול השרטוט.",
+      "cites": {
+        "instance_ids": [
+          "I1"
+        ],
+        "line_ids": [
+          "L1"
+        ],
+        "span_ids": [
+          "S2",
+          "S4"
+        ]
+      },
+      "confidence": 0.85,
+      "focus": {
+        "instance_ids": [
+          "I1"
+        ]
+      },
+      "trace_supported": true
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "line_explanation"
+}

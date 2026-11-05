@@ -88,6 +88,9 @@ class ComponentMatch(Contract):
     missing_attributes: list[str] = []
     warnings: list[str] = []
     signature: str | None = None
+    # the match memory's context for a memory written for this match (05 §5.3, §11, 08 §7.4): the customer's brand when
+    # the customer's preference chose it, else null (a brand the drawing or its notes name wins over memory anyway)
+    brand_context: str | None = None
     llm_decision: dict[str, Any] | None = None
 
 

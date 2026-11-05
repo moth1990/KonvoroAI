@@ -1,0 +1,20 @@
+{
+  "answer": {
+    "input_tokens": 2,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 383,
+    "payload": {
+      "clarification_options": [
+        "מא\"ז 1P ‏16A (כמו L6)",
+        "מא\"ז 3P ‏16A (כמו L5)",
+        "מא\"ז 1P+N ‏10A (כמו L3)",
+        "מא\"ז אחר – אפרט"
+      ],
+      "text": "איזה מא\"ז להוסיף ללוח B1? צריך לדעת מספר קטבים, זרם וכמות. אלה המא\"זים שכבר יש בלוח:\n- {{line:L3}}: SN201M ‏1P+N ‏10A, כמות 17\n- {{line:L5}}: S203M ‏3P ‏16A, כמות 5\n- {{line:L6}}: S201M ‏1P ‏16A, כמות 1\nכתוב לי את הפרטים, או בחר אחת מהאפשרויות. לא הכנתי הצעה, ושום דבר לא ישתנה בלי אישור שלך."
+    },
+    "text": null,
+    "tool_calls": []
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

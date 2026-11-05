@@ -1,0 +1,20 @@
+{
+  "answer": {
+    "input_tokens": 4,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 127,
+    "payload": null,
+    "text": null,
+    "tool_calls": [
+      {
+        "args": {
+          "text": "NURSERY"
+        },
+        "id": "toolu_01Tsbuks6rNCGokyxqZ7wWku",
+        "name": "list_quotes"
+      }
+    ]
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

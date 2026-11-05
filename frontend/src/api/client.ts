@@ -569,6 +569,7 @@ export type ChatTurn = Schemas["ChatTurnOut"];
 export type ChatApply = Schemas["ChatApplyOut"];
 export type ChatUiContext = Schemas["ChatUiContextIn"];
 export type ChatMoney = Schemas["ChatMoneyOut"];
+export type ChatInstance = Schemas["ChatInstanceOut"];
 
 export async function fetchChat(quoteId: string, client = api): Promise<Chat> {
   return unwrap(await client.GET("/quotes/{quote_id}/chat", { params: { path: { quote_id: quoteId } } }));
@@ -595,9 +596,17 @@ export async function newChat(quoteId: string, client = api): Promise<Chat> {
 }
 
 /** 08 §7.5: the estimator's approval. The answer has the quote as it now is and the event "בטל" undoes. */
-export async function applyProposal(proposalId: string, client = api): Promise<ChatApply> {
+/** 08 §7.5; `remember` (08 §7.4): "customer" or "tenant" writes the match memory too, when the card offers it. */
+export async function applyProposal(
+  proposalId: string,
+  remember: "quote_only" | "customer" | "tenant" = "quote_only",
+  client = api,
+): Promise<ChatApply> {
   return unwrap(
-    await client.POST("/chat/proposals/{proposal_id}/apply", { params: { path: { proposal_id: proposalId } } }),
+    await client.POST("/chat/proposals/{proposal_id}/apply", {
+      params: { path: { proposal_id: proposalId } },
+      body: { remember },
+    }),
   );
 }
 

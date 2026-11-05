@@ -1,0 +1,22 @@
+{
+  "answer": {
+    "input_tokens": 2,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 99,
+    "payload": null,
+    "text": null,
+    "tool_calls": [
+      {
+        "args": {
+          "family": "device",
+          "manufacturer": "ABB",
+          "text": "מגען"
+        },
+        "id": "toolu_0163p94dDAswn45riiKLaKaD",
+        "name": "search_catalog"
+      }
+    ]
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_command"
+}

@@ -38,6 +38,8 @@ COPIED = (
     "line_group",
     "line_type",
     "component_id",
+    "signature",
+    "brand_context",
     "catalog_item_id",
     "product_id",
     "sku",

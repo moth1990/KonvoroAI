@@ -1,0 +1,30 @@
+{
+  "answer": {
+    "input_tokens": 2715,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 289,
+    "payload": {
+      "answer": "ערך ה-IP55 נלקח מההערות הכלליות של השרטוט (מקור notes, ביטחון 0.95), ולא מברירת מחדל. גם הטקסט שליד הרכיב (S1) מציין IP-55, יחד עם IK=10 ו-RAL-7035. בטבלת המפרט שבתמונה המסומנת באדום מופיעים המבנה, הצבע והמידות 1200/800/300, אך אין בה שורה עם דרגת IP, ולכן את הערך עצמו קראתי מההערות ומהטקסט הסמוך.",
+      "cites": {
+        "instance_ids": [
+          "I1"
+        ],
+        "line_ids": [
+          "L1"
+        ],
+        "span_ids": [
+          "S1"
+        ]
+      },
+      "confidence": 0.85,
+      "focus": {
+        "instance_ids": [
+          "I1"
+        ]
+      },
+      "trace_supported": true
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "line_explanation"
+}
