@@ -1,0 +1,81 @@
+{
+  "answer": {
+    "input_tokens": 3445,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 648,
+    "payload": {
+      "issues": [
+        {
+          "bbox": [
+            990,
+            25,
+            1030,
+            70
+          ],
+          "component_ids": [
+            "c08"
+          ],
+          "confidence": 0.5,
+          "message": "c08 הוגדר כמפסק בתיבה יצוקה 40A, אבל בשרטוט נראה מא\"ז 40A (4x40A) לפני מפסקי הפחת. כדאי לבדוק את הסוג.",
+          "type": "wrong_family"
+        },
+        {
+          "bbox": [
+            895,
+            10,
+            1190,
+            75
+          ],
+          "component_ids": [
+            "c12"
+          ],
+          "confidence": 0.3,
+          "message": "בשרטוט שני מפסקי פחת 4x40A, אחד לכל קבוצת שקעים, וסך הכמות בטבלה הוא 2. כדאי לוודא שהכמות תואמת את שני המעגלים שנקבעו כבר כ-1 כל אחד.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": [
+            215,
+            85,
+            870,
+            135
+          ],
+          "component_ids": [
+            "c16"
+          ],
+          "confidence": 0.35,
+          "message": "בשלוש קבוצות שדה תאורה נראים כ-13 מא\"זים 10A, ובטבלה יש 12. כדאי לספור מחדש.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": [
+            95,
+            175,
+            150,
+            215
+          ],
+          "component_ids": [
+            "c06"
+          ],
+          "confidence": 0.5,
+          "message": "לחצן ES מוגדר ירוק, אבל בשרטוט הוא לחצן חירום (כפתור הפסקת חירום), שאמור להיות אדום. כדאי לבדוק צבע וסוג.",
+          "type": "inconsistent_attributes"
+        },
+        {
+          "bbox": [
+            1410,
+            235,
+            1568,
+            300
+          ],
+          "component_ids": [],
+          "confidence": 0.3,
+          "message": "בפינה הימנית התחתונה נראה תא פוטואלקטרי/מאור עם מפסק, שלא מופיע בטבלה. כדאי לבדוק אם חסר רכיב.",
+          "type": "missing_component"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "validator_review"
+}

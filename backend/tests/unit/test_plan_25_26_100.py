@@ -125,6 +125,7 @@ def test_three_current_transformers_from_one_range() -> None:
     ct = next(c for c in COMPONENTS if c.family == "current_transformer")
     assert ct.designators == ["T1", "T2", "T3"] and ct.quantity == 3
     assert (_value(ct, "ratio_primary_a"), _value(ct, "ratio_secondary_a")) == (100, 5)
+    assert run(ct)[0].chosen_sku == "CT4 100/5"  # a real product the sample catalog lacked (the user's approval)
 
 
 def test_both_rcds() -> None:
