@@ -6,7 +6,7 @@
 | **Branch** | `s26-overlay-export` |
 | **Depends on** | S23 |
 | **Status** | in review |
-| **PR** | (link) |
+| **PR** | [moth1990/KonvoroAI#36](https://github.com/moth1990/KonvoroAI/pull/36) |
 
 ## Goal
 
