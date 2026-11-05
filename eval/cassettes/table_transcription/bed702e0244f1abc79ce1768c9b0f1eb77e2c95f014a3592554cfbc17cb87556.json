@@ -1,0 +1,16 @@
+{
+  "answer": {
+    "input_tokens": 4339,
+    "model": "claude-opus-5-5",
+    "output_tokens": 44,
+    "payload": {
+      "columns": [],
+      "quote_date": "04/11/2026",
+      "quote_number": "10298",
+      "rows": [],
+      "totals": []
+    }
+  },
+  "model": "claude-opus-5-5",
+  "stage": "table_transcription"
+}
