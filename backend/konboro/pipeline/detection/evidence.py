@@ -32,6 +32,8 @@ A class changed here keeps the line yellow at most: code's evidence is good, not
    did not see.
 """
 
+import re
+
 from konboro.contracts.extraction import TextSpan
 from konboro.pipeline.association.grammar import parse
 
@@ -150,6 +152,7 @@ def _rating(c: Candidate, spans: list[TextSpan], cfg: DetectionConfig) -> float 
 
 BUTTONS = ("push_button",)  # rule 3b: a current rating beside one says it is not what it was read as, however sure
 UNSURE_RATED = ("contactor",)  # rule 3b too, when unsure (BUG-087: 25.26.100's x2 10A breakers)
+AMPS_WRITTEN = re.compile(r"\d\s*A", re.IGNORECASE)  # "10AC", "16 A": a current with its unit, not a tag's digits
 CURVED = ("switch_disconnector",)  # rule 2b: a curve on its rating says a breaker (and an unknown protective one)
 ROW_MIN = 3  # rule 3c: a row votes from this many symbols
 
@@ -196,26 +199,36 @@ def _class_of(family: str, like: list[Candidate], lib: Library) -> str | None:
 
 def curve_is_a_breaker(found: list[Candidate], spans: list[TextSpan], cfg: DetectionConfig) -> None:
     """Rule 2b (BUG-091): a curve written on a rating ("1×10AC", "C16") is a breaker's, like "MCB" written beside it:
-    the disconnector (or an unknown protective symbol) it is written beside, nearest it, is an MCB. A written reading
-    beats the model's class; the line stays yellow."""
+    the disconnector (or an unknown protective symbol) it is written beside, nearest it, is an MCB. So is an unsure
+    contactor, drawn as a device or as its power contacts (25.26.100's "1×10AC" read as a contactor at 0.504): a
+    contactor's rating carries no curve. For a contactor the amps must be written with their unit: its own tag "C1"
+    reads as curve C, 1A too (6199-2-50's contactors C1 and C2). A written reading beats the model's class; the line
+    stays yellow."""
     for s in spans:
         readings = parse(s.text)
         if not any(r.key == "curve" for r in readings) or not any(r.key == "current_a" for r in readings):
             continue
+        amps = bool(AMPS_WRITTEN.search(s.text))
         near = [
             (gap(c.bbox, s.bbox), c)
             for c in found
-            if c.role == "device"
-            and (c.family in (*PROTECTIVE, *CURVED) or c.symbol_class == UNKNOWN)
+            if (c.role == "device" or (amps and _curved_contactor(c, cfg)))
+            and (c.family in (*PROTECTIVE, *CURVED, *UNSURE_RATED) or c.symbol_class == UNKNOWN)
             and gap(c.bbox, s.bbox) <= _radius(c, cfg)
             and _aligned(c, s)
         ]
         if not near:
             continue
         _, c = min(near, key=lambda it: (it[0], it[1].bbox))
-        if c.family in CURVED or (c.family in PROTECTIVE and c.symbol_class == UNKNOWN):
+        curved = c.family in CURVED or (c.family in PROTECTIVE and c.symbol_class == UNKNOWN)
+        if curved or (amps and _curved_contactor(c, cfg)):
             _adopt(c, "circuit_breaker", "mcb", min(_cap(cfg), max(c.confidence, TEXT_FLOOR)))
             c.ceiling = _cap(cfg)
+            c.role = "device"
+
+
+def _curved_contactor(c: Candidate, cfg: DetectionConfig) -> bool:
+    return c.family in UNSURE_RATED and c.role in ("device", "power_contact") and not _sure(c, cfg)
 
 
 def _rated_buttons(

@@ -23,7 +23,7 @@ from ..association import schemas
 from ..context import StageContext
 from ..matching import catalog, factory, notes
 from ..matching.agent import Ask
-from ..matching.match import Inputs, item_of, match_all
+from ..matching.match import Inputs, corrected_poles, item_of, match_all
 
 log = logging.getLogger("konboro.pipeline.s5")
 
@@ -46,6 +46,7 @@ def run(ctx: StageContext) -> MatchingResult:
         notes=notes.read(intake.context_artifacts),
         components={c.component_id: c for c in merge.components},
         ask=chooser,
+        corrected=corrected_poles(merge.instances),
     )
     result = match_all(merge.components, inputs)
     for match in result.matches:

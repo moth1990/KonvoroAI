@@ -9,9 +9,10 @@ from typing import Any
 
 import pytest
 
+from konboro.contracts.common import StageIssue
 from konboro.contracts.intake import ContextArtifact
 from konboro.contracts.matching import ComponentMatch
-from konboro.contracts.merge import AttributeValue, Cable, CircuitContext, Component
+from konboro.contracts.merge import AttributeValue, Cable, CircuitContext, Component, Instance
 from konboro.db.catalog import SAMPLE, SAMPLE_ACCESSORIES, SAMPLE_KITS, parse, parse_accessories, parse_kits
 from konboro.pipeline.association import schemas
 from konboro.pipeline.matching import notes as notes_mod
@@ -19,7 +20,7 @@ from konboro.pipeline.matching import query as q
 from konboro.pipeline.matching.catalog import Catalog, Item, Kit, norm_sku, norm_token
 from konboro.pipeline.matching.config import DEFAULT
 from konboro.pipeline.matching.factory import Factory, Memory
-from konboro.pipeline.matching.match import Inputs, match_all, signature
+from konboro.pipeline.matching.match import Inputs, corrected_poles, match_all, signature
 from konboro.pipeline.matching.notes import NoteRule, Notes
 from konboro_llm.stages.catalog_disambiguation import CatalogAnswer
 
@@ -116,7 +117,11 @@ class Agent:
 
 
 def run(
-    *components: Component, fac: Factory | None = None, notes: Notes | None = None, ask: Any = None
+    *components: Component,
+    fac: Factory | None = None,
+    notes: Notes | None = None,
+    ask: Any = None,
+    corrected: frozenset[str] = frozenset(),
 ) -> list[ComponentMatch]:
     inp = Inputs(
         catalog=CATALOG,
@@ -125,6 +130,7 @@ def run(
         notes=notes or Notes(),
         components={c.component_id: c for c in components},
         ask=ask,
+        corrected=corrected,
     )
     return match_all(list(components), inp).matches
 
@@ -476,6 +482,41 @@ def test_an_unsure_pole_mark_the_cable_contradicts_is_a_conflict() -> None:
     assert "1P" in m.reason and "3P" in m.reason
     # nothing filled in: the reading stays what was read
     assert m.attributes_used["poles"].value == 1 and m.attributes_used["poles"].source == "graphic"
+
+
+def test_poles_corrected_by_the_cable_and_the_row_are_inferred() -> None:
+    """S24b decision 12: stage 4 joined two breakers read 3P (graphic 0.6) on 3×1.5 to the thirteen beside them read
+    1P, because their cable and the row's majority agree (`poles_corrected` on their instances). The component's poles
+    are `inferred`, the note names both, and the line is yellow."""
+    cable = CircuitContext(cable=Cable(cores=3, cross_section_mm2=1.5, raw="3×1.5"))
+    c = comp("circuit_breaker", "mcb", {"current_a": 10}, circuit=cable)
+    c.attributes["poles"] = AttributeValue(value=1, source="graphic", confidence=0.5)
+    plain = one(c)
+    assert plain.attributes_used["poles"].source == "graphic"
+    m = one(c, corrected=frozenset({c.component_id}))
+    assert (m.status, m.chosen_sku) == ("matched", "S201M-C10")
+    used = m.attributes_used["poles"]
+    assert (used.value, used.source) == (1, "inferred")
+    assert used.note == 'הכבל 3×1.5 ורוב המא"זים הזהים בשורה: 1P'
+    assert used.note in m.reason and m.confidence < 0.85
+    # the instances say which components: their `poles_corrected` issue
+    ins = Instance(
+        instance_id="ins_001_0034",
+        det_id="det_001_0034",
+        page_id="pg_001",
+        panel_id="pnl_01",
+        bbox=(0, 0, 1, 1),
+        family="circuit_breaker",
+        symbol_class="mcb",
+        attributes={},
+        method="agent",
+        status="uncertain",
+        confidence=0.42,
+        component_id=c.component_id,
+        issues=[StageIssue(code="poles_corrected", severity="warning", message="…")],
+    )
+    other = ins.model_copy(update={"instance_id": "ins_001_0035", "component_id": "cmp_x", "issues": []})
+    assert corrected_poles([ins, other]) == frozenset({c.component_id})
 
 
 def test_an_overload_relays_range_holds_the_load() -> None:
