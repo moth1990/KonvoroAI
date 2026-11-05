@@ -1,0 +1,60 @@
+{
+  "answer": {
+    "input_tokens": 5481,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 509,
+    "payload": {
+      "issues": [
+        {
+          "bbox": [
+            555,
+            444,
+            610,
+            466
+          ],
+          "component_ids": [
+            "c08"
+          ],
+          "confidence": 0.35,
+          "message": "בשרטוט המונה הוא SATEC 135E, ובקטלוג נקרא PM135E. כדאי לוודא שהדגם נכון.",
+          "type": "inconsistent_attributes"
+        },
+        {
+          "bbox": null,
+          "component_ids": [
+            "c18"
+          ],
+          "confidence": 0.4,
+          "message": "בשרטוט אין נתיכים, ובטבלה יש 3 נתיכים 100A. כדאי לוודא שהם באמת בלוח, ואולי זו ערבוב עם מגן הברק 100kA.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": null,
+          "component_ids": [
+            "c14"
+          ],
+          "confidence": 0.3,
+          "message": "בטבלה יש 6 מא\"ז 63A. בשרטוט רואים רק מא\"ז אחד של 63A בכל אחד משני הענפים בצד שמאל, ועוד בענף (x6) באמצע. כדאי לבדוק את הכמות.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": [
+            183,
+            540,
+            210,
+            570
+          ],
+          "component_ids": [
+            "c12",
+            "c06"
+          ],
+          "confidence": 0.4,
+          "message": "המפסק 160A LSI מופיע פעמיים בטבלה, פעם עם 10kA ופעם עם 36kA. כדאי לבדוק אם זה אותו מפסק ולהשאיר שורה אחת.",
+          "type": "inconsistent_attributes"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "validator_review"
+}
