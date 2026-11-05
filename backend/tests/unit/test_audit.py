@@ -348,7 +348,7 @@ def test_included_items() -> None:
 
 
 def test_every_golden_quote_line_is_signed() -> None:
-    for g in ("26-993", "NEVIS-1", "NURSERY-1"):
+    for g in ("26-993", "NEVIS-1", "NURSERY-1", "25.26.100"):
         quote = json.loads((GOLDEN / g / "actual_quote.json").read_text(encoding="utf-8"))
         for ln in quote["lines"]:
             assert sign(ln.get("text") or ln["description"]).signed, (g, ln)
@@ -680,6 +680,43 @@ def test_the_golden_quotes_against_their_labels(g: str) -> None:
     if g == "26-993":  # the CT test terminals: auxiliary material; lines 5 and 15 cover several devices
         assert [d.type for d in o.differences if d.type == "not_a_difference"] == ["not_a_difference"]
         assert {ln.index for ln in o.lines if ln.status != "matched"} == {16}
+
+
+def test_25_26_100_quote_read_from_its_text_layer() -> None:
+    """Quote 10298 has a text layer: code reads its table, no model. BUG-076: the cabinet's cell wraps over two lines,
+    which came back in reverse order, so the line did not sign and every omission's confidence was capped."""
+    from konboro.pipeline.audit.step import _text_table
+
+    data = (GOLDEN / "25.26.100" / "actual_quote_10298.pdf").read_bytes()
+    assert _text_table(data, 0) is None  # the cover page: the customer's details, no table
+    read = _text_table(data, 1)
+    assert read is not None and len(read.lines) == 16
+    assert read.lines[15].text.startswith("מבנה לוח מפח") and read.lines[15].text.endswith("2100/600/400")
+    assert all(sign(ln.text).signed for ln in read.lines)
+    assert sum(ln.total for ln in read.lines if ln.total is not None) == Decimal(14341)
+
+
+def test_25_26_100_quote_against_its_labels() -> None:
+    """Quote 10298 (S24b), confirmed by the user: 13 and 2 breakers short, the 25A feeder priced as 1P, the selector
+    left out, and line 5 a copy of line 4. The astronomical clock is a time switch (its line matches)."""
+    o = audit(oracle_quote("25.26.100"), oracle_components("25.26.100"), AUX)
+    shown = sorted((d.type, d.quote_line_index, d.family) for d in o.differences if d.confidence >= 0.6)
+    assert shown == [
+        ("attribute_mismatch", 2, "circuit_breaker"),  # BUG-075: 2.5–4A against the drawn 2.4–4A, the same product
+        ("attribute_mismatch", 8, "circuit_breaker"),  # the feeder: 1P in the quote, 3P in the drawing
+        ("attribute_mismatch", 15, "rcd"),  # "40/0.3": a typo in the quote, flagged by its text
+        ("missing_in_quote", None, "selector_switch"),
+        ("qty_short", 10, "circuit_breaker"),
+        ("qty_short", 11, "circuit_breaker"),
+    ]
+    # BUG-074: the repeated CT line is "not in the drawing", hidden, instead of a double count
+    [extra] = [d for d in o.differences if d.confidence < 0.6]
+    assert (extra.type, extra.quote_line_index, extra.family) == ("extra_in_quote", 5, "current_transformer")
+    by_line = {d.quote_line_index: d.amount for d in o.differences}
+    assert (by_line[10], by_line[11]) == (Decimal(546), Decimal(84))  # the confirmed 630
+    s = o.summary
+    assert (str(s.value_at_risk), s.missing_items, s.missing_items_without_price) == ("763.00", 16, 1)
+    assert {ln.index for ln in o.lines if ln.status == "matched"} == {1, 3, 4, 6, 7, 9, 12, 13, 14, 16}
 
 
 # --- the rest of the money branches (07 §10.1: money code is fully covered) ----------------------------------------

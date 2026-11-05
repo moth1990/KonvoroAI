@@ -1,0 +1,70 @@
+{
+  "answer": {
+    "input_tokens": 3333,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 529,
+    "payload": {
+      "issues": [
+        {
+          "bbox": [
+            1100,
+            195,
+            1150,
+            235
+          ],
+          "component_ids": [
+            "c06"
+          ],
+          "confidence": 0.4,
+          "message": "ES מסומן ככפתור חירום ירוק, אבל בשרטוט זה לחצן כיבוי חירום/מגע בלוח הפיקוד. כדאי לבדוק את סוג וצבע הלחצן.",
+          "type": "wrong_family"
+        },
+        {
+          "bbox": [
+            895,
+            100,
+            1160,
+            125
+          ],
+          "component_ids": [
+            "c09"
+          ],
+          "confidence": 0.45,
+          "message": "כמות 22 מא\"ז 16A חד-קוטביים נראית גבוהה בהרבה ממה שמופיע בשרטוט (כ-10 מאזים עם ריבוי X2/X11). כדאי לוודא את הספירה.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": [
+            500,
+            0,
+            830,
+            40
+          ],
+          "component_ids": [
+            "c07",
+            "c08"
+          ],
+          "confidence": 0.4,
+          "message": "מפסקי 40A מופיעים בשתי שורות עם נתונים שונים (25kA ו-6kA, עם ובלי קטלוג). כדאי לבדוק אם כולם אותו סוג.",
+          "type": "inconsistent_attributes"
+        },
+        {
+          "bbox": [
+            0,
+            70,
+            60,
+            120
+          ],
+          "component_ids": [
+            "c13"
+          ],
+          "confidence": 0.35,
+          "message": "שנאי זרם 100/5A מופיע ככמות 3 עם תגים T1–T3, בעוד T1 משמש גם לבורר. כדאי לבדוק את התיוג והכמות.",
+          "type": "inconsistent_attributes"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "validator_review"
+}

@@ -49,6 +49,7 @@ TERMS: tuple[tuple[str, str, str | None], ...] = (
     ("רב מד", "measuring_instrument", "measuring_instrument"),
     ("שעון שבת", "time_switch", "time_switch"),
     ("שעון פיקוד", "time_switch", "time_switch"),
+    ("שעון אסטרונומי", "time_switch", "time_switch"),  # 25.26.100's quote 10298
     ("לחצן חירום", "push_button", "emergency_button"),
     ("לחצן", "push_button", "push_button"),
     ("נורית", "indicator_lamp", "indicator_lamp"),

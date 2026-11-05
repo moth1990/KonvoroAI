@@ -85,6 +85,10 @@ class CanonDifference(Canon):
     designators: tuple[str, ...] = ()
     value_at_risk: Decimal | None = None
     confidence: float | None = None  # predictions only: 11 §10 scores the differences shown at ≥ 0.6
+    # what a difference with no designator is matched by (25.26.100's untagged breakers): the quote's lines it is
+    # about, and for an omission with no line, its family
+    quote_lines: tuple[int, ...] = ()
+    family: str | None = None
 
 
 class CanonAudit(Canon):

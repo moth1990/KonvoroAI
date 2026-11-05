@@ -40,6 +40,8 @@ def audit_differences(differences: list[Difference]) -> tuple[CanonDifference, .
             designators=tuple(d.designators),
             value_at_risk=d.amount if d.amount is not None and d.amount > 0 else None,
             confidence=d.confidence,
+            quote_lines=() if d.quote_line_index is None else (d.quote_line_index,),
+            family=d.family,
         )
         for d in differences
         if d.type in AUDIT_TYPES

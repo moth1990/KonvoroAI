@@ -95,7 +95,11 @@ def quote_total(quote: dict[str, Any] | None) -> Decimal | None:
     return _money(quote.get("subtotal", quote.get("total_before_vat")))
 
 
-DIFFERENCE_TYPES: dict[str, DifferenceType] = {"missing": "missing_in_quote", "quantity_mismatch": "quantity_mismatch"}
+DIFFERENCE_TYPES: dict[str, DifferenceType] = {
+    "missing": "missing_in_quote",
+    "quantity_mismatch": "quantity_mismatch",
+    "attribute_mismatch": "attribute_mismatch",
+}
 
 
 def audit(quote: dict[str, Any] | None) -> CanonAudit | None:
@@ -115,6 +119,8 @@ def audit(quote: dict[str, Any] | None) -> CanonAudit | None:
                     item=d["item"],
                     designators=designators(d.get("designators")),
                     value_at_risk=_money(d.get("value_at_risk")),
+                    quote_lines=tuple(d.get("quote_lines", ())),
+                    family=d.get("family"),
                 )
             )
         return CanonAudit(matched=comparison.get("matched_lines"), differences=tuple(diffs))
