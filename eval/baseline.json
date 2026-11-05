@@ -1099,23 +1099,23 @@
       ],
       "matching": {
         "auxiliary": 5,
-        "components": 88,
+        "components": 86,
         "llm_signatures": 3,
         "method_llm": 5,
-        "method_none": 37,
+        "method_none": 35,
         "method_rules_ranked": 10,
         "method_rules_unique": 31,
-        "signatures": 64,
+        "signatures": 62,
         "status_ambiguous": 11,
         "status_matched": 41,
-        "status_unmatched": 31
+        "status_unmatched": 29
       },
       "merge": {
         "agent_instances": 148,
         "agent_tiles": 28,
         "citation_mismatches": 6,
         "cited_values": 123,
-        "components": 88,
+        "components": 86,
         "instances": 178,
         "missing": 3,
         "shared_labels": 0,
@@ -1139,10 +1139,10 @@
         },
         "לוח סככה": {
           "component_precision": {
-            "den": 31,
+            "den": 30,
             "kind": "ratio",
             "num": 17.0,
-            "value": 0.548387
+            "value": 0.566667
           },
           "component_recall": {
             "den": 29,
@@ -1153,10 +1153,10 @@
         },
         "לוח ראשי": {
           "component_precision": {
-            "den": 33,
+            "den": 32,
             "kind": "ratio",
             "num": 21.0,
-            "value": 0.636364
+            "value": 0.65625
           },
           "component_recall": {
             "den": 30,
@@ -1167,7 +1167,7 @@
         }
       },
       "predicted": {
-        "products": 88,
+        "products": 86,
         "units": 258
       },
       "predicted_total": "0",
@@ -1378,10 +1378,10 @@
             "value": 0.04878
           },
           "component_precision": {
-            "den": 81,
+            "den": 79,
             "kind": "ratio",
             "num": 47.0,
-            "value": 0.580247
+            "value": 0.594937
           },
           "component_recall": {
             "den": 73,
@@ -1410,8 +1410,8 @@
           "unit_recall": {
             "den": 184,
             "kind": "ratio",
-            "num": 122.0,
-            "value": 0.663043
+            "num": 123.0,
+            "value": 0.668478
           },
           "values_without_evidence": {
             "den": 1,
@@ -1428,10 +1428,10 @@
             "value": 1.0
           },
           "llm_share": {
-            "den": 64,
+            "den": 62,
             "kind": "ratio",
             "num": 3.0,
-            "value": 0.046875
+            "value": 0.048387
           },
           "sku_value_accuracy": {
             "den": 0,
@@ -1440,10 +1440,10 @@
             "value": null
           },
           "with_sku": {
-            "den": 83,
+            "den": 81,
             "kind": "ratio",
             "num": 52.0,
-            "value": 0.626506
+            "value": 0.641975
           }
         },
         "s5_labelled": {
@@ -3797,10 +3797,10 @@
           "value": 0.042471
         },
         "component_precision": {
-          "den": 199,
+          "den": 197,
           "kind": "ratio",
           "num": 134.0,
-          "value": 0.673367
+          "value": 0.680203
         },
         "component_recall": {
           "den": 180,
@@ -3829,8 +3829,8 @@
         "unit_recall": {
           "den": 512,
           "kind": "ratio",
-          "num": 398.0,
-          "value": 0.777344
+          "num": 399.0,
+          "value": 0.779297
         },
         "values_without_evidence": {
           "den": 7,
@@ -3847,10 +3847,10 @@
           "value": 1.0
         },
         "llm_share": {
-          "den": 176,
+          "den": 174,
           "kind": "ratio",
           "num": 7.0,
-          "value": 0.039773
+          "value": 0.04023
         },
         "sku_value_accuracy": {
           "den": 31,
@@ -3859,10 +3859,10 @@
           "value": 1.0
         },
         "with_sku": {
-          "den": 206,
+          "den": 204,
           "kind": "ratio",
           "num": 152.0,
-          "value": 0.737864
+          "value": 0.745098
         }
       },
       "s5_labelled": {
@@ -4453,10 +4453,10 @@
             "value": 0.045977
           },
           "component_precision": {
-            "den": 99,
+            "den": 97,
             "kind": "ratio",
             "num": 58.0,
-            "value": 0.585859
+            "value": 0.597938
           },
           "component_recall": {
             "den": 88,
@@ -4485,8 +4485,8 @@
           "unit_recall": {
             "den": 242,
             "kind": "ratio",
-            "num": 175.0,
-            "value": 0.72314
+            "num": 176.0,
+            "value": 0.727273
           },
           "values_without_evidence": {
             "den": 2,
@@ -4503,10 +4503,10 @@
             "value": 1.0
           },
           "llm_share": {
-            "den": 82,
+            "den": 80,
             "kind": "ratio",
             "num": 3.0,
-            "value": 0.036585
+            "value": 0.0375
           },
           "sku_value_accuracy": {
             "den": 0,
@@ -4515,10 +4515,10 @@
             "value": null
           },
           "with_sku": {
-            "den": 106,
+            "den": 104,
             "kind": "ratio",
             "num": 70.0,
-            "value": 0.660377
+            "value": 0.673077
           }
         },
         "s5_labelled": {
