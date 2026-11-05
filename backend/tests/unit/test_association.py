@@ -933,9 +933,56 @@ def test_the_majority_pole_mark_of_alike_peers_wins() -> None:
         comps, _, _ = components("drw_01X", built, SCH)
         return sorted((c.quantity, c.attributes["poles"].value or 0) for c in comps)
 
+    assert outcome([(3, "graphic"), (3, "graphic"), (4, "drawing")]) == [(1, 4), (2, 3)]  # written in text
     assert outcome([(3, "graphic"), (4, "graphic"), (None, "graphic")]) == [(1, 0), (1, 3), (1, 4)]  # a tie
-    # a count written in text is never overruled: 4P written beside one, 3P marked on two
-    assert outcome([(3, "graphic"), (3, "graphic"), (4, "drawing")]) == [(1, 4), (2, 3)]
+
+
+def test_a_mark_both_its_cable_and_the_majority_contradict_is_corrected() -> None:
+    """S24b decision 12 (live run `drw_01M6NFV83V6MQMWTVVMSFW6ZMD`, the user: "Yes, correct it"): main panel's two
+    10A breakers "X2" read 3P (graphic 0.6) on a 3×1.5 cable, in a row of thirteen read 1P. Their cable and their alike
+    peers' majority agree on 1P, so they join the row's component: 15 × 1P. The instance keeps what was read and says
+    why it joined (`poles_corrected`); stage 5 makes the value `inferred`. A disagreeing mark with no cable keeps its
+    own flagged line (decision 11, 6199-2-50's shed), and a sure mark or a count written in text is never changed."""
+
+    def at(
+        b: Built, x: float, poles: int | None, cores: int | None = 3, conf: float = 0.5, src: str = "graphic"
+    ) -> Built:
+        b.instance.bbox = (x, 464.3, x + 44.4, 502.3)
+        b.instance.attributes["poles"] = AttributeValue(
+            value=poles,
+            source=src if poles is not None else None,  # type: ignore[arg-type]
+            confidence=conf if poles is not None else None,
+            span_ids=[],
+        )
+        if cores is not None:
+            b.circuit_context = CircuitContext(cable=Cable(cores=cores, cross_section_mm2=1.5, raw="3×1.5"))
+        return b
+
+    ten = {"current_a": 10}
+
+    def row(mark: tuple[int, float, str], cores: int | None = 3) -> list[Built]:
+        peers = [at(_built(n, values=ten), 650 + 100 * n, 1) for n in range(1, 4)]
+        x2 = at(_built(9, values=ten, mult=2), 1877.7, mark[0], cores, conf=mark[1], src=mark[2])
+        x2.instance.bbox = (1877.7, 454.9, 1922.2, 509.1)  # drawn taller, centred on the row
+        return [*peers, x2]
+
+    built = row((3, 0.6, "graphic"))
+    comps, _, _ = components("drw_01X", built, SCH)
+    assert [(c.quantity, c.attributes["poles"].value) for c in comps] == [(5, 1)]
+    assert comps[0].attributes["poles"].source == "graphic"  # the row's marks; stage 5 says `inferred`
+    x2 = built[-1].instance
+    assert x2.attributes["poles"].value == 3  # kept as read (00 §5.3)
+    assert [i.code for i in x2.issues] == ["poles_corrected"]
+    assert "3×1.5" in x2.issues[0].message and "1P" in x2.issues[0].message
+
+    def outcome(mark: tuple[int, float, str], cores: int | None = 3) -> list[tuple[int, int]]:
+        comps, _, _ = components("drw_01X", row(mark, cores), SCH)
+        return sorted((c.quantity, c.attributes["poles"].value) for c in comps)
+
+    assert outcome((3, 0.6, "graphic"), cores=None) == [(2, 3), (3, 1)]  # no cable: its own flagged line
+    assert outcome((3, 0.6, "graphic"), cores=5) == [(2, 3), (3, 1)]  # its cable backs the mark
+    assert outcome((3, 0.9, "graphic")) == [(2, 3), (3, 1)]  # a sure mark
+    assert outcome((3, 0.6, "drawing")) == [(2, 3), (3, 1)]  # written in text
 
 
 def test_one_tag_merges_one_family_never_a_terminal_over_breakers() -> None:

@@ -24,6 +24,7 @@ they sit on.
 
 import re
 from collections import Counter
+from collections.abc import Iterable
 from dataclasses import dataclass, field, replace
 from typing import Any
 
@@ -37,7 +38,7 @@ from konboro.contracts.matching import (
     Substitution,
     UsedAttribute,
 )
-from konboro.contracts.merge import Component
+from konboro.contracts.merge import Component, Instance
 
 from ..association.grammar import parse
 from ..association.schemas import NEVER_DEFAULT, Attribute, Schemas
@@ -66,6 +67,30 @@ class Inputs:
     components: dict[str, Component]  # every component of the drawing, for the circuit and the parents
     ask: Ask | None = None
     cfg: MatchingConfig = DEFAULT
+    corrected: frozenset[str] = frozenset()  # components whose poles stage 4 corrected (`corrected_poles`)
+
+
+def corrected_poles(instances: Iterable[Instance]) -> frozenset[str]:
+    """S24b decision 12: the components stage 4 joined a breaker to because its cable and its alike peers' majority
+    both contradicted its unsure pole mark (`poles_corrected` on the instance, which keeps the mark as read)."""
+    return frozenset(
+        i.component_id for i in instances if i.component_id and any(x.code == "poles_corrected" for x in i.issues)
+    )
+
+
+_PEERS = {"mcb": 'המא"זים'}  # how the row's breakers are named in the note; any other class: המפסקים
+
+
+def _corrected(component: Component, needs: dict[str, Need]) -> Need | None:
+    """The poles stage 4 corrected, `inferred`: the cable and the row agree (05 §5.5.1, S24b decision 12)."""
+    read = needs.get("poles")
+    cable = component.circuit_context.cable if component.circuit_context else None
+    if read is None or read.source != "graphic" or cable is None:
+        return None
+    shown = cable.raw or f"{cable.cores} גידים"
+    peers = _PEERS.get(component.symbol_class, "המפסקים")
+    note = f"הכבל {shown} ורוב {peers} הזהים בשורה: {text.value('poles', read.value)}"
+    return Need("poles", read.value, read.mode, "inferred", False, note)
 
 
 @dataclass
@@ -388,6 +413,7 @@ class Prepared:
     kit_phrases: tuple[str, ...] = ()
     has_text: bool = False
     cable_conflict: inference.CableConflict | None = None  # BUG-079
+    corrected: bool = False  # S24b decision 12
 
     @property
     def key(self) -> tuple[Any, ...]:
@@ -406,6 +432,7 @@ class Prepared:
             self.parent_fit,
             self.parent_statuses,
             self.cable_conflict,
+            self.corrected,
         )
 
 
@@ -427,6 +454,10 @@ def prepare(component: Component, inp: Inputs, done: dict[str, ComponentMatch], 
             if name in attrs and name not in needs:
                 needs[name] = Need(name, value, attrs[name].match_mode, "series", False, f"לפי הדגם {ex.token}")
     needs = fill(component, needs, attrs, inp)
+    corrected = _corrected(component, needs) if component.component_id in inp.corrected else None
+    if corrected is not None:
+        needs["poles"] = corrected
+        warnings.append("inferred_attribute")
     tops = inference.class_tops(catalog.top_current)
     model_written = ex.sku_item is not None or ex.series_items is not None
     untyped = component.symbol_class in (UNTYPED, "", None) or inference.outranged(
@@ -474,6 +505,7 @@ def prepare(component: Component, inp: Inputs, done: dict[str, ComponentMatch], 
         tuple(phrases),
         bool(beside) or bool(inp.notes.applying(component.family, component.panel_id)),
         inferred.conflict,
+        corrected is not None,
     )
 
 

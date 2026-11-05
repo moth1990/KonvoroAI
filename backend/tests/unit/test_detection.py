@@ -665,6 +665,30 @@ def test_a_residual_rating_beside_a_breaker_makes_it_an_rcd() -> None:
     assert breaker.family == "circuit_breaker"
 
 
+def test_a_curve_on_a_rating_makes_an_unsure_contactor_a_breaker() -> None:
+    """Rule 2b (BUG-091) on a contactor (25.26.100's third live run): "1×10AC" beside a symbol read as a contactor's
+    power contacts at 0.504. A contactor's rating has no curve: it is an MCB, a device, yellow at most. A sure contactor
+    stays one, and so does a coil, whose circuit numbers ("C130,131") are no rating."""
+    ac = span("1×10AC", (3205.0, 446.8, 3251.8, 460.6), n=1)
+    unsure = cand(
+        (3164.7, 437.4, 3197.6, 477.1), family="contactor", cls="contactor", role="power_contact", detector_score=0.56
+    )
+    assert not evidence._sure(unsure, DEFAULT)
+    evidence.curve_is_a_breaker([unsure], [ac], DEFAULT)
+    assert (unsure.family, unsure.symbol_class, unsure.role) == ("circuit_breaker", "mcb", "device")
+    assert unsure.confidence < DEFAULT.accepted_from
+    sure = cand((3164.7, 437.4, 3197.6, 477.1), family="contactor", cls="contactor", role="power_contact")
+    evidence.curve_is_a_breaker([sure], [ac], DEFAULT)
+    assert (sure.family, sure.role) == ("contactor", "power_contact")
+    coil = cand((3262.2, 689.0, 3320.1, 710.9), family="contactor", cls="contactor", role="coil", detector_score=0.56)
+    evidence.curve_is_a_breaker([coil], [span("C130,131", (3262.5, 691.7, 3316.4, 708.6), n=2)], DEFAULT)
+    assert coil.family == "contactor"
+    # 6199-2-50: a contactor's own tag "C1" reads curve C, 1A; only amps written with their unit count for a contactor
+    c1 = cand((519, 1100, 532, 1128), family="contactor", cls="contactor", role="power_contact", detector_score=0.47)
+    evidence.curve_is_a_breaker([c1], [span("C1", (512, 1086, 526, 1096), n=3)], DEFAULT)
+    assert (c1.family, c1.role) == ("contactor", "power_contact")
+
+
 def test_breakers_in_one_row_with_one_rating_and_one_drawing_are_one_class() -> None:
     """BUG-070: four 10A lighting breakers read as switch-disconnectors beside mcbs of the same row and rating, and
     two 16A breakers read as push buttons. A sure one gives its class to the unsure ones; a different rating or a

@@ -157,10 +157,14 @@ def test_q0_is_a_moulded_case_breaker() -> None:
 
 
 def test_the_10a_lighting_breakers_are_one_1p_line() -> None:
-    """BUG-070, BUG-072: switch-disconnectors beside mcbs became mcbs; the 3×1.5 cable gives them one pole."""
-    tens = [
+    """BUG-070, BUG-072: switch-disconnectors beside mcbs became mcbs; the 3×1.5 cable gives them one pole. The
+    "1×10AC" breaker, read as a contactor here, is a breaker of its own by rule 2b (1P 10A curve C, its own line)."""
+    ten = [
         c for c in COMPONENTS if c.family in ("circuit_breaker", "switch_disconnector") and _value(c, "current_a") == 10
     ]
+    ac = [c for c in ten if "1×10AC" in c.explicit_texts]
+    assert [(c.quantity, _value(c, "poles"), _value(c, "curve")) for c in ac] == [(1, 1, "C")]
+    tens = [c for c in ten if c not in ac]
     assert len(tens) == 1 and tens[0].family == "circuit_breaker" and tens[0].quantity >= 11
     assert tens[0].circuit_context is not None and tens[0].circuit_context.cable is not None
     assert tens[0].circuit_context.cable.cores == 3

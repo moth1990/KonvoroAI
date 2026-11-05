@@ -53,6 +53,7 @@ INSTANCE_ISSUES = {
     "tag_conflict": "התג {tag} כתוב גם ליד רכיב מסוג אחר ({family}). בדקו לאיזה רכיב הוא שייך.",
     "poles_from_peers": "לא סומנו קטבים: רוב המפסקים הזהים בשורה סומנו {poles}. בדקו.",
     "poles_peer_conflict": "סומן {read}, אבל רוב המפסקים הזהים בשורה סומנו {poles}. בדקו את הקטבים.",
+    "poles_corrected": "סומן {read}, אבל הכבל {cable} ורוב המפסקים הזהים בשורה נותנים {poles}: נספר כ-{poles}. בדקו.",
 }
 
 
@@ -388,7 +389,10 @@ def _join_by_peers(groups: dict[tuple[Any, ...], list[Device]]) -> None:
       like `_join_by_cable`, each instance keeps its poles unread (00 §5.3) and carries why it joined;
     - one whose unsure pole mark (`graphic`) disagrees keeps its reading and its own line, flagged for the reviewer
       (`poles_peer_conflict`), unless its own cable backs what was marked. Outvoting it made 6199-2-50's real 1P
-      breaker among five 3P a 3P one (the user chose the flag).
+      breaker among five 3P a 3P one (the user chose the flag);
+    - one whose own cable gives the majority's poles too joins them (`poles_corrected`, S24b decision 12: 25.26.100's
+      two 10A "X2" read 3P on 3×1.5 beside thirteen 1P). Its instance keeps the mark as read; stage 5 makes the
+      component's poles `inferred` (`matching.match.corrected_poles`).
     A tie, a sure mark or a count written in text that disagrees gives nothing. Peers are the same family, class and
     values: an RCD's 4P beside the breakers never votes."""
     rows: dict[tuple[Any, ...], list[tuple[tuple[Any, ...], Device]]] = defaultdict(list)
@@ -438,13 +442,19 @@ def _vote_poles(groups: dict[tuple[Any, ...], list[Device]], cluster: list[tuple
     winner = ranked[0][0]
     dissent = [(sig, d) for sig, d in cluster if (a := poles(d)) is not None and repr(a.value) != winner]
     implied = _cable_poles()
-    flagged = []
-    for _, d in dissent:
+    flagged: list[Device] = []
+    corrected: list[tuple[tuple[Any, ...], Device]] = []
+    for sig, d in dissent:
         a = poles(d)
         if a is None or a.source != "graphic" or (a.confidence or 0.0) >= SURE_MARK:
             return  # written in text, or a sure mark: the row is not one product
-        if not any(implied.get(c) == a.value for b in d.built if (c := _cable_cores(b)) is not None):
-            flagged.append(d)  # its own cable doesn't back it (25.26.100's kitchen 3P on 5×2.5 does)
+        cabled = {implied.get(c) for b in d.built if (c := _cable_cores(b)) is not None}
+        if a.value in cabled:
+            continue  # its own cable backs the mark (25.26.100's kitchen 3P on 5×2.5)
+        if cabled and all(p is not None and repr(p) == winner for p in cabled):
+            corrected.append((sig, d))  # its cable and the majority agree against the mark (decision 12)
+        else:
+            flagged.append(d)
     target = next(sig for sig, d in cluster if (a := poles(d)) is not None and repr(a.value) == winner)
     shown = f"{winner}P"
     for d in flagged:  # kept as read, on its own line: 6199-2-50's shed has a real 1P among five 3P (the user's choice)
@@ -452,13 +462,30 @@ def _vote_poles(groups: dict[tuple[Any, ...], list[Device]], cluster: list[tuple
             b.instance.issues.append(
                 issue("poles_peer_conflict", "warning", b.instance.page_id, poles=shown, read=f"{poles(d).value}P")  # type: ignore[union-attr]
             )
+    majority = poles(groups[target][0])
+    for sig, d in corrected:
+        read = f"{poles(d).value}P"  # type: ignore[union-attr]
+        for b in d.built:
+            cable = b.circuit_context.cable if b.circuit_context else None
+            shown_cable = (cable.raw or f"{cable.cores} גידים") if cable else ""
+            b.instance.issues.append(
+                issue("poles_corrected", "warning", b.instance.page_id, poles=shown, read=read, cable=shown_cable)
+            )
+        d.attributes = {**d.attributes, "poles": majority.model_copy()}  # type: ignore[union-attr]
+        _move(groups, sig, d, target)
     for sig, d in [(sig, d) for sig, d in cluster if sig != target and poles(d) is None and not sig[-1]]:
         for b in d.built:
             b.instance.issues.append(issue("poles_from_peers", "info", b.instance.page_id, poles=shown))
-        groups[sig] = [x for x in groups[sig] if x is not d]
-        if not groups[sig]:
-            del groups[sig]
-        groups[target].append(d)
+        _move(groups, sig, d, target)
+
+
+def _move(
+    groups: dict[tuple[Any, ...], list[Device]], sig: tuple[Any, ...], d: Device, target: tuple[Any, ...]
+) -> None:
+    groups[sig] = [x for x in groups[sig] if x is not d]
+    if not groups[sig]:
+        del groups[sig]
+    groups[target].append(d)
 
 
 def _cable_cores(b: Built) -> int | None:
