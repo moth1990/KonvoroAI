@@ -1,0 +1,97 @@
+{
+  "answer": {
+    "input_tokens": 5358,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 514,
+    "payload": {
+      "instances": [
+        {
+          "attributes": [
+            {
+              "confidence": 0.85,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s5"
+              ],
+              "value": 16
+            },
+            {
+              "confidence": 0.6,
+              "evidence": "graphic",
+              "graphic_note": "one line in, one slanted stroke across the line, so 1 pole",
+              "name": "poles",
+              "span_ids": [],
+              "value": 1
+            }
+          ],
+          "brand_hint": null,
+          "det": "d1",
+          "explicit_texts": [
+            "s5",
+            "s1"
+          ],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          },
+          "uses_shared_label": false
+        },
+        {
+          "attributes": [
+            {
+              "confidence": 0.85,
+              "evidence": "text",
+              "name": "current_a",
+              "span_ids": [
+                "s6"
+              ],
+              "value": 16
+            },
+            {
+              "confidence": 0.6,
+              "evidence": "graphic",
+              "graphic_note": "one line in, one slanted stroke across the line, so 1 pole",
+              "name": "poles",
+              "span_ids": [],
+              "value": 1
+            }
+          ],
+          "brand_hint": null,
+          "det": "d2",
+          "explicit_texts": [
+            "s6",
+            "s2"
+          ],
+          "multiplicity": {
+            "count": 1,
+            "span_ids": []
+          },
+          "uses_shared_label": false
+        }
+      ],
+      "possible_missed": [],
+      "shared_labels": [],
+      "unassigned_spans": [
+        {
+          "reason": "terminal/circuit label X11, not a device value",
+          "span_id": "s7"
+        },
+        {
+          "reason": "belongs to neighbour c2",
+          "span_id": "s3"
+        },
+        {
+          "reason": "belongs to neighbour c2",
+          "span_id": "s4"
+        },
+        {
+          "reason": "belongs to neighbour c3, cable text",
+          "span_id": "s8"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "text_association"
+}

@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 868,
+    "model": "claude-haiku-5-5",
+    "output_tokens": 454,
+    "payload": {
+      "chosen_sku": null,
+      "confidence": 0.4,
+      "missing_attributes": [],
+      "reason": "הכתוב בשרטוט מציין סליל הפסקה על המפסק הראשי בלבד, ואינו מכריע בין שני המועמדים; שניהם ABB ובמתח 230V. לכן לא נבחר מק\"ט."
+    }
+  },
+  "model": "claude-haiku-5-5",
+  "stage": "catalog_disambiguation"
+}

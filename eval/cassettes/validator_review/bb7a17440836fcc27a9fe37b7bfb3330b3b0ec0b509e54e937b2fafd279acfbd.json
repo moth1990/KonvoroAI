@@ -1,0 +1,83 @@
+{
+  "answer": {
+    "input_tokens": 6728,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 651,
+    "payload": {
+      "issues": [
+        {
+          "bbox": [
+            702,
+            452,
+            748,
+            492
+          ],
+          "component_ids": [
+            "c06"
+          ],
+          "confidence": 0.6,
+          "message": "בשרטוט מופיע לחצן אחד (לחץ על הלוח) אך בטבלה כמות 3. יש לבדוק את הכמות.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": [
+            30,
+            760,
+            90,
+            800
+          ],
+          "component_ids": [
+            "c19"
+          ],
+          "confidence": 0.4,
+          "message": "בשרטוט נתיך HRC 3x100A אחד (3 נתיכים), אך בטבלה כמות 3 לשורה אחת; יש לוודא שלא הוכפל בנוסף. כמו כן מגן הברק בכמות 3 בעוד שבשרטוט מופיע אחד 4P.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": [
+            775,
+            310,
+            805,
+            365
+          ],
+          "component_ids": [
+            "c04"
+          ],
+          "confidence": 0.3,
+          "message": "המפסק 4x630A (ליד הגנרטור) מסווג כמנתק בעוד שהוא מפסק זרם אלקטרוני; ודא את הסוג.",
+          "type": "wrong_family"
+        },
+        {
+          "bbox": [
+            405,
+            1033,
+            545,
+            1055
+          ],
+          "component_ids": [
+            "c03"
+          ],
+          "confidence": 0.3,
+          "message": "מגענים C, C1, C2 מופיעים כשורה אחת בכמות 3 ללא ערכים; יש לבדוק שהם אכן מגענים ולפרט נתונים.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": [
+            1070,
+            845,
+            1110,
+            920
+          ],
+          "component_ids": [
+            "c22"
+          ],
+          "confidence": 0.35,
+          "message": "מא\"ז 25A בכמות 3 (x3) מוצג כמעגלים 21-23 ב-3 פולים בטבלה, אך בשרטוט הוא חד-קוטבי לכל מעגל; יש לבדוק קוטביות וכמות.",
+          "type": "suspicious_quantity"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "validator_review"
+}

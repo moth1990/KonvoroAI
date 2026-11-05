@@ -51,6 +51,7 @@ INSTANCE_ISSUES = {
     "range_mismatch": "טווח המעגלים {range} לא תואם לכמות {count}. בדקו את הכמות.",
     "brand_conflict": "שני מותגים שונים ברכיבים זהים: {brands}.",
     "tag_conflict": "התג {tag} כתוב גם ליד רכיב מסוג אחר ({family}). בדקו לאיזה רכיב הוא שייך.",
+    "poles_from_peers": "לא סומנו קטבים: {poles} כמו המפסקים הזהים לידו בשורה. בדקו.",
 }
 
 
@@ -349,6 +350,68 @@ def _join_by_cable(groups: dict[tuple[Any, ...], list[Device]]) -> None:
             groups[target].extend(groups.pop(sig))
 
 
+PEER_ROW_PT = 3.0  # alike peers (BUG-088), as stage 3's rows (`detection/evidence.py`): tops or middles this close
+PEER_WIDTH_SHARE = 0.15
+PEER_HEIGHT_SHARE = 0.6
+
+
+def _alike(a: Bbox, b: Bbox) -> bool:
+    level = abs(a[1] - b[1]) <= PEER_ROW_PT or abs((a[1] + a[3]) / 2 - (b[1] + b[3]) / 2) <= PEER_ROW_PT
+    wa, wb, ha, hb = a[2] - a[0], b[2] - b[0], a[3] - a[1], b[3] - b[1]
+    return level and abs(wa - wb) <= PEER_WIDTH_SHARE * wa and min(ha, hb) >= PEER_HEIGHT_SHARE * max(ha, hb)
+
+
+def _join_by_peers(groups: dict[tuple[Any, ...], list[Device]]) -> None:
+    """BUG-088 (the user: breakers drawn alike in one row with one rating "are all the same"): protective devices with
+    no poles read and no cable on their circuit join the identical component whose instances beside them, drawn
+    alike, had their poles read, when every instance of the device has such peers and the peers agree. Like
+    `_join_by_cable`, each instance keeps its poles unread (no value without evidence, 00 §5.3); it carries why it
+    joined, and the line stays as unsure as it was. Peers are the same family, class and values: an RCD's 4P beside
+    the breakers never counts."""
+    for sig in list(groups):
+        values = dict(sig[5])
+        if sig[1] not in PROTECTIVE or values.get("poles") != repr(None) or sig[-1]:
+            continue  # a cable read on its circuit is `_join_by_cable`'s evidence, not its peers'
+        others = [
+            (other, b)
+            for other in groups
+            if other != sig
+            and other[:5] == sig[:5]
+            and {k: v for k, v in other[5] if k != "poles"} == {k: v for k, v in values.items() if k != "poles"}
+            and dict(other[5]).get("poles") != repr(None)
+            for d in groups[other]
+            for b in d.built
+        ]
+        stay: list[Device] = []
+        for d in groups[sig]:
+            found: set[str] = set()
+            for b in d.built:
+                near = {
+                    o
+                    for o, x in others
+                    if x.instance.page_id == b.instance.page_id
+                    and x.instance.bbox is not None
+                    and b.instance.bbox is not None
+                    and _alike(x.instance.bbox, b.instance.bbox)
+                }
+                if not near:
+                    found = set()
+                    break
+                found |= {dict(o[5])["poles"] for o in near}
+            target = next((o for o, _ in others if dict(o[5])["poles"] in found), None) if len(found) == 1 else None
+            if target is None:
+                stay.append(d)
+                continue
+            poles = next(iter(found))
+            for b in d.built:
+                b.instance.issues.append(issue("poles_from_peers", "info", b.instance.page_id, poles=f"{poles}P"))
+            groups[target].append(d)
+        if stay:
+            groups[sig] = stay
+        else:
+            del groups[sig]
+
+
 def _cable_cores(b: Built) -> int | None:
     cable = b.circuit_context.cable if b.circuit_context else None
     return cable.cores if cable else None
@@ -372,6 +435,7 @@ def components(
     for d in devices(built, schemas, cfg):
         groups[_signature(d)].append(d)
     _join_by_cable(groups)
+    _join_by_peers(groups)
     out: list[Component] = []
     owner: dict[str, str] = {}
     issues: list[StageIssue] = []

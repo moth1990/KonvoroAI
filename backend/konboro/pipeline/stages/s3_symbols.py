@@ -80,6 +80,7 @@ def after_model(found: list[Candidate], spans: list[TextSpan], lib: library.Libr
     an unsure class (`detection/evidence.py`), counts are told from tags, each symbol's designator is linked, and the
     designator's letter weighs the class (BUG-067–070)."""
     evidence.residual_is_rcd(found, spans, lib, cfg)
+    evidence.curve_is_a_breaker(found, spans, cfg)
     evidence.peers(found, spans, lib, cfg)
     counts = designators.counts(found, spans, cfg)
     for c in found:

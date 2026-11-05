@@ -1,0 +1,83 @@
+{
+  "answer": {
+    "input_tokens": 3426,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 644,
+    "payload": {
+      "issues": [
+        {
+          "bbox": [
+            95,
+            175,
+            150,
+            215
+          ],
+          "component_ids": [
+            "c06"
+          ],
+          "confidence": 0.5,
+          "message": "לחצן ES מוגדר כלחצן חירום בצבע ירוק. לחצן חירום בדרך כלל אדום, יש לבדוק את הקריאה והפריט בקטלוג.",
+          "type": "inconsistent_attributes"
+        },
+        {
+          "bbox": [
+            215,
+            95,
+            870,
+            125
+          ],
+          "component_ids": [
+            "c14"
+          ],
+          "confidence": 0.4,
+          "message": "כמות 14 מא\"ז 10A נראית גבוהה מהמעגלים 100–112 בציור, ובנוסף יש שורה נפרדת c13 עם אותו ערך. יש לבדוק אם צריך לאחד ולוודא את הכמות.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": [
+            985,
+            35,
+            1190,
+            80
+          ],
+          "component_ids": [
+            "c11"
+          ],
+          "confidence": 0.3,
+          "message": "בציור שני מפסקי פחת 4x40A 30mA, אחד לכל קבוצת שקעים. יש לוודא שהכמות 2 תואמת ושלא חסרים מעגלים.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": [
+            1400,
+            235,
+            1568,
+            290
+          ],
+          "component_ids": [
+            "c18"
+          ],
+          "confidence": 0.5,
+          "message": "הרכיב בתחתית הימנית הוא תא פוטואלקטרי (חיישן אור) ולא בית תקע. יש לבדוק את סוג הרכיב.",
+          "type": "wrong_family"
+        },
+        {
+          "bbox": [
+            70,
+            30,
+            125,
+            60
+          ],
+          "component_ids": [
+            "c01"
+          ],
+          "confidence": 0.3,
+          "message": "FS הוא מגן מנוע 3 קטבים בתחום 2.4–4A, אבל לא מחובר לעץ ההזנה. יש לבדוק את המיקום שלו מול המאמ\"ת הראשי.",
+          "type": "inconsistent_attributes"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "validator_review"
+}

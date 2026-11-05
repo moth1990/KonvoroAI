@@ -1,0 +1,69 @@
+{
+  "answer": {
+    "input_tokens": 4467,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 567,
+    "payload": {
+      "issues": [
+        {
+          "bbox": [
+            20,
+            360,
+            1380,
+            500
+          ],
+          "component_ids": [
+            "c06"
+          ],
+          "confidence": 0.5,
+          "message": "בטבלה 17 מא\"זים SN201M 1P+N 10A (F1–F17), אך בתמונה מופיעים רק F1–F7 (BOM 1–7). יש לבדוק אם הכמות נכונה או שחלק מהמא\"זים שייכים לעמוד אחר.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": [
+            630,
+            10,
+            725,
+            90
+          ],
+          "component_ids": [
+            "c01"
+          ],
+          "confidence": 0.45,
+          "message": "הנורות מקובצות בשורה אחת בכמות 4 (HNV ו-L1–L3), בעוד בציור HNV היא נורה אדומה ו-L1–L3 ירוקות. יש לבדוק צבע וכמות בנפרד.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": [
+            525,
+            195,
+            620,
+            290
+          ],
+          "component_ids": [
+            "c05"
+          ],
+          "confidence": 0.4,
+          "message": "FNV בציור הוא S204M ABB 3X6A (INC=4A), בעוד בטבלה 3 קטבים 6A ללא פריט קטלוגי. יש לבדוק את הדגם, מספר הקטבים והזרם.",
+          "type": "inconsistent_attributes"
+        },
+        {
+          "bbox": [
+            920,
+            130,
+            1150,
+            290
+          ],
+          "component_ids": [
+            "c02"
+          ],
+          "confidence": 0.35,
+          "message": "בציור Q0 הוא ABB XT1C 4X160A עם INC=125A, אך בטבלה הזרם 160A. יש לבדוק אם נדרש זרם כוונון 125A.",
+          "type": "inconsistent_attributes"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "validator_review"
+}

@@ -767,3 +767,22 @@ def test_a_stated_preference_is_part_of_the_signature() -> None:
     sw3 = comp("selector_switch", "selector_switch", {}, (), cid="cmp_0002", designators=("SW3",))
     a, b = run(sw1, sw3)
     assert a.signature == "selector_switch|selector_switch|positions:1-0-2" and a.signature != b.signature
+
+
+def test_every_line_is_named_as_the_factory_names_it() -> None:
+    """The user, on 25.26.100's quote: professional names. A contactor's current is its AC-3 rating and its coil is
+    named (the prototype's "מגען 3P ‏16A לפחות (AC-3)"); a motor-protection breaker is "מפסק מגן מנוע" with its range;
+    a switch-disconnector is "מנתק" (the prototype's word). The detection library's names, the model's words, stay."""
+    from konboro.pipeline.matching.text import describe
+
+    contactor = describe("contactor", "contactor", "ABB", "AF09", {"poles": 3, "current_a": 9, "coil_voltage_v": 230})
+    assert contactor == "מגען ABB AF09 3P 9A (AC-3) סליל 230V"
+    mpcb = describe(
+        "circuit_breaker", "motor_protection", "ABB", "MS116", {"poles": 3, "range_min_a": 2.5, "range_max_a": 4}
+    )
+    assert mpcb == "מפסק מגן מנוע ABB MS116 3P טווח 2.5–4A"
+    assert describe("switch_disconnector", "switch_disconnector", None, None, {"poles": 4, "current_a": 125}) == (
+        "מנתק 4P 125A"
+    )
+    assert describe("relay", "relay", None, None, {"coil_voltage_v": 24}) == "ממסר עזר סליל 24V"
+    assert SKU["MS116-4"].description.startswith("מפסק מגן מנוע ABB")

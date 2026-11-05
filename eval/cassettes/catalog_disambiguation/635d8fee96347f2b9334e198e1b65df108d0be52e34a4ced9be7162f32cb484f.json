@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 852,
+    "model": "claude-haiku-5-5",
+    "output_tokens": 437,
+    "payload": {
+      "chosen_sku": null,
+      "confidence": 0.3,
+      "missing_attributes": [],
+      "reason": "שני המועמדים הם ABB עם מתח סליל 230V, והסימון בשרטוט הוא 'סליל הפסקה' בלבד בלי דגם, ולכן אין בטקסט דבר שמכריע ביניהם."
+    }
+  },
+  "model": "claude-haiku-5-5",
+  "stage": "catalog_disambiguation"
+}

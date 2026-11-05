@@ -1,0 +1,84 @@
+{
+  "answer": {
+    "input_tokens": 4875,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 682,
+    "payload": {
+      "issues": [
+        {
+          "bbox": [
+            686,
+            618,
+            724,
+            650
+          ],
+          "component_ids": [
+            "c11",
+            "c12"
+          ],
+          "confidence": 0.45,
+          "message": "המגענים C1, C2 ו-C3 נראים זהים בשרטוט, אך בטבלה C1/C2 הם 10A ללא קטלוג ו-C3 הוא AF26 26A. כדאי לבדוק את הזרם והדגם של כל מגען.",
+          "type": "inconsistent_attributes"
+        },
+        {
+          "bbox": [
+            130,
+            490,
+            245,
+            560
+          ],
+          "component_ids": [
+            "c08"
+          ],
+          "confidence": 0.35,
+          "message": "בשרטוט F2, F3, F4 הם S201M 10A עם INC=8A, ובטבלה הם מקובצים עם F1 ו-F8–F10 שאינם מופיעים בשרטוט. כדאי לבדוק את הכמות (7).",
+          "type": "inconsistent_attributes"
+        },
+        {
+          "bbox": [
+            1480,
+            505,
+            1568,
+            590
+          ],
+          "component_ids": [
+            "c10"
+          ],
+          "confidence": 0.3,
+          "message": "F7 בשרטוט הוא S201M 16A, אך בטבלה הכמות 2 (F7, F13) ו-F13 אינו נראה בשרטוט. כדאי לוודא את הכמות.",
+          "type": "inconsistent_attributes"
+        },
+        {
+          "bbox": [
+            648,
+            44,
+            745,
+            75
+          ],
+          "component_ids": [
+            "c02"
+          ],
+          "confidence": 0.3,
+          "message": "בטבלה 8 נורות סימון (H1, H2, HT1, HT2 ועוד), אך בשרטוט נראות רק HNV ו-L1–L3. כדאי לוודא את הכמות.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": [
+            972,
+            195,
+            1052,
+            235
+          ],
+          "component_ids": [
+            "c04"
+          ],
+          "confidence": 0.2,
+          "message": "S0 בשרטוט הוא מפסק מנתק 3X40A ללא פריט קטלוג בטבלה. כדאי להשלים קטלוג ולוודא שהוא לא מופיע כמא\"ז.",
+          "type": "wrong_family"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "validator_review"
+}

@@ -392,6 +392,9 @@ def test_every_term_names_a_family_and_class_of_the_library() -> None:
         ("רב מודד SATEC כולל התראות לצורך הפעלת ממסר", ("energy_meter", "energy_meter")),
         ("לחצן חירום", ("push_button", "emergency_button")),
         ("מגען 2X25", ("contactor", "contactor")),
+        ("מפסק מגן מנוע ABB MS116 3P טווח 2.5–4A", ("circuit_breaker", "motor_protection")),  # the quote's own names
+        ("מגן מנוע 4-6.3A", ("circuit_breaker", "motor_protection")),
+        ("מנתק 4P 125A", ("switch_disconnector", "switch_disconnector")),
         ("שעון שבת", ("time_switch", "time_switch")),
         ("MCB C16", ("circuit_breaker", "mcb")),
         ("ממפסק", None),  # inside another word

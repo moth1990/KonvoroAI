@@ -862,6 +862,43 @@ def test_a_tag_beside_symbols_of_two_families_names_the_nearest() -> None:
     }
 
 
+def test_a_breaker_takes_the_poles_read_on_its_alike_peers() -> None:
+    """BUG-088, the user on 25.26.100's five 40A field breakers: "they're all the same". The tile agent read a pole
+    mark on two of them; the three beside them, drawn alike and rated alike, join their component (as a breaker
+    whose cable gives the read poles does, BUG-072). Each keeps its poles unread and says why it joined. An RCD's 4P
+    beside them doesn't count, peers that disagree give nothing, and a breaker in another row stays apart."""
+
+    def at(b: Built, x: float, y: float = 320.0, h: float = 36.0) -> Built:
+        b.instance.bbox = (x, y, x + 47.0, y + h)
+        return b
+
+    read = {"current_a": 40, "poles": 3}
+    row = [
+        at(_built(1, values=read), 800),
+        at(_built(2, values={"current_a": 40}), 1286),
+        at(_built(3, values={"current_a": 40}), 1762, y=315, h=46),  # its box drawn taller, centred on the row
+        at(_built(4, values=read), 2284),
+        at(_built(5, values={"current_a": 40}), 2555),
+        at(_built(6, "rcd", values={"current_a": 40, "poles": 4, "residual_ma": 30}), 2650),
+        at(_built(7, values={"current_a": 40}), 2555, y=1128),  # another row
+    ]
+    comps, _, _ = components("drw_01X", row, SCH)
+    forty = sorted(
+        ((c.quantity, c.attributes["poles"].value) for c in comps if c.family == "circuit_breaker"), reverse=True
+    )
+    assert forty == [(5, 3), (1, None)]
+    joined = [b for b in row[1:5] if b.instance.attributes["poles"].value is None]
+    assert len(joined) == 3 and all(i.code == "poles_from_peers" for b in joined for i in b.instance.issues)
+    # peers that disagree give nothing
+    split = [
+        at(_built(11, values=read), 800),
+        at(_built(12, values={"current_a": 40}), 900),
+        at(_built(13, values={"current_a": 40, "poles": 1}), 1000),
+    ]
+    comps, _, _ = components("drw_01X", split, SCH)
+    assert sorted((c.quantity, c.attributes["poles"].value or 0) for c in comps) == [(1, 0), (1, 1), (1, 3)]
+
+
 def test_one_tag_merges_one_family_never_a_terminal_over_breakers() -> None:
     """BUG-066 (25.26.100): "X2" read as the tag of terminals, 16A breakers and an RCD made one terminal × 76. A tag
     merges the drawings of one device; a symbol of another family under it stays itself, untagged, for review."""
@@ -893,10 +930,11 @@ def test_what_never_merges() -> None:
     built = [
         _built(1, values={"current_a": 16, "poles": 1}),
         _built(2, values={"current_a": 16, "poles": 1}, panel="pnl_02"),  # another panel
-        _built(3, values={"current_a": 16, "poles": None}),  # a null against a known value
+        _built(3, values={"current_a": 16, "poles": None}),  # a null against a known value, not drawn beside it
         _built(4, values={"current_a": 16, "poles": 1}, scope="other_location"),
         _built(5, values={"current_a": 16, "poles": 1}, mult=6),
     ]
+    built[2].instance.bbox = (0, 100, 10, 110)  # another row: BUG-088's alike peers join a null to a known value
     comps, _, _ = components("drw_01X", built, SCH)
     assert len(comps) == 4
     first = next(
