@@ -27,6 +27,7 @@
         "warning QTY_RANGE_MISMATCH",
         "warning QTY_RANGE_MISMATCH",
         "warning QTY_SINGLE_INSTANCE_FAMILY",
+        "info AGENT_inconsistent_attributes ES",
         "info AGENT_wrong_family",
         "info CTRL_CONTACTOR_WITHOUT_COIL_CIRCUIT",
         "info DATA_INFERRED_ATTRIBUTE",
@@ -63,13 +64,13 @@
         "auxiliary": 3,
         "components": 28,
         "llm_signatures": 0,
-        "method_none": 13,
+        "method_none": 12,
         "method_rules_ranked": 4,
-        "method_rules_unique": 8,
+        "method_rules_unique": 9,
         "signatures": 21,
         "status_ambiguous": 4,
-        "status_matched": 12,
-        "status_unmatched": 9
+        "status_matched": 13,
+        "status_unmatched": 8
       },
       "merge": {
         "agent_instances": 55,
@@ -319,9 +320,9 @@
         },
         "s5": {
           "consistency": {
-            "den": 12,
+            "den": 13,
             "kind": "ratio",
-            "num": 12.0,
+            "num": 13.0,
             "value": 1.0
           },
           "llm_share": {
@@ -339,15 +340,15 @@
           "with_sku": {
             "den": 25,
             "kind": "ratio",
-            "num": 16.0,
-            "value": 0.64
+            "num": 17.0,
+            "value": 0.68
           }
         },
         "s5_labelled": {
           "consistency": {
-            "den": 12,
+            "den": 13,
             "kind": "ratio",
-            "num": 12.0,
+            "num": 13.0,
             "value": 1.0
           },
           "exact_value_accuracy": {
@@ -363,7 +364,7 @@
             "value": 0.2
           },
           "unmatched_in_catalog": {
-            "den": 13,
+            "den": 14,
             "kind": "ratio",
             "num": 0.0,
             "value": 0.0
@@ -466,11 +467,11 @@
       },
       "validation": {
         "agent_calls": 2,
-        "agent_findings": 1,
+        "agent_findings": 2,
         "checks_run": 28,
         "checks_skipped": 14,
         "severity_error": 1,
-        "severity_info": 9,
+        "severity_info": 10,
         "severity_warning": 3
       }
     },
@@ -3842,9 +3843,9 @@
       },
       "s5": {
         "consistency": {
-          "den": 124,
+          "den": 125,
           "kind": "ratio",
-          "num": 124.0,
+          "num": 125.0,
           "value": 1.0
         },
         "llm_share": {
@@ -3862,15 +3863,15 @@
         "with_sku": {
           "den": 210,
           "kind": "ratio",
-          "num": 150.0,
-          "value": 0.714286
+          "num": 151.0,
+          "value": 0.719048
         }
       },
       "s5_labelled": {
         "consistency": {
-          "den": 132,
+          "den": 133,
           "kind": "ratio",
-          "num": 132.0,
+          "num": 133.0,
           "value": 1.0
         },
         "exact_value_accuracy": {
@@ -3886,7 +3887,7 @@
           "value": 0.08
         },
         "unmatched_in_catalog": {
-          "den": 185,
+          "den": 186,
           "kind": "ratio",
           "num": 0.0,
           "value": 0.0
@@ -4498,9 +4499,9 @@
         },
         "s5": {
           "consistency": {
-            "den": 48,
+            "den": 49,
             "kind": "ratio",
-            "num": 48.0,
+            "num": 49.0,
             "value": 1.0
           },
           "llm_share": {
@@ -4518,15 +4519,15 @@
           "with_sku": {
             "den": 110,
             "kind": "ratio",
-            "num": 68.0,
-            "value": 0.618182
+            "num": 69.0,
+            "value": 0.627273
           }
         },
         "s5_labelled": {
           "consistency": {
-            "den": 53,
+            "den": 54,
             "kind": "ratio",
-            "num": 53.0,
+            "num": 54.0,
             "value": 1.0
           },
           "exact_value_accuracy": {
@@ -4542,7 +4543,7 @@
             "value": 0.116667
           },
           "unmatched_in_catalog": {
-            "den": 104,
+            "den": 105,
             "kind": "ratio",
             "num": 0.0,
             "value": 0.0
