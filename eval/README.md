@@ -11,6 +11,7 @@
 | `EVAL_MODE=live EVAL_RECORD=1 make eval` | Real Claude, saving every answer as a cassette. Commit the new cassettes |
 | `EVAL_MODE=live EVAL_RECORD=missing make eval` | Replays what is recorded and sends only the calls with no cassette to Claude, saving them. For a new stage or prompt, so the stages before it keep their recorded answers |
 | `EVAL_MAX_USD=20` (with `EVAL_MODE=live`) | Stops the run once its calls cost this much at list prices. The call that crosses the line finishes; the next one fails the run |
+| `EVAL_CATALOG_LINES=1 make eval` | The eval factory and the backtest with `catalog_lines` on (S27b; 13 §3 rule 6, both states of a flag that moves the pipeline). Reported against the baseline, which is the flag off |
 | `make eval-baseline` | Make this run's metrics the new `baseline.json`, after a change that moves a score on purpose |
 
 Every run needs `make up`. Two runs cannot overlap, `make check`'s included: each recreates the `konboro_eval` database, uploads each drawing to one throwaway tenant, and runs the 7 stages in-process, without the queue (`Pipeline.run_inline`).
