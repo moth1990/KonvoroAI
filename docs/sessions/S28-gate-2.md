@@ -6,7 +6,7 @@
 | **Branch** | `s28-gate-2` |
 | **Depends on** | S27b |
 | **Status** | in review |
-| **PR** | (link) |
+| **PR** | [moth1990/KonvoroAI#39](https://github.com/moth1990/KonvoroAI/pull/39) |
 
 ## Goal
 
