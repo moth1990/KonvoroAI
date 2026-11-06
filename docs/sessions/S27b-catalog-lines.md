@@ -6,7 +6,7 @@
 | **Branch** | `s27b-catalog-lines` |
 | **Depends on** | S27 (and S22, S23, S23b, S24) |
 | **Status** | in review |
-| **PR** | (link) |
+| **PR** | [moth1990/KonvoroAI#38](https://github.com/moth1990/KonvoroAI/pull/38) |
 
 ## Goal
 
