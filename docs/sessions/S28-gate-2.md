@@ -5,7 +5,7 @@
 | **Track** | G |
 | **Branch** | `s28-gate-2` |
 | **Depends on** | S27b |
-| **Status** | in progress |
+| **Status** | in review |
 | **PR** | (link) |
 
 ## Goal
@@ -115,9 +115,9 @@ Every open item of the roadmap's backlog, scheduled (dev-strategy §7, the roadm
 ## Acceptance criteria (phase 2 exit)
 
 - [x] A new factory produces a quote on day one: `day-one.spec.ts` green on both projects.
-- [ ] ≥ 85% of golden rows need no edit (00 §10.2, §14), by decision 2: **not met**, 54.2% live (117/216) and 51.4% in replay (111/216). Wrong green rows ≤ 1%: not measurable, no line is green apart from its price (BUG-103). A known gap (decision 2), for Reading II (question 7).
+- [ ] ≥ 85% of golden rows need no edit (00 §10.2, §14), by decision 2: **not met**, 54.2% live (117/216) and 51.4% in replay (111/216). Wrong green rows ≤ 1%: not measurable, no line is green apart from its price (BUG-103). A known gap (decision 2), measured again at Gate 3 (S32 in the roadmap); the work is Reading II if the user schedules it (question 7).
 - [x] Every prototype flow covered by E2E (the table above has no gap), the whole suite green on both projects (251).
-- [ ] `make check` green, and CI green on the PR: every step green, run one at a time (decision 7); the single run and CI at `/session-close`.
+- [ ] `make check` green, and CI green on the PR: `make check` green in one run at close (Node 22); CI on the PR pending.
 - [x] No open P0 or P1 bugs.
 - [x] External blockers recorded (B1–B8, under Outcome).
 
@@ -175,7 +175,7 @@ Filled in at `/session-close`.
   - B1, the golden set: 7 drawings; MINHAROT-1 not checked with its factory, 25.26.100's sub-panel unlabelled (owner: the user and the estimator).
   - B7, the review screen's usability test (owner: the user).
   - The chat set: 77 requests written by Claude, not about 200 in an estimator's words (owner: the user, at the pilot).
-  - `make check` as one run and CI: at `/session-close`.
+  - CI on the PR (`make check` passed in one run at close).
 - **Follow-ups:**
   - Question 7: a Reading II session before Gate 3 (the triage's "Reading II" row).
   - The user reviews the fidelity report.

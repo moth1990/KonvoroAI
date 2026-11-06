@@ -64,7 +64,7 @@ P and R sessions alternate. R sessions use a fixture quote seeded through the re
 | [S26](sessions/S26-overlay-export.md) | X | Flags: overlay and export | `unresolved_overlay`; `export_doc` (PDF through Playwright Chromium, Excel through openpyxl) | 13 §4.1, §4.4 | 575–580, 1360–1378 | S23 | done |
 | [S27](sessions/S27-chat-builder-voice.md) | X | Flags: chat builder, home chat, voice | `chat_quote_builder` and the build screen, `home_chat` wired to real actions, `voice_input` with a fake transcriber | 13 §4.2–4.3 | 1253–1357 | S25 | done |
 | [S27b](sessions/S27b-catalog-lines.md) | X | Quote lines from the catalog | One line per product in a panel, a waiting line for a product not in the catalog (an alert, up to 3 nearest products, no price, send refused), "מוצר חדש" in the app's format for the factory and the approval queue, behind `catalog_lines`; the user's 15 common products (`common.csv`); the clocks' names, a contactor's AC-1, "LS/I", U+200F | 05 §5.6–5.9; 07 §7.1, §6.2; 09 §6.4, §7.8, §7.12; 10 §5.4; 13 | 409–460, 872–1004 | S27 | done |
-| [S28](sessions/S28-gate-2.md) | G | **Gate 2** | Live eval, regression of every prototype flow, fix bugs. Tag `phase-2` | dev-strategy §7 | all | S27b | in progress |
+| [S28](sessions/S28-gate-2.md) | G | **Gate 2** | Live eval, regression of every prototype flow, fix bugs. Tag `phase-2` | dev-strategy §7 | all | S27b | in review |
 
 **Exit:** a new tenant produces a quote on day one; ≥85% of golden rows need no edit; every prototype flow is covered by E2E.
 
@@ -75,7 +75,7 @@ P and R sessions alternate. R sessions use a fixture quote seeded through the re
 | [S29](sessions/S29-infrastructure.md) | X | Infrastructure as code | Terraform or CDK (decide at kickoff): VPC, RDS, S3 + KMS, SQS + DLQ, ECS API and workers, ALB, CloudFront, Secrets Manager, Cognito replacing dev auth, Bedrock provider, Transcribe, per-tenant pipeline concurrency limit (00 §4.3, BUG-008) | 12 §2, §4, §7 | S28 | todo |
 | [S30](sessions/S30-deploy-observability.md) | X | Deploy and observability | GitHub Actions deploy to staging, Sentry, OpenTelemetry `trace_id`, CloudWatch, per-tenant cost table | 12 §7 | S29 | todo |
 | S31 | P | **Floating:** OCR engine choice | Google Vision vs Azure on the golden set by electrical-token accuracy, plug in the winner, live eval. **Runs whenever OCR keys exist** | 02 §10; 12 §5 | S10 | blocked (keys) |
-| S32 | G | **Gate 3: pilot readiness** | Security review, RLS checks on staging, backups and restore test, staging E2E, live eval. Tag `phase-3` | 00 §11, §14.2 | S30, S31 | todo |
+| S32 | G | **Gate 3: pilot readiness** | Security review, RLS checks on staging, backups and restore test, staging E2E, live eval, the rows that need no edit again (S28's known gap: 54% against phase 2's 85%; wrong green rows, BUG-103). Tag `phase-3` | 00 §11, §14.2 | S30, S31 | todo |
 
 After S32: one triage session per batch of pilot feedback (P0 and P1 first). Phase 4 (dedicated detector, embedding index, learning service, ERP export, DWG/DXF) is planned after the pilot.
 
