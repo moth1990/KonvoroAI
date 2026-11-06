@@ -19,6 +19,7 @@ from PIL import Image
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from konboro.contracts.detection import Detection, DetectionResult, OrphanText, PageDetections
 from konboro.db import models as m
 from konboro.db.ids import new_id
 from konboro.db.seed import PRODUCTS, SUPPLIERS
@@ -704,3 +705,70 @@ def seed_nursery_pages(session: Session, storage: Storage, tenant_id: str) -> in
         written += 1
     session.flush()
     return written
+
+
+# prototype `UNRESOLVED` (konboro-app.html 575–580): what stage 3 left on NURSERY for the "לא פוענח" layer (S26). The
+# other two of its four spots are the fixture's own: RNV's line has no model, and F26–F29 is the `fv` finding.
+UNKNOWN_SYMBOL = (4, 205, 500, 292, 572)  # the block of 4 terminals under Q0, on the front view
+ORPHAN_TEXT = (8, "9 / 5", 1210, 380, 1290, 448)  # RNV's contact numbers on page 8
+FIXTURE_TRACE = "trc_fixture_NURSERY_1"
+
+
+def _pt(box: list[Any]) -> tuple[float, float, float, float]:
+    x0, y0, x1, y1 = _bbox(*box)
+    return (x0, y0, x1, y1)
+
+
+def seed_nursery_detections(session: Session, storage: Storage, tenant_id: str) -> bool:
+    """Stage 3's output for the fixture drawing, with one unknown symbol and one orphan text, where the pipeline
+    keeps it (`stages/s3.json`, `stage_runs`). Stages 4–6 stay without output, so the review actions still price the
+    stored lines (`pricing.read_outputs` needs 1, 4, 5 and 6). Safe to rerun; returns whether it wrote."""
+    drawing_id = session.scalar(
+        select(m.Drawing.id).where(m.Drawing.tenant_id == tenant_id, m.Drawing.trace_id == MARKER)
+    )
+    if drawing_id is None:
+        return False
+    key = drawing_key(tenant_id, drawing_id, "stages", "s3.json")
+    run = session.get(m.StageRun, (tenant_id, drawing_id, 3))
+    if run is not None and run.output_key == key and storage.exists(tenant_id, key):
+        return False
+    pages = dict(
+        session.execute(
+            select(m.Page.page_no, m.Page.id).where(m.Page.tenant_id == tenant_id, m.Page.drawing_id == drawing_id)
+        ).all()
+    )
+    no, *box = UNKNOWN_SYMBOL
+    unknown = Detection(
+        det_id="det_fixture_0001",
+        page_id=pages[no],
+        bbox=_pt(box),
+        family="unknown",
+        symbol_class="unknown_symbol",
+        billable=False,
+        method="llm_vision",
+        detector_score=None,
+        class_score=0.3,
+        confidence=0.3,
+        status="unknown",
+        owner_tile_id="tl_fixture_0001",
+    )
+    text_no, text, *text_box = ORPHAN_TEXT
+    orphan = OrphanText(span_id="ts_fixture_0001", text=str(text), bbox=_pt(text_box), recovery_attempted=True)
+    result = DetectionResult(
+        drawing_id=drawing_id,
+        pages=[
+            PageDetections(page_id=pages[no], drawing_id=drawing_id, detections=[unknown], trace_id=FIXTURE_TRACE),
+            PageDetections(
+                page_id=pages[int(text_no)], drawing_id=drawing_id, orphan_texts=[orphan], trace_id=FIXTURE_TRACE
+            ),
+        ],
+        trace_id=FIXTURE_TRACE,
+    )
+    storage.put(tenant_id, key, result.model_dump_json().encode(), "application/json")
+    if run is None:
+        run = m.StageRun(tenant_id=tenant_id, drawing_id=drawing_id, stage=3)
+        session.add(run)
+    now = datetime.now(UTC)
+    run.status, run.output_key, run.started_at, run.finished_at = "done", key, now, now
+    session.flush()
+    return True

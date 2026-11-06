@@ -1424,6 +1424,31 @@ a.list-item:hover {
   font-weight: 600;
   pointer-events: none;
 }
+/* 13 §4.4 "לא פוענח" (prototype `.ux`, lines 329–330): a dashed red box around what was not read, and its kind in a
+   red tab on its inline-start corner. In the SVG layer the box is a stroke and the tab a rect with its text; the box
+   lets clicks through to the line's own box, as the prototype's `pointer-events: none`, and the tab has the note. */
+.hl-layer .ux .ux-box {
+  fill: none;
+  stroke: var(--bad);
+  stroke-width: 2;
+  stroke-dasharray: 6 4;
+  pointer-events: none;
+}
+.hl-layer .ux .ux-tag {
+  pointer-events: all;
+  cursor: default;
+}
+.hl-layer .ux .ux-tag rect {
+  fill: var(--bad);
+}
+.hl-layer .ux .ux-tag text {
+  fill: #fff;
+  font-family: var(--font-body);
+  font-weight: 500;
+}
+.pg .ux-dot {
+  color: var(--bad);
+}
 .vtools {
   position: absolute;
   bottom: calc(12px + env(safe-area-inset-bottom, 0px));
@@ -2155,6 +2180,16 @@ table.tbl {
   opacity: 0.6;
   cursor: not-allowed;
 }
+/* "המסמך ללקוח" (S26 decision 1; no prototype screen): the logo's preview, on white like the paper it prints on */
+.doc-logo {
+  max-height: 40px;
+  max-width: 140px;
+  object-fit: contain;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  padding: 2px;
+}
 .v2 {
   font-size: 10.5px;
   font-weight: 600;
@@ -2163,6 +2198,46 @@ table.tbl {
   background: var(--copper);
   color: #fff;
   letter-spacing: 0.02em;
+}
+/* 13 §4.1 the export modal's preview (prototype `.doc`, lines 331–334): the customer's paper, white in either scheme */
+.doc {
+  background: #fff;
+  color: #1a1a1a;
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  padding: 18px;
+  font-size: 12.5px;
+  display: grid;
+  gap: 10px;
+  max-height: 52vh;
+  overflow: auto;
+}
+.doc table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.doc th,
+.doc td {
+  border-bottom: 1px solid #e3e3e3;
+  padding: 5px 4px;
+  text-align: start;
+}
+.doc td.n,
+.doc th.n {
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+}
+/* S26: a draft's mark and a panel's heading, as the PDF prints them (no prototype: its quote is one sent panel) */
+.doc .doc-draft {
+  font-size: 11px;
+  border: 1px solid #999;
+  border-radius: 4px;
+  padding: 0 6px;
+  color: #555;
+}
+.doc tr.doc-panel td {
+  font-weight: 600;
+  padding-top: 10px;
 }
 
 /* ---------- onboarding (S24, 10 §5.1; no prototype screen: its card, input and chip classes) ---------- */

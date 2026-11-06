@@ -14,7 +14,7 @@ from konboro.pipeline.coordinator import Pipeline
 from konboro.services import quote_versions as qv
 from konboro.services.storage import Storage
 
-from .api import Api, ApiTenant
+from .api import Api, ApiTenant, set_tenant_flag
 from .test_pipeline import pipeline  # noqa: F401  (fixture)
 from .test_stage7 import priced_tenant, seeded, stages_5_to_7_by_hand, through_the_queue  # noqa: F401  (fixture)
 
@@ -121,3 +121,37 @@ def test_actions_on_a_drawing_the_pipeline_priced(
         qv.recalculate(s, storage, tenant.tenant_id, quote_id)
         row = s.get_one(m.QuoteLine, priced["line_id"])
         assert row.approved_at is not None
+
+
+def test_the_unresolved_layer_reads_the_pipelines_outputs(
+    seeded: dict[str, Engine],  # noqa: F811
+    api: Api,
+    pipeline: Pipeline,  # noqa: F811
+    storage: Storage,
+) -> None:
+    """13 §4.4 (S26) on a drawing the pipeline read with the stand-in model, from stages 3–5's outputs in S3: every
+    spot is on one of its pages, a partial one points at a live line, and approving those lines empties that kind."""
+    engine = seeded["app"]
+    tenant = priced_tenant(engine)
+    set_tenant_flag(engine, tenant.tenant_id, "unresolved_overlay", True)
+    drawing_id = through_the_queue(api, pipeline, tenant)  # all 7 stages on the stand-in model's answers
+    with tenant_session(tenant.tenant_id, engine) as s:
+        quote_id = s.scalar(select(m.Quote.id).where(m.Quote.drawing_id == drawing_id))
+    assert quote_id is not None
+    body = get(api, tenant, quote_id)
+    pages = {p["page_id"] for p in body["pages"]}
+    live = {ln["line_id"] for ln in lines(body)}
+
+    r = api.client.get(f"/quotes/{quote_id}/unresolved", headers=api.as_(tenant))
+    assert r.status_code == 200, r.text
+    spots = r.json()["spots"]
+    assert spots, "the stand-in model leaves lines it can't identify"
+    assert {s["page_id"] for s in spots} <= pages
+    assert {s["kind"] for s in spots} <= {"unknown_symbol", "orphan_text", "partial", "front_only"}
+    partial = {s["line_id"] for s in spots if s["kind"] == "partial"}
+    assert partial and partial <= live
+
+    for line_id in partial:
+        post(api, tenant, f"/quotes/{quote_id}/lines/{line_id}/approve")
+    r = api.client.get(f"/quotes/{quote_id}/unresolved", headers=api.as_(tenant))
+    assert not [s for s in r.json()["spots"] if s["kind"] == "partial"]

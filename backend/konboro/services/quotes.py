@@ -354,8 +354,9 @@ class QuoteView:
     derived_note: str | None = None  # "פריטים נלווים: פסי צבירה, אפס והארקה כלולים במחיר הארון…" (prototype 978)
 
 
-def read_quote(session: Session, tenant_id: str, quote_id: str) -> QuoteView | None:
-    """The quote's current version, or None when the tenant has no such quote (the API answers 404)."""
+def read_quote(session: Session, tenant_id: str, quote_id: str, version_no: int | None = None) -> QuoteView | None:
+    """The quote's current version, or version `version_no` (the export, S26 decision 2); None when the tenant has no
+    such quote or version (the API answers 404)."""
     row = session.execute(
         select(m.Quote, m.QuoteVersion)
         .join(
@@ -363,7 +364,7 @@ def read_quote(session: Session, tenant_id: str, quote_id: str) -> QuoteView | N
             and_(
                 m.QuoteVersion.tenant_id == m.Quote.tenant_id,
                 m.QuoteVersion.quote_id == m.Quote.id,
-                m.QuoteVersion.version == m.Quote.current_version,
+                m.QuoteVersion.version == (m.Quote.current_version if version_no is None else version_no),
             ),
         )
         .where(m.Quote.tenant_id == tenant_id, m.Quote.id == quote_id)

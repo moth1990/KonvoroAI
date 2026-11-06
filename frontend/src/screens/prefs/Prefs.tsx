@@ -8,6 +8,7 @@ import { Shell, useSignOut } from "../../shell/Shell";
 import { Icon } from "../../ui/Icon";
 import { useToast } from "../../ui/Toast";
 import { MAX_FILE_MB } from "../newQuote/model";
+import { DocumentSection } from "./DocumentSection";
 import { markupRate, ratePercentText } from "../welcome/model";
 import { BRAND_ROWS, BRANDS, FLAG_ROWS, INCLUDES, rcd30, withRcd30, type EnclosurePart } from "./model";
 
@@ -238,6 +239,8 @@ export function PrefsScreen() {
           />
         </Row>
       </section>
+
+      {flags.export_doc ? <DocumentSection /> : null}
 
       <section className="card set-sec" data-testid="flags">
         <div className="sec-head">

@@ -14,7 +14,21 @@ from konboro.services.storage import Storage
 from konboro.settings import Settings, get_settings
 
 from . import errors
-from .routes import account, audits, chat, drawings, health, home, knowledge, onboarding, pages, price_list, quotes
+from .routes import (
+    account,
+    audits,
+    chat,
+    document,
+    drawings,
+    export,
+    health,
+    home,
+    knowledge,
+    onboarding,
+    pages,
+    price_list,
+    quotes,
+)
 from .routes import auth as auth_routes
 from .routes import settings as settings_routes
 
@@ -23,9 +37,11 @@ ROUTERS = (
     auth_routes.router,
     account.router,
     settings_routes.router,
+    document.router,
     home.router,
     drawings.router,
     quotes.router,
+    export.router,
     pages.router,
     audits.router,
     price_list.router,
@@ -65,6 +81,7 @@ def create_app(
         allow_origins=settings.cors_origins,
         allow_methods=["GET", "POST", "PATCH", "PUT", "DELETE"],
         allow_headers=["Authorization", "Content-Type"],
+        expose_headers=["Content-Disposition"],  # an export's file name (S26)
     )
     errors.install(app)
     for router in ROUTERS:

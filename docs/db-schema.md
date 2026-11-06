@@ -167,6 +167,7 @@ The remaining global tables:
 | `onboarding jsonb` | 10 §9.1's counters (`first_drawing_at`, `first_quote_sent_at`, `quotes_sent`, `price_coverage_last`, `accelerators_*`), plus the answers: `answered_at`, `markup_source`, `brands` (S24). The markup itself is the `default` margin rule |
 | `auxiliary_families text[] default '{terminal}'` | Families the factory counts as auxiliary material: the audit shows them as `not_a_difference` (11 §5.4, S15 decision 4, migration 0011), and stage 5 gives them no SKU (S20 decision 3) |
 | `matching jsonb default '{}'` | Stage 5's settings (05 §5.4–5.7, §13 item 1; migration 0015): `series` (family → preferred series), `alternate_brands` (family or `*` → brands allowed instead), `tie_break` (`frequency`, the default, `price` or `ask`), `inference_off` (rule ids of 05 §5.5.1 turned off). `brand_preferences` takes `*` for every family too |
+| `document jsonb default '{}'` | The customer PDF's template (13 §4.1, S26 decision 1; migration 0023): `company` (`name`, `company_id`, `address`, `phone`), `terms`, `show_sku`, and `logo` (`key` under `tenants/{tenant_id}/branding/`, `content_type`). Empty: the tenant's name, no SKUs, no logo, no terms |
 
 **`tenant_plan_overrides`** has `tenant_id` as PK. It holds `monthly_quote_limit`, `monthly_audit_limit` and `max_pages_per_file`, all nullable; `null` means use the plan's value.
 

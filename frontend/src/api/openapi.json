@@ -989,6 +989,21 @@
         "title": "AuditUploadOut",
         "type": "object"
       },
+      "Body_put_logo_settings_document_logo_put": {
+        "properties": {
+          "file": {
+            "contentMediaType": "application/octet-stream",
+            "description": "PNG or JPEG, up to 1 MB",
+            "title": "File",
+            "type": "string"
+          }
+        },
+        "required": [
+          "file"
+        ],
+        "title": "Body_put_logo_settings_document_logo_put",
+        "type": "object"
+      },
       "Body_upload_audit_audits_post": {
         "properties": {
           "customer": {
@@ -2010,6 +2025,58 @@
         "title": "ChatUiContextIn",
         "type": "object"
       },
+      "CompanyDetails": {
+        "properties": {
+          "address": {
+            "anyOf": [
+              {
+                "maxLength": 300,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Address"
+          },
+          "company_id": {
+            "anyOf": [
+              {
+                "maxLength": 40,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "ח.פ. or עוסק מורשה",
+            "title": "Company Id"
+          },
+          "name": {
+            "description": "The factory's name on the document; its account name until set",
+            "maxLength": 200,
+            "title": "Name",
+            "type": "string"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "maxLength": 40,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "title": "CompanyDetails",
+        "type": "object"
+      },
       "CorrectedQuoteOut": {
         "properties": {
           "created": {
@@ -2284,6 +2351,355 @@
           "reason"
         ],
         "title": "DismissIn",
+        "type": "object"
+      },
+      "DocumentOut": {
+        "description": "The customer document of one version, as the PDF prints it (13 §4.1, 07 §12): no cost, margin, supplier, price\nsource or colour. The export modal's preview.",
+        "properties": {
+          "company": {
+            "title": "Company",
+            "type": "string"
+          },
+          "customer": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Customer"
+          },
+          "draft": {
+            "description": "A draft prints \"טיוטה\" on every page (S26 decision 3)",
+            "title": "Draft",
+            "type": "boolean"
+          },
+          "drawing_number": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Drawing Number"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "quote_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quote Date"
+          },
+          "sections": {
+            "items": {
+              "$ref": "#/components/schemas/DocumentSectionOut"
+            },
+            "title": "Sections",
+            "type": "array"
+          },
+          "show_sku": {
+            "title": "Show Sku",
+            "type": "boolean"
+          },
+          "totals": {
+            "$ref": "#/components/schemas/DocumentTotalsOut"
+          },
+          "unpriced_count": {
+            "description": "Rows with no price: they print with no amount",
+            "title": "Unpriced Count",
+            "type": "integer"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "name",
+          "drawing_number",
+          "customer",
+          "version",
+          "draft",
+          "quote_date",
+          "company",
+          "show_sku",
+          "sections",
+          "totals",
+          "unpriced_count"
+        ],
+        "title": "DocumentOut",
+        "type": "object"
+      },
+      "DocumentRowOut": {
+        "properties": {
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "line_total": {
+            "anyOf": [
+              {
+                "examples": [
+                  "0.15"
+                ],
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Line Total"
+          },
+          "qty": {
+            "examples": [
+              "0.15"
+            ],
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Qty",
+            "type": "string"
+          },
+          "sku": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Only when the factory shows SKUs on the document (07 §12)",
+            "title": "Sku"
+          },
+          "unit_price": {
+            "anyOf": [
+              {
+                "examples": [
+                  "0.15"
+                ],
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Null: the row has no price and prints with no amount",
+            "title": "Unit Price"
+          }
+        },
+        "required": [
+          "description",
+          "sku",
+          "qty",
+          "unit_price",
+          "line_total"
+        ],
+        "title": "DocumentRowOut",
+        "type": "object"
+      },
+      "DocumentSectionOut": {
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/DocumentRowOut"
+            },
+            "title": "Rows",
+            "type": "array"
+          },
+          "total": {
+            "description": "The panel's price before the discount and VAT",
+            "examples": [
+              "0.15"
+            ],
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Total",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "rows",
+          "total"
+        ],
+        "title": "DocumentSectionOut",
+        "type": "object"
+      },
+      "DocumentSettingsIn": {
+        "additionalProperties": false,
+        "properties": {
+          "company": {
+            "$ref": "#/components/schemas/CompanyDetails"
+          },
+          "show_sku": {
+            "default": false,
+            "title": "Show Sku",
+            "type": "boolean"
+          },
+          "terms": {
+            "anyOf": [
+              {
+                "maxLength": 4000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Terms"
+          }
+        },
+        "required": [
+          "company"
+        ],
+        "title": "DocumentSettingsIn",
+        "type": "object"
+      },
+      "DocumentSettingsOut": {
+        "description": "The customer PDF's template (13 §4.1, §6 item 2; S26 decision 1).",
+        "properties": {
+          "company": {
+            "$ref": "#/components/schemas/CompanyDetails"
+          },
+          "logo_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Short-lived; load it, don't store it",
+            "title": "Logo Url"
+          },
+          "show_sku": {
+            "description": "A SKU column on the customer document (07 §12)",
+            "title": "Show Sku",
+            "type": "boolean"
+          },
+          "terms": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Printed under the totals, as written",
+            "title": "Terms"
+          }
+        },
+        "required": [
+          "company",
+          "terms",
+          "show_sku",
+          "logo_url"
+        ],
+        "title": "DocumentSettingsOut",
+        "type": "object"
+      },
+      "DocumentTotalsOut": {
+        "properties": {
+          "discount": {
+            "anyOf": [
+              {
+                "examples": [
+                  "0.15"
+                ],
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Discount"
+          },
+          "discount_pct": {
+            "anyOf": [
+              {
+                "examples": [
+                  "0.15"
+                ],
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Discount Pct"
+          },
+          "gross_total": {
+            "examples": [
+              "0.15"
+            ],
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Gross Total",
+            "type": "string"
+          },
+          "net_total": {
+            "examples": [
+              "0.15"
+            ],
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Net Total",
+            "type": "string"
+          },
+          "price_total": {
+            "examples": [
+              "0.15"
+            ],
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Price Total",
+            "type": "string"
+          },
+          "vat": {
+            "examples": [
+              "0.15"
+            ],
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Vat",
+            "type": "string"
+          },
+          "vat_rate": {
+            "examples": [
+              "0.15"
+            ],
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Vat Rate",
+            "type": "string"
+          }
+        },
+        "required": [
+          "price_total",
+          "discount_pct",
+          "discount",
+          "net_total",
+          "vat_rate",
+          "vat",
+          "gross_total"
+        ],
+        "title": "DocumentTotalsOut",
         "type": "object"
       },
       "DraftUseOut": {
@@ -6988,6 +7404,91 @@
         "title": "TokenOut",
         "type": "object"
       },
+      "UnresolvedOut": {
+        "properties": {
+          "spots": {
+            "items": {
+              "$ref": "#/components/schemas/UnresolvedSpotOut"
+            },
+            "title": "Spots",
+            "type": "array"
+          }
+        },
+        "required": [
+          "spots"
+        ],
+        "title": "UnresolvedOut",
+        "type": "object"
+      },
+      "UnresolvedSpotOut": {
+        "description": "One box of the \"לא פוענח\" layer (13 §4.4, prototype `UNRESOLVED`).",
+        "properties": {
+          "bbox": {
+            "description": "x0, y0, x1, y1 in PDF points, origin top left",
+            "items": {
+              "type": "number"
+            },
+            "maxItems": 4,
+            "minItems": 4,
+            "title": "Bbox",
+            "type": "array"
+          },
+          "finding_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The finding a `front_only` box belongs to",
+            "title": "Finding Id"
+          },
+          "kind": {
+            "description": "סימן לא מזוהה, טקסט בלי סימן, פוענח חלקית, בחזית בלבד",
+            "enum": [
+              "unknown_symbol",
+              "orphan_text",
+              "partial",
+              "front_only"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "line_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The line a `partial` box belongs to",
+            "title": "Line Id"
+          },
+          "note": {
+            "description": "The box's tooltip",
+            "title": "Note",
+            "type": "string"
+          },
+          "page_id": {
+            "title": "Page Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "page_id",
+          "bbox",
+          "note",
+          "line_id",
+          "finding_id"
+        ],
+        "title": "UnresolvedSpotOut",
+        "type": "object"
+      },
       "UploadOut": {
         "properties": {
           "counted_as": {
@@ -7125,6 +7626,60 @@
           "role"
         ],
         "title": "UserOut",
+        "type": "object"
+      },
+      "VersionOut": {
+        "description": "One version of a quote, for the export's selector (S26 decision 2).",
+        "properties": {
+          "current": {
+            "title": "Current",
+            "type": "boolean"
+          },
+          "quote_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quote Date"
+          },
+          "sent_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sent At"
+          },
+          "status": {
+            "enum": [
+              "draft",
+              "sent"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "version",
+          "status",
+          "quote_date",
+          "sent_at",
+          "current"
+        ],
+        "title": "VersionOut",
         "type": "object"
       }
     },
@@ -11001,7 +11556,107 @@
         ]
       }
     },
+    "/quotes/{quote_id}/unresolved": {
+      "get": {
+        "description": "13 §4.4: what the drawing shows that the system did not read, or read only in part, for the current version.\nBehind `unresolved_overlay`: off, the route does not exist (13 §3).",
+        "operationId": "get_unresolved_quotes__quote_id__unresolved_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "quote_id",
+            "required": true,
+            "schema": {
+              "pattern": "^quo_[0-9A-Z]{26}$",
+              "title": "Quote Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnresolvedOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Unresolved",
+        "tags": [
+          "quotes"
+        ]
+      }
+    },
     "/quotes/{quote_id}/versions": {
+      "get": {
+        "description": "The quote's versions, newest first, for the export modal's selector.",
+        "operationId": "list_versions_quotes__quote_id__versions_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "quote_id",
+            "required": true,
+            "schema": {
+              "pattern": "^quo_[0-9A-Z]{26}$",
+              "title": "Quote Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/VersionOut"
+                  },
+                  "title": "Response List Versions Quotes  Quote Id  Versions Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "List Versions",
+        "tags": [
+          "export"
+        ]
+      },
       "post": {
         "description": "\"פתח גרסה N+1\": a draft copy of the sent version, which stays as it was sent.",
         "operationId": "open_next_version_quotes__quote_id__versions_post",
@@ -11047,6 +11702,178 @@
         "summary": "Open Next Version",
         "tags": [
           "quotes"
+        ]
+      }
+    },
+    "/quotes/{quote_id}/versions/{version}/document": {
+      "get": {
+        "description": "The customer document of the version, as the PDF prints it (the modal's preview).",
+        "operationId": "get_document_quotes__quote_id__versions__version__document_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "quote_id",
+            "required": true,
+            "schema": {
+              "pattern": "^quo_[0-9A-Z]{26}$",
+              "title": "Quote Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "version",
+            "required": true,
+            "schema": {
+              "maximum": 10000,
+              "minimum": 1,
+              "title": "Version",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Document",
+        "tags": [
+          "export"
+        ]
+      }
+    },
+    "/quotes/{quote_id}/versions/{version}/export.pdf": {
+      "get": {
+        "description": "The customer PDF (07 §12): description, SKU by the factory's setting, quantity, prices, discount, VAT.",
+        "operationId": "export_pdf_route_quotes__quote_id__versions__version__export_pdf_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "quote_id",
+            "required": true,
+            "schema": {
+              "pattern": "^quo_[0-9A-Z]{26}$",
+              "title": "Quote Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "version",
+            "required": true,
+            "schema": {
+              "maximum": 10000,
+              "minimum": 1,
+              "title": "Version",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/pdf": {}
+            },
+            "description": "The customer PDF"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Export Pdf Route",
+        "tags": [
+          "export"
+        ]
+      }
+    },
+    "/quotes/{quote_id}/versions/{version}/export.xlsx": {
+      "get": {
+        "description": "The internal Excel: every line with its cost, price source, colour and tags, the findings and the totals.",
+        "operationId": "export_xlsx_route_quotes__quote_id__versions__version__export_xlsx_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "quote_id",
+            "required": true,
+            "schema": {
+              "pattern": "^quo_[0-9A-Z]{26}$",
+              "title": "Quote Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "version",
+            "required": true,
+            "schema": {
+              "maximum": 10000,
+              "minimum": 1,
+              "title": "Version",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": {}
+            },
+            "description": "The internal Excel"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Export Xlsx Route",
+        "tags": [
+          "export"
         ]
       }
     },
@@ -11125,6 +11952,166 @@
           }
         ],
         "summary": "Patch Settings",
+        "tags": [
+          "settings"
+        ]
+      }
+    },
+    "/settings/document": {
+      "get": {
+        "operationId": "get_document_settings_document_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentSettingsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Document",
+        "tags": [
+          "settings"
+        ]
+      },
+      "put": {
+        "operationId": "put_document_settings_document_put",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DocumentSettingsIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentSettingsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Put Document",
+        "tags": [
+          "settings"
+        ]
+      }
+    },
+    "/settings/document/logo": {
+      "delete": {
+        "operationId": "delete_logo_settings_document_logo_delete",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentSettingsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Delete Logo",
+        "tags": [
+          "settings"
+        ]
+      },
+      "put": {
+        "operationId": "put_logo_settings_document_logo_put",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_put_logo_settings_document_logo_put"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentSettingsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Put Logo",
         "tags": [
           "settings"
         ]

@@ -13,10 +13,10 @@ from fastapi import APIRouter, Depends, Path, Query, Request
 
 from konboro.domain.permissions import Permission, allowed
 from konboro.domain.totals import QuoteSums, Sums
-from konboro.services import onboarding, price_list, quote_versions, quotes, review, review_picker
+from konboro.services import onboarding, price_list, quote_versions, quotes, review, review_picker, unresolved
 from konboro.services.storage import Storage
 
-from ..deps import Actor, require
+from ..deps import Actor, require, require_flag
 from ..errors import ERROR_RESPONSES, ApiError
 from ..schemas import (
     ActionOut,
@@ -35,6 +35,7 @@ from ..schemas import (
     QuoteOut,
     RecalculationOut,
     RestoreIn,
+    UnresolvedOut,
 )
 
 router = APIRouter(tags=["quotes"], responses=ERROR_RESPONSES)
@@ -52,6 +53,16 @@ EventId = Annotated[str, Path(pattern=r"^evt_[0-9A-Z]{26}$")]
 def get_quote(actor: Reader, quote_id: QuoteId, request: Request) -> QuoteOut:
     """The quote's current version. Another tenant's quote is 404, the same as one that does not exist."""
     return quote_out(actor, quote_id, request.app.state.storage)
+
+
+@router.get("/quotes/{quote_id}/unresolved", dependencies=[Depends(require_flag("unresolved_overlay"))])
+def get_unresolved(actor: Reader, quote_id: QuoteId, request: Request) -> UnresolvedOut:
+    """13 §4.4: what the drawing shows that the system did not read, or read only in part, for the current version.
+    Behind `unresolved_overlay`: off, the route does not exist (13 §3)."""
+    spots = unresolved.read_spots(actor.session, request.app.state.storage, actor.tenant_id, quote_id)
+    if spots is None:
+        raise ApiError(404, "not_found")
+    return UnresolvedOut.model_validate({"spots": [s.__dict__ for s in spots]})
 
 
 def act(actor: Actor, quote_id: str, request: Request, action: Callable[[review.Ctx], review.Done]) -> ActionOut:

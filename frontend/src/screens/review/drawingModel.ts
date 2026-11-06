@@ -5,7 +5,7 @@
  * widths (the image is 1 wide, `height / width` tall), so a point maps to the viewport by dividing by the page's
  * width in points. The page render keeps the page's aspect (stage 2 renders the upright page whole).
  */
-import type { Finding, Quote, QuoteLine } from "../../api/client";
+import type { Finding, Quote, QuoteLine, UnresolvedSpot } from "../../api/client";
 import { PAGE_KINDS, ROUTES } from "../newQuote/model";
 import { matches, type Filter } from "./model";
 
@@ -186,14 +186,49 @@ export function stripTag(page: Page): string | null {
   return null;
 }
 
-/** A thumbnail's accessible name: number, content and tag (09 §13). */
-export function stripLabel(page: Page): string {
+/** A thumbnail's accessible name: number, content and tag (09 §13), and whether the "לא פוענח" layer marks it. */
+export function stripLabel(page: Page, unresolved = false): string {
   const count = stripCount(page);
   const parts = [`עמוד ${page.page_no}`, kindLabel(page), routeLabel(page)];
   if (count) parts.push(count.tone === "r" ? `${count.n} לא זוהו או שגויות` : `${count.n} לבדיקה`);
   const tag = stripTag(page);
   if (tag) parts.push(tag);
+  if (unresolved) parts.push("יש בו מה שלא פוענח");
   return parts.filter(Boolean).join(", ");
+}
+
+/** The "לא פוענח" layer's label for each kind of spot (13 §4.4, prototype `UNRESOLVED`). */
+export const UNRESOLVED_LABELS: Record<UnresolvedSpot["kind"], string> = {
+  unknown_symbol: "סימן לא מזוהה",
+  orphan_text: "טקסט בלי סימן",
+  partial: "פוענח חלקית",
+  front_only: "בחזית בלבד",
+};
+
+export interface UnresolvedBox {
+  spot: UnresolvedSpot;
+  /** Whether this box carries the kind's tab: a line's boxes on a page share one, on the first (the server sends them
+   * top to bottom), so the tabs of a line drawn as a row of small symbols don't run into each other. */
+  tag: boolean;
+}
+
+/** The layer's spots on one page; none while it is off (prototype `boxesFor`, `S.showUnresolved`). */
+export function unresolvedOn(spots: UnresolvedSpot[], pageId: string, on: boolean): UnresolvedBox[] {
+  if (!on) return [];
+  const tagged = new Set<string>();
+  return spots
+    .filter((s) => s.page_id === pageId)
+    .map((spot) => {
+      if (!spot.line_id) return { spot, tag: true };
+      const first = !tagged.has(spot.line_id);
+      tagged.add(spot.line_id);
+      return { spot, tag: first };
+    });
+}
+
+/** The strip's red dot (prototype line 985): the pages with a spot, while the layer is on. */
+export function unresolvedPages(spots: UnresolvedSpot[], on: boolean): Set<string> {
+  return new Set(on ? spots.map((s) => s.page_id) : []);
 }
 
 /** The classification row, read-only until S23 (S11 decision 4): confidence, or "נקבע ידנית". */

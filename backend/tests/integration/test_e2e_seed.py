@@ -62,6 +62,9 @@ def test_e2e_tenants_have_their_states(migrated_db: dict[str, Engine]) -> None:
         "chat-mobile@e2e.konboro.local": (False, 12, "ok"),
         "chat-off@e2e.konboro.local": (False, 12, "ok"),
         "chat-shots@e2e.konboro.local": (False, 12, "ok"),
+        "export-desktop@e2e.konboro.local": (False, 12, "ok"),
+        "export-mobile@e2e.konboro.local": (False, 12, "ok"),
+        "s26-off@e2e.konboro.local": (False, 12, "ok"),
     }
     sample = states["classic@e2e.konboro.local"][3]
     assert sample.queue_pending == 3

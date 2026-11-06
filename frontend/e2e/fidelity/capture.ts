@@ -196,6 +196,7 @@ const SCREENS: Screen[] = [
   ...priceScreens(),
   ...s24Screens(),
   ...chatScreens(),
+  ...s26Screens(),
 ];
 
 /** S25: the chat drawer (prototype `vChat`, `propCard`), on the desktop over the drawing, on the phone its tab. The
@@ -455,7 +456,7 @@ async function appReview(page: Page) {
 
 function reviewScreens(): Screen[] {
   const notes = [
-    'Header: "אשר ושלח" since S23; export and chat wait for their sessions (S26, S25). The drawing pane is S11 ' +
+    'Header: "אשר ושלח" since S23, the chat since S25, "הורדה" since S26 (its modal below). The drawing pane is S11 ' +
       "(its own screens below).",
     "S09 decision 3: a shape icon beside each stripe (check, triangle, X, box), so color is never the only signal.",
     'S09 decision 4: the spec\'s filter row (הכל · רק לבדיקה · ירוק · צהוב · אדום) and the "X מתוך Y שורות מוכנות" bar.',
@@ -658,6 +659,89 @@ function reviewScreens(): Screen[] {
         },
       },
       notes: ["No price cell, no action in the detail, and undo is cleared: nothing before sending is undone."],
+    },
+  ];
+}
+
+/** S26: the "לא פוענח" layer (13 §4.4) and the export modal (13 §4.1) on the review fixture, in the read-only review
+ * tenant; and the settings screen's "המסמך ללקוח", which the prototype does not have. */
+function s26Screens(): Screen[] {
+  const phone = (page: Page) => (page.viewportSize()?.width ?? 0) <= 860;
+  const review = { path: "/home", tenant: TENANTS.review };
+  const protoPage = (n: number) => async (p: Page) => {
+    if (phone(p)) await p.locator('[data-act="tab"][data-tab="drawing"]').click();
+    await p.locator(`[data-act="page"][data-p="${n}"]`).click();
+  };
+  const appPage = (n: number) => async (page: Page) => {
+    await appReview(page);
+    if (phone(page)) await page.getByRole("tab", { name: "שרטוט" }).click();
+    await page
+      .getByTestId("page-thumb")
+      .and(page.getByLabel(new RegExp(`^עמוד ${n},`)))
+      .click();
+    await page.locator("[data-testid=viewer][data-state=ready]").waitFor({ timeout: 20_000 });
+    await page.getByTestId("ux").first().waitFor();
+  };
+  const layerNotes = [
+    "S26 decision 5: the prototype draws its boxes from b[1]…b[4], as if they began with a page number, so its four " +
+      "spots land shifted and with no height (its tabs float alone). The app uses each box as given.",
+    "S26 decision 7: a line counts as partly read when no product was identified or its current or poles were not " +
+      "read. On the fixture that is RNV and C1–C4 (eight symbols), so the button counts 12 where the prototype's " +
+      "hand-made list counts 4. A line's boxes on a page share one tab (C1–C4 on page 8).",
+    "The tab sits on the box's inline-start corner in the drawing's own scale, as the prototype's 20px on its 1400px " +
+      "canvas; the note is the tab's tooltip.",
+  ];
+  return [
+    {
+      id: "review-unresolved",
+      title: 'Review: the "לא פוענח" layer (page 4)',
+      prototype: { hash: "#review", authed: true, setup: protoPage(4) },
+      app: { ...review, setup: appPage(4) },
+      notes: layerNotes,
+      window: true,
+    },
+    {
+      id: "review-unresolved-p8",
+      title: 'Review: the "לא פוענח" layer (page 8)',
+      prototype: { hash: "#review", authed: true, setup: protoPage(8) },
+      app: { ...review, setup: appPage(8) },
+      notes: ["\"9 / 5\" by RNV's contact is the orphan text; RNV's own box there is the same place, drawn once."],
+      window: true,
+    },
+    {
+      id: "export-modal",
+      title: "Review: הורדת ההצעה",
+      prototype: { hash: "#review", authed: true, setup: (p) => p.locator('[data-act="export"]').click() },
+      app: {
+        ...review,
+        setup: async (page) => {
+          await appReview(page);
+          await page.getByTestId("export").click();
+          await page.getByTestId("export-row").first().waitFor();
+        },
+      },
+      notes: [
+        "The preview is the server's customer document, the PDF's own rows: Q0's kit part, included in its price, is " +
+          'not a row. A draft says "טיוטה", as its PDF does on every page (S26 decision 3).',
+        "The warning counts the rows with no price (5); the prototype counts red lines.",
+        'A quote with more than one version gets a selector where "גרסה 1" is (S26 decision 2).',
+        "Totals keep agorot (₪841.32), as on the review screen.",
+      ],
+    },
+    {
+      id: "prefs-document",
+      title: 'Settings: "המסמך ללקוח" (no prototype screen; compared with settings)',
+      prototype: { hash: "#prefs", authed: true },
+      app: {
+        path: "/prefs",
+        tenant: TENANTS.s24Shots,
+        setup: (page) => page.getByTestId("document-settings").getByLabel("שם המפעל").waitFor(),
+      },
+      notes: [
+        "S26 decision 1: the logo, the factory's details, its terms and the SKU switch, for the customer PDF. Built " +
+          "from the settings screen's card, row, field and switch classes, after the defaults, behind export_doc.",
+        "The E2E tenant has written no template, so the name is its account name and the other fields are empty.",
+      ],
     },
   ];
 }

@@ -65,6 +65,9 @@ class TenantSettings(Base, TenantScoped):
     # preferred series), `alternate_brands` (family → brands the factory allows instead), `tie_break` (`frequency`,
     # the default, `price` or `ask`), `inference_off` (rule ids of 05 §5.5.1 the factory turned off).
     matching: Mapped[dict[str, Any]] = mapped_column(server_default="{}")
+    # The customer PDF's template (13 §4.1, S26 decision 1; migration 0023): `company` (name, company_id, address,
+    # phone), `terms`, `show_sku`, and `logo` (its storage key and type). `services.document_template` reads it.
+    document: Mapped[dict[str, Any]] = mapped_column(server_default="{}")
 
 
 class TenantPlanOverride(Base, TenantScoped, Timestamps):
