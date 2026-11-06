@@ -15,11 +15,13 @@ from konboro.contracts.matching import MatchingResult
 from konboro.contracts.merge import MergeResult
 from konboro.contracts.validation import ValidationResult
 from konboro.db import models as m
+from konboro.domain.flags import CATALOG_LINES, is_enabled
 from konboro.pipeline.association import schemas
 from konboro.pipeline.stages.s6_validation import finding_row
 from konboro.pipeline.validation import engine
 from konboro.pipeline.validation import pack as pack_mod
 from konboro.pipeline.validation.model import build
+from konboro.services import flags
 
 from .storage import Storage
 
@@ -63,6 +65,7 @@ def revalidate_panel(
     coverage = pack.rules.get("TEXT_COVERAGE_LOW")
     tags = tuple(coverage.params.get("tags", ("current_a",))) if coverage else ("current_a",)
     drawing = build(intake, merge, matching, sch, extraction, classes, tags)
+    drawing.catalog_lines = is_enabled(flags.tenant_flags(session, tenant_id), CATALOG_LINES)
     result = engine.revalidate(previous, drawing, panel_id, pack, sch)
     storage.put(tenant_id, key, result.model_dump_json().encode(), "application/json")
     _sync(session, tenant_id, drawing_id, panel_id, result, intake)

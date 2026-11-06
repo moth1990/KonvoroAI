@@ -145,6 +145,7 @@ class DrawingModel:
     page_no: dict[str, int]
     matches: dict[str, ComponentMatch]
     auxiliary: set[str]
+    catalog_lines: bool = False  # S27b (13 §4.10): a product not in the catalog is a finding
 
     def devices(self) -> list[Device]:
         return [d for p in self.panels.values() for d in p.devices]
