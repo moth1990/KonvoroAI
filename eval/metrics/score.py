@@ -36,6 +36,8 @@ LOWER_IS_BETTER = frozenset(
         "build_dropped",
         "build_money_to_model",
         "home_money_to_model",
+        # the overall rows (00 §10.2, S28)
+        "wrong_green_rows",
     }
 )
 

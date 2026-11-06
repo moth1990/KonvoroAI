@@ -174,6 +174,9 @@ class Prediction(Canon):
     merge: dict[str, int] = {}  # stage 4's counts: agent tiles, cited values, mismatches, values with no evidence
     matches: tuple[CanonMatch, ...] | None = None  # stage 5's, end to end
     matching: dict[str, int] = {}  # stage 5's counts: signatures, the agent's, by status and method
+    auxiliary: tuple[str, ...] = ()  # stage 5's auxiliary components (terminals), no line of their own
+    # stage 7: each component's line colour apart from its price (the eval's factory has no price list; S28)
+    line_colours: dict[str, str] = {}
     labelled_matches: tuple[CanonMatch, ...] | None = None  # stage 5 on the labelled attributes (05 §10)
     findings: tuple[CanonFinding, ...] | None = None  # stage 6's, end to end
     validation: dict[str, int] = {}  # stage 6's counts: agent calls, checks run and skipped

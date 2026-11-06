@@ -265,18 +265,14 @@ def front_compare(panel: PanelModel, ctx: Ctx) -> FrontCompare:
     assert front is not None  # noqa: S101 (the engine runs these rules only with a front view)
     shown = set(front.designators)
     missing = [t for t in front.designators if t not in ctx.drawing.designators]
-    # terminals are numbered on a strip, not tagged on a front or a layout (BUG-055: NEVIS-1's N4 against R4)
-    plan = [
-        (t, d)
-        for d in panel.devices
-        if d.in_panel and d.component.family != "terminal"
-        for t in d.component.designators
-        if t not in shown
-    ]
+    tagged = [(t, d) for d in panel.devices if d.in_panel for t in d.component.designators if t not in shown]
+    # terminals are numbered on a strip, not tagged on a front or a layout (BUG-055: NEVIS-1's N4 against R4), so a
+    # terminal is never extra; a device read as terminals can still be a near match (BUG-046: 26-993's SG, BUG-036)
+    plan = [(t, d) for t, d in tagged if d.component.family != "terminal"]
     near: list[tuple[str, str, Device]] = []
     used: set[str] = set()
     for m in missing:
-        for t, d in plan:
+        for t, d in plan + [(t, d) for t, d in tagged if d.component.family == "terminal"]:
             if t not in used and _near(m, t):
                 near.append((m, t, d))
                 used.add(t)

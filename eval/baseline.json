@@ -117,22 +117,36 @@
       "scores": {
         "audit": {
           "difference_precision": {
-            "den": 3,
+            "den": 4,
             "kind": "ratio",
-            "num": 1.0,
-            "value": 0.333333
+            "num": 2.0,
+            "value": 0.5
           },
           "difference_recall": {
             "den": 5,
             "kind": "ratio",
-            "num": 1.0,
-            "value": 0.2
+            "num": 2.0,
+            "value": 0.4
           },
           "type_agreement": {
-            "den": 1,
+            "den": 2,
             "kind": "ratio",
-            "num": 1.0,
+            "num": 2.0,
             "value": 1.0
+          }
+        },
+        "overall": {
+          "rows_without_edit": {
+            "den": 16,
+            "kind": "ratio",
+            "num": 8.0,
+            "value": 0.5
+          },
+          "wrong_green_rows": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
           }
         },
         "pricing": {
@@ -558,6 +572,7 @@
       "findings": [
         "warning CTRL_OVERLOAD_WITHOUT_CONTACTOR",
         "warning DATA_LOAD_CURRENT_GT_RATED FC1",
+        "warning FRONT_VIEW_DESIGNATOR_MISSING",
         "info DATA_INFERRED_ATTRIBUTE G1",
         "info DATA_INFERRED_ATTRIBUTE L1 L2 L3",
         "info DATA_MANY_DEFAULTS",
@@ -566,7 +581,6 @@
         "info DATA_INFERRED_ATTRIBUTE LG1 LG2 LG3",
         "info DATA_MANY_DEFAULTS",
         "info HIER_ORPHAN_DEVICE QLG2 QPM FPB",
-        "info AGENT_wrong_family FB2",
         "info DATA_INFERRED_ATTRIBUTE GIC-1",
         "info DATA_INFERRED_ATTRIBUTE TC-G1 TC-G2",
         "info DATA_MANY_DEFAULTS",
@@ -666,6 +680,20 @@
             "kind": "ratio",
             "num": 3.0,
             "value": 1.0
+          }
+        },
+        "overall": {
+          "rows_without_edit": {
+            "den": 21,
+            "kind": "ratio",
+            "num": 8.0,
+            "value": 0.380952
+          },
+          "wrong_green_rows": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
           }
         },
         "pricing": {
@@ -976,8 +1004,8 @@
           "warnings": {
             "den": 1,
             "kind": "average",
-            "num": 2.0,
-            "value": 2.0
+            "num": 3.0,
+            "value": 3.0
           }
         },
         "s6_labelled": {
@@ -1057,12 +1085,12 @@
       },
       "validation": {
         "agent_calls": 2,
-        "agent_findings": 2,
-        "checks_run": 29,
-        "checks_skipped": 20,
+        "agent_findings": 1,
+        "checks_run": 32,
+        "checks_skipped": 17,
         "severity_error": 0,
-        "severity_info": 14,
-        "severity_warning": 2
+        "severity_info": 13,
+        "severity_warning": 3
       }
     },
     "6199-2-50": {
@@ -1226,6 +1254,20 @@
       "quote_total": null,
       "scores": {
         "audit": {},
+        "overall": {
+          "rows_without_edit": {
+            "den": 108,
+            "kind": "ratio",
+            "num": 41.0,
+            "value": 0.37963
+          },
+          "wrong_green_rows": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          }
+        },
         "pricing": {},
         "s1": {
           "confirmation_rate": {
@@ -1729,6 +1771,20 @@
       "quote_total": null,
       "scores": {
         "audit": {},
+        "overall": {
+          "rows_without_edit": {
+            "den": 19,
+            "kind": "ratio",
+            "num": 18.0,
+            "value": 0.947368
+          },
+          "wrong_green_rows": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          }
+        },
         "pricing": {},
         "s1": {
           "confirmation_rate": {
@@ -2114,6 +2170,20 @@
       "quote_total": null,
       "scores": {
         "audit": {},
+        "overall": {
+          "rows_without_edit": {
+            "den": 18,
+            "kind": "ratio",
+            "num": 14.0,
+            "value": 0.777778
+          },
+          "wrong_green_rows": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          }
+        },
         "pricing": {},
         "s1": {
           "confirmation_rate": {
@@ -2622,6 +2692,20 @@
             "kind": "ratio",
             "num": 3.0,
             "value": 1.0
+          }
+        },
+        "overall": {
+          "rows_without_edit": {
+            "den": 21,
+            "kind": "ratio",
+            "num": 13.0,
+            "value": 0.619048
+          },
+          "wrong_green_rows": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
           }
         },
         "pricing": {
@@ -3143,6 +3227,20 @@
             "value": 1.0
           }
         },
+        "overall": {
+          "rows_without_edit": {
+            "den": 13,
+            "kind": "ratio",
+            "num": 9.0,
+            "value": 0.692308
+          },
+          "wrong_green_rows": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          }
+        },
         "pricing": {
           "backtest_derived_deviation": {
             "den": 1,
@@ -3522,21 +3620,21 @@
     "all": {
       "audit": {
         "difference_precision": {
-          "den": 12,
+          "den": 13,
           "kind": "ratio",
-          "num": 10.0,
-          "value": 0.833333
+          "num": 11.0,
+          "value": 0.846154
         },
         "difference_recall": {
           "den": 14,
           "kind": "ratio",
-          "num": 9.0,
-          "value": 0.642857
+          "num": 10.0,
+          "value": 0.714286
         },
         "type_agreement": {
-          "den": 9,
+          "den": 10,
           "kind": "ratio",
-          "num": 9.0,
+          "num": 10.0,
           "value": 1.0
         }
       },
@@ -3632,6 +3730,20 @@
           "kind": "ratio",
           "num": 62.0,
           "value": 0.984127
+        }
+      },
+      "overall": {
+        "rows_without_edit": {
+          "den": 216,
+          "kind": "ratio",
+          "num": 111.0,
+          "value": 0.513889
+        },
+        "wrong_green_rows": {
+          "den": 0,
+          "kind": "ratio",
+          "num": 0.0,
+          "value": null
         }
       },
       "pricing": {
@@ -4014,8 +4126,8 @@
         "warnings": {
           "den": 7,
           "kind": "average",
-          "num": 26.0,
-          "value": 3.714286
+          "num": 27.0,
+          "value": 3.857143
         }
       },
       "s6_labelled": {
@@ -4096,6 +4208,20 @@
     "by_input_kind": {
       "bom_only": {
         "audit": {},
+        "overall": {
+          "rows_without_edit": {
+            "den": 19,
+            "kind": "ratio",
+            "num": 18.0,
+            "value": 0.947368
+          },
+          "wrong_green_rows": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          }
+        },
         "pricing": {},
         "s1": {
           "confirmation_rate": {
@@ -4358,22 +4484,36 @@
       "designer_plan": {
         "audit": {
           "difference_precision": {
-            "den": 3,
+            "den": 4,
             "kind": "ratio",
-            "num": 1.0,
-            "value": 0.333333
+            "num": 2.0,
+            "value": 0.5
           },
           "difference_recall": {
             "den": 5,
             "kind": "ratio",
-            "num": 1.0,
-            "value": 0.2
+            "num": 2.0,
+            "value": 0.4
           },
           "type_agreement": {
-            "den": 1,
+            "den": 2,
             "kind": "ratio",
-            "num": 1.0,
+            "num": 2.0,
             "value": 1.0
+          }
+        },
+        "overall": {
+          "rows_without_edit": {
+            "den": 124,
+            "kind": "ratio",
+            "num": 49.0,
+            "value": 0.395161
+          },
+          "wrong_green_rows": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
           }
         },
         "pricing": {
@@ -4814,6 +4954,20 @@
             "value": 1.0
           }
         },
+        "overall": {
+          "rows_without_edit": {
+            "den": 73,
+            "kind": "ratio",
+            "num": 44.0,
+            "value": 0.60274
+          },
+          "wrong_green_rows": {
+            "den": 0,
+            "kind": "ratio",
+            "num": 0.0,
+            "value": null
+          }
+        },
         "pricing": {
           "backtest_derived_deviation": {
             "den": 3,
@@ -5164,8 +5318,8 @@
           "warnings": {
             "den": 4,
             "kind": "average",
-            "num": 9.0,
-            "value": 2.25
+            "num": 10.0,
+            "value": 2.5
           }
         },
         "s6_labelled": {

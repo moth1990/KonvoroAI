@@ -451,6 +451,40 @@ def test_front_view_near_match_replaces_missing_and_extra() -> None:
     assert not checks._near("L3", "C3") and not checks._near("HNV", "RNV")  # another kind of device
 
 
+def test_a_front_view_on_a_page_no_panel_holds_goes_to_the_panel_with_its_tags() -> None:
+    """BUG-046: 26-993's front view is on page 2, which no panel holds, and stage 1 reads three panels (BUG-035), so
+    the view went to none and SE against SG never fired. It goes to the panel that holds most of its tags; a tie
+    between two panels gives it to neither."""
+
+    def drawing(*tags: str) -> Drawing:
+        sg = comp("cmp_sg", "changeover_switch", "changeover_switch", tags=("SG",), current_a=125, poles=4)
+        ms = comp("cmp_ms", "current_transformer", "current_transformer", tags=("MS1", "MS2"), qty=2, panel="pnl_2")
+        d = main_and(sg, ms)
+        d.panels.append(Panel(panel_id="pnl_2", name="QEN1", page_ids=["pg_3"]))
+        d.pages += [page(2, "pg_2", "panel_front_view", ()), page(3, "pg_3", panels=("pnl_2",))]
+        return d.artifact("panel_front_view", {"designators": list(tags), "panels": []}, "pg_2")
+
+    r = drawing("Q0", "SE").validate()
+    [i] = fired(r, "FRONT_VIEW_DESIGNATOR_NEAR_MATCH")
+    assert (i.values["front"], i.values["plan"], i.component_ids) == ("SE", "SG", ["cmp_sg"])
+    assert drawing("Q0", "SE").model().panels["pnl_2"].front is None
+    tie = drawing("Q0", "MS1")
+    assert all(p.front is None for p in tie.model().panels.values())
+
+
+def test_a_near_match_may_be_a_device_read_as_terminals() -> None:
+    """BUG-046 with BUG-036: 26-993's SG is read as terminals × 4, so SE on the front paired with nothing and came out
+    "missing". A tagged terminal may be the near match (one letter apart, the same first letter), never an extra."""
+    sg = comp("cmp_sg", "terminal", "terminal", tags=("SG",), qty=4)
+    n4 = comp("cmp_n4", "terminal", "terminal", tags=("N4",))
+    r = _front(main_and(sg, n4), "Q0", "SE", "R4").validate()
+    [i] = fired(r, "FRONT_VIEW_DESIGNATOR_NEAR_MATCH")
+    assert (i.values["front"], i.values["plan"]) == ("SE", "SG")
+    [missing] = fired(r, "FRONT_VIEW_DESIGNATOR_MISSING")
+    assert missing.values["designators"] == ["R4"]  # N4 is a terminal named after its conductor: another letter
+    assert not fired(r, "FRONT_VIEW_DESIGNATOR_EXTRA")
+
+
 def test_front_view_designator_extra() -> None:
     d = _front(main_and(comp("cmp_f", tags=("F1", "F2"), qty=2, current_a=16)), "Q0", "F1")
     [i] = fired(d.validate(), "FRONT_VIEW_DESIGNATOR_EXTRA")

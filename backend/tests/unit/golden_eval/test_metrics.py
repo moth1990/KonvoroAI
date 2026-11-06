@@ -333,6 +333,7 @@ def test_score_drawing_has_every_section() -> None:
         "s6_labelled",
         "audit",
         "pricing",
+        "overall",
     }
     assert scores["pricing"]["backtest_within_5pct"].value == 1.0
 
@@ -587,3 +588,76 @@ def test_stage_6_end_to_end_and_on_the_labelled_quote() -> None:
     assert (lab["injected_not_applicable"].num, lab["injected_qty_minus_2"].value) == (1, 0.0)
     assert total([s, s])["warnings"].value == 1.0  # per drawing, across drawings
     assert {"errors", "warnings", "false_errors", "false_warnings", "bug_net_fired"} <= LOWER_IS_BETTER
+
+
+# --- the overall rows (00 §10.2, S28 decision 2) --------------------------------------------------------------------
+
+
+def _pred(ref: str, family: str, qty: int, *des: str, **attrs: Any) -> CanonComponent:
+    return CanonComponent(family=family, designators=des, attributes=attrs, qty=qty, ref=ref)
+
+
+def test_a_row_needs_no_edit_with_its_family_quantity_values_and_a_sku() -> None:
+    from eval.metrics import rows
+
+    label = drawing(
+        CanonPanel(
+            name="P",
+            components=(
+                comp("circuit_breaker", 2, "F1", "F2", current_a=16, poles=1, model_token="S201"),  # right
+                comp("circuit_breaker", 1, "F3", current_a=20, poles=3),  # the wrong current, read 25
+                comp("circuit_breaker", 1, "F4", current_a=10, poles=1),  # no SKU
+                comp("rcd", 1, "FR", current_a=40, poles=4, residual_ma=30),  # the item says 300 mA
+                comp("contactor", 3, "K1", "K2", "K3"),  # two of three
+                comp("relay", 1, "R1"),  # missed
+                comp("terminal", 20),  # auxiliary: no row
+                comp("circuit_breaker", 4, current_a=6, poles=1),  # a group with no designators, right
+            ),
+        )
+    )
+    pred = predicted(
+        CanonPanel(
+            name="P",
+            components=(
+                _pred("c1", "circuit_breaker", 2, "F1", "F2", current_a=16),  # poles from the item
+                _pred("c3", "circuit_breaker", 1, "F3", current_a=25, poles=3),
+                _pred("c4", "circuit_breaker", 1, "F4", current_a=10, poles=1),
+                _pred("c5", "rcd", 1, "FR", current_a=40, poles=4),
+                _pred("c6", "contactor", 2, "K1", "K2"),
+                _pred("c7", "terminal", 18),
+                _pred("c8", "circuit_breaker", 4, current_a=6, poles=1),
+                _pred("c9", "push_button", 1, "S9"),  # extra
+            ),
+        ),
+        matches=(
+            _match("c1", "S201M-C16", "a", item={"current_a": 16, "poles": 1}),
+            _match("c3", "S203M-C25", "b", item={"current_a": 25, "poles": 3}),
+            _match("c4", None, "c"),
+            _match("c5", "F204A-40/0.3", "d", item={"current_a": 40, "poles": 4, "residual_ma": 300}),
+            _match("c6", "AF09", "e"),
+            _match("c8", "S201M-C6", "f", item={"current_a": 6, "poles": 1}),
+            _match("c9", "MP1", "g"),
+        ),
+        auxiliary=("c7",),
+        line_colours={"c1": "green", "c3": "green", "c4": "red", "c5": "yellow", "c6": "green", "c8": "green",
+                      "c9": "green"},
+    )  # fmt: skip
+    s = rows.score(label, pred)
+    assert (s["rows_without_edit"].num, s["rows_without_edit"].den) == (2, 7)  # F1-F2 and the 6A group
+    # green: c1, c8 right; c3 (current), c6 (quantity) and the extra c9 wrong
+    assert (s["wrong_green_rows"].num, s["wrong_green_rows"].den) == (3, 5)
+    assert "wrong_green_rows" in LOWER_IS_BETTER
+
+
+def test_rows_skip_an_unchecked_panel_and_need_stage_5() -> None:
+    from eval.metrics import rows
+
+    label = drawing(CanonPanel(name="P", components=(comp("rcd", 1, "FR"),), verified=False))
+    pred = predicted(CanonPanel(name="P", components=(_pred("c1", "rcd", 1, "FR"),)), matches=())
+    assert values(rows.score(label, pred)) == {"rows_without_edit": None, "wrong_green_rows": None}
+    assert rows.score(label, predicted()) == {}  # no stage 5: nothing to score
+    # a family with no attribute schema names no value to compare
+    assert rows.values_right(comp("lamp", 1, color="red"), _pred("c", "lamp", 1, color="green"), None) is True
+    lamp = comp("indicator_lamp", 1, color="Green ")
+    assert rows.values_right(lamp, _pred("c", "indicator_lamp", 1, color="green"), None) is True
+    assert rows.values_right(comp("rcd", 1, neutral=True), _pred("c", "rcd", 1, neutral=1), None) is False
