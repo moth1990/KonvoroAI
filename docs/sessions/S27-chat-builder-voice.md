@@ -6,7 +6,7 @@
 | **Branch** | `s27-chat-builder-voice` |
 | **Depends on** | S25 |
 | **Status** | in review |
-| **PR** | (link) |
+| **PR** | [moth1990/KonvoroAI#37](https://github.com/moth1990/KonvoroAI/pull/37) |
 
 ## Goal
 
