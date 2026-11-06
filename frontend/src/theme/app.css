@@ -2099,6 +2099,17 @@ table.tbl {
   max-height: calc(100vh - 32px);
   grid-template-rows: auto auto auto minmax(0, 1fr) auto;
 }
+/* "מוצר חדש" (S27b, 09 §7.16, no prototype screen): the fields scroll, the name and the buttons stay in view */
+.modal.new-product {
+  width: min(560px, 100%);
+  max-height: calc(100vh - 32px);
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+}
+.modal.new-product .np-fields {
+  overflow: auto;
+  min-height: 0;
+  margin: 0;
+}
 .picker-list {
   display: grid;
   align-content: start;

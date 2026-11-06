@@ -164,7 +164,13 @@ export function nextToCheck(ids: string[], lines: QuoteLine[], current: string |
 
 /** A line whose price is typed in its row (prototype line 879): no price, not a kit part priced in its parent. */
 export function takesPrice(line: QuoteLine): boolean {
-  return line.unit_price == null && !line.included && (line.line_type === "component" || line.line_type === "manual");
+  // S27b: a line waiting for a decision takes a product first, not a price (07 §7.1)
+  return (
+    line.unit_price == null &&
+    !line.included &&
+    !line.pending &&
+    (line.line_type === "component" || line.line_type === "manual")
+  );
 }
 
 /** 09 §7.13: Enter in a price cell saves it and moves to the next line with no price, after this one. */

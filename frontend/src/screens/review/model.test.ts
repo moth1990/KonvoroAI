@@ -470,6 +470,11 @@ describe("catalog lines (S27b)", () => {
     expect([pendingText(1), pendingText(3)]).toEqual(["מוצר חדש אחד בשרטוט", "3 מוצרים חדשים בשרטוט"]);
   });
 
+  it("gives a waiting line no price cell (07 §7.1)", () => {
+    expect(takesPrice(line({ pending: true, unit_price: null }))).toBe(false);
+    expect(takesPrice(line({ unit_price: null }))).toBe(true);
+  });
+
   it("says a product is new in the drawing in place of 'no SKU' (09 §6.3)", () => {
     const waiting = line({
       pending: true,

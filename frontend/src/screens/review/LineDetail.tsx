@@ -494,13 +494,13 @@ function NewProductModal(props: {
     setBusy(false);
   };
   return (
-    <Modal onClose={props.onClose} labelledBy={titleId} className="picker">
+    <Modal onClose={props.onClose} labelledBy={titleId} className="new-product">
       <h2 id={titleId}>מוצר חדש</h2>
       <div className="small" data-testid="new-product-name">
         <span className="muted">השם בהצעה: </span>
         <b>{name.data ?? line.description}</b>
       </div>
-      <dl className="kv">
+      <dl className="kv np-fields">
         {attrs.map((a) => (
           <label key={a.name} style={{ display: "contents" }}>
             <dt>
@@ -572,21 +572,23 @@ function NewProductModal(props: {
           <dd />
         </label>
       </dl>
-      {missing.length ? <span className="small muted">חסר: {missing.join(", ")}</span> : null}
-      <span className="small muted">בלי מק"ט המוצר נשאר של המפעל ולא נשלח לאישור לקטלוג המשותף.</span>
-      <div className="row">
-        <button
-          type="button"
-          className="btn primary"
-          data-testid="np-save"
-          disabled={!ready || busy}
-          onClick={() => void save()}
-        >
-          שמור ובחר
-        </button>
-        <button type="button" className="btn" onClick={props.onClose}>
-          ביטול
-        </button>
+      <div style={{ display: "grid", gap: 8 }}>
+        {missing.length ? <span className="small muted">חסר: {missing.join(", ")}</span> : null}
+        <span className="small muted">בלי מק"ט המוצר נשאר של המפעל ולא נשלח לאישור לקטלוג המשותף.</span>
+        <div className="row">
+          <button
+            type="button"
+            className="btn primary"
+            data-testid="np-save"
+            disabled={!ready || busy}
+            onClick={() => void save()}
+          >
+            שמור ובחר
+          </button>
+          <button type="button" className="btn" onClick={props.onClose}>
+            ביטול
+          </button>
+        </div>
       </div>
     </Modal>
   );
