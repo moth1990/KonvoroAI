@@ -101,7 +101,7 @@ System limits (20 MB per file, 20 files, 200 pages per drawing, 2 m² per page) 
 - `default_on bool not null default false`. A new flag is always off.
 - `depends_on text[]`.
 - `owner`, `created_at`, `remove_by date`.
-- Seeded keys: spec 13's five. `review_screen` (S09) gated the review screen while it was built; migration 0019 removed it with S23b.
+- Seeded keys: spec 13's five and `catalog_lines` (S27b), with no `remove_by` (13 §3 rule 5: removed a month after they are on for every factory); the build-time flags of accepted screens, `quote_audit`, `bom_column_mapping`, `onboarding`, `settings_screen`, `approval_queue` and `chat_layer`, with `remove_by` 2026-12-31, Gate 3 (S28 decision 4, migration 0026). `review_screen` (S09) gated the review screen while it was built; migration 0019 removed it with S23b. `price_list` (S18) gated the price list; migration 0026 removed it with S28.
 
 **`plan_feature_flags`** holds the plan-level flag setting: `plan_id → plans`, `flag_key → feature_flags`, `enabled bool`, with PK `(plan_id, flag_key)`.
 

@@ -28,11 +28,10 @@ export const TENANTS = {
   auditMobile: "audit-mobile@e2e.konboro.local",
   auditShots: "audit-shots@e2e.konboro.local",
   // The price list (S19): the demo's products and the NURSERY draft. Saves change it, so one tenant per project; the
-  // shots read a third. The fourth has `price_list` off.
+  // shots read a third.
   pricesDesktop: "prices-desktop@e2e.konboro.local",
   pricesMobile: "prices-mobile@e2e.konboro.local",
   pricesShots: "prices-shots@e2e.konboro.local",
-  pricesOff: "prices-off@e2e.konboro.local",
   // The review screen's actions (S23): they change the NURSERY draft, and sending locks it, so one tenant per project.
   reviewDesktop: "review-desktop@e2e.konboro.local",
   reviewMobile: "review-mobile@e2e.konboro.local",
@@ -70,6 +69,9 @@ export const TENANTS = {
   linesDesktop: "lines-desktop@e2e.konboro.local",
   linesMobile: "lines-mobile@e2e.konboro.local",
   linesShots: "lines-shots@e2e.konboro.local",
+  // S28. A new factory's first day: no terms, no price list; its first quote is sent, so one tenant per project.
+  dayOneDesktop: "day-one-desktop@e2e.konboro.local",
+  dayOneMobile: "day-one-mobile@e2e.konboro.local",
 } as const;
 
 /** The fixture audit's id in each audit tenant (`E2eTenant.audit_id` in devtools/e2e.py). */

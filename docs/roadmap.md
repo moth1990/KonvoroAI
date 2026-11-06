@@ -105,7 +105,7 @@ Ideas and out-of-scope findings from sessions. Each one is scheduled into a sess
 - **Confirmation rate and `page_kind` below target** (from S08). 25% of drawings needed the confirmation screen (target ≤ 15%) and `page_kind` is 95.8% (target ≥ 97%). Calibrate the classifier's confidence, or the 0.85 threshold, against more labelled drawings (01 §12 item 5).
 
 - ~~**Remove `review_screen`**~~ Done in S23b: migration 0019, the routes, the client's guard and the 404 tests.
-- **Remove `price_list`** (from S18 decision 5, S19 decision 5). The price list screen was accepted in S19; take out the flag, its 404 tests (`test_api_price_list*.py`) and the `prices-off` E2E tenant. Due at Gate 2 (S28) at the latest.
+- ~~**Remove `price_list`**~~ Done in S28: migration 0026, the route's dependency, the seed, the 404 tests and the `prices-off` E2E tenant. The other build-time flags have `remove_by` 2026-12-31, for Gate 3 (S28 decision 4).
 - ~~**Review row sub line: spec vs prototype**~~ Resolved in S23 (decision 4): the prototype's sub line; 09 §6.3 fixed.
 - ~~**Review pricing details**~~ Done in S23: the quote API's `fresh_price`, `below_floor`, `price_hints` and `derived_note`, and their chips.
 - ~~**Draw mode: mark a missed component**~~ Done in S23b (09 §6.6): a manual line with the rectangle as its box, and the crop as a `tenant_reference_crops` row.

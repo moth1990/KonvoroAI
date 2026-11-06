@@ -16,11 +16,10 @@ from konboro.db.seed import seed_global
 from konboro.db.session import tenant_session
 from konboro.devtools.fixtures.nursery import seed_nursery
 
-from .api import Api, ApiTenant, set_tenant_flag
+from .api import Api, ApiTenant
 
 pytestmark = pytest.mark.integration
 
-FLAG = "price_list"
 TODAY = date.today()
 F1 = 'מא"ז ABB SN201M 1P+N ‏10A'  # NURSERY-1's F1 … F17 (devtools/fixtures/nursery.py)
 F1_TO_F17 = ", ".join(f"F{i}" for i in range(1, 18))
@@ -29,9 +28,8 @@ F1_TO_F17 = ", ".join(f"F{i}" for i in range(1, 18))
 @pytest.fixture(scope="module")
 def pl(api: Api, migrated_db: dict[str, Engine]) -> Api:
     with Session(migrated_db["owner"]) as s, s.begin():
-        seed_global(s)  # the flag, the FX rates and the sample catalog
+        seed_global(s)  # the FX rates and the sample catalog
     for t in (api.a, api.b):
-        set_tenant_flag(api.engine, t.tenant_id, FLAG, True)
         with tenant_session(t.tenant_id, api.engine) as s:
             s.add(m.MarginRule(id=new_id("mr"), tenant_id=t.tenant_id, level="default", value=Decimal("0.25")))
     return api
@@ -135,18 +133,6 @@ def test_another_tenants_products_are_never_compared(pl: Api) -> None:
         "/price-list/products/check-cost", json={"unit_cost": "1", "product_id": mine["id"]}, headers=pl.as_(pl.b)
     )
     assert r.status_code == 404
-
-
-def test_the_flag_off_answers_404(pl: Api) -> None:
-    set_tenant_flag(pl.engine, pl.a.tenant_id, FLAG, False)
-    try:
-        r = pl.client.post(
-            "/price-list/products/check-cost", json={"unit_cost": "1", "family": "relay"}, headers=pl.as_(pl.a)
-        )
-        assert r.status_code == 404
-        assert pl.client.get("/price-list/brands", headers=pl.as_(pl.a)).status_code == 404
-    finally:
-        set_tenant_flag(pl.engine, pl.a.tenant_id, FLAG, True)
 
 
 def test_the_drafts_that_use_a_product(pl: Api) -> None:

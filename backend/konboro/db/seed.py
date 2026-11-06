@@ -59,10 +59,11 @@ PLANS = [
     {"id": "pro", "name_he": "מקצועי", "monthly_quote_limit": 200, "max_pages_per_file": 60},
 ]
 
-PRICE_LIST_FLAG = "price_list"
+# S28 decision 4: the build-time flags of accepted screens go at Gate 3 (S32), before the pilot (migration 0026)
+GATE_3 = date(2026, 12, 31)
 
 # Spec 13 keys (the prototype's shorter names are not used in code, see CLAUDE.md).
-FLAGS = [
+FLAGS: list[dict[str, Any]] = [
     {"key": "unresolved_overlay", "description": "סימון מה לא פוענח על השרטוט (13 §4.4)", "depends_on": []},
     {"key": "export_doc", "description": "הורדת ההצעה כ-PDF ו-Excel (13 §4.1)", "depends_on": []},
     {"key": "chat_quote_builder", "description": "בניית הצעה בצ'אט (13 §4.2)", "depends_on": []},
@@ -70,21 +71,30 @@ FLAGS = [
     {"key": "voice_input", "description": "הקלטה קולית (13 §4.2)", "depends_on": ["chat_quote_builder"]},
     # S09 decision 2: on while the screen is being built, removed when it is complete (S23).
     # S14 decision 1: an unsure BOM column mapping stops for the user on the confirmation step.
-    {"key": "bom_column_mapping", "description": "אישור מיפוי עמודות בכתב כמויות (01 §5.8)", "depends_on": []},
+    {
+        "key": "bom_column_mapping",
+        "description": "אישור מיפוי עמודות בכתב כמויות (01 §5.8)",
+        "depends_on": [],
+        "remove_by": GATE_3,
+    },
     # S15: the quote audit's API (11); its screen is S16's.
-    {"key": "quote_audit", "description": "בדיקת הצעה קיימת (11)", "depends_on": []},
-    # S18 decision 5: the price list's API while its screen is built (S19), then removed.
-    {"key": PRICE_LIST_FLAG, "description": "מחירון המפעל (07 §7.2). יוסר אחרי S19", "depends_on": []},
+    {"key": "quote_audit", "description": "בדיקת הצעה קיימת (11)", "depends_on": [], "remove_by": GATE_3},
     # S24 decision 5: a new factory's entry, the settings screen, and the pilot approval queue.
     {
         "key": "onboarding",
         "description": "שתי שאלות ותנאי השימוש בנתונים לפני השרטוט הראשון (10 §5.1)",
         "depends_on": [],
+        "remove_by": GATE_3,
     },
-    {"key": "settings_screen", "description": "מסך ההגדרות (10 §9.1)", "depends_on": []},
-    {"key": "approval_queue", "description": "תור אישור לשכבה המשותפת (00 §14.2)", "depends_on": []},
+    {"key": "settings_screen", "description": "מסך ההגדרות (10 §9.1)", "depends_on": [], "remove_by": GATE_3},
+    {
+        "key": "approval_queue",
+        "description": "תור אישור לשכבה המשותפת (00 §14.2)",
+        "depends_on": [],
+        "remove_by": GATE_3,
+    },
     # S25 decision 5: spec 13 has no key for the chat; removed once its screen is accepted
-    {"key": "chat_layer", "description": "צ'אט על ההצעה במסך הבדיקה (08)", "depends_on": []},
+    {"key": "chat_layer", "description": "צ'אט על ההצעה במסך הבדיקה (08)", "depends_on": [], "remove_by": GATE_3},
     # S27b: every product line is a product, once per panel; a product not in the catalog waits for a decision
     {
         "key": CATALOG_LINES,
@@ -182,7 +192,8 @@ def seed_global(session: Session) -> None:
     for plan in PLANS:
         session.execute(insert(Plan).values(**plan).on_conflict_do_nothing(index_elements=["id"]))
     for flag in FLAGS:
-        session.execute(insert(FeatureFlag).values(**flag).on_conflict_do_nothing(index_elements=["key"]))
+        row = insert(FeatureFlag).values(**flag)
+        session.execute(row.on_conflict_do_update(index_elements=["key"], set_={"remove_by": row.excluded.remove_by}))
     session.execute(
         insert(VatRate)
         .values(id="vat_01JD0DEM000000000000000000", rate=Decimal("0.18"), valid_from=date(2025, 1, 1))
@@ -443,7 +454,7 @@ def seed_demo_fixtures(session: Session, storage: "Storage") -> None:
     audit_993.enable_flag(session, DEMO_TENANT)
     audit_993.seed_audit_993(session, DEMO_TENANT, DEMO_USER)
     audit_993.seed_audit_993_pages(session, storage, DEMO_TENANT)
-    for key in (PRICE_LIST_FLAG, *S24_FLAGS, CHAT_FLAG):
+    for key in (*S24_FLAGS, CHAT_FLAG):
         session.execute(
             insert(TenantFeatureOverride)
             .values(tenant_id=DEMO_TENANT, flag_key=key, enabled=True, reason="demo")

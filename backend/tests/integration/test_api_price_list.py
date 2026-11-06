@@ -1,5 +1,5 @@
 """The price-list API (07 §7.2–7.3, S18): products with their suppliers, history, brand discounts, margin rules,
-supplier preferences, the flag, and another tenant. Money is a string everywhere (non-negotiable 5)."""
+supplier preferences, and another tenant. Money is a string everywhere (non-negotiable 5)."""
 
 from datetime import date, timedelta
 from decimal import Decimal
@@ -14,11 +14,10 @@ from konboro.db.ids import new_id
 from konboro.db.seed import seed_global
 from konboro.db.session import tenant_session
 
-from .api import Api, ApiTenant, set_tenant_flag
+from .api import Api, ApiTenant
 
 pytestmark = pytest.mark.integration
 
-FLAG = "price_list"
 TODAY = date.today()
 
 
@@ -26,9 +25,8 @@ TODAY = date.today()
 def pl(api: Api, migrated_db: dict[str, Engine]) -> Api:
     """Tenants a and b with the price list on and the one default rule a new factory gets (10 §5.1)."""
     with Session(migrated_db["owner"]) as s, s.begin():
-        seed_global(s)  # the flag, the FX rates and the sample catalog
+        seed_global(s)  # the FX rates and the sample catalog
     for t in (api.a, api.b):
-        set_tenant_flag(api.engine, t.tenant_id, FLAG, True)
         with tenant_session(t.tenant_id, api.engine) as s:
             if not s.scalar(select(m.MarginRule.id).where(m.MarginRule.level == "default")):
                 s.add(m.MarginRule(id=new_id("mr"), tenant_id=t.tenant_id, level="default", value=Decimal("0.25")))
@@ -64,15 +62,12 @@ def a_quote(api: Api, tenant: ApiTenant) -> str:
     return quote_id
 
 
-def test_the_flag_off_answers_404(pl: Api) -> None:
-    set_tenant_flag(pl.engine, pl.a.tenant_id, FLAG, False)
-    try:
-        for path in ("/price-list/products", "/price-list/suppliers", "/price-list/margin-rules"):
-            assert pl.client.get(path, headers=pl.as_(pl.a)).status_code == 404
-        body = {"display_name": "x", "family": "relay"}
-        assert pl.client.post("/price-list/products", json=body, headers=pl.as_(pl.a)).status_code == 404
-    finally:
-        set_tenant_flag(pl.engine, pl.a.tenant_id, FLAG, True)
+def test_every_factory_has_the_price_list(pl: Api) -> None:
+    """S28: `price_list` is gone (S18 decision 5, S19 decision 5). A factory with no flag override reads it."""
+    with tenant_session(pl.a.tenant_id, pl.engine) as s:
+        assert s.get(m.FeatureFlag, "price_list") is None
+    for path in ("/price-list/products", "/price-list/suppliers", "/price-list/margin-rules", "/price-list/brands"):
+        assert pl.client.get(path, headers=pl.as_(pl.a)).status_code == 200, path
 
 
 def test_a_product_with_two_suppliers(pl: Api) -> None:
