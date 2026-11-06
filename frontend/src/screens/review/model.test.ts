@@ -24,7 +24,17 @@ import {
   statusMark,
   stepLine,
 } from "./model";
-import { belowFloor, nextToCheck, nextUnpriced, parseAmount, priceChips, sendSummary, takesPrice } from "./model";
+import {
+  belowFloor,
+  nextToCheck,
+  nextUnpriced,
+  parseAmount,
+  pendingCount,
+  pendingText,
+  priceChips,
+  sendSummary,
+  takesPrice,
+} from "./model";
 
 describe("money from strings", () => {
   it.each([
@@ -394,7 +404,7 @@ describe("review actions (S23)", () => {
   it("warns before sending about red, yellow and unpriced lines (09 §7.12)", () => {
     const q = quote([panel("A", [line({ status: "red", unit_price: null }), line({ status: "yellow" }), line()])]);
     q.totals.unpriced_count = 1;
-    expect(sendSummary(q)).toEqual({ red: 1, yellow: 1, unpriced: 1 });
+    expect(sendSummary(q)).toEqual({ red: 1, yellow: 1, unpriced: 1, pending: 0 });
     expect([belowFloor("0.12", "0.15"), belowFloor("0.15", "0.15"), belowFloor(null, "0.15")]).toEqual([
       true,
       false,
@@ -447,5 +457,27 @@ describe("the product picker's wording (S23b)", () => {
       [],
     );
     expect(chips).toEqual([{ text: "אין בקטלוג מוצר עם הערכים האלה", tone: "bad" }]);
+  });
+});
+
+describe("catalog lines (S27b)", () => {
+  it("counts the lines waiting for a decision and names them for the header and the send (09 §6.1, §7.12)", () => {
+    const q = quote([
+      panel("A", [line({ pending: true, status: "red", unit_price: null }), line(), line({ pending: true })]),
+    ]);
+    expect(pendingCount(q)).toBe(2);
+    expect(sendSummary(q).pending).toBe(2);
+    expect([pendingText(1), pendingText(3)]).toEqual(["מוצר חדש אחד בשרטוט", "3 מוצרים חדשים בשרטוט"]);
+  });
+
+  it("says a product is new in the drawing in place of 'no SKU' (09 §6.3)", () => {
+    const waiting = line({
+      pending: true,
+      status: "red",
+      status_reasons: [{ source: "match", value: "unmatched", status: "red" }],
+    });
+    const chips = reasonChips(waiting, []).map((c) => c.text);
+    expect(chips).toContain("מוצר חדש בשרטוט");
+    expect(chips).not.toContain('אין מק"ט מתאים');
   });
 });

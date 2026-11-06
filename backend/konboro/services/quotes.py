@@ -244,6 +244,7 @@ class LineView:
     list_price_brand: str | None = None  # 09 §7.13: the brand of an unpriced line whose item has a list price
     pending: bool = False  # S27b: no product yet, waiting for a decision (07 §7.1)
     component_ids: list[str] = field(default_factory=list)  # S27b: a merged line's components
+    family: str | None = None  # the component's family: the picker starts with it (09 §6.4)
 
 
 @dataclass(frozen=True)
@@ -766,6 +767,7 @@ def _line_view(
         list_price_brand=extra.list_brands.get(ln.id) if extra else None,
         pending=ln.pending,
         component_ids=list(ln.component_ids or ([ln.component_id] if ln.component_id else [])),
+        family=cmp.family if cmp else None,
     )
 
 

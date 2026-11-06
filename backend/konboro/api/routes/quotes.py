@@ -40,6 +40,8 @@ from ..schemas import (
     MarkIn,
     NewProductFormOut,
     NewProductIn,
+    NewProductNameIn,
+    NewProductNameOut,
     PriceEntryIn,
     ProductChoiceOut,
     ProductRefIn,
@@ -214,6 +216,19 @@ def new_product_form(actor: Reader, quote_id: QuoteId, line_id: LineId, request:
     ctx = _draft(actor, quote_id, request)
     try:
         return NewProductFormOut.model_validate(catalog_lines.form(ctx, line_id))
+    except review.ReviewError as e:
+        raise ApiError(e.status, e.code, e.details) from e
+
+
+@router.post("/quotes/{quote_id}/lines/{line_id}/new-product/name", dependencies=[Depends(require_flag(CATALOG_LINES))])
+def new_product_name(
+    actor: Reader, quote_id: QuoteId, line_id: LineId, body: NewProductNameIn, request: Request
+) -> NewProductNameOut:
+    """09 §7.16 (S27b): the name the product would get, as the form is filled; nothing is saved."""
+    ctx = _draft(actor, quote_id, request)
+    new = catalog_lines.NewProduct(attributes=dict(body.attributes), brand=body.brand, model_code=body.model_code)
+    try:
+        return NewProductNameOut(name=catalog_lines.preview(ctx, line_id, new))
     except review.ReviewError as e:
         raise ApiError(e.status, e.code, e.details) from e
 

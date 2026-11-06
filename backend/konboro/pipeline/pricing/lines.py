@@ -190,9 +190,9 @@ def alternative(a: Alternative) -> dict[str, Any]:
 
 
 def nearest_alternative(n: Nearest) -> dict[str, Any]:
-    """05 §5.9.2 (S27b): a product near a component nothing matched, offered as the line's alternative to choose."""
-    head = " ".join(x for x in (n.manufacturer, n.sku) if x)
-    return {"description": f"{head} · {n.diff}", "nearest": True, **n.model_dump(mode="json")}
+    """05 §5.9.2 (S27b): a product near a component nothing matched, offered as the line's alternative to choose. Its
+    name is the product's, and what differs from the drawing rides apart (`diff`), for the screen to show under it."""
+    return {**n.model_dump(mode="json"), "nearest": True}
 
 
 def component_line(

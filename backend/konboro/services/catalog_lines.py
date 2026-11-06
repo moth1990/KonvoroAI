@@ -236,6 +236,15 @@ def _read_values(ctx: Ctx, row: m.QuoteLine) -> dict[str, Any]:
     return {k: a.value for k, a in found.attributes.items() if a.value is not None}
 
 
+def preview(ctx: Ctx, line_id: str, body: NewProduct) -> str:
+    """The name "מוצר חדש" would give, as the user fills the form (09 §7.16): nothing is saved."""
+    row = _line(ctx, line_id)
+    family = _family_of(ctx, row)
+    known = set(schemas_mod.load(ctx.session).names(family))
+    attrs = {k: _value(v) for k, v in body.attributes.items() if v not in (None, "") and k in known}
+    return name_of(family, _class_of(ctx, row), body.brand.strip(), body.model_code.strip(), attrs)
+
+
 def form(ctx: Ctx, line_id: str) -> dict[str, Any]:
     """What the form opens with (09 §7.16): the line's family, its schema's attributes with what was read, and which
     of them are required."""

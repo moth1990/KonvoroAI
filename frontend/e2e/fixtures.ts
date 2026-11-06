@@ -66,6 +66,10 @@ export const TENANTS = {
   buildMobile: "build-mobile@e2e.konboro.local",
   buildOff: "build-off@e2e.konboro.local",
   buildShots: "build-shots@e2e.konboro.local",
+  // S27b. `catalog_lines` on for these only: deciding a waiting line changes the quote, so one tenant per project.
+  linesDesktop: "lines-desktop@e2e.konboro.local",
+  linesMobile: "lines-mobile@e2e.konboro.local",
+  linesShots: "lines-shots@e2e.konboro.local",
 } as const;
 
 /** The fixture audit's id in each audit tenant (`E2eTenant.audit_id` in devtools/e2e.py). */

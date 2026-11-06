@@ -269,6 +269,7 @@ class LineOut(BaseModel):
     )
     pending: bool = Field(False, description="S27b (07 §7.1): no product yet; the line waits for a decision")
     component_ids: list[str] = Field(default_factory=list, description="S27b: a merged line's components")
+    family: str | None = Field(None, description="The component's family: the product picker starts with it")
 
 
 class LineCountsOut(BaseModel):
@@ -1154,6 +1155,20 @@ class NewProductIn(Strict):
     model_code: str = Field(min_length=1, max_length=120)
     series: str | None = Field(None, max_length=120)
     sku: str | None = Field(None, max_length=120)
+
+
+class NewProductNameIn(Strict):
+    """What the name is built from, as the form is filled (09 §7.16): brand and model may still be empty."""
+
+    attributes: dict[Annotated[str, Field(pattern=r"^[a-z_]{1,40}$")], Annotated[str, Field(max_length=40)]] = Field(
+        max_length=30
+    )
+    brand: str = Field("", max_length=120)
+    model_code: str = Field("", max_length=120)
+
+
+class NewProductNameOut(BaseModel):
+    name: str = Field(description="The product's name as the app builds it (`text.describe`), never typed")
 
 
 class NewProductAttributeOut(BaseModel):

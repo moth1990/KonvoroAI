@@ -54,6 +54,24 @@
       "AlternativeIn": {
         "additionalProperties": false,
         "properties": {
+          "designators": {
+            "anyOf": [
+              {
+                "items": {
+                  "maxLength": 40,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "maxItems": 200,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "S27b (09 §7.17): only these of a merged line's components",
+            "title": "Designators"
+          },
           "index": {
             "description": "Which of the line's alternatives (09 §7.3)",
             "maximum": 9.0,
@@ -74,6 +92,18 @@
             "title": "Description",
             "type": "string"
           },
+          "diff": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "What differs from the drawing: \"20A במקום 16A\"",
+            "title": "Diff"
+          },
           "manufacturer": {
             "anyOf": [
               {
@@ -84,6 +114,12 @@
               }
             ],
             "title": "Manufacturer"
+          },
+          "nearest": {
+            "default": false,
+            "description": "05 §5.9.2 (S27b): a product near a component nothing matched",
+            "title": "Nearest",
+            "type": "boolean"
           },
           "sku": {
             "anyOf": [
@@ -3468,6 +3504,14 @@
             "title": "Boxes",
             "type": "array"
           },
+          "component_ids": {
+            "description": "S27b: a merged line's components",
+            "items": {
+              "type": "string"
+            },
+            "title": "Component Ids",
+            "type": "array"
+          },
           "cost_source": {
             "anyOf": [
               {
@@ -3510,6 +3554,18 @@
             ],
             "description": "Why this product, when it needs saying",
             "title": "Explanation"
+          },
+          "family": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The component's family: the product picker starts with it",
+            "title": "Family"
           },
           "fresh_price": {
             "anyOf": [
@@ -3661,6 +3717,12 @@
               }
             ],
             "title": "Parent Line Id"
+          },
+          "pending": {
+            "default": false,
+            "description": "S27b (07 §7.1): no product yet; the line waits for a decision",
+            "title": "Pending",
+            "type": "boolean"
           },
           "price_hints": {
             "description": "Neighbouring products, on a line with no price",
@@ -4368,6 +4430,191 @@
           "count"
         ],
         "title": "MissingPricesItem",
+        "type": "object"
+      },
+      "NewProductAttributeOut": {
+        "properties": {
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "required": {
+            "title": "Required",
+            "type": "boolean"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value"
+          }
+        },
+        "required": [
+          "name",
+          "required",
+          "value"
+        ],
+        "title": "NewProductAttributeOut",
+        "type": "object"
+      },
+      "NewProductFormOut": {
+        "description": "What \"מוצר חדש\" opens with (09 §7.16): the line's family, its schema's attributes with what was read.",
+        "properties": {
+          "attributes": {
+            "items": {
+              "$ref": "#/components/schemas/NewProductAttributeOut"
+            },
+            "title": "Attributes",
+            "type": "array"
+          },
+          "brand": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Brand"
+          },
+          "family": {
+            "title": "Family",
+            "type": "string"
+          },
+          "symbol_class": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Symbol Class"
+          }
+        },
+        "required": [
+          "family",
+          "symbol_class",
+          "brand",
+          "attributes"
+        ],
+        "title": "NewProductFormOut",
+        "type": "object"
+      },
+      "NewProductIn": {
+        "additionalProperties": false,
+        "description": "09 §7.16 (S27b): a factory product made from a waiting line, named the app's way.",
+        "properties": {
+          "attributes": {
+            "description": "The family's attributes, as the user left them",
+            "maxProperties": 30,
+            "patternProperties": {
+              "^[a-z_]{1,40}$": {
+                "maxLength": 40,
+                "type": "string"
+              }
+            },
+            "title": "Attributes",
+            "type": "object"
+          },
+          "brand": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Brand",
+            "type": "string"
+          },
+          "model_code": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Model Code",
+            "type": "string"
+          },
+          "series": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Series"
+          },
+          "sku": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sku"
+          }
+        },
+        "required": [
+          "attributes",
+          "brand",
+          "model_code"
+        ],
+        "title": "NewProductIn",
+        "type": "object"
+      },
+      "NewProductNameIn": {
+        "additionalProperties": false,
+        "description": "What the name is built from, as the form is filled (09 §7.16): brand and model may still be empty.",
+        "properties": {
+          "attributes": {
+            "maxProperties": 30,
+            "patternProperties": {
+              "^[a-z_]{1,40}$": {
+                "maxLength": 40,
+                "type": "string"
+              }
+            },
+            "title": "Attributes",
+            "type": "object"
+          },
+          "brand": {
+            "default": "",
+            "maxLength": 120,
+            "title": "Brand",
+            "type": "string"
+          },
+          "model_code": {
+            "default": "",
+            "maxLength": 120,
+            "title": "Model Code",
+            "type": "string"
+          }
+        },
+        "required": [
+          "attributes"
+        ],
+        "title": "NewProductNameIn",
+        "type": "object"
+      },
+      "NewProductNameOut": {
+        "properties": {
+          "name": {
+            "description": "The product's name as the app builds it (`text.describe`), never typed",
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "title": "NewProductNameOut",
         "type": "object"
       },
       "NoticeOut": {
@@ -5831,6 +6078,24 @@
       "ProductRefIn": {
         "additionalProperties": false,
         "properties": {
+          "designators": {
+            "anyOf": [
+              {
+                "items": {
+                  "maxLength": 40,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "maxItems": 200,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "S27b (09 §7.17): only these of a merged line's components",
+            "title": "Designators"
+          },
           "ref": {
             "description": "A choice from the picker",
             "pattern": "^(cat|prd):[A-Za-z0-9_\\-]{1,64}$",
@@ -11279,7 +11544,7 @@
     },
     "/quotes/{quote_id}/lines/{line_id}/alternative": {
       "post": {
-        "description": "09 §7.3: the alternative on every line with the same signature, in every panel, each approved.",
+        "description": "09 §7.3: the alternative on every line with the same signature, in every panel, each approved. With\n`catalog_lines` (S27b): a waiting line's nearest products are its alternatives, and `designators` moves only\nthose of a merged line's components (09 §7.17).",
         "operationId": "choose_alternative_quotes__quote_id__lines__line_id__alternative_post",
         "parameters": [
           {
@@ -11734,6 +11999,201 @@
         ]
       }
     },
+    "/quotes/{quote_id}/lines/{line_id}/new-product": {
+      "get": {
+        "description": "09 §7.16 (S27b): what \"מוצר חדש\" opens with for a waiting line.",
+        "operationId": "new_product_form_quotes__quote_id__lines__line_id__new_product_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "quote_id",
+            "required": true,
+            "schema": {
+              "pattern": "^quo_[0-9A-Z]{26}$",
+              "title": "Quote Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "line_id",
+            "required": true,
+            "schema": {
+              "pattern": "^ln_[0-9A-Z]{26}$",
+              "title": "Line Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewProductFormOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "New Product Form",
+        "tags": [
+          "quotes"
+        ]
+      },
+      "post": {
+        "description": "09 §7.16 (S27b): a factory product from a waiting line, its family's attributes, named the app's way; the\nline's components move to it, approved.",
+        "operationId": "create_new_product_quotes__quote_id__lines__line_id__new_product_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "quote_id",
+            "required": true,
+            "schema": {
+              "pattern": "^quo_[0-9A-Z]{26}$",
+              "title": "Quote Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "line_id",
+            "required": true,
+            "schema": {
+              "pattern": "^ln_[0-9A-Z]{26}$",
+              "title": "Line Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewProductIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActionOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Create New Product",
+        "tags": [
+          "quotes"
+        ]
+      }
+    },
+    "/quotes/{quote_id}/lines/{line_id}/new-product/name": {
+      "post": {
+        "description": "09 §7.16 (S27b): the name the product would get, as the form is filled; nothing is saved.",
+        "operationId": "new_product_name_quotes__quote_id__lines__line_id__new_product_name_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "quote_id",
+            "required": true,
+            "schema": {
+              "pattern": "^quo_[0-9A-Z]{26}$",
+              "title": "Quote Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "line_id",
+            "required": true,
+            "schema": {
+              "pattern": "^ln_[0-9A-Z]{26}$",
+              "title": "Line Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewProductNameIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewProductNameOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "New Product Name",
+        "tags": [
+          "quotes"
+        ]
+      }
+    },
     "/quotes/{quote_id}/lines/{line_id}/price": {
       "post": {
         "description": "A line's sale price changed in the review screen (07 §7.2.3, 09 §7.14): for this quote only, or in the price\nlist too.",
@@ -11943,7 +12403,7 @@
     },
     "/quotes/{quote_id}/lines/{line_id}/resolve": {
       "post": {
-        "description": "09 §7.8: a product for a missing line, which becomes an approved component line.",
+        "description": "09 §7.8: a product for a missing line, which becomes an approved component line. With `catalog_lines`\n(S27b): also a waiting line's product, or the designators picked of a merged line (09 §7.17).",
         "operationId": "resolve_missing_quotes__quote_id__lines__line_id__resolve_post",
         "parameters": [
           {
