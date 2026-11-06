@@ -95,6 +95,8 @@ class QuoteLine(Base, TenantScoped, Timestamps):
     line_group: Mapped[str | None]
     line_type: Mapped[str] = mapped_column(server_default="component")
     component_id: Mapped[str | None]
+    component_ids: Mapped[list[Any]] = mapped_column(server_default="[]")  # a merged line's components (S27b)
+    pending: Mapped[bool] = mapped_column(server_default="false")  # no product yet: waiting for a decision (S27b)
     parent_line_id: Mapped[str | None]
     catalog_item_id: Mapped[str | None]  # global table: plain reference, checked by the app
     product_id: Mapped[str | None]
