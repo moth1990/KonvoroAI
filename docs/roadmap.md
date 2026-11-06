@@ -72,8 +72,8 @@ P and R sessions alternate. R sessions use a fixture quote seeded through the re
 
 | # | Track | Session | Main contents | Specs | Depends on | Status |
 | --- | --- | --- | --- | --- | --- | --- |
-| S29 | X | Infrastructure as code | Terraform or CDK (decide at kickoff): VPC, RDS, S3 + KMS, SQS + DLQ, ECS API and workers, ALB, CloudFront, Secrets Manager, Cognito replacing dev auth, Bedrock provider, Transcribe, per-tenant pipeline concurrency limit (00 §4.3, BUG-008) | 12 §2, §4, §7 | S28 | todo |
-| S30 | X | Deploy and observability | GitHub Actions deploy to staging, Sentry, OpenTelemetry `trace_id`, CloudWatch, per-tenant cost table | 12 §7 | S29 | todo |
+| [S29](sessions/S29-infrastructure.md) | X | Infrastructure as code | Terraform or CDK (decide at kickoff): VPC, RDS, S3 + KMS, SQS + DLQ, ECS API and workers, ALB, CloudFront, Secrets Manager, Cognito replacing dev auth, Bedrock provider, Transcribe, per-tenant pipeline concurrency limit (00 §4.3, BUG-008) | 12 §2, §4, §7 | S28 | todo |
+| [S30](sessions/S30-deploy-observability.md) | X | Deploy and observability | GitHub Actions deploy to staging, Sentry, OpenTelemetry `trace_id`, CloudWatch, per-tenant cost table | 12 §7 | S29 | todo |
 | S31 | P | **Floating:** OCR engine choice | Google Vision vs Azure on the golden set by electrical-token accuracy, plug in the winner, live eval. **Runs whenever OCR keys exist** | 02 §10; 12 §5 | S10 | blocked (keys) |
 | S32 | G | **Gate 3: pilot readiness** | Security review, RLS checks on staging, backups and restore test, staging E2E, live eval. Tag `phase-3` | 00 §11, §14.2 | S30, S31 | todo |
 

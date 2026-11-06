@@ -72,7 +72,45 @@ Phase 3 (cloud and pilot readiness) starts from a tagged, stable `phase-2`.
 
 ## Flow coverage
 
-Filled in during the session: prototype flow → E2E test → status.
+Every `data-act` of the prototype's click handler (lines 1446–1559) and every screen in CLAUDE.md's map, against the Playwright spec that covers it. "S28" marks a test added here for a gap.
+
+| Screen | Prototype actions | Spec |
+| --- | --- | --- |
+| Login | `pw`, `forgot` | `login.spec.ts` |
+| Shell | navigation, `logout`, the quota meter | `shell.spec.ts`, `home.spec.ts` |
+| Home, classic and chat | `home-sugg`, `mic-home`, `chat` | `home.spec.ts`, `build.spec.ts`, `voice.spec.ts` |
+| New quote: pick | `upmode`, `rmfile`, `clearfiles` (S28), `start`; `sample` left out (S05: demo only, 01 §4.6 item 5) | `new-quote.spec.ts`, `bom.spec.ts` |
+| New quote: run and done | `cancelrun`, `toreview`; the confirm step and page kinds | `new-quote.spec.ts` |
+| A new factory's first day | the two questions, the terms, a drawing, a typed price, send (no prototype screen) | `welcome.spec.ts`, `day-one.spec.ts` (S28) |
+| Review: lines | `filter`, `margin` (S28), `approve`, `del`, `undo`, `toast` | `review.spec.ts`, `review-actions.spec.ts` |
+| Review: line detail | `editprice`, `price-here`, `price-db`, `takefresh`, `addcost`, `mkpref`, `alt`, `prod`, `savelist` (S28), `dismiss`, `close` | `review-actions.spec.ts`, `review-picker.spec.ts`, `catalog-lines.spec.ts` |
+| Review: findings | `f-onlyred` (S28), `f-show`, `goline` | `review-actions.spec.ts`, `drawing.spec.ts` |
+| Review: drawing | `page`, `tab`, `zin`, `zout`, `zfit`, `showdraw`, `ux` | `drawing.spec.ts`, `unresolved.spec.ts` |
+| Review: send and versions | `send`, `dosend`, `newver` | `review-actions.spec.ts`, `export.spec.ts` |
+| Chat drawer and proposals | `ask`, `apply`, `newchat`, line chips (`goline`), `mic` | `chat.spec.ts` |
+| Audit | upload, results, decisions, "הצג בשרטוט", corrected quote | `audit.spec.ts` |
+| Price list and editor | `pricef`, `prod`, `prod-new`, `ed-save`, `ed-addsup`, `ed-rmsup`, `cons`, the brand discount | `prices.spec.ts` |
+| Approval queue | `qok`, `qno` | `queue.spec.ts` |
+| Settings | `pref`; `flag` shown read-only (S03, S24) | `prefs.spec.ts` |
+| Chat quote builder | the conversation, `price-here`, `mic` | `build.spec.ts`, `voice.spec.ts` |
+| Export modal | `export`, `exp` | `export.spec.ts` |
+
+Not ported: the prototype chat's canned answers with their own buttons (`onlyred` in a message, line 1035): the app's chat answers come from the model, with line chips.
+
+## Backlog triage
+
+Every open item of the roadmap's backlog, scheduled (dev-strategy §7, the roadmap's "Each one is scheduled into a session, or dropped, at the next gate"). "Reading II" is the session proposed at close for the reading gaps the rows metric shows (question 7). "Pilot" means a triage session after S32 decides it from what the pilot factory finds. "Phase 4" is after the pilot.
+
+| Where | Items |
+| --- | --- |
+| S29, infrastructure | BUG-008, the per-tenant pipeline limit; a test database per checkout (S23b's merge), with the environment settings |
+| S30, deploy and observability | a usage table for every flag (S26 decision 6); exchange rates in production (S18); cassettes that replay the same on every platform (S24b decision 15, BUG-073) |
+| S31, OCR engine | reuse stage 2 for a reused page (S10); calibrate OCR confidence and the blank threshold (S10) |
+| S32, Gate 3 | the data terms' wording (S24, with B5); the review screen's usability test (S23 decision 1, B7); remove the six build-time flags (S28 decision 4); a manual line joins its product's line (S27b, before `catalog_lines` goes); a product deleted after it was queued (S24) |
+| Reading II (proposed) | panel count: feed sources are not panels (S08, BUG-035); a terminal with a device's tag (S24b, BUG-036, BUG-051's rest); time switches and impulse relays missed (S12, BUG-082); the backtest's unpriced lines (S22); an audit scoped to the quoted panel (S24b decision 18); end circles before the disambiguation call (S24b decision 5); disambiguation share above target (S12); a drawing's BOM SKUs and a CT's count (S20); an auxiliary contact's device and drawn twice (S12, S13); dashed frames for supply scope (S13); line confidence: no golden line is green apart from its price (S28) |
+| Pilot | PDFium in a process pool (S07); confirmation rate and `page_kind` (S08); a tenant's own BOM words and a misread BOM word (S14); the price list in the audit's money (S15); "הורד דוח" for an audit and audits in home's recent work (S16); the audit's summary counts (S16); matching, labor and derived-rule settings (S20, S22); the picker's price at a brand discount (S23b); a rematch and the kit, the rules on a resolved missing line (S23b); paste rows from a supplier quote (S23b decision 7); show an action before the server answers (S23 decision 10); the chat streams its answer, `set_attribute` for any value, "ליצור מחדש" (S25); grow the chat set to 200 and the builder's set (S25, S27, with estimators); a value changed by message, an enclosure said, `validator_review` on a chat build (S27); the customer PDF's template (S26 decision 1); a product's delete or archive, similar products without the catalog (S18) |
+| Phase 4 | eval each stage on labelled input and symbol-box labels (S06, S12); legend crops (S12); stage 3 reads the tenant's crops (S23b); the picker at catalog scale (S23b, with B3); BOM tables in a vector PDF (S14); a model for quote lines code can't sign (S15); the audit's, pricing's and the dismissals' learning loops (S15, S21, S22); the factory tunes an inference rule and tenant-level proposals (S20, S24); more sources for the approval queue, stage 4 reads `spelling_patterns`, re-review of `pilot_engineer` records (S24); `QTY_RANGE_MISMATCH`'s own count, the agent's catch rate (S21); one editor at a time and costs by permission (S23, S09: with a second user or role) |
+| External | 25.26.100's sub-panel labels (S24b decision 11, the user); the prefix table and thresholds (S24b, B2, the electrical expert) |
 
 ## Acceptance criteria (phase 2 exit)
 
@@ -97,6 +135,7 @@ Filled in during the session: prototype flow → E2E test → status.
 4. Which build-time flags go at this gate beyond `price_list`.
 5. Which P2s this gate fixes.
 6. Known gaps: B1 (the golden set), B7 (the usability test), the chat set's estimator phrasing.
+7. At close: a "Reading II" session before Gate 3, for the reading gaps the rows metric shows (51% against 85%).
 
 ## Outcome
 

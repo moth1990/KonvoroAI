@@ -161,6 +161,15 @@ test("a CAD file and an oversized file are rejected before upload", async ({ pag
   await page.getByRole("button", { name: "הסר את MAIN_BOARD.dwg" }).click();
   await page.getByRole("button", { name: "הסר את scan_site.pdf" }).click();
   await expect(page.getByRole("list", { name: "הקבצים שנבחרו" })).toHaveCount(0);
+
+  // "נקה הכול" (prototype `clearfiles`, S28's flow coverage) empties the list at once
+  await page.locator("#file-in").setInputFiles([
+    { name: "a.dwg", mimeType: "application/octet-stream", buffer: Buffer.from("AC1027") },
+    { name: "b.dwg", mimeType: "application/octet-stream", buffer: Buffer.from("AC1027") },
+  ]);
+  await expect(page.getByRole("list", { name: "הקבצים שנבחרו" }).getByRole("listitem")).toHaveCount(2);
+  await page.getByRole("button", { name: "נקה הכול" }).click();
+  await expect(page.getByRole("list", { name: "הקבצים שנבחרו" })).toHaveCount(0);
 });
 
 test("the server's own check is shown next to the file", async ({ page }) => {

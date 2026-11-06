@@ -8,7 +8,7 @@
 import { expect, test, type Page } from "@playwright/test";
 
 import { isMobile, signIn, TENANTS } from "./fixtures";
-import { lineWith, openNursery } from "./review-helpers";
+import { lines, lineWith, openNursery } from "./review-helpers";
 
 test.describe.configure({ mode: "serial", timeout: 60_000 });
 
@@ -75,6 +75,28 @@ test("a price typed in the row goes to the price list, and Enter moves to the ne
   await expect(priced.locator(".t")).toContainText("₪840");
   await expect(page.getByTestId("findings")).toContainText("4 שורות בלי מחיר");
   if (!isMobile(page)) await expect(page.locator(":focus")).toHaveAttribute("data-testid", "price-in");
+});
+
+test("הצג רק אותן shows the lines with no price, and with שמור למחירון off a price is for this quote only", async ({
+  page,
+}) => {
+  // prototype `f-onlyred` and `savelist` (S28's flow coverage)
+  await page.getByTestId("findings").getByTestId("f-onlyred").click();
+  await expect(page.getByTestId("filter-red")).toHaveAttribute("aria-pressed", "true");
+  for (const row of await lines(page).all()) await expect(row.locator(".chip.bad")).toHaveText("אין מחיר");
+  const name = (await lines(page).first().locator(".name").textContent()) ?? "";
+  const { detail } = await openLine(page, name);
+  const toggle = detail.getByTestId("savelist");
+  await expect(toggle).toHaveAttribute("aria-checked", "true");
+  await toggle.click();
+  await expect(toggle).toHaveAttribute("aria-checked", "false");
+  await closeSheet(page);
+  const cell = (await lineWith(page, name)).getByTestId("price-in");
+  await cell.fill("55");
+  await cell.press("Enter");
+  await expect(toast(page)).toContainText("נשמר להצעה הזו בלבד");
+  await page.getByTestId("filter-all").click();
+  await expect((await lineWith(page, name)).locator(".chip", { hasText: "מחיר להצעה הזו" })).toBeVisible();
 });
 
 test("a sale price changed for this quote only, then from the price list's new price", async ({ page }) => {

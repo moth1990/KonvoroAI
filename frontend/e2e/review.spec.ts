@@ -68,6 +68,22 @@ test.describe("the NURSERY-1 fixture", () => {
     await expect(page.getByText("הזנה", { exact: true })).toBeVisible();
   });
 
+  test("רווחיות shows each line's margin, and is remembered", async ({ page }) => {
+    // prototype `margin` (S23, 09 §6.3; S28's flow coverage)
+    await openNursery(page);
+    const toggle = page.getByRole("button", { name: "רווחיות" });
+    await expect(toggle).toHaveAttribute("aria-pressed", "false");
+    await expect(page.locator(".mg")).toHaveCount(0);
+    await toggle.click();
+    await expect(toggle).toHaveAttribute("aria-pressed", "true");
+    await expect(page.locator(".lines-pane .mg").first()).toHaveText("רווח");
+    await expect((await lineWith(page, "SN201M")).locator(".mg")).toContainText("%");
+    await page.reload();
+    await expect(page.getByRole("button", { name: "רווחיות" })).toHaveAttribute("aria-pressed", "true");
+    await page.getByRole("button", { name: "רווחיות" }).click();
+    await expect(page.locator(".mg")).toHaveCount(0);
+  });
+
   test("a line's detail: what the drawing says, where each value comes from, price and cost", async ({ page }) => {
     await openNursery(page);
     const f1 = await lineWith(page, "SN201M");
