@@ -16,6 +16,7 @@ from sqlalchemy import Engine, create_engine, select, text, update
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
+from konboro.domain.flags import CATALOG_LINES
 from konboro.settings import get_settings
 
 from . import catalog
@@ -86,12 +87,11 @@ FLAGS = [
     {"key": "chat_layer", "description": "צ'אט על ההצעה במסך הבדיקה (08)", "depends_on": []},
     # S27b: every product line is a product, once per panel; a product not in the catalog waits for a decision
     {
-        "key": "catalog_lines",
+        "key": CATALOG_LINES,
         "description": "שורות מהקטלוג: מוצר אחד בשורה, ומוצר חדש ממתין להחלטה (13 §4.10)",
         "depends_on": [],
     },
 ]
-CATALOG_LINES = "catalog_lines"
 S24_FLAGS = ("onboarding", "settings_screen", "approval_queue")
 CHAT_FLAG = "chat_layer"
 # The demo factory has answered the two questions, and its price list came from two quotes it sent (10288, 10271).

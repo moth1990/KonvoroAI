@@ -118,7 +118,9 @@ def describe(family: str, symbol_class: str | None, brand: str | None, model: st
         if attrs.get(name) is not None:
             # a contactor's current is rated for a utilization category: AC-3 unless the item says otherwise
             # (S27b: ESB25's 25A is AC-1; the prototype's "מגען 3P 16A לפחות (AC-3)")
-            category = f" ({attrs.get('utilization') or 'AC-3'})" if name == "current_a" and family == "contactor" else ""
+            category = (
+                f" ({attrs.get('utilization') or 'AC-3'})" if name == "current_a" and family == "contactor" else ""
+            )
             parts.append(value(name, attrs[name]) + category)
     if attrs.get("coil_voltage_v") is not None:
         parts.append(f"סליל {value('coil_voltage_v', attrs['coil_voltage_v'])}")

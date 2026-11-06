@@ -45,9 +45,10 @@ from ..association.schemas import NEVER_DEFAULT, Attribute, Schemas
 from ..bom.terms import UNTYPED
 from . import agent, inference, text
 from .agent import Ask
-from .catalog import Catalog, Item, norm_sku, norm_token
+from .catalog import PRODUCT, Catalog, Item, norm_sku, norm_token
 from .config import DEFAULT, SYSTEM_DEFAULTS, MatchingConfig
 from .factory import Factory
+from .nearest import nearest
 from .notes import Notes
 from .query import BrandPlan, Need, Ranked, alternatives_pool, check, decide, passes, query, rank, unknown_differences
 
@@ -68,6 +69,7 @@ class Inputs:
     ask: Ask | None = None
     cfg: MatchingConfig = DEFAULT
     corrected: frozenset[str] = frozenset()  # components whose poles stage 4 corrected (`corrected_poles`)
+    nearest: bool = False  # `catalog_lines` (S27b): suggest the nearest products when nothing matches (05 §5.9.2)
 
 
 def corrected_poles(instances: Iterable[Instance]) -> frozenset[str]:
@@ -1010,8 +1012,13 @@ def match_all(components: list[Component], inp: Inputs) -> Result:
         if decided is None:
             decided = cache[pr.key] = decide_prepared(pr, inp)
         match = finish(c, decided, inp.cfg)
+        item_id = chosen_item(match, inp.catalog)
+        if item_id is not None and item_id.startswith(PRODUCT):  # a factory product (05 §5.6, S27b)
+            match = match.model_copy(update={"product_id": item_id[len(PRODUCT) :]})
+        if inp.nearest and match.status == "unmatched":
+            near = nearest(c, match, inp.catalog, inp.factory, inp.schemas)
+            match = match.model_copy(update={"nearest": near}) if near else match
         done[c.component_id] = match
-        item_id = item_of(match, inp.catalog)
         if item_id is not None:
             items[c.component_id] = item_id
     matches = [done[c.component_id] for c in todo]
@@ -1037,11 +1044,18 @@ def match_all(components: list[Component], inp: Inputs) -> Result:
     return Result(matches, auxiliary, stats, issues)
 
 
-def item_of(match: ComponentMatch, catalog: Catalog) -> str | None:
-    """The catalog item a match chose (its snapshot keeps sku and manufacturer; the pair is unique)."""
+def chosen_item(match: ComponentMatch, catalog: Catalog) -> str | None:
+    """The item a match chose, a factory product's included (its snapshot keeps sku and manufacturer; the pair is
+    unique)."""
     if match.catalog_item is None:
         return None
     for i in catalog.by_sku.get(norm_sku(match.catalog_item.sku), []):
         if i.brand == match.catalog_item.manufacturer and i.sku == match.catalog_item.sku:
             return i.id
     return None
+
+
+def item_of(match: ComponentMatch, catalog: Catalog) -> str | None:
+    """The master catalog item a match chose; None for a factory product (S27b)."""
+    found = chosen_item(match, catalog)
+    return None if found is None or found.startswith(PRODUCT) else found

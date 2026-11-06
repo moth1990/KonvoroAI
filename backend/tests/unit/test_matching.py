@@ -854,3 +854,78 @@ def test_the_two_clocks_and_a_contactors_category_are_named() -> None:
     assert describe("time_switch", "time_switch", None, None, {}) == "שעון שבת / שעון פיקוד"
     esb = describe("contactor", None, "ABB", "ESB25", {"poles": 3, "current_a": 25, "utilization": "AC-1"})
     assert esb == "מגען ABB ESB25 3P 25A (AC-1)"
+
+
+# --- S27b: the nearest products (05 §5.9.2) and the factory's own products (05 §5.6) ---------------------------------
+
+
+def run_lines(*components: Component, catalog: Catalog = CATALOG, nearest: bool = True) -> list[ComponentMatch]:
+    inp = Inputs(
+        catalog=catalog,
+        factory=factory(),
+        schemas=schemas.default(),
+        notes=Notes(),
+        components={c.component_id: c for c in components},
+        nearest=nearest,
+    )
+    return match_all(list(components), inp).matches
+
+
+def test_nothing_matches_and_the_nearest_products_are_suggested() -> None:
+    """A 3P 13A MCB is no product. Stage 5 suggests the three nearest, all 3P, each with what differs, and chooses
+    none of them (05 §1 principles 2 and 3). The distance ranks before the brand: Schneider's 10A is nearer than
+    ABB's 20A, and among the equally near the factory's ABB comes first."""
+    m = run_lines(comp("circuit_breaker", "mcb", {"poles": 3, "current_a": 13, "curve": "C"}))[0]
+    assert (m.status, m.chosen_sku, m.catalog_item) == ("unmatched", None, None)
+    assert [n.sku for n in m.nearest] == ["S203M-C10", "S203M-C16", "A9F74310"]
+    first = m.nearest[0]
+    assert (first.diff, first.differs, first.manufacturer) == ("10A במקום 13A", ["current_a"], "ABB")
+    assert first.catalog_item_id == SKU["S203M-C10"].id and first.product_id is None
+    assert first.description == SKU["S203M-C10"].description
+
+
+def test_another_pole_count_comes_last() -> None:
+    """The user's decision 2: a product with the drawing's poles before any with other poles. 3P 63A D has no D curve
+    in the sample, so the 3P C items come first, and a 1P one only after every 3P."""
+    m = run_lines(comp("circuit_breaker", "mcb", {"poles": 3, "current_a": 63, "curve": "D"}))[0]
+    assert m.status == "unmatched" and m.nearest
+    poles = [SKU[n.sku].attributes.get("poles") for n in m.nearest]
+    assert poles == sorted(poles, key=lambda p: p != 3) and poles[0] == 3
+    assert "curve" in m.nearest[0].differs
+
+
+def test_no_suggestion_without_the_current_or_with_the_flag_off() -> None:
+    """05 §5.9.2: with the current missing there is nothing to compare with; the user picks the value (09 §6.4).
+    With `catalog_lines` off, stage 5 is as before."""
+    missing = run_lines(comp("circuit_breaker", "mcb", {"poles": 3, "curve": "C"}))[0]
+    assert missing.status == "unmatched" and "missing_required_attribute" in missing.warnings and missing.nearest == []
+    off = run_lines(comp("circuit_breaker", "mcb", {"poles": 3, "current_a": 13, "curve": "C"}), nearest=False)[0]
+    assert off.status == "unmatched" and off.nearest == []
+
+
+def test_a_factory_product_is_a_candidate() -> None:
+    """05 §5.6 (S27b): a product made in "מוצר חדש", with its family's attributes, a brand and a model, is matched like
+    a catalog item, and the match names it by `product_id`. A product typed in the price list (no attributes) is not."""
+    from konboro.db import models as m
+    from konboro.pipeline.matching.catalog import with_products
+
+    made = m.Product(
+        id="prd_01JNEW",
+        family="circuit_breaker",
+        symbol_class="mcb",
+        brand="ABB",
+        model_code="S203M",
+        series="S200M",
+        manufacturer_sku=None,
+        attributes={"poles": 3, "current_a": 13, "curve": "C", "breaking_capacity_ka": 10, "neutral": False},
+        catalog_item_id=None,
+        display_name="x",
+    )
+    typed = m.Product(id="prd_01JTYPED", family="circuit_breaker", brand="ABB", model_code=None, attributes={})
+    cat = with_products(CATALOG, [made, typed])
+    assert "prd:prd_01JTYPED" not in cat.items
+    found = run_lines(comp("circuit_breaker", "mcb", {"poles": 3, "current_a": 13, "curve": "C"}), catalog=cat)[0]
+    assert (found.status, found.product_id, found.chosen_sku) == ("matched", "prd_01JNEW", "S203M")
+    assert found.catalog_item is not None
+    assert found.catalog_item.description == 'מפסק זרם אוטומטי (מא"ז) ABB S203M 3P 13A עקומה C 10kA'
+    assert found.nearest == []
