@@ -69,6 +69,20 @@ def test_e2e_tenants_have_their_states(migrated_db: dict[str, Engine]) -> None:
         "build-mobile@e2e.konboro.local": (True, 12, "ok"),
         "build-off@e2e.konboro.local": (True, 12, "ok"),
         "build-shots@e2e.konboro.local": (True, 12, "ok"),
+        "lines-desktop@e2e.konboro.local": (False, 12, "ok"),
+        "lines-mobile@e2e.konboro.local": (False, 12, "ok"),
+        "lines-shots@e2e.konboro.local": (False, 12, "ok"),
+    }
+    # S27b: `catalog_lines` changes every priced quote's lines, so only its own tenants have it on
+    lines_on = set()
+    for t in e2e.TENANTS:
+        with tenant_session(t.tenant_id, migrated_db["app"]) as s:
+            if flags.tenant_flags(s, t.tenant_id)["catalog_lines"]:
+                lines_on.add(t.email)
+    assert lines_on == {
+        "lines-desktop@e2e.konboro.local",
+        "lines-mobile@e2e.konboro.local",
+        "lines-shots@e2e.konboro.local",
     }
     sample = states["classic@e2e.konboro.local"][3]
     assert sample.queue_pending == 3
