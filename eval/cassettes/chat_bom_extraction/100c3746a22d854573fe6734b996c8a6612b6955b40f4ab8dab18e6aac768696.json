@@ -1,0 +1,25 @@
+{
+  "answer": {
+    "input_tokens": 2426,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 103,
+    "payload": {
+      "changes": [],
+      "items": [
+        {
+          "quantity": 1,
+          "quote": "מפסק ראשי שלוש על מאה",
+          "text": "מפסק 3X100A"
+        },
+        {
+          "quantity": 1,
+          "quote": "פחת ארבע על ארבעים",
+          "text": "פחת 4X40A"
+        }
+      ],
+      "question": null
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_bom_extraction"
+}

@@ -1,0 +1,14 @@
+{
+  "answer": {
+    "input_tokens": 2403,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 47,
+    "payload": {
+      "changes": [],
+      "items": [],
+      "question": "מה הזרם של המפסק הראשי (ומספר הקטבים)?"
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_bom_extraction"
+}

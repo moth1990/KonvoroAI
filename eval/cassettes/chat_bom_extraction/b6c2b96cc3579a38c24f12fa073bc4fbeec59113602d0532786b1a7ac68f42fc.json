@@ -1,0 +1,21 @@
+{
+  "answer": {
+    "input_tokens": 2405,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 62,
+    "payload": {
+      "changes": [],
+      "items": [
+        {
+          "panel": null,
+          "quantity": 4,
+          "quote": "4 מגענים 3X25",
+          "text": "מגען 3X25A"
+        }
+      ],
+      "question": null
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_bom_extraction"
+}

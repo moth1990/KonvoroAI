@@ -160,7 +160,11 @@ def rows(
     return out
 
 
-def components(drawing_id: str, found: list[Row], cfg: AssociationConfig = DEFAULT) -> list[Component]:
+def components(
+    drawing_id: str, found: list[Row], cfg: AssociationConfig = DEFAULT, by_row: bool = False
+) -> list[Component]:
+    """`by_row`: a chat build's components are named by their first row, not their place, so a line keeps its key
+    while the rows before it come and go (S27; `pipeline/bom/chat.py`)."""
     groups: dict[tuple[Any, ...], list[Row]] = defaultdict(list)
     for r in sorted(found, key=lambda r: r.order):
         groups[r.signature].append(r)
@@ -182,7 +186,7 @@ def components(drawing_id: str, found: list[Row], cfg: AssociationConfig = DEFAU
         known = [r.quantity for r in group if r.quantity is not None]
         out.append(
             Component(
-                component_id=f"cmp_{prefix}_{n:04d}",
+                component_id=f"cmp_{prefix}_{group[0].order[1] if by_row else n:04d}",
                 drawing_id=drawing_id,
                 panel_id=first.panel_id,  # type: ignore[arg-type]
                 family=first.family,

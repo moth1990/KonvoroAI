@@ -1,0 +1,25 @@
+{
+  "answer": {
+    "input_tokens": 2417,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 99,
+    "payload": {
+      "changes": [],
+      "items": [
+        {
+          "quantity": 1,
+          "quote": "פחת 4X40 30mA",
+          "text": "פחת 4X40A 30mA"
+        },
+        {
+          "quantity": 2,
+          "quote": "ושני פחתים 2X25",
+          "text": "פחת 2X25A"
+        }
+      ],
+      "question": null
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_bom_extraction"
+}

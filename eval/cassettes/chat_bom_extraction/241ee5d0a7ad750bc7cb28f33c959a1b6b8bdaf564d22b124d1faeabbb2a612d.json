@@ -1,0 +1,25 @@
+{
+  "answer": {
+    "input_tokens": 2416,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 91,
+    "payload": {
+      "changes": [],
+      "items": [
+        {
+          "quantity": 1,
+          "quote": "מפסק 4X100",
+          "text": "מפסק 4X100A"
+        },
+        {
+          "quantity": 2,
+          "quote": "2 פחת 4X40",
+          "text": "פחת 4X40A"
+        }
+      ],
+      "question": null
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_bom_extraction"
+}

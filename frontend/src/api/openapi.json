@@ -1004,6 +1004,62 @@
         "title": "Body_put_logo_settings_document_logo_put",
         "type": "object"
       },
+      "Body_send_build_voice_builds__drawing_id__voice_post": {
+        "properties": {
+          "recording": {
+            "contentMediaType": "application/octet-stream",
+            "description": "WebM/Opus, Ogg, MP4/AAC, MPEG or WAV, up to 2 MB (about a minute)",
+            "title": "Recording",
+            "type": "string"
+          },
+          "seconds": {
+            "anyOf": [
+              {
+                "maximum": 65.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Seconds"
+          }
+        },
+        "required": [
+          "recording"
+        ],
+        "title": "Body_send_build_voice_builds__drawing_id__voice_post",
+        "type": "object"
+      },
+      "Body_start_build_by_voice_builds_voice_post": {
+        "properties": {
+          "recording": {
+            "contentMediaType": "application/octet-stream",
+            "description": "WebM/Opus, Ogg, MP4/AAC, MPEG or WAV, up to 2 MB (about a minute)",
+            "title": "Recording",
+            "type": "string"
+          },
+          "seconds": {
+            "anyOf": [
+              {
+                "maximum": 65.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Seconds"
+          }
+        },
+        "required": [
+          "recording"
+        ],
+        "title": "Body_start_build_by_voice_builds_voice_post",
+        "type": "object"
+      },
       "Body_upload_audit_audits_post": {
         "properties": {
           "customer": {
@@ -1255,7 +1311,8 @@
           "source": {
             "enum": [
               "spreadsheet",
-              "image"
+              "image",
+              "chat"
             ],
             "title": "Source",
             "type": "string"
@@ -1353,6 +1410,266 @@
           "priced_products"
         ],
         "title": "BrandDiscountOut",
+        "type": "object"
+      },
+      "BuildChangeOut": {
+        "description": "A change the message makes to a line of the draft (S27 decision 4).",
+        "properties": {
+          "action": {
+            "enum": [
+              "set_qty",
+              "add_qty",
+              "remove"
+            ],
+            "title": "Action",
+            "type": "string"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "line_id": {
+            "title": "Line Id",
+            "type": "string"
+          },
+          "quantity": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quantity"
+          }
+        },
+        "required": [
+          "line_id",
+          "description",
+          "action",
+          "quantity"
+        ],
+        "title": "BuildChangeOut",
+        "type": "object"
+      },
+      "BuildDroppedOut": {
+        "description": "What the code check left out (S27 design 3), with why.",
+        "properties": {
+          "quote": {
+            "title": "Quote",
+            "type": "string"
+          },
+          "reason": {
+            "enum": [
+              "not_in_message",
+              "number_not_said",
+              "unknown_line",
+              "bad_quantity"
+            ],
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "quote",
+          "reason"
+        ],
+        "title": "BuildDroppedOut",
+        "type": "object"
+      },
+      "BuildItemOut": {
+        "description": "A product the message described, as stage 4 will read it.",
+        "properties": {
+          "panel": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Panel"
+          },
+          "quantity": {
+            "title": "Quantity",
+            "type": "integer"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "text",
+          "quantity",
+          "panel"
+        ],
+        "title": "BuildItemOut",
+        "type": "object"
+      },
+      "BuildMessageIn": {
+        "additionalProperties": false,
+        "properties": {
+          "text": {
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "title": "BuildMessageIn",
+        "type": "object"
+      },
+      "BuildMessageOut": {
+        "properties": {
+          "changes": {
+            "items": {
+              "$ref": "#/components/schemas/BuildChangeOut"
+            },
+            "title": "Changes",
+            "type": "array"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "dropped": {
+            "items": {
+              "$ref": "#/components/schemas/BuildDroppedOut"
+            },
+            "title": "Dropped",
+            "type": "array"
+          },
+          "heard": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Heard"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/BuildItemOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "message_id": {
+            "title": "Message Id",
+            "type": "string"
+          },
+          "question": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Question"
+          },
+          "role": {
+            "enum": [
+              "user",
+              "assistant"
+            ],
+            "title": "Role",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "applied",
+              "pending",
+              "dismissed",
+              "undone"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "message_id",
+          "role",
+          "text",
+          "heard",
+          "status",
+          "created_at",
+          "items",
+          "changes",
+          "dropped",
+          "question"
+        ],
+        "title": "BuildMessageOut",
+        "type": "object"
+      },
+      "BuildOut": {
+        "description": "A chat build (S27): its conversation, and its quote once a message added a line (decision 2).",
+        "properties": {
+          "can_undo": {
+            "title": "Can Undo",
+            "type": "boolean"
+          },
+          "drawing_id": {
+            "title": "Drawing Id",
+            "type": "string"
+          },
+          "messages": {
+            "items": {
+              "$ref": "#/components/schemas/BuildMessageOut"
+            },
+            "title": "Messages",
+            "type": "array"
+          },
+          "quote": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/QuoteOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "quote_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quote Id"
+          },
+          "voice_stand_in": {
+            "title": "Voice Stand In",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "drawing_id",
+          "quote_id",
+          "messages",
+          "quote",
+          "can_undo",
+          "voice_stand_in"
+        ],
+        "title": "BuildOut",
         "type": "object"
       },
       "CandidateList": {
@@ -2895,6 +3212,149 @@
           }
         },
         "title": "HealthOut",
+        "type": "object"
+      },
+      "HomeChoiceOut": {
+        "properties": {
+          "chat": {
+            "description": "The review opens with its chat",
+            "title": "Chat",
+            "type": "boolean"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "A quote's last change, to tell two of one name apart",
+            "title": "Note"
+          },
+          "text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Sent on arrival: the build's first message, or the question to the chat",
+            "title": "Text"
+          },
+          "to": {
+            "title": "To",
+            "type": "string"
+          }
+        },
+        "required": [
+          "label",
+          "to",
+          "text",
+          "chat",
+          "note"
+        ],
+        "title": "HomeChoiceOut",
+        "type": "object"
+      },
+      "HomeRouteIn": {
+        "additionalProperties": false,
+        "properties": {
+          "text": {
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "title": "HomeRouteIn",
+        "type": "object"
+      },
+      "HomeRouteOut": {
+        "description": "Where a request goes (13 §4.3). `ask`: a short question with choices, nothing done until one is picked.",
+        "properties": {
+          "by": {
+            "enum": [
+              "code",
+              "model"
+            ],
+            "title": "By",
+            "type": "string"
+          },
+          "chat": {
+            "title": "Chat",
+            "type": "boolean"
+          },
+          "choices": {
+            "items": {
+              "$ref": "#/components/schemas/HomeChoiceOut"
+            },
+            "title": "Choices",
+            "type": "array"
+          },
+          "kind": {
+            "enum": [
+              "go",
+              "ask",
+              "toast"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Message"
+          },
+          "text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Text"
+          },
+          "to": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "To"
+          }
+        },
+        "required": [
+          "kind",
+          "to",
+          "text",
+          "chat",
+          "message",
+          "choices",
+          "by"
+        ],
+        "title": "HomeRouteOut",
         "type": "object"
       },
       "HomeSummaryOut": {
@@ -8021,6 +8481,432 @@
         ]
       }
     },
+    "/builds": {
+      "post": {
+        "description": "A new build from its first message. Nothing is counted until a message adds a line (decision 2).",
+        "operationId": "start_build_builds_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BuildMessageIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BuildOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Start Build",
+        "tags": [
+          "build"
+        ]
+      }
+    },
+    "/builds/voice": {
+      "post": {
+        "description": "A new build from a recording: what was heard and understood waits for \"הוסף\" (decision 1).",
+        "operationId": "start_build_by_voice_builds_voice_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_start_build_by_voice_builds_voice_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BuildOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Start Build By Voice",
+        "tags": [
+          "build"
+        ]
+      }
+    },
+    "/builds/{drawing_id}": {
+      "get": {
+        "operationId": "get_build_builds__drawing_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "drawing_id",
+            "required": true,
+            "schema": {
+              "pattern": "^drw_[0-9A-Z]{26}$",
+              "title": "Drawing Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BuildOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Get Build",
+        "tags": [
+          "build"
+        ]
+      }
+    },
+    "/builds/{drawing_id}/messages": {
+      "post": {
+        "description": "A typed message: its lines and changes applied at once, stages 4–7 again, and the reply.",
+        "operationId": "send_build_message_builds__drawing_id__messages_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "drawing_id",
+            "required": true,
+            "schema": {
+              "pattern": "^drw_[0-9A-Z]{26}$",
+              "title": "Drawing Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BuildMessageIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BuildOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Send Build Message",
+        "tags": [
+          "build"
+        ]
+      }
+    },
+    "/builds/{drawing_id}/messages/{message_id}/apply": {
+      "post": {
+        "description": "\"הוסף\" on a recording's card (decision 1).",
+        "operationId": "apply_build_message_builds__drawing_id__messages__message_id__apply_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "drawing_id",
+            "required": true,
+            "schema": {
+              "pattern": "^drw_[0-9A-Z]{26}$",
+              "title": "Drawing Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "message_id",
+            "required": true,
+            "schema": {
+              "pattern": "^bmg_[0-9A-Z]{26}$",
+              "title": "Message Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BuildOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Apply Build Message",
+        "tags": [
+          "build"
+        ]
+      }
+    },
+    "/builds/{drawing_id}/messages/{message_id}/dismiss": {
+      "post": {
+        "description": "\"תקן\": the recording is not added.",
+        "operationId": "dismiss_build_message_builds__drawing_id__messages__message_id__dismiss_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "drawing_id",
+            "required": true,
+            "schema": {
+              "pattern": "^drw_[0-9A-Z]{26}$",
+              "title": "Drawing Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "message_id",
+            "required": true,
+            "schema": {
+              "pattern": "^bmg_[0-9A-Z]{26}$",
+              "title": "Message Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BuildOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Dismiss Build Message",
+        "tags": [
+          "build"
+        ]
+      }
+    },
+    "/builds/{drawing_id}/undo": {
+      "post": {
+        "description": "The last applied message taken back.",
+        "operationId": "undo_build_message_builds__drawing_id__undo_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "drawing_id",
+            "required": true,
+            "schema": {
+              "pattern": "^drw_[0-9A-Z]{26}$",
+              "title": "Drawing Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BuildOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Undo Build Message",
+        "tags": [
+          "build"
+        ]
+      }
+    },
+    "/builds/{drawing_id}/voice": {
+      "post": {
+        "operationId": "send_build_voice_builds__drawing_id__voice_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "drawing_id",
+            "required": true,
+            "schema": {
+              "pattern": "^drw_[0-9A-Z]{26}$",
+              "title": "Drawing Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_send_build_voice_builds__drawing_id__voice_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BuildOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Send Build Voice",
+        "tags": [
+          "build"
+        ]
+      }
+    },
     "/chat/proposals/{proposal_id}/apply": {
       "post": {
         "description": "08 §7.5: the estimator approved the card. The same actions as the screen's, as one undoable change; a sent\nversion opens N+1 first. A proposal the quote has moved past answers 409 `proposal_expired`. `remember` (08 §7.4):\n`customer` or `tenant` writes the match memory too; a scope the proposal does not offer answers 422, and `tenant`\nwithout the settings permission 403.",
@@ -8526,6 +9412,53 @@
         "summary": "Health",
         "tags": [
           "system"
+        ]
+      }
+    },
+    "/home/route": {
+      "post": {
+        "description": "13 §4.3: where a request typed on the chat home goes. A suggestion, never an action: the screen navigates, or\nshows the question and its choices.",
+        "operationId": "route_request_home_route_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HomeRouteIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HomeRouteOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Route Request",
+        "tags": [
+          "home"
         ]
       }
     },

@@ -1,0 +1,21 @@
+{
+  "answer": {
+    "input_tokens": 2421,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 81,
+    "payload": {
+      "changes": [],
+      "items": [
+        {
+          "panel": null,
+          "quantity": 8,
+          "quote": "שמונה מא״זים חד פאזיים שש עשרה אמפר",
+          "text": "מא\"ז 1P16A"
+        }
+      ],
+      "question": null
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_bom_extraction"
+}

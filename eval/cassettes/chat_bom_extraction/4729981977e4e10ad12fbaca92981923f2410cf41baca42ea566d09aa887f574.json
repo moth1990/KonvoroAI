@@ -1,0 +1,21 @@
+{
+  "answer": {
+    "input_tokens": 2521,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 66,
+    "payload": {
+      "changes": [
+        {
+          "action": "set_qty",
+          "line": "L2",
+          "quantity": 8,
+          "quote": "בעצם 8 מא\"ז ולא 6"
+        }
+      ],
+      "items": [],
+      "question": null
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_bom_extraction"
+}

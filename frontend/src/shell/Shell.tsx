@@ -1,6 +1,6 @@
 import { useQueryClient } from "@tanstack/react-query";
 import type { ReactNode } from "react";
-import { NavLink, useNavigate } from "react-router";
+import { Link, NavLink, useLocation, useNavigate } from "react-router";
 
 import { logout } from "../api/client";
 import { useHomeSummary, useMe } from "../api/QueryProvider";
@@ -9,6 +9,8 @@ import { quotaView } from "./quota";
 
 interface NavItem {
   to: string;
+  /** Other paths this item stands for: the chat builder is a new quote too (prototype `shell("new")`, line 1335). */
+  also?: string[];
   label: string;
   icon: IconName;
   count?: number;
@@ -18,12 +20,38 @@ interface NavItem {
 export function navItems(queuePending: number): NavItem[] {
   return [
     { to: "/home", label: "בית", icon: "home" },
-    { to: "/new", label: "הצעה חדשה", icon: "plus" },
+    { to: "/new", also: ["/build"], label: "הצעה חדשה", icon: "plus" },
     { to: "/audit", label: "בדיקת הצעה", icon: "audit" },
     { to: "/prices", label: "מחירון", icon: "tag" },
     { to: "/queue", label: "תור אישור", icon: "queue", count: queuePending || undefined },
     { to: "/prefs", label: "הגדרות", icon: "gear" },
   ];
+}
+
+/** NavLink marks its own path as the page; `on`: one of the item's other paths is open, so it is marked too. */
+function NavItemLink({
+  to,
+  on,
+  children,
+  ...rest
+}: {
+  to: string;
+  on: boolean;
+  children: ReactNode;
+  className?: string;
+  "aria-label"?: string;
+}) {
+  if (on)
+    return (
+      <Link to={to} aria-current="page" {...rest}>
+        {children}
+      </Link>
+    );
+  return (
+    <NavLink to={to} {...rest}>
+      {children}
+    </NavLink>
+  );
 }
 
 /**
@@ -36,6 +64,8 @@ export function Shell({ title, bare = false, children }: { title?: string; bare?
   const signOut = useSignOut();
   const quota = me.data ? quotaView(me.data.quota) : null;
   const nav = navItems(summary.data?.queue_pending ?? 0);
+  const { pathname } = useLocation();
+  const also = (item: NavItem) => !!item.also?.some((p) => pathname === p || pathname.startsWith(`${p}/`));
 
   return (
     <div className="shell">
@@ -43,7 +73,7 @@ export function Shell({ title, bare = false, children }: { title?: string; bare?
         <Logo />
         {nav.map((item) => (
           // NavLink sets aria-current="page" on the active item, which the prototype's CSS styles.
-          <NavLink key={item.to} to={item.to} className="nav-a">
+          <NavItemLink key={item.to} to={item.to} on={also(item)} className="nav-a">
             <Icon name={item.icon} />
             <span>{item.label}</span>
             {item.count ? (
@@ -51,7 +81,7 @@ export function Shell({ title, bare = false, children }: { title?: string; bare?
                 {item.count}
               </span>
             ) : null}
-          </NavLink>
+          </NavItemLink>
         ))}
         <div className="rail-foot">
           <div className="small" data-testid="quota-meter">
@@ -126,7 +156,7 @@ export function Shell({ title, bare = false, children }: { title?: string; bare?
       </div>
       <nav className="tabbar" aria-label="ניווט">
         {nav.map((item) => (
-          <NavLink key={item.to} to={item.to} aria-label={item.label}>
+          <NavItemLink key={item.to} to={item.to} on={also(item)} aria-label={item.label}>
             <Icon name={item.icon} />
             <span aria-hidden="true">{item.label.split(" ")[0]}</span>
             {item.count ? (
@@ -134,7 +164,7 @@ export function Shell({ title, bare = false, children }: { title?: string; bare?
                 {item.count}
               </span>
             ) : null}
-          </NavLink>
+          </NavItemLink>
         ))}
       </nav>
     </div>

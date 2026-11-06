@@ -2283,3 +2283,62 @@ table.tbl {
   gap: 4px;
   padding: 10px 14px;
 }
+
+/* ---------- the chat quote builder (chat_quote_builder, prototype `vBuild`, lines 326–328) ---------- */
+.build {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+  gap: 20px;
+  align-items: start;
+}
+@media (max-width: 1000px) {
+  .build {
+    grid-template-columns: 1fr;
+  }
+}
+.build-chat {
+  display: flex;
+  flex-direction: column;
+}
+.build .msgs {
+  max-height: 52vh;
+  min-height: 220px;
+}
+.msg.u.undone {
+  opacity: 0.6;
+  text-decoration: line-through;
+}
+.round.rec {
+  background: var(--bad);
+  border-color: var(--bad);
+  color: #fff;
+  animation: pulse 1s ease-in-out infinite;
+}
+@keyframes pulse {
+  50% {
+    box-shadow: 0 0 0 8px color-mix(in srgb, var(--bad) 25%, transparent);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .round.rec {
+    animation: none;
+  }
+}
+
+/* the chat home's question when the request is unclear (13 §4.3, S27; no prototype screen: the prototype routes or
+   toasts) */
+.home-ask {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  width: min(720px, 100%);
+}
+.build-note {
+  padding: 0 14px 12px;
+}
+.voice-lines {
+  margin: 0;
+  padding-inline-start: 18px;
+  display: grid;
+  gap: 2px;
+}

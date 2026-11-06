@@ -54,6 +54,8 @@ ROUTES: dict[str, StageRoute] = {
     "chat_compaction": StageRoute(provider="anthropic", model="claude-haiku-5-5"),
     # Behind the chat_quote_builder flag (version 1.0): turn chat or transcribed speech into BOM lines (spec 13 §4.2).
     "chat_bom_extraction": StageRoute(provider="anthropic", model="claude-sonnet-5-5"),
+    # Behind the home_chat flag (13 §4.3): what a request on the chat home is, when code can't tell (S27).
+    "home_intent": StageRoute(provider="anthropic", model="claude-haiku-5-5"),
     # Chat sub-agent: answer "why" about one quote line from its trace and a drawing crop.
     "line_explanation": StageRoute(provider="anthropic", model="claude-sonnet-5-5"),
 }

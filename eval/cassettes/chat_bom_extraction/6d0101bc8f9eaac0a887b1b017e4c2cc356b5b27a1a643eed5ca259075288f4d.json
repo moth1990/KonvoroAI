@@ -1,0 +1,21 @@
+{
+  "answer": {
+    "input_tokens": 2404,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 62,
+    "payload": {
+      "changes": [],
+      "items": [
+        {
+          "panel": null,
+          "quantity": 1,
+          "quote": "מגן ברק 4P",
+          "text": "מגן ברק 4P"
+        }
+      ],
+      "question": null
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_bom_extraction"
+}

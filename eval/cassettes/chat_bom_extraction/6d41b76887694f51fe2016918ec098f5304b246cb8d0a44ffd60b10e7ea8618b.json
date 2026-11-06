@@ -1,0 +1,14 @@
+{
+  "answer": {
+    "input_tokens": 2408,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 19,
+    "payload": {
+      "changes": [],
+      "items": [],
+      "question": null
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_bom_extraction"
+}

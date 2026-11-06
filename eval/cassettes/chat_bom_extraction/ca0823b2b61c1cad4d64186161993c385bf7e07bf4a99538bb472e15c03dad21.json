@@ -1,0 +1,21 @@
+{
+  "answer": {
+    "input_tokens": 2410,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 75,
+    "payload": {
+      "changes": [],
+      "items": [
+        {
+          "panel": null,
+          "quantity": 8,
+          "quote": "8 מא\"ז 1X16 10kA",
+          "text": "מא\"ז 1X16A 10kA"
+        }
+      ],
+      "question": null
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_bom_extraction"
+}

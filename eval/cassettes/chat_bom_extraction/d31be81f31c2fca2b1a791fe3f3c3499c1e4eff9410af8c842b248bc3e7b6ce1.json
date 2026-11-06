@@ -1,0 +1,35 @@
+{
+  "answer": {
+    "input_tokens": 2444,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 179,
+    "payload": {
+      "changes": [],
+      "items": [
+        {
+          "quantity": 1,
+          "quote": "מפסק ראשי 3X100",
+          "text": "מפסק 3X100A"
+        },
+        {
+          "quantity": 2,
+          "quote": "2 פחת 4X40",
+          "text": "פחת 4X40A"
+        },
+        {
+          "quantity": 18,
+          "quote": "18 מא\"ז 1X16",
+          "text": "מא\"ז 1X16A"
+        },
+        {
+          "quantity": 6,
+          "quote": "6 מא\"ז 3X16",
+          "text": "מא\"ז 3X16A"
+        }
+      ],
+      "question": null
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_bom_extraction"
+}

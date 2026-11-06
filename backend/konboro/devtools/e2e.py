@@ -164,6 +164,14 @@ TENANTS = (
         prices=True,
         off=("unresolved_overlay", "export_doc"),
     ),
+    # S27. A build adds a quote and counts it, so one tenant per project, with the demo price list and the chat home;
+    # one has the builder (and so voice) off; one makes the fidelity shots.
+    E2eTenant(40, "build-desktop@e2e.konboro.local", True, 12, False, prices=True),
+    E2eTenant(41, "build-mobile@e2e.konboro.local", True, 12, False, prices=True),
+    E2eTenant(
+        42, "build-off@e2e.konboro.local", True, 12, False, prices=True, off=("chat_quote_builder", "voice_input")
+    ),
+    E2eTenant(43, "build-shots@e2e.konboro.local", True, 12, False, prices=True),
 )
 TERMS = {"version": "2026-10", "at": "2026-10-01T09:00:00+00:00"}
 

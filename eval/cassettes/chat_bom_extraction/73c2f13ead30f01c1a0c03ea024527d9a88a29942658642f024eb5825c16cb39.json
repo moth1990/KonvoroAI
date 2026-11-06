@@ -1,0 +1,21 @@
+{
+  "answer": {
+    "input_tokens": 2518,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 79,
+    "payload": {
+      "changes": [],
+      "items": [
+        {
+          "panel": "לוח 2",
+          "quantity": 12,
+          "quote": "בלוח 2: 12 מא\"ז 1X16",
+          "text": "מא\"ז 1X16A"
+        }
+      ],
+      "question": null
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_bom_extraction"
+}

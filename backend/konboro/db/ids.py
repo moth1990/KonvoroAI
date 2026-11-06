@@ -34,6 +34,7 @@ PREFIXES = frozenset(
         "ckt",
         "cac",
         "spl",
+        "bmg",
     }
 )
 

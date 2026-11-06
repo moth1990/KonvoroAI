@@ -11,7 +11,7 @@ import {
   Fragment,
   type ReactNode,
 } from "react";
-import { Link, useParams } from "react-router";
+import { Link, useLocation, useNavigate, useParams } from "react-router";
 
 import {
   ApiError,
@@ -131,13 +131,22 @@ export function ReviewScreen() {
   return <Shell bare>{body ?? null}</Shell>;
 }
 
+/** What the chat home sent with a question about this quote (13 §4.3, S27): open the chat and ask it. */
+type Arrival = { chat?: boolean; ask?: string | null; token?: string } | null;
+
 function Review({ quote }: { quote: Quote }) {
   const phone = usePhone();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [arrival] = useState<Arrival>(() => location.state as Arrival);
+  const [question] = useState(() =>
+    arrival?.chat && arrival.ask ? { token: arrival.token ?? arrival.ask, text: arrival.ask } : null,
+  );
   const [filter, setFilter] = useState<Filter>("all");
   const [panelIdx, setPanelIdx] = useState(0);
   const [selected, setSelected] = useState<string | null>(null);
   const [open, setOpen] = useState<string | null>(null);
-  const [tab, setTab] = useState<Tab>("lines");
+  const [tab, setTab] = useState<Tab>(() => (arrival?.chat && phone ? "chat" : "lines"));
   const [showMargin, setShowMargin] = useState(readMarginPref);
   const [pageId, setPageId] = useState<string | null>(() => firstPage(quote.pages));
   const [focus, setFocus] = useState<FocusRequest | null>(null);
@@ -160,7 +169,12 @@ function Review({ quote }: { quote: Quote }) {
     enabled: unresolvedFlag,
     placeholderData: (previous) => previous,
   });
-  const [chatOpen, setChatOpen] = useState(false);
+  const [chatOpen, setChatOpen] = useState(() => Boolean(arrival?.chat) && !phone);
+  // the question is sent once: a reload of the page doesn't send it again
+  useEffect(() => {
+    if (location.state) navigate(location.pathname, { replace: true, state: null });
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- once, on arrival
+  }, []);
   const chatInput = useRef<HTMLInputElement>(null);
   const qc = useQueryClient();
   const locked = quote.status === "sent";
@@ -641,6 +655,7 @@ function Review({ quote }: { quote: Quote }) {
       onShowInstance={chatShowInstance}
       onApplied={chatApplied}
       toast={toast}
+      initialQuestion={question}
     />
   ) : null;
 

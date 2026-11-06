@@ -31,6 +31,11 @@ LOWER_IS_BETTER = frozenset(
         "money_to_model",
         "invalid_refs",
         "amounts_removed",
+        # the chat builder and home (13 §4.2–4.3, S27)
+        "build_invented_values",
+        "build_dropped",
+        "build_money_to_model",
+        "home_money_to_model",
     }
 )
 

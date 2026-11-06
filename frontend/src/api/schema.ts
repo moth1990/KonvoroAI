@@ -139,6 +139,160 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/builds": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Start Build
+         * @description A new build from its first message. Nothing is counted until a message adds a line (decision 2).
+         */
+        post: operations["start_build_builds_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/builds/voice": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Start Build By Voice
+         * @description A new build from a recording: what was heard and understood waits for "הוסף" (decision 1).
+         */
+        post: operations["start_build_by_voice_builds_voice_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/builds/{drawing_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Build */
+        get: operations["get_build_builds__drawing_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/builds/{drawing_id}/messages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Send Build Message
+         * @description A typed message: its lines and changes applied at once, stages 4–7 again, and the reply.
+         */
+        post: operations["send_build_message_builds__drawing_id__messages_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/builds/{drawing_id}/messages/{message_id}/apply": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Apply Build Message
+         * @description "הוסף" on a recording's card (decision 1).
+         */
+        post: operations["apply_build_message_builds__drawing_id__messages__message_id__apply_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/builds/{drawing_id}/messages/{message_id}/dismiss": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Dismiss Build Message
+         * @description "תקן": the recording is not added.
+         */
+        post: operations["dismiss_build_message_builds__drawing_id__messages__message_id__dismiss_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/builds/{drawing_id}/undo": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Undo Build Message
+         * @description The last applied message taken back.
+         */
+        post: operations["undo_build_message_builds__drawing_id__undo_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/builds/{drawing_id}/voice": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Send Build Voice */
+        post: operations["send_build_voice_builds__drawing_id__voice_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/chat/proposals/{proposal_id}/apply": {
         parameters: {
             query?: never;
@@ -332,6 +486,27 @@ export interface paths {
         get: operations["health_health_get"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/home/route": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Route Request
+         * @description 13 §4.3: where a request typed on the chat home goes. A suggestion, never an action: the screen navigates, or
+         *     shows the question and its choices.
+         */
+        post: operations["route_request_home_route_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1722,6 +1897,26 @@ export interface components {
              */
             file: string;
         };
+        /** Body_send_build_voice_builds__drawing_id__voice_post */
+        Body_send_build_voice_builds__drawing_id__voice_post: {
+            /**
+             * Recording
+             * @description WebM/Opus, Ogg, MP4/AAC, MPEG or WAV, up to 2 MB (about a minute)
+             */
+            recording: string;
+            /** Seconds */
+            seconds?: number | null;
+        };
+        /** Body_start_build_by_voice_builds_voice_post */
+        Body_start_build_by_voice_builds_voice_post: {
+            /**
+             * Recording
+             * @description WebM/Opus, Ogg, MP4/AAC, MPEG or WAV, up to 2 MB (about a minute)
+             */
+            recording: string;
+            /** Seconds */
+            seconds?: number | null;
+        };
         /** Body_upload_audit_audits_post */
         Body_upload_audit_audits_post: {
             /** Customer */
@@ -1819,7 +2014,7 @@ export interface components {
              * Source
              * @enum {string}
              */
-            source: "spreadsheet" | "image";
+            source: "spreadsheet" | "image" | "chat";
         };
         /**
          * BoxOut
@@ -1862,6 +2057,102 @@ export interface components {
              * @description The brand's products this discount prices today
              */
             priced_products: number;
+        };
+        /**
+         * BuildChangeOut
+         * @description A change the message makes to a line of the draft (S27 decision 4).
+         */
+        BuildChangeOut: {
+            /**
+             * Action
+             * @enum {string}
+             */
+            action: "set_qty" | "add_qty" | "remove";
+            /** Description */
+            description: string;
+            /** Line Id */
+            line_id: string;
+            /** Quantity */
+            quantity: number | null;
+        };
+        /**
+         * BuildDroppedOut
+         * @description What the code check left out (S27 design 3), with why.
+         */
+        BuildDroppedOut: {
+            /** Quote */
+            quote: string;
+            /**
+             * Reason
+             * @enum {string}
+             */
+            reason: "not_in_message" | "number_not_said" | "unknown_line" | "bad_quantity";
+        };
+        /**
+         * BuildItemOut
+         * @description A product the message described, as stage 4 will read it.
+         */
+        BuildItemOut: {
+            /** Panel */
+            panel: string | null;
+            /** Quantity */
+            quantity: number;
+            /** Text */
+            text: string;
+        };
+        /** BuildMessageIn */
+        BuildMessageIn: {
+            /** Text */
+            text: string;
+        };
+        /** BuildMessageOut */
+        BuildMessageOut: {
+            /** Changes */
+            changes: components["schemas"]["BuildChangeOut"][];
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Dropped */
+            dropped: components["schemas"]["BuildDroppedOut"][];
+            /** Heard */
+            heard: string | null;
+            /** Items */
+            items: components["schemas"]["BuildItemOut"][];
+            /** Message Id */
+            message_id: string;
+            /** Question */
+            question: string | null;
+            /**
+             * Role
+             * @enum {string}
+             */
+            role: "user" | "assistant";
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "applied" | "pending" | "dismissed" | "undone";
+            /** Text */
+            text: string;
+        };
+        /**
+         * BuildOut
+         * @description A chat build (S27): its conversation, and its quote once a message added a line (decision 2).
+         */
+        BuildOut: {
+            /** Can Undo */
+            can_undo: boolean;
+            /** Drawing Id */
+            drawing_id: string;
+            /** Messages */
+            messages: components["schemas"]["BuildMessageOut"][];
+            quote: components["schemas"]["QuoteOut"] | null;
+            /** Quote Id */
+            quote_id: string | null;
+            /** Voice Stand In */
+            voice_stand_in: boolean;
         };
         /** CandidateList */
         CandidateList: {
@@ -2447,6 +2738,59 @@ export interface components {
              * @constant
              */
             status: "ok";
+        };
+        /** HomeChoiceOut */
+        HomeChoiceOut: {
+            /**
+             * Chat
+             * @description The review opens with its chat
+             */
+            chat: boolean;
+            /** Label */
+            label: string;
+            /**
+             * Note
+             * @description A quote's last change, to tell two of one name apart
+             */
+            note: string | null;
+            /**
+             * Text
+             * @description Sent on arrival: the build's first message, or the question to the chat
+             */
+            text: string | null;
+            /** To */
+            to: string;
+        };
+        /** HomeRouteIn */
+        HomeRouteIn: {
+            /** Text */
+            text: string;
+        };
+        /**
+         * HomeRouteOut
+         * @description Where a request goes (13 §4.3). `ask`: a short question with choices, nothing done until one is picked.
+         */
+        HomeRouteOut: {
+            /**
+             * By
+             * @enum {string}
+             */
+            by: "code" | "model";
+            /** Chat */
+            chat: boolean;
+            /** Choices */
+            choices: components["schemas"]["HomeChoiceOut"][];
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "go" | "ask" | "toast";
+            /** Message */
+            message: string | null;
+            /** Text */
+            text: string | null;
+            /** To */
+            to: string | null;
         };
         /**
          * HomeSummaryOut
@@ -4349,6 +4693,268 @@ export interface operations {
             };
         };
     };
+    start_build_builds_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BuildMessageIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BuildOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    start_build_by_voice_builds_voice_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_start_build_by_voice_builds_voice_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BuildOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    get_build_builds__drawing_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                drawing_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BuildOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    send_build_message_builds__drawing_id__messages_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                drawing_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BuildMessageIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BuildOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    apply_build_message_builds__drawing_id__messages__message_id__apply_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                drawing_id: string;
+                message_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BuildOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    dismiss_build_message_builds__drawing_id__messages__message_id__dismiss_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                drawing_id: string;
+                message_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BuildOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    undo_build_message_builds__drawing_id__undo_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                drawing_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BuildOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    send_build_voice_builds__drawing_id__voice_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                drawing_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_send_build_voice_builds__drawing_id__voice_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BuildOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     apply_proposal_chat_proposals__proposal_id__apply_post: {
         parameters: {
             query?: never;
@@ -4658,6 +5264,39 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HealthOut"];
+                };
+            };
+        };
+    };
+    route_request_home_route_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HomeRouteIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HomeRouteOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
         };

@@ -7,8 +7,14 @@ memory and price list (as yes or no), and matches every component in code (`pipe
 Components of the factory's auxiliary families (terminals by default) get no SKU: they are listed apart and stage 7
 counts them as derived material (S20 decision 3). Each component row keeps its status and the catalog item chosen,
 for the run step and for what points at a component.
+
+A chat build runs this stage on every message (S27 design 2): the model's answer to a question it was asked before,
+word for word, is kept beside the build's outputs (`stages/s5-asked.json`) and given again, so one component is not
+asked about on every message.
 """
 
+import hashlib
+import json
 import logging
 
 from sqlalchemy import update
@@ -17,6 +23,7 @@ from konboro.contracts.intake import IntakeResult
 from konboro.contracts.matching import MatchingResult
 from konboro.contracts.merge import MergeResult
 from konboro.db import models as m
+from konboro.services.storage import drawing_key
 from konboro_llm.stages import catalog_disambiguation
 
 from ..association import schemas
@@ -35,8 +42,22 @@ def run(ctx: StageContext) -> MatchingResult:
     project = ctx.session.get(m.Project, ctx.drawing.project_id) if ctx.drawing.project_id else None
     fac = factory.load(ctx.session, ctx.tenant_id, cat, project.customer_id if project else None)
 
+    memo_key = drawing_key(ctx.tenant_id, ctx.drawing.id, "stages", "s5-asked.json")
+    memo: dict[str, dict[str, object]] | None = None
+    if ctx.drawing.origin == "chat":
+        try:
+            memo = json.loads(ctx.storage.get(ctx.tenant_id, memo_key))
+        except Exception:  # none yet
+            memo = {}
+
     def ask(component: str, candidates: str, context: str, error: str | None) -> catalog_disambiguation.CatalogAnswer:
-        return catalog_disambiguation.choose(ctx.llm, component, candidates, context, ctx.tenant_id, error).data
+        key = hashlib.sha256("\x00".join((component, candidates, context)).encode()).hexdigest()
+        if memo is not None and error is None and key in memo:
+            return catalog_disambiguation.CatalogAnswer.model_validate(memo[key])
+        answer = catalog_disambiguation.choose(ctx.llm, component, candidates, context, ctx.tenant_id, error).data
+        if memo is not None and error is None:
+            memo[key] = answer.model_dump(mode="json")
+        return answer
 
     chooser: Ask = ask
     inputs = Inputs(
@@ -49,6 +70,8 @@ def run(ctx: StageContext) -> MatchingResult:
         corrected=corrected_poles(merge.instances),
     )
     result = match_all(merge.components, inputs)
+    if memo is not None:
+        ctx.storage.put(ctx.tenant_id, memo_key, json.dumps(memo).encode(), "application/json")
     for match in result.matches:
         ctx.session.execute(
             update(m.Component)

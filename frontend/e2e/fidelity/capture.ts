@@ -99,8 +99,8 @@ const SCREENS: Screen[] = [
     prototype: { hash: "#home", authed: true, flags: { home_chat: true } },
     app: { path: "/home", tenant: TENANTS.chat },
     notes: [
-      "No mic button until voice lands (S27).",
-      "The suggestion about the NURSERY demo quote is left out; the weekday is today's, in the tenant's timezone.",
+      "S27: the mic is voice_input's; the suggestion about the NURSERY demo quote is a question about the tenant's " +
+        "latest quote; the weekday is today's, in the tenant's timezone.",
     ],
   },
   {
@@ -197,6 +197,7 @@ const SCREENS: Screen[] = [
   ...s24Screens(),
   ...chatScreens(),
   ...s26Screens(),
+  ...s27Screens(),
 ];
 
 /** S25: the chat drawer (prototype `vChat`, `propCard`), on the desktop over the drawing, on the phone its tab. The
@@ -741,6 +742,98 @@ function s26Screens(): Screen[] {
         "S26 decision 1: the logo, the factory's details, its terms and the SKU switch, for the customer PDF. Built " +
           "from the settings screen's card, row, field and switch classes, after the defaults, behind export_doc.",
         "The E2E tenant has written no template, so the name is its account name and the other fields are empty.",
+      ],
+    },
+  ];
+}
+
+/** S27: the chat quote builder (prototype `vBuild`) and the chat home's question, in a tenant of their own. */
+function s27Screens(): Screen[] {
+  const PROTOTYPE_MESSAGE = 'מפסק ראשי 4X63, 12 מא"ז 1X16, פחת 4X40';
+  // the prototype's own state and functions (`S.build`, `buildSay`, lines 1309–1321): script-level names, so a string
+  const protoBuild = (say?: string) => async (p: Page) => {
+    const text = JSON.stringify(say ?? "");
+    await p.evaluate(
+      `S.build = { msgs: [], lines: [], rec: false }; location.hash = "build"; render(); if (${text}) buildSay(${text});`,
+    );
+  };
+  const appSay = (text: string) => async (page: Page) => {
+    await page.getByTestId("build-input").fill(text);
+    await page.getByRole("button", { name: "שלח" }).click();
+    await page.getByTestId("build-line").first().waitFor({ timeout: 20_000 });
+  };
+  const protoVoice = async (p: Page) => {
+    await protoBuild()(p);
+    await p.locator('[data-act="mic"]').click();
+    await p.locator(".msg.u").first().waitFor({ timeout: 5_000 });
+  };
+  const appVoice = async (page: Page) => {
+    await page.evaluate(() => {
+      navigator.mediaDevices.getUserMedia = async () => {
+        const audio = new AudioContext();
+        const tone = audio.createOscillator();
+        const out = audio.createMediaStreamDestination();
+        tone.connect(out);
+        tone.start();
+        return out.stream;
+      };
+    });
+    await page.getByTestId("mic").click();
+    await page.waitForTimeout(700);
+    await page.getByTestId("mic").click();
+    await page.getByTestId("voice-card").waitFor({ timeout: 20_000 });
+  };
+  const notes = [
+    "The lines are the server's: stages 5–7 match the sample catalog and price the demo price list, so the names " +
+      'are the app\'s one line format (ABB S201M 1P 16A…), not the prototype\'s short "מא"ז ABB S201M 1P 16A".',
+    "The chips are the review screen's reasons for the line's colour (09 §6.3); the prototype's two chips (\"סוג לפי " +
+      'הזרם", "30mA ברירת מחדל") are the same facts in stage 5\'s words.',
+    'S27: stage 7 adds accessories and labor to every BOM (01 §5.8): one "פריטים נלווים ועבודה" row and the total ' +
+      'include them; and "בטל את השינוי האחרון" (decision 4) sits beside "פתח במסך הבדיקה".',
+  ];
+  return [
+    {
+      id: "build-empty",
+      title: "Chat builder: empty (S27)",
+      prototype: { hash: "#home", authed: true, setup: protoBuild() },
+      app: { path: "/build", tenant: TENANTS.buildShots, setup: (p) => p.getByTestId("build-input").waitFor() },
+      notes: ["The stand-in transcriber's note under the field replaces the prototype's demo note (until S29)."],
+    },
+    {
+      id: "build-lines",
+      title: "Chat builder: the prototype's message (S27)",
+      prototype: { hash: "#home", authed: true, setup: protoBuild(PROTOTYPE_MESSAGE) },
+      app: { path: "/build", tenant: TENANTS.buildShots, setup: appSay(PROTOTYPE_MESSAGE) },
+      notes,
+    },
+    {
+      id: "build-voice",
+      title: "Chat builder: a recording, before it is added (S27 decision 1)",
+      prototype: { hash: "#home", authed: true, setup: protoVoice },
+      app: { path: "/build", tenant: TENANTS.buildShots, setup: appVoice },
+      notes: [
+        'Decision 1 (13 §4.2, the user): what was heard and what was understood wait on a card with "הוסף" and ' +
+          '"תקן"; the prototype adds the lines at once. Its shot is after its recording, the lines already added; the ' +
+          "app's is the card.",
+        "The stand-in transcriber hears the prototype's sentence whatever was recorded.",
+      ],
+    },
+    {
+      id: "home-ask",
+      title: "Chat home: an unclear request gets a question (S27)",
+      prototype: { hash: "#home", authed: true, flags: { home_chat: true } },
+      app: {
+        path: "/home",
+        tenant: TENANTS.buildShots,
+        setup: async (page) => {
+          await page.getByTestId("home-input").fill("שלום");
+          await page.getByTestId("home-input").press("Enter");
+          await page.getByTestId("home-ask").waitFor({ timeout: 15_000 });
+        },
+      },
+      notes: [
+        '13 §4.3: "the routing is a suggestion, not an action". The prototype routes by keywords or toasts; the app ' +
+          "asks a short question with choices under the prompt. No prototype screen: compared with its chat home.",
       ],
     },
   ];

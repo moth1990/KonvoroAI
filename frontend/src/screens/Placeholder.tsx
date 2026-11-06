@@ -7,7 +7,6 @@ export const PLACEHOLDERS = {
   prices: "מחירון",
   queue: "תור אישור",
   prefs: "הגדרות",
-  build: "הצעה בצ'אט",
 } as const;
 
 export function Placeholder({ screen }: { screen: keyof typeof PLACEHOLDERS }) {

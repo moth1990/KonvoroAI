@@ -1,0 +1,25 @@
+{
+  "answer": {
+    "input_tokens": 2414,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 87,
+    "payload": {
+      "changes": [],
+      "items": [
+        {
+          "quantity": 1,
+          "quote": "שעון שבת",
+          "text": "שעון שבת"
+        },
+        {
+          "quantity": 2,
+          "quote": "2 מגענים 1X16",
+          "text": "מגען 1X16A"
+        }
+      ],
+      "question": null
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_bom_extraction"
+}

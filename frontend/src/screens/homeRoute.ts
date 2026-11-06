@@ -1,26 +1,44 @@
 /**
- * Where a request typed on the chat home goes (13 §4.3). For now these are keyword rules, like the prototype's
- * `homeSubmit` (line 1277); real intent comes in S27. The prototype's rule that opens one named demo quote is
- * left out: there is no such quote here.
+ * The chat home (13 §4.3): the server decides where a request goes (`POST /home/route`, S27): code first, a small
+ * model for the rest, and a short question with choices when it can't tell. This module turns its answer into a
+ * navigation, and keeps the prototype's suggestion chips (`HOME_SUGG`, line 1253).
  */
-export type HomeRoute = { kind: "go"; to: string; text?: string } | { kind: "toast"; text: string } | null;
+import type { HomeChoice, HomeRoute, QuoteListItem } from "../api/client";
 
-export const NO_BUILDER_TOAST = "כדי ליצור הצעה, צרפו שרטוט או כתב כמויות";
-
-export function homeRoute(text: string, flags: Record<string, boolean>): HomeRoute {
-  const t = text.trim();
-  if (!t) return null;
-  if (/בדוק|בדיקת הצעה|\b\d{4,6}\b/.test(t)) return { kind: "go", to: "/audit" };
-  if (/מחירון|מחירים חסרים/.test(t)) return { kind: "go", to: "/prices" };
-  // A flag that is off behaves as if the feature does not exist (13 §3.2): no mention of building in chat.
-  if (flags.chat_quote_builder) return { kind: "go", to: "/build", text: t };
-  return { kind: "toast", text: NO_BUILDER_TOAST };
+/** Where to go and what to carry: the build's first message, or the question for the review's chat. */
+export function arrival(r: Pick<HomeRoute, "to" | "text" | "chat">): { to: string; state?: object } | null {
+  if (!r.to) return null;
+  if (r.to.startsWith("/review/"))
+    return { to: r.to, state: r.chat ? { chat: true, ask: r.text, token: `${Date.now()}:${r.text}` } : undefined };
+  return { to: r.to, state: r.text ? { text: r.text } : undefined };
 }
 
-/** Suggestion chips (prototype HOME_SUGG, line 1253), without the one about a named demo quote. */
-export function homeSuggestions(flags: Record<string, boolean>): string[] {
+export function choiceArrival(c: HomeChoice): { to: string; state?: object } {
+  return arrival(c) ?? { to: c.to };
+}
+
+/** A quote's name as the estimator says it: without the file's extension ("NURSERY-1_merged.pdf" → "NURSERY-1"). */
+export function spokenName(name: string): string {
+  return name
+    .replace(/\.(pdf|xlsx?|csv|dwg|png|jpe?g)$/i, "")
+    .replace(/[_-]merged$/i, "")
+    .trim();
+}
+
+/** "מה חסר בהצעה של NURSERY-1?", or for a quote whose name says it is one, "מה חסר בהצעה בצ'אט 06.11 09:37?". */
+export function missingIn(name: string): string {
+  const said = spokenName(name);
+  return said.startsWith("הצעה") ? `מה חסר ב${said}?` : `מה חסר בהצעה של ${said}?`;
+}
+
+/**
+ * Suggestion chips (prototype HOME_SUGG, line 1253): building in chat (with the builder), a question about the most
+ * recent quote (with the chat on the review screen), an audit and the price list.
+ */
+export function homeSuggestions(flags: Record<string, boolean>, recent?: QuoteListItem | null): string[] {
   return [
     ...(flags.chat_quote_builder ? ['בנה הצעה ללוח 3 פאזות 63A עם 12 מא"ז 1X16'] : []),
+    ...(flags.chat_layer && recent ? [missingIn(recent.name)] : []),
     "בדוק הצעה קיימת מול השרטוט",
     "אילו מחירים חסרים במחירון?",
   ];

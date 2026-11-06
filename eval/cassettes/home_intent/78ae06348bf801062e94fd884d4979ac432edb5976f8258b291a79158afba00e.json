@@ -1,0 +1,13 @@
+{
+  "answer": {
+    "input_tokens": 688,
+    "model": "claude-haiku-5-5",
+    "output_tokens": 148,
+    "payload": {
+      "confidence": 0.5,
+      "intent": "unclear"
+    }
+  },
+  "model": "claude-haiku-5-5",
+  "stage": "home_intent"
+}

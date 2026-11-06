@@ -1,0 +1,20 @@
+{
+  "answer": {
+    "input_tokens": 2416,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 81,
+    "payload": {
+      "changes": [],
+      "items": [
+        {
+          "quantity": 4,
+          "quote": "מא\"ז משולב פחת 1X16 30mA x4",
+          "text": "מא\"ז משולב פחת 1X16A 30mA"
+        }
+      ],
+      "question": null
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_bom_extraction"
+}

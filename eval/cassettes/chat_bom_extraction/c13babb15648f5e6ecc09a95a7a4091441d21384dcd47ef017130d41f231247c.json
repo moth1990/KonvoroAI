@@ -1,0 +1,35 @@
+{
+  "answer": {
+    "input_tokens": 2477,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 212,
+    "payload": {
+      "changes": [],
+      "items": [
+        {
+          "quantity": 1,
+          "quote": "מפסק ראשי ארבע על שישים ושלוש",
+          "text": "מפסק 4X63A"
+        },
+        {
+          "quantity": 12,
+          "quote": "שנים עשר מא״ז אחד על שש עשרה",
+          "text": "מא\"ז 1X16A"
+        },
+        {
+          "quantity": 4,
+          "quote": "ארבעה מא״ז שלוש על עשרים וחמש",
+          "text": "מא\"ז 3X25A"
+        },
+        {
+          "quantity": 1,
+          "quote": "פחת ארבע על ארבעים",
+          "text": "פחת 4X40A"
+        }
+      ],
+      "question": null
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_bom_extraction"
+}

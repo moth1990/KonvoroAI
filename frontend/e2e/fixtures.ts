@@ -61,6 +61,11 @@ export const TENANTS = {
   exportDesktop: "export-desktop@e2e.konboro.local",
   exportMobile: "export-mobile@e2e.konboro.local",
   s26Off: "s26-off@e2e.konboro.local",
+  // S27. A build adds and counts a quote, so one tenant per project (the chat home on); one with the builder off.
+  buildDesktop: "build-desktop@e2e.konboro.local",
+  buildMobile: "build-mobile@e2e.konboro.local",
+  buildOff: "build-off@e2e.konboro.local",
+  buildShots: "build-shots@e2e.konboro.local",
 } as const;
 
 /** The fixture audit's id in each audit tenant (`E2eTenant.audit_id` in devtools/e2e.py). */

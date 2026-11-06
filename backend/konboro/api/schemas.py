@@ -519,7 +519,7 @@ class BomColumnOut(BaseModel):
 class BomTableOut(BaseModel):
     """A BOM page's table (01 §5.8): its columns and how they were mapped (S14 decision 1)."""
 
-    source: Literal["spreadsheet", "image"]
+    source: Literal["spreadsheet", "image", "chat"]
     sheet: str | None
     mapping_sure: bool = Field(description="False: the user should check the roles before decoding goes on")
     columns: list[BomColumnOut]
@@ -1268,3 +1268,85 @@ class ChatApplyOut(BaseModel):
     event_id: str | None
     count: int
     proposal: ChatProposalOut
+
+
+# --- the chat quote builder (13 §4.2, S27) ---------------------------------------------------------------------------
+
+
+class BuildMessageIn(Strict):
+    text: Annotated[str, Field(min_length=1, max_length=2000)]
+
+
+class BuildItemOut(BaseModel):
+    """A product the message described, as stage 4 will read it."""
+
+    text: str
+    quantity: int
+    panel: str | None
+
+
+class BuildChangeOut(BaseModel):
+    """A change the message makes to a line of the draft (S27 decision 4)."""
+
+    line_id: str
+    description: str
+    action: Literal["set_qty", "add_qty", "remove"]
+    quantity: int | None
+
+
+class BuildDroppedOut(BaseModel):
+    """What the code check left out (S27 design 3), with why."""
+
+    quote: str
+    reason: Literal["not_in_message", "number_not_said", "unknown_line", "bad_quantity"]
+
+
+class BuildMessageOut(BaseModel):
+    message_id: str
+    role: Literal["user", "assistant"]
+    text: str
+    heard: str | None  # what a recording was heard as (13 §4.2)
+    status: Literal["applied", "pending", "dismissed", "undone"]
+    created_at: datetime
+    items: list[BuildItemOut]
+    changes: list[BuildChangeOut]
+    dropped: list[BuildDroppedOut]
+    question: str | None
+
+
+class BuildOut(BaseModel):
+    """A chat build (S27): its conversation, and its quote once a message added a line (decision 2)."""
+
+    drawing_id: str
+    quote_id: str | None
+    messages: list[BuildMessageOut]
+    quote: QuoteOut | None
+    can_undo: bool
+    voice_stand_in: bool  # the recording is transcribed by the stand-in until S29 (the screen says so)
+
+
+# --- the chat home's routing (13 §4.3, S27) ---------------------------------------------------------------------------
+
+
+class HomeRouteIn(Strict):
+    text: Annotated[str, Field(min_length=1, max_length=2000)]
+
+
+class HomeChoiceOut(BaseModel):
+    label: str
+    to: str
+    text: str | None = Field(description="Sent on arrival: the build's first message, or the question to the chat")
+    chat: bool = Field(description="The review opens with its chat")
+    note: str | None = Field(description="A quote's last change, to tell two of one name apart")
+
+
+class HomeRouteOut(BaseModel):
+    """Where a request goes (13 §4.3). `ask`: a short question with choices, nothing done until one is picked."""
+
+    kind: Literal["go", "ask", "toast"]
+    to: str | None
+    text: str | None
+    chat: bool
+    message: str | None
+    choices: list[HomeChoiceOut]
+    by: Literal["code", "model"]

@@ -1,0 +1,21 @@
+{
+  "answer": {
+    "input_tokens": 2427,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 91,
+    "payload": {
+      "changes": [],
+      "items": [
+        {
+          "panel": null,
+          "quantity": 2,
+          "quote": "שני מא״ז שלוש על שלושים ושתיים עשרה קילו אמפר",
+          "text": "מא\"ז 3X32A 12kA"
+        }
+      ],
+      "question": null
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_bom_extraction"
+}

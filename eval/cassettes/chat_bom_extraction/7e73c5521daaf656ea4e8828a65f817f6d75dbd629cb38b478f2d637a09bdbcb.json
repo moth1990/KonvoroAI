@@ -1,0 +1,21 @@
+{
+  "answer": {
+    "input_tokens": 2488,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 67,
+    "payload": {
+      "changes": [],
+      "items": [
+        {
+          "panel": null,
+          "quantity": 1,
+          "quote": "63 אמפר, 4 קטבים",
+          "text": "מפסק 4X63A"
+        }
+      ],
+      "question": null
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_bom_extraction"
+}
