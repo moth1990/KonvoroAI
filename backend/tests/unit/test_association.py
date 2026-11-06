@@ -131,6 +131,8 @@ def test_an_unknown_builder_or_a_repeated_id_is_refused() -> None:
         ("5/800A", "current_transformer", {"ratio_secondary_a": [5], "ratio_primary_a": [800]}),
         ("800/5A", "current_transformer", {"ratio_primary_a": [800], "ratio_secondary_a": [5]}),
         ("LSI", "circuit_breaker", {"trip_unit": ["LSI"]}),
+        ("LS/I", "circuit_breaker", {"trip_unit": ["LS/I"]}),  # S27b: as the catalog writes it
+        ("שעון אסטרונומי", "time_switch", {"astronomical": [True]}),  # S27b
         ("MCCB", "circuit_breaker", {"symbol_class": ["mccb"]}),
         ("מפסק בתיבה יצוקה 25A", "circuit_breaker", {"symbol_class": ["mccb"], "current_a": [25]}),  # BUG-077
         ("4P 100kA B+C", "surge_protector", {"poles": [4], "imax_ka": [100], "spd_class": ["B+C"]}),

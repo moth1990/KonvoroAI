@@ -76,14 +76,14 @@ SCHEMAS: dict[str, tuple[Attribute, ...]] = {
     "changeover_switch": (_CURRENT, _POLES),
     "ats": (_CURRENT, _POLES),
     "fuse": (_CURRENT, _a("poles")),
-    "contactor": (_CURRENT, _POLES, _COIL),
+    "contactor": (_CURRENT, _POLES, _COIL, _a("utilization")),  # AC-1 / AC-3 (S27b)
     "overload_relay": (_a("range_min_a", True), _a("range_max_a", True)),
     "relay": (_COIL,),
     "relay_coil": (_COIL,),
     "timer": (_COIL,),
     "voltage_relay": (_COIL,),
     "impulse_relay": (_COIL,),
-    "time_switch": (_COIL,),
+    "time_switch": (_COIL, _a("astronomical", mode="prefer")),  # S27b: astronomical or a Shabbat clock
     "shunt_trip": (_COIL,),
     "temperature_controller": (),
     "surge_protector": (_POLES, _a("imax_ka", True, "gte"), _a("spd_class", mode="exact", default=True)),

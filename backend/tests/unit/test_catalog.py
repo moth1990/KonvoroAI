@@ -5,6 +5,7 @@ from decimal import Decimal
 import pytest
 
 from konboro.db.catalog import (
+    COMMON,
     SAMPLE,
     SAMPLE_ACCESSORIES,
     SAMPLE_KITS,
@@ -44,6 +45,40 @@ def test_the_sample_parses() -> None:
         if r.family == "accessory":
             continue
         assert r.family in SCHEMAS, r.sku
+
+
+def test_the_common_products_parse() -> None:
+    """S27b: the products the user listed from 25/886, 2240-P-001 and 25/823. Real products with no price, none of
+    them already in the sample, and each named the app's way."""
+    common = parse(COMMON.read_text(encoding="utf-8"))
+    sample = {(r.brand, r.sku) for r in parse(SAMPLE.read_text(encoding="utf-8"))}
+    assert len(common) == 15
+    assert all(r.list_price is None and r.list_currency is None for r in common)
+    assert not {(r.brand, r.sku) for r in common} & sample
+    by_sku = {r.sku: r for r in common}
+    assert by_sku["DWA1"].attributes["astronomical"] is True
+    assert by_sku["ESB25-30N-06"].attributes["utilization"] == "AC-1"
+    assert by_sku["AM530D"].brand == "AMDAR"
+
+
+def test_no_catalog_name_carries_a_direction_mark() -> None:
+    """The user: no U+200F in a product's name. Every item of the sample and the common list, as a quote line names
+    it (`pricing.load.describe`, stage 5's wording for all but the derived items)."""
+    from konboro.db.models import CatalogItem
+    from konboro.pipeline.pricing.load import describe
+
+    for path in (SAMPLE, COMMON):
+        for r in parse(path.read_text(encoding="utf-8")):
+            item = CatalogItem(
+                brand=r.brand,
+                sku=r.sku,
+                family=r.family,
+                symbol_class=r.symbol_class,
+                model_code=r.model_code,
+                attributes=r.attributes,
+            )
+            name = describe(item)
+            assert "\u200f" not in name and "\u200e" not in name, (r.sku, name)
 
 
 def test_the_sample_kits_and_accessories_parse() -> None:

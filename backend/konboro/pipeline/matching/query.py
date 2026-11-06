@@ -20,7 +20,7 @@ Mode = Literal["exact", "gte", "lte", "prefer", "contains"]
 # 05 §4.4: an RCD's type compares by order (AC < A < F < B)
 ORDERED = {"rcd_type": ("AC", "A", "F", "B")}
 # "אלקטרוני" (stage 4's `electronic`) is any electronic trip unit; "LSI" written is that one
-ELECTRONIC = frozenset({"LSI", "LSIG", "LI", "ELECTRONIC"})
+ELECTRONIC = frozenset({"LSI", "LSIG", "LS/I", "LI", "ELECTRONIC"})
 
 
 @dataclass(frozen=True)

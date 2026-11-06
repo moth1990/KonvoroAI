@@ -840,3 +840,17 @@ def test_every_line_is_named_as_the_factory_names_it() -> None:
     )
     assert describe("relay", "relay", None, None, {"coil_voltage_v": 24}) == "ממסר עזר סליל 24V"
     assert SKU["MS116-4"].description.startswith("מפסק מגן מנוע ABB")
+
+
+def test_the_two_clocks_and_a_contactors_category_are_named() -> None:
+    """S27b (the user): "שעון שבת" and "שעון אסטרונומי" are two products, and ESB25's 25A is an AC-1 rating. A clock
+    nothing is known about keeps the library's name; a contactor with no category stays AC-3, as before."""
+    from konboro.pipeline.matching.text import describe
+
+    assert describe("time_switch", "time_switch", "ABB", "DWA1", {"astronomical": True, "coil_voltage_v": 230}) == (
+        "שעון אסטרונומי ABB DWA1 סליל 230V"
+    )
+    assert describe("time_switch", "time_switch", "ABB", "D1", {"astronomical": False}) == "שעון שבת ABB D1"
+    assert describe("time_switch", "time_switch", None, None, {}) == "שעון שבת / שעון פיקוד"
+    esb = describe("contactor", None, "ABB", "ESB25", {"poles": 3, "current_a": 25, "utilization": "AC-1"})
+    assert esb == "מגען ABB ESB25 3P 25A (AC-1)"

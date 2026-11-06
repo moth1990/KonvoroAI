@@ -112,7 +112,7 @@ def describe(r: m.CatalogItem) -> str:
         parts = ["ארון", r.brand, size, a.get("ip") or "", f"{_n(a['modules'])} מודולים" if a.get("modules") else ""]
         return " ".join(p for p in parts if p)
     if r.family == "din_rail":
-        return f"מסילת DIN ‏{_n(a['length_mm'])} מ״מ" if a.get("length_mm") else "מסילת DIN"
+        return f"מסילת DIN {_n(a['length_mm'])} מ״מ" if a.get("length_mm") else "מסילת DIN"
     if r.family == "busbar":
         return f"פס צבירה {_n(a['current_a'])}A" if a.get("current_a") else "פס צבירה"
     if r.family == "terminal":
