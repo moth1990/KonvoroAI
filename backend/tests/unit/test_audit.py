@@ -461,6 +461,24 @@ def test_qty_over_and_a_double_count() -> None:
     assert types(o) == ["qty_over"] and o.differences[0].amount == Decimal(-84)
 
 
+def test_a_line_repeated_word_for_word_is_a_double_count() -> None:
+    """BUG-074: quote 10298 has "משנה זרם 100/5 × 3" twice, and the panel has T1-T3. The repeat took nothing because
+    its twin took the three, so it is an over-charge shown with the twin's confidence, not "not in the drawing"."""
+    cts = [comp(f"t{n}", "current_transformer", designators=(f"T{n}",), ratio="100/5") for n in (1, 2, 3)]
+    o = audit(read(line(4, "משנה זרם 100/5", 3, "110"), line(5, "משנה זרם 100/5", 3, "110")), cts)
+    [d] = o.differences
+    assert (d.type, d.quote_line_index, d.amount, d.severity) == ("possible_double_count", 5, Decimal(-330), "medium")
+    assert d.confidence >= 0.6 and d.designators == ["T1", "T2", "T3"]
+    assert "חוזרת על שורה 4" in d.message
+    assert o.summary.over_charged == Decimal("330.00") and o.summary.value_at_risk == 0
+    assert [ln.status for ln in o.lines] == ["matched", "quantity_differs"]
+    # another quantity, or a twin that did not take its own quantity, is not a repeat: still not in the drawing
+    o = audit(read(line(4, "משנה זרם 100/5", 3, "110"), line(5, "משנה זרם 100/5", 2, "110")), cts)
+    assert [(d.type, d.confidence) for d in o.differences] == [("extra_in_quote", 0.55)]
+    o = audit(read(line(4, "משנה זרם 100/5", 2, "110"), line(5, "משנה זרם 100/5", 2, "110")), cts)
+    assert types(o) == ["qty_over"] and o.differences[0].quote_line_index == 5
+
+
 def test_attribute_mismatch_one_value_apart() -> None:
     o = audit(
         read(line(1, 'מא"ז 3X16A', 1, "185")),
@@ -706,12 +724,14 @@ def test_25_26_100_quote_against_its_labels() -> None:
         ("attribute_mismatch", 8, "circuit_breaker"),  # the feeder: 1P in the quote, 3P in the drawing
         ("attribute_mismatch", 15, "rcd"),  # "40/0.3": a typo in the quote, flagged by its text
         ("missing_in_quote", None, "selector_switch"),
+        ("possible_double_count", 5, "current_transformer"),
         ("qty_short", 10, "circuit_breaker"),
         ("qty_short", 11, "circuit_breaker"),
     ]
-    # BUG-074: the repeated CT line is "not in the drawing", hidden, instead of a double count
-    [extra] = [d for d in o.differences if d.confidence < 0.6]
-    assert (extra.type, extra.quote_line_index, extra.family) == ("extra_in_quote", 5, "current_transformer")
+    # BUG-074: the repeated CT line is a double count, shown, its 330 over-charged
+    [double] = [d for d in o.differences if d.type == "possible_double_count"]
+    assert (double.quote_line_index, double.family, double.confidence >= 0.6) == (5, "current_transformer", True)
+    assert not [d for d in o.differences if d.confidence < 0.6]
     by_line = {d.quote_line_index: d.amount for d in o.differences}
     assert (by_line[10], by_line[11]) == (Decimal(546), Decimal(84))  # the confirmed 630
     s = o.summary

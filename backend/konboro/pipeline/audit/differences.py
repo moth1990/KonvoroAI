@@ -9,6 +9,9 @@ For every component with units no line took:
 5. else `missing_in_quote`.
 For every line with units left:
 - its components are drawn more times than they are, and the line counts the drawings: `possible_double_count`;
+- it took nothing, and repeats word for word, at the same quantity, an earlier line that took exactly its own
+  quantity: `possible_double_count` on the twin's components, at the twin's confidence (BUG-074: quote 10298's
+  "משנה זרם 100/5 × 3" twice for T1-T3);
 - else, when it took something: `qty_over`; when it took nothing: `extra_in_quote`. An enclosure line with no
   enclosure among the components stands for the panel's cabinet, which comes from the data page (07 §7.4): matched.
 `arithmetic` comes from the quote's own numbers; `drawing_conflict` when a matched component has values that
@@ -396,6 +399,24 @@ def audit(
         if not took:
             if sig.family == ENCLOSURE and not has_enclosure:
                 continue  # the panel's cabinet, from the data page (07 §7.4)
+            if (twin := _twin(ln, lines, sigs, a)) is not None:
+                twin_took = [comps[cid] for cid, _ in a.absorbed(twin.index)]
+                tier = min(a.pairs[(twin.index, c.component_id)].tier for c in twin_took)
+                drawn = sum(n for _, n in a.absorbed(twin.index))
+                own = unit_price(ln)
+                add(
+                    "possible_double_count",
+                    min([c.confidence for c in twin_took] + [ln.confidence, twin.confidence, MATCH_CONFIDENCE[tier]]),
+                    f'שורה {ln.index} בהצעה, {_num(rest)} × "{ln.text}", חוזרת על שורה {twin.index}. '
+                    f"בשרטוט {drawn}{_des_text(_designators(twin_took))}: ייתכן שנספרה פעמיים",
+                    twin_took,
+                    ln,
+                    drawing_qty=drawn,
+                    quote_qty=ln.qty,
+                    amount=-own * rest if own is not None else None,
+                )
+                _line_status(statuses, ln.index, "quantity_differs")
+                continue
             add(
                 "extra_in_quote",
                 min(ln.confidence, UNSURE_CAP),
@@ -461,6 +482,20 @@ def audit(
 
     audited = _audited(lines, sigs, a, statuses, included)
     return Outcome(audited, diffs, summarize(audited, diffs, components), included)
+
+
+def _twin(ln: QuoteLine, lines: list[QuoteLine], sigs: dict[int, Signature], a: Assignment) -> QuoteLine | None:
+    """BUG-074: the earlier line `ln` repeats word for word (the same signature and text) at the same quantity, when
+    that line took exactly its quantity from the drawing. Another quantity, or a line the drawing did not fill, may be
+    a second item the reading missed: that stays "not in the drawing"."""
+    for other in lines:
+        if other.index >= ln.index or ln.qty is None or other.qty != ln.qty or sigs[other.index] != sigs[ln.index]:
+            continue
+        if not sigs[ln.index].signed or a.line_left[other.index] != 0:
+            continue
+        if sum(n for _, n in a.absorbed(other.index)) == other.qty:
+            return other
+    return None
 
 
 def _doubled(ln: QuoteLine, a: Assignment, comps: dict[str, DrawnComponent]) -> bool:
