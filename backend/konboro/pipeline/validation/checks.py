@@ -325,6 +325,20 @@ def missing_rows(panel: PanelModel, rule: Rule, ctx: Ctx) -> list[Hit]:
     return [Hit(instance_ids=[m.instance_id for m in panel.missing], values={"count": n, "count_text": words})]
 
 
+@check("PRODUCT_NOT_IN_CATALOG")
+def not_in_catalog(panel: PanelModel, rule: Rule, ctx: Ctx) -> list[Hit]:
+    """S27b (06 decision 1): the panel's components with no product, in the catalog or the factory's, one finding
+    with all of them. Only with `catalog_lines` on (13 §4.10)."""
+    if not ctx.drawing.catalog_lines:
+        return []
+    none = [
+        d for d in panel.devices if d.match is not None and d.match.chosen_sku is None and d.match.product_id is None
+    ]
+    if not none:
+        return []
+    return [Hit(_ids(none), values={"count_text": count_text(none), "tags": _tags(none), "count": len(none)})]
+
+
 _STRUCTURAL = {"לוח", "חשמל", "panel", "board", "electrical"}
 _QUALIFIERS = {"ראשי", "main"}
 

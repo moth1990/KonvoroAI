@@ -165,7 +165,18 @@
     },
     {
       "id": "trip_unit",
-      "re": "^(?P<trip_unit>LSIG|LSI|LI)$"
+      "re": "^(?P<trip_unit>LSIG|LSI|LS/I|LI)$"
+    },
+    {
+      "id": "astronomical",
+      "re": "^אסטרונומי$",
+      "families": [
+        "time_switch"
+      ],
+      "set": {
+        "astronomical": true
+      },
+      "confidence": 0.9
     },
     {
       "id": "trip_unit_he",

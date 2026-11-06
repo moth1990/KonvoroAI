@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 949,
+    "model": "claude-haiku-5-5",
+    "output_tokens": 578,
+    "payload": {
+      "chosen_sku": null,
+      "confidence": 0.3,
+      "missing_attributes": [],
+      "reason": "הרישום מציין סליל הפסקה על המפסק הראשי אך לא את דגם המפסק; שלושת המועמדים הם ABB 230V, והמועמדים S2C-A1 ו-SOR-C/YO-C מתאימים לסדרות שונות, ולכן לא ניתן להכריע."
+    }
+  },
+  "model": "claude-haiku-5-5",
+  "stage": "catalog_disambiguation"
+}

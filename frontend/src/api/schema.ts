@@ -1052,7 +1052,9 @@ export interface paths {
         put?: never;
         /**
          * Choose Alternative
-         * @description 09 §7.3: the alternative on every line with the same signature, in every panel, each approved.
+         * @description 09 §7.3: the alternative on every line with the same signature, in every panel, each approved. With
+         *     `catalog_lines` (S27b): a waiting line's nearest products are its alternatives, and `designators` moves only
+         *     those of a merged line's components (09 §7.17).
          */
         post: operations["choose_alternative_quotes__quote_id__lines__line_id__alternative_post"];
         delete?: never;
@@ -1181,6 +1183,51 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/quotes/{quote_id}/lines/{line_id}/new-product": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * New Product Form
+         * @description 09 §7.16 (S27b): what "מוצר חדש" opens with for a waiting line.
+         */
+        get: operations["new_product_form_quotes__quote_id__lines__line_id__new_product_get"];
+        put?: never;
+        /**
+         * Create New Product
+         * @description 09 §7.16 (S27b): a factory product from a waiting line, its family's attributes, named the app's way; the
+         *     line's components move to it, approved.
+         */
+        post: operations["create_new_product_quotes__quote_id__lines__line_id__new_product_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/quotes/{quote_id}/lines/{line_id}/new-product/name": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * New Product Name
+         * @description 09 §7.16 (S27b): the name the product would get, as the form is filled; nothing is saved.
+         */
+        post: operations["new_product_name_quotes__quote_id__lines__line_id__new_product_name_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/quotes/{quote_id}/lines/{line_id}/price": {
         parameters: {
             query?: never;
@@ -1253,7 +1300,8 @@ export interface paths {
         put?: never;
         /**
          * Resolve Missing
-         * @description 09 §7.8: a product for a missing line, which becomes an approved component line.
+         * @description 09 §7.8: a product for a missing line, which becomes an approved component line. With `catalog_lines`
+         *     (S27b): also a waiting line's product, or the designators picked of a merged line (09 §7.17).
          */
         post: operations["resolve_missing_quotes__quote_id__lines__line_id__resolve_post"];
         delete?: never;
@@ -1598,6 +1646,11 @@ export interface components {
         /** AlternativeIn */
         AlternativeIn: {
             /**
+             * Designators
+             * @description S27b (09 §7.17): only these of a merged line's components
+             */
+            designators?: string[] | null;
+            /**
              * Index
              * @description Which of the line's alternatives (09 §7.3)
              */
@@ -1607,8 +1660,19 @@ export interface components {
         AlternativeOut: {
             /** Description */
             description: string;
+            /**
+             * Diff
+             * @description What differs from the drawing: "20A במקום 16A"
+             */
+            diff?: string | null;
             /** Manufacturer */
             manufacturer?: string | null;
+            /**
+             * Nearest
+             * @description 05 §5.9.2 (S27b): a product near a component nothing matched
+             * @default false
+             */
+            nearest: boolean;
             /** Sku */
             sku?: string | null;
         };
@@ -2851,6 +2915,11 @@ export interface components {
              * @description Every instance of the line's component, for the drawing (09 §6.5)
              */
             boxes: components["schemas"]["BoxOut"][];
+            /**
+             * Component Ids
+             * @description S27b: a merged line's components
+             */
+            component_ids?: string[];
             cost_source: components["schemas"]["CostSourceOut"] | null;
             derived: components["schemas"]["DerivedOut"] | null;
             /** Description */
@@ -2862,6 +2931,11 @@ export interface components {
              * @description Why this product, when it needs saying
              */
             explanation: string | null;
+            /**
+             * Family
+             * @description The component's family: the product picker starts with it
+             */
+            family?: string | null;
             /**
              * Fresh Price
              * @description "מחיר חדש במחירון": the price list's price today, when it differs and there is no override
@@ -2911,6 +2985,12 @@ export interface components {
             override: boolean;
             /** Parent Line Id */
             parent_line_id: string | null;
+            /**
+             * Pending
+             * @description S27b (07 §7.1): no product yet; the line waits for a decision
+             * @default false
+             */
+            pending: boolean;
             /**
              * Price Hints
              * @description Neighbouring products, on a line with no price
@@ -3118,6 +3198,78 @@ export interface components {
             quote_id: string;
             /** Quote Name */
             quote_name: string;
+        };
+        /** NewProductAttributeOut */
+        NewProductAttributeOut: {
+            /** Name */
+            name: string;
+            /** Required */
+            required: boolean;
+            /** Value */
+            value: string | null;
+        };
+        /**
+         * NewProductFormOut
+         * @description What "מוצר חדש" opens with (09 §7.16): the line's family, its schema's attributes with what was read.
+         */
+        NewProductFormOut: {
+            /** Attributes */
+            attributes: components["schemas"]["NewProductAttributeOut"][];
+            /** Brand */
+            brand: string | null;
+            /** Family */
+            family: string;
+            /** Symbol Class */
+            symbol_class: string | null;
+        };
+        /**
+         * NewProductIn
+         * @description 09 §7.16 (S27b): a factory product made from a waiting line, named the app's way.
+         */
+        NewProductIn: {
+            /**
+             * Attributes
+             * @description The family's attributes, as the user left them
+             */
+            attributes: {
+                [key: string]: string;
+            };
+            /** Brand */
+            brand: string;
+            /** Model Code */
+            model_code: string;
+            /** Series */
+            series?: string | null;
+            /** Sku */
+            sku?: string | null;
+        };
+        /**
+         * NewProductNameIn
+         * @description What the name is built from, as the form is filled (09 §7.16): brand and model may still be empty.
+         */
+        NewProductNameIn: {
+            /** Attributes */
+            attributes: {
+                [key: string]: string;
+            };
+            /**
+             * Brand
+             * @default
+             */
+            brand: string;
+            /**
+             * Model Code
+             * @default
+             */
+            model_code: string;
+        };
+        /** NewProductNameOut */
+        NewProductNameOut: {
+            /**
+             * Name
+             * @description The product's name as the app builds it (`text.describe`), never typed
+             */
+            name: string;
         };
         /**
          * NoticeOut
@@ -3599,6 +3751,11 @@ export interface components {
         };
         /** ProductRefIn */
         ProductRefIn: {
+            /**
+             * Designators
+             * @description S27b (09 §7.17): only these of a merged line's components
+             */
+            designators?: string[] | null;
             /**
              * Ref
              * @description A choice from the picker
@@ -6672,6 +6829,110 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ActionOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    new_product_form_quotes__quote_id__lines__line_id__new_product_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                quote_id: string;
+                line_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NewProductFormOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    create_new_product_quotes__quote_id__lines__line_id__new_product_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                quote_id: string;
+                line_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NewProductIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ActionOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    new_product_name_quotes__quote_id__lines__line_id__new_product_name_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                quote_id: string;
+                line_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NewProductNameIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NewProductNameOut"];
                 };
             };
             /** @description Error */

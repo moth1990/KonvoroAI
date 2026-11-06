@@ -271,6 +271,15 @@
           ],
           "title": "Component Id"
         },
+        "component_ids": {
+          "default": [],
+          "items": {
+            "pattern": "^cmp_[0-9A-Za-z_]+$",
+            "type": "string"
+          },
+          "title": "Component Ids",
+          "type": "array"
+        },
         "cost_source": {
           "anyOf": [
             {
@@ -419,6 +428,11 @@
           ],
           "default": null,
           "title": "Parent Line Id"
+        },
+        "pending": {
+          "default": false,
+          "title": "Pending",
+          "type": "boolean"
         },
         "price_status": {
           "enum": [

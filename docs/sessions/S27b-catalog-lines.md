@@ -1,0 +1,177 @@
+# S27b: Quote lines from the catalog, one line per product
+
+| | |
+| --- | --- |
+| **Track** | X |
+| **Branch** | `s27b-catalog-lines` |
+| **Depends on** | S27 (and S22, S23, S23b, S24) |
+| **Status** | in review |
+| **PR** | [moth1990/KonvoroAI#38](https://github.com/moth1990/KonvoroAI/pull/38) |
+
+## Goal
+
+With `catalog_lines` on, every product line in a quote points to a product the app knows (a master catalog item, or a factory product made in "מוצר חדש"), and a product appears once per panel: components that resolve to the same product are one line, with their quantities added and their tags together. A component with no product is a line waiting for a decision: it has its family, an alert, and up to 3 nearest products with their difference ("20A במקום 16A"), no price, and the quote can't be sent while one is left. The user picks the nearest product, another one, "מוצר חדש" (a product in the app's own format, with the family's attributes, saved for the factory and offered to the master catalog through the approval queue), or "אין כאן רכיב". The flag off leaves the app as it is today. The session also brings in the 15 products the user prepared from 25/886 and 2240-P-001 (`backend/konboro/db/catalog/common.csv`), and fixes four names the app writes wrong today.
+
+## References
+
+- Specs:
+  - 05 §1 (principles 2 and 3: never invent a SKU, never change an electrical value without approval), §4.4 (attribute schemas), §5.6 (candidate query, relaxation, ranking), §5.7, §5.9 (alternatives with their difference), §5.9.1 (kits and accessories as child lines), §6.2, §7 (statuses), §8 (`no_catalog_match`, `catalog_gap`, `high_unmatched_ratio`), S20 decisions.
+  - 04 §5.8 (stage 4's merge: identical instances in one panel are one component; what is not merged), §6.3.
+  - 06 (the rule pack as data; S21 decision 14, findings grouped per cause).
+  - 07 §6.2 (the line, the description of a line with no catalog item, BUG-071), §7.1 (lines by panel, one chapter per panel), §7.2 (nearby prices only as a hint), §7.2.1 (the product record), §7.5 (final colour), §8, S22 decisions 5 (`line_key`, what a rerun keeps) and 8 (kit parts), S23 decisions.
+  - 09 §6.3 (row, title of a missing or unmatched line), §6.4 (line detail, missing line, unmatched line), §7.2–7.8, §7.12 (send, "שלח בכל זאת"), §7.13, §10 (correction events), S23b decisions 1–4 and 8.
+  - 10 §5.4 (a product not in the catalog is saved for the factory and is a candidate for the master), §9.2, §11 (it goes to the master without price, supplier or the factory's name).
+  - 13 §2, §3 (rule 6: the eval runs both states of a flag that moves the pipeline), §4.9 (`approval_queue`).
+  - 00 §9, §14.2 (only an explicit approval in the queue changes the shared layer).
+  - 03 (the symbol library: `time_switch`), 04 §5.1 (the spelling grammar: `trip_unit`).
+- Prototype: `prototype/konboro-app.html`
+  - 409–460 (`makeLines`: one line per product, with `qty`, `des[]` and a joined `note`; F18's line with no product has `price:null` and `hint` "קרובים במחירון: 3X16A ₪185 · 3X25A ₪195").
+  - 872–1004 (`vReview`: the rows, the "אין מחיר" chip, the line detail).
+  - The waiting line's decisions and the "מוצר חדש" form have no prototype screen (as S23b decision 1).
+- Golden: every drawing through `make eval`, with `catalog_lines` off and on (13 §3 rule 6).
+- Earlier sessions and the planning conversation:
+  - S20 (stage 5), S22 (stage 7, `line_key`), S23 (review actions, `pipeline/pricing/edits.py`), S23b (product picker, stage 5 for one line in code), S24 (approval queue, `konboro_promote`).
+  - The design and the user's decisions: `/Users/mothanaa/.claude/plans/users-mothanaa-downloads-pdf-soft-fox.md` (2026-11-06).
+  - The product list: `backend/konboro/db/catalog/common.csv` (15 products, no prices) and the review workbook `boq/common-products.xlsx` (74 products of 25/886, 2240-P-001 and 25/823, what went in and why the rest didn't; kept out of git).
+  - BUG-084 (one product, two lines) is fixed by the merge.
+
+## Design
+
+1. **A product line points to a product.** `component`, `manual` and kit lines carry a `catalog_item_id` or a factory `product_id`. Labor, a service from the notes and consumables are not product lines and stay as they are. Derived items (enclosure, rails, busbars, terminals, labels) stay as stage 7's rules make them.
+2. **A line waiting for a decision.** A component stage 5 leaves with no SKU (`unmatched`, `conflict`, `ambiguous` with no SKU), and a stage-4 `missing` row, is a waiting line: red, no price, counted at the top of the screen ("N מוצרים חדשים בשרטוט"). Sending is refused while one is left; red lines of other causes keep "שלח בכל זאת" (09 §7.12).
+3. **The alert.** A stage 6 rule, `PRODUCT_NOT_IN_CATALOG`, grouped as one finding with every waiting line of the panel (S21 decision 14).
+4. **The nearest products.** A new search in stage 5, in code, only when the candidate query finds nothing: same family and class, ranked by the attributes that differ, weighted (poles, current, curve, kA, residual mA, RCD type, then brand and series by the factory's preferences). A product with another pole count may be suggested, after every product with the drawing's poles (decision 6). Up to 3, each with its difference in 05 §5.9's wording. It is a suggestion, never a choice (05 §1): the match stays `unmatched`. No suggestion when the current or the poles were not read (05 §5.5; the user picks the value, as today). The suggested products' prices are shown as a hint only (07 §7.2).
+5. **The decisions.** "זה המוצר" (one of the suggestions), "מוצר אחר…" (the picker, filtered to the line's family), "מוצר חדש", "אין כאן רכיב". Each is a correction event with undo. Choosing a product whose values differ from the drawing's records the change as approved by the user (05 §1 principle 3).
+6. **"מוצר חדש".** A form opened from the line: the family is fixed, the attributes are the family's schema (`association/schemas.py`), filled from the drawing's values and editable, then brand, series, model and SKU. The name is not typed: it is `text.describe` of those values, shown as the user fills the form. It is saved as a factory product with its attributes (`products.attributes`, new), so stage 5 finds it on the next drawing; with a brand and a SKU it is also a `catalog_item` candidate in the approval queue, with its attributes in the payload. Only an approval puts it in the master catalog (00 §9). Required: the family's required attributes (current and poles where the schema has them), brand and model; the SKU is optional, and without it the product stays the factory's (decision 8).
+7. **One line per product in a panel.** Stage 7 merges the lines of components that resolve to the same product in the same panel: quantities added, designators and boxes joined, circuit notes joined. The key becomes the product's: `p:{panel}:{catalog_item_id}`, or `p:{panel}:prd:{product_id}`. A rerun moves what the user set on a `c:` line to the product's line through its components. A waiting line stays one line per component until it is decided; deciding it on a product that already has a line joins that line. A kit part priced as included stays under its device; any other occurrence of the product joins its line. A manual line of a product already in the panel adds to its quantity (**not built**: a manual or draw-mode line is still its own; a follow-up in the roadmap's backlog). An edit on a merged line applies to the whole line, or to the designators the user picks in the line detail: those move to the other product's line (a split), and undo brings them back (decision 7).
+8. **The product list.** `catalog.load_sample` loads `common.csv` after `sample.csv`, so it is in `make seed`, E2E and the eval. `sample.csv` doesn't change.
+9. **The names.**
+   - "שעון שבת" and "שעון אסטרונומי" are two classes of `time_switch`, each with its name (today both are "שעון שבת / שעון פיקוד"). DWA1 is astronomical, D1 PLUS a Shabbat clock.
+   - A contactor's utilization category is an attribute, `utilization` (`AC-1` / `AC-3`, default `AC-3`), and `text.describe` writes it (today "(AC-3)" is fixed after the current). ESB25-30N-06 is `AC-1`: "מגען ABB ESB25 3P 25A (AC-1) סליל 230V".
+   - The grammar's `trip_unit` reads "LS/I", as the catalog writes it.
+   - No U+200F in the DIN rail's name (`pricing/load.py`) or in `text.py`.
+
+## Tasks
+
+### Specs (first: the line key and the product record are contracts)
+- [x] 05: the nearest-products search (§5.9 or a new §5.10), a suggestion is not a choice, `nearest[]` in §6.2's output
+- [x] 06: `PRODUCT_NOT_IN_CATALOG`
+- [x] 07 §7.1, §6.2: one line per product per panel, waiting lines, `line_key` `p:` (and S22 decision 5)
+- [x] 09 §6.3, §6.4, §7.8, §7.12: the waiting line, its decisions, "מוצר חדש", send refused while one is left
+- [x] 10 §5.4, §9.2: a factory product with attributes, its name in the app's format
+- [x] 13: `catalog_lines` (what it does, depends on nothing, removed when on for everyone)
+- [x] 03, 04, 07: the clock classes, `utilization`, "LS/I"
+
+### Backend
+- [x] Migration: `products.attributes` (jsonb), the `catalog_lines` flag; `docs/db-schema.md`
+- [x] Contracts: `nearest` on a match (`contracts/matching.py`), a line's `pending` reason (`contracts/pricing.py`); `tests/unit/test_contracts.py` pins
+- [x] Stage 5: the nearest search (`pipeline/matching/query.py`, `match.py`); factory products with attributes as candidates (`pipeline/matching/catalog.py`)
+- [x] Stage 7: the merge by product per panel and the `p:` key (`pipeline/pricing/lines.py`, `engine.py`), the rerun moving `c:` state to `p:` (`run.py`, `load.py`), edits on merged lines (`edits.py`, `stored.py`)
+- [x] Stage 6: `PRODUCT_NOT_IN_CATALOG` in `validation/rules.json` and `checks.py`
+- [x] Review: decide a waiting line (nearest, picker, new product, delete), join on decide, undo (`services/review.py`, `review_picker.py`); a manual line of a product already there adds quantity
+- [x] New product: `services/price_list.py` creates it with attributes and the standard name; `services/knowledge.py` puts its attributes in the candidate's payload (whitelist), `konboro_promote` writes them
+- [x] Send refused while a waiting line is left (`services/quote_versions.py`), behind the flag
+- [x] Quote API: waiting lines, their nearest products with the difference and the price hint, the count (`services/quotes.py`); `make gen-client`
+- [x] Flag gate on every new route and every path that changes behaviour
+- [x] `common.csv` loaded by `catalog.load_sample` (`db/catalog/__init__.py`)
+- [x] Names: the clock classes (`detection/library.py`, `matching/text.py` `LINE_NAMES`), `utilization` (`association/schemas.py`, `text.py`, `sample.csv`'s contactors, `common.csv`'s ESB25), "LS/I" (`association/grammar.json`), U+200F (`pricing/load.py`, `text.py`)
+
+### Frontend
+- [x] The waiting line: its chip, the count at the top, the nearest products with the difference and the price hint, keys 1–3 (`screens/review/LineDetail.tsx`, `model.ts`)
+- [x] "מוצר אחר…" on a waiting component line too, filtered to the family (`ProductPicker.tsx`: pass `family`)
+- [x] The "מוצר חדש" form: fixed family, the schema's attributes, brand, series, model, SKU, the name as it is built
+- [x] Merged lines: every designator in the sub line, the joined notes; in the line detail, pick designators for a change of product (the split)
+- [x] Send: the summary says why it is refused while a waiting line is left
+- [x] Everything behind `catalog_lines` from the server's flags
+
+### Unit tests
+- [x] Two components resolving to one product in one panel are one line with the quantities added; in two panels, two lines
+- [x] A kit part priced as included doesn't join the direct line; one that isn't does
+- [x] The nearest search: up to 3 with their difference, weighted order, nothing when the current or the poles are missing, the match stays `unmatched`
+- [x] `PRODUCT_NOT_IN_CATALOG` fires once per panel with its lines
+- [x] `text.describe`: the two clocks, `utilization`, no U+200F/U+200E in any catalog item's description (`sample.csv` and `common.csv`)
+- [x] The grammar reads "LS/I"
+- [x] `common.csv` parses, has no price, no (brand, SKU) also in `sample.csv`
+- [x] With the flag off, stage 7's lines are today's (the existing tests pass unchanged)
+
+### Integration tests
+- [x] A drawing with a product not in the catalog: the waiting line, the finding, the nearest products, send refused
+- [x] Each decision, its event and its undo; deciding on a product that has a line joins it; undo splits it again
+- [x] "מוצר חדש": the product with its attributes and the standard name, the candidate with the attributes; stage 5 finds it on the next drawing; an approval promotes it with its attributes
+- [x] A rerun of a draft keeps a deleted line, a typed price and a manual line across the `c:` → `p:` change
+- [x] The flag off answers 404 on the new routes, and the quote is today's
+
+### UI tests (Playwright)
+- [x] Desktop and mobile: a waiting line, choosing a nearest product, "מוצר חדש" end to end, "אין כאן רכיב", send refused then allowed
+- [x] Desktop and mobile: a merged line shows every designator
+- [x] Prototype-fidelity screenshots of the waiting line and the form reviewed by the user (no prototype screen: as S23b): `lines-waiting` and `lines-new-product`, accepted by the user on 2026-11-06
+
+### Eval (pipeline sessions)
+- [x] `make eval` with `catalog_lines` off and on; the line counts' drop, `common.csv` and the names explained; the baseline accepted once
+
+### Docs
+- [x] `docs/catalog-import.md`: `common.csv`, why it is apart from the sample
+- [x] `docs/db-schema.md`: `products.attributes`, `line_key` `p:`
+- [x] CLAUDE.md: what S27b built
+- [x] `docs/bugs.md`: BUG-084 fixed
+
+## Acceptance criteria
+
+- [x] With `catalog_lines` on, no golden quote has two lines of the same product in one panel (checked in code over every eval drawing).
+- [x] With `catalog_lines` on, every product line has a `catalog_item_id` or a `product_id`, or is a waiting line.
+- [x] A quote with a waiting line can't be sent; with none left it can.
+- [x] A product made in "מוצר חדש" is matched by stage 5 on the next drawing that has it.
+- [x] No value the user didn't approve changes: a nearest product is never priced or chosen on its own.
+- [x] With the flag off, the eval's metrics move only by `common.csv` and the names.
+- [x] `make check` passes (run in parts on 2026-11-06; one screenshot flake, BUG-102, green on rerun).
+
+## Out of scope
+
+- Derived items' "not found" (an enclosure that doesn't fit stays a red derived line, as today).
+- Stage 3 typing the astronomical clock as a time relay (BUG-082): this session names the class, the detector's prompt is BUG-082's live re-record.
+- The products the user's list left out (XT1C or XT1N, XT2 125A and 40A, CTs 630/5A and 160/5A, F202 10mA, the SPDs, the meters with no model): they reach a quote as waiting lines, and the user decides there.
+- A factory product's delete or archive (backlog, S18).
+
+## Open questions
+
+None open. Answered 2026-11-06: decisions 6–9 below.
+
+## Outcome
+
+Filled in at `/session-close`.
+
+- **Done:**
+  - **Specs** 03, 04, 05 (§4.4, §5.6, §5.9.2, §6.2, decisions), 06 (`PRODUCT_NOT_IN_CATALOG`), 07 (§7.1, §6.2, S22 decision 5, decisions), 09 (§6.1, §6.3, §6.4, §7.12, §7.16, §7.17, decisions), 10 §5.4, 13 §4.10.
+  - **Migration 0025:** `products.attributes`, `series`, `model_code`, `symbol_class`; `quote_lines.component_ids`, `pending`; `quote_versions.component_edits`; the correction type `product_created`. The flag `catalog_lines` (off by default, on for the demo tenant and S27b's E2E tenants).
+  - **Stage 5:** the factory's products made in "מוצר חדש" are candidates (`matching/catalog.py` `with_products`); with nothing matched, up to 3 nearest products with what differs (`matching/nearest.py`); a contactor with no category written is AC-3 (`query.IMPLIED`).
+  - **Stage 7:** each component's choices from the version, then one line per product in a panel and group (`pricing/merge.py`), a product-less line `pending` and unpriced; a draft from before the flag passes its deletions, prices and approvals on.
+  - **Stage 6:** `PRODUCT_NOT_IN_CATALOG`, one finding per panel.
+  - **Review:** `services/catalog_lines.py` (a choice for the components, the split by designators, "מוצר חדש" with its form and its name preview, undo of the map whole), the alternatives, picker and attribute actions on merged and waiting lines, no price or approval on a waiting line, the send refused while one is left; the queue candidate carries a new product's attributes.
+  - **Screen:** the waiting box, the "מוצר חדש" form, the designators picked on a merged line, the header's count, the send dialog.
+  - **The product list:** `common.csv` (15 products from 25/886, 2240-P-001 and 25/823, no prices) loaded after the sample. **The names:** "שעון שבת" / "שעון אסטרונומי" by `astronomical`, a contactor's `utilization` ("(AC-1)" for ESB25-30N-06), "LS/I" in the grammar, no U+200F in the DIN rail's name.
+  - **Tests:** unit (stage 5 nearest and factory products, stage 7 merge, the rule, names, grammar, `common.csv`, AC-3), integration (`test_catalog_lines.py`: the merge, the waiting line and its finding, nearest with undo and a rerun, the split, "מוצר חדש" with undo and stage 5 next time, the send refused, the flag off), Vitest, Playwright (`catalog-lines.spec.ts`, desktop and mobile), the fidelity shots.
+- **Decisions made:**
+  1. **One line per product in each panel** (the user, 2026-11-06). The quote keeps a chapter per panel (07 §7.1); inside a panel a product appears once.
+  2. **No price before the decision** (the user). A waiting line has no price and isn't in the total; the nearest products' prices are a hint; the quote can't be sent while one is left.
+  3. **A new product is the factory's, and a candidate** (the user). Usable at once in the factory's quotes and by stage 5; it reaches the master catalog only through an approval in the queue (00 §9, 10 §1).
+  4. **Its own session before Gate 2** (the user): S27b, after S27.
+  5. **The product list and the name fixes in this session** (the user): `common.csv`, and the clocks, AC-1, "LS/I" and U+200F, so the list's products reach a quote with the right name.
+  6. **A nearest product may have other poles, ranked last** (the user). Every product with the drawing's pole count comes first.
+  7. **A split by designators** (the user). On a merged line, a change of product can apply to the designators the user picks; they move to the other product's line, and undo brings them back.
+  8. **"מוצר חדש" requires the family's attributes, a brand and a model** (the user). The SKU is optional: without it the product stays the factory's and doesn't reach the approval queue.
+  9. **One flag, `catalog_lines`** (the user). Off by default, on for the demo tenant; the eval runs both states (13 §3 rule 6).
+  10. **Child lines stay under their device** (Claude, 07 decision 4 of S27b). A kit part or an accessory is merged only under the same merged device; an accessory of two breakers is a child line under each.
+  11. **The line group is part of the key** (Claude, 07 decision 3 of S27b). A component "מחוץ ללוח" doesn't join the same product inside the panel.
+  12. **A choice is the components', on the version** (Claude). `quote_versions.component_edits` by `c:`/`m:` key, not the line's edits: the line it moves to has another key and id. Undo restores the map whole. A waiting line that comes back after undo has a new id (its key was gone while its component sat in the merged line); the screen reloads from the quote.
+  13. **A nearest product is the line's alternative** (Claude). Stage 7 offers the nearest as the waiting line's `alternatives` (`nearest: true`, `diff`), so "זה המוצר" is the alternative action, named by the product's full description with what differs under it.
+  14. **The name of a new product is the server's** (Claude). `POST …/new-product/name` builds it with `text.describe` as the form is filled; the client never builds a name.
+  15. **E2E tenants** (Claude). `catalog_lines` is on only for S27b's three tenants (`lines-*`), so the other E2E tests keep today's lines.
+  16. **The two new screens accepted** (the user, 2026-11-06): the waiting line and the "מוצר חדש" form, from the fidelity shots.
+- **Eval / metrics:**
+  - **Flag off (the committed baseline):** recorded live, only the calls with no cassette (`EVAL_RECORD=missing`, under $5): 4 `catalog_disambiguation`, 2 `validator_review`, 1 `chat_bom_extraction`. Three metrics moved, all one more model call on 6199-2-50's labelled stage 5 (`s5_labelled/llm_share` 0.089 → 0.111; all 0.080 → 0.087): a shunt trip drawn with no breaker now has SOR-C, YO-C (from `common.csv`) and S2C-A1 to choose from, and the model rightly picks none (yellow); a breaker written "אלקטרוני LSI" has Ekip LS/I beside Ekip LSI, and the model picks LSI, as written. Nothing else moved. A first recording had re-recorded 27 tile-agent calls, since the new attributes changed its prompt, and stage 4 lost on 6199-2-50 by the model's variance: `astronomical` and `utilization` are read in code only (`schemas.CODE_ONLY`), the prompt is as before, and those cassettes were dropped.
+  - **Flag on (`EVAL_CATALOG_LINES=1`, replay, reported):** only `s6/warnings` rises, by one per panel with a waiting line (`PRODUCT_NOT_IN_CATALOG`; all 3.43 → 5.00). The backtest's totals and stage 5's metrics don't move. On the 7 golden drawings, checked in the eval database: no product on two lines of one panel; every product line has a product or waits (54 waiting lines, 32 of them on 6199-2-50; 145 product lines).
+- **Bugs logged:** BUG-084 fixed (with `catalog_lines` on); BUG-101 (attribute keys shown untranslated in "מאיפה כל ערך", P3); BUG-102 (a screenshot that timed out once, P3).
+- **Follow-ups:**
+  - Remove `catalog_lines` once it is on for every factory for a month (13 §3 rule 5); then the merged lines are the only lines.
+  - A manual or draw-mode line of a product already in the panel still adds its own line (09 decision 5 of S27b covers edits only); joining it is for the flag's removal.
+  - The products the list left out (XT1C or XT1N, XT2 125A and 40A, CTs 630/5A and 160/5A, F202 10mA, the SPDs, the meters) now reach a quote as waiting lines; the user decides there.

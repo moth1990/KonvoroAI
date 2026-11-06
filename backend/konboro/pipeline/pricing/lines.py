@@ -23,7 +23,7 @@ from datetime import datetime
 from decimal import Decimal
 from typing import Any
 
-from konboro.contracts.matching import Alternative, ComponentMatch
+from konboro.contracts.matching import Alternative, ComponentMatch, Nearest
 from konboro.contracts.merge import Component, MissingInstance
 from konboro.contracts.validation import Issue
 from konboro.pipeline.matching.match import ACCESSORY_FAMILIES
@@ -82,6 +82,12 @@ class Draft:
     approved_at: datetime | None = None  # the estimator approved the line (09 §7.2)
     boxes: list[dict[str, Any]] = field(default_factory=list)  # a line with no component: where it is (09 §6.5)
     query_failed: bool = False  # a derived line whose catalog query found nothing (07 §7.5, `enclosure_not_found`)
+    # S27b (`catalog_lines`, 07 §7.1): a merged line's components and the component lines it was made of, a line with
+    # no product waiting for a decision, and the products stage 5 found nearest it (05 §5.9.2)
+    component_ids: list[str] = field(default_factory=list)
+    members: list[str] = field(default_factory=list)
+    pending: bool = False
+    nearest: list[dict[str, Any]] = field(default_factory=list)
     status: str = "red"
     status_reasons: list[dict[str, Any]] = field(default_factory=list)
 
@@ -183,13 +189,19 @@ def alternative(a: Alternative) -> dict[str, Any]:
     return {"description": f"{head} · {a.diff}" if a.diff else head, **a.model_dump(mode="json")}
 
 
+def nearest_alternative(n: Nearest) -> dict[str, Any]:
+    """05 §5.9.2 (S27b): a product near a component nothing matched, offered as the line's alternative to choose. Its
+    name is the product's, and what differs from the drawing rides apart (`diff`), for the screen to show under it."""
+    return {**n.model_dump(mode="json"), "nearest": True}
+
+
 def component_line(
     c: Component, m: ComponentMatch | None, book: Book, group: str, issues: Sequence[Issue]
 ) -> tuple[Draft, Product | None]:
     item = m.catalog_item if m else None
     catalog = book.item_by_sku(item.manufacturer, item.sku) if item else None
     product = (
-        book.find(None, catalog.id if catalog else None, m.chosen_sku, item.manufacturer if item else None)
+        book.find(m.product_id, catalog.id if catalog else None, m.chosen_sku, item.manufacturer if item else None)
         if m and m.chosen_sku
         else None
     )
@@ -215,9 +227,13 @@ def component_line(
             manufacturer=item.manufacturer if item else None,
             unit=product.unit if product else "unit",
             explanation=m.reason or None if m else None,
-            alternatives=[alternative(a) for a in m.alternatives] if m else [],
+            alternatives=(
+                [alternative(a) for a in m.alternatives] or [nearest_alternative(n) for n in m.nearest] if m else []
+            ),
             reasons=reasons,
             issue_ids=[i.issue_id for i in issues],
+            component_ids=[c.component_id],
+            nearest=[n.model_dump(mode="json") for n in m.nearest] if m else [],
         ),
         product,
     )

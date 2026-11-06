@@ -298,7 +298,7 @@ export type LineAction =
   | { kind: "approve" }
   | { kind: "delete" }
   | { kind: "qty"; qty: string }
-  | { kind: "alternative"; index: number }
+  | { kind: "alternative"; index: number; designators?: string[] }
   | { kind: "price"; unit_price: string; scope: "quote" | "catalog" }
   | { kind: "price-entry"; unit_price: string; save: boolean }
   | { kind: "cost"; unit_cost: string; supplier: string | null }
@@ -306,8 +306,13 @@ export type LineAction =
   | { kind: "supplier"; supplier_price_id: string }
   | { kind: "preferred" }
   | { kind: "attribute"; attribute: EditableAttribute; value: string }
-  | { kind: "resolve"; ref: string }
-  | { kind: "brand-discount"; discount_pct: string };
+  | { kind: "resolve"; ref: string; designators?: string[] }
+  | { kind: "brand-discount"; discount_pct: string }
+  | { kind: "new-product"; product: NewProduct };
+
+/** 09 §7.16 (S27b): "מוצר חדש" from a waiting line. */
+export type NewProduct = Schemas["NewProductIn"];
+export type NewProductForm = Schemas["NewProductFormOut"];
 
 export type EditableAttribute = Schemas["AttributeIn"]["attribute"];
 export type ProductChoice = Schemas["ProductChoiceOut"];
@@ -332,7 +337,7 @@ export async function lineAction(
       return unwrap(
         await client.POST("/quotes/{quote_id}/lines/{line_id}/alternative", {
           params: { path },
-          body: { index: action.index },
+          body: { index: action.index, ...(action.designators?.length ? { designators: action.designators } : {}) },
         }),
       );
     case "price":
@@ -378,7 +383,7 @@ export async function lineAction(
       return unwrap(
         await client.POST("/quotes/{quote_id}/lines/{line_id}/resolve", {
           params: { path },
-          body: { ref: action.ref },
+          body: { ref: action.ref, ...(action.designators?.length ? { designators: action.designators } : {}) },
         }),
       );
     case "brand-discount":
@@ -388,7 +393,36 @@ export async function lineAction(
           body: { discount_pct: action.discount_pct },
         }),
       );
+    case "new-product":
+      return unwrap(
+        await client.POST("/quotes/{quote_id}/lines/{line_id}/new-product", { params: { path }, body: action.product }),
+      );
   }
+}
+
+/** 09 §7.16 (S27b): what "מוצר חדש" opens with: the family, its attributes and what was read. */
+export async function newProductForm(quoteId: string, lineId: string, client = api): Promise<NewProductForm> {
+  return unwrap(
+    await client.GET("/quotes/{quote_id}/lines/{line_id}/new-product", {
+      params: { path: { quote_id: quoteId, line_id: lineId } },
+    }),
+  );
+}
+
+/** The name the product would get, built by the server in the app's wording as the form is filled. */
+export async function newProductName(
+  quoteId: string,
+  lineId: string,
+  values: Schemas["NewProductNameIn"],
+  client = api,
+): Promise<string> {
+  const out = unwrap(
+    await client.POST("/quotes/{quote_id}/lines/{line_id}/new-product/name", {
+      params: { path: { quote_id: quoteId, line_id: lineId } },
+      body: values,
+    }),
+  );
+  return out.name;
 }
 
 // --- the product picker (09 §6.4, §6.6, §7.8; S23b) ------------------------------------------------------------------

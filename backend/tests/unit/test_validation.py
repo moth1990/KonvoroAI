@@ -471,6 +471,22 @@ def test_panel_missing_rows() -> None:
     assert_filled(i)
 
 
+def test_a_product_not_in_the_catalog() -> None:
+    """S27b (06 decision 1): one finding per panel with every component that has no product, only with
+    `catalog_lines` on. A component the factory's product matched is not one."""
+    f13 = comp("cmp_f13", tags=("F13", "F14"), qty=2, current_a=13, poles=3)
+    own = comp("cmp_own", tags=("F20",), current_a=13, poles=1)
+    d = main_and(f13, own)
+    d.matches["cmp_f13"] = match(f13, None, "unmatched")
+    d.matches["cmp_own"] = match(own, "S201M").model_copy(update={"product_id": "prd_1"})
+    on = d.model()
+    on.catalog_lines = True
+    [i] = fired(engine.validate(on, PACK, SCH, None), "PRODUCT_NOT_IN_CATALOG")
+    assert i.component_ids == ["cmp_f13"] and i.values["count"] == 1 and "F13" in i.values["count_text"]
+    assert_filled(i)
+    assert not fired(d.validate(), "PRODUCT_NOT_IN_CATALOG")
+
+
 def test_panel_referenced_not_drawn() -> None:
     feeds = {
         "feeds": [

@@ -1,5 +1,5 @@
 {
-  "version": "rules-global-2026.11.1",
+  "version": "rules-global-2026.11.2",
   "rules": [
     {
       "rule_id": "HIER_CHILD_CURRENT_GT_PARENT",
@@ -194,6 +194,17 @@
       "params": {},
       "title_he": "{count_text} בלי פענוח",
       "message_he": "בלוח {count_text} שמצאנו בשרטוט ולא הצלחנו לקרוא. הם מופיעים בהצעה כשורות חסרות."
+    },
+    {
+      "rule_id": "PRODUCT_NOT_IN_CATALOG",
+      "version": 1,
+      "category": "B",
+      "applies_to": [],
+      "requires": null,
+      "severity": "warning",
+      "params": {},
+      "title_he": "{count_text}: אין מוצר בקטלוג",
+      "message_he": "בלוח {count_text} שאין להם מוצר בקטלוג או אצל המפעל. בחרו מוצר קרוב, מוצר אחר, או צרו מוצר חדש."
     },
     {
       "rule_id": "PANEL_REFERENCED_NOT_DRAWN",

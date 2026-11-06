@@ -29,6 +29,7 @@ from .book import Book
 from .derived import DerivedRule, Labor, PanelContext, Requirement, derive
 from .edits import Kept, LineEdits, apply_all, price_line
 from .lines import Draft, panel_lines, values_of
+from .merge import merge, waiting
 from .status import finalize
 
 SEVERITY = {
@@ -54,6 +55,8 @@ class Carry:
     edits: Mapping[str, LineEdits] = field(default_factory=dict)  # line key → the review screen's edits
     dismissed: frozenset[str] = frozenset()  # finding ids the user dismissed: their reasons leave the lines
     kept: Mapping[str, Kept] = field(default_factory=dict)  # line key → its stored price, after a review action
+    # S27b: the estimator's choice per component, by its line key (`quote_versions.component_edits`)
+    components: Mapping[str, LineEdits] = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
@@ -73,6 +76,7 @@ class QuoteInput:
     vat_rate: Decimal = Decimal(0)
     carry: Carry = Carry()
     scope: str = ""  # the quote version's id: pricing findings' ids are stable within it
+    catalog_lines: bool = False  # S27b (13 §4.10): one line per product in a panel, a product-less line waits
 
 
 @dataclass(frozen=True)
@@ -171,6 +175,28 @@ def manual_line(ln: Draft, inp: QuoteInput) -> Draft:
     return replace(out, edits=e.as_json() if e else {}, approved_at=e.approved_at if e else None)
 
 
+def per_product(lines: Sequence[Draft], inp: QuoteInput) -> list[Draft]:
+    """07 §7.1 (S27b): each component's choices first, so a change of product moves it; then one line per product in
+    the panel; then what the estimator did on the merged line itself (a quantity, a supplier, an approval, a kept
+    price). A line with no product waits for a decision, unpriced."""
+    carry = inp.carry
+    own = {k: e for k, e in carry.edits.items() if not k.startswith("p:")}  # a component's row, or a waiting line's
+    chosen = apply_all(lines, {**own, **carry.components}, inp.book, carry.dismissed, carry.kept)
+    chosen = [ln for ln in chosen if ln.key not in carry.deleted or ln.parent is not None]
+    merged = merge(chosen)
+    heads = [ln for ln in merged if ln.key.startswith("p:")]
+    line_edits = {ln.key: carry.edits.get(ln.key) or LineEdits.of(ln.edits, ln.approved_at) for ln in heads}
+    again = apply_all(heads, line_edits, inp.book, carry.dismissed, carry.kept)
+    by_key = {ln.key: ln for ln in again}
+    out = []
+    for ln in merged:
+        ln = by_key.get(ln.key, ln)
+        if waiting(ln):
+            ln = replace(ln, pending=True)
+        out.append(ln)
+    return out
+
+
 def price_quote(inp: QuoteInput) -> PricedQuote:
     matches = {m.component_id: m for m in inp.matching.matches}
     auxiliary = set(inp.matching.auxiliary)
@@ -191,7 +217,10 @@ def price_quote(inp: QuoteInput) -> PricedQuote:
         built = panel_lines(
             panel_id, inp.merge.components, matches, auxiliary, missing, issues_by_component, main_ids, inp.book
         )
-        built.lines = apply_all(built.lines, inp.carry.edits, inp.book, inp.carry.dismissed, inp.carry.kept)
+        if inp.catalog_lines:
+            built.lines = per_product(built.lines, inp)
+        else:
+            built.lines = apply_all(built.lines, inp.carry.edits, inp.book, inp.carry.dismissed, inp.carry.kept)
         comps = [c for c in inp.merge.components if c.panel_id == panel_id]
         main = next((by_id[i] for i in main_ids if i in by_id and by_id[i].panel_id == panel_id), None)
         ctx = PanelContext(
@@ -212,7 +241,12 @@ def price_quote(inp: QuoteInput) -> PricedQuote:
         lines = [ln for ln in lines if ln.key not in inp.carry.deleted]
         kept = {ln.key for ln in lines}
         lines = [ln for ln in lines if ln.parent is None or ln.parent in kept]  # a deleted device takes its children
-        lines = [override(ln, inp.carry.overrides[ln.key]) if ln.key in inp.carry.overrides else ln for ln in lines]
+        overrides = dict(inp.carry.overrides)
+        for ln in lines:  # S27b decision 5: a price set on a component's line before the flag, the merged line's
+            was = next((overrides[k] for k in ln.members if k in overrides), None)
+            if was is not None and ln.key not in overrides:
+                overrides[ln.key] = was
+        lines = [override(ln, overrides[ln.key]) if ln.key in overrides else ln for ln in lines]
         for ln in lines:
             finalize(ln)
         found += [

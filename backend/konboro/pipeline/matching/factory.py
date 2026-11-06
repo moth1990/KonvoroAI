@@ -20,7 +20,7 @@ from konboro.domain.pricing import cost as pc
 from konboro.pipeline.detection.library import prefix_table
 from konboro.services import price_list
 
-from .catalog import Catalog, Item
+from .catalog import PRODUCT, Catalog, Item
 from .config import TIE_BREAKS
 
 ANY = "*"  # a preference for every family
@@ -95,7 +95,9 @@ def _priced(
     costs: dict[str, Decimal] = {}
     linked: set[str] = set()
     for p in products:
-        item_id = p.catalog_item_id or by_sku.get((p.brand or "", p.manufacturer_sku or ""))
+        own = PRODUCT + p.id  # a product made in "מוצר חדש" is its own candidate (S27b)
+        item_id = p.catalog_item_id or (own if own in catalog.items else None)
+        item_id = item_id or by_sku.get((p.brand or "", p.manufacturer_sku or ""))
         if item_id is None:
             continue
         linked.add(item_id)

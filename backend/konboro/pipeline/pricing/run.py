@@ -40,6 +40,8 @@ from konboro.contracts.validation import ValidationResult
 from konboro.db import models as m
 from konboro.db.ids import new_id
 from konboro.domain import totals as t
+from konboro.domain.flags import CATALOG_LINES, is_enabled
+from konboro.services import flags
 from konboro.services import quotes as qs
 from konboro.services.storage import Storage
 
@@ -107,6 +109,7 @@ def target(
         version=current.version + 1 if current else 1,
         quote_date=today(),
         discount_pct=current.discount_pct if current else customer.discount_pct if customer else None,
+        component_edits=dict(current.component_edits or {}) if current else {},
     )
     session.add(version)
     session.flush()
@@ -187,13 +190,14 @@ def price_drawing(
     settings = session.get(m.TenantSettings, tenant_id)
     if keep is None or version.quote_date is None:
         version.quote_date = today()
-    chosen = [
-        (e.replaced.manufacturer or "", e.replaced.sku) for e in carried.edits.values() if e.replaced and e.replaced.sku
-    ]
-    chosen += [(e.match.manufacturer or "", e.match.sku) for e in carried.edits.values() if e.match and e.match.sku]
+    every = [*carried.edits.values(), *carried.components.values()]
+    chosen = [(e.replaced.manufacturer or "", e.replaced.sku) for e in every if e.replaced and e.replaced.sku]
+    chosen += [(e.match.manufacturer or "", e.match.sku) for e in every if e.match and e.match.sku]
     chosen += [(ln.manufacturer or "", ln.sku) for ln in carried.manual if ln.sku]
-    picked = {e.replaced.product_id for e in carried.edits.values() if e.replaced and e.replaced.product_id}
+    picked = {e.replaced.product_id for e in every if e.replaced and e.replaced.product_id}
     picked |= {ln.product_id for ln in carried.manual if ln.product_id}
+    picked |= {x.product_id for x in out.matching.matches if x.product_id}  # a factory product stage 5 chose (S27b)
+    lines_on = is_enabled(flags.tenant_flags(session, tenant_id), CATALOG_LINES)
     book, row_ids = load.book(
         session, tenant_id, version.quote_date, out.matching, quote.customer_id, chosen, sorted(picked)
     )
@@ -219,6 +223,7 @@ def price_drawing(
         vat_rate=vat[1] if vat else Decimal(0),
         carry=carried,
         scope=version.id,
+        catalog_lines=lines_on,
     )
     priced = price_quote(inp)
     was = previous or version
@@ -288,6 +293,8 @@ def line_in(ln: Draft) -> qs.LineIn:
         line_group=ln.line_group,
         parent=ln.parent,
         component_id=ln.component_id,
+        component_ids=list(ln.component_ids),
+        pending=ln.pending,
         signature=ln.signature,
         brand_context=ln.brand_context,
         product_id=ln.product_id,
@@ -343,7 +350,8 @@ def write(session: Session, version: m.QuoteVersion, drawing_id: str, priced: Pr
     for p in priced.panels:
         for ln in p.lines:
             if ln.component_id and ln.parent is None:
-                by_component.setdefault(ln.component_id, []).append(ids[ln.key])
+                for c in ln.component_ids or [ln.component_id]:
+                    by_component.setdefault(c, []).append(ids[ln.key])
     for row in session.scalars(
         select(m.Finding).where(
             m.Finding.tenant_id == tid, m.Finding.drawing_id == drawing_id, m.Finding.source.in_(STAGE6_SOURCES)

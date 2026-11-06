@@ -9,6 +9,9 @@ import time
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass, field
 
+# S27b (13 §4.10): every product line a product, once per panel; read by stages 5–7, the review and the send
+CATALOG_LINES = "catalog_lines"
+
 
 @dataclass(frozen=True)
 class FlagDef:

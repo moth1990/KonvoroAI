@@ -92,10 +92,21 @@ def class_name(family: str, symbol_class: str | None) -> str:
     return family
 
 
+# S27b (the user): a Shabbat clock and an astronomical clock are two products. `astronomical` tells them apart; a clock
+# nothing says about keeps the library's name
+CLOCK_NAMES = {True: "שעון אסטרונומי", False: "שעון שבת"}
+
+
+def _name(family: str, symbol_class: str | None, attrs: dict[str, Any]) -> str:
+    if family == "time_switch" and isinstance(attrs.get("astronomical"), bool):
+        return CLOCK_NAMES[attrs["astronomical"]]
+    return class_name(family, symbol_class)
+
+
 def describe(family: str, symbol_class: str | None, brand: str | None, model: str | None, attrs: dict[str, Any]) -> str:
     """'מפסק זרם אוטומטי (מא"ז) ABB S203M 3P 16A עקומה C 10kA', the shape of the demo price list's names (S18), for
     every quote line (BUG-071): a catalog item's, and an unmatched component's with what is known of it."""
-    parts = [class_name(family, symbol_class)]
+    parts = [_name(family, symbol_class, attrs)]
     if brand:
         parts.append(brand)
     if model:
@@ -105,9 +116,12 @@ def describe(family: str, symbol_class: str | None, brand: str | None, model: st
         parts.append(f"{number(poles)}P" + ("+N" if attrs.get("neutral") else ""))
     for name in ("current_a", "residual_ma", "imax_ka"):
         if attrs.get(name) is not None:
-            # a contactor's current is its AC-3 rating (the prototype's "מגען 3P ‏16A לפחות (AC-3)")
-            ac3 = " (AC-3)" if name == "current_a" and family == "contactor" else ""
-            parts.append(value(name, attrs[name]) + ac3)
+            # a contactor's current is rated for a utilization category: AC-3 unless the item says otherwise
+            # (S27b: ESB25's 25A is AC-1; the prototype's "מגען 3P 16A לפחות (AC-3)")
+            category = (
+                f" ({attrs.get('utilization') or 'AC-3'})" if name == "current_a" and family == "contactor" else ""
+            )
+            parts.append(value(name, attrs[name]) + category)
     if attrs.get("coil_voltage_v") is not None:
         parts.append(f"סליל {value('coil_voltage_v', attrs['coil_voltage_v'])}")
     if attrs.get("range_min_a") is not None and attrs.get("range_max_a") is not None:

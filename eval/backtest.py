@@ -14,6 +14,7 @@ The factory's settings are these quotes' factory's (S22 decision 1): its cabinet
 and doors; it quotes no labor, terminals or labels as lines, so only the enclosure rule runs.
 """
 
+import os
 from collections.abc import Sequence
 from dataclasses import dataclass, field
 from datetime import date
@@ -31,6 +32,7 @@ from konboro.pipeline.pricing.engine import PricedQuote, QuoteInput, amounts, pr
 
 ENCLOSURE = "enclosure"
 INCLUDES = {"busbar": True, "n": True, "pe": True, "panels": True, "doors": True}
+CATALOG_LINES = os.environ.get("EVAL_CATALOG_LINES") == "1"  # S27b: `run.py`'s docstring
 RULES = [
     DerivedRule(
         id="dr_eval_enclosure",
@@ -134,6 +136,7 @@ def price(mat: Material, b: Book, on: date) -> Result:
             rules=RULES,
             requirements=mat.requirements,
             includes_default=INCLUDES,
+            catalog_lines=CATALOG_LINES,
         )
     )
     components = [ln for ln in q.lines if ln.line_type == "component" and not ln.included]

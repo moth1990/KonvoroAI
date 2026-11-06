@@ -72,6 +72,8 @@ import {
   nextToCheck,
   nextUnpriced,
   parseAmount,
+  pendingCount,
+  pendingText,
   priceChips,
   sendSummary,
   takesPrice,
@@ -186,7 +188,9 @@ function Review({ quote }: { quote: Quote }) {
   // S23b: draw mode (09 §6.6) and the product picker, for a rectangle drawn or a missing line ("מוצר אחר…")
   const [drawing, setDrawing] = useState(false);
   const [picker, setPicker] = useState<
-    { kind: "mark"; pageId: string; bbox: number[] } | { kind: "missing"; line: QuoteLine } | null
+    | { kind: "mark"; pageId: string; bbox: number[] }
+    | { kind: "missing"; line: QuoteLine; designators?: string[] }
+    | null
   >(null);
 
   const panel = quote.panels[Math.min(panelIdx, quote.panels.length - 1)];
@@ -197,6 +201,7 @@ function Review({ quote }: { quote: Quote }) {
   const prog = progress(allLines);
   const tabs = panelTabs(quote);
   const t = quote.totals;
+  const pending = pendingCount(quote); // S27b (09 §6.1)
   const sheetLine = phone && open ? allLines.find((l) => l.line_id === open) : undefined;
 
   const toggleMargin = () => {
@@ -432,7 +437,7 @@ function Review({ quote }: { quote: Quote }) {
     onSaveToList: (on) => setSaveToList((m) => ({ ...m, [line.line_id]: on })),
     onAction: act,
     onDismiss: dismiss,
-    onPickProduct: (l) => setPicker({ kind: "missing", line: l }),
+    onPickProduct: (l, designators) => setPicker({ kind: "missing", line: l, designators }),
   });
 
   const page = quote.pages.find((p) => p.page_id === pageId) ?? quote.pages[0];
@@ -446,7 +451,11 @@ function Review({ quote }: { quote: Quote }) {
     setPicker(null);
     if (!p) return;
     if (p.kind === "missing") {
-      void act(p.line, { kind: "resolve", ref: choice.ref });
+      void act(p.line, {
+        kind: "resolve",
+        ref: choice.ref,
+        ...(p.designators?.length ? { designators: p.designators } : {}),
+      });
       return;
     }
     void run(
@@ -689,6 +698,11 @@ function Review({ quote }: { quote: Quote }) {
             </span>
           ) : null}
           {t.unpriced_count ? <span className="chip bad">{t.unpriced_count} חסרים</span> : null}
+          {pending ? (
+            <button type="button" className="chip bad" data-testid="pending-count" onClick={() => setFilter("red")}>
+              {pendingText(pending)}
+            </button>
+          ) : null}
         </div>
         <button
           type="button"
@@ -979,6 +993,7 @@ function Review({ quote }: { quote: Quote }) {
         <ProductPicker
           quoteId={quoteId}
           title={picker.kind === "mark" ? "איזה רכיב סימנתם?" : "בחירת מוצר לשורה"}
+          family={picker.kind === "missing" ? picker.line.family : null}
           onPick={picked}
           onClose={() => setPicker(null)}
         />
@@ -1256,11 +1271,22 @@ function SendDialog(props: { quote: Quote; busy: boolean; onSend: () => void; on
           בהצעה בלי סכום. מומלץ להשלים לפני השליחה.
         </div>
       ) : null}
+      {sum.pending ? (
+        <div className="small alert-bad" data-testid="send-pending">
+          {pendingText(sum.pending)}: בחרו מוצר לכל אחד לפני השליחה.
+        </div>
+      ) : null}
       {sum.red && sum.red !== sum.unpriced ? <div className="small alert-bad">{sum.red} שורות אדומות.</div> : null}
       {sum.yellow ? <div className="small alert-warn">{sum.yellow} שורות צהובות לא אושרו.</div> : null}
       <span className="small muted">הלקוח מקבל תיאור, כמות, מחיר וסכום. לא עלות, לא רווח ולא צבעים.</span>
       <div className="row">
-        <button type="button" className="btn primary" data-testid="dosend" disabled={props.busy} onClick={props.onSend}>
+        <button
+          type="button"
+          className="btn primary"
+          data-testid="dosend"
+          disabled={props.busy || sum.pending > 0}
+          onClick={props.onSend}
+        >
           {sum.red || sum.yellow ? "שלח בכל זאת" : "שלח ללקוח"}
         </button>
         <button type="button" className="btn" onClick={props.onClose}>

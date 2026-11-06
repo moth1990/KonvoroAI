@@ -51,6 +51,8 @@ class QuoteVersion(Base, TenantScoped, Timestamps):
     discount_pct: Mapped[Decimal | None] = mapped_column(Rate)
     totals: Mapped[dict[str, Any]] = mapped_column(server_default="{}")
     snapshot: Mapped[dict[str, Any]] = mapped_column(server_default="{}")
+    # S27b: the estimator's choice per component (a product, an alternative, an attribute), by its line key (`c:…`)
+    component_edits: Mapped[dict[str, Any]] = mapped_column(server_default="{}")
     diff_from_previous: Mapped[dict[str, Any] | None]
     sent_at: Mapped[datetime | None]
     sent_by: Mapped[str | None]
@@ -95,6 +97,8 @@ class QuoteLine(Base, TenantScoped, Timestamps):
     line_group: Mapped[str | None]
     line_type: Mapped[str] = mapped_column(server_default="component")
     component_id: Mapped[str | None]
+    component_ids: Mapped[list[Any]] = mapped_column(server_default="[]")  # a merged line's components (S27b)
+    pending: Mapped[bool] = mapped_column(server_default="false")  # no product yet: waiting for a decision (S27b)
     parent_line_id: Mapped[str | None]
     catalog_item_id: Mapped[str | None]  # global table: plain reference, checked by the app
     product_id: Mapped[str | None]
@@ -191,6 +195,8 @@ CORRECTION_TYPES = (
     "discount_set",
     # 08 §7.4: the match memory a chat proposal wrote for a customer or the factory (S25b)
     "memory_saved",
+    # 09 §7.16: "מוצר חדש" made a factory product from a waiting line (S27b)
+    "product_created",
 )
 
 

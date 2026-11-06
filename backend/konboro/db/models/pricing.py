@@ -40,6 +40,11 @@ class Product(Base, TenantScoped, Timestamps):
     manufacturer_sku: Mapped[str | None]
     brand: Mapped[str | None]
     family: Mapped[str]
+    # a product made in "מוצר חדש" (S27b, 09 §7.16): the family's attributes and its model, for stage 5 and its name
+    attributes: Mapped[dict[str, Any]] = mapped_column(server_default="{}")
+    series: Mapped[str | None]
+    model_code: Mapped[str | None]
+    symbol_class: Mapped[str | None]
     unit: Mapped[str] = mapped_column(server_default="unit")
     sale_mode: Mapped[str] = mapped_column(server_default="rule")
     fixed_price: Mapped[Decimal | None] = mapped_column(Money)

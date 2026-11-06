@@ -519,7 +519,7 @@
       "validation": {
         "agent_calls": 2,
         "agent_findings": 2,
-        "checks_run": 28,
+        "checks_run": 29,
         "checks_skipped": 14,
         "severity_error": 1,
         "severity_info": 9,
@@ -1056,7 +1056,7 @@
       "validation": {
         "agent_calls": 2,
         "agent_findings": 2,
-        "checks_run": 28,
+        "checks_run": 29,
         "checks_skipped": 20,
         "severity_error": 0,
         "severity_info": 14,
@@ -1153,12 +1153,12 @@
         "components": 86,
         "llm_signatures": 3,
         "method_llm": 5,
-        "method_none": 35,
+        "method_none": 36,
         "method_rules_ranked": 10,
-        "method_rules_unique": 31,
+        "method_rules_unique": 30,
         "signatures": 62,
-        "status_ambiguous": 11,
-        "status_matched": 41,
+        "status_ambiguous": 12,
+        "status_matched": 40,
         "status_unmatched": 29
       },
       "merge": {
@@ -1513,8 +1513,8 @@
           "llm_share": {
             "den": 45,
             "kind": "ratio",
-            "num": 4.0,
-            "value": 0.088889
+            "num": 5.0,
+            "value": 0.111111
           },
           "unmatched_in_catalog": {
             "den": 91,
@@ -1621,7 +1621,7 @@
       "validation": {
         "agent_calls": 3,
         "agent_findings": 3,
-        "checks_run": 28,
+        "checks_run": 29,
         "checks_skipped": 19,
         "severity_error": 0,
         "severity_info": 18,
@@ -1684,12 +1684,12 @@
         "components": 20,
         "llm_signatures": 2,
         "method_llm": 2,
-        "method_none": 1,
-        "method_rules_ranked": 2,
-        "method_rules_unique": 15,
+        "method_none": 2,
+        "method_rules_ranked": 3,
+        "method_rules_unique": 13,
         "signatures": 19,
-        "status_ambiguous": 2,
-        "status_matched": 17,
+        "status_ambiguous": 3,
+        "status_matched": 16,
         "status_unmatched": 1
       },
       "merge": {
@@ -1991,7 +1991,7 @@
       "validation": {
         "agent_calls": 1,
         "agent_findings": 1,
-        "checks_run": 25,
+        "checks_run": 26,
         "checks_skipped": 12,
         "severity_error": 0,
         "severity_info": 3,
@@ -2065,8 +2065,8 @@
         "method_explicit_series": 6,
         "method_llm": 1,
         "method_none": 6,
-        "method_rules_ranked": 2,
-        "method_rules_unique": 4,
+        "method_rules_ranked": 3,
+        "method_rules_unique": 3,
         "signatures": 19,
         "status_ambiguous": 2,
         "status_conflict": 1,
@@ -2475,7 +2475,7 @@
       "validation": {
         "agent_calls": 1,
         "agent_findings": 0,
-        "checks_run": 31,
+        "checks_run": 32,
         "checks_skipped": 6,
         "severity_error": 0,
         "severity_info": 9,
@@ -2990,7 +2990,7 @@
       "validation": {
         "agent_calls": 1,
         "agent_findings": 0,
-        "checks_run": 31,
+        "checks_run": 32,
         "checks_skipped": 6,
         "severity_error": 0,
         "severity_info": 9,
@@ -3497,7 +3497,7 @@
       "validation": {
         "agent_calls": 1,
         "agent_findings": 1,
-        "checks_run": 31,
+        "checks_run": 32,
         "checks_skipped": 6,
         "severity_error": 0,
         "severity_info": 11,
@@ -3982,8 +3982,8 @@
         "llm_share": {
           "den": 150,
           "kind": "ratio",
-          "num": 12.0,
-          "value": 0.08
+          "num": 13.0,
+          "value": 0.086667
         },
         "unmatched_in_catalog": {
           "den": 186,
@@ -4682,8 +4682,8 @@
           "llm_share": {
             "den": 60,
             "kind": "ratio",
-            "num": 7.0,
-            "value": 0.116667
+            "num": 8.0,
+            "value": 0.133333
           },
           "unmatched_in_catalog": {
             "den": 105,

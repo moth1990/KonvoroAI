@@ -56,6 +56,19 @@ class Alternative(Contract):
     has_cost_price: bool
 
 
+class Nearest(Contract):
+    """05 §5.9.2 (S27b): a product near a component nothing matched. A suggestion for the user, never a choice."""
+
+    sku: str
+    manufacturer: str | None
+    description: str
+    diff: str  # 05 §5.9's wording: "20A במקום 16A"
+    differs: list[str] = []  # the attributes that differ
+    catalog_item_id: str | None = None
+    product_id: str | None = None  # a factory product (05 §5.6)
+    has_cost_price: bool = False
+
+
 class BundleLine(Contract):
     """A kit's part that the main item needs (05 §5.9.1): the RCD module of "XT1C … משולב פחת". Stage 7 shows it
     as a child line under the device's line."""
@@ -92,6 +105,8 @@ class ComponentMatch(Contract):
     # the customer's preference chose it, else null (a brand the drawing or its notes name wins over memory anyway)
     brand_context: str | None = None
     llm_decision: dict[str, Any] | None = None
+    product_id: str | None = None  # a factory product made in "מוצר חדש" was chosen (05 §5.6, S27b)
+    nearest: list[Nearest] = []  # no candidate at all: up to 3 products near it (05 §5.9.2, S27b)
 
 
 class MatchStats(Contract):

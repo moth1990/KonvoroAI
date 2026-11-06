@@ -23,6 +23,8 @@ from konboro.contracts.intake import IntakeResult
 from konboro.contracts.matching import MatchingResult
 from konboro.contracts.merge import MergeResult
 from konboro.db import models as m
+from konboro.domain.flags import CATALOG_LINES, is_enabled
+from konboro.services import flags
 from konboro.services.storage import drawing_key
 from konboro_llm.stages import catalog_disambiguation
 
@@ -39,6 +41,9 @@ def run(ctx: StageContext) -> MatchingResult:
     merge = ctx.output(4, MergeResult)
     intake = ctx.output(1, IntakeResult)
     cat = catalog.load(ctx.session)
+    lines = is_enabled(flags.tenant_flags(ctx.session, ctx.tenant_id), CATALOG_LINES)
+    if lines:  # S27b: the factory's own products are candidates, and nothing matched gets its nearest (05 §5.6, §5.9.2)
+        cat = catalog.with_products(cat, catalog.factory_products(ctx.session, ctx.tenant_id))
     project = ctx.session.get(m.Project, ctx.drawing.project_id) if ctx.drawing.project_id else None
     fac = factory.load(ctx.session, ctx.tenant_id, cat, project.customer_id if project else None)
 
@@ -68,6 +73,7 @@ def run(ctx: StageContext) -> MatchingResult:
         components={c.component_id: c for c in merge.components},
         ask=chooser,
         corrected=corrected_poles(merge.instances),
+        nearest=lines,
     )
     result = match_all(merge.components, inputs)
     if memo is not None:

@@ -11,9 +11,19 @@ from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, Path, Query, Request
 
+from konboro.domain.flags import CATALOG_LINES
 from konboro.domain.permissions import Permission, allowed
 from konboro.domain.totals import QuoteSums, Sums
-from konboro.services import onboarding, price_list, quote_versions, quotes, review, review_picker, unresolved
+from konboro.services import (
+    catalog_lines,
+    onboarding,
+    price_list,
+    quote_versions,
+    quotes,
+    review,
+    review_picker,
+    unresolved,
+)
 from konboro.services.storage import Storage
 
 from ..deps import Actor, require, require_flag
@@ -28,6 +38,10 @@ from ..schemas import (
     LinePriceIn,
     LineSupplierIn,
     MarkIn,
+    NewProductFormOut,
+    NewProductIn,
+    NewProductNameIn,
+    NewProductNameOut,
     PriceEntryIn,
     ProductChoiceOut,
     ProductRefIn,
@@ -114,8 +128,10 @@ def set_quantity(actor: Writer, quote_id: QuoteId, line_id: LineId, body: Quanti
 def choose_alternative(
     actor: Writer, quote_id: QuoteId, line_id: LineId, body: AlternativeIn, request: Request
 ) -> ActionOut:
-    """09 §7.3: the alternative on every line with the same signature, in every panel, each approved."""
-    return act(actor, quote_id, request, lambda c: review.choose_alternative(c, line_id, body.index))
+    """09 §7.3: the alternative on every line with the same signature, in every panel, each approved. With
+    `catalog_lines` (S27b): a waiting line's nearest products are its alternatives, and `designators` moves only
+    those of a merged line's components (09 §7.17)."""
+    return act(actor, quote_id, request, lambda c: review.choose_alternative(c, line_id, body.index, body.designators))
 
 
 @router.post("/quotes/{quote_id}/findings/{finding_id}/dismiss")
@@ -187,8 +203,50 @@ def set_attribute(actor: Writer, quote_id: QuoteId, line_id: LineId, body: Attri
 def resolve_missing(
     actor: Writer, quote_id: QuoteId, line_id: LineId, body: ProductRefIn, request: Request
 ) -> ActionOut:
-    """09 §7.8: a product for a missing line, which becomes an approved component line."""
-    return act(actor, quote_id, request, lambda c: review_picker.resolve_missing(c, line_id, body.ref))
+    """09 §7.8: a product for a missing line, which becomes an approved component line. With `catalog_lines`
+    (S27b): also a waiting line's product, or the designators picked of a merged line (09 §7.17)."""
+    return act(
+        actor, quote_id, request, lambda c: review_picker.resolve_missing(c, line_id, body.ref, body.designators)
+    )
+
+
+@router.get("/quotes/{quote_id}/lines/{line_id}/new-product", dependencies=[Depends(require_flag(CATALOG_LINES))])
+def new_product_form(actor: Reader, quote_id: QuoteId, line_id: LineId, request: Request) -> NewProductFormOut:
+    """09 §7.16 (S27b): what "מוצר חדש" opens with for a waiting line."""
+    ctx = _draft(actor, quote_id, request)
+    try:
+        return NewProductFormOut.model_validate(catalog_lines.form(ctx, line_id))
+    except review.ReviewError as e:
+        raise ApiError(e.status, e.code, e.details) from e
+
+
+@router.post("/quotes/{quote_id}/lines/{line_id}/new-product/name", dependencies=[Depends(require_flag(CATALOG_LINES))])
+def new_product_name(
+    actor: Reader, quote_id: QuoteId, line_id: LineId, body: NewProductNameIn, request: Request
+) -> NewProductNameOut:
+    """09 §7.16 (S27b): the name the product would get, as the form is filled; nothing is saved."""
+    ctx = _draft(actor, quote_id, request)
+    new = catalog_lines.NewProduct(attributes=dict(body.attributes), brand=body.brand, model_code=body.model_code)
+    try:
+        return NewProductNameOut(name=catalog_lines.preview(ctx, line_id, new))
+    except review.ReviewError as e:
+        raise ApiError(e.status, e.code, e.details) from e
+
+
+@router.post("/quotes/{quote_id}/lines/{line_id}/new-product", dependencies=[Depends(require_flag(CATALOG_LINES))])
+def create_new_product(
+    actor: Writer, quote_id: QuoteId, line_id: LineId, body: NewProductIn, request: Request
+) -> ActionOut:
+    """09 §7.16 (S27b): a factory product from a waiting line, its family's attributes, named the app's way; the
+    line's components move to it, approved."""
+    new = catalog_lines.NewProduct(
+        attributes=dict(body.attributes),
+        brand=body.brand,
+        model_code=body.model_code,
+        series=body.series,
+        sku=body.sku,
+    )
+    return act(actor, quote_id, request, lambda c: catalog_lines.new_product(c, line_id, new))
 
 
 @router.post("/quotes/{quote_id}/marks")

@@ -42,6 +42,7 @@ from konboro.pipeline.matching import catalog, factory, match, notes
 from konboro.pipeline.pricing import load as pricing_load
 from konboro.pipeline.pricing.edits import Rematch, Replaced
 from konboro.pipeline.pricing.lines import alternative, confidence_reason, match_reasons, unmatched_description
+from konboro.services import catalog_lines
 from konboro.services import price_list as pl
 from konboro.services.review import (
     Ctx,
@@ -187,6 +188,9 @@ def choice(session: Any, tenant_id: str, ref: str) -> Choice:
 def _inputs(ctx: Ctx, components: Iterable[Component]) -> match.Inputs:
     cat = catalog.load(ctx.session)
     out = ctx.outputs()
+    lines = catalog_lines.on(ctx)
+    if lines:  # S27b: the factory's own products, and the nearest when nothing matches (05 §5.6, §5.9.2)
+        cat = catalog.with_products(cat, catalog.factory_products(ctx.session, ctx.tid))
     return match.Inputs(
         catalog=cat,
         factory=factory.load(ctx.session, ctx.tid, cat, ctx.quote.customer_id),
@@ -195,6 +199,7 @@ def _inputs(ctx: Ctx, components: Iterable[Component]) -> match.Inputs:
         components={c.component_id: c for c in components},
         ask=None,  # no model from a review route: the rules' first candidate, yellow (match._ambiguous)
         corrected=match.corrected_poles(out.merge.instances) if out else frozenset(),
+        nearest=lines,
     )
 
 
@@ -376,6 +381,7 @@ def set_attribute(ctx: Ctx, line_id: str, name: str, value: Decimal) -> Done:
         return Done("הערך לא השתנה")
     rem = rematch(ctx, row, values)
     restore = _restore_of(ctx, [row, *_children(ctx, row)], panels=[row.panel_id])
+    lines = catalog_lines.on(ctx)
     event = _event(
         ctx,
         "attribute_changed",
@@ -389,7 +395,12 @@ def set_attribute(ctx: Ctx, line_id: str, name: str, value: Decimal) -> Done:
         after={name: values[name], "source": "user", "sku": rem.sku, "description": rem.description},
         restore=restore,
     )
-    _edit(row, attrs=values, match=rem.as_json(), replaced=None)
+    if lines:  # S27b: the components' choice, so they move to the product stage 5 now finds
+        catalog_lines.set_components(
+            ctx, catalog_lines.member_keys(ctx, row), attrs=values, match=rem.as_json(), replaced=None
+        )
+    else:
+        _edit(row, attrs=values, match=rem.as_json(), replaced=None)
     ctx.session.flush()
     refresh(ctx, reprice=[key_of(row)], revalidate=[row.panel_id])
     if rem.sku is None:
@@ -442,6 +453,7 @@ def candidates(ctx: Ctx, line_id: str) -> list[Choice]:
     if found.catalog_item is not None and found.chosen_sku:
         wanted.append((found.catalog_item.manufacturer or "", found.chosen_sku))
     wanted += [(a.manufacturer or "", a.sku) for a in found.alternatives if a.sku]
+    wanted += [(n.manufacturer or "", n.sku) for n in found.nearest if n.catalog_item_id]  # S27b
     products = _products(ctx.session, ctx.tid, x.family)
     by_item = {p.catalog_item_id: p for p in products if p.catalog_item_id}
     out: list[Choice] = []
@@ -455,14 +467,21 @@ def candidates(ctx: Ctx, line_id: str) -> list[Choice]:
     return out
 
 
-def resolve_missing(ctx: Ctx, line_id: str, ref: str) -> Done:
+def resolve_missing(ctx: Ctx, line_id: str, ref: str, designators: Sequence[str] | None = None) -> Done:
     """09 §7.8: the product picked; the line becomes an approved component line, its values from the drawing kept.
-    `missing_resolved` is a positive example for the detector (03 §11)."""
+    `missing_resolved` is a positive example for the detector (03 §11). With `catalog_lines` (S27b): also a waiting
+    component line's product ("מוצר אחר…", 09 §6.4), or a merged line's for the designators picked (09 §7.17); the
+    components move to the product's line."""
     row = _line(ctx, line_id)
-    if row.line_type != "missing":
+    lines = catalog_lines.on(ctx)
+    if row.line_type != "missing" and not (lines and (row.pending or designators)):
         raise ReviewError(422, "validation_error", ("line_id",), "not_missing")
     picked = choice(ctx.session, ctx.tid, ref)
     rep = picked.replaced()
+    if lines:
+        kind = "missing_resolved" if row.line_type == "missing" else "sku_replaced"
+        extra = {"family": picked.family, "positive_example": True} if kind == "missing_resolved" else {}
+        return catalog_lines.choose(ctx, row, rep, designators, kind, extra)
     restore = _restore_of(ctx, [row], panels=[row.panel_id])
     event = _event(
         ctx,

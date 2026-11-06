@@ -1,8 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
-import { useId, useState } from "react";
+import { useDeferredValue, useId, useState } from "react";
 
 import {
   missingCandidates,
+  newProductForm,
+  newProductName,
+  type NewProduct,
   type DismissReason,
   type EditableAttribute,
   type Finding,
@@ -19,6 +22,7 @@ import {
   discountFraction,
   lineFindings,
   missingText,
+  newProductLabel,
   parseAmount,
   percent,
   priceSourceText,
@@ -38,8 +42,8 @@ export interface DetailActions {
   /** Resolves true when the server took it. */
   onAction: (line: QuoteLine, action: LineAction) => Promise<boolean>;
   onDismiss: (finding: Finding, reason: DismissReason, text?: string) => Promise<boolean>;
-  /** "מוצר אחר…": the product picker, for this missing line (09 §6.4). */
-  onPickProduct: (line: QuoteLine) => void;
+  /** "מוצר אחר…": the product picker, for this missing or waiting line, or the designators picked (09 §6.4, §7.17). */
+  onPickProduct: (line: QuoteLine, designators?: string[]) => void;
 }
 
 /**
@@ -61,6 +65,12 @@ export function LineDetail(props: {
   const editable = actions && !actions.locked ? actions : null;
   const derived = line.line_type === "derived" || line.line_type === "labor";
   const missing = line.line_type === "missing";
+  // S27b: a product not in the catalog waits for a decision; a merged line's designators can be picked (09 §7.17)
+  const waiting = !!line.pending && !missing;
+  const [tags, setTags] = useState<string[]>([]);
+  const picked = tags.filter((t) => line.designators.includes(t));
+  const splittable =
+    !!editable && !waiting && !missing && line.designators.length > 1 && (line.component_ids?.length ?? 0) > 1;
   const hasError = own.some((f) => f.severity === "error");
   const setAttribute = (attribute: string, value: string) =>
     editable &&
@@ -116,7 +126,31 @@ export function LineDetail(props: {
         </div>
       </div>
       {missing ? <MissingBox line={line} actions={editable} /> : null}
-      {missing ? null : (
+      {waiting ? <WaitingBox line={line} actions={editable} /> : null}
+      {splittable ? (
+        <div style={{ display: "grid", gap: 6 }} data-testid="split">
+          <span className="eyebrow">התגים בשורה</span>
+          <div className="row" style={{ flexWrap: "wrap" }}>
+            {line.designators.map((t) => (
+              <button
+                key={t}
+                type="button"
+                className="fchip des"
+                dir="ltr"
+                aria-pressed={picked.includes(t)}
+                data-testid="split-tag"
+                onClick={() => setTags((x) => (x.includes(t) ? x.filter((y) => y !== t) : [...x, t]))}
+              >
+                {t}
+              </button>
+            ))}
+          </div>
+          <span className="small muted">
+            {picked.length ? `החלפת מוצר תחול רק על ${picked.join(", ")}` : "בחרו תגים כדי להחליף מוצר רק לחלק מהם"}
+          </span>
+        </div>
+      ) : null}
+      {missing || waiting ? null : (
         <div className="dgrid">
           <div style={{ display: "grid", gap: 6, alignContent: "start" }}>
             <span className="eyebrow">מחיר</span>
@@ -149,9 +183,9 @@ export function LineDetail(props: {
           ))}
         </div>
       ) : null}
-      {derived || missing ? null : (
+      {derived || missing || waiting ? null : (
         <div style={{ display: "grid", gap: 6 }}>
-          <span className="eyebrow">חלופות</span>
+          <span className="eyebrow">{picked.length ? `חלופות ל-${picked.join(", ")}` : "חלופות"}</span>
           {line.alternatives.length ? (
             line.alternatives.slice(0, 3).map((alt, i) => (
               <div key={`${i}:${alt.description}`} className="alt">
@@ -162,7 +196,13 @@ export function LineDetail(props: {
                     className="btn sm"
                     data-testid="alt"
                     aria-keyshortcuts={String(i + 1)}
-                    onClick={() => void editable.onAction(line, { kind: "alternative", index: i })}
+                    onClick={() =>
+                      void editable.onAction(line, {
+                        kind: "alternative",
+                        index: i,
+                        ...(picked.length ? { designators: picked } : {}),
+                      })
+                    }
                   >
                     החלף <span className="kbd">{i + 1}</span>
                   </button>
@@ -172,6 +212,18 @@ export function LineDetail(props: {
           ) : (
             <span className="small muted">אין חלופות. הדגם כתוב בשרטוט</span>
           )}
+          {editable && picked.length ? (
+            <div className="row">
+              <button
+                type="button"
+                className="btn sm"
+                data-testid="split-other"
+                onClick={() => editable.onPickProduct(line, picked)}
+              >
+                מוצר אחר ל-{picked.join(", ")}…
+              </button>
+            </div>
+          ) : null}
         </div>
       )}
       <div className="row">
@@ -182,7 +234,7 @@ export function LineDetail(props: {
           </button>
         ) : null}
         {editable && line.qty_editable ? <QtyStepper line={line} actions={editable} /> : null}
-        {editable && !line.approved && line.line_type !== "missing" && line.line_type !== "manual" ? (
+        {editable && !line.approved && !waiting && line.line_type !== "missing" && line.line_type !== "manual" ? (
           <button
             type="button"
             className="btn sm"
@@ -193,7 +245,7 @@ export function LineDetail(props: {
           </button>
         ) : null}
         <span className="spacer" />
-        {editable && !missing ? (
+        {editable && !missing && !waiting ? (
           <button
             type="button"
             className="btn ghost sm danger"
@@ -309,6 +361,236 @@ function MissingBox({ line, actions }: { line: QuoteLine; actions: DetailActions
         </div>
       ) : null}
     </div>
+  );
+}
+
+/**
+ * 09 §6.4 (S27b), no prototype screen: a component no product has. Up to three nearest products with what differs,
+ * "זה המוצר" (keys 1–3), "מוצר אחר…" from the line's family, "מוצר חדש", and "אין כאן רכיב". No price until then.
+ */
+function WaitingBox({ line, actions }: { line: QuoteLine; actions: DetailActions | null }) {
+  const [creating, setCreating] = useState(false);
+  const near = line.alternatives.map((a, i) => ({ a, i })).filter(({ a }) => a.nearest);
+  return (
+    <div style={{ display: "grid", gap: 6 }} data-testid="waiting">
+      <span className="eyebrow">איזה מוצר זה?</span>
+      <div className="small why">אין בקטלוג מוצר עם הערכים האלה. בחרו מוצר קרוב, מוצר אחר, או צרו מוצר חדש.</div>
+      {near.length ? (
+        near.map(({ a, i }, n) => (
+          <div key={`${i}:${a.description}`} className="alt">
+            <span style={{ flex: 1, display: "grid", gap: 2 }}>
+              <span>{a.description}</span>
+              {a.diff ? <span className="small muted">{a.diff}</span> : null}
+            </span>
+            {actions ? (
+              <button
+                type="button"
+                className="btn sm"
+                data-testid="nearest"
+                aria-keyshortcuts={String(n + 1)}
+                onClick={() => void actions.onAction(line, { kind: "alternative", index: i })}
+              >
+                זה המוצר <span className="kbd">{n + 1}</span>
+              </button>
+            ) : null}
+          </div>
+        ))
+      ) : (
+        <span className="small muted">אין מוצר קרוב. בחרו את הערך החסר, מוצר אחר או מוצר חדש</span>
+      )}
+      {line.price_hints?.length ? (
+        <span className="small muted">
+          קרובים במחירון: {line.price_hints.map((h) => `${h.name} ${shekels(h.unit_price)}`).join(" · ")}
+        </span>
+      ) : null}
+      {actions ? (
+        <div className="row">
+          <button
+            type="button"
+            className="btn sm"
+            data-testid="other-product"
+            onClick={() => actions.onPickProduct(line)}
+          >
+            מוצר אחר…
+          </button>
+          <button type="button" className="btn sm" data-testid="new-product" onClick={() => setCreating(true)}>
+            מוצר חדש
+          </button>
+          <span className="spacer" />
+          <button
+            type="button"
+            className="btn ghost sm danger"
+            data-testid="no-component"
+            onClick={() => void actions.onAction(line, { kind: "delete" })}
+          >
+            אין כאן רכיב
+          </button>
+        </div>
+      ) : null}
+      {creating && actions ? (
+        <NewProductModal
+          quoteId={actions.quoteId}
+          line={line}
+          onClose={() => setCreating(false)}
+          onSave={async (product) => {
+            if (await actions.onAction(line, { kind: "new-product", product })) setCreating(false);
+          }}
+        />
+      ) : null}
+    </div>
+  );
+}
+
+/**
+ * 09 §7.16 (S27b), no prototype screen: a factory product from a waiting line. The family is the line's, the
+ * attributes its schema's, filled from the drawing; brand and model required, the SKU optional. The name is built by
+ * the server as the form is filled, never typed.
+ */
+function NewProductModal(props: {
+  quoteId: string;
+  line: QuoteLine;
+  onClose: () => void;
+  onSave: (product: NewProduct) => Promise<void>;
+}) {
+  const { quoteId, line } = props;
+  const titleId = useId();
+  const form = useQuery({
+    queryKey: ["new-product", quoteId, line.line_id],
+    queryFn: () => newProductForm(quoteId, line.line_id),
+    staleTime: 60_000,
+  });
+  const [values, setValues] = useState<Record<string, string>>({});
+  const [brand, setBrand] = useState<string | null>(null);
+  const [model, setModel] = useState("");
+  const [series, setSeries] = useState("");
+  const [sku, setSku] = useState("");
+  const [busy, setBusy] = useState(false);
+  const attrs = form.data?.attributes ?? [];
+  const value = (name: string) => values[name] ?? attrs.find((a) => a.name === name)?.value ?? "";
+  const filled = Object.fromEntries(attrs.map((a) => [a.name, value(a.name)]).filter(([, v]) => v !== ""));
+  const brandText = brand ?? form.data?.brand ?? "";
+  const asked = useDeferredValue(JSON.stringify([filled, brandText, model]));
+  const name = useQuery({
+    queryKey: ["new-product-name", quoteId, line.line_id, asked],
+    queryFn: () => {
+      const [a, b, mo] = JSON.parse(asked) as [Record<string, string>, string, string];
+      return newProductName(quoteId, line.line_id, { attributes: a, brand: b, model_code: mo });
+    },
+    enabled: !!form.data,
+    staleTime: 60_000,
+  });
+  const missing = attrs.filter((a) => a.required && !value(a.name)).map((a) => newProductLabel(a.name));
+  const ready = !!form.data && !missing.length && brandText.trim() !== "" && model.trim() !== "";
+  const save = async () => {
+    if (!ready) return;
+    setBusy(true);
+    await props.onSave({
+      attributes: filled,
+      brand: brandText.trim(),
+      model_code: model.trim(),
+      series: series.trim() || null,
+      sku: sku.trim() || null,
+    });
+    setBusy(false);
+  };
+  return (
+    <Modal onClose={props.onClose} labelledBy={titleId} className="new-product">
+      <h2 id={titleId}>מוצר חדש</h2>
+      <div className="small" data-testid="new-product-name">
+        <span className="muted">השם בהצעה: </span>
+        <b>{name.data ?? line.description}</b>
+      </div>
+      <dl className="kv np-fields">
+        {attrs.map((a) => (
+          <label key={a.name} style={{ display: "contents" }}>
+            <dt>
+              {newProductLabel(a.name)}
+              {a.required ? " *" : ""}
+            </dt>
+            <dd>
+              <input
+                className="input"
+                dir="ltr"
+                value={value(a.name)}
+                data-testid={`np-${a.name}`}
+                onChange={(e) => setValues((v) => ({ ...v, [a.name]: e.target.value }))}
+              />
+            </dd>
+            <dd />
+          </label>
+        ))}
+        <label style={{ display: "contents" }}>
+          <dt>מותג *</dt>
+          <dd>
+            <input
+              className="input"
+              dir="ltr"
+              value={brandText}
+              data-testid="np-brand"
+              onChange={(e) => setBrand(e.target.value)}
+            />
+          </dd>
+          <dd />
+        </label>
+        <label style={{ display: "contents" }}>
+          <dt>דגם *</dt>
+          <dd>
+            <input
+              className="input"
+              dir="ltr"
+              value={model}
+              data-testid="np-model"
+              onChange={(e) => setModel(e.target.value)}
+            />
+          </dd>
+          <dd />
+        </label>
+        <label style={{ display: "contents" }}>
+          <dt>סדרה</dt>
+          <dd>
+            <input
+              className="input"
+              dir="ltr"
+              value={series}
+              data-testid="np-series"
+              onChange={(e) => setSeries(e.target.value)}
+            />
+          </dd>
+          <dd />
+        </label>
+        <label style={{ display: "contents" }}>
+          <dt>מק"ט</dt>
+          <dd>
+            <input
+              className="input"
+              dir="ltr"
+              value={sku}
+              data-testid="np-sku"
+              onChange={(e) => setSku(e.target.value)}
+            />
+          </dd>
+          <dd />
+        </label>
+      </dl>
+      <div style={{ display: "grid", gap: 8 }}>
+        {missing.length ? <span className="small muted">חסר: {missing.join(", ")}</span> : null}
+        <span className="small muted">בלי מק"ט המוצר נשאר של המפעל ולא נשלח לאישור לקטלוג המשותף.</span>
+        <div className="row">
+          <button
+            type="button"
+            className="btn primary"
+            data-testid="np-save"
+            disabled={!ready || busy}
+            onClick={() => void save()}
+          >
+            שמור ובחר
+          </button>
+          <button type="button" className="btn" onClick={props.onClose}>
+            ביטול
+          </button>
+        </div>
+      </div>
+    </Modal>
   );
 }
 

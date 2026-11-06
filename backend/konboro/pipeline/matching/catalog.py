@@ -17,6 +17,7 @@ from konboro.db import models as m
 from . import text
 
 _SKU_NOISE = re.compile(r"[\s\-./_]+")
+PRODUCT = "prd:"  # a factory product made in "מוצר חדש", as stage 5 sees it (05 §5.6, S27b)
 
 
 def norm_sku(value: str) -> str:
@@ -150,6 +151,50 @@ def from_rows(
     for a in accessories or []:
         fits[a.accessory_id].add((a.fits_brand, a.fits_series))
     return Catalog(items, dict(by_item), dict(fits))
+
+
+def product_item(p: m.Product) -> Item | None:
+    """A factory product as a candidate (05 §5.6, S27b): one made in "מוצר חדש", with its family's attributes, a brand
+    and a model. Its SKU is the maker's when it has one, else its model. A product typed in the price list has no
+    attributes and stays out; one linked to a catalog item is that item already."""
+    if p.catalog_item_id or not p.attributes or not p.brand or not p.model_code:
+        return None
+    token = norm_token(p.model_code)
+    return Item(
+        id=PRODUCT + p.id,
+        sku=p.manufacturer_sku or p.model_code,
+        brand=p.brand,
+        series=p.series,
+        model_code=p.model_code,
+        model_tokens=(token,) if token else (),
+        family=p.family,
+        symbol_class=p.symbol_class,
+        attributes=dict(p.attributes),
+        status="active",
+        replaced_by=None,
+    )
+
+
+def with_products(catalog: Catalog, products: list[m.Product]) -> Catalog:
+    """The catalog and the factory's own products (05 §5.6, S27b). Kits and fits are the catalog's only."""
+    items = dict(catalog.items)
+    for p in products:
+        item = product_item(p)
+        if item is not None:
+            items[item.id] = item
+    return Catalog(items, catalog.kits, catalog.fits)
+
+
+def factory_products(session: Session, tenant_id: str) -> list[m.Product]:
+    return list(
+        session.scalars(
+            select(m.Product).where(
+                m.Product.tenant_id == tenant_id,
+                m.Product.catalog_item_id.is_(None),
+                m.Product.model_code.is_not(None),
+            )
+        )
+    )
 
 
 def load(session: Session) -> Catalog:

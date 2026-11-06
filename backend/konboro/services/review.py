@@ -62,6 +62,7 @@ LINE_STATE = (
     "issue_ids",
     "override",
     "edits",
+    "pending",  # S27b: a line waiting for a decision
 )
 
 
@@ -399,6 +400,7 @@ def _restore_of(
     if stage6:
         out["revalidate"] = stage6
     out["deleted_line_keys"] = list((ctx.version.snapshot or {}).get("deleted_line_keys", []))
+    out["component_edits"] = dict(ctx.version.component_edits or {})  # S27b: the components' choices, whole
     return out
 
 
@@ -409,15 +411,28 @@ def edited_outputs(ctx: Ctx, out: pricing.Outputs) -> tuple[MergeResult, Matchin
     """Stage 4 and 5's results as the estimator left them, for the rules (06 §6.3): a quantity, a deleted line's
     component gone, an alternative's SKU. The stored results stay as the pipeline wrote them."""
     rows = ctx.lines(live=False)
-    deleted = {r.component_id for r in rows if r.deleted_at and r.component_id and not r.parent_line_id} - {
-        r.component_id for r in rows if not r.deleted_at and r.component_id
+
+    def ids(r: m.QuoteLine) -> list[str]:  # a merged line's components (S27b)
+        return list(r.component_ids or ([r.component_id] if r.component_id else []))
+
+    deleted = {c for r in rows if r.deleted_at and not r.parent_line_id for c in ids(r)} - {
+        c for r in rows if not r.deleted_at for c in ids(r)
     }
-    heads = {r.component_id: r for r in rows if not r.deleted_at and r.component_id and not r.parent_line_id}
+    # a component's own line (`c:`); a merged line's quantity is its components', so it says nothing of one of them
+    heads = {
+        r.component_id: r
+        for r in rows
+        if not r.deleted_at and r.component_id and not r.parent_line_id and not (r.line_key or "").startswith("p:")
+    }
+    chosen = {k[2:]: v for k, v in (ctx.version.component_edits or {}).items() if k.startswith("c:")}  # S27b
     components = []
     for c in out.merge.components:
         if c.component_id in deleted:
             continue
-        edits = (heads[c.component_id].edits or {}) if c.component_id in heads else {}
+        edits = {
+            **((heads[c.component_id].edits or {}) if c.component_id in heads else {}),
+            **chosen.get(c.component_id, {}),
+        }
         update: dict[str, Any] = {}
         if edits.get("qty"):
             update["quantity"] = int(Decimal(edits["qty"]))
@@ -429,8 +444,13 @@ def edited_outputs(ctx: Ctx, out: pricing.Outputs) -> tuple[MergeResult, Matchin
         components.append(c.model_copy(update=update) if update else c)
     matches = []
     for x in out.matching.matches:
-        e = (heads[x.component_id].edits or {}) if x.component_id in heads else {}
+        e = {
+            **((heads[x.component_id].edits or {}) if x.component_id in heads else {}),
+            **chosen.get(x.component_id, {}),
+        }
         rep = e.get("replaced") or e.get("match")
+        if rep and rep.get("product_id"):  # a factory product, from "מוצר חדש" or the price list (S27b)
+            x = x.model_copy(update={"product_id": rep["product_id"], "method": "user"})
         if rep and rep.get("sku"):
             item = ctx.session.scalar(select(m.CatalogItem).where(m.CatalogItem.sku == rep["sku"]).limit(1))
             snapshot = (
@@ -506,12 +526,22 @@ def _signature(ctx: Ctx, row: m.QuoteLine) -> str | None:
     return match.signature if match else None
 
 
+def _refuse_pending(ctx: Ctx, row: m.QuoteLine) -> None:
+    """S27b (07 §7.1): a line waiting for a decision gets a product first; no price, no approval before."""
+    if row.pending:
+        from konboro.services import catalog_lines
+
+        if catalog_lines.on(ctx):
+            raise ReviewError(409, "pending_line")
+
+
 def approve(ctx: Ctx, line_id: str) -> Done:
     """09 §7.2: green with "אושר"; the line's open findings are dismissed as "אושר ידנית" once every line they name
     is approved; the match memory that chose the line is strengthened (05 §11)."""
     row = _line(ctx, line_id)
     if row.line_type == "missing":
         raise ReviewError(422, "validation_error", ("line_id",), "missing_line")  # pick a product (09 §7.8, S23b)
+    _refuse_pending(ctx, row)
     if row.approved_at is not None:
         return Done("השורה כבר מאושרת")
     approved = {r.id for r in ctx.lines() if r.approved_at} | {row.id}
@@ -645,15 +675,27 @@ def _alternative_description(session: Session, alt: dict[str, Any]) -> tuple[str
     return text.split(" · ")[0], None
 
 
-def choose_alternative(ctx: Ctx, line_id: str, index: int) -> Done:
+def choose_alternative(ctx: Ctx, line_id: str, index: int, designators: Sequence[str] | None = None) -> Done:
     """09 §7.3: the alternative's SKU on every line with the same signature, each approved; stages 6 and 7 on what
-    it touched. `sku_replaced` per line, for this quote only: nothing is remembered for the factory (08 §7.4)."""
+    it touched. `sku_replaced` per line, for this quote only: nothing is remembered for the factory (08 §7.4).
+    With `catalog_lines` (S27b): the line's components, or the designators picked (09 §7.17), move to the product's
+    line; a waiting line's nearest products are its alternatives (05 §5.9.2)."""
     row = _line(ctx, line_id)
     if not 0 <= index < len(row.alternatives):
         raise ReviewError(422, "validation_error", ("index",), "invalid")
     alt = dict(row.alternatives[index])
     description, item_id = _alternative_description(ctx.session, alt)
-    replaced = Replaced(alt.get("sku"), alt.get("manufacturer"), description, item_id)
+    replaced = Replaced(
+        alt.get("sku"),
+        alt.get("manufacturer"),
+        description,
+        item_id or alt.get("catalog_item_id"),
+        alt.get("product_id"),
+    )
+    from konboro.services import catalog_lines  # it builds on this module
+
+    if catalog_lines.on(ctx) and (row.pending or designators or (row.line_key or "").startswith("p:")):
+        return catalog_lines.choose(ctx, row, replaced, designators)
     targets = _same_signature(ctx, row)
     rows = [*targets, *(c for t in targets for c in _children(ctx, t))]
     restore = _restore_of(ctx, rows, panels=[t.panel_id for t in targets])
@@ -798,6 +840,7 @@ def enter_price(ctx: Ctx, line_id: str, unit_price: Decimal, save: bool) -> Done
     on: the product is `fixed` at that price in the price list, made from the line when there is none, and every line
     of it in the quote is priced. Off: for this quote only, as an override."""
     row = _line(ctx, line_id)
+    _refuse_pending(ctx, row)
     if row.unit_price is not None:
         raise ReviewError(409, "line_priced")
     pl.check_money(unit_price, ("unit_price",))
@@ -868,6 +911,7 @@ def enter_cost(ctx: Ctx, line_id: str, unit_cost: Decimal, supplier: str | None)
     the product. A product with no preferred supplier gets this one. A line with no product gets one, priced by the
     factory's margin rules."""
     row = _line(ctx, line_id)
+    _refuse_pending(ctx, row)
     if row.parent_line_id and row.unit_price == 0:
         raise ReviewError(422, "validation_error", ("line_id",), "included")
     pl.check_money(unit_cost, ("unit_cost",))
@@ -1090,6 +1134,8 @@ def undo(ctx: Ctx, event_id: str) -> Done:
     snapshot = dict(ctx.version.snapshot or {})
     snapshot["deleted_line_keys"] = restore.get("deleted_line_keys", [])
     ctx.version.snapshot = snapshot
+    if "component_edits" in restore:
+        ctx.version.component_edits = restore["component_edits"]
     event.undone = True
     group = (event.after or {}).get("group")
     if event.type == "sku_replaced" and group:  # one action wrote one event per line: all are undone together
@@ -1128,6 +1174,8 @@ def _put_back(ctx: Ctx, event: m.CorrectionEvent) -> None:
     snapshot = dict(ctx.version.snapshot or {})
     snapshot["deleted_line_keys"] = restore.get("deleted_line_keys", [])
     ctx.version.snapshot = snapshot
+    if "component_edits" in restore:
+        ctx.version.component_edits = restore["component_edits"]
     event.undone = True
 
 

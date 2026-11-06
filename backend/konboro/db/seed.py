@@ -16,6 +16,7 @@ from sqlalchemy import Engine, create_engine, select, text, update
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
+from konboro.domain.flags import CATALOG_LINES
 from konboro.settings import get_settings
 
 from . import catalog
@@ -84,6 +85,12 @@ FLAGS = [
     {"key": "approval_queue", "description": "תור אישור לשכבה המשותפת (00 §14.2)", "depends_on": []},
     # S25 decision 5: spec 13 has no key for the chat; removed once its screen is accepted
     {"key": "chat_layer", "description": "צ'אט על ההצעה במסך הבדיקה (08)", "depends_on": []},
+    # S27b: every product line is a product, once per panel; a product not in the catalog waits for a decision
+    {
+        "key": CATALOG_LINES,
+        "description": "שורות מהקטלוג: מוצר אחד בשורה, ומוצר חדש ממתין להחלטה (13 §4.10)",
+        "depends_on": [],
+    },
 ]
 S24_FLAGS = ("onboarding", "settings_screen", "approval_queue")
 CHAT_FLAG = "chat_layer"

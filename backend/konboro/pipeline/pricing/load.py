@@ -7,7 +7,7 @@ and read-only, and holds no factory price.
 
 import json
 from collections.abc import Iterable, Sequence
-from datetime import date
+from datetime import date, datetime
 from decimal import Decimal
 from typing import Any
 
@@ -112,7 +112,7 @@ def describe(r: m.CatalogItem) -> str:
         parts = ["ארון", r.brand, size, a.get("ip") or "", f"{_n(a['modules'])} מודולים" if a.get("modules") else ""]
         return " ".join(p for p in parts if p)
     if r.family == "din_rail":
-        return f"מסילת DIN ‏{_n(a['length_mm'])} מ״מ" if a.get("length_mm") else "מסילת DIN"
+        return f"מסילת DIN {_n(a['length_mm'])} מ״מ" if a.get("length_mm") else "מסילת DIN"
     if r.family == "busbar":
         return f"פס צבירה {_n(a['current_a'])}A" if a.get("current_a") else "פס צבירה"
     if r.family == "terminal":
@@ -397,4 +397,9 @@ def carry(session: Session, version: m.QuoteVersion | None, keep: frozenset[str]
         if keep is not None
         else {}
     )
-    return Carry(deleted, overrides, manual, edits, dismissed(session, version), kept)
+    components = {  # S27b: a choice approves the component it moves (`catalog_lines.choose`)
+        k: LineEdits.of(v, datetime.fromisoformat(v["approved_at"]) if v.get("approved_at") else None)
+        for k, v in (version.component_edits or {}).items()
+        if v
+    }
+    return Carry(deleted, overrides, manual, edits, dismissed(session, version), kept, components)

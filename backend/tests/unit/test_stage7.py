@@ -685,3 +685,108 @@ def test_the_diff_between_two_versions() -> None:
 def test_a_rule_change_is_named(rule_ref: str) -> None:
     out = diff([snap("a", "1", "100", rule_ref="mr_0")], [snap("a", "1", "120", rule_ref=rule_ref)], 1, D(0), D(0))
     assert out["lines"][0]["why"] == ["margin_rule"]
+
+
+# --- S27b: one line per product in a panel (07 §7.1, `catalog_lines`) ---------------------------------------------
+
+
+def lines_on(comps: list[Component], matches: list[ComponentMatch], **kw: Any) -> PricedQuote:
+    return quote(comps, matches, catalog_lines=True, **kw)
+
+
+def test_components_of_one_product_are_one_line() -> None:
+    """F1–F5 and FC1 come to S203M-C16 in one panel: one line, the quantities added, every component kept. BUG-084:
+    a product read twice (two 10A x2 lines) is one line too. In another panel the same product is its own line."""
+    comps = [
+        comp("cmp_1", qty=5, designators=["F1", "F2", "F3", "F4", "F5"]),
+        comp("cmp_2", qty=1, designators=["FC1"]),
+        comp("cmp_3", qty=2, panel="pnl_2"),
+    ]
+    matches = [match("cmp_1", "S203M-C16"), match("cmp_2", "S203M-C16"), match("cmp_3", "S203M-C16")]
+    q = lines_on(comps, matches, panels=[(PNL, "לוח ראשי"), ("pnl_2", "לוח משנה")])
+    heads = [ln for ln in q.lines if ln.parent is None and ln.line_type == "component"]
+    assert [(ln.key, ln.qty, ln.component_ids) for ln in heads] == [
+        ("p:pnl_1:outputs:ci_s203_16", D(6), ["cmp_1", "cmp_2"]),
+        ("p:pnl_2:outputs:ci_s203_16", D(2), ["cmp_3"]),
+    ]
+    one = heads[0]
+    assert (one.component_id, one.members, one.pending) == ("cmp_1", ["c:cmp_1", "c:cmp_2"], False)
+    assert amounts(one).line_total == D("1035.00")  # 6 × 172.50
+    off = quote(comps, matches, panels=[(PNL, "לוח ראשי"), ("pnl_2", "לוח משנה")])
+    assert [ln.key for ln in off.lines if ln.line_type == "component"] == ["c:cmp_1", "c:cmp_2", "c:cmp_3"]
+
+
+def test_a_component_with_no_product_waits_for_a_decision() -> None:
+    """07 §7.1: red, no price, its nearest products kept for the screen, and a line of its own."""
+    near = {"sku": "S203M-C16", "manufacturer": "ABB", "description": "x", "diff": "16A במקום 13A"}
+    comps = [comp("cmp_1", attrs={"current_a": 13, "poles": 3}), comp("cmp_2", attrs={"current_a": 13, "poles": 3})]
+    matches = [match("cmp_1", None, "unmatched", nearest=[near]), match("cmp_2", None, "unmatched", nearest=[near])]
+    q = lines_on(comps, matches)
+    waiting = [ln for ln in q.lines if ln.line_type == "component"]
+    assert [(ln.key, ln.pending, ln.status) for ln in waiting] == [("c:cmp_1", True, "red"), ("c:cmp_2", True, "red")]
+    assert waiting[0].priced.unit_price is None and waiting[0].nearest[0]["diff"] == "16A במקום 13A"
+
+
+def test_a_choice_for_a_component_moves_it_to_its_products_line() -> None:
+    """S27b: the estimator picks S203M-C16 for the 13A component (or splits F3 off a merged line); the choice is kept
+    on the version, by the component's key, and the component joins the product's line."""
+    from konboro.pipeline.pricing.edits import LineEdits, Replaced
+
+    comps = [comp("cmp_1", qty=4), comp("cmp_2", attrs={"current_a": 13, "poles": 3})]
+    matches = [match("cmp_1", "S203M-C16"), match("cmp_2", None, "unmatched")]
+    pick = LineEdits(replaced=Replaced("S203M-C16", "ABB", 'מא"ז S203M-C16', "ci_s203_16"))
+    q = lines_on(comps, matches, carry=Carry(components={"c:cmp_2": pick}))
+    heads = [ln for ln in q.lines if ln.line_type == "component"]
+    assert [(ln.key, ln.qty, ln.component_ids, ln.pending) for ln in heads] == [
+        ("p:pnl_1:outputs:ci_s203_16", D(5), ["cmp_1", "cmp_2"], False)
+    ]
+    split = LineEdits(replaced=Replaced("S203M-C25", "ABB", 'מא"ז S203M-C25', "ci_s203_25"))
+    q = lines_on(
+        [*comps[:1], comp("cmp_3", qty=1)],
+        [matches[0], match("cmp_3", "S203M-C16")],
+        carry=Carry(components={"c:cmp_3": split}),
+    )
+    assert [(ln.key, ln.qty) for ln in q.lines if ln.line_type == "component"] == [
+        ("p:pnl_1:outputs:ci_s203_16", D(4)),
+        ("p:pnl_1:outputs:ci_s203_25", D(1)),
+    ]
+
+
+def test_what_the_user_did_on_the_merged_line_is_kept() -> None:
+    """A quantity, an approval and a price set on the merged line are its own, by its key; a draft from before the
+    flag passes its component lines' approval on only when every one was approved (S27b decision 5)."""
+    from datetime import UTC, datetime
+
+    from konboro.pipeline.pricing.edits import LineEdits
+
+    comps = [comp("cmp_1", qty=2), comp("cmp_2", qty=1)]
+    matches = [match("cmp_1", "S203M-C16"), match("cmp_2", "S203M-C16")]
+    key = "p:pnl_1:outputs:ci_s203_16"
+    at = datetime(2026, 11, 6, tzinfo=UTC)
+    q = lines_on(comps, matches, carry=Carry(edits={key: LineEdits(qty=D(7), approved_at=at)}))
+    ln = by_key(q)[key]
+    assert (ln.qty, ln.approved, ln.status) == (D(7), True, "green")
+    one = lines_on(comps, matches, carry=Carry(edits={"c:cmp_1": LineEdits(approved_at=at)}))
+    both = lines_on(
+        comps, matches, carry=Carry(edits={"c:cmp_1": LineEdits(approved_at=at), "c:cmp_2": LineEdits(approved_at=at)})
+    )
+    assert (by_key(one)[key].approved, by_key(both)[key].approved) == (False, True)
+    gone = lines_on(comps, matches, carry=Carry(deleted=frozenset({"c:cmp_2"})))
+    assert by_key(gone)[key].qty == D(2)
+    priced = lines_on(comps, matches, carry=Carry(overrides={"c:cmp_1": {"unit_price": "200.00"}}))
+    assert by_key(priced)[key].priced.unit_price == D("200.00")
+
+
+def test_a_kits_part_stays_under_its_merged_device() -> None:
+    """S27b decision 4: two XT1C mains with their RC module become one device line with one kit line under it."""
+    kit = BundleLine(
+        sku="S203M-C25", manufacturer="ABB", description="ערכה", quantity=1, reason="משולב פחת", has_cost_price=True
+    )
+    comps = [comp("cmp_1", cls="mccb"), comp("cmp_2", cls="mccb")]
+    matches = [match("cmp_1", "XT1C160", bundle_lines=[kit]), match("cmp_2", "XT1C160", bundle_lines=[kit])]
+    q = lines_on(comps, matches)
+    device = "p:pnl_1:outputs:ci_main"
+    assert [(ln.key, ln.parent, ln.qty) for ln in q.lines if ln.line_type == "component"] == [
+        (device, None, D(2)),
+        (f"{device}>ci_s203_25", device, D(2)),
+    ]

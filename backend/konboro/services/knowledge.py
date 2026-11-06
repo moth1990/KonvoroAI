@@ -162,7 +162,8 @@ def propose(session: Session, tenant_id: str, kind: str, raw: dict[str, Any], ev
 
 def propose_product(session: Session, product: m.Product) -> str | None:
     """A factory product with a SKU and a brand that the master catalog lacks is a `catalog_item` candidate (10 §5.4:
-    "מועמד לקטלוג המאסטר"). Only its SKU, brand and family can travel; its name, price and suppliers stay."""
+    "מועמד לקטלוג המאסטר"). Its SKU, brand and family travel, and what "מוצר חדש" gave it (series, model, class,
+    attributes; S27b); its name, price and suppliers stay."""
     if not is_enabled(flags.tenant_flags(session, product.tenant_id), FLAG):
         return None
     sku, brand = (product.manufacturer_sku or "").strip(), (product.brand or "").strip()
@@ -178,9 +179,14 @@ def propose_product(session: Session, product: m.Product) -> str | None:
     }
     if product.entered_in_quote:
         evidence["quote_id"] = product.entered_in_quote
-    return propose(
-        session, product.tenant_id, "catalog_item", {"sku": sku, "brand": brand, "family": product.family}, evidence
-    )
+    payload: dict[str, Any] = {"sku": sku, "brand": brand, "family": product.family}
+    # a product made in "מוצר חדש" travels with what defines it (S27b, 10 §5.4): never a price or a supplier
+    for name in ("series", "model_code", "symbol_class"):
+        if getattr(product, name, None):
+            payload[name] = getattr(product, name)
+    if product.attributes:
+        payload["attributes"] = dict(product.attributes)
+    return propose(session, product.tenant_id, "catalog_item", payload, evidence)
 
 
 @dataclass(frozen=True)

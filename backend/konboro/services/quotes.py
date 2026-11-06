@@ -47,6 +47,8 @@ class LineIn:
     line_group: str | None = None
     parent: str | None = None
     component_id: str | None = None
+    component_ids: list[str] = field(default_factory=list)  # a merged line's components (S27b, migration 0025)
+    pending: bool = False  # waiting for a decision: no product (S27b)
     signature: str | None = None  # 05 §3 (migration 0022)
     brand_context: str | None = None
     product_id: str | None = None
@@ -104,6 +106,8 @@ def write_lines(
                 line_group=line.line_group,
                 line_type=line.line_type,
                 component_id=line.component_id,
+                component_ids=line.component_ids or ([line.component_id] if line.component_id else []),
+                pending=line.pending,
                 signature=line.signature,
                 brand_context=line.brand_context,
                 parent_line_id=ids[line.parent] if line.parent else None,
@@ -238,6 +242,9 @@ class LineView:
     qty_editable: bool = False  # 09 §7.5: a component or manual line, not a kit's part
     attribute_options: dict[str, list[str]] = field(default_factory=dict)  # 09 §6.4: an editable value's list
     list_price_brand: str | None = None  # 09 §7.13: the brand of an unpriced line whose item has a list price
+    pending: bool = False  # S27b: no product yet, waiting for a decision (07 §7.1)
+    component_ids: list[str] = field(default_factory=list)  # S27b: a merged line's components
+    family: str | None = None  # the component's family: the picker starts with it (09 §6.4)
 
 
 @dataclass(frozen=True)
@@ -374,7 +381,12 @@ def read_quote(session: Session, tenant_id: str, quote_id: str, version_no: int 
     quote, version = row
     drawing = session.get(m.Drawing, quote.drawing_id) if quote.drawing_id else None
     lines = live_lines(session, version)
-    components = _by_id(session, m.Component, tenant_id, {ln.component_id for ln in lines if ln.component_id})
+    components = _by_id(
+        session,
+        m.Component,
+        tenant_id,
+        {c for ln in lines for c in (ln.component_ids or ([ln.component_id] if ln.component_id else []))},
+    )
     panels = _by_id(session, m.Panel, tenant_id, {ln.panel_id for ln in lines if ln.panel_id})
 
     settings = session.get(m.TenantSettings, tenant_id)
@@ -391,7 +403,10 @@ def read_quote(session: Session, tenant_id: str, quote_id: str, version_no: int 
         PanelView(
             panel_id=pid,
             name=panels[pid].name if pid in panels else quote.name,
-            lines=[_line_view(ln, components.get(ln.component_id or ""), extra, floor) for ln in display_order(group)],
+            lines=[
+                _line_view(ln, components.get(ln.component_id or ""), extra, floor, components)
+                for ln in display_order(group)
+            ],
             sums=t.sum_lines(_figures(group)),
             removed=removed.get(pid, []),
         )
@@ -670,8 +685,16 @@ def _plain(v: Any) -> str:
 
 
 def _line_view(
-    ln: m.QuoteLine, cmp: m.Component | None, extra: "PricingDetails | None" = None, floor: Decimal | None = None
+    ln: m.QuoteLine,
+    cmp: m.Component | None,
+    extra: "PricingDetails | None" = None,
+    floor: Decimal | None = None,
+    components: Mapping[str, m.Component] | None = None,
 ) -> LineView:
+    # S27b: a merged line is every one of its components on the drawing: their tags, boxes and circuit notes
+    members = [components[c] for c in (ln.component_ids or []) if components and c in components] or (
+        [cmp] if cmp else []
+    )
     attributes: dict[str, Any] = cmp.attributes if cmp else {}
     sources = [
         SourceView(
@@ -693,7 +716,8 @@ def _line_view(
         SourceView(x.attribute, _plain(user[x.attribute]), "user", None, None) if x.attribute in user else x
         for x in sources
     ]
-    note = attributes.get(NOTE_ATTRIBUTE, {}).get("value")
+    notes = [str(x) for c in members if (x := (c.attributes or {}).get(NOTE_ATTRIBUTE, {}).get("value")) is not None]
+    note = ", ".join(dict.fromkeys(notes)) if notes else None
     return LineView(
         line_id=ln.id,
         line_type=ln.line_type,
@@ -718,15 +742,19 @@ def _line_view(
         status=ln.status,
         status_reasons=list(ln.status_reasons),
         issue_ids=list(ln.issue_ids),
-        designators=list(cmp.designators) if cmp else [],
+        designators=[d for c in members for d in c.designators],
         raw_text=[str(x) for x in cmp.explicit_texts] if cmp else [],
         sources=sources,
-        note=str(note) if note is not None else None,
+        note=note,
         explanation=ln.explanation,
         alternatives=list(ln.alternatives),
         derived=ln.derived,
         approved=ln.approved_at is not None,
-        boxes=[BoxView(i["page_id"], list(i["bbox"])) for i in (cmp.instances if cmp else ln.boxes) if i.get("bbox")],
+        boxes=[
+            BoxView(i["page_id"], list(i["bbox"]))
+            for i in ([x for c in members for x in c.instances] if members else ln.boxes)
+            if i.get("bbox")
+        ],
         product_id=ln.product_id,
         override=bool(ln.override),
         fresh_price=extra.fresh.get(ln.id) if extra else None,
@@ -737,6 +765,9 @@ def _line_view(
         qty_editable=ln.line_type in ("component", "manual") and ln.parent_line_id is None,
         attribute_options=options,
         list_price_brand=extra.list_brands.get(ln.id) if extra else None,
+        pending=ln.pending,
+        component_ids=list(ln.component_ids or ([ln.component_id] if ln.component_id else [])),
+        family=cmp.family if cmp else None,
     )
 
 

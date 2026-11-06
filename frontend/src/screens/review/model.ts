@@ -164,7 +164,13 @@ export function nextToCheck(ids: string[], lines: QuoteLine[], current: string |
 
 /** A line whose price is typed in its row (prototype line 879): no price, not a kit part priced in its parent. */
 export function takesPrice(line: QuoteLine): boolean {
-  return line.unit_price == null && !line.included && (line.line_type === "component" || line.line_type === "manual");
+  // S27b: a line waiting for a decision takes a product first, not a price (07 §7.1)
+  return (
+    line.unit_price == null &&
+    !line.included &&
+    !line.pending &&
+    (line.line_type === "component" || line.line_type === "manual")
+  );
 }
 
 /** 09 §7.13: Enter in a price cell saves it and moves to the next line with no price, after this one. */
@@ -180,14 +186,44 @@ export function nextUnpriced(ids: string[], lines: QuoteLine[], current: string)
 }
 
 /** The send dialog's warnings (09 §7.12, prototype `send`): red and yellow lines, and lines left out of the sum. */
-export function sendSummary(quote: Quote): { red: number; yellow: number; unpriced: number } {
+export function sendSummary(quote: Quote): { red: number; yellow: number; unpriced: number; pending: number } {
   const lines = quote.panels.flatMap((p) => p.lines);
   return {
     red: lines.filter((l) => l.status === "red").length,
     yellow: lines.filter((l) => l.status === "yellow").length,
     unpriced: quote.totals.unpriced_count,
+    pending: pendingCount(quote),
   };
 }
+
+/** S27b (09 §6.1): the lines waiting for a decision, a product not in the catalog. */
+export function pendingCount(quote: Quote): number {
+  return quote.panels.flatMap((p) => p.lines).filter((l) => l.pending).length;
+}
+
+export function pendingText(n: number): string {
+  return n === 1 ? "מוצר חדש אחד בשרטוט" : `${n} מוצרים חדשים בשרטוט`;
+}
+
+/** 09 §7.16: the form's attribute names, as the line detail names them. */
+export function newProductLabel(name: string): string {
+  return NEW_PRODUCT_LABELS[name] ?? attributeLabel(name);
+}
+
+const NEW_PRODUCT_LABELS: Record<string, string> = {
+  poles: "קטבים",
+  curve: "עקומה",
+  neutral: "אפס (N)",
+  residual_ma: "זרם פחת (mA)",
+  rcd_type: "סוג פחת",
+  coil_voltage_v: "מתח סליל (V)",
+  trip_unit: "יחידת הגנה",
+  range_min_a: "טווח מ- (A)",
+  range_max_a: "טווח עד (A)",
+  setting_a: "כיול (A)",
+  utilization: "קטגוריית עבודה",
+  astronomical: "שעון אסטרונומי",
+};
 
 /** A rate under a floor, both decimal strings from the server ("0.1200" < "0.1500"). */
 export function belowFloor(rate: string | null | undefined, floor: string | null | undefined): boolean {
@@ -237,6 +273,7 @@ const MATCH_CHIPS: Record<string, [string, Tone]> = {
   not_in_catalog: ["אין בקטלוג מוצר עם הערכים האלה", "bad"], // 09 §7.4, after a value set by hand
   resolved: ["נבחר ידנית", "ok"], // 09 §7.8: a missing line the estimator picked a product for
 };
+const PENDING_CHIP: [string, Tone] = ["מוצר חדש בשרטוט", "bad"]; // S27b (09 §6.3)
 const PRICE_CHIPS: Record<string, [string, Tone]> = {
   missing: ["אין מחיר", "bad"],
   stale: ["מחיר ישן", "warn"],
@@ -302,6 +339,13 @@ export function reasonChips(line: QuoteLine, findings: Finding[]): { text: strin
     .map((r) => reasonChip(r, findings))
     .filter((c): c is [string, Tone] => c !== null)
     .map(([text, tone]) => ({ text, tone }));
+  if (line.pending && line.line_type !== "missing") {
+    // S27b: a product not in the catalog says so, in place of "אין מק"ט מתאים"
+    const at = chips.findIndex((c) => c.text === MATCH_CHIPS.unmatched?.[0]);
+    const chip = { text: PENDING_CHIP[0], tone: PENDING_CHIP[1] };
+    if (at >= 0) chips[at] = chip;
+    else chips.unshift(chip);
+  }
   const explained = chips.some((c) => c.tone === (line.status === "red" ? "bad" : "warn"));
   if (line.status !== "green" && !explained)
     chips.push({ text: STATUS_LABELS[line.status], tone: toneOf(line.status) });

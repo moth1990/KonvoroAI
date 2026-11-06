@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 1149,
+    "model": "claude-haiku-5-5",
+    "output_tokens": 276,
+    "payload": {
+      "chosen_sku": "XT2N160 Ekip LSI In=160 3P",
+      "confidence": 0.85,
+      "missing_attributes": [],
+      "reason": "הרישום בשרטוט מציין \"אלקטרוני | LSI\", וזה תואם למועמד השני (LSI) ולא ל-LS/I של המועמד הראשון. שני המועמדים הם ABB, בהתאם להעדפת המפעל."
+    }
+  },
+  "model": "claude-haiku-5-5",
+  "stage": "catalog_disambiguation"
+}

@@ -1,0 +1,16 @@
+brand,sku,series,model_code,model_tokens,symbol_class,family,module_width,list_price,list_currency,status,replaced_by_sku,attr.current_a,attr.poles,attr.curve,attr.breaking_capacity_ka,attr.neutral,attr.residual_ma,attr.rcd_type,attr.trip_unit,attr.range_min_a,attr.range_max_a,attr.contacts,attr.coil_voltage_v,attr.color,attr.positions,attr.ratio_primary_a,attr.ratio_secondary_a,attr.imax_ka,attr.spd_class,attr.socket_standard,attr.modules,attr.rows,attr.height_mm,attr.width_mm,attr.depth_mm,attr.ip,attr.material,attr.length_mm,attr.cross_section_mm2,attr.astronomical,attr.utilization
+ABB,XT6N1000 Ekip LSI In=1000 3P,Tmax XT,XT6N1000,XT6N1000|XT6N|XT6,mccb,circuit_breaker,,,,active,,1000,3,,36,false,,,LSI,400,1000,,,,,,,,,,,,,,,,,,,,
+ABB,XT6N800 TMA800 3P,Tmax XT,XT6N800,XT6N800|XT6N|XT6,mccb,circuit_breaker,,,,active,,800,3,,36,false,,,TMA,560,800,,,,,,,,,,,,,,,,,,,,
+ABB,XT3N250 TMD250 3P,Tmax XT,XT3N250,XT3N250|XT3N|XT3,mccb,circuit_breaker,,,,active,,250,3,,36,false,,,TMD,,,,,,,,,,,,,,,,,,,,,,
+ABB,XT1N160 TMD160 3P,Tmax XT,XT1N160,XT1N160|XT1N|XT1,mccb,circuit_breaker,,,,active,,160,3,,36,false,,,TMD,,,,,,,,,,,,,,,,,,,,,,
+ABB,XT2N160 Ekip LS/I In=160 3P,Tmax XT,XT2N160,XT2N160|XT2N|XT2,mccb,circuit_breaker,,,,active,,160,3,,36,false,,,LS/I,64,160,,,,,,,,,,,,,,,,,,,,
+ABB,XT2N160 Ekip LS/I In=100 3P,Tmax XT,XT2N160,XT2N160|XT2N|XT2,mccb,circuit_breaker,,,,active,,100,3,,36,false,,,LS/I,40,100,,,,,,,,,,,,,,,,,,,,
+ABB,XT2N160 Ekip LS/I In=63 3P,Tmax XT,XT2N160,XT2N160|XT2N|XT2,mccb,circuit_breaker,,,,active,,63,3,,36,false,,,LS/I,25.2,63,,,,,,,,,,,,,,,,,,,,
+ABB,F204A-100/0.03,F200,F204,,,rcd,4,,,active,,100,4,,,,30,A,,,,,,,,,,,,,,,,,,,,,,,
+ABB,AF65-30-11-13,AF,AF65,,,contactor,,,,active,,65,3,,,,,,,,,,230,,,,,,,,,,,,,,,,,,
+ABB,ESB25-30N-06,ESB,ESB25,,,contactor,2,,,active,,25,3,,,,,,,,,,230,,,,,,,,,,,,,,,,,,AC-1
+ABB,OFAF000H63,OFAF,OFAF000,,,fuse,,,,active,,63,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+ABB,YO-C XT5-XT6 F/P 110-240VAC,Tmax XT,YO-C,,,shunt_trip,,,,active,,,,,,,,,,,,,230,,,,,,,,,,,,,,,,,,
+ABB,DWA1,DW,DWA1,,,time_switch,,,,active,,,,,,,,,,,,,230,,,,,,,,,,,,,,,,,true,
+ABB,CT80 1000/5,CT,CT80,,,current_transformer,,,,active,,,,,,,,,,,,,,,,1000,5,,,,,,,,,,,,,,
+AMDAR,AM530D,AM530,AM530D,AM530D|AM530,,ats,,,,active,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,

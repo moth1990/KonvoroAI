@@ -198,6 +198,7 @@ const SCREENS: Screen[] = [
   ...chatScreens(),
   ...s26Screens(),
   ...s27Screens(),
+  ...s27bScreens(),
 ];
 
 /** S25: the chat drawer (prototype `vChat`, `propCard`), on the desktop over the drawing, on the phone its tab. The
@@ -835,6 +836,58 @@ function s27Screens(): Screen[] {
         '13 §4.3: "the routing is a suggestion, not an action". The prototype routes by keywords or toasts; the app ' +
           "asks a short question with choices under the prompt. No prototype screen: compared with its chat home.",
       ],
+    },
+  ];
+}
+
+/** S27b (`catalog_lines`, no prototype screen, as S23b): a spreadsheet BOM whose 3X13A no product has, its waiting
+ * line and the "מוצר חדש" form, compared with the prototype's line with no price (F18, its "קרובים במחירון" hint). */
+function s27bScreens(): Screen[] {
+  const BOQ = 'תיאור,כמות\n"מא""ז 3X16A",2\n"מא""ז 3X16A C 10kA",3\n"מא""ז 3X13A",1\n';
+  const appWaiting = async (page: Page) => {
+    await page.locator("#file-in").setInputFiles({ name: "lines.csv", mimeType: "text/csv", buffer: Buffer.from(BOQ) });
+    await page.getByTestId("start").click();
+    await page.getByTestId("done").waitFor({ timeout: 45_000 });
+    await page.getByTestId("toreview").click();
+    await page.getByTestId("rv-totals").waitFor();
+    await (await lineWith(page, "13A")).locator(".name").click();
+    await page.getByTestId("waiting").waitFor();
+  };
+  const protoF18 = (p: Page) => p.locator('[data-line="f18"]').click();
+  const notes = [
+    "No prototype screen (S27b decision 1 in 09): the waiting line is compared with the prototype's line with no " +
+      'price. Its three nearest products with what differs ("16A במקום 13A"), "מוצר אחר…", "מוצר חדש" and "אין ' +
+      'כאן רכיב"; no price box until a product is chosen. The header counts the waiting lines.',
+    "The merged line above it is one product of 5 (3X16A and 3X16A C 10kA).",
+  ];
+  return [
+    {
+      id: "lines-waiting",
+      title: "Review: a product not in the catalog waits for a decision (S27b)",
+      prototype: { hash: "#review", authed: true, setup: protoF18 },
+      app: { path: "/new", tenant: TENANTS.linesShots, setup: appWaiting },
+      notes,
+    },
+    {
+      id: "lines-new-product",
+      title: 'Review: "מוצר חדש" (S27b, 09 §7.16)',
+      prototype: { hash: "#review", authed: true, setup: protoF18 },
+      app: {
+        path: "/new",
+        tenant: TENANTS.linesShots,
+        setup: async (page) => {
+          await appWaiting(page);
+          await page.getByTestId("new-product").click();
+          await page.getByTestId("np-brand").fill("ABB");
+          await page.getByTestId("np-model").fill("S203M");
+          await page.getByTestId("new-product-name").getByText("ABB S203M").waitFor();
+        },
+      },
+      notes: [
+        "No prototype screen. The family is the line's; the attributes are its schema's, filled from the drawing; brand " +
+          "and model required, the SKU optional. The name at the top is the server's, built as the form is filled.",
+      ],
+      window: true,
     },
   ];
 }

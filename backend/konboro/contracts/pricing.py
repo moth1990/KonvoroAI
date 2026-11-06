@@ -63,6 +63,8 @@ class Line(Contract):
     line_id: LineId
     line_type: Literal["component", "derived", "labor", "manual", "missing"]
     component_id: ComponentId | None
+    component_ids: list[ComponentId] = []  # a merged line's components (07 §6.2, S27b)
+    pending: bool = False  # waiting for a decision: no product (07 §7.1, S27b)
     sku: str | None
     description: str
     manufacturer: str | None

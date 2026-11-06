@@ -48,6 +48,7 @@ from konboro.devtools.fixtures.nursery import (
     seed_nursery_pages,
 )
 from konboro.devtools.fixtures.queue import seed_queue
+from konboro.domain.flags import CATALOG_LINES
 from konboro.pipeline.context import StageContext
 from konboro.pipeline.extraction.config import ExtractionConfig
 from konboro.pipeline.stages import Stage, s2_extraction
@@ -75,6 +76,8 @@ class E2eTenant:
     terms: bool = True
     queue: bool = False  # the prototype's six approval-queue candidates (devtools/fixtures/queue.py)
     earlier: bool = False  # a sent quote before NURSERY, for the chat's compare with another quote (S25b)
+    # S27b: `catalog_lines` changes the lines of every quote the pipeline prices, so only its own tenants have it on
+    lines: bool = False
 
     @property
     def tenant_id(self) -> str:
@@ -172,6 +175,11 @@ TENANTS = (
         42, "build-off@e2e.konboro.local", True, 12, False, prices=True, off=("chat_quote_builder", "voice_input")
     ),
     E2eTenant(43, "build-shots@e2e.konboro.local", True, 12, False, prices=True),
+    # S27b. Deciding a waiting line changes the quote, and the upload counts in the quota, so one tenant per project;
+    # a third makes the fidelity shots.
+    E2eTenant(44, "lines-desktop@e2e.konboro.local", False, 12, False, prices=True, lines=True),
+    E2eTenant(45, "lines-mobile@e2e.konboro.local", False, 12, False, prices=True, lines=True),
+    E2eTenant(46, "lines-shots@e2e.konboro.local", False, 12, False, prices=True, lines=True),
 )
 TERMS = {"version": "2026-10", "at": "2026-10-01T09:00:00+00:00"}
 
@@ -303,6 +311,8 @@ def seed_e2e(owner: Engine, storage: Storage | None = None) -> None:
             s.add(QuotaUsage(tenant_id=t.tenant_id, month=month, used=t.used))
             for flag in FLAGS:
                 enabled = t.home_chat if flag["key"] == "home_chat" else flag["key"] not in t.off
+                if flag["key"] == CATALOG_LINES:
+                    enabled = t.lines
                 s.add(TenantFeatureOverride(tenant_id=t.tenant_id, flag_key=flag["key"], enabled=enabled, reason="e2e"))
             s.flush()
             if t.sample_data:

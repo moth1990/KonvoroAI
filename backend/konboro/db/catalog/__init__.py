@@ -11,7 +11,8 @@ which series. Their rows name items by brand and sku, of this file or already in
 
 `sample.csv` (with `sample_kits.csv` and `sample_accessories.csv`) is the sample `make seed` loads until the real
 catalog arrives (roadmap B3): ABB and Schneider items covering the golden drawings' families, with made-up list
-prices (S20 decision 1).
+prices (S20 decision 1). `common.csv` follows it: the common products the user listed from three factory drawings
+(25/886, 2240-P-001, 25/823; S27b), real ones with no price, kept apart so the sample stays the sample.
 """
 
 import csv
@@ -32,6 +33,7 @@ from ..models import CatalogAccessory, CatalogItem, CatalogKit
 SAMPLE = Path(__file__).with_name("sample.csv")
 SAMPLE_KITS = Path(__file__).with_name("sample_kits.csv")
 SAMPLE_ACCESSORIES = Path(__file__).with_name("sample_accessories.csv")
+COMMON = Path(__file__).with_name("common.csv")
 REQUIRED = ("brand", "sku", "family")
 OPTIONAL = (
     "series",
@@ -331,4 +333,4 @@ def load_file(session: Session, path: Path, kits: Path | None = None, accessorie
 
 
 def load_sample(session: Session) -> int:
-    return load_file(session, SAMPLE, SAMPLE_KITS, SAMPLE_ACCESSORIES)
+    return load_file(session, SAMPLE, SAMPLE_KITS, SAMPLE_ACCESSORIES) + load_file(session, COMMON)

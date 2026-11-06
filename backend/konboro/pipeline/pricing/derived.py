@@ -142,8 +142,9 @@ def modules_of(ctx: PanelContext, book: Book) -> tuple[Decimal, list[str], int]:
             unknown += ln.line_type == "component"
             continue
         total += item.module_width * ln.qty
-        if ln.component_id and ln.component_id not in ids:
-            ids.append(ln.component_id)
+        for c in ln.component_ids or ([ln.component_id] if ln.component_id else []):
+            if c not in ids:
+                ids.append(c)
     return total, ids, unknown
 
 

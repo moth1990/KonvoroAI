@@ -301,6 +301,26 @@
           "title": "Missing Attributes",
           "type": "array"
         },
+        "nearest": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/Nearest"
+          },
+          "title": "Nearest",
+          "type": "array"
+        },
+        "product_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Product Id"
+        },
         "reason": {
           "default": "",
           "title": "Reason",
@@ -409,6 +429,80 @@
         }
       },
       "title": "MatchStats",
+      "type": "object"
+    },
+    "Nearest": {
+      "additionalProperties": false,
+      "description": "05 §5.9.2 (S27b): a product near a component nothing matched. A suggestion for the user, never a choice.",
+      "properties": {
+        "catalog_item_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Catalog Item Id"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "diff": {
+          "title": "Diff",
+          "type": "string"
+        },
+        "differs": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Differs",
+          "type": "array"
+        },
+        "has_cost_price": {
+          "default": false,
+          "title": "Has Cost Price",
+          "type": "boolean"
+        },
+        "manufacturer": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Manufacturer"
+        },
+        "product_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Product Id"
+        },
+        "sku": {
+          "title": "Sku",
+          "type": "string"
+        }
+      },
+      "required": [
+        "sku",
+        "manufacturer",
+        "description",
+        "diff"
+      ],
+      "title": "Nearest",
       "type": "object"
     },
     "StageIssue": {

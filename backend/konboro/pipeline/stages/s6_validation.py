@@ -22,6 +22,8 @@ from konboro.contracts.matching import MatchingResult
 from konboro.contracts.merge import MergeResult
 from konboro.contracts.validation import Issue, ValidationResult
 from konboro.db import models as m
+from konboro.domain.flags import CATALOG_LINES, is_enabled
+from konboro.services import flags
 from konboro_llm import ImageInput
 from konboro_llm.stages import validator_review
 
@@ -133,6 +135,7 @@ def run(ctx: StageContext) -> ValidationResult:
     coverage = pack.rules.get("TEXT_COVERAGE_LOW")
     tags = tuple(coverage.params.get("tags", ("current_a",))) if coverage else ("current_a",)
     drawing = build(intake, merge, matching, sch, extraction, classes(ctx, matching), tags)
+    drawing.catalog_lines = is_enabled(flags.tenant_flags(ctx.session, ctx.tenant_id), CATALOG_LINES)
 
     def agent_for(panel: PanelModel) -> AgentCall:
         pic = picture_for(ctx, intake, extraction, panel)
