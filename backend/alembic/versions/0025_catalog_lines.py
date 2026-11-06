@@ -6,6 +6,9 @@
 - `quote_lines.component_ids`: every component of a merged line (07 §6.2); `component_id` stays the first of them.
 - `quote_lines.pending`: a line waiting for a decision, with no product (07 §7.1). Sending is refused while one is left
   (09 §7.12).
+- `quote_versions.component_edits`: what the estimator chose for a component (a product, an alternative, an attribute,
+  a missing line resolved), by the component's line key (`c:…`, `m:…`). Kept on the version, not on a line: the choice
+  moves the component to its product's line, whose key changes, and undo puts the map back whole (S27b).
 
 Revision ID: 0025
 Revises: 0024
@@ -40,10 +43,15 @@ def upgrade() -> None:
         sa.Column("component_ids", postgresql.JSONB(astext_type=sa.Text()), server_default="[]", nullable=False),
     )
     op.add_column("quote_lines", sa.Column("pending", sa.Boolean(), server_default="false", nullable=False))
+    op.add_column(
+        "quote_versions",
+        sa.Column("component_edits", postgresql.JSONB(astext_type=sa.Text()), server_default="{}", nullable=False),
+    )
 
 
 def downgrade() -> None:
     """Downgrade schema."""
+    op.drop_column("quote_versions", "component_edits")
     op.drop_column("quote_lines", "pending")
     op.drop_column("quote_lines", "component_ids")
     op.drop_column("products", "symbol_class")

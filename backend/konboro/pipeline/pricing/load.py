@@ -397,4 +397,5 @@ def carry(session: Session, version: m.QuoteVersion | None, keep: frozenset[str]
         if keep is not None
         else {}
     )
-    return Carry(deleted, overrides, manual, edits, dismissed(session, version), kept)
+    components = {k: LineEdits.of(v) for k, v in (version.component_edits or {}).items() if v}  # S27b
+    return Carry(deleted, overrides, manual, edits, dismissed(session, version), kept, components)

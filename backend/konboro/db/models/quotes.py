@@ -51,6 +51,8 @@ class QuoteVersion(Base, TenantScoped, Timestamps):
     discount_pct: Mapped[Decimal | None] = mapped_column(Rate)
     totals: Mapped[dict[str, Any]] = mapped_column(server_default="{}")
     snapshot: Mapped[dict[str, Any]] = mapped_column(server_default="{}")
+    # S27b: the estimator's choice per component (a product, an alternative, an attribute), by its line key (`c:…`)
+    component_edits: Mapped[dict[str, Any]] = mapped_column(server_default="{}")
     diff_from_previous: Mapped[dict[str, Any] | None]
     sent_at: Mapped[datetime | None]
     sent_by: Mapped[str | None]

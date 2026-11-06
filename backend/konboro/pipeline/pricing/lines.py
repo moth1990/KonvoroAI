@@ -82,6 +82,12 @@ class Draft:
     approved_at: datetime | None = None  # the estimator approved the line (09 §7.2)
     boxes: list[dict[str, Any]] = field(default_factory=list)  # a line with no component: where it is (09 §6.5)
     query_failed: bool = False  # a derived line whose catalog query found nothing (07 §7.5, `enclosure_not_found`)
+    # S27b (`catalog_lines`, 07 §7.1): a merged line's components and the component lines it was made of, a line with
+    # no product waiting for a decision, and the products stage 5 found nearest it (05 §5.9.2)
+    component_ids: list[str] = field(default_factory=list)
+    members: list[str] = field(default_factory=list)
+    pending: bool = False
+    nearest: list[dict[str, Any]] = field(default_factory=list)
     status: str = "red"
     status_reasons: list[dict[str, Any]] = field(default_factory=list)
 
@@ -189,7 +195,7 @@ def component_line(
     item = m.catalog_item if m else None
     catalog = book.item_by_sku(item.manufacturer, item.sku) if item else None
     product = (
-        book.find(None, catalog.id if catalog else None, m.chosen_sku, item.manufacturer if item else None)
+        book.find(m.product_id, catalog.id if catalog else None, m.chosen_sku, item.manufacturer if item else None)
         if m and m.chosen_sku
         else None
     )
@@ -218,6 +224,8 @@ def component_line(
             alternatives=[alternative(a) for a in m.alternatives] if m else [],
             reasons=reasons,
             issue_ids=[i.issue_id for i in issues],
+            component_ids=[c.component_id],
+            nearest=[n.model_dump(mode="json") for n in m.nearest] if m else [],
         ),
         product,
     )
