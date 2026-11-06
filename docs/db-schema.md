@@ -282,6 +282,7 @@ This table answers the customer's question "why was this counted?".
 | `revision int not null default 0` | Increases on every edit: each run of stage 7 bumps it (`pricing.run`, `pricing.stored`). Used for the optimistic check (09 §11) and proposal expiry (08 §7.5, S25) |
 | `quote_date`, `currency` | |
 | `discount_pct`, `totals jsonb` | `totals` follows the 07 §6.1 shape, with decimal strings |
+| `component_edits jsonb default '{}'` | S27b (`catalog_lines`, migration 0025): what the estimator chose for each component, by its line key (`c:<component>`, `m:<instance>`): `replaced`, `match`, `attrs`, `resolved`, `approved_at`. Kept on the version, since the choice moves the component to its product's line; undo puts the map back whole (`before.restore.component_edits`), and a new version after a sent one starts with it |
 | `snapshot jsonb` | What priced this version (07 §7.7, S22): `price_list_ids` (the `product_suppliers` rows its lines used), `products`, `margin_rules_version`, `derived_rules_version`, `fx_rates`, `vat_rate_id`, `rounding`, the panels' `notes` (supply scope `prepare_only` / `by_others`), and `deleted_line_keys` (lines the user deleted, carried into later versions, S22 decision 5) |
 | `diff_from_previous jsonb` | Against the sent version this one follows (07 §7.7): `from_version`, `lines[]` (`key`, `change` added / removed / changed, `before`, `after`, `delta`, `why`: sku, qty, cost, margin_rule, price), `net_before`, `net_after`, `delta`. "Open version N+1" writes `{from_version, lines: [], copied: true}` |
 | `sent_at`, `sent_by` | |
@@ -291,9 +292,10 @@ This table answers the customer's question "why was this counted?".
 | Columns | Notes |
 | --- | --- |
 | `quote_version_id`, `panel_id null`, `position int`, `line_group` | `line_group` is the review screen's group: feed, outputs, control, enclosure, outside (07 §7.4 "מחוץ ללוח") |
-| `line_key null` | Stage 7's stable handle: `c:<component>`, `c:<component>:kit:<n>`, `m:<instance>`, `d:<panel>:<rule>[:<item>]`, `l:<panel>`. A rerun carries what the user did on the line by it (migration 0017, S22 decision 5) |
+| `line_key null` | Stage 7's stable handle: `c:<component>`, `c:<component>:kit:<n>`, `m:<instance>`, `d:<panel>:<rule>[:<item>]`, `l:<panel>`. With `catalog_lines` (S27b) a line of one product in a panel is `p:<panel>:<group>:<product>` (the catalog item, `prd:<product>` or `sku:<maker>:<sku>`), and its child lines `<parent key>><product>`; a line with no product keeps `c:`/`m:`. A rerun carries what the user did on the line by it (migration 0017, S22 decision 5) |
 | `line_type` | `component`, `derived`, `labor`, `manual`, `missing` |
 | `component_id null`, `parent_line_id null` | `component_id` is how a line points back to the drawing |
+| `component_ids jsonb default '[]'`, `pending bool default false` | S27b (migration 0025): every component of a merged line (`component_id` is the first), and a line with no product waiting for a decision (07 §7.1). Sending is refused while one is left |
 | `signature null`, `brand_context null` | The component's signature (05 §3) and the brand context a match memory for it belongs to (05 §6 `brand_context`: the customer's brand when the customer's preference chose it, else null). Stage 7 writes them from stage 5's match; the fixtures' seed signs its lines the same way. `compare` with another quote pairs lines by signature (08 §6.5), and a proposal remembered for a customer or the factory writes the memory under them (08 §7.4). Null on a kit part, a derived, labor or manual line, and a family with no schema. Migration 0022, S25b |
 | `catalog_item_id null`, `product_id null` | |
 | `sku`, `description`, `manufacturer`, `qty numeric(12,3)`, `unit` | |
@@ -319,7 +321,7 @@ This table answers the customer's question "why was this counted?".
 **`correction_events`** (`evt_`, 09 §10) is append-only. The app may update only `undone`, and a trigger enforces this. So an event is written once, whole: a review action keeps what undo needs to put back in `before.restore` (the lines' state, the findings, the price-list product, the match memory, S23).
 - `quote_id`, `quote_version`, `user_id`.
 - `source`: `review_screen`, `chat`, `price_list`, or `new_quote` (a page kind changed on the new-quote screen, S08).
-- `type`: the 09 §10 list, plus `price_changed` and `supplier_selected` from 09 §7.14–7.15, `bom_columns_mapped` (the user set a BOM spreadsheet's column roles, 01 §5.8; migration 0010, S14), `discount_set` (the customer discount on the quote, 08 §6.7, from the chat; migration 0021, S25), and `memory_saved` (the match memory a chat proposal wrote for a customer or the factory, 08 §7.4, with `before.restore.memory`: each row as it was, or `absent` for a row it made; migration 0022, S25b).
+- `type`: the 09 §10 list, plus `price_changed` and `supplier_selected` from 09 §7.14–7.15, `bom_columns_mapped` (the user set a BOM spreadsheet's column roles, 01 §5.8; migration 0010, S14), `discount_set` (the customer discount on the quote, 08 §6.7, from the chat; migration 0021, S25), `memory_saved` (the match memory a chat proposal wrote for a customer or the factory, 08 §7.4, with `before.restore.memory`: each row as it was, or `absent` for a row it made; migration 0022, S25b), and `product_created` ("מוצר חדש" made a factory product from a waiting line, 09 §7.16, with `before.restore.product.created`; migration 0025, S27b).
 - `line_id`, `component_id`, `instance_ids`, `page_id`.
 - `before jsonb`, `after jsonb`, `reason`, `undone bool`.
 
@@ -336,6 +338,7 @@ This table answers the customer's question "why was this counted?".
 | `source` | `supplier_price_list`, `manual_entry`, `quote_import`, `brand_discount` |
 | `entered_in_quote`, `entered_by`, `entered_at` | |
 | `sanity jsonb` | 10 §9.2 |
+| `attributes jsonb default '{}'`, `series null`, `model_code null`, `symbol_class null` | A product made in "מוצר חדש" (09 §7.16, migration 0025, S27b): the family's attributes and its model, so stage 5 matches it on the next drawing (05 §5.6, `prd:<id>` beside the catalog's items) and its `display_name` is the app's wording (`text.describe`). A product typed in the price list keeps `{}` |
 
 The rest of the price-list tables:
 - **`suppliers`** (`sup_`): the tenant's supplier list, with `name` unique per tenant.

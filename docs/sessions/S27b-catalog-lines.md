@@ -54,74 +54,74 @@ With `catalog_lines` on, every product line in a quote points to a product the a
 ## Tasks
 
 ### Specs (first: the line key and the product record are contracts)
-- [ ] 05: the nearest-products search (§5.9 or a new §5.10), a suggestion is not a choice, `nearest[]` in §6.2's output
-- [ ] 06: `PRODUCT_NOT_IN_CATALOG`
-- [ ] 07 §7.1, §6.2: one line per product per panel, waiting lines, `line_key` `p:` (and S22 decision 5)
-- [ ] 09 §6.3, §6.4, §7.8, §7.12: the waiting line, its decisions, "מוצר חדש", send refused while one is left
-- [ ] 10 §5.4, §9.2: a factory product with attributes, its name in the app's format
-- [ ] 13: `catalog_lines` (what it does, depends on nothing, removed when on for everyone)
-- [ ] 03, 04, 07: the clock classes, `utilization`, "LS/I"
+- [x] 05: the nearest-products search (§5.9 or a new §5.10), a suggestion is not a choice, `nearest[]` in §6.2's output
+- [x] 06: `PRODUCT_NOT_IN_CATALOG`
+- [x] 07 §7.1, §6.2: one line per product per panel, waiting lines, `line_key` `p:` (and S22 decision 5)
+- [x] 09 §6.3, §6.4, §7.8, §7.12: the waiting line, its decisions, "מוצר חדש", send refused while one is left
+- [x] 10 §5.4, §9.2: a factory product with attributes, its name in the app's format
+- [x] 13: `catalog_lines` (what it does, depends on nothing, removed when on for everyone)
+- [x] 03, 04, 07: the clock classes, `utilization`, "LS/I"
 
 ### Backend
-- [ ] Migration: `products.attributes` (jsonb), the `catalog_lines` flag; `docs/db-schema.md`
-- [ ] Contracts: `nearest` on a match (`contracts/matching.py`), a line's `pending` reason (`contracts/pricing.py`); `tests/unit/test_contracts.py` pins
-- [ ] Stage 5: the nearest search (`pipeline/matching/query.py`, `match.py`); factory products with attributes as candidates (`pipeline/matching/catalog.py`)
-- [ ] Stage 7: the merge by product per panel and the `p:` key (`pipeline/pricing/lines.py`, `engine.py`), the rerun moving `c:` state to `p:` (`run.py`, `load.py`), edits on merged lines (`edits.py`, `stored.py`)
-- [ ] Stage 6: `PRODUCT_NOT_IN_CATALOG` in `validation/rules.json` and `checks.py`
-- [ ] Review: decide a waiting line (nearest, picker, new product, delete), join on decide, undo (`services/review.py`, `review_picker.py`); a manual line of a product already there adds quantity
-- [ ] New product: `services/price_list.py` creates it with attributes and the standard name; `services/knowledge.py` puts its attributes in the candidate's payload (whitelist), `konboro_promote` writes them
-- [ ] Send refused while a waiting line is left (`services/quote_versions.py`), behind the flag
-- [ ] Quote API: waiting lines, their nearest products with the difference and the price hint, the count (`services/quotes.py`); `make gen-client`
-- [ ] Flag gate on every new route and every path that changes behaviour
-- [ ] `common.csv` loaded by `catalog.load_sample` (`db/catalog/__init__.py`)
-- [ ] Names: the clock classes (`detection/library.py`, `matching/text.py` `LINE_NAMES`), `utilization` (`association/schemas.py`, `text.py`, `sample.csv`'s contactors, `common.csv`'s ESB25), "LS/I" (`association/grammar.json`), U+200F (`pricing/load.py`, `text.py`)
+- [x] Migration: `products.attributes` (jsonb), the `catalog_lines` flag; `docs/db-schema.md`
+- [x] Contracts: `nearest` on a match (`contracts/matching.py`), a line's `pending` reason (`contracts/pricing.py`); `tests/unit/test_contracts.py` pins
+- [x] Stage 5: the nearest search (`pipeline/matching/query.py`, `match.py`); factory products with attributes as candidates (`pipeline/matching/catalog.py`)
+- [x] Stage 7: the merge by product per panel and the `p:` key (`pipeline/pricing/lines.py`, `engine.py`), the rerun moving `c:` state to `p:` (`run.py`, `load.py`), edits on merged lines (`edits.py`, `stored.py`)
+- [x] Stage 6: `PRODUCT_NOT_IN_CATALOG` in `validation/rules.json` and `checks.py`
+- [x] Review: decide a waiting line (nearest, picker, new product, delete), join on decide, undo (`services/review.py`, `review_picker.py`); a manual line of a product already there adds quantity
+- [x] New product: `services/price_list.py` creates it with attributes and the standard name; `services/knowledge.py` puts its attributes in the candidate's payload (whitelist), `konboro_promote` writes them
+- [x] Send refused while a waiting line is left (`services/quote_versions.py`), behind the flag
+- [x] Quote API: waiting lines, their nearest products with the difference and the price hint, the count (`services/quotes.py`); `make gen-client`
+- [x] Flag gate on every new route and every path that changes behaviour
+- [x] `common.csv` loaded by `catalog.load_sample` (`db/catalog/__init__.py`)
+- [x] Names: the clock classes (`detection/library.py`, `matching/text.py` `LINE_NAMES`), `utilization` (`association/schemas.py`, `text.py`, `sample.csv`'s contactors, `common.csv`'s ESB25), "LS/I" (`association/grammar.json`), U+200F (`pricing/load.py`, `text.py`)
 
 ### Frontend
-- [ ] The waiting line: its chip, the count at the top, the nearest products with the difference and the price hint, keys 1–3 (`screens/review/LineDetail.tsx`, `model.ts`)
-- [ ] "מוצר אחר…" on a waiting component line too, filtered to the family (`ProductPicker.tsx`: pass `family`)
-- [ ] The "מוצר חדש" form: fixed family, the schema's attributes, brand, series, model, SKU, the name as it is built
-- [ ] Merged lines: every designator in the sub line, the joined notes; in the line detail, pick designators for a change of product (the split)
-- [ ] Send: the summary says why it is refused while a waiting line is left
-- [ ] Everything behind `catalog_lines` from the server's flags
+- [x] The waiting line: its chip, the count at the top, the nearest products with the difference and the price hint, keys 1–3 (`screens/review/LineDetail.tsx`, `model.ts`)
+- [x] "מוצר אחר…" on a waiting component line too, filtered to the family (`ProductPicker.tsx`: pass `family`)
+- [x] The "מוצר חדש" form: fixed family, the schema's attributes, brand, series, model, SKU, the name as it is built
+- [x] Merged lines: every designator in the sub line, the joined notes; in the line detail, pick designators for a change of product (the split)
+- [x] Send: the summary says why it is refused while a waiting line is left
+- [x] Everything behind `catalog_lines` from the server's flags
 
 ### Unit tests
-- [ ] Two components resolving to one product in one panel are one line with the quantities added; in two panels, two lines
-- [ ] A kit part priced as included doesn't join the direct line; one that isn't does
-- [ ] The nearest search: up to 3 with their difference, weighted order, nothing when the current or the poles are missing, the match stays `unmatched`
-- [ ] `PRODUCT_NOT_IN_CATALOG` fires once per panel with its lines
-- [ ] `text.describe`: the two clocks, `utilization`, no U+200F/U+200E in any catalog item's description (`sample.csv` and `common.csv`)
-- [ ] The grammar reads "LS/I"
-- [ ] `common.csv` parses, has no price, no (brand, SKU) also in `sample.csv`
-- [ ] With the flag off, stage 7's lines are today's (the existing tests pass unchanged)
+- [x] Two components resolving to one product in one panel are one line with the quantities added; in two panels, two lines
+- [x] A kit part priced as included doesn't join the direct line; one that isn't does
+- [x] The nearest search: up to 3 with their difference, weighted order, nothing when the current or the poles are missing, the match stays `unmatched`
+- [x] `PRODUCT_NOT_IN_CATALOG` fires once per panel with its lines
+- [x] `text.describe`: the two clocks, `utilization`, no U+200F/U+200E in any catalog item's description (`sample.csv` and `common.csv`)
+- [x] The grammar reads "LS/I"
+- [x] `common.csv` parses, has no price, no (brand, SKU) also in `sample.csv`
+- [x] With the flag off, stage 7's lines are today's (the existing tests pass unchanged)
 
 ### Integration tests
-- [ ] A drawing with a product not in the catalog: the waiting line, the finding, the nearest products, send refused
-- [ ] Each decision, its event and its undo; deciding on a product that has a line joins it; undo splits it again
-- [ ] "מוצר חדש": the product with its attributes and the standard name, the candidate with the attributes; stage 5 finds it on the next drawing; an approval promotes it with its attributes
-- [ ] A rerun of a draft keeps a deleted line, a typed price and a manual line across the `c:` → `p:` change
-- [ ] The flag off answers 404 on the new routes, and the quote is today's
+- [x] A drawing with a product not in the catalog: the waiting line, the finding, the nearest products, send refused
+- [x] Each decision, its event and its undo; deciding on a product that has a line joins it; undo splits it again
+- [x] "מוצר חדש": the product with its attributes and the standard name, the candidate with the attributes; stage 5 finds it on the next drawing; an approval promotes it with its attributes
+- [x] A rerun of a draft keeps a deleted line, a typed price and a manual line across the `c:` → `p:` change
+- [x] The flag off answers 404 on the new routes, and the quote is today's
 
 ### UI tests (Playwright)
-- [ ] Desktop and mobile: a waiting line, choosing a nearest product, "מוצר חדש" end to end, "אין כאן רכיב", send refused then allowed
-- [ ] Desktop and mobile: a merged line shows every designator
+- [x] Desktop and mobile: a waiting line, choosing a nearest product, "מוצר חדש" end to end, "אין כאן רכיב", send refused then allowed
+- [x] Desktop and mobile: a merged line shows every designator
 - [ ] Prototype-fidelity screenshots of the waiting line and the form reviewed by the user (no prototype screen: as S23b)
 
 ### Eval (pipeline sessions)
 - [ ] `make eval` with `catalog_lines` off and on; the line counts' drop, `common.csv` and the names explained; the baseline accepted once
 
 ### Docs
-- [ ] `docs/catalog-import.md`: `common.csv`, why it is apart from the sample
-- [ ] `docs/db-schema.md`: `products.attributes`, `line_key` `p:`
-- [ ] CLAUDE.md: what S27b built
-- [ ] `docs/bugs.md`: BUG-084 fixed
+- [x] `docs/catalog-import.md`: `common.csv`, why it is apart from the sample
+- [x] `docs/db-schema.md`: `products.attributes`, `line_key` `p:`
+- [x] CLAUDE.md: what S27b built
+- [x] `docs/bugs.md`: BUG-084 fixed
 
 ## Acceptance criteria
 
 - [ ] With `catalog_lines` on, no golden quote has two lines of the same product in one panel (checked in code over every eval drawing).
 - [ ] With `catalog_lines` on, every product line has a `catalog_item_id` or a `product_id`, or is a waiting line.
-- [ ] A quote with a waiting line can't be sent; with none left it can.
-- [ ] A product made in "מוצר חדש" is matched by stage 5 on the next drawing that has it.
-- [ ] No value the user didn't approve changes: a nearest product is never priced or chosen on its own.
+- [x] A quote with a waiting line can't be sent; with none left it can.
+- [x] A product made in "מוצר חדש" is matched by stage 5 on the next drawing that has it.
+- [x] No value the user didn't approve changes: a nearest product is never priced or chosen on its own.
 - [ ] With the flag off, the eval's metrics move only by `common.csv` and the names.
 - [ ] `make check` passes.
 
@@ -151,6 +151,12 @@ Filled in at `/session-close`.
   7. **A split by designators** (the user). On a merged line, a change of product can apply to the designators the user picks; they move to the other product's line, and undo brings them back.
   8. **"מוצר חדש" requires the family's attributes, a brand and a model** (the user). The SKU is optional: without it the product stays the factory's and doesn't reach the approval queue.
   9. **One flag, `catalog_lines`** (the user). Off by default, on for the demo tenant; the eval runs both states (13 §3 rule 6).
+  10. **Child lines stay under their device** (Claude, 07 decision 4 of S27b). A kit part or an accessory is merged only under the same merged device; an accessory of two breakers is a child line under each.
+  11. **The line group is part of the key** (Claude, 07 decision 3 of S27b). A component "מחוץ ללוח" doesn't join the same product inside the panel.
+  12. **A choice is the components', on the version** (Claude). `quote_versions.component_edits` by `c:`/`m:` key, not the line's edits: the line it moves to has another key and id. Undo restores the map whole. A waiting line that comes back after undo has a new id (its key was gone while its component sat in the merged line); the screen reloads from the quote.
+  13. **A nearest product is the line's alternative** (Claude). Stage 7 offers the nearest as the waiting line's `alternatives` (`nearest: true`, `diff`), so "זה המוצר" is the alternative action, named by the product's full description with what differs under it.
+  14. **The name of a new product is the server's** (Claude). `POST …/new-product/name` builds it with `text.describe` as the form is filled; the client never builds a name.
+  15. **E2E tenants** (Claude). `catalog_lines` is on only for S27b's three tenants (`lines-*`), so the other E2E tests keep today's lines.
 - **Eval / metrics:**
 - **Bugs logged:**
 - **Follow-ups:**

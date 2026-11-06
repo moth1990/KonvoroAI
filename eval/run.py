@@ -4,6 +4,8 @@
     EVAL_MODE=live              real Claude (ANTHROPIC_API_KEY); with EVAL_RECORD=1 its answers become cassettes
     EVAL_RECORD=missing         live, but only calls with no cassette yet go to the model (S10)
     EVAL_MAX_USD=20             a live run stops once its calls cost this much at list prices
+    EVAL_CATALOG_LINES=1        the eval factory has `catalog_lines` on (S27b, 13 §3 rule 6: both states of a flag
+                                that moves the pipeline); the committed baseline is the flag off
 
 Each run recreates the `konboro_eval` database and uploads every drawing to one throwaway tenant, as a user would.
 Then the coordinator's own stage code runs every stage in order in this process (`Pipeline.run_inline`), with no
@@ -104,6 +106,8 @@ def add_tenant(engine: Engine) -> tuple[str, str]:
         # no price list here, so every SKU would lack a cost: the factory turns the check off (06 §6.5 item 2)
         s.add(m.TenantRuleOverride(tenant_id=tenant_id, rule_id="DATA_NO_COST_PRICE", enabled=False))
         s.add(m.TenantPlanOverride(tenant_id=tenant_id, monthly_quote_limit=1000))
+        if backtest.CATALOG_LINES:  # S27b: one line per product, a product not in the catalog waits (13 §4.10)
+            s.add(m.TenantFeatureOverride(tenant_id=tenant_id, flag_key="catalog_lines", enabled=True, reason="eval"))
         s.flush()
         # it quotes no labor, terminals, labels, rails or consumables as lines: only the enclosure rule (S22 decision 1)
         pricing_load.ensure_rules(s, tenant_id)
