@@ -19,6 +19,10 @@ from .factory import Factory
 Mode = Literal["exact", "gte", "lte", "prefer", "contains"]
 # 05 §4.4: an RCD's type compares by order (AC < A < F < B)
 ORDERED = {"rcd_type": ("AC", "A", "F", "B")}
+# S27b: a value an unwritten attribute means. A contactor's current with no category is its AC-3 rating, so an item
+# rated in another (ESB25-30N-06: 25A at AC-1) passes only when the drawing writes that category. Not a fill-in: it
+# leaves the signature, and the match memory under it, as they were.
+IMPLIED = {"utilization": "AC-3"}
 # "אלקטרוני" (stage 4's `electronic`) is any electronic trip unit; "LSI" written is that one
 ELECTRONIC = frozenset({"LSI", "LSIG", "LS/I", "LI", "ELECTRONIC"})
 
@@ -72,6 +76,11 @@ def check(item: Item, need: Need) -> bool | None:
 
 def passes(item: Item, needs: list[Need]) -> tuple[bool, list[str]]:
     """Whether the item passes every filter, and the strict attributes it fails only by not stating them."""
+    asked = {n.name for n in needs}
+    for name, value in IMPLIED.items():
+        stated = item.attributes.get(name)
+        if name not in asked and stated is not None and not _same(stated, value):
+            return False, []
     gaps: list[str] = []
     ok = True
     for need in needs:

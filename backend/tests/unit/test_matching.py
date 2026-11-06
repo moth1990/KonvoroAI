@@ -929,3 +929,28 @@ def test_a_factory_product_is_a_candidate() -> None:
     assert found.catalog_item is not None
     assert found.catalog_item.description == 'מפסק זרם אוטומטי (מא"ז) ABB S203M 3P 13A עקומה C 10kA'
     assert found.nearest == []
+
+
+def test_a_contactor_with_no_category_written_is_ac3() -> None:
+    """S27b (05 decision 6): "מגען 3X25" is 25A at AC-3. ESB25-30N-06 is rated 25A at AC-1 only, so it is no candidate
+    unless the drawing writes AC-1; the signature doesn't change."""
+    esb = Item(
+        id="cat_esb25",
+        sku="ESB25-30N-06",
+        brand="ABB",
+        series="ESB",
+        model_code="ESB25",
+        model_tokens=(),
+        family="contactor",
+        symbol_class=None,
+        attributes={"current_a": 25, "poles": 3, "coil_voltage_v": 230, "utilization": "AC-1"},
+        status="active",
+        replaced_by=None,
+    )
+    cat = Catalog({**CATALOG.items, esb.id: esb}, CATALOG.kits, CATALOG.fits)
+    plain = run_lines(comp("contactor", "contactor", {"current_a": 25, "poles": 3}), catalog=cat, nearest=False)[0]
+    assert plain.chosen_sku != "ESB25-30N-06" and plain.signature == "contactor|contactor|current_a=25|poles=3"
+    ac1 = run_lines(
+        comp("contactor", "contactor", {"current_a": 25, "poles": 3, "utilization": "AC-1"}), catalog=cat, nearest=False
+    )[0]
+    assert ac1.chosen_sku == "ESB25-30N-06"
