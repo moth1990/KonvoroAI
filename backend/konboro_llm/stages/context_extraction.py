@@ -3,7 +3,8 @@
 One call per item, each on an image of just that page or region:
 - the drawing's title block, read once per drawing from a crop of the region the classifier found (S08 decision);
 - `technical_data` pages and a panel's `notes_block` (§5.5.1): the same requirements schema;
-- `panel_front_view` pages: the panels, their sizes, and the device tags shown on the front;
+- `panel_front_view` pages: the panels, their sizes, the device tags shown on the front, and those of the interior
+  layout when the page draws one (BUG-055);
 - a `feed_diagram` region (§5.5.2): which panel is fed from which, by what cable;
 - `general_notes` pages: the notes as Markdown.
 
@@ -69,6 +70,11 @@ class FrontView(BaseModel):
     designators: list[str] = Field(
         default=[], description="Every device tag on the front, as written, ranges kept (R1-R7)"
     )
+    layout_designators: list[str] = Field(
+        default=[],
+        description="Every device tag in the interior layout (the mounting plate), if the page draws one, as written, "
+        "ranges kept",
+    )
 
 
 class Feed(BaseModel):
@@ -105,7 +111,8 @@ PROMPTS: dict[Kind, tuple[str, type[BaseModel]]] = {
         PanelRequirements,
     ),
     "panel_front_view": (
-        "This is a panel's front view. List the panels with their sizes if written, and every device tag shown.",
+        "This is a panel's front view, sometimes drawn beside its interior layout. List the panels with their sizes "
+        "if written, every device tag shown on the front, and every device tag in the interior layout.",
         FrontView,
     ),
     "feed_diagram": (

@@ -16,12 +16,21 @@ An instance is one symbol with what was read for it. The merge, once per drawing
    devices in the panel is another drawing of one of them, and joins the nearest (no quantity of its own).
    A symbol tagged with a list ("MS1/MS2/MS3", 03 §3.7 item 5) is one device per tag in the list, so its quantity
    is the list's length (BUG-031).
+   - A tag drawn only as terminals, whose letters name devices of one other family in the panel, is a device of that
+     family: terminals are numbered, not tagged, and MINHAROT-1's selectors SW2–SW5 were read as their two contact
+     points while SW1 was read as a selector (BUG-051). Never green: the family is the tag's, not the drawing's.
+   - A contactor drawn as single-pole power contacts on one page, one per circuit, has a pole per contact
+     (MINHAROT-1's C1 on F2–F4, BUG-053). Only drawn poles (`graphic`) are counted; poles written as text win.
+   - An auxiliary contact tagged with devices drawn on another page is drawn again where it is used (a fault-lamp
+     circuit), when the devices' page has at least as many contacts: it joins one of them with no quantity of its own
+     (MINHAROT-1's 21/22 contacts on pages 5 and 8, BUG-054). The dashed link (03 §3.7 item 4) is not read in v1.
 3. **Then by signature**: devices with the same panel, family, class, supply scope and exactly the same values in
    every attribute (null included) are one component. Quantity: the number of distinct tags, plus the multiplicity
    of the untagged ones. Missing instances, different panels, and a known value against a null never merge.
 """
 
-from collections import defaultdict
+import re
+from collections import Counter, defaultdict
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -54,6 +63,7 @@ INSTANCE_ISSUES = {
     "poles_from_peers": "לא סומנו קטבים: רוב המפסקים הזהים בשורה סומנו {poles}. בדקו.",
     "poles_peer_conflict": "סומן {read}, אבל רוב המפסקים הזהים בשורה סומנו {poles}. בדקו את הקטבים.",
     "poles_corrected": "סומן {read}, אבל הכבל {cable} ורוב המפסקים הזהים בשורה נותנים {poles}: נספר כ-{poles}. בדקו.",
+    "family_by_tag": "{tags} צוירו כמו מהדקים, והתג שלהם הוא כמו של {kin}. הם נספרו כמו {kin}. בדקו את השורה.",
 }
 
 
@@ -116,6 +126,7 @@ class Device:
     supply_scope: str
     multiplicity_inherited: bool
     conflicts: list[str] = field(default_factory=list)
+    family_by_tag: str | None = None  # the tag whose family a terminal took (BUG-051)
 
 
 def _join_attributes(
@@ -195,8 +206,11 @@ def devices(built: list[Built], schemas: Schemas, cfg: AssociationConfig = DEFAU
         else:
             alone.append(b)
     out: list[Device] = []
+    device_page: dict[tuple[str, str], int] = {}  # (panel, tag) → the page of the tag's device drawing
     for (panel_id, tag), group in by_tag.items():
         lead = min(group, key=lambda b: (ROLE_RANK.get(b.role, 9), -b.instance.confidence, b.order))
+        if lead.role == "device":
+            device_page[(panel_id, tag)] = lead.order[0]
         family, cls = lead.instance.family, lead.instance.symbol_class
         members = []
         for b in group:
@@ -231,6 +245,7 @@ def devices(built: list[Built], schemas: Schemas, cfg: AssociationConfig = DEFAU
                 conflicts,
             )
         )
+    _family_by_tag(out, schemas, cfg)
     tagged: dict[tuple[str, str], list[Device]] = defaultdict(list)
     for d in out:
         tagged[(d.panel_id, d.family)].append(d)
@@ -251,9 +266,13 @@ def devices(built: list[Built], schemas: Schemas, cfg: AssociationConfig = DEFAU
                 b.multiplicity_inherited,
             )
         )
+    away = _away_contacts(alone, device_page)
+    contacts: dict[tuple[str, int], list[Device]] = defaultdict(list)  # (panel, page) → the contacts counted there
     for b in alone:
         i = b.instance
         aux = i.family == "aux_contact"
+        if id(b) in away:
+            continue
         own = [] if aux or _conflicted(b) else tags(b.designator)
         # An untagged contact or coil of a family that has tagged devices in the panel is another drawing of one of
         # them (03 §4.5), not a device of its own: it joins the nearest one on its page, else the first.
@@ -277,6 +296,15 @@ def devices(built: list[Built], schemas: Schemas, cfg: AssociationConfig = DEFAU
                 b.multiplicity_inherited,
             )
         )
+        if aux:
+            contacts[(i.panel_id or "", b.order[0])].append(out[-1])
+    for b in (b for b in alone if id(b) in away):
+        host = min(contacts[(b.instance.panel_id or "", away[id(b)])], key=lambda d: _distance(d, b))
+        host.built.append(b)
+        host.parent_designators += [t for t in tags(b.designator) if t not in host.parent_designators]
+    for d in out:
+        if d.designators and d.family != "aux_contact":
+            _poles_from_contacts(d, cfg)
     return out
 
 
@@ -309,6 +337,86 @@ def _part_of(b: Built, drawings: list[Built]) -> bool:
 
 def _conflicted(b: Built) -> bool:
     return any(x.code == "tag_conflict" for x in b.instance.issues)
+
+
+_LETTERS = re.compile(r"^[A-Z]+")
+# a terminal named after its conductor (NURSERY-1's L4 and N4, circuit 4's phase and neutral) or its strip (X1):
+# terminals' own names, though L1–L3 are lamps on the same drawing (03 §3.7 item 2)
+CONDUCTOR_LETTERS = frozenset({"L", "N", "PE", "X"})
+
+
+def _letters(tag: str) -> str:
+    m = _LETTERS.match(tag)
+    return m.group(0) if m else ""
+
+
+def _family_by_tag(devices: list[Device], schemas: Schemas, cfg: AssociationConfig) -> None:
+    """BUG-051: a tag drawn only as terminals takes the family its letters name in the panel (SW2 beside SW1, a
+    selector), when they name one family. Terminals keep their family when nothing else in the panel shares the
+    letters, when two families do, or when the letters are a conductor's or a strip's (`CONDUCTOR_LETTERS`)."""
+    kin: dict[tuple[str, str], list[Device]] = defaultdict(list)
+    for d in devices:
+        if d.family != "terminal" and _letters(d.designators[0]):
+            kin[(d.panel_id, _letters(d.designators[0]))].append(d)
+    for d in devices:
+        if d.family != "terminal" or any(b.instance.family != "terminal" for b in d.built):
+            continue
+        if _letters(d.designators[0]) in CONDUCTOR_LETTERS:
+            continue
+        same = kin.get((d.panel_id, _letters(d.designators[0])), [])
+        named = Counter((k.family, k.symbol_class) for k in same)
+        if len(named) != 1:
+            continue
+        (family, cls), _ = named.most_common(1)[0]
+        d.family, d.symbol_class = family, cls
+        d.attributes = {n: attribute(None) for n in schemas.names(family)}
+        d.confidence = round(min(d.confidence, cfg.family_by_tag_max), 4)
+        d.family_by_tag = same[0].designators[0]
+
+
+def _away_contacts(alone: list[Built], device_page: dict[tuple[str, str], int]) -> dict[int, int]:
+    """BUG-054: id(contact) → the page it joins, for each auxiliary contact tagged with devices drawn on one other
+    page. All the contacts bound for a page join it when it has at least as many contacts of its own; else none
+    does, and each is counted where it is drawn."""
+    bound: dict[tuple[str, int], list[Built]] = defaultdict(list)
+    home: Counter[tuple[str, int]] = Counter()
+    for b in alone:
+        if b.instance.family != "aux_contact":
+            continue
+        panel_id = b.instance.panel_id or ""
+        names = tags(b.designator)
+        pages = {device_page[(panel_id, t)] for t in names if (panel_id, t) in device_page}
+        if names and len(pages) == 1 and all((panel_id, t) in device_page for t in names) and b.order[0] not in pages:
+            bound[(panel_id, pages.pop())].append(b)
+        else:
+            home[(panel_id, b.order[0])] += b.instance.multiplicity
+    out: dict[int, int] = {}
+    for (panel_id, page), group in bound.items():
+        if home[(panel_id, page)] >= sum(b.instance.multiplicity for b in group):
+            out.update({id(b): page for b in group})
+    return out
+
+
+def _poles_from_contacts(d: Device, cfg: AssociationConfig) -> None:
+    """BUG-053: a device drawn as two or more power contacts on one page, each drawn single-pole (or not read), has
+    a pole per contact. Never over poles written as text, nor over a contact drawn with more than one pole."""
+    poles = d.attributes.get("poles")
+    if poles is None or (poles.value is not None and poles.source != "graphic"):
+        return
+    by_page: dict[int, list[Built]] = defaultdict(list)
+    for b in d.built:
+        if b.role == "power_contact":
+            by_page[b.order[0]].append(b)
+    best: AttributeValue | None = None
+    for drawn in by_page.values():
+        read = [a for b in drawn if (a := b.instance.attributes.get("poles")) is not None and a.value is not None]
+        if len(drawn) < 2 or not read or any(a.source != "graphic" or a.value != 1 for a in read):
+            continue
+        if best is None or len(drawn) > best.value:
+            confidence = min(min(a.confidence or cfg.graphic_max for a in read), cfg.graphic_max)
+            best = AttributeValue(value=len(drawn), source="graphic", confidence=confidence, span_ids=[])
+    if best is not None:
+        d.attributes["poles"] = best
 
 
 def _distance(d: Device, b: Built) -> tuple[int, float]:
@@ -508,13 +616,20 @@ def components(
 ) -> tuple[list[Component], dict[str, str], list[StageIssue]]:
     """5.8: the components, instance id → component id, and the merge's issues."""
     groups: dict[tuple[Any, ...], list[Device]] = defaultdict(list)
-    for d in devices(built, schemas, cfg):
+    found = devices(built, schemas, cfg)
+    for d in found:
         groups[_signature(d)].append(d)
     _join_by_cable(groups)
     _join_by_peers(groups)
     out: list[Component] = []
     owner: dict[str, str] = {}
     issues: list[StageIssue] = []
+    retagged: dict[str, list[str]] = defaultdict(list)
+    for d in found:
+        if d.family_by_tag:
+            retagged[d.family_by_tag] += d.designators
+    for kin, named in retagged.items():
+        issues.append(issue("family_by_tag", "warning", tags=", ".join(sorted(named, key=_tag_order)), kin=kin))
     prefix = drawing_id.removeprefix("drw_")
     for n, group in enumerate(groups.values(), start=1):
         component_id = f"cmp_{prefix}_{n:04d}"

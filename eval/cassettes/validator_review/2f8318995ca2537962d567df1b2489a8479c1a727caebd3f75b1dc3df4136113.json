@@ -1,0 +1,75 @@
+{
+  "answer": {
+    "input_tokens": 4969,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 666,
+    "payload": {
+      "issues": [
+        {
+          "bbox": [
+            530,
+            225,
+            630,
+            325
+          ],
+          "component_ids": [
+            "c07"
+          ],
+          "confidence": 0.55,
+          "message": "בציור FNV הוא 3X6A עם INC=4A מסוג S204M (4 קטבים), ובטבלה הוא 3 קטבים 6A עם כושר ניתוק 6kA. יש לבדוק את מספר הקטבים, הדגם וכושר הניתוק.",
+          "type": "inconsistent_attributes"
+        },
+        {
+          "bbox": [
+            130,
+            490,
+            250,
+            560
+          ],
+          "component_ids": [
+            "c09"
+          ],
+          "confidence": 0.35,
+          "message": "בציור F2–F4 הם 1X10A עם INC=8A. יש לוודא שהכמות 7 (כולל F1, F8–F10) תואמת את מה שנראה בציור, שבו מופיעים רק F2–F4.",
+          "type": "inconsistent_attributes"
+        },
+        {
+          "bbox": [
+            1170,
+            615,
+            1310,
+            655
+          ],
+          "component_ids": [
+            "c13",
+            "c12"
+          ],
+          "confidence": 0.3,
+          "message": "C3 בטבלה הוא מגען 26A ואילו C1 ו-C2 הם 10A. שלושתם משרתים עומסים דומים (מאורורים), ויש לבדוק אם הזרם של C3 נקרא נכון.",
+          "type": "inconsistent_attributes"
+        },
+        {
+          "bbox": null,
+          "component_ids": [
+            "c19"
+          ],
+          "confidence": 0.3,
+          "message": "מגעי עזר ב-5 יחידות ללא תג וללא חיבור לעץ ההזנה, ואינם נראים בציור. יש לבדוק אם הכמות נדרשת.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": null,
+          "component_ids": [
+            "c15",
+            "c18"
+          ],
+          "confidence": 0.25,
+          "message": "5 בוררים, מפסק טמפרטורה ושעון מופיעים בטבלה אך לא נראים בציור הזה. יש לוודא שהכמויות מתאימות ללוח.",
+          "type": "suspicious_quantity"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "validator_review"
+}

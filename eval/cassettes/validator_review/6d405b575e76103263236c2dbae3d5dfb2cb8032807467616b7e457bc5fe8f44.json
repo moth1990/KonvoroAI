@@ -1,0 +1,70 @@
+{
+  "answer": {
+    "input_tokens": 5181,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 598,
+    "payload": {
+      "issues": [
+        {
+          "bbox": [
+            655,
+            205,
+            750,
+            305
+          ],
+          "component_ids": [
+            "c06"
+          ],
+          "confidence": 0.5,
+          "message": "FNV בציור הוא S204M ‏3X6A עם INC=4A, אך בטבלה מופיע מא\"ז 6A 3 קטבים 6kA ללא פריט קטלוגי. יש לבדוק דגם, קטבים ויכולת ניתוק.",
+          "type": "inconsistent_attributes"
+        },
+        {
+          "bbox": [
+            1480,
+            430,
+            1568,
+            515
+          ],
+          "component_ids": [
+            "c08"
+          ],
+          "confidence": 0.3,
+          "message": "F3 ו-F5 מקובצים כ-16A, אך בציור F3 הוא 16+N עם INC=12.8A ו-F5 דומה. יש לוודא שהערכים זהים ושהכמות 2 נכונה.",
+          "type": "inconsistent_attributes"
+        },
+        {
+          "bbox": [
+            690,
+            605,
+            1270,
+            650
+          ],
+          "component_ids": [
+            "c11",
+            "c10"
+          ],
+          "confidence": 0.45,
+          "message": "C3 ו-C4 בציור הם מגענים דו-קוטביים (2X208V) ו-C1 תלת-קוטבי 18A. בטבלה C2–C5 מקובצים כ-16A ללא קטבים ופריט קטלוגי. יש לבדוק קטבים וזרם לכל מגען.",
+          "type": "inconsistent_attributes"
+        },
+        {
+          "bbox": [
+            1040,
+            135,
+            1220,
+            260
+          ],
+          "component_ids": [
+            "c02"
+          ],
+          "confidence": 0.3,
+          "message": "Q0 בציור הוא ABB XT1C ‏4X80A עם INC=63A, אך הפריט בטבלה הוא XT1C160 80A עם TMD. יש לוודא את הזרם והגדרת היחידה.",
+          "type": "inconsistent_attributes"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "validator_review"
+}

@@ -37,6 +37,13 @@ class AssociationConfig:
     fallback_max: float = 0.6
     missing_max: float = 0.4
     accepted_from: float = 0.85
+    family_by_tag_max: float = 0.6  # 5.8: terminals counted as the device their tag names (BUG-051), never green
+    # 5.6 a lamp's colour from its symbol's fill (BUG-057, `colour.py`)
+    fill_saturation: float = 0.4  # a pixel counts as coloured from this saturation
+    fill_value: float = 0.35  # and this brightness (dark pixels are the lines)
+    fill_min_share: float = 0.08  # of the symbol's box, solid in one hue (a line is never solid)
+    fill_dominance: float = 0.8  # of the coloured pixels, in that hue
+    fill_confidence: float = 0.85  # like drawn poles (`graphic_max`)
     # 8
     high_missing_share: float = 0.10
 

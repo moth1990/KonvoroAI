@@ -1,0 +1,73 @@
+{
+  "answer": {
+    "input_tokens": 3837,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 646,
+    "payload": {
+      "issues": [
+        {
+          "bbox": null,
+          "component_ids": [
+            "c04"
+          ],
+          "confidence": 0.6,
+          "message": "ממסר תרמי בכמות 5 – בשרטוט לא רואים ממסר תרמי כלל, ובסך הכול יש רק מגען אחד. לבדוק מאיפה הגיעה הכמות.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": [
+            690,
+            995,
+            770,
+            1090
+          ],
+          "component_ids": [
+            "c11"
+          ],
+          "confidence": 0.5,
+          "message": "מא\"ז 16A בכמות 9: בשרטוט יש שלושה מא\"זים 16A בודדים ועוד אחד עם (x6), כלומר 8 ולא 9. לבדוק את הספירה.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": [
+            285,
+            905,
+            382,
+            935
+          ],
+          "component_ids": [
+            "c08"
+          ],
+          "confidence": 0.4,
+          "message": "נורות סימון אדומות בכמות 4, אבל בשרטוט רואים שלוש נורות בשורה ועוד נורה אחת ליד המגען. לבדוק אם הספירה נכונה.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": [
+            100,
+            975,
+            160,
+            1075
+          ],
+          "component_ids": [
+            "c13"
+          ],
+          "confidence": 0.25,
+          "message": "מא\"ז 10A בכמות 2: בשרטוט יש שני מא\"זים כאלה, אחד בראש העמודה השמאלית ואחד בתוך ענף בורר הפיקוד. לוודא שהם באמת אותו פריט.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": null,
+          "component_ids": [
+            "c06"
+          ],
+          "confidence": 0.3,
+          "message": "משנה זרם מופיע בטבלה, אבל בשרטוט רואים מד אנרגיה או מכשיר מדידה (שעון) ולא משנה זרם. לבדוק אם זה פריט נפרד.",
+          "type": "wrong_family"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "validator_review"
+}
