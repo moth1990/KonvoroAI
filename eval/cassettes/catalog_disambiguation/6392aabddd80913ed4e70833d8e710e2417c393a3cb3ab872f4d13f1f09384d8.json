@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 933,
+    "model": "claude-haiku-5-5",
+    "output_tokens": 518,
+    "payload": {
+      "chosen_sku": null,
+      "confidence": 0.3,
+      "missing_attributes": [],
+      "reason": "הרישום בשרטוט הוא רק 'סליל הפסקה' בלי סדרה או דגם, וכל המועמדים הם ABB 230V, ולכן אין הכרעה לפי הכתוב או לפי העדפת המותג."
+    }
+  },
+  "model": "claude-haiku-5-5",
+  "stage": "catalog_disambiguation"
+}

@@ -36,7 +36,7 @@ from konboro_llm.stages.text_association import TileAnswer
 from .assign import Read, SharedLabel, Text, Value, gap, radius
 from .config import DEFAULT, AssociationConfig
 from .grammar import contains, parse, same
-from .schemas import Schemas
+from .schemas import CODE_ONLY, Schemas
 
 log = logging.getLogger("konboro.pipeline.s4")
 
@@ -117,7 +117,8 @@ def prompt_parts(job: TileJob, schemas: Schemas) -> dict[str, str]:
     own = []
     for short, d in zip(job.own_ids, job.own, strict=True):
         tag = f", tag {d.designator}" if d.designator else ""
-        names = ", ".join(schemas.names(d.family)) or "(nothing; multiplicity and texts only)"
+        asked = [n for n in schemas.names(d.family) if n not in CODE_ONLY]
+        names = ", ".join(asked) or "(nothing; multiplicity and texts only)"
         own.append(f"- {short}: {d.family} / {d.symbol_class}{tag}, box {_box(job, d.bbox)}, read: {names}")
     context = [
         f"- {short}: {d.family} / {d.symbol_class}"
@@ -215,7 +216,7 @@ def check(
     for a in answer.instances:
         det_id = own[a.det]
         d = dets[det_id]
-        names = set(schemas.names(d.family))
+        names = set(schemas.names(d.family)) - CODE_ONLY
         reach = cfg.agent_radius_factor * radius(d, cfg)
         values: dict[str, Value] = {}
         nulls: set[str] = set()

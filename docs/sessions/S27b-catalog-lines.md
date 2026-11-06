@@ -107,7 +107,7 @@ With `catalog_lines` on, every product line in a quote points to a product the a
 - [ ] Prototype-fidelity screenshots of the waiting line and the form reviewed by the user (no prototype screen: as S23b)
 
 ### Eval (pipeline sessions)
-- [ ] `make eval` with `catalog_lines` off and on; the line counts' drop, `common.csv` and the names explained; the baseline accepted once
+- [x] `make eval` with `catalog_lines` off and on; the line counts' drop, `common.csv` and the names explained; the baseline accepted once
 
 ### Docs
 - [x] `docs/catalog-import.md`: `common.csv`, why it is apart from the sample
@@ -117,12 +117,12 @@ With `catalog_lines` on, every product line in a quote points to a product the a
 
 ## Acceptance criteria
 
-- [ ] With `catalog_lines` on, no golden quote has two lines of the same product in one panel (checked in code over every eval drawing).
-- [ ] With `catalog_lines` on, every product line has a `catalog_item_id` or a `product_id`, or is a waiting line.
+- [x] With `catalog_lines` on, no golden quote has two lines of the same product in one panel (checked in code over every eval drawing).
+- [x] With `catalog_lines` on, every product line has a `catalog_item_id` or a `product_id`, or is a waiting line.
 - [x] A quote with a waiting line can't be sent; with none left it can.
 - [x] A product made in "מוצר חדש" is matched by stage 5 on the next drawing that has it.
 - [x] No value the user didn't approve changes: a nearest product is never priced or chosen on its own.
-- [ ] With the flag off, the eval's metrics move only by `common.csv` and the names.
+- [x] With the flag off, the eval's metrics move only by `common.csv` and the names.
 - [ ] `make check` passes.
 
 ## Out of scope
@@ -158,5 +158,7 @@ Filled in at `/session-close`.
   14. **The name of a new product is the server's** (Claude). `POST …/new-product/name` builds it with `text.describe` as the form is filled; the client never builds a name.
   15. **E2E tenants** (Claude). `catalog_lines` is on only for S27b's three tenants (`lines-*`), so the other E2E tests keep today's lines.
 - **Eval / metrics:**
+  - **Flag off (the committed baseline):** recorded live, only the calls with no cassette (`EVAL_RECORD=missing`, under $5): 4 `catalog_disambiguation`, 2 `validator_review`, 1 `chat_bom_extraction`. Three metrics moved, all one more model call on 6199-2-50's labelled stage 5 (`s5_labelled/llm_share` 0.089 → 0.111; all 0.080 → 0.087): a shunt trip drawn with no breaker now has SOR-C, YO-C (from `common.csv`) and S2C-A1 to choose from, and the model rightly picks none (yellow); a breaker written "אלקטרוני LSI" has Ekip LS/I beside Ekip LSI, and the model picks LSI, as written. Nothing else moved. A first recording had re-recorded 27 tile-agent calls, since the new attributes changed its prompt, and stage 4 lost on 6199-2-50 by the model's variance: `astronomical` and `utilization` are read in code only (`schemas.CODE_ONLY`), the prompt is as before, and those cassettes were dropped.
+  - **Flag on (`EVAL_CATALOG_LINES=1`, replay, reported):** only `s6/warnings` rises, by one per panel with a waiting line (`PRODUCT_NOT_IN_CATALOG`; all 3.43 → 5.00). The backtest's totals and stage 5's metrics don't move. On the 7 golden drawings, checked in the eval database: no product on two lines of one panel; every product line has a product or waits (54 waiting lines, 32 of them on 6199-2-50; 145 product lines).
 - **Bugs logged:**
 - **Follow-ups:**

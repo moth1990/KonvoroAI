@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 934,
+    "model": "claude-haiku-5-5",
+    "output_tokens": 526,
+    "payload": {
+      "chosen_sku": null,
+      "confidence": 0.4,
+      "missing_attributes": [],
+      "reason": "הרישום בשרטוט הוא רק \"סליל הפסקה\" ללא סדרת מפסק או גודל מסגרת, ושלושת המועמדים הם ABB עם מתח סליל 230V זהה, ולכן השרטוט אינו מכריע בין הסדרות. נדרש מידע נוסף על סדרת המפסק כדי לבחור."
+    }
+  },
+  "model": "claude-haiku-5-5",
+  "stage": "catalog_disambiguation"
+}

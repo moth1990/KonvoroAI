@@ -1,0 +1,69 @@
+{
+  "answer": {
+    "input_tokens": 4873,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 543,
+    "payload": {
+      "issues": [
+        {
+          "bbox": [
+            948,
+            288,
+            1145,
+            358
+          ],
+          "component_ids": [
+            "c07"
+          ],
+          "confidence": 0.35,
+          "message": "בציור FB0 מסומן 0.3mA (נראה כטעות הקלדה של 0.3A), בטבלה נקרא 300mA. כדאי לבדוק את זרם הזליגה של מפסק הפחת.",
+          "type": "inconsistent_attributes"
+        },
+        {
+          "bbox": [
+            686,
+            619,
+            724,
+            650
+          ],
+          "component_ids": [
+            "c11"
+          ],
+          "confidence": 0.45,
+          "message": "המגענים C1 ו-C2 מקובצים יחד עם זרם 10A, אך C1 מזין שלושה מא\"זים 10A ו-C2 מזין מא\"ז 3x20A. הזרם הנקרא נראה לא מתאים ל-C2, וחסר דגם.",
+          "type": "inconsistent_attributes"
+        },
+        {
+          "bbox": [
+            1480,
+            470,
+            1568,
+            590
+          ],
+          "component_ids": [
+            "c10"
+          ],
+          "confidence": 0.3,
+          "message": "F7 בציור הוא 1X16A עם INC=12.8A, ומוצג בטבלה יחד עם F13 שאינו נראה בציור. כדאי לבדוק את הכמות והערכים.",
+          "type": "inconsistent_attributes"
+        },
+        {
+          "bbox": [
+            648,
+            44,
+            750,
+            100
+          ],
+          "component_ids": [
+            "c02"
+          ],
+          "confidence": 0.4,
+          "message": "בטבלה 8 נורות סימון, אך בציור נראות רק 4 (L1, L2, L3 ו-HNV). כדאי לוודא את H1, H2, HT1, HT2.",
+          "type": "suspicious_quantity"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "validator_review"
+}

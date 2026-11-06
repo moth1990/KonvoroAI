@@ -17,6 +17,9 @@ from konboro.db import models as m
 
 MatchMode = Literal["exact", "gte", "lte", "prefer"]
 NEVER_DEFAULT = frozenset({"current_a", "poles"})
+# S27b: read by the grammar in code ("אסטרונומי", a contactor's category), never asked of the tile agent: the agent's
+# prompt stays as it was, and so does what it reads
+CODE_ONLY = frozenset({"astronomical", "utilization"})
 
 
 @dataclass(frozen=True)

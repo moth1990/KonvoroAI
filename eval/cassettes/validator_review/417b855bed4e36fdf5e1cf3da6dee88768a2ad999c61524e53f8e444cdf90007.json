@@ -1,0 +1,51 @@
+{
+  "answer": {
+    "input_tokens": 3204,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 475,
+    "payload": {
+      "issues": [
+        {
+          "bbox": null,
+          "component_ids": [
+            "c08"
+          ],
+          "confidence": 0.6,
+          "message": "לחצן מסווג כלחצן חירום אך הצבע ירוק והפריט ABB MP1 ירוק הוא לחצן רגיל. יש לבדוק את סוג הלחצן.",
+          "type": "wrong_family"
+        },
+        {
+          "bbox": null,
+          "component_ids": [
+            "c09"
+          ],
+          "confidence": 0.4,
+          "message": "המפסק XT1C160 מוגדר כ-125A, בעוד שהדגם הוא 160A. יש לבדוק האם הזרם או הדגם נקראו נכון.",
+          "type": "inconsistent_attributes"
+        },
+        {
+          "bbox": null,
+          "component_ids": [
+            "c15",
+            "c03"
+          ],
+          "confidence": 0.3,
+          "message": "6 מפסקי פחת ו-5 סלילי הפסקה ללא מפסק ראשי תואם בטבלה. יש לבדוק שהכמויות מתאימות ללוח.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": null,
+          "component_ids": [
+            "c04",
+            "c01"
+          ],
+          "confidence": 0.2,
+          "message": "3 משני זרם 250/5A מול מפסק ראשי אחד 250A ומונה אחד, וההתאמה סבירה אך יש לוודא שהמונה מחובר אליהם ולא נדרשים משני זרם נוספים.",
+          "type": "suspicious_quantity"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "validator_review"
+}
