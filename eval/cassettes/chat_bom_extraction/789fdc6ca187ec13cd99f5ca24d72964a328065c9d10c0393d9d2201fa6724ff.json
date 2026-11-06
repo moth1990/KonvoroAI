@@ -1,0 +1,21 @@
+{
+  "answer": {
+    "input_tokens": 2402,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 58,
+    "payload": {
+      "changes": [],
+      "items": [
+        {
+          "panel": null,
+          "quantity": 1,
+          "quote": "לחצן חירום",
+          "text": "לחצן חירום"
+        }
+      ],
+      "question": null
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_bom_extraction"
+}

@@ -3534,6 +3534,56 @@
           "value": 1.0
         }
       },
+      "build": {
+        "build_clarification_accuracy": {
+          "den": 51,
+          "kind": "ratio",
+          "num": 51.0,
+          "value": 1.0
+        },
+        "build_dropped": {
+          "den": 51,
+          "kind": "count",
+          "num": 1.0,
+          "value": 1.0
+        },
+        "build_invented_values": {
+          "den": 79,
+          "kind": "count",
+          "num": 0.0,
+          "value": 0.0
+        },
+        "build_line_accuracy": {
+          "den": 76,
+          "kind": "ratio",
+          "num": 75.0,
+          "value": 0.986842
+        },
+        "build_money_to_model": {
+          "den": 54,
+          "kind": "count",
+          "num": 0.0,
+          "value": 0.0
+        },
+        "build_turn_accuracy": {
+          "den": 51,
+          "kind": "ratio",
+          "num": 50.0,
+          "value": 0.980392
+        },
+        "home_money_to_model": {
+          "den": 10,
+          "kind": "count",
+          "num": 0.0,
+          "value": 0.0
+        },
+        "home_route_accuracy": {
+          "den": 30,
+          "kind": "ratio",
+          "num": 30.0,
+          "value": 1.0
+        }
+      },
       "chat": {
         "amounts_removed": {
           "den": 77,

@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import Engine
 
 from konboro.db.session import app_engine
-from konboro.services import auth, flags, viewer
+from konboro.services import auth, flags, transcribe, viewer
 from konboro.services.llm import chat_providers
 from konboro.services.queue import Queue
 from konboro.services.storage import Storage
@@ -17,6 +17,7 @@ from . import errors
 from .routes import (
     account,
     audits,
+    build,
     chat,
     document,
     drawings,
@@ -48,6 +49,7 @@ ROUTERS = (
     onboarding.router,
     knowledge.router,
     chat.router,
+    build.router,
 )
 
 
@@ -74,6 +76,9 @@ def create_app(
     app.state.tile_indexes = viewer.TileIndexes()
     # The chat's model (08): Claude with a key; the stand-in in tests and locally without one (services.llm)
     app.state.llm_providers = llm_providers if llm_providers is not None else chat_providers(settings)
+    # The chat builder's speech to text (13 §4.2): the stand-in until Amazon Transcribe (S29)
+    app.state.transcriber = transcribe.transcriber()
+    app.state.transcriber_is_stand_in = app.state.transcriber.stand_in
     flags.cache.ttl = settings.flag_cache_seconds
 
     app.add_middleware(

@@ -1,0 +1,21 @@
+{
+  "answer": {
+    "input_tokens": 2418,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 76,
+    "payload": {
+      "changes": [],
+      "items": [
+        {
+          "panel": null,
+          "quantity": 2,
+          "quote": "שני מגענים תלת פאזיים ארבעים אמפר",
+          "text": "מגען 3P 40A"
+        }
+      ],
+      "question": null
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_bom_extraction"
+}

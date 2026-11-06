@@ -1,0 +1,21 @@
+{
+  "answer": {
+    "input_tokens": 2472,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 55,
+    "payload": {
+      "changes": [
+        {
+          "action": "set_qty",
+          "line": "L1",
+          "quantity": 6,
+          "quote": "תעשה שישה"
+        }
+      ],
+      "items": [],
+      "question": null
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_bom_extraction"
+}

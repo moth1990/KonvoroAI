@@ -65,6 +65,10 @@ def test_e2e_tenants_have_their_states(migrated_db: dict[str, Engine]) -> None:
         "export-desktop@e2e.konboro.local": (False, 12, "ok"),
         "export-mobile@e2e.konboro.local": (False, 12, "ok"),
         "s26-off@e2e.konboro.local": (False, 12, "ok"),
+        "build-desktop@e2e.konboro.local": (True, 12, "ok"),
+        "build-mobile@e2e.konboro.local": (True, 12, "ok"),
+        "build-off@e2e.konboro.local": (True, 12, "ok"),
+        "build-shots@e2e.konboro.local": (True, 12, "ok"),
     }
     sample = states["classic@e2e.konboro.local"][3]
     assert sample.queue_pending == 3

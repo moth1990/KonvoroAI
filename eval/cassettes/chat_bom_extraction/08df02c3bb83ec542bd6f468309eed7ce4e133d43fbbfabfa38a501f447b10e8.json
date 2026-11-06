@@ -1,0 +1,21 @@
+{
+  "answer": {
+    "input_tokens": 2411,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 72,
+    "payload": {
+      "changes": [],
+      "items": [
+        {
+          "panel": null,
+          "quantity": 8,
+          "quote": "מא\"ז C16 חד פאזי x8",
+          "text": "מא\"ז C16 1P"
+        }
+      ],
+      "question": null
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_bom_extraction"
+}

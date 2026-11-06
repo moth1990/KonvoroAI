@@ -1,0 +1,135 @@
+{
+  "about": "The chat builder's test set (13 §4.2, S27): messages an estimator types or says, each case a new build in a factory with the demo price list. After each turn `draft` is the whole draft as components (family, the values given, the quantity; `panel` when it matters), in any order. `question`: the turn should ask instead of adding. Written by Claude; grow it with estimators' own phrasing at the pilot.",
+  "cases": [
+    {"id": "t01", "kind": "typed", "turns": [{"say": "מפסק ראשי 4X63, 12 מא\"ז 1X16, פחת 4X40", "draft": [
+      {"family": "circuit_breaker", "attrs": {"current_a": 63, "poles": 4}, "qty": 1},
+      {"family": "circuit_breaker", "attrs": {"current_a": 16, "poles": 1}, "qty": 12},
+      {"family": "rcd", "attrs": {"current_a": 40, "poles": 4}, "qty": 1}]}]},
+    {"id": "t02", "kind": "typed", "turns": [{"say": "6 מא\"ז 1X10, 4 מא\"ז 1X16, 2 מא\"ז 3X20", "draft": [
+      {"family": "circuit_breaker", "attrs": {"current_a": 10, "poles": 1}, "qty": 6},
+      {"family": "circuit_breaker", "attrs": {"current_a": 16, "poles": 1}, "qty": 4},
+      {"family": "circuit_breaker", "attrs": {"current_a": 20, "poles": 3}, "qty": 2}]}]},
+    {"id": "t03", "kind": "typed", "turns": [{"say": "פחת 4X40 30mA ושני פחתים 2X25", "draft": [
+      {"family": "rcd", "attrs": {"current_a": 40, "poles": 4, "residual_ma": 30}, "qty": 1},
+      {"family": "rcd", "attrs": {"current_a": 25, "poles": 2}, "qty": 2}]}]},
+    {"id": "t04", "kind": "typed", "turns": [{"say": "3 מגענים 3X25", "draft": [
+      {"family": "contactor", "attrs": {"current_a": 25, "poles": 3}, "qty": 3}]}]},
+    {"id": "t05", "kind": "typed", "turns": [{"say": "מא\"ז C16 חד פאזי x8", "draft": [
+      {"family": "circuit_breaker", "attrs": {"current_a": 16, "poles": 1, "curve": "C"}, "qty": 8}]}]},
+    {"id": "t06", "kind": "typed", "turns": [{"say": "מפסק ראשי 3X100, 2 פחת 4X40, 18 מא\"ז 1X16, 6 מא\"ז 3X16", "draft": [
+      {"family": "circuit_breaker", "attrs": {"current_a": 100, "poles": 3}, "qty": 1},
+      {"family": "rcd", "attrs": {"current_a": 40, "poles": 4}, "qty": 2},
+      {"family": "circuit_breaker", "attrs": {"current_a": 16, "poles": 1}, "qty": 18},
+      {"family": "circuit_breaker", "attrs": {"current_a": 16, "poles": 3}, "qty": 6}]}]},
+    {"id": "t07", "kind": "typed", "turns": [{"say": "מגן ברק 4P", "draft": [
+      {"family": "surge_protector", "attrs": {"poles": 4}, "qty": 1}]}]},
+    {"id": "t08", "kind": "typed", "turns": [{"say": "שעון שבת ו-2 מגענים 1X16", "draft": [
+      {"family": "time_switch", "attrs": {}, "qty": 1},
+      {"family": "contactor", "attrs": {"current_a": 16, "poles": 1}, "qty": 2}]}]},
+    {"id": "t09", "kind": "typed", "turns": [{"say": "10 נוריות סימון", "draft": [
+      {"family": "indicator_lamp", "attrs": {}, "qty": 10}]}]},
+    {"id": "t10", "kind": "typed", "turns": [{"say": "מא\"ז משולב פחת 1X16 30mA x4", "draft": [
+      {"family": "rcbo", "attrs": {"current_a": 16, "poles": 1, "residual_ma": 30}, "qty": 4}]}]},
+    {"id": "t11", "kind": "typed", "turns": [{"say": "רב מודד ו-3 משני זרם 200/5", "draft": [
+      {"family": "energy_meter", "attrs": {}, "qty": 1},
+      {"family": "current_transformer", "attrs": {"ratio_primary_a": 200, "ratio_secondary_a": 5}, "qty": 3}]}]},
+    {"id": "t12", "kind": "typed", "turns": [{"say": "מנתק 3X63", "draft": [
+      {"family": "switch_disconnector", "attrs": {"current_a": 63, "poles": 3}, "qty": 1}]}]},
+    {"id": "t13", "kind": "typed", "turns": [{"say": "8 מא\"ז 1X16 10kA", "draft": [
+      {"family": "circuit_breaker", "attrs": {"current_a": 16, "poles": 1, "breaking_capacity_ka": 10}, "qty": 8}]}]},
+    {"id": "t14", "kind": "typed", "turns": [{"say": "פחת 4X63 300mA", "draft": [
+      {"family": "rcd", "attrs": {"current_a": 63, "poles": 4, "residual_ma": 300}, "qty": 1}]}]},
+    {"id": "t15", "kind": "typed", "turns": [{"say": "2 מגיני מנוע 2.5-4", "draft": [
+      {"family": "circuit_breaker", "attrs": {"range_min_a": 2.5, "range_max_a": 4}, "qty": 2}]}]},
+    {"id": "t16", "kind": "typed", "turns": [{"say": "מפסק 3X250 ומתחתיו 4 מא\"ז 3X32", "draft": [
+      {"family": "circuit_breaker", "attrs": {"current_a": 250, "poles": 3}, "qty": 1},
+      {"family": "circuit_breaker", "attrs": {"current_a": 32, "poles": 3}, "qty": 4}]}]},
+    {"id": "t17", "kind": "typed", "turns": [{"say": "לחצן חירום", "draft": [
+      {"family": "push_button", "attrs": {}, "qty": 1}]}]},
+    {"id": "t18", "kind": "typed", "turns": [{"say": "24 מא\"ז 1X20", "draft": [
+      {"family": "circuit_breaker", "attrs": {"current_a": 20, "poles": 1}, "qty": 24}]}]},
+    {"id": "t19", "kind": "typed", "turns": [{"say": "מגען 3X25 ב-120 ש\"ח, 4 יחידות", "draft": [
+      {"family": "contactor", "attrs": {"current_a": 25, "poles": 3}, "qty": 4}]}]},
+    {"id": "t20", "kind": "typed", "turns": [{"say": "MCB 1X16 x6 ו-RCD 4X40", "draft": [
+      {"family": "circuit_breaker", "attrs": {"current_a": 16, "poles": 1}, "qty": 6},
+      {"family": "rcd", "attrs": {"current_a": 40, "poles": 4}, "qty": 1}]}]},
+
+    {"id": "s01", "kind": "spoken", "turns": [{"say": "מפסק ראשי ארבע על שישים ושלוש, שנים עשר מא״ז אחד על שש עשרה, ארבעה מא״ז שלוש על עשרים וחמש, ופחת ארבע על ארבעים", "draft": [
+      {"family": "circuit_breaker", "attrs": {"current_a": 63, "poles": 4}, "qty": 1},
+      {"family": "circuit_breaker", "attrs": {"current_a": 16, "poles": 1}, "qty": 12},
+      {"family": "circuit_breaker", "attrs": {"current_a": 25, "poles": 3}, "qty": 4},
+      {"family": "rcd", "attrs": {"current_a": 40, "poles": 4}, "qty": 1}]}]},
+    {"id": "s02", "kind": "spoken", "turns": [{"say": "שישה מא״ז אחד על עשר וארבעה מא״ז אחד על שש עשרה", "draft": [
+      {"family": "circuit_breaker", "attrs": {"current_a": 10, "poles": 1}, "qty": 6},
+      {"family": "circuit_breaker", "attrs": {"current_a": 16, "poles": 1}, "qty": 4}]}]},
+    {"id": "s03", "kind": "spoken", "turns": [{"say": "מפסק ראשי שלוש על מאה, ופחת ארבע על ארבעים", "draft": [
+      {"family": "circuit_breaker", "attrs": {"current_a": 100, "poles": 3}, "qty": 1},
+      {"family": "rcd", "attrs": {"current_a": 40, "poles": 4}, "qty": 1}]}]},
+    {"id": "s04", "kind": "spoken", "turns": [{"say": "שלושה מגענים שלוש על עשרים וחמש", "draft": [
+      {"family": "contactor", "attrs": {"current_a": 25, "poles": 3}, "qty": 3}]}]},
+    {"id": "s05", "kind": "spoken", "turns": [{"say": "עשרים וארבעה מא״ז אחד על עשרים", "draft": [
+      {"family": "circuit_breaker", "attrs": {"current_a": 20, "poles": 1}, "qty": 24}]}]},
+    {"id": "s06", "kind": "spoken", "turns": [{"say": "פחת ארבע על שישים ושלוש שלוש מאות מילי אמפר", "draft": [
+      {"family": "rcd", "attrs": {"current_a": 63, "poles": 4, "residual_ma": 300}, "qty": 1}]}]},
+    {"id": "s07", "kind": "spoken", "turns": [{"say": "שני מא״ז שלוש על שלושים ושתיים עשרה קילו אמפר", "draft": [
+      {"family": "circuit_breaker", "attrs": {"current_a": 32, "poles": 3, "breaking_capacity_ka": 10}, "qty": 2}]}]},
+    {"id": "s08", "kind": "spoken", "turns": [{"say": "מפסק ראשי ארבע על מאה עשרים וחמש", "draft": [
+      {"family": "circuit_breaker", "attrs": {"current_a": 125, "poles": 4}, "qty": 1}]}]},
+    {"id": "s09", "kind": "spoken", "turns": [{"say": "שמונה מא״זים חד פאזיים שש עשרה אמפר", "draft": [
+      {"family": "circuit_breaker", "attrs": {"current_a": 16, "poles": 1}, "qty": 8}]}]},
+    {"id": "s10", "kind": "spoken", "turns": [{"say": "מגן ברק ארבעה קטבים", "draft": [
+      {"family": "surge_protector", "attrs": {"poles": 4}, "qty": 1}]}]},
+    {"id": "s11", "kind": "spoken", "turns": [{"say": "שתים עשרה נוריות סימון", "draft": [
+      {"family": "indicator_lamp", "attrs": {}, "qty": 12}]}]},
+    {"id": "s12", "kind": "spoken", "turns": [{"say": "שני מגענים תלת פאזיים ארבעים אמפר", "draft": [
+      {"family": "contactor", "attrs": {"current_a": 40, "poles": 3}, "qty": 2}]}]},
+
+    {"id": "m01", "kind": "multi", "turns": [
+      {"say": "מפסק ראשי 4X63, 12 מא\"ז 1X16, פחת 4X40", "draft": [
+        {"family": "circuit_breaker", "attrs": {"current_a": 63, "poles": 4}, "qty": 1},
+        {"family": "circuit_breaker", "attrs": {"current_a": 16, "poles": 1}, "qty": 12},
+        {"family": "rcd", "attrs": {"current_a": 40, "poles": 4}, "qty": 1}]},
+      {"say": "לא 12, 10", "draft": [
+        {"family": "circuit_breaker", "attrs": {"current_a": 63, "poles": 4}, "qty": 1},
+        {"family": "circuit_breaker", "attrs": {"current_a": 16, "poles": 1}, "qty": 10},
+        {"family": "rcd", "attrs": {"current_a": 40, "poles": 4}, "qty": 1}]},
+      {"say": "תוריד את הפחת", "draft": [
+        {"family": "circuit_breaker", "attrs": {"current_a": 63, "poles": 4}, "qty": 1},
+        {"family": "circuit_breaker", "attrs": {"current_a": 16, "poles": 1}, "qty": 10}]}]},
+    {"id": "m02", "kind": "multi", "turns": [
+      {"say": "6 מא\"ז 1X16", "draft": [{"family": "circuit_breaker", "attrs": {"current_a": 16, "poles": 1}, "qty": 6}]},
+      {"say": "עוד שניים כאלה", "draft": [{"family": "circuit_breaker", "attrs": {"current_a": 16, "poles": 1}, "qty": 8}]}]},
+    {"id": "m03", "kind": "multi", "turns": [
+      {"say": "4 מגענים 3X25", "draft": [{"family": "contactor", "attrs": {"current_a": 25, "poles": 3}, "qty": 4}]},
+      {"say": "ועוד 2 מגענים 3X25", "draft": [{"family": "contactor", "attrs": {"current_a": 25, "poles": 3}, "qty": 6}]}]},
+    {"id": "m04", "kind": "multi", "turns": [
+      {"say": "מפסק 4X100 ו-2 פחת 4X40", "draft": [
+        {"family": "circuit_breaker", "attrs": {"current_a": 100, "poles": 4}, "qty": 1},
+        {"family": "rcd", "attrs": {"current_a": 40, "poles": 4}, "qty": 2}]},
+      {"say": "בלוח 2: 12 מא\"ז 1X16", "draft": [
+        {"family": "circuit_breaker", "attrs": {"current_a": 100, "poles": 4}, "qty": 1},
+        {"family": "rcd", "attrs": {"current_a": 40, "poles": 4}, "qty": 2},
+        {"family": "circuit_breaker", "attrs": {"current_a": 16, "poles": 1}, "qty": 12, "panel": "לוח 2"}]}]},
+    {"id": "m05", "kind": "multi", "turns": [
+      {"say": "מפסק ראשי", "question": true, "draft": []},
+      {"say": "63 אמפר, 4 קטבים", "draft": [{"family": "circuit_breaker", "attrs": {"current_a": 63, "poles": 4}, "qty": 1}]}]},
+    {"id": "m06", "kind": "multi", "turns": [
+      {"say": "פחת 4X40 ו-6 מא\"ז 1X10", "draft": [
+        {"family": "rcd", "attrs": {"current_a": 40, "poles": 4}, "qty": 1},
+        {"family": "circuit_breaker", "attrs": {"current_a": 10, "poles": 1}, "qty": 6}]},
+      {"say": "בעצם 8 מא\"ז ולא 6", "draft": [
+        {"family": "rcd", "attrs": {"current_a": 40, "poles": 4}, "qty": 1},
+        {"family": "circuit_breaker", "attrs": {"current_a": 10, "poles": 1}, "qty": 8}]}]},
+    {"id": "m07", "kind": "multi", "turns": [
+      {"say": "3 מגענים 3X25 ושעון שבת", "draft": [
+        {"family": "contactor", "attrs": {"current_a": 25, "poles": 3}, "qty": 3},
+        {"family": "time_switch", "attrs": {}, "qty": 1}]},
+      {"say": "בלי שעון שבת", "draft": [{"family": "contactor", "attrs": {"current_a": 25, "poles": 3}, "qty": 3}]}]},
+    {"id": "m08", "kind": "multi", "turns": [
+      {"say": "ארבעה מא״ז אחד על שש עשרה", "draft": [{"family": "circuit_breaker", "attrs": {"current_a": 16, "poles": 1}, "qty": 4}]},
+      {"say": "תעשה שישה", "draft": [{"family": "circuit_breaker", "attrs": {"current_a": 16, "poles": 1}, "qty": 6}]}]},
+
+    {"id": "n01", "kind": "none", "turns": [{"say": "שלום, אפשר עזרה?", "draft": []}]},
+    {"id": "n02", "kind": "none", "turns": [{"say": "כמה עולה מגען?", "draft": []}]}
+  ]
+}

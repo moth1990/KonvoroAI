@@ -56,7 +56,12 @@ type Props = {
   onShowInstance: (instance: ChatInstance) => void;
   onApplied: (done: ChatApply) => void;
   toast: (text: string) => void;
+  /** A question asked on the chat home (13 §4.3, S27), sent once when the conversation has loaded: its token is
+   * remembered, so the panel opening again (or React's dev double mount) never sends it twice. */
+  initialQuestion?: { token: string; text: string } | null;
 };
+
+const askedFromHome = new Set<string>();
 
 const placed = (m: ChatMessage, ids: string[] | null | undefined): ChatInstance[] =>
   (ids ?? []).map((i) => m.instances?.[i]).filter((x): x is ChatInstance => !!x);
@@ -76,6 +81,7 @@ export function ChatPanel({
   onShowInstance,
   onApplied,
   toast,
+  initialQuestion,
 }: Props) {
   const quoteId = quote.quote_id;
   const qc = useQueryClient();
@@ -127,6 +133,13 @@ export function ChatPanel({
     if (!q.trim() || send.isPending) return;
     send.mutate(q.trim());
   };
+  const loaded = Boolean(chat.data);
+  useEffect(() => {
+    if (!initialQuestion || !loaded || askedFromHome.has(initialQuestion.token)) return;
+    askedFromHome.add(initialQuestion.token);
+    ask(initialQuestion.text);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- once per question home sent
+  }, [initialQuestion, loaded]);
   const submit = (e: FormEvent) => {
     e.preventDefault();
     const q = text;

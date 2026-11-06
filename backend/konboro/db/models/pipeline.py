@@ -39,6 +39,9 @@ class Project(Base, TenantScoped, Timestamps):
     name: Mapped[str]
 
 
+DRAWING_ORIGINS = ("upload", "chat")
+
+
 class Drawing(Base, TenantScoped, Timestamps):
     """01 §6.2."""
 
@@ -49,6 +52,7 @@ class Drawing(Base, TenantScoped, Timestamps):
         tenant_fk("revision_of", "drawings"),
         tenant_fk("created_by", "users"),
         one_of("purpose", ("quote", "audit")),
+        one_of("origin", DRAWING_ORIGINS),
         one_of("status", ("uploaded", "processing", "awaiting_confirmation", "ready", "failed", "cancelled")),
         CheckConstraint(
             "input_kind IS NULL OR input_kind IN ('factory_drawing', 'designer_plan', 'bom_only', 'mixed')",
@@ -62,6 +66,8 @@ class Drawing(Base, TenantScoped, Timestamps):
     project_id: Mapped[str | None]
     revision_of: Mapped[str | None]
     purpose: Mapped[str] = mapped_column(server_default="quote")
+    # `chat`: built on /build from a conversation, with no files; its stages run in the request (S27)
+    origin: Mapped[str] = mapped_column(server_default="upload")
     status: Mapped[str] = mapped_column(server_default="uploaded")
     input_kind: Mapped[str | None]
     current_stage: Mapped[int | None] = mapped_column(SmallInteger)

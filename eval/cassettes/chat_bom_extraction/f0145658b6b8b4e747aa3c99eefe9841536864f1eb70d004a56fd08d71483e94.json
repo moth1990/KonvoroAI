@@ -1,0 +1,27 @@
+{
+  "answer": {
+    "input_tokens": 2414,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 100,
+    "payload": {
+      "changes": [],
+      "items": [
+        {
+          "panel": null,
+          "quantity": 1,
+          "quote": "רב מודד",
+          "text": "רב מודד"
+        },
+        {
+          "panel": null,
+          "quantity": 3,
+          "quote": "3 משני זרם 200/5",
+          "text": "משנה זרם 200/5"
+        }
+      ],
+      "question": null
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_bom_extraction"
+}

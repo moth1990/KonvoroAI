@@ -40,5 +40,6 @@ def test_llm_gateway_has_a_route_for_every_stage_key() -> None:
         "chat_compaction",
         "chat_bom_extraction",
         "line_explanation",
+        "home_intent",  # the chat home's routing (13 §4.3, S27)
     }
     assert set(ROUTES) == expected

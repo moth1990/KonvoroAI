@@ -514,7 +514,7 @@ def run_bom(ctx: StageContext, intake: IntakeResult, cfg: AssociationConfig = DE
     panel_ids = {name_key(p.name): p.panel_id for p in intake.panels}
     fallback = intake.title_block.panel_name if intake.title_block else None
     found = bom.rows(tables, panel_ids, fallback, sch, cfg)
-    comps = bom.components(ctx.drawing.id, found, cfg)
+    comps = bom.components(ctx.drawing.id, found, cfg, by_row=any(t.source == "chat" for _, t in tables))
     owner = {i: c.component_id for c in comps for i in c.instance_ids}
     instances = [r.instance.model_copy(update={"component_id": owner.get(r.instance.instance_id)}) for r in found]
     _store(

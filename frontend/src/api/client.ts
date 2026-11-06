@@ -693,3 +693,79 @@ export async function dismissProposal(proposalId: string, client = api): Promise
     await client.POST("/chat/proposals/{proposal_id}/dismiss", { params: { path: { proposal_id: proposalId } } }),
   );
 }
+
+// --- the chat quote builder (13 §4.2, S27) ---------------------------------------------------------------------------
+
+export type Build = Schemas["BuildOut"];
+export type BuildMessage = Schemas["BuildMessageOut"];
+
+/** The first message starts the build; the quote exists from its first line (S27 decision 2). */
+export async function startBuild(text: string, client = api): Promise<Build> {
+  return unwrap(await client.POST("/builds", { body: { text } }));
+}
+
+export async function fetchBuild(drawingId: string, client = api): Promise<Build> {
+  return unwrap(await client.GET("/builds/{drawing_id}", { params: { path: { drawing_id: drawingId } } }));
+}
+
+export async function sendBuildMessage(drawingId: string, text: string, client = api): Promise<Build> {
+  return unwrap(
+    await client.POST("/builds/{drawing_id}/messages", { params: { path: { drawing_id: drawingId } }, body: { text } }),
+  );
+}
+
+/** "הוסף" (apply) or "תקן" (dismiss) on a recording's card (S27 decision 1). */
+export async function settleBuildMessage(
+  drawingId: string,
+  messageId: string,
+  how: "apply" | "dismiss",
+  client = api,
+): Promise<Build> {
+  const params = { path: { drawing_id: drawingId, message_id: messageId } };
+  return unwrap(
+    how === "apply"
+      ? await client.POST("/builds/{drawing_id}/messages/{message_id}/apply", { params })
+      : await client.POST("/builds/{drawing_id}/messages/{message_id}/dismiss", { params }),
+  );
+}
+
+export async function undoBuild(drawingId: string, client = api): Promise<Build> {
+  return unwrap(await client.POST("/builds/{drawing_id}/undo", { params: { path: { drawing_id: drawingId } } }));
+}
+
+// --- the chat home's routing (13 §4.3, S27) --------------------------------------------------------------------------
+
+export type HomeRoute = Schemas["HomeRouteOut"];
+export type HomeChoice = Schemas["HomeChoiceOut"];
+
+export async function routeHomeRequest(text: string, client = api): Promise<HomeRoute> {
+  return unwrap(await client.POST("/home/route", { body: { text } }));
+}
+
+/** A recording, transcribed on the server and never stored; what was heard waits for "הוסף" (S27 decision 1). */
+export async function sendBuildVoice(
+  drawingId: string | null,
+  audio: Blob,
+  seconds: number,
+  client = api,
+): Promise<Build> {
+  const data = new FormData();
+  const ext = audio.type.includes("mp4") ? "m4a" : audio.type.includes("ogg") ? "ogg" : "webm";
+  data.append("recording", audio, `recording.${ext}`);
+  data.append("seconds", seconds.toFixed(1));
+  const bodySerializer = (body: unknown) => body as FormData;
+  if (!drawingId)
+    return unwrap(
+      await client.POST("/builds/voice", {
+        body: data as unknown as Schemas["Body_start_build_by_voice_builds_voice_post"],
+        bodySerializer,
+      }),
+    );
+  return unwrap(
+    await client.POST("/builds/{drawing_id}/voice", {
+      params: { path: { drawing_id: drawingId } },
+      body: data as unknown as Schemas["Body_send_build_voice_builds__drawing_id__voice_post"],
+      bodySerializer,
+    }),
+  );
+}

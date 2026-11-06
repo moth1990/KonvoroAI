@@ -1,0 +1,25 @@
+{
+  "answer": {
+    "input_tokens": 2430,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 114,
+    "payload": {
+      "changes": [],
+      "items": [
+        {
+          "quantity": 6,
+          "quote": "שישה מא״ז אחד על עשר",
+          "text": "מא\"ז 1X10A"
+        },
+        {
+          "quantity": 4,
+          "quote": "ארבעה מא״ז אחד על שש עשרה",
+          "text": "מא\"ז 1X16A"
+        }
+      ],
+      "question": null
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_bom_extraction"
+}

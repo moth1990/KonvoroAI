@@ -207,6 +207,7 @@ This table answers the customer's question "why was this counted?".
 | --- | --- |
 | `project_id → projects null`, `revision_of → drawings null` | |
 | `purpose` | `quote` or `audit` (11). It decides which quota counter is used |
+| `origin` | `upload` (files, through the pipeline's queues) or `chat`: a build on `/build` (13 §4.2, migration 0024, S27). A chat drawing is `bom_only`, has no files and no `pages` rows, one panel or more, and its stages 4–7 run in the request after each message (`pipeline/inline.py`). Its rows are its stage-1 `bom_table` artifact of source `chat`, whose `page_id` stands for the conversation (no `pages` row) |
 | `status` | `uploaded`, `processing`, `awaiting_confirmation`, `ready`, `failed`, `cancelled` |
 | `input_kind null` | `factory_drawing`, `designer_plan`, `bom_only`, `mixed`. Set by stage 1 |
 | `current_stage smallint null`, `progress real` | What the "run" screen shows |
@@ -268,7 +269,7 @@ This table answers the customer's question "why was this counted?".
 ### 6.1 Quotes (07 §6, §7.7)
 
 **`quotes`** (`quo_`):
-- `drawing_id → drawings null`. It is `null` for a quote built in chat or by hand.
+- `drawing_id → drawings null`. A quote built in chat has one too: its drawing of `origin` = `chat` (S27 design 1), so the review screen's actions, picker, overlay and export work on it. `null` is for a quote built by hand.
 - `customer_id`, `project_id`, `name`.
 - `current_version int`.
 
@@ -379,6 +380,10 @@ The rest of the price-list tables:
 - **`chat_messages`** (`msg_`): `conversation_id`, `role`, `content jsonb`, `tokens`.
   - A user message's `content`: `seq`, `text`, `model_text` (with the screen context, as the model got it), `ui_context`.
   - An assistant message's: `seq`, `blocks` (08 §8.1, line references as ids), `answer_text` (as the model wrote it), `tool_summaries` (one line per call, what later turns get, 08 §5.2.1), `tool_calls` (each tool with its arguments, 08 §10's log), `money_refs`, `instances` (where each instance the answer points at is, page and bbox, S25b), `errors` (`invalid_ref`, `amount_removed`, `tool_failed`).
+- **`build_messages`** (`bmg_`, 13 §4.2, migration 0024, S27): a chat build's conversation, by `drawing_id` (cascade), since the quote exists only from the first line (S27 decision 2).
+  - `role` (`user` or `assistant`), `status` (`applied`, `pending`: a recording waiting for "הוסף"; `dismissed`: "תקן"; `undone`), `content jsonb`.
+  - A user message's `content`: `text`, `heard` (what a recording was heard as; the recording itself is never stored), `items` and `changes` the code check kept (a change with its `line_id`), `dropped` (with why), `question` (the model's, short names replaced by descriptions), and `rows`: the build's rows after it, on a message that changed them. The build's rows are its last applied message's; undo marks that message `undone`.
+  - An assistant message's: `text`, the reply written in code.
 - **`chat_proposals`** (`prp_`, 08 §7.1):
   - `quote_id`, `conversation_id`, `base_version`, `base_revision`, `summary_he`, `changes jsonb`, `diff jsonb`, `remember_default`.
   - `changes`: each change with the lines it applies to, as ids and line keys, resolved once by code (`chat.proposals.resolve`). `diff`: lines changed, added, removed and derived, totals before and after and new and resolved findings, every amount a money reference of the conversation.
@@ -423,7 +428,7 @@ Added here:
 | `cnv_` | conversation | `msg_` | chat message |
 | `prp_` | chat proposal | `aud_` | audit |
 | `dif_` | audit difference | `kc_` | knowledge candidate |
-| `aql_` | audited quote line | | |
+| `aql_` | audited quote line | `bmg_` | chat build message |
 | `tpl_` | factory page template | | |
 | `cat_` | catalog item | `ref_` | reference crop (global) |
 | `trf_` | reference crop (tenant) | `abr_` | abbreviation (global) |

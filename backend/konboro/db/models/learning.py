@@ -154,6 +154,28 @@ class ChatMessage(Base, TenantScoped, Created):
     tokens: Mapped[int | None]
 
 
+class BuildMessage(Base, TenantScoped, Created):
+    """A message of a chat build (13 §4.2, S27), by drawing: the quote exists only from the first line. A user
+    message's `content` keeps its text, what a recording was heard as, the items and changes the code check kept, and
+    the build's rows before it (undo); the assistant's keeps the reply. `pending`: a recording waiting for "הוסף"
+    (S27 decision 1)."""
+
+    __tablename__ = "build_messages"
+    __table_args__ = (
+        tenant_unique(),
+        tenant_fk("drawing_id", "drawings", ondelete="CASCADE"),
+        one_of("role", ("user", "assistant")),
+        one_of("status", ("applied", "pending", "dismissed", "undone")),
+        Index(None, "tenant_id", "drawing_id", "created_at"),
+    )
+
+    id: Mapped[str] = pk()
+    drawing_id: Mapped[str]
+    role: Mapped[str]
+    content: Mapped[dict[str, Any]]
+    status: Mapped[str] = mapped_column(server_default="applied")
+
+
 class ChatProposal(Base, TenantScoped, Timestamps):
     """08 §7.1. Expires when the quote's revision moves past base_revision."""
 

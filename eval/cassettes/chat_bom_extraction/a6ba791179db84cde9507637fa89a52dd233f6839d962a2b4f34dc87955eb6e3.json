@@ -1,0 +1,20 @@
+{
+  "answer": {
+    "input_tokens": 2486,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 48,
+    "payload": {
+      "changes": [
+        {
+          "action": "remove",
+          "line": "L2",
+          "quote": "בלי שעון שבת"
+        }
+      ],
+      "items": [],
+      "question": null
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_bom_extraction"
+}

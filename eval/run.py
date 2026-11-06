@@ -51,6 +51,7 @@ from konboro.settings import Settings
 from konboro_llm import LLMClient
 
 from . import backtest, chat, compare, report
+from . import build as builder
 from .canonical import GoldenDrawing, Prediction
 from .labelled import labelled_matches
 from .normalizers import GOLDEN, load_all
@@ -205,6 +206,7 @@ def evaluate(
     labels = load_all(golden)
     runs = [(label, *run_drawing(pipeline, tenant_id, user_id, label, golden)) for label in labels]
     chat_scores, chat_rows = chat.run(engine, storage, providers)  # the chat's test set (08 §13.1, S25)
+    build_scores, build_rows, home_rows = builder.run(engine, storage, providers)  # 13 §4.2–4.3 (S27)
     engine.dispose()
     # the backtest's date is fixed, so a replay prices the same to the agora (07 §10.1)
     priced = backtest.run([mat for _, _, mat in runs if mat is not None], BACKTEST_DATE)
@@ -212,6 +214,9 @@ def evaluate(
     out = report.build(results)
     out["totals"]["all"][chat.SECTION] = {k: v.model_dump() for k, v in chat_scores.items()}
     out["chat_cases"] = chat_rows
+    out["totals"]["all"][builder.SECTION] = {k: v.model_dump() for k, v in build_scores.items()}
+    out["build_cases"] = build_rows
+    out["home_cases"] = home_rows
     return out
 
 
@@ -260,6 +265,7 @@ def main(argv: list[str] | None = None) -> int:
     }
 
     md = report.markdown(result) + "\n" + chat.markdown(result["totals"]["all"][chat.SECTION], result["chat_cases"])
+    md += "\n" + builder.markdown(result["totals"]["all"][builder.SECTION], result["build_cases"], result["home_cases"])
     comparison = None
     if not args.no_compare and args.baseline.exists():
         comparison = compare.compare(result, json.loads(args.baseline.read_text(encoding="utf-8")))

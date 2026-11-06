@@ -25,6 +25,15 @@ The chat coordinator (08, S25) follows a short script on the review screen's sug
 deleting or setting the quantity of the selected lines (`propose_change`). Anything else gets a fixed answer that
 says so. Its answers name the lines and the first line's total by the references the tools gave it.
 
+The chat builder's extraction (13 §4.2, S27) reads the message the way the prototype's `parseBom` does, in code:
+number words become digits and "על" between numbers an X; each product word starts a line, with the number before
+it as the quantity and what follows up to the next comma or "ו" as its values; "בלוח N" names the panel of what
+follows. "לא A, B" sets the line of quantity A to B, "עוד N כאלה" adds N to the last line, and "תוריד את …" removes
+the first line whose description has that word. Every quote is the whole message.
+
+The chat home's routing (13 §4.3, S27) is a few words: "הצעה ששלחתי" an audit, "מחיר" the price list, "ההצעה" a
+question about a quote, "לבנות" or "לוח" a build; anything else unclear.
+
 A picture of a BOM (01 §5.8) reads as a short handwritten form for "לוח קומה 1": quantity and item columns, three
 items, the third continued on the next row, and the last row clear of the image's edge. A spreadsheet's unknown
 headers map by position: the first column is the item, the second the quantity.
@@ -40,9 +49,11 @@ from PIL import Image
 from konboro_llm import LLMRequest
 from konboro_llm.providers import FakeProvider
 from konboro_llm.stages.catalog_disambiguation import STAGE as CATALOG
+from konboro_llm.stages.chat_bom_extraction import STAGE as BUILD
 from konboro_llm.stages.chat_command import STAGE as CHAT
 from konboro_llm.stages.chat_compaction import STAGE as COMPACT
 from konboro_llm.stages.context_extraction import GeneralNotes
+from konboro_llm.stages.home_intent import STAGE as HOME
 from konboro_llm.stages.line_explanation import STAGE as EXPLAIN
 from konboro_llm.stages.ocr_transcription import STAGE as OCR
 from konboro_llm.stages.page_classification import STAGE as CLASSIFY
@@ -198,6 +209,64 @@ def bom_table(request: LLMRequest[Any]) -> dict[str, Any]:
     }
 
 
+_LINE = re.compile(r"^(L\d+): (.*) × (\d+)$", re.M)
+_SET = re.compile(r"לא\s+(\d+)\s*,?\s*(?:אלא\s+)?(\d+)")
+_MORE = re.compile(r"עוד\s+(\d+)\s+(?:כאלה|כאלו|מאותו)")
+_REMOVE = re.compile(r"(?:תוריד|תמחק|הורד|מחק)\s+(?:את\s+)?(?:ה)?(\S+)")
+_PANEL = re.compile(r"ב?לוח\s+(\S+?)[:,]?(?=\s|$)")
+
+
+def build_lines(request: LLMRequest[Any]) -> dict[str, Any]:
+    from konboro.pipeline.bom import numbers, terms
+
+    text = request.user_text
+    message = text.split("Message:\n", 1)[-1]
+    lines = [(m[1], m[2], int(m[3])) for m in _LINE.finditer(text.split("Message:\n", 1)[0])]
+    said = numbers.in_digits(message).replace("×", "X")
+    said = re.sub(r"(\d+)\s*(?:על|x|X)\s*(\d+)", r"\1X\2", said)
+    changes: list[dict[str, Any]] = []
+    if (m := _SET.search(said)) and (hit := next((n for n, _, q in lines if q == int(m[1])), None)):
+        changes.append({"line": hit, "action": "set_qty", "quantity": int(m[2]), "quote": message})
+        said = said.replace(m[0], " ")
+    if (m := _MORE.search(said)) and lines:
+        changes.append({"line": lines[-1][0], "action": "add_qty", "quantity": int(m[1]), "quote": message})
+        said = said.replace(m[0], " ")
+    for m in _REMOVE.finditer(said):
+        word = m[1].strip(",.")
+        hit = next((n for n, d, _ in lines if word and word in d.split(" (נאמר:")[0]), None)
+        if hit:
+            changes.append({"line": hit, "action": "remove", "quote": message})
+        said = said.replace(m[0], " ")
+    t = re.sub(r"(\d)x(\d)", r"\1X\2", terms.norm(said))
+    t = re.sub(r"(^|[\s,:])ו(?=\S)", r"\1", t)  # "ופחת": the "and" before a product word
+    found = terms.families_in(t)
+    starts = [start for _, _, start in found]
+    panels = [(m.start(), f"לוח {m[1]}") for m in _PANEL.finditer(t)]
+    items: list[dict[str, Any]] = []
+    for i, start in enumerate(starts):
+        stop = starts[i + 1] if i + 1 < len(starts) else len(t)
+        segment = re.split(r",|\s+ו(?=\S)", t[start:stop])[0]
+        segment = re.sub(r"\s\d+$", "", _PANEL.sub("", segment).strip(" ,.:"))  # the next product's count
+        before = t[starts[i - 1] if i else 0 : start]
+        qty = re.search(r"(?:^|[\s,:])(\d+)\s*$", before)
+        panel = next((name for at, name in reversed(panels) if at < start), None)
+        items.append({"text": segment, "quantity": int(qty[1]) if qty else 1, "panel": panel, "quote": message.strip()})
+    return {"items": items, "changes": changes, "question": None}
+
+
+def home_route(request: LLMRequest[Any]) -> dict[str, Any]:
+    text = request.user_text.split("\n", 1)[-1]
+    for words, intent in (
+        (("ששלחתי", "לבדוק"), "audit"),
+        (("מחיר",), "price_list"),
+        (("ההצעה", "בהצעה"), "quote_question"),
+        (("לבנות", "לוח"), "build"),
+    ):
+        if any(w in text for w in words):
+            return {"intent": intent, "confidence": 0.8}
+    return {"intent": "unclear", "confidence": 0.5}
+
+
 CHAT_UNKNOWN = "זו תשובה של מודל הדמה: הוא מכיר רק את הפקודות שמתחת לחלון."
 _SELECTED = re.compile(r"selected lines ([L0-9, ]+)")
 _QTY = re.compile(r"(\d+)")
@@ -342,6 +411,10 @@ def answer(request: Any) -> dict[str, Any]:
         return tile_agent(request)
     if request.stage == TABLE:
         return bom_table(request)
+    if request.stage == BUILD:
+        return build_lines(request)
+    if request.stage == HOME:
+        return home_route(request)
     if request.stage == CATALOG:
         return catalog_choice(request)
     if request.stage == REVIEW:

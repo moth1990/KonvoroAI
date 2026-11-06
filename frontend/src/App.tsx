@@ -3,6 +3,7 @@ import { Navigate, Outlet, Route, Routes, useLocation } from "react-router";
 import { useMe } from "./api/QueryProvider";
 import { AuthBridge, RequireAuth } from "./auth/auth";
 import { AuditScreen } from "./screens/audit/Audit";
+import { BuildScreen } from "./screens/build/Build";
 import { NewAuditScreen } from "./screens/audit/NewAudit";
 import { HomeScreen } from "./screens/Home";
 import { LoginScreen } from "./screens/Login";
@@ -18,7 +19,7 @@ import { WelcomeScreen } from "./screens/welcome/Welcome";
 function BuildRoute() {
   const me = useMe();
   if (!me.data) return null;
-  return me.data.flags.chat_quote_builder ? <Placeholder screen="build" /> : <Navigate to="/home" replace />;
+  return me.data.flags.chat_quote_builder ? <BuildScreen /> : <Navigate to="/home" replace />;
 }
 
 /** The audit (S16) is behind `quote_audit`, evaluated on the server (13 §3); off, `/audit` stays a placeholder. */
@@ -83,7 +84,7 @@ export default function App() {
             <Route path="/prices" element={<PricesRoute />} />
             <Route path="/queue" element={<QueueRoute />} />
             <Route path="/prefs" element={<PrefsRoute />} />
-            <Route path="/build" element={<BuildRoute />} />
+            <Route path="/build/:drawingId?" element={<BuildRoute />} />
             <Route path="*" element={<Navigate to="/home" replace />} />
           </Route>
         </Route>

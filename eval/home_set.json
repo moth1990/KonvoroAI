@@ -1,0 +1,40 @@
+{
+  "about": "The chat home's routing set (13 §4.3, S27): requests typed on \"מה בונים היום?\" in a factory with three quotes (NURSERY-1, and two industrial-kitchen panels), each with where it should go: a path, `quote:<key>` (that quote's review, the chat open), `quote:latest` (the quote changed last), or `ask` (a short question with choices); a list when more than one is right. Written by Claude.",
+  "quotes": {
+    "nursery": {"name": "NURSERY-1_merged.pdf", "project": "גן ילדים, לוח ראשי", "customer": "קבלן לדוגמה בע\"מ"},
+    "kitchen1": {"name": "מטבח תעשייתי - לוח 1.pdf"},
+    "kitchen2": {"name": "מטבח תעשייתי - לוח 2.pdf"}
+  },
+  "cases": [
+    {"id": "h01", "say": "בנה הצעה ללוח 3 פאזות 63A עם 12 מא\"ז 1X16", "to": "/build"},
+    {"id": "h02", "say": "6 מא\"ז 1X16 ופחת 4X40", "to": "/build"},
+    {"id": "h03", "say": "שנים עשר מא״ז אחד על שש עשרה", "to": "/build"},
+    {"id": "h04", "say": "לוח מטבח: 4 מא\"ז 1X16, פחת 2X25", "to": "/build"},
+    {"id": "h05", "say": "רוצה לבנות הצעה ללוח חדש בלי שרטוט", "to": "/build"},
+    {"id": "h06", "say": "אני צריך הצעה ללוח של דירה, אתאר לך מה יש בו", "to": "/build"},
+    {"id": "h07", "say": "בדוק את הצעה 10271 מול השרטוט", "to": "/audit"},
+    {"id": "h08", "say": "תבדוק לי את ההצעה ששלחתי ללקוח מול השרטוט שלו", "to": "/audit"},
+    {"id": "h09", "say": "יש לי הצעה ישנה, אפשר לבדוק אם חסר בה משהו לפי השרטוט?", "to": "/audit"},
+    {"id": "h10", "say": "בדיקת הצעה", "to": "/audit"},
+    {"id": "h11", "say": "אילו מחירים חסרים במחירון?", "to": "/prices"},
+    {"id": "h12", "say": "פתח את המחירון", "to": "/prices"},
+    {"id": "h13", "say": "כמה עולה אצלי מגען 3X25?", "to": "/prices"},
+    {"id": "h14", "say": "לעדכן מחיר של מא\"ז", "to": "/prices"},
+    {"id": "h15", "say": "יש לי שרטוט חדש", "to": "/new"},
+    {"id": "h16", "say": "להעלות קובץ PDF של לוח", "to": "/new"},
+    {"id": "h17", "say": "קיבלתי שרטוט מהמתכנן, תכין הצעה", "to": "/new"},
+    {"id": "h18", "say": "מה חסר בהצעה של NURSERY?", "to": "quote:nursery"},
+    {"id": "h19", "say": "כמה מא\"זים יש בהצעה של NURSERY?", "to": "quote:nursery"},
+    {"id": "h20", "say": "למה ההצעה של מטבח תעשייתי - לוח 1 אדומה?", "to": "quote:kitchen1"},
+    {"id": "h21", "say": "תשנה את ההצעה של NURSERY לשניידר", "to": "quote:nursery"},
+    {"id": "h22", "say": "מה חסר בהצעה של גן הילדים?", "to": "quote:nursery"},
+    {"id": "h23", "say": "מה חסר במטבח התעשייתי?", "to": "ask"},
+    {"id": "h24", "say": "תשנה את ההצעה האחרונה לשניידר", "to": "quote:latest"},
+    {"id": "h25", "say": "שלום", "to": "ask"},
+    {"id": "h26", "say": "מה אתה יודע לעשות?", "to": "ask"},
+    {"id": "h27", "say": "עזרה", "to": "ask"},
+    {"id": "h28", "say": "כן", "to": "ask"},
+    {"id": "h29", "say": "תכין לי הצעה", "to": "ask"},
+    {"id": "h30", "say": "מגען", "to": ["ask", "/build", "/prices"]}
+  ]
+}

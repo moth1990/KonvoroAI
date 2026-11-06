@@ -1,0 +1,30 @@
+{
+  "answer": {
+    "input_tokens": 2432,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 145,
+    "payload": {
+      "changes": [],
+      "items": [
+        {
+          "quantity": 6,
+          "quote": "6 מא\"ז 1X10",
+          "text": "מא\"ז 1X10A"
+        },
+        {
+          "quantity": 4,
+          "quote": "4 מא\"ז 1X16",
+          "text": "מא\"ז 1X16A"
+        },
+        {
+          "quantity": 2,
+          "quote": "2 מא\"ז 3X20",
+          "text": "מא\"ז 3X20A"
+        }
+      ],
+      "question": null
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_bom_extraction"
+}

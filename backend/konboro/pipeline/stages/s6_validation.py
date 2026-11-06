@@ -149,7 +149,8 @@ def run(ctx: StageContext) -> ValidationResult:
 
         return AgentCall(look, size, to_points if pic else None, page_id)
 
-    result = validate(drawing, pack, sch, agent_for, ctx.trace_id)
+    # A chat build runs stage 6 on every message: the data rules only, no `validator_review` call (01 §5.8 item 3)
+    result = validate(drawing, pack, sch, agent_for if ctx.drawing.origin != "chat" else None, ctx.trace_id)
     known_panels = set(ctx.session.scalars(select(m.Panel.id).where(m.Panel.drawing_id == ctx.drawing.id)))
     write_findings(ctx, result, {p.page_id for p in intake.pages}, known_panels)
     counts = {s: sum(1 for i in result.issues if i.severity == s) for s in ("error", "warning", "info")}

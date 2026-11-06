@@ -1,0 +1,30 @@
+{
+  "answer": {
+    "input_tokens": 2428,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 135,
+    "payload": {
+      "changes": [],
+      "items": [
+        {
+          "quantity": 1,
+          "quote": "מפסק ראשי 4X63",
+          "text": "מפסק 4X63A"
+        },
+        {
+          "quantity": 12,
+          "quote": "12 מא\"ז 1X16",
+          "text": "מא\"ז 1X16A"
+        },
+        {
+          "quantity": 1,
+          "quote": "פחת 4X40",
+          "text": "פחת 4X40A"
+        }
+      ],
+      "question": null
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_bom_extraction"
+}

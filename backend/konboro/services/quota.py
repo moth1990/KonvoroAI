@@ -197,15 +197,17 @@ def confirm(
     *,
     drawing_id: str | None = None,
     created_by: str | None = None,
+    reason: str = "intake_succeeded",
 ) -> None:
-    """Stage 1 succeeded: the reserved slot becomes used (01 §4.5 step 2). Counted in the reservation's month."""
+    """Stage 1 succeeded: the reserved slot becomes used (01 §4.5 step 2). Counted in the reservation's month. A chat
+    build is counted at its first line (S27 decision 2), `reason` = `chat_first_line`."""
     reservation = _reservation(session, tenant_id, reservation_id)
     if not _close(
         session,
         tenant_id,
         reservation,
         "confirm",
-        reason="intake_succeeded",
+        reason=reason,
         drawing_id=drawing_id,
         created_by=created_by,
     ):

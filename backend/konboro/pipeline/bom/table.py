@@ -14,6 +14,7 @@ Row rules (01 §5.8):
 - The panel is the row's panel cell; an empty one is the panel of the row above (a merged cell reads as empty);
   else the panel the form's heading names.
 - The last row of a picture that touches its bottom edge means the list may go on (`bom_possibly_cropped`).
+- A chat build's row the estimator removed is skipped (`removed`, S27).
 """
 
 import re
@@ -48,10 +49,11 @@ class BomRow(BaseModel):
     cells: list[str | None]
     confidence: list[float] | None = None  # per cell, from a picture
     bbox: Bbox | None = None  # PDF points on the page, from a picture
+    removed: bool = False  # a chat build's row the estimator took back; kept so no row number is used twice (S27)
 
 
 class BomTable(BaseModel):
-    source: Literal["spreadsheet", "image"]
+    source: Literal["spreadsheet", "image", "chat"]  # chat: the rows of a chat build (13 §4.2, S27)
     sheet: str | None = None
     panel_name: str | None = None
     project_name: str | None = None
@@ -171,6 +173,8 @@ def items(table: BomTable) -> list[Item]:
     out: list[Item] = []
     panel = None
     for r in table.rows:
+        if r.removed:
+            continue
         text, text_conf = cell(r, "item")
         model, model_conf = cell(r, "model")
         brand, _ = cell(r, "brand")

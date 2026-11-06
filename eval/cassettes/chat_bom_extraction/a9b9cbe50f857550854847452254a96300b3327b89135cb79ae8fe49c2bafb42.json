@@ -1,0 +1,21 @@
+{
+  "answer": {
+    "input_tokens": 2406,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 67,
+    "payload": {
+      "changes": [],
+      "items": [
+        {
+          "panel": null,
+          "quantity": 1,
+          "quote": "פחת 4X63 300mA",
+          "text": "פחת 4X63A 300mA"
+        }
+      ],
+      "question": null
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "chat_bom_extraction"
+}

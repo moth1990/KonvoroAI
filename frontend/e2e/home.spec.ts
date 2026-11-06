@@ -36,9 +36,10 @@ test("home_chat on: the chat home", async ({ page, request }) => {
   await expect(page.getByRole("heading", { name: "שלום" })).toHaveCount(0);
   await expect(page.locator(".hero .eyebrow")).toContainText("38 הצעות נותרו החודש");
   await expect(page.locator(".hero .eyebrow")).toContainText(/^יום /);
-  await expect(page.getByTestId("home-sugg")).toHaveCount(3);
+  // the builder, a question about the latest quote (S27), an audit, the price list
+  await expect(page.getByTestId("home-sugg")).toHaveCount(4);
   await expect(page.getByTestId("recent").getByRole("link")).toHaveCount(3);
-  await expect(page.getByRole("button", { name: "הקלטה קולית" })).toHaveCount(0); // voice is S27
+  await expect(page.getByTestId("mic-home")).toBeVisible(); // `voice_input` (S27)
 });
 
 test("chat home: Enter routes the request; Shift+Enter adds a line", async ({ page, request }) => {
@@ -51,6 +52,29 @@ test("chat home: Enter routes the request; Shift+Enter adds a line", async ({ pa
   await input.fill("בדוק את הצעה 10271");
   await input.press("Enter");
   await expect(page).toHaveURL(/\/audit$/);
+});
+
+test("chat home: a question about the latest quote opens it with the chat, asked (S27)", async ({ page, request }) => {
+  await signIn(page, request, TENANTS.chat);
+  await page.goto("/home");
+  const first = await page.getByTestId("recent").getByRole("link").first().getAttribute("href");
+  await page.getByTestId("home-sugg").filter({ hasText: "מה חסר בהצעה של" }).click();
+  await expect(page).toHaveURL(first ?? /\/review\//);
+  // the conversation is the quote's, shared by both projects' runs: the question is the last one asked
+  await expect(page.getByTestId("chat").locator(".msg.u").last()).toContainText("מה חסר בהצעה של");
+});
+
+test("chat home: an unclear request gets a question with choices, never an action (S27)", async ({ page, request }) => {
+  await signIn(page, request, TENANTS.chat);
+  await page.goto("/home");
+  const input = page.getByTestId("home-input");
+  await input.fill("שלום");
+  await input.press("Enter");
+  const ask = page.getByTestId("home-ask");
+  await expect(ask).toContainText("לא בטוח שהבנתי");
+  await expect(page).toHaveURL(/\/home$/);
+  await ask.getByTestId("home-choice").filter({ hasText: "הצעה משרטוט" }).click();
+  await expect(page).toHaveURL(/\/new$/);
 });
 
 test("chat home: a suggestion chip routes too", async ({ page, request }) => {

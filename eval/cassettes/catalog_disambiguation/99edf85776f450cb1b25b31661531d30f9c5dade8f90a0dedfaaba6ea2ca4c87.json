@@ -1,0 +1,17 @@
+{
+  "answer": {
+    "input_tokens": 936,
+    "model": "claude-haiku-5-5",
+    "output_tokens": 114,
+    "payload": {
+      "chosen_sku": null,
+      "confidence": 0.2,
+      "missing_attributes": [
+        "color"
+      ],
+      "reason": "הרישום בשרטוט הוא \"נורית סימון\" בלבד ואינו מציין צבע, ולכן לא ניתן להכריע בין הנורות הירוקה, האדומה והצהובה."
+    }
+  },
+  "model": "claude-haiku-5-5",
+  "stage": "catalog_disambiguation"
+}

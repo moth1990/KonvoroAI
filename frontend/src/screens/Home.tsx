@@ -1,14 +1,21 @@
 import { useState, type FormEvent, type KeyboardEvent, type ReactNode } from "react";
 import { Link, useNavigate } from "react-router";
 
-import type { HomeSummary, Me, QuoteListItem } from "../api/client";
+import {
+  ApiError,
+  routeHomeRequest,
+  type HomeRoute,
+  type HomeSummary,
+  type Me,
+  type QuoteListItem,
+} from "../api/client";
 import { useHomeSummary, useMe, useQuotes } from "../api/QueryProvider";
 import { countText, shekelsFloor, weekdayText, whenText } from "../format";
 import { quotaView, type QuotaView } from "../shell/quota";
 import { Shell } from "../shell/Shell";
 import { Icon } from "../ui/Icon";
 import { useToast } from "../ui/Toast";
-import { homeRoute, homeSuggestions } from "./homeRoute";
+import { arrival, choiceArrival, homeSuggestions } from "./homeRoute";
 
 /** Classic home, or the chat home when `home_chat` is on (13 §4.3). The server evaluates the flag. */
 export function HomeScreen() {
@@ -210,32 +217,49 @@ function remainingEyebrow(quota: QuotaView): string | null {
   return countText(quota.remaining, "הצעה אחת נותרה החודש", (n) => `${n} הצעות נותרו החודש`);
 }
 
-/** Chat home (`home_chat`, prototype `vHomeChat` and `homeSubmit`, lines 1253–1284). No mic until S27. */
+/**
+ * Chat home (`home_chat`, prototype `vHomeChat` and `homeSubmit`, lines 1253–1284). The server routes the request
+ * (13 §4.3, S27): it goes where it should, or a short question with choices appears under the prompt.
+ */
 function ChatHome({ me }: { me: Me }) {
   const quota = quotaView(me.quota);
   const quotes = useQuotes(4);
   const navigate = useNavigate();
   const toast = useToast();
   const [text, setText] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [asked, setAsked] = useState<HomeRoute | null>(null);
   const builder = Boolean(me.flags.chat_quote_builder);
   const eyebrow = [weekdayText(new Date(), me.tenant.timezone), remainingEyebrow(quota)].filter(Boolean).join(" · ");
 
-  function go(request: string) {
-    const route = homeRoute(request, me.flags);
-    if (!route) return;
-    if (route.kind === "toast") toast(route.text);
-    else navigate(route.to, { state: route.text ? { text: route.text } : undefined });
+  async function go(request: string) {
+    if (!request.trim() || busy) return;
+    setBusy(true);
+    setAsked(null);
+    try {
+      const route = await routeHomeRequest(request.trim());
+      if (route.kind === "toast") toast(route.message ?? "");
+      else if (route.kind === "ask") setAsked(route);
+      else {
+        const target = arrival(route);
+        if (target) navigate(target.to, { state: target.state });
+      }
+    } catch (e) {
+      toast(e instanceof ApiError ? e.message : "לא הצלחנו להבין את הבקשה. נסו שוב");
+    } finally {
+      setBusy(false);
+    }
   }
 
   function submit(e: FormEvent) {
     e.preventDefault();
-    go(text);
+    void go(text);
   }
 
   function onKey(e: KeyboardEvent<HTMLTextAreaElement>) {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      go(text);
+      void go(text);
     }
   }
 
@@ -261,16 +285,52 @@ function ChatHome({ me }: { me: Me }) {
               <Icon name="clip" />
               <span className="visually-hidden">צרף שרטוט או קובץ</span>
             </NewQuoteAction>
+            {me.flags.voice_input ? (
+              <button
+                type="button"
+                className="round"
+                data-testid="mic-home"
+                aria-label="הקלטה קולית"
+                disabled={quota.blocked}
+                onClick={() => navigate("/build", { state: { record: true } })}
+              >
+                <Icon name="mic" />
+              </button>
+            ) : null}
             <span className="spacer" />
             {builder && <span className="small muted">השורות נבנות מהמחירון שלך</span>}
-            <button className="round primary" type="submit" aria-label="שלח">
+            <button className="round primary" type="submit" aria-label="שלח" disabled={busy}>
               <Icon name="send" />
             </button>
           </div>
         </form>
+        {asked ? (
+          <div className="home-ask" role="group" aria-labelledby="home-ask-q" data-testid="home-ask">
+            <span id="home-ask-q">{asked.message}</span>
+            <div className="hero-sugg">
+              {asked.choices.map((c) => (
+                <button
+                  key={`${c.to}:${c.label}`}
+                  type="button"
+                  className="fchip"
+                  data-testid="home-choice"
+                  onClick={() => {
+                    const target = choiceArrival(c);
+                    navigate(target.to, { state: target.state });
+                  }}
+                >
+                  {c.label}
+                  {c.note && asked.choices.filter((o) => o.label === c.label).length > 1 ? (
+                    <span className="muted"> · {c.note}</span>
+                  ) : null}
+                </button>
+              ))}
+            </div>
+          </div>
+        ) : null}
         <div className="hero-sugg">
-          {homeSuggestions(me.flags).map((q) => (
-            <button key={q} type="button" className="fchip" data-testid="home-sugg" onClick={() => go(q)}>
+          {homeSuggestions(me.flags, quotes.data?.[0]).map((q) => (
+            <button key={q} type="button" className="fchip" data-testid="home-sugg" onClick={() => void go(q)}>
               {q}
             </button>
           ))}

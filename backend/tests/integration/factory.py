@@ -236,6 +236,11 @@ def build_tenant_graph(s: Session, tenant_id: str) -> dict[str, str]:
             diff={},
         )
     )
+    add(
+        m.BuildMessage(
+            id=new_id("bmg"), tenant_id=tenant_id, drawing_id=drw.id, role="user", content={"text": '12 מא"ז 1X16'}
+        )
+    )
     add(aud := m.Audit(id=new_id("aud"), tenant_id=tenant_id, drawing_id=drw.id, quote_file_id=fil.id))
     add(
         m.AuditDifference(
