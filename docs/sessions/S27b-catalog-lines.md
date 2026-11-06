@@ -104,7 +104,7 @@ With `catalog_lines` on, every product line in a quote points to a product the a
 ### UI tests (Playwright)
 - [x] Desktop and mobile: a waiting line, choosing a nearest product, "מוצר חדש" end to end, "אין כאן רכיב", send refused then allowed
 - [x] Desktop and mobile: a merged line shows every designator
-- [ ] Prototype-fidelity screenshots of the waiting line and the form reviewed by the user (no prototype screen: as S23b). **Waiting for the user:** `make fidelity`'s `lines-waiting` and `lines-new-product` (`frontend/e2e/fidelity/report.html`)
+- [x] Prototype-fidelity screenshots of the waiting line and the form reviewed by the user (no prototype screen: as S23b): `lines-waiting` and `lines-new-product`, accepted by the user on 2026-11-06
 
 ### Eval (pipeline sessions)
 - [x] `make eval` with `catalog_lines` off and on; the line counts' drop, `common.csv` and the names explained; the baseline accepted once
@@ -166,12 +166,12 @@ Filled in at `/session-close`.
   13. **A nearest product is the line's alternative** (Claude). Stage 7 offers the nearest as the waiting line's `alternatives` (`nearest: true`, `diff`), so "זה המוצר" is the alternative action, named by the product's full description with what differs under it.
   14. **The name of a new product is the server's** (Claude). `POST …/new-product/name` builds it with `text.describe` as the form is filled; the client never builds a name.
   15. **E2E tenants** (Claude). `catalog_lines` is on only for S27b's three tenants (`lines-*`), so the other E2E tests keep today's lines.
+  16. **The two new screens accepted** (the user, 2026-11-06): the waiting line and the "מוצר חדש" form, from the fidelity shots.
 - **Eval / metrics:**
   - **Flag off (the committed baseline):** recorded live, only the calls with no cassette (`EVAL_RECORD=missing`, under $5): 4 `catalog_disambiguation`, 2 `validator_review`, 1 `chat_bom_extraction`. Three metrics moved, all one more model call on 6199-2-50's labelled stage 5 (`s5_labelled/llm_share` 0.089 → 0.111; all 0.080 → 0.087): a shunt trip drawn with no breaker now has SOR-C, YO-C (from `common.csv`) and S2C-A1 to choose from, and the model rightly picks none (yellow); a breaker written "אלקטרוני LSI" has Ekip LS/I beside Ekip LSI, and the model picks LSI, as written. Nothing else moved. A first recording had re-recorded 27 tile-agent calls, since the new attributes changed its prompt, and stage 4 lost on 6199-2-50 by the model's variance: `astronomical` and `utilization` are read in code only (`schemas.CODE_ONLY`), the prompt is as before, and those cassettes were dropped.
   - **Flag on (`EVAL_CATALOG_LINES=1`, replay, reported):** only `s6/warnings` rises, by one per panel with a waiting line (`PRODUCT_NOT_IN_CATALOG`; all 3.43 → 5.00). The backtest's totals and stage 5's metrics don't move. On the 7 golden drawings, checked in the eval database: no product on two lines of one panel; every product line has a product or waits (54 waiting lines, 32 of them on 6199-2-50; 145 product lines).
 - **Bugs logged:** BUG-084 fixed (with `catalog_lines` on); BUG-101 (attribute keys shown untranslated in "מאיפה כל ערך", P3); BUG-102 (a screenshot that timed out once, P3).
 - **Follow-ups:**
-  - The fidelity review of the two new screens (above).
   - Remove `catalog_lines` once it is on for every factory for a month (13 §3 rule 5); then the merged lines are the only lines.
   - A manual or draw-mode line of a product already in the panel still adds its own line (09 decision 5 of S27b covers edits only); joining it is for the flag's removal.
   - The products the list left out (XT1C or XT1N, XT2 125A and 40A, CTs 630/5A and 160/5A, F202 10mA, the SPDs, the meters) now reach a quote as waiting lines; the user decides there.
