@@ -62,8 +62,9 @@ P and R sessions alternate. R sessions use a fixture quote seeded through the re
 | [S25](sessions/S25-chat-layer.md) | X | Chat layer | Tool loop in `konboro_llm`, chat tools, `$T` references, history budget and compaction, answer check, chat drawer and proposal cards | 08 (all) | 1007–1064 | S23 | done |
 | [S25b](sessions/S25b-chat-layer-2.md) | X | Chat layer II | `explain_line` sub-agent with the drawing crop, `compare` with another quote by signatures, remember scopes `customer` and `tenant` on the proposal card | 08 §6.4–6.5, §7.4; 05 §11 | 1007–1064 | S25 | done |
 | [S26](sessions/S26-overlay-export.md) | X | Flags: overlay and export | `unresolved_overlay`; `export_doc` (PDF through Playwright Chromium, Excel through openpyxl) | 13 §4.1, §4.4 | 575–580, 1360–1378 | S23 | done |
-| [S27](sessions/S27-chat-builder-voice.md) | X | Flags: chat builder, home chat, voice | `chat_quote_builder` and the build screen, `home_chat` wired to real actions, `voice_input` with a fake transcriber | 13 §4.2–4.3 | 1253–1357 | S25 | in review |
-| S28 | G | **Gate 2** | Live eval, regression of every prototype flow, fix bugs. Tag `phase-2` | dev-strategy §7 | all | S27 | todo |
+| [S27](sessions/S27-chat-builder-voice.md) | X | Flags: chat builder, home chat, voice | `chat_quote_builder` and the build screen, `home_chat` wired to real actions, `voice_input` with a fake transcriber | 13 §4.2–4.3 | 1253–1357 | S25 | done |
+| [S27b](sessions/S27b-catalog-lines.md) | X | Quote lines from the catalog | One line per product in a panel, a waiting line for a product not in the catalog (an alert, up to 3 nearest products, no price, send refused), "מוצר חדש" in the app's format for the factory and the approval queue, behind `catalog_lines`; the user's 15 common products (`common.csv`); the clocks' names, a contactor's AC-1, "LS/I", U+200F | 05 §5.6–5.9; 07 §7.1, §6.2; 09 §6.4, §7.8, §7.12; 10 §5.4; 13 | 409–460, 872–1004 | S27 | in progress |
+| S28 | G | **Gate 2** | Live eval, regression of every prototype flow, fix bugs. Tag `phase-2` | dev-strategy §7 | all | S27b | todo |
 
 **Exit:** a new tenant produces a quote on day one; ≥85% of golden rows need no edit; every prototype flow is covered by E2E.
 

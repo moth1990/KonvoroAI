@@ -127,7 +127,8 @@
 | `500A/630A`, `80A/100A`, `160A/160A` ליד מפסק בתיבה יצוקה | `current_a=630` (הזרם הנקוב), `setting_a=500` (הכיול). ההתאמה לפי הזרם הנקוב, והכיול נשמר לשורה |
 | `4x63A/0,03A`, `4x40A/0,03A` | `poles=4`, `current_a`, `residual_ma=30` |
 | `5/800A`, `800/5A` | משנה זרם: `ratio_primary_a=800`, `ratio_secondary_a=5` |
-| `LSI`, `LSIG`, "אלקטרוני" | `trip_unit` = אלקטרוני, עם ההגנות שכתובות |
+| `LSI`, `LSIG`, `LS/I`, "אלקטרוני" | `trip_unit` = אלקטרוני, עם ההגנות שכתובות. `LS/I` נשמר כמו שהקטלוג כותב אותו (S27b) |
+| "אסטרונומי" ליד שעון | `astronomical` = `true` (S27b, [05 §4.4](05-catalog-matching.md)) |
 | `MCB`, `MCCB`, `HRC` | `family` (רמז) ו-`symbol_class` |
 | `4P 100KA B+C` ליד מגן ברק | `poles`, `imax_ka`, `spd_class` |
 | `CEE 5x16A`, `CEE 1x16A`, `ת.י.` ליד בית תקע | `socket_standard`, `poles`, `current_a` |
