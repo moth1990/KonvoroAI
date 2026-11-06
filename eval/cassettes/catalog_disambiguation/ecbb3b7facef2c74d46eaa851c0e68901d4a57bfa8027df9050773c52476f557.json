@@ -1,0 +1,15 @@
+{
+  "answer": {
+    "input_tokens": 837,
+    "model": "claude-haiku-5-5",
+    "output_tokens": 277,
+    "payload": {
+      "chosen_sku": "M2SS3-10B",
+      "confidence": 0.9,
+      "missing_attributes": [],
+      "reason": "הסימון בשרטוט כולל מיקומים 0, 1 ו-2, וזה תואם לבורר M2SS3 עם מיקומים 1-0-2. הבורר M2SS2 כולל רק 0-1 ולכן אינו מתאים."
+    }
+  },
+  "model": "claude-haiku-5-5",
+  "stage": "catalog_disambiguation"
+}

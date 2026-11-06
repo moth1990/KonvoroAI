@@ -2,11 +2,11 @@
  "audit": [
   {
    "corrected_quote_id": null,
-   "drawing_id": "drw_01M6EKBN9DQSM11JBTXNT4E1B8",
-   "id": "aud_01M6EKBNCE3GRS7VJSBCHBWENP",
+   "drawing_id": "drw_01M6RPAATZJRVWYCK7QEQKYKPQ",
+   "id": "aud_01M6RPAAWHNANKZP385HAH2A4G",
    "input_kind": "factory_drawing",
    "issues": [],
-   "quote_file_id": "fil_01M6EKBNC64M16QQ4SFPQQBKDZ",
+   "quote_file_id": "fil_01M6RPAAW7M1VAS8YZ63XF6DXT",
    "quote_ref": {
     "date": "2026-10-04",
     "number": "10271",
@@ -31,9 +31,9 @@
  "audit_differences": [
   {
    "amount": null,
-   "audit_id": "aud_01M6EKBNCE3GRS7VJSBCHBWENP",
+   "audit_id": "aud_01M6RPAAWHNANKZP385HAH2A4G",
    "component_ids": [
-    "cmp_01M6EKBN9DQSM11JBTXNT4E1B8_0007"
+    "cmp_01M6RPAATZJRVWYCK7QEQKYKPQ_0007"
    ],
    "confidence": 0.56,
    "decided_at": null,
@@ -51,7 +51,7 @@
     }
    ],
    "family": "shunt_trip",
-   "id": "dif_01M6EKBSJ8REMBFK1K6M6S5KFY",
+   "id": "dif_01M6RPAF5Y0XFAGFSRTEZ202W2",
    "message": "בשרטוט סליל הפסקה (G1), ואין לו שורה בהצעה",
    "quote_line_index": null,
    "quote_qty": "0.000",
@@ -69,9 +69,9 @@
   },
   {
    "amount": null,
-   "audit_id": "aud_01M6EKBNCE3GRS7VJSBCHBWENP",
+   "audit_id": "aud_01M6RPAAWHNANKZP385HAH2A4G",
    "component_ids": [
-    "cmp_01M6EKBN9DQSM11JBTXNT4E1B8_0008"
+    "cmp_01M6RPAATZJRVWYCK7QEQKYKPQ_0008"
    ],
    "confidence": 0.49,
    "decided_at": null,
@@ -92,7 +92,7 @@
     }
    ],
    "family": "terminal",
-   "id": "dif_01M6EKBSJ8REMBFK1K6M6S5KFZ",
+   "id": "dif_01M6RPAF5Y0XFAGFSRTEZ202W3",
    "message": "מהדק × 4 (SG): חומר עזר בהגדרות המפעל, ולכן לא הבדל",
    "quote_line_index": null,
    "quote_qty": "0.000",
@@ -105,9 +105,9 @@
   },
   {
    "amount": null,
-   "audit_id": "aud_01M6EKBNCE3GRS7VJSBCHBWENP",
+   "audit_id": "aud_01M6RPAAWHNANKZP385HAH2A4G",
    "component_ids": [
-    "cmp_01M6EKBN9DQSM11JBTXNT4E1B8_0021"
+    "cmp_01M6RPAATZJRVWYCK7QEQKYKPQ_0021"
    ],
    "confidence": 0.595,
    "decided_at": null,
@@ -116,11 +116,10 @@
     "C",
     "COM",
     "EM1",
-    "EM2",
     "L",
     "Z1"
    ],
-   "drawing_qty": "16.000",
+   "drawing_qty": "15.000",
    "evidence": [
     {
      "instance_ids": [
@@ -143,16 +142,15 @@
       "ins_003_0007",
       "ins_003_0005",
       "ins_003_0006",
-      "ins_003_0010",
-      "ins_003_0013",
-      "ins_003_0012"
+      "ins_003_0012",
+      "ins_003_0011"
      ],
      "page_no": 5
     }
    ],
    "family": "terminal",
-   "id": "dif_01M6EKBSJ8REMBFK1K6M6S5KG0",
-   "message": "מהדק × 16 (C, COM, EM1, EM2, L, Z1): חומר עזר בהגדרות המפעל, ולכן לא הבדל",
+   "id": "dif_01M6RPAF5Y0XFAGFSRTEZ202W4",
+   "message": "מהדק × 15 (C, COM, EM1, L, Z1): חומר עזר בהגדרות המפעל, ולכן לא הבדל",
    "quote_line_index": null,
    "quote_qty": "0.000",
    "reject_note": null,
@@ -164,9 +162,9 @@
   },
   {
    "amount": null,
-   "audit_id": "aud_01M6EKBNCE3GRS7VJSBCHBWENP",
+   "audit_id": "aud_01M6RPAAWHNANKZP385HAH2A4G",
    "component_ids": [
-    "cmp_01M6EKBN9DQSM11JBTXNT4E1B8_0022"
+    "cmp_01M6RPAATZJRVWYCK7QEQKYKPQ_0022"
    ],
    "confidence": 0.9,
    "decided_at": null,
@@ -186,7 +184,7 @@
     }
    ],
    "family": "shunt_trip",
-   "id": "dif_01M6EKBSJ8REMBFK1K6M6S5KG1",
+   "id": "dif_01M6RPAF5ZPFNG0PRT27WX2S05",
    "message": "בשרטוט 2 × סליל הפסקה (TC-G1, TC-G2), ואין להם שורה בהצעה",
    "quote_line_index": null,
    "quote_qty": "0.000",
@@ -204,9 +202,9 @@
   },
   {
    "amount": null,
-   "audit_id": "aud_01M6EKBNCE3GRS7VJSBCHBWENP",
+   "audit_id": "aud_01M6RPAAWHNANKZP385HAH2A4G",
    "component_ids": [
-    "cmp_01M6EKBN9DQSM11JBTXNT4E1B8_0026"
+    "cmp_01M6RPAATZJRVWYCK7QEQKYKPQ_0026"
    ],
    "confidence": 0.81,
    "decided_at": null,
@@ -226,7 +224,7 @@
     }
    ],
    "family": "current_transformer",
-   "id": "dif_01M6EKBSJ9DMEZB9HA40XJZSRQ",
+   "id": "dif_01M6RPAF5ZPFNG0PRT27WX2S06",
    "message": "בשרטוט 3 × משנה זרם 125/5A (MS1, MS2, MS3), ואין להם שורה בהצעה",
    "quote_line_index": null,
    "quote_qty": "0.000",
@@ -244,10 +242,10 @@
   },
   {
    "amount": "1250.0000",
-   "audit_id": "aud_01M6EKBNCE3GRS7VJSBCHBWENP",
+   "audit_id": "aud_01M6RPAAWHNANKZP385HAH2A4G",
    "component_ids": [
-    "cmp_01M6EKBN9DQSM11JBTXNT4E1B8_0003",
-    "cmp_01M6EKBN9DQSM11JBTXNT4E1B8_0004"
+    "cmp_01M6RPAATZJRVWYCK7QEQKYKPQ_0003",
+    "cmp_01M6RPAATZJRVWYCK7QEQKYKPQ_0004"
    ],
    "confidence": 0.81,
    "decided_at": null,
@@ -267,7 +265,7 @@
     }
    ],
    "family": "circuit_breaker",
-   "id": "dif_01M6EKBSJ9DMEZB9HA40XJZSRR",
+   "id": "dif_01M6RPAF5ZPFNG0PRT27WX2S07",
    "message": "בהצעה 1 × \"מפסק 4X125A\" (שורה 16). בשרטוט 2 (QG1, QG2)",
    "quote_line_index": 16,
    "quote_qty": "1.000",
@@ -288,15 +286,15 @@
   },
   {
    "amount": "260.0000",
-   "audit_id": "aud_01M6EKBNCE3GRS7VJSBCHBWENP",
+   "audit_id": "aud_01M6RPAAWHNANKZP385HAH2A4G",
    "component_ids": [
-    "cmp_01M6EKBN9DQSM11JBTXNT4E1B8_0005",
-    "cmp_01M6EKBN9DQSM11JBTXNT4E1B8_0006",
-    "cmp_01M6EKBN9DQSM11JBTXNT4E1B8_0011",
-    "cmp_01M6EKBN9DQSM11JBTXNT4E1B8_0025",
-    "cmp_01M6EKBN9DQSM11JBTXNT4E1B8_0027"
+    "cmp_01M6RPAATZJRVWYCK7QEQKYKPQ_0005",
+    "cmp_01M6RPAATZJRVWYCK7QEQKYKPQ_0006",
+    "cmp_01M6RPAATZJRVWYCK7QEQKYKPQ_0011",
+    "cmp_01M6RPAATZJRVWYCK7QEQKYKPQ_0025",
+    "cmp_01M6RPAATZJRVWYCK7QEQKYKPQ_0027"
    ],
-   "confidence": 0.4284,
+   "confidence": 0.4788,
    "decided_at": null,
    "decided_by": null,
    "designators": [
@@ -318,14 +316,14 @@
     },
     {
      "instance_ids": [
-      "ins_003_0014",
-      "ins_003_0015"
+      "ins_003_0013",
+      "ins_003_0014"
      ],
      "page_no": 5
     }
    ],
    "family": "circuit_breaker",
-   "id": "dif_01M6EKBSJ9DMEZB9HA40XJZSRS",
+   "id": "dif_01M6RPAF5ZPFNG0PRT27WX2S08",
    "message": "בהצעה 4 × \"הגנת מנוע 4-6.3A\" (שורה 1). בשרטוט 5 (QLG1, QLG2, QPM, QRF)",
    "quote_line_index": 1,
    "quote_qty": "4.000",
@@ -346,7 +344,7 @@
   },
   {
    "amount": null,
-   "audit_id": "aud_01M6EKBNCE3GRS7VJSBCHBWENP",
+   "audit_id": "aud_01M6RPAAWHNANKZP385HAH2A4G",
    "component_ids": [],
    "confidence": 0.55,
    "decided_at": null,
@@ -355,7 +353,7 @@
    "drawing_qty": "0.000",
    "evidence": [],
    "family": "push_button",
-   "id": "dif_01M6EKBSJ9DMEZB9HA40XJZSRT",
+   "id": "dif_01M6RPAF5ZPFNG0PRT27WX2S09",
    "message": "שורה 13 בהצעה, \"לחצן חירום לדלת\", ולא מצאנו אותה בשרטוט",
    "quote_line_index": 13,
    "quote_qty": "1.000",
@@ -368,7 +366,7 @@
   },
   {
    "amount": null,
-   "audit_id": "aud_01M6EKBNCE3GRS7VJSBCHBWENP",
+   "audit_id": "aud_01M6RPAAWHNANKZP385HAH2A4G",
    "component_ids": [],
    "confidence": 0.55,
    "decided_at": null,
@@ -377,7 +375,7 @@
    "drawing_qty": "0.000",
    "evidence": [],
    "family": "switch_disconnector",
-   "id": "dif_01M6EKBSJ9DMEZB9HA40XJZSRV",
+   "id": "dif_01M6RPAF5ZPFNG0PRT27WX2S0A",
    "message": "שורה 17 בהצעה, \"מנתק 4X125A\", ולא מצאנו אותה בשרטוט",
    "quote_line_index": 17,
    "quote_qty": "1.000",
@@ -391,7 +389,7 @@
  ],
  "audit_quote_lines": [
   {
-   "audit_id": "aud_01M6EKBNCE3GRS7VJSBCHBWENP",
+   "audit_id": "aud_01M6RPAAWHNANKZP385HAH2A4G",
    "bbox": [
     38.09763671875,
     329.36970330810544,
@@ -399,14 +397,14 @@
     351.3944251098633
    ],
    "component_ids": [
-    "cmp_01M6EKBN9DQSM11JBTXNT4E1B8_0005",
-    "cmp_01M6EKBN9DQSM11JBTXNT4E1B8_0006",
-    "cmp_01M6EKBN9DQSM11JBTXNT4E1B8_0011",
-    "cmp_01M6EKBN9DQSM11JBTXNT4E1B8_0025"
+    "cmp_01M6RPAATZJRVWYCK7QEQKYKPQ_0005",
+    "cmp_01M6RPAATZJRVWYCK7QEQKYKPQ_0006",
+    "cmp_01M6RPAATZJRVWYCK7QEQKYKPQ_0011",
+    "cmp_01M6RPAATZJRVWYCK7QEQKYKPQ_0025"
    ],
    "confidence": 0.95,
    "description": "הגנת מנוע 4-6.3A",
-   "id": "aql_01M6EKBSJBS2T19NGMDRKDYQX0",
+   "id": "aql_01M6RPAF624CYYD988MXJCC759",
    "line_index": 1,
    "line_total": "1040.0000",
    "matched_qty": "4.000",
@@ -430,7 +428,7 @@
    "unit_price": "260.0000"
   },
   {
-   "audit_id": "aud_01M6EKBNCE3GRS7VJSBCHBWENP",
+   "audit_id": "aud_01M6RPAAWHNANKZP385HAH2A4G",
    "bbox": [
     38.09763671875,
     351.3944251098633,
@@ -438,12 +436,12 @@
     374.4202706298828
    ],
    "component_ids": [
-    "cmp_01M6EKBN9DQSM11JBTXNT4E1B8_0001",
-    "cmp_01M6EKBN9DQSM11JBTXNT4E1B8_0002"
+    "cmp_01M6RPAATZJRVWYCK7QEQKYKPQ_0001",
+    "cmp_01M6RPAATZJRVWYCK7QEQKYKPQ_0002"
    ],
    "confidence": 0.95,
    "description": "מנורה קוטר 22",
-   "id": "aql_01M6EKBSJBS2T19NGMDRKDYQX1",
+   "id": "aql_01M6RPAF624CYYD988MXJCC75A",
    "line_index": 2,
    "line_total": "270.0000",
    "matched_qty": "6.000",
@@ -464,7 +462,7 @@
    "unit_price": "45.0000"
   },
   {
-   "audit_id": "aud_01M6EKBNCE3GRS7VJSBCHBWENP",
+   "audit_id": "aud_01M6RPAAWHNANKZP385HAH2A4G",
    "bbox": [
     38.09763671875,
     374.4202706298828,
@@ -472,11 +470,11 @@
     396.4449924316406
    ],
    "component_ids": [
-    "cmp_01M6EKBN9DQSM11JBTXNT4E1B8_0010"
+    "cmp_01M6RPAATZJRVWYCK7QEQKYKPQ_0010"
    ],
    "confidence": 0.95,
    "description": "רב מודד SATEC",
-   "id": "aql_01M6EKBSJBS2T19NGMDRKDYQX2",
+   "id": "aql_01M6RPAF624CYYD988MXJCC75B",
    "line_index": 3,
    "line_total": "1800.0000",
    "matched_qty": "1.000",
@@ -497,7 +495,7 @@
    "unit_price": "1800.0000"
   },
   {
-   "audit_id": "aud_01M6EKBNCE3GRS7VJSBCHBWENP",
+   "audit_id": "aud_01M6RPAAWHNANKZP385HAH2A4G",
    "bbox": [
     38.09763671875,
     396.4449924316406,
@@ -505,11 +503,11 @@
     419.47083795166014
    ],
    "component_ids": [
-    "cmp_01M6EKBN9DQSM11JBTXNT4E1B8_0009"
+    "cmp_01M6RPAATZJRVWYCK7QEQKYKPQ_0009"
    ],
    "confidence": 0.95,
    "description": "מגן מתח יתר",
-   "id": "aql_01M6EKBSJBS2T19NGMDRKDYQX3",
+   "id": "aql_01M6RPAF624CYYD988MXJCC75C",
    "line_index": 4,
    "line_total": "855.0000",
    "matched_qty": "1.000",
@@ -530,7 +528,7 @@
    "unit_price": "855.0000"
   },
   {
-   "audit_id": "aud_01M6EKBNCE3GRS7VJSBCHBWENP",
+   "audit_id": "aud_01M6RPAAWHNANKZP385HAH2A4G",
    "bbox": [
     38.09763671875,
     419.47083795166014,
@@ -538,11 +536,11 @@
     441.495559753418
    ],
    "component_ids": [
-    "cmp_01M6EKBN9DQSM11JBTXNT4E1B8_0012"
+    "cmp_01M6RPAATZJRVWYCK7QEQKYKPQ_0012"
    ],
    "confidence": 0.93,
    "description": "מנתק נתיך גלילי +נתיכים",
-   "id": "aql_01M6EKBSJBS2T19NGMDRKDYQX4",
+   "id": "aql_01M6RPAF624CYYD988MXJCC75D",
    "line_index": 5,
    "line_total": "275.0000",
    "matched_qty": "1.000",
@@ -568,7 +566,7 @@
    "unit_price": "275.0000"
   },
   {
-   "audit_id": "aud_01M6EKBNCE3GRS7VJSBCHBWENP",
+   "audit_id": "aud_01M6RPAAWHNANKZP385HAH2A4G",
    "bbox": [
     38.09763671875,
     441.495559753418,
@@ -576,11 +574,11 @@
     464.5214052734375
    ],
    "component_ids": [
-    "cmp_01M6EKBN9DQSM11JBTXNT4E1B8_0015"
+    "cmp_01M6RPAATZJRVWYCK7QEQKYKPQ_0015"
    ],
    "confidence": 0.95,
    "description": "מפסק 3X80A",
-   "id": "aql_01M6EKBSJBS2T19NGMDRKDYQX5",
+   "id": "aql_01M6RPAF624CYYD988MXJCC75E",
    "line_index": 6,
    "line_total": "750.0000",
    "matched_qty": "1.000",
@@ -604,7 +602,7 @@
    "unit_price": "750.0000"
   },
   {
-   "audit_id": "aud_01M6EKBNCE3GRS7VJSBCHBWENP",
+   "audit_id": "aud_01M6RPAAWHNANKZP385HAH2A4G",
    "bbox": [
     38.09763671875,
     464.5214052734375,
@@ -612,11 +610,11 @@
     486.54612707519533
    ],
    "component_ids": [
-    "cmp_01M6EKBN9DQSM11JBTXNT4E1B8_0013"
+    "cmp_01M6RPAATZJRVWYCK7QEQKYKPQ_0013"
    ],
    "confidence": 0.95,
    "description": "מא\"ז 3X16A",
-   "id": "aql_01M6EKBSJBS2T19NGMDRKDYQX6",
+   "id": "aql_01M6RPAF624CYYD988MXJCC75F",
    "line_index": 7,
    "line_total": "185.0000",
    "matched_qty": "1.000",
@@ -640,7 +638,7 @@
    "unit_price": "185.0000"
   },
   {
-   "audit_id": "aud_01M6EKBNCE3GRS7VJSBCHBWENP",
+   "audit_id": "aud_01M6RPAAWHNANKZP385HAH2A4G",
    "bbox": [
     38.09763671875,
     486.54612707519533,
@@ -648,11 +646,11 @@
     509.57197259521485
    ],
    "component_ids": [
-    "cmp_01M6EKBN9DQSM11JBTXNT4E1B8_0014"
+    "cmp_01M6RPAATZJRVWYCK7QEQKYKPQ_0014"
    ],
    "confidence": 0.95,
    "description": "מא\"ז 3X40A",
-   "id": "aql_01M6EKBSJBS2T19NGMDRKDYQX7",
+   "id": "aql_01M6RPAF624CYYD988MXJCC75G",
    "line_index": 8,
    "line_total": "195.0000",
    "matched_qty": "1.000",
@@ -676,7 +674,7 @@
    "unit_price": "195.0000"
   },
   {
-   "audit_id": "aud_01M6EKBNCE3GRS7VJSBCHBWENP",
+   "audit_id": "aud_01M6RPAAWHNANKZP385HAH2A4G",
    "bbox": [
     38.09763671875,
     509.57197259521485,
@@ -684,12 +682,12 @@
     531.5966943969727
    ],
    "component_ids": [
-    "cmp_01M6EKBN9DQSM11JBTXNT4E1B8_0017",
-    "cmp_01M6EKBN9DQSM11JBTXNT4E1B8_0016"
+    "cmp_01M6RPAATZJRVWYCK7QEQKYKPQ_0017",
+    "cmp_01M6RPAATZJRVWYCK7QEQKYKPQ_0016"
    ],
    "confidence": 0.95,
    "description": "פחת 4X40A",
-   "id": "aql_01M6EKBSJBS2T19NGMDRKDYQX8",
+   "id": "aql_01M6RPAF624CYYD988MXJCC75H",
    "line_index": 9,
    "line_total": "600.0000",
    "matched_qty": "2.000",
@@ -713,7 +711,7 @@
    "unit_price": "300.0000"
   },
   {
-   "audit_id": "aud_01M6EKBNCE3GRS7VJSBCHBWENP",
+   "audit_id": "aud_01M6RPAAWHNANKZP385HAH2A4G",
    "bbox": [
     38.09763671875,
     531.5966943969727,
@@ -721,11 +719,11 @@
     554.6225399169922
    ],
    "component_ids": [
-    "cmp_01M6EKBN9DQSM11JBTXNT4E1B8_0020"
+    "cmp_01M6RPAATZJRVWYCK7QEQKYKPQ_0020"
    ],
    "confidence": 0.95,
    "description": "מא\"ז 1X10A",
-   "id": "aql_01M6EKBSJBS2T19NGMDRKDYQX9",
+   "id": "aql_01M6RPAF624CYYD988MXJCC75J",
    "line_index": 10,
    "line_total": "168.0000",
    "matched_qty": "4.000",
@@ -749,7 +747,7 @@
    "unit_price": "42.0000"
   },
   {
-   "audit_id": "aud_01M6EKBNCE3GRS7VJSBCHBWENP",
+   "audit_id": "aud_01M6RPAAWHNANKZP385HAH2A4G",
    "bbox": [
     38.09763671875,
     554.6225399169922,
@@ -757,11 +755,11 @@
     576.64726171875
    ],
    "component_ids": [
-    "cmp_01M6EKBN9DQSM11JBTXNT4E1B8_0018"
+    "cmp_01M6RPAATZJRVWYCK7QEQKYKPQ_0018"
    ],
    "confidence": 0.95,
    "description": "מא\"ז 3X25A",
-   "id": "aql_01M6EKBSJC13EYZRTGFQ6YWWSD",
+   "id": "aql_01M6RPAF624CYYD988MXJCC75K",
    "line_index": 11,
    "line_total": "390.0000",
    "matched_qty": "2.000",
@@ -785,7 +783,7 @@
    "unit_price": "195.0000"
   },
   {
-   "audit_id": "aud_01M6EKBNCE3GRS7VJSBCHBWENP",
+   "audit_id": "aud_01M6RPAAWHNANKZP385HAH2A4G",
    "bbox": [
     38.09763671875,
     576.64726171875,
@@ -793,11 +791,11 @@
     599.6731072387695
    ],
    "component_ids": [
-    "cmp_01M6EKBN9DQSM11JBTXNT4E1B8_0019"
+    "cmp_01M6RPAATZJRVWYCK7QEQKYKPQ_0019"
    ],
    "confidence": 0.95,
    "description": "מא\"ז 1X16A",
-   "id": "aql_01M6EKBSJC13EYZRTGFQ6YWWSE",
+   "id": "aql_01M6RPAF624CYYD988MXJCC75M",
    "line_index": 12,
    "line_total": "84.0000",
    "matched_qty": "2.000",
@@ -821,7 +819,7 @@
    "unit_price": "42.0000"
   },
   {
-   "audit_id": "aud_01M6EKBNCE3GRS7VJSBCHBWENP",
+   "audit_id": "aud_01M6RPAAWHNANKZP385HAH2A4G",
    "bbox": [
     38.09763671875,
     599.6731072387695,
@@ -831,7 +829,7 @@
    "component_ids": [],
    "confidence": 0.95,
    "description": "לחצן חירום לדלת",
-   "id": "aql_01M6EKBSJC13EYZRTGFQ6YWWSF",
+   "id": "aql_01M6RPAF624CYYD988MXJCC75N",
    "line_index": 13,
    "line_total": "160.0000",
    "matched_qty": "0.000",
@@ -852,7 +850,7 @@
    "unit_price": "160.0000"
   },
   {
-   "audit_id": "aud_01M6EKBNCE3GRS7VJSBCHBWENP",
+   "audit_id": "aud_01M6RPAAWHNANKZP385HAH2A4G",
    "bbox": [
     38.09763671875,
     621.6978290405274,
@@ -860,11 +858,11 @@
     644.7236745605469
    ],
    "component_ids": [
-    "cmp_01M6EKBN9DQSM11JBTXNT4E1B8_0024"
+    "cmp_01M6RPAATZJRVWYCK7QEQKYKPQ_0024"
    ],
    "confidence": 0.94,
    "description": "ממסר מבודד 1 ערוץ",
-   "id": "aql_01M6EKBSJC13EYZRTGFQ6YWWSG",
+   "id": "aql_01M6RPAF624CYYD988MXJCC75P",
    "line_index": 14,
    "line_total": "130.0000",
    "matched_qty": "1.000",
@@ -885,7 +883,7 @@
    "unit_price": "130.0000"
   },
   {
-   "audit_id": "aud_01M6EKBNCE3GRS7VJSBCHBWENP",
+   "audit_id": "aud_01M6RPAAWHNANKZP385HAH2A4G",
    "bbox": [
     38.09763671875,
     644.7236745605469,
@@ -895,7 +893,7 @@
    "component_ids": [],
    "confidence": 0.92,
    "description": "ארון 1000/800/300 כולל פסי צבירה אפס ארקה פנילים ודלתות",
-   "id": "aql_01M6EKBSJC13EYZRTGFQ6YWWSH",
+   "id": "aql_01M6RPAF624CYYD988MXJCC75Q",
    "line_index": 15,
    "line_total": "4200.0000",
    "matched_qty": "0.000",
@@ -925,7 +923,7 @@
    "unit_price": "4200.0000"
   },
   {
-   "audit_id": "aud_01M6EKBNCE3GRS7VJSBCHBWENP",
+   "audit_id": "aud_01M6RPAAWHNANKZP385HAH2A4G",
    "bbox": [
     38.09763671875,
     666.7483963623047,
@@ -933,11 +931,11 @@
     689.7742418823242
    ],
    "component_ids": [
-    "cmp_01M6EKBN9DQSM11JBTXNT4E1B8_0003"
+    "cmp_01M6RPAATZJRVWYCK7QEQKYKPQ_0003"
    ],
    "confidence": 0.95,
    "description": "מפסק 4X125A",
-   "id": "aql_01M6EKBSJC13EYZRTGFQ6YWWSJ",
+   "id": "aql_01M6RPAF624CYYD988MXJCC75R",
    "line_index": 16,
    "line_total": "1250.0000",
    "matched_qty": "1.000",
@@ -961,7 +959,7 @@
    "unit_price": "1250.0000"
   },
   {
-   "audit_id": "aud_01M6EKBNCE3GRS7VJSBCHBWENP",
+   "audit_id": "aud_01M6RPAAWHNANKZP385HAH2A4G",
    "bbox": [
     38.09763671875,
     689.7742418823242,
@@ -971,7 +969,7 @@
    "component_ids": [],
    "confidence": 0.95,
    "description": "מנתק 4X125A",
-   "id": "aql_01M6EKBSJC13EYZRTGFQ6YWWSK",
+   "id": "aql_01M6RPAF624CYYD988MXJCC75S",
    "line_index": 17,
    "line_total": "1670.0000",
    "matched_qty": "0.000",
@@ -1005,27 +1003,28 @@
      "value": null
     },
     "color": {
-     "confidence": null,
-     "source": null,
+     "confidence": 0.85,
+     "source": "graphic",
      "span_ids": [],
-     "value": null
+     "value": "green"
     }
    },
    "brand_hint": null,
+   "catalog_item_id": null,
    "confidence": 0.9,
    "designators": [
     "L1",
     "L2",
     "L3"
    ],
-   "drawing_id": "drw_01M6EKBN9DQSM11JBTXNT4E1B8",
+   "drawing_id": "drw_01M6RPAATZJRVWYCK7QEQKYKPQ",
    "explicit_texts": [
     "L1",
     "L2",
     "L3"
    ],
    "family": "indicator_lamp",
-   "id": "cmp_01M6EKBN9DQSM11JBTXNT4E1B8_0001",
+   "id": "cmp_01M6RPAATZJRVWYCK7QEQKYKPQ_0001",
    "instances": [
     {
      "bbox": [
@@ -1035,7 +1034,7 @@
       133.68
      ],
      "instance_id": "ins_001_0002",
-     "page_id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZM",
+     "page_id": "pg_01M6RPAB12YQHXPQSFJBH5HQZY",
      "role": "device"
     },
     {
@@ -1046,7 +1045,7 @@
       133.68
      ],
      "instance_id": "ins_001_0003",
-     "page_id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZM",
+     "page_id": "pg_01M6RPAB12YQHXPQSFJBH5HQZY",
      "role": "device"
     },
     {
@@ -1057,11 +1056,12 @@
       133.68
      ],
      "instance_id": "ins_001_0004",
-     "page_id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZM",
+     "page_id": "pg_01M6RPAB12YQHXPQSFJBH5HQZY",
      "role": "device"
     }
    ],
-   "panel_id": "pnl_01M6EKBP64PQHZXARHWVJHN5SZ",
+   "match_status": null,
+   "panel_id": "pnl_01M6RPABQPSZ2NKQ3GYF30W5QT",
    "quantity": "3.000",
    "supply_scope": "in_panel"
   },
@@ -1074,27 +1074,28 @@
      "value": null
     },
     "color": {
-     "confidence": null,
-     "source": null,
+     "confidence": 0.85,
+     "source": "graphic",
      "span_ids": [],
-     "value": null
+     "value": "green"
     }
    },
    "brand_hint": null,
+   "catalog_item_id": null,
    "confidence": 0.9,
    "designators": [
     "LG1",
     "LG2",
     "LG3"
    ],
-   "drawing_id": "drw_01M6EKBN9DQSM11JBTXNT4E1B8",
+   "drawing_id": "drw_01M6RPAATZJRVWYCK7QEQKYKPQ",
    "explicit_texts": [
     "LG1",
     "LG2",
     "LG3"
    ],
    "family": "indicator_lamp",
-   "id": "cmp_01M6EKBN9DQSM11JBTXNT4E1B8_0002",
+   "id": "cmp_01M6RPAATZJRVWYCK7QEQKYKPQ_0002",
    "instances": [
     {
      "bbox": [
@@ -1104,7 +1105,7 @@
       133.68
      ],
      "instance_id": "ins_001_0005",
-     "page_id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZM",
+     "page_id": "pg_01M6RPAB12YQHXPQSFJBH5HQZY",
      "role": "device"
     },
     {
@@ -1115,7 +1116,7 @@
       133.68
      ],
      "instance_id": "ins_001_0006",
-     "page_id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZM",
+     "page_id": "pg_01M6RPAB12YQHXPQSFJBH5HQZY",
      "role": "device"
     },
     {
@@ -1126,11 +1127,12 @@
       133.68
      ],
      "instance_id": "ins_001_0007",
-     "page_id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZM",
+     "page_id": "pg_01M6RPAB12YQHXPQSFJBH5HQZY",
      "role": "device"
     }
    ],
-   "panel_id": "pnl_01M6EKBP64PQHZXARHWVJHN5T0",
+   "match_status": null,
+   "panel_id": "pnl_01M6RPABQPSZ2NKQ3GYF30W5QV",
    "quantity": "3.000",
    "supply_scope": "in_panel"
   },
@@ -1196,18 +1198,19 @@
     }
    },
    "brand_hint": null,
+   "catalog_item_id": null,
    "confidence": 0.81,
    "designators": [
     "QG1"
    ],
-   "drawing_id": "drw_01M6EKBN9DQSM11JBTXNT4E1B8",
+   "drawing_id": "drw_01M6RPAATZJRVWYCK7QEQKYKPQ",
    "explicit_texts": [
     "ABB-XT1C",
     "4×125A",
     "INC=100A"
    ],
    "family": "circuit_breaker",
-   "id": "cmp_01M6EKBN9DQSM11JBTXNT4E1B8_0003",
+   "id": "cmp_01M6RPAATZJRVWYCK7QEQKYKPQ_0003",
    "instances": [
     {
      "bbox": [
@@ -1217,11 +1220,12 @@
       221.52
      ],
      "instance_id": "ins_001_0008",
-     "page_id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZM",
+     "page_id": "pg_01M6RPAB12YQHXPQSFJBH5HQZY",
      "role": "device"
     }
    ],
-   "panel_id": "pnl_01M6EKBP64PQHZXARHWVJHN5SZ",
+   "match_status": null,
+   "panel_id": "pnl_01M6RPABQPSZ2NKQ3GYF30W5QT",
    "quantity": "1.000",
    "supply_scope": "in_panel"
   },
@@ -1289,18 +1293,19 @@
     }
    },
    "brand_hint": null,
+   "catalog_item_id": null,
    "confidence": 0.81,
    "designators": [
     "QG2"
    ],
-   "drawing_id": "drw_01M6EKBN9DQSM11JBTXNT4E1B8",
+   "drawing_id": "drw_01M6RPAATZJRVWYCK7QEQKYKPQ",
    "explicit_texts": [
     "ABB-XT1C",
     "4×125A",
     "INC=100A"
    ],
    "family": "circuit_breaker",
-   "id": "cmp_01M6EKBN9DQSM11JBTXNT4E1B8_0004",
+   "id": "cmp_01M6RPAATZJRVWYCK7QEQKYKPQ_0004",
    "instances": [
     {
      "bbox": [
@@ -1310,11 +1315,12 @@
       221.52
      ],
      "instance_id": "ins_001_0009",
-     "page_id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZM",
+     "page_id": "pg_01M6RPAB12YQHXPQSFJBH5HQZY",
      "role": "device"
     }
    ],
-   "panel_id": "pnl_01M6EKBP64PQHZXARHWVJHN5T0",
+   "match_status": null,
+   "panel_id": "pnl_01M6RPABQPSZ2NKQ3GYF30W5QV",
    "quantity": "1.000",
    "supply_scope": "in_panel"
   },
@@ -1380,18 +1386,19 @@
     }
    },
    "brand_hint": "ABB",
+   "catalog_item_id": null,
    "confidence": 0.4788,
    "designators": [
     "QLG1"
    ],
-   "drawing_id": "drw_01M6EKBN9DQSM11JBTXNT4E1B8",
+   "drawing_id": "drw_01M6RPAATZJRVWYCK7QEQKYKPQ",
    "explicit_texts": [
     "QLG1",
     "4-6.3A",
     "ABB-MS116"
    ],
    "family": "circuit_breaker",
-   "id": "cmp_01M6EKBN9DQSM11JBTXNT4E1B8_0005",
+   "id": "cmp_01M6RPAATZJRVWYCK7QEQKYKPQ_0005",
    "instances": [
     {
      "bbox": [
@@ -1401,7 +1408,7 @@
       235.68
      ],
      "instance_id": "ins_001_0010",
-     "page_id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZM",
+     "page_id": "pg_01M6RPAB12YQHXPQSFJBH5HQZY",
      "role": "device"
     },
     {
@@ -1412,11 +1419,12 @@
       235.68
      ],
      "instance_id": "ins_001_0013",
-     "page_id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZM",
+     "page_id": "pg_01M6RPAB12YQHXPQSFJBH5HQZY",
      "role": "device"
     }
    ],
-   "panel_id": "pnl_01M6EKBP64PQHZXARHWVJHN5SZ",
+   "match_status": null,
+   "panel_id": "pnl_01M6RPABQPSZ2NKQ3GYF30W5QT",
    "quantity": "1.000",
    "supply_scope": "in_panel"
   },
@@ -1482,18 +1490,19 @@
     }
    },
    "brand_hint": "ABB",
+   "catalog_item_id": null,
    "confidence": 0.9,
    "designators": [
     "QLG2"
    ],
-   "drawing_id": "drw_01M6EKBN9DQSM11JBTXNT4E1B8",
+   "drawing_id": "drw_01M6RPAATZJRVWYCK7QEQKYKPQ",
    "explicit_texts": [
     "QLG2",
     "4-6.3A",
     "ABB-MS116"
    ],
    "family": "circuit_breaker",
-   "id": "cmp_01M6EKBN9DQSM11JBTXNT4E1B8_0006",
+   "id": "cmp_01M6RPAATZJRVWYCK7QEQKYKPQ_0006",
    "instances": [
     {
      "bbox": [
@@ -1503,11 +1512,12 @@
       235.68
      ],
      "instance_id": "ins_001_0011",
-     "page_id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZM",
+     "page_id": "pg_01M6RPAB12YQHXPQSFJBH5HQZY",
      "role": "device"
     }
    ],
-   "panel_id": "pnl_01M6EKBP64PQHZXARHWVJHN5T0",
+   "match_status": null,
+   "panel_id": "pnl_01M6RPABQPSZ2NKQ3GYF30W5QV",
    "quantity": "1.000",
    "supply_scope": "in_panel"
   },
@@ -1521,14 +1531,15 @@
     }
    },
    "brand_hint": null,
+   "catalog_item_id": null,
    "confidence": 0.56,
    "designators": [
     "G1"
    ],
-   "drawing_id": "drw_01M6EKBN9DQSM11JBTXNT4E1B8",
+   "drawing_id": "drw_01M6RPAATZJRVWYCK7QEQKYKPQ",
    "explicit_texts": [],
    "family": "shunt_trip",
-   "id": "cmp_01M6EKBN9DQSM11JBTXNT4E1B8_0007",
+   "id": "cmp_01M6RPAATZJRVWYCK7QEQKYKPQ_0007",
    "instances": [
     {
      "bbox": [
@@ -1538,11 +1549,12 @@
       207.6
      ],
      "instance_id": "ins_001_0012",
-     "page_id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZM",
+     "page_id": "pg_01M6RPAB12YQHXPQSFJBH5HQZY",
      "role": "device"
     }
    ],
-   "panel_id": "pnl_01M6EKBP64PQHZXARHWVJHN5SZ",
+   "match_status": null,
+   "panel_id": "pnl_01M6RPABQPSZ2NKQ3GYF30W5QT",
    "quantity": "1.000",
    "supply_scope": "in_panel"
   },
@@ -1556,14 +1568,15 @@
     }
    },
    "brand_hint": null,
+   "catalog_item_id": null,
    "confidence": 0.49,
    "designators": [
     "SG"
    ],
-   "drawing_id": "drw_01M6EKBN9DQSM11JBTXNT4E1B8",
+   "drawing_id": "drw_01M6RPAATZJRVWYCK7QEQKYKPQ",
    "explicit_texts": [],
    "family": "terminal",
-   "id": "cmp_01M6EKBN9DQSM11JBTXNT4E1B8_0008",
+   "id": "cmp_01M6RPAATZJRVWYCK7QEQKYKPQ_0008",
    "instances": [
     {
      "bbox": [
@@ -1573,7 +1586,7 @@
       273.12
      ],
      "instance_id": "ins_001_0016",
-     "page_id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZM",
+     "page_id": "pg_01M6RPAB12YQHXPQSFJBH5HQZY",
      "role": "device"
     },
     {
@@ -1584,7 +1597,7 @@
       250.56
      ],
      "instance_id": "ins_001_0014",
-     "page_id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZM",
+     "page_id": "pg_01M6RPAB12YQHXPQSFJBH5HQZY",
      "role": "device"
     },
     {
@@ -1595,7 +1608,7 @@
       250.56
      ],
      "instance_id": "ins_001_0015",
-     "page_id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZM",
+     "page_id": "pg_01M6RPAB12YQHXPQSFJBH5HQZY",
      "role": "device"
     },
     {
@@ -1606,11 +1619,12 @@
       399.84
      ],
      "instance_id": "ins_001_0019",
-     "page_id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZM",
+     "page_id": "pg_01M6RPAB12YQHXPQSFJBH5HQZY",
      "role": "device"
     }
    ],
-   "panel_id": "pnl_01M6EKBP64PQHZXARHWVJHN5T0",
+   "match_status": null,
+   "panel_id": "pnl_01M6RPABQPSZ2NKQ3GYF30W5QV",
    "quantity": "4.000",
    "supply_scope": "in_panel"
   },
@@ -1638,11 +1652,12 @@
     }
    },
    "brand_hint": null,
+   "catalog_item_id": null,
    "confidence": 0.729,
    "designators": [
     "PB"
    ],
-   "drawing_id": "drw_01M6EKBN9DQSM11JBTXNT4E1B8",
+   "drawing_id": "drw_01M6RPAATZJRVWYCK7QEQKYKPQ",
    "explicit_texts": [
     "PB",
     "Overvoltage",
@@ -1651,7 +1666,7 @@
     "50kA"
    ],
    "family": "surge_protector",
-   "id": "cmp_01M6EKBN9DQSM11JBTXNT4E1B8_0009",
+   "id": "cmp_01M6RPAATZJRVWYCK7QEQKYKPQ_0009",
    "instances": [
     {
      "bbox": [
@@ -1661,29 +1676,31 @@
       369.36
      ],
      "instance_id": "ins_001_0017",
-     "page_id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZM",
+     "page_id": "pg_01M6RPAB12YQHXPQSFJBH5HQZY",
      "role": "device"
     }
    ],
-   "panel_id": "pnl_01M6EKBP64PQHZXARHWVJHN5T0",
+   "match_status": null,
+   "panel_id": "pnl_01M6RPABQPSZ2NKQ3GYF30W5QV",
    "quantity": "1.000",
    "supply_scope": "in_panel"
   },
   {
    "attributes": {},
    "brand_hint": null,
+   "catalog_item_id": null,
    "confidence": 0.651,
    "designators": [
     "PM"
    ],
-   "drawing_id": "drw_01M6EKBN9DQSM11JBTXNT4E1B8",
+   "drawing_id": "drw_01M6RPAATZJRVWYCK7QEQKYKPQ",
    "explicit_texts": [
     "SATEC-135",
     "E",
     "PM"
    ],
    "family": "energy_meter",
-   "id": "cmp_01M6EKBN9DQSM11JBTXNT4E1B8_0010",
+   "id": "cmp_01M6RPAATZJRVWYCK7QEQKYKPQ_0010",
    "instances": [
     {
      "bbox": [
@@ -1693,11 +1710,12 @@
       364.08
      ],
      "instance_id": "ins_001_0018",
-     "page_id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZM",
+     "page_id": "pg_01M6RPAB12YQHXPQSFJBH5HQZY",
      "role": "device"
     }
    ],
-   "panel_id": "pnl_01M6EKBP64PQHZXARHWVJHN5T0",
+   "match_status": null,
+   "panel_id": "pnl_01M6RPABQPSZ2NKQ3GYF30W5QV",
    "quantity": "1.000",
    "supply_scope": "in_panel"
   },
@@ -1763,18 +1781,19 @@
     }
    },
    "brand_hint": "ABB",
+   "catalog_item_id": null,
    "confidence": 0.63,
    "designators": [
     "QPM"
    ],
-   "drawing_id": "drw_01M6EKBN9DQSM11JBTXNT4E1B8",
+   "drawing_id": "drw_01M6RPAATZJRVWYCK7QEQKYKPQ",
    "explicit_texts": [
     "QPM",
     "4-6.3A",
     "ABB-MS116"
    ],
    "family": "circuit_breaker",
-   "id": "cmp_01M6EKBN9DQSM11JBTXNT4E1B8_0011",
+   "id": "cmp_01M6RPAATZJRVWYCK7QEQKYKPQ_0011",
    "instances": [
     {
      "bbox": [
@@ -1784,11 +1803,12 @@
       415.44
      ],
      "instance_id": "ins_001_0020",
-     "page_id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZM",
+     "page_id": "pg_01M6RPAB12YQHXPQSFJBH5HQZY",
      "role": "device"
     }
    ],
-   "panel_id": "pnl_01M6EKBP64PQHZXARHWVJHN5T0",
+   "match_status": null,
+   "panel_id": "pnl_01M6RPABQPSZ2NKQ3GYF30W5QV",
    "quantity": "1.000",
    "supply_scope": "in_panel"
   },
@@ -1810,18 +1830,19 @@
     }
    },
    "brand_hint": null,
+   "catalog_item_id": null,
    "confidence": 0.729,
    "designators": [
     "FPB"
    ],
-   "drawing_id": "drw_01M6EKBN9DQSM11JBTXNT4E1B8",
+   "drawing_id": "drw_01M6RPAATZJRVWYCK7QEQKYKPQ",
    "explicit_texts": [
     "FPB",
     "H.R.C",
     "3×50A"
    ],
    "family": "fuse",
-   "id": "cmp_01M6EKBN9DQSM11JBTXNT4E1B8_0012",
+   "id": "cmp_01M6RPAATZJRVWYCK7QEQKYKPQ_0012",
    "instances": [
     {
      "bbox": [
@@ -1831,11 +1852,12 @@
       415.2
      ],
      "instance_id": "ins_001_0022",
-     "page_id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZM",
+     "page_id": "pg_01M6RPAB12YQHXPQSFJBH5HQZY",
      "role": "device"
     }
    ],
-   "panel_id": "pnl_01M6EKBP64PQHZXARHWVJHN5T0",
+   "match_status": null,
+   "panel_id": "pnl_01M6RPABQPSZ2NKQ3GYF30W5QV",
    "quantity": "1.000",
    "supply_scope": "in_panel"
   },
@@ -1901,11 +1923,12 @@
     }
    },
    "brand_hint": "ABB",
+   "catalog_item_id": null,
    "confidence": 0.81,
    "designators": [
     "FC1"
    ],
-   "drawing_id": "drw_01M6EKBN9DQSM11JBTXNT4E1B8",
+   "drawing_id": "drw_01M6RPAATZJRVWYCK7QEQKYKPQ",
    "explicit_texts": [
     "3×16A",
     "S203M",
@@ -1913,7 +1936,7 @@
     "INC=20A"
    ],
    "family": "circuit_breaker",
-   "id": "cmp_01M6EKBN9DQSM11JBTXNT4E1B8_0013",
+   "id": "cmp_01M6RPAATZJRVWYCK7QEQKYKPQ_0013",
    "instances": [
     {
      "bbox": [
@@ -1923,11 +1946,12 @@
       159.6
      ],
      "instance_id": "ins_002_0002",
-     "page_id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZN",
+     "page_id": "pg_01M6RPAB12YQHXPQSFJBH5HQZZ",
      "role": "device"
     }
    ],
-   "panel_id": "pnl_01M6EKBP64PQHZXARHWVJHN5T1",
+   "match_status": null,
+   "panel_id": "pnl_01M6RPABQPSZ2NKQ3GYF30W5QW",
    "quantity": "1.000",
    "supply_scope": "in_panel"
   },
@@ -1993,11 +2017,12 @@
     }
    },
    "brand_hint": "ABB",
+   "catalog_item_id": null,
    "confidence": 0.81,
    "designators": [
     "FC2"
    ],
-   "drawing_id": "drw_01M6EKBN9DQSM11JBTXNT4E1B8",
+   "drawing_id": "drw_01M6RPAATZJRVWYCK7QEQKYKPQ",
    "explicit_texts": [
     "S203M",
     "3×40A",
@@ -2005,7 +2030,7 @@
     "ABB"
    ],
    "family": "circuit_breaker",
-   "id": "cmp_01M6EKBN9DQSM11JBTXNT4E1B8_0014",
+   "id": "cmp_01M6RPAATZJRVWYCK7QEQKYKPQ_0014",
    "instances": [
     {
      "bbox": [
@@ -2015,11 +2040,12 @@
       159.36
      ],
      "instance_id": "ins_002_0003",
-     "page_id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZN",
+     "page_id": "pg_01M6RPAB12YQHXPQSFJBH5HQZZ",
      "role": "device"
     }
    ],
-   "panel_id": "pnl_01M6EKBP64PQHZXARHWVJHN5T1",
+   "match_status": null,
+   "panel_id": "pnl_01M6RPABQPSZ2NKQ3GYF30W5QW",
    "quantity": "1.000",
    "supply_scope": "in_panel"
   },
@@ -2085,18 +2111,19 @@
     }
    },
    "brand_hint": null,
+   "catalog_item_id": null,
    "confidence": 0.81,
    "designators": [
     "Q1"
    ],
-   "drawing_id": "drw_01M6EKBN9DQSM11JBTXNT4E1B8",
+   "drawing_id": "drw_01M6RPAATZJRVWYCK7QEQKYKPQ",
    "explicit_texts": [
     "3×80A",
     "ABB-XT1",
     "INC=64A"
    ],
    "family": "circuit_breaker",
-   "id": "cmp_01M6EKBN9DQSM11JBTXNT4E1B8_0015",
+   "id": "cmp_01M6RPAATZJRVWYCK7QEQKYKPQ_0015",
    "instances": [
     {
      "bbox": [
@@ -2106,11 +2133,12 @@
       172.32
      ],
      "instance_id": "ins_002_0004",
-     "page_id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZN",
+     "page_id": "pg_01M6RPAB12YQHXPQSFJBH5HQZZ",
      "role": "device"
     }
    ],
-   "panel_id": "pnl_01M6EKBP64PQHZXARHWVJHN5T1",
+   "match_status": null,
+   "panel_id": "pnl_01M6RPABQPSZ2NKQ3GYF30W5QW",
    "quantity": "1.000",
    "supply_scope": "in_panel"
   },
@@ -2151,29 +2179,35 @@
      "value": 4
     },
     "rcd_type": {
-     "confidence": null,
-     "source": null,
-     "span_ids": [],
-     "value": null
+     "confidence": 0.9,
+     "source": "drawing",
+     "span_ids": [
+      "ts_002_0036"
+     ],
+     "value": "A"
     },
     "residual_ma": {
-     "confidence": null,
-     "source": null,
-     "span_ids": [],
-     "value": null
+     "confidence": 0.9,
+     "source": "drawing",
+     "span_ids": [
+      "ts_002_0036"
+     ],
+     "value": 30
     }
    },
    "brand_hint": null,
+   "catalog_item_id": null,
    "confidence": 0.504,
    "designators": [
     "FB2"
    ],
-   "drawing_id": "drw_01M6EKBN9DQSM11JBTXNT4E1B8",
+   "drawing_id": "drw_01M6RPAATZJRVWYCK7QEQKYKPQ",
    "explicit_texts": [
-    "4×40A"
+    "4×40A",
+    "30mA-TYPE\"A\""
    ],
    "family": "rcbo",
-   "id": "cmp_01M6EKBN9DQSM11JBTXNT4E1B8_0016",
+   "id": "cmp_01M6RPAATZJRVWYCK7QEQKYKPQ_0016",
    "instances": [
     {
      "bbox": [
@@ -2183,11 +2217,12 @@
       210.48
      ],
      "instance_id": "ins_002_0005",
-     "page_id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZN",
+     "page_id": "pg_01M6RPAB12YQHXPQSFJBH5HQZZ",
      "role": "device"
     }
    ],
-   "panel_id": "pnl_01M6EKBP64PQHZXARHWVJHN5T1",
+   "match_status": null,
+   "panel_id": "pnl_01M6RPABQPSZ2NKQ3GYF30W5QW",
    "quantity": "1.000",
    "supply_scope": "in_panel"
   },
@@ -2216,29 +2251,35 @@
      "value": 4
     },
     "rcd_type": {
-     "confidence": null,
-     "source": null,
-     "span_ids": [],
-     "value": null
+     "confidence": 0.6,
+     "source": "drawing",
+     "span_ids": [
+      "ts_002_0022"
+     ],
+     "value": "A"
     },
     "residual_ma": {
-     "confidence": null,
-     "source": null,
-     "span_ids": [],
-     "value": null
+     "confidence": 0.6,
+     "source": "drawing",
+     "span_ids": [
+      "ts_002_0022"
+     ],
+     "value": 30
     }
    },
    "brand_hint": null,
-   "confidence": 0.81,
+   "catalog_item_id": null,
+   "confidence": 0.54,
    "designators": [
     "FB1"
    ],
-   "drawing_id": "drw_01M6EKBN9DQSM11JBTXNT4E1B8",
+   "drawing_id": "drw_01M6RPAATZJRVWYCK7QEQKYKPQ",
    "explicit_texts": [
-    "4×40A"
+    "4×40A",
+    "30mA-TYPE”A”"
    ],
    "family": "rcd",
-   "id": "cmp_01M6EKBN9DQSM11JBTXNT4E1B8_0017",
+   "id": "cmp_01M6RPAATZJRVWYCK7QEQKYKPQ_0017",
    "instances": [
     {
      "bbox": [
@@ -2248,11 +2289,12 @@
       211.2
      ],
      "instance_id": "ins_002_0006",
-     "page_id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZN",
+     "page_id": "pg_01M6RPAB12YQHXPQSFJBH5HQZZ",
      "role": "device"
     }
    ],
-   "panel_id": "pnl_01M6EKBP64PQHZXARHWVJHN5T1",
+   "match_status": null,
+   "panel_id": "pnl_01M6RPABQPSZ2NKQ3GYF30W5QW",
    "quantity": "1.000",
    "supply_scope": "in_panel"
   },
@@ -2320,12 +2362,13 @@
     }
    },
    "brand_hint": "ABB",
+   "catalog_item_id": null,
    "confidence": 0.81,
    "designators": [
     "F13",
     "F14"
    ],
-   "drawing_id": "drw_01M6EKBN9DQSM11JBTXNT4E1B8",
+   "drawing_id": "drw_01M6RPAATZJRVWYCK7QEQKYKPQ",
    "explicit_texts": [
     "3×25A",
     "S203M",
@@ -2333,7 +2376,7 @@
     "INC=20A"
    ],
    "family": "circuit_breaker",
-   "id": "cmp_01M6EKBN9DQSM11JBTXNT4E1B8_0018",
+   "id": "cmp_01M6RPAATZJRVWYCK7QEQKYKPQ_0018",
    "instances": [
     {
      "bbox": [
@@ -2343,7 +2386,7 @@
       309.12
      ],
      "instance_id": "ins_002_0009",
-     "page_id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZN",
+     "page_id": "pg_01M6RPAB12YQHXPQSFJBH5HQZZ",
      "role": "device"
     },
     {
@@ -2354,11 +2397,12 @@
       307.2
      ],
      "instance_id": "ins_002_0016",
-     "page_id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZN",
+     "page_id": "pg_01M6RPAB12YQHXPQSFJBH5HQZZ",
      "role": "device"
     }
    ],
-   "panel_id": "pnl_01M6EKBP64PQHZXARHWVJHN5T1",
+   "match_status": null,
+   "panel_id": "pnl_01M6RPABQPSZ2NKQ3GYF30W5QW",
    "quantity": "2.000",
    "supply_scope": "in_panel"
   },
@@ -2426,12 +2470,13 @@
     }
    },
    "brand_hint": "ABB",
+   "catalog_item_id": null,
    "confidence": 0.81,
    "designators": [
     "F17",
     "F18"
    ],
-   "drawing_id": "drw_01M6EKBN9DQSM11JBTXNT4E1B8",
+   "drawing_id": "drw_01M6RPAATZJRVWYCK7QEQKYKPQ",
    "explicit_texts": [
     "INC=8A",
     "S201M",
@@ -2440,7 +2485,7 @@
     "SPARE"
    ],
    "family": "circuit_breaker",
-   "id": "cmp_01M6EKBN9DQSM11JBTXNT4E1B8_0019",
+   "id": "cmp_01M6RPAATZJRVWYCK7QEQKYKPQ_0019",
    "instances": [
     {
      "bbox": [
@@ -2450,7 +2495,7 @@
       309.12
      ],
      "instance_id": "ins_002_0010",
-     "page_id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZN",
+     "page_id": "pg_01M6RPAB12YQHXPQSFJBH5HQZZ",
      "role": "device"
     },
     {
@@ -2461,11 +2506,12 @@
       309.12
      ],
      "instance_id": "ins_002_0011",
-     "page_id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZN",
+     "page_id": "pg_01M6RPAB12YQHXPQSFJBH5HQZZ",
      "role": "device"
     }
    ],
-   "panel_id": "pnl_01M6EKBP64PQHZXARHWVJHN5T1",
+   "match_status": null,
+   "panel_id": "pnl_01M6RPABQPSZ2NKQ3GYF30W5QW",
    "quantity": "2.000",
    "supply_scope": "in_panel"
   },
@@ -2537,6 +2583,7 @@
     }
    },
    "brand_hint": "ABB",
+   "catalog_item_id": null,
    "confidence": 0.81,
    "designators": [
     "F7",
@@ -2544,7 +2591,7 @@
     "F9",
     "F10"
    ],
-   "drawing_id": "drw_01M6EKBN9DQSM11JBTXNT4E1B8",
+   "drawing_id": "drw_01M6RPAATZJRVWYCK7QEQKYKPQ",
    "explicit_texts": [
     "1×10A",
     "S201M",
@@ -2552,7 +2599,7 @@
     "INC=8A"
    ],
    "family": "circuit_breaker",
-   "id": "cmp_01M6EKBN9DQSM11JBTXNT4E1B8_0020",
+   "id": "cmp_01M6RPAATZJRVWYCK7QEQKYKPQ_0020",
    "instances": [
     {
      "bbox": [
@@ -2562,7 +2609,7 @@
       307.2
      ],
      "instance_id": "ins_002_0012",
-     "page_id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZN",
+     "page_id": "pg_01M6RPAB12YQHXPQSFJBH5HQZZ",
      "role": "device"
     },
     {
@@ -2573,7 +2620,7 @@
       307.2
      ],
      "instance_id": "ins_002_0013",
-     "page_id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZN",
+     "page_id": "pg_01M6RPAB12YQHXPQSFJBH5HQZZ",
      "role": "device"
     },
     {
@@ -2584,7 +2631,7 @@
       307.2
      ],
      "instance_id": "ins_002_0014",
-     "page_id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZN",
+     "page_id": "pg_01M6RPAB12YQHXPQSFJBH5HQZZ",
      "role": "device"
     },
     {
@@ -2595,11 +2642,12 @@
       307.2
      ],
      "instance_id": "ins_002_0015",
-     "page_id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZN",
+     "page_id": "pg_01M6RPAB12YQHXPQSFJBH5HQZZ",
      "role": "device"
     }
    ],
-   "panel_id": "pnl_01M6EKBP64PQHZXARHWVJHN5T1",
+   "match_status": null,
+   "panel_id": "pnl_01M6RPABQPSZ2NKQ3GYF30W5QW",
    "quantity": "4.000",
    "supply_scope": "in_panel"
   },
@@ -2613,22 +2661,21 @@
     }
    },
    "brand_hint": null,
+   "catalog_item_id": null,
    "confidence": 0.595,
    "designators": [
     "C",
     "COM",
     "EM1",
-    "EM2",
     "L",
     "Z1"
    ],
-   "drawing_id": "drw_01M6EKBN9DQSM11JBTXNT4E1B8",
+   "drawing_id": "drw_01M6RPAATZJRVWYCK7QEQKYKPQ",
    "explicit_texts": [
-    "EM2",
     "L"
    ],
    "family": "terminal",
-   "id": "cmp_01M6EKBN9DQSM11JBTXNT4E1B8_0021",
+   "id": "cmp_01M6RPAATZJRVWYCK7QEQKYKPQ_0021",
    "instances": [
     {
      "bbox": [
@@ -2638,7 +2685,7 @@
       176.88
      ],
      "instance_id": "ins_003_0001",
-     "page_id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZP",
+     "page_id": "pg_01M6RPAB12YQHXPQSFJBH5HR00",
      "role": "device"
     },
     {
@@ -2649,7 +2696,7 @@
       176.64
      ],
      "instance_id": "ins_003_0002",
-     "page_id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZP",
+     "page_id": "pg_01M6RPAB12YQHXPQSFJBH5HR00",
      "role": "device"
     },
     {
@@ -2660,7 +2707,7 @@
       205.44
      ],
      "instance_id": "ins_003_0007",
-     "page_id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZP",
+     "page_id": "pg_01M6RPAB12YQHXPQSFJBH5HR00",
      "role": "device"
     },
     {
@@ -2671,7 +2718,7 @@
       207.84
      ],
      "instance_id": "ins_003_0005",
-     "page_id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZP",
+     "page_id": "pg_01M6RPAB12YQHXPQSFJBH5HR00",
      "role": "device"
     },
     {
@@ -2682,18 +2729,7 @@
       205.44
      ],
      "instance_id": "ins_003_0006",
-     "page_id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZP",
-     "role": "device"
-    },
-    {
-     "bbox": [
-      298.8,
-      237.6,
-      305.04,
-      244.32
-     ],
-     "instance_id": "ins_003_0010",
-     "page_id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZP",
+     "page_id": "pg_01M6RPAB12YQHXPQSFJBH5HR00",
      "role": "device"
     },
     {
@@ -2703,8 +2739,8 @@
       400.32,
       249.36
      ],
-     "instance_id": "ins_003_0013",
-     "page_id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZP",
+     "instance_id": "ins_003_0012",
+     "page_id": "pg_01M6RPAB12YQHXPQSFJBH5HR00",
      "role": "device"
     },
     {
@@ -2715,7 +2751,7 @@
       265.68
      ],
      "instance_id": "ins_002_0008",
-     "page_id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZN",
+     "page_id": "pg_01M6RPAB12YQHXPQSFJBH5HQZZ",
      "role": "device"
     },
     {
@@ -2726,7 +2762,7 @@
       364.8
      ],
      "instance_id": "ins_002_0020",
-     "page_id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZN",
+     "page_id": "pg_01M6RPAB12YQHXPQSFJBH5HQZZ",
      "role": "device"
     },
     {
@@ -2737,7 +2773,7 @@
       364.8
      ],
      "instance_id": "ins_002_0021",
-     "page_id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZN",
+     "page_id": "pg_01M6RPAB12YQHXPQSFJBH5HQZZ",
      "role": "device"
     },
     {
@@ -2748,7 +2784,7 @@
       364.8
      ],
      "instance_id": "ins_002_0022",
-     "page_id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZN",
+     "page_id": "pg_01M6RPAB12YQHXPQSFJBH5HQZZ",
      "role": "device"
     },
     {
@@ -2759,7 +2795,7 @@
       364.32
      ],
      "instance_id": "ins_002_0023",
-     "page_id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZN",
+     "page_id": "pg_01M6RPAB12YQHXPQSFJBH5HQZZ",
      "role": "device"
     },
     {
@@ -2770,7 +2806,7 @@
       364.32
      ],
      "instance_id": "ins_002_0024",
-     "page_id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZN",
+     "page_id": "pg_01M6RPAB12YQHXPQSFJBH5HQZZ",
      "role": "device"
     },
     {
@@ -2781,7 +2817,7 @@
       364.32
      ],
      "instance_id": "ins_002_0017",
-     "page_id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZN",
+     "page_id": "pg_01M6RPAB12YQHXPQSFJBH5HQZZ",
      "role": "device"
     },
     {
@@ -2792,7 +2828,7 @@
       364.32
      ],
      "instance_id": "ins_002_0018",
-     "page_id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZN",
+     "page_id": "pg_01M6RPAB12YQHXPQSFJBH5HQZZ",
      "role": "device"
     },
     {
@@ -2803,7 +2839,7 @@
       364.32
      ],
      "instance_id": "ins_002_0019",
-     "page_id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZN",
+     "page_id": "pg_01M6RPAB12YQHXPQSFJBH5HQZZ",
      "role": "device"
     },
     {
@@ -2813,13 +2849,14 @@
       465.84,
       249.36
      ],
-     "instance_id": "ins_003_0012",
-     "page_id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZP",
+     "instance_id": "ins_003_0011",
+     "page_id": "pg_01M6RPAB12YQHXPQSFJBH5HR00",
      "role": "device"
     }
    ],
-   "panel_id": "pnl_01M6EKBP64PQHZXARHWVJHN5T1",
-   "quantity": "16.000",
+   "match_status": null,
+   "panel_id": "pnl_01M6RPABQPSZ2NKQ3GYF30W5QW",
+   "quantity": "15.000",
    "supply_scope": "in_panel"
   },
   {
@@ -2832,15 +2869,16 @@
     }
    },
    "brand_hint": null,
+   "catalog_item_id": null,
    "confidence": 0.9,
    "designators": [
     "TC-G1",
     "TC-G2"
    ],
-   "drawing_id": "drw_01M6EKBN9DQSM11JBTXNT4E1B8",
+   "drawing_id": "drw_01M6RPAATZJRVWYCK7QEQKYKPQ",
    "explicit_texts": [],
    "family": "shunt_trip",
-   "id": "cmp_01M6EKBN9DQSM11JBTXNT4E1B8_0022",
+   "id": "cmp_01M6RPAATZJRVWYCK7QEQKYKPQ_0022",
    "instances": [
     {
      "bbox": [
@@ -2850,7 +2888,7 @@
       192.72
      ],
      "instance_id": "ins_003_0003",
-     "page_id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZP",
+     "page_id": "pg_01M6RPAB12YQHXPQSFJBH5HR00",
      "role": "device"
     },
     {
@@ -2861,11 +2899,12 @@
       192.96
      ],
      "instance_id": "ins_003_0004",
-     "page_id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZP",
+     "page_id": "pg_01M6RPAB12YQHXPQSFJBH5HR00",
      "role": "device"
     }
    ],
-   "panel_id": "pnl_01M6EKBP64PQHZXARHWVJHN5T1",
+   "match_status": null,
+   "panel_id": "pnl_01M6RPABQPSZ2NKQ3GYF30W5QW",
    "quantity": "2.000",
    "supply_scope": "in_panel"
   },
@@ -2879,16 +2918,17 @@
     }
    },
    "brand_hint": null,
+   "catalog_item_id": null,
    "confidence": 0.9,
    "designators": [
     "EMS"
    ],
-   "drawing_id": "drw_01M6EKBN9DQSM11JBTXNT4E1B8",
+   "drawing_id": "drw_01M6RPAATZJRVWYCK7QEQKYKPQ",
    "explicit_texts": [
     "EMS"
    ],
    "family": "push_button",
-   "id": "cmp_01M6EKBN9DQSM11JBTXNT4E1B8_0023",
+   "id": "cmp_01M6RPAATZJRVWYCK7QEQKYKPQ_0023",
    "instances": [
     {
      "bbox": [
@@ -2898,7 +2938,7 @@
       231.6
      ],
      "instance_id": "ins_003_0008",
-     "page_id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZP",
+     "page_id": "pg_01M6RPAB12YQHXPQSFJBH5HR00",
      "role": "device"
     },
     {
@@ -2909,11 +2949,12 @@
       238.08
      ],
      "instance_id": "ins_003_0009",
-     "page_id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZP",
+     "page_id": "pg_01M6RPAB12YQHXPQSFJBH5HR00",
      "role": "device"
     }
    ],
-   "panel_id": "pnl_01M6EKBP64PQHZXARHWVJHN5T1",
+   "match_status": null,
+   "panel_id": "pnl_01M6RPABQPSZ2NKQ3GYF30W5QW",
    "quantity": "1.000",
    "supply_scope": "prepare_only"
   },
@@ -2927,14 +2968,15 @@
     }
    },
    "brand_hint": null,
+   "catalog_item_id": null,
    "confidence": 0.42,
    "designators": [
     "GIC-1"
    ],
-   "drawing_id": "drw_01M6EKBN9DQSM11JBTXNT4E1B8",
+   "drawing_id": "drw_01M6RPAATZJRVWYCK7QEQKYKPQ",
    "explicit_texts": [],
    "family": "relay",
-   "id": "cmp_01M6EKBN9DQSM11JBTXNT4E1B8_0024",
+   "id": "cmp_01M6RPAATZJRVWYCK7QEQKYKPQ_0024",
    "instances": [
     {
      "bbox": [
@@ -2943,12 +2985,13 @@
       442.08,
       248.4
      ],
-     "instance_id": "ins_003_0011",
-     "page_id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZP",
+     "instance_id": "ins_003_0010",
+     "page_id": "pg_01M6RPAB12YQHXPQSFJBH5HR00",
      "role": "relay_contact"
     }
    ],
-   "panel_id": "pnl_01M6EKBP64PQHZXARHWVJHN5T1",
+   "match_status": null,
+   "panel_id": "pnl_01M6RPABQPSZ2NKQ3GYF30W5QW",
    "quantity": "1.000",
    "supply_scope": "in_panel"
   },
@@ -2979,22 +3022,26 @@
      "value": null
     },
     "poles": {
-     "confidence": 0.6,
-     "source": "graphic",
+     "confidence": null,
+     "source": null,
      "span_ids": [],
-     "value": 3
+     "value": null
     },
     "range_max_a": {
-     "confidence": null,
-     "source": null,
-     "span_ids": [],
-     "value": null
+     "confidence": 0.765,
+     "source": "drawing",
+     "span_ids": [
+      "ts_003_0059"
+     ],
+     "value": 6.3
     },
     "range_min_a": {
-     "confidence": null,
-     "source": null,
-     "span_ids": [],
-     "value": null
+     "confidence": 0.765,
+     "source": "drawing",
+     "span_ids": [
+      "ts_003_0059"
+     ],
+     "value": 4.0
     },
     "setting_a": {
      "confidence": null,
@@ -3010,17 +3057,18 @@
     }
    },
    "brand_hint": null,
-   "confidence": 0.54,
+   "catalog_item_id": null,
+   "confidence": 0.9,
    "designators": [
     "QRF"
    ],
-   "drawing_id": "drw_01M6EKBN9DQSM11JBTXNT4E1B8",
+   "drawing_id": "drw_01M6RPAATZJRVWYCK7QEQKYKPQ",
    "explicit_texts": [
     "QRF",
     "4-6.3A"
    ],
    "family": "circuit_breaker",
-   "id": "cmp_01M6EKBN9DQSM11JBTXNT4E1B8_0025",
+   "id": "cmp_01M6RPAATZJRVWYCK7QEQKYKPQ_0025",
    "instances": [
     {
      "bbox": [
@@ -3029,12 +3077,13 @@
       374.16,
       321.6
      ],
-     "instance_id": "ins_003_0014",
-     "page_id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZP",
+     "instance_id": "ins_003_0013",
+     "page_id": "pg_01M6RPAB12YQHXPQSFJBH5HR00",
      "role": "device"
     }
    ],
-   "panel_id": "pnl_01M6EKBP64PQHZXARHWVJHN5T1",
+   "match_status": null,
+   "panel_id": "pnl_01M6RPABQPSZ2NKQ3GYF30W5QW",
    "quantity": "1.000",
    "supply_scope": "in_panel"
   },
@@ -3058,18 +3107,19 @@
     }
    },
    "brand_hint": null,
+   "catalog_item_id": null,
    "confidence": 0.81,
    "designators": [
     "MS1",
     "MS2",
     "MS3"
    ],
-   "drawing_id": "drw_01M6EKBN9DQSM11JBTXNT4E1B8",
+   "drawing_id": "drw_01M6RPAATZJRVWYCK7QEQKYKPQ",
    "explicit_texts": [
     "125/5A"
    ],
    "family": "current_transformer",
-   "id": "cmp_01M6EKBN9DQSM11JBTXNT4E1B8_0026",
+   "id": "cmp_01M6RPAATZJRVWYCK7QEQKYKPQ_0026",
    "instances": [
     {
      "bbox": [
@@ -3079,18 +3129,19 @@
       391.92
      ],
      "instance_id": "ins_001_0021",
-     "page_id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZM",
+     "page_id": "pg_01M6RPAB12YQHXPQSFJBH5HQZY",
      "role": "device"
     }
    ],
-   "panel_id": "pnl_01M6EKBP64PQHZXARHWVJHN5T0",
+   "match_status": null,
+   "panel_id": "pnl_01M6RPABQPSZ2NKQ3GYF30W5QV",
    "quantity": "3.000",
    "supply_scope": "in_panel"
   },
   {
    "attributes": {
     "range_max_a": {
-     "confidence": 0.765,
+     "confidence": 0.9,
      "source": "drawing",
      "span_ids": [
       "ts_003_0059"
@@ -3098,23 +3149,24 @@
      "value": 6.3
     },
     "range_min_a": {
-     "confidence": 0.765,
+     "confidence": 0.9,
      "source": "drawing",
      "span_ids": [
       "ts_003_0059"
      ],
-     "value": 4.0
+     "value": 4
     }
    },
    "brand_hint": null,
-   "confidence": 0.4284,
+   "catalog_item_id": null,
+   "confidence": 0.504,
    "designators": [],
-   "drawing_id": "drw_01M6EKBN9DQSM11JBTXNT4E1B8",
+   "drawing_id": "drw_01M6RPAATZJRVWYCK7QEQKYKPQ",
    "explicit_texts": [
     "4-6.3A"
    ],
    "family": "overload_relay",
-   "id": "cmp_01M6EKBN9DQSM11JBTXNT4E1B8_0027",
+   "id": "cmp_01M6RPAATZJRVWYCK7QEQKYKPQ_0027",
    "instances": [
     {
      "bbox": [
@@ -3123,12 +3175,13 @@
       383.04,
       353.52
      ],
-     "instance_id": "ins_003_0015",
-     "page_id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZP",
+     "instance_id": "ins_003_0014",
+     "page_id": "pg_01M6RPAB12YQHXPQSFJBH5HR00",
      "role": "device"
     }
    ],
-   "panel_id": "pnl_01M6EKBP64PQHZXARHWVJHN5T1",
+   "match_status": null,
+   "panel_id": "pnl_01M6RPABQPSZ2NKQ3GYF30W5QW",
    "quantity": "1.000",
    "supply_scope": "in_panel"
   }
@@ -3137,18 +3190,19 @@
   {
    "created_by": "{user}",
    "current_stage": 8,
-   "id": "drw_01M6EKBN9DQSM11JBTXNT4E1B8",
+   "id": "drw_01M6RPAATZJRVWYCK7QEQKYKPQ",
    "input_kind": "factory_drawing",
    "issues": [],
    "needs_confirmation": false,
+   "origin": "upload",
    "progress": 1.0,
-   "project_id": "prj_01M6EKBN9DQSM11JBTXNT4E1BA",
+   "project_id": "prj_01M6RPAATZJRVWYCK7QEQKYKPS",
    "purpose": "audit",
    "quota": {
     "counted": true,
-    "quota_event_id": "qev_01M6EKBPHB718KW33PFMGQVBW2",
+    "quota_event_id": "qev_01M6RPAC2MSMYQP8EJCTKJM67N",
     "reason": "audit",
-    "reservation_id": "qev_01M6EKBNBFYNCQP1KXH539WQZM"
+    "reservation_id": "qev_01M6RPAAVATZ0VWM69089HK4G0"
    },
    "revision_of": null,
    "status": "ready",
@@ -3159,14 +3213,14 @@
     "project_name": null,
     "revision": null
    },
-   "trace_id": "trc_01M6EKBN9DQSM11JBTXNT4E1B9"
+   "trace_id": "trc_01M6RPAATZJRVWYCK7QEQKYKPR"
   }
  ],
  "files": [
   {
    "detected_format": "pdf",
-   "drawing_id": "drw_01M6EKBN9DQSM11JBTXNT4E1B8",
-   "id": "fil_01M6EKBNC64M16QQ4SFPQQBKDZ",
+   "drawing_id": "drw_01M6RPAATZJRVWYCK7QEQKYKPQ",
+   "id": "fil_01M6RPAAW7M1VAS8YZ63XF6DXT",
    "original_name": "Hatzaa_10271.pdf",
    "page_count": 1,
    "role": "audited_quote",
@@ -3175,8 +3229,8 @@
   },
   {
    "detected_format": "pdf",
-   "drawing_id": "drw_01M6EKBN9DQSM11JBTXNT4E1B8",
-   "id": "fil_01M6EKBNBYTRSFWE6WFNWHHDDT",
+   "drawing_id": "drw_01M6RPAATZJRVWYCK7QEQKYKPQ",
+   "id": "fil_01M6RPAAVSZDTNDZ2GQWXDM6S3",
    "original_name": "MAIN_ELECTRICAL_BOARD.pdf",
    "page_count": 5,
    "role": "drawing",
@@ -3188,11 +3242,11 @@
   {
    "classified_by": "model",
    "component_labels": "not_applicable",
-   "drawing_id": "drw_01M6EKBN9DQSM11JBTXNT4E1B8",
-   "file_id": "fil_01M6EKBNBYTRSFWE6WFNWHHDDT",
+   "drawing_id": "drw_01M6RPAATZJRVWYCK7QEQKYKPQ",
+   "file_id": "fil_01M6RPAAVSZDTNDZ2GQWXDM6S3",
    "geometry_source": "vector",
    "height_pt": 612.0,
-   "id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZJ",
+   "id": "pg_01M6RPAB12YQHXPQSFJBH5HQZW",
    "model": "claude-haiku-5-5",
    "page_kind": "technical_data",
    "page_kind_confidence": 0.9,
@@ -3219,11 +3273,11 @@
   {
    "classified_by": "model",
    "component_labels": "tags_only",
-   "drawing_id": "drw_01M6EKBN9DQSM11JBTXNT4E1B8",
-   "file_id": "fil_01M6EKBNBYTRSFWE6WFNWHHDDT",
+   "drawing_id": "drw_01M6RPAATZJRVWYCK7QEQKYKPQ",
+   "file_id": "fil_01M6RPAAVSZDTNDZ2GQWXDM6S3",
    "geometry_source": "vector",
    "height_pt": 612.0,
-   "id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZK",
+   "id": "pg_01M6RPAB12YQHXPQSFJBH5HQZX",
    "model": "claude-haiku-5-5",
    "page_kind": "panel_front_view",
    "page_kind_confidence": 0.85,
@@ -3262,11 +3316,11 @@
   {
    "classified_by": "model",
    "component_labels": "tags_and_models",
-   "drawing_id": "drw_01M6EKBN9DQSM11JBTXNT4E1B8",
-   "file_id": "fil_01M6EKBNBYTRSFWE6WFNWHHDDT",
+   "drawing_id": "drw_01M6RPAATZJRVWYCK7QEQKYKPQ",
+   "file_id": "fil_01M6RPAAVSZDTNDZ2GQWXDM6S3",
    "geometry_source": "vector",
    "height_pt": 612.0,
-   "id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZM",
+   "id": "pg_01M6RPAB12YQHXPQSFJBH5HQZY",
    "model": "claude-haiku-5-5",
    "page_kind": "single_line_diagram",
    "page_kind_confidence": 0.95,
@@ -3316,11 +3370,11 @@
   {
    "classified_by": "model",
    "component_labels": "tags_and_models",
-   "drawing_id": "drw_01M6EKBN9DQSM11JBTXNT4E1B8",
-   "file_id": "fil_01M6EKBNBYTRSFWE6WFNWHHDDT",
+   "drawing_id": "drw_01M6RPAATZJRVWYCK7QEQKYKPQ",
+   "file_id": "fil_01M6RPAAVSZDTNDZ2GQWXDM6S3",
    "geometry_source": "vector",
    "height_pt": 612.0,
-   "id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZN",
+   "id": "pg_01M6RPAB12YQHXPQSFJBH5HQZZ",
    "model": "claude-haiku-5-5",
    "page_kind": "single_line_diagram",
    "page_kind_confidence": 0.95,
@@ -3370,11 +3424,11 @@
   {
    "classified_by": "model",
    "component_labels": "tags_only",
-   "drawing_id": "drw_01M6EKBN9DQSM11JBTXNT4E1B8",
-   "file_id": "fil_01M6EKBNBYTRSFWE6WFNWHHDDT",
+   "drawing_id": "drw_01M6RPAATZJRVWYCK7QEQKYKPQ",
+   "file_id": "fil_01M6RPAAVSZDTNDZ2GQWXDM6S3",
    "geometry_source": "vector",
    "height_pt": 612.0,
-   "id": "pg_01M6EKBNGRPKD7X7SVFP8GRHZP",
+   "id": "pg_01M6RPAB12YQHXPQSFJBH5HR00",
    "model": "claude-haiku-5-5",
    "page_kind": "control_diagram",
    "page_kind_confidence": 0.8,
@@ -3397,7 +3451,7 @@
    "rotation_applied": 90,
    "route": "process",
    "sha256": "7b2d8e7941b7d351f5fd4c07f7e472149dae9fcc5397ef862fe8419cedb43655",
-   "symbol_count": 15,
+   "symbol_count": 14,
    "symbol_llm_count": 3,
    "text_source": "ocr",
    "tile_count": 12,
@@ -3414,7 +3468,7 @@
  "panels": [
   {
    "bboxes": {
-    "pg_01M6EKBNGRPKD7X7SVFP8GRHZM": [
+    "pg_01M6RPAB12YQHXPQSFJBH5HQZY": [
      [
       100.6,
       93.0,
@@ -3424,16 +3478,16 @@
     ]
    },
    "confidence": 0.9,
-   "drawing_id": "drw_01M6EKBN9DQSM11JBTXNT4E1B8",
-   "id": "pnl_01M6EKBP64PQHZXARHWVJHN5SZ",
+   "drawing_id": "drw_01M6RPAATZJRVWYCK7QEQKYKPQ",
+   "id": "pnl_01M6RPABQPSZ2NKQ3GYF30W5QT",
    "name": "QEN1 ESSENTIAL WATER PUMP MAIN BOARD",
    "page_ids": [
-    "pg_01M6EKBNGRPKD7X7SVFP8GRHZM"
+    "pg_01M6RPAB12YQHXPQSFJBH5HQZY"
    ]
   },
   {
    "bboxes": {
-    "pg_01M6EKBNGRPKD7X7SVFP8GRHZM": [
+    "pg_01M6RPAB12YQHXPQSFJBH5HQZY": [
      [
       351.6,
       93.0,
@@ -3443,16 +3497,16 @@
     ]
    },
    "confidence": 0.9,
-   "drawing_id": "drw_01M6EKBN9DQSM11JBTXNT4E1B8",
-   "id": "pnl_01M6EKBP64PQHZXARHWVJHN5T0",
+   "drawing_id": "drw_01M6RPAATZJRVWYCK7QEQKYKPQ",
+   "id": "pnl_01M6RPABQPSZ2NKQ3GYF30W5QV",
    "name": "QEN2 ESSENTIAL WATER PUMP MAIN BOARD",
    "page_ids": [
-    "pg_01M6EKBNGRPKD7X7SVFP8GRHZM"
+    "pg_01M6RPAB12YQHXPQSFJBH5HQZY"
    ]
   },
   {
    "bboxes": {
-    "pg_01M6EKBNGRPKD7X7SVFP8GRHZN": [
+    "pg_01M6RPAB12YQHXPQSFJBH5HQZZ": [
      [
       43.6,
       67.3,
@@ -3460,7 +3514,7 @@
       459.0
      ]
     ],
-    "pg_01M6EKBNGRPKD7X7SVFP8GRHZP": [
+    "pg_01M6RPAB12YQHXPQSFJBH5HR00": [
      [
       166.3,
       154.8,
@@ -3470,68 +3524,68 @@
     ]
    },
    "confidence": 0.6,
-   "drawing_id": "drw_01M6EKBN9DQSM11JBTXNT4E1B8",
-   "id": "pnl_01M6EKBP64PQHZXARHWVJHN5T1",
+   "drawing_id": "drw_01M6RPAATZJRVWYCK7QEQKYKPQ",
+   "id": "pnl_01M6RPABQPSZ2NKQ3GYF30W5QW",
    "name": "MAIN ELECTRICAL BOARD",
    "page_ids": [
-    "pg_01M6EKBNGRPKD7X7SVFP8GRHZN",
-    "pg_01M6EKBNGRPKD7X7SVFP8GRHZP"
+    "pg_01M6RPAB12YQHXPQSFJBH5HQZZ",
+    "pg_01M6RPAB12YQHXPQSFJBH5HR00"
    ]
   }
  ],
  "project": [
   {
    "customer_id": null,
-   "id": "prj_01M6EKBN9DQSM11JBTXNT4E1BA",
+   "id": "prj_01M6RPAATZJRVWYCK7QEQKYKPS",
    "name": "MAIN ELECTRICAL BOARD"
   }
  ],
  "stage_runs": [
   {
    "attempts": 1,
-   "drawing_id": "drw_01M6EKBN9DQSM11JBTXNT4E1B8",
+   "drawing_id": "drw_01M6RPAATZJRVWYCK7QEQKYKPQ",
    "error": null,
-   "finished_at": "2026-11-02 17:01:54.600749+00:00",
-   "sent_at": "2026-11-02 17:01:53.421927+00:00",
+   "finished_at": "2026-11-06 15:06:01.169406+00:00",
+   "sent_at": "2026-11-06 15:05:59.953643+00:00",
    "stage": 1,
-   "started_at": "2026-11-02 17:01:53.430845+00:00",
+   "started_at": "2026-11-06 15:05:59.962621+00:00",
    "status": "done"
   },
   {
    "attempts": 1,
-   "drawing_id": "drw_01M6EKBN9DQSM11JBTXNT4E1B8",
+   "drawing_id": "drw_01M6RPAATZJRVWYCK7QEQKYKPQ",
    "error": null,
-   "finished_at": "2026-11-02 17:01:56.848806+00:00",
-   "sent_at": "2026-11-02 17:01:54.611276+00:00",
+   "finished_at": "2026-11-06 15:06:03.442584+00:00",
+   "sent_at": "2026-11-06 15:06:01.183992+00:00",
    "stage": 2,
-   "started_at": "2026-11-02 17:01:54.616954+00:00",
+   "started_at": "2026-11-06 15:06:01.190158+00:00",
    "status": "done"
   },
   {
    "attempts": 1,
-   "drawing_id": "drw_01M6EKBN9DQSM11JBTXNT4E1B8",
+   "drawing_id": "drw_01M6RPAATZJRVWYCK7QEQKYKPQ",
    "error": null,
-   "finished_at": "2026-11-02 17:01:57.421437+00:00",
-   "sent_at": "2026-11-02 17:01:56.848821+00:00",
+   "finished_at": "2026-11-06 15:06:04.014512+00:00",
+   "sent_at": "2026-11-06 15:06:03.442600+00:00",
    "stage": 3,
-   "started_at": "2026-11-02 17:01:56.855794+00:00",
+   "started_at": "2026-11-06 15:06:03.448224+00:00",
    "status": "done"
   },
   {
    "attempts": 1,
-   "drawing_id": "drw_01M6EKBN9DQSM11JBTXNT4E1B8",
+   "drawing_id": "drw_01M6RPAATZJRVWYCK7QEQKYKPQ",
    "error": null,
-   "finished_at": "2026-11-02 17:01:57.584811+00:00",
-   "sent_at": "2026-11-02 17:01:57.421449+00:00",
+   "finished_at": "2026-11-06 15:06:04.233866+00:00",
+   "sent_at": "2026-11-06 15:06:04.014528+00:00",
    "stage": 4,
-   "started_at": "2026-11-02 17:01:57.426966+00:00",
+   "started_at": "2026-11-06 15:06:04.018956+00:00",
    "status": "done"
   },
   {
    "attempts": 0,
-   "drawing_id": "drw_01M6EKBN9DQSM11JBTXNT4E1B8",
+   "drawing_id": "drw_01M6RPAATZJRVWYCK7QEQKYKPQ",
    "error": null,
-   "finished_at": "2026-11-02 17:01:57.584893+00:00",
+   "finished_at": "2026-11-06 15:06:04.233964+00:00",
    "sent_at": null,
    "stage": 5,
    "started_at": null,
@@ -3539,9 +3593,9 @@
   },
   {
    "attempts": 0,
-   "drawing_id": "drw_01M6EKBN9DQSM11JBTXNT4E1B8",
+   "drawing_id": "drw_01M6RPAATZJRVWYCK7QEQKYKPQ",
    "error": null,
-   "finished_at": "2026-11-02 17:01:57.584893+00:00",
+   "finished_at": "2026-11-06 15:06:04.233964+00:00",
    "sent_at": null,
    "stage": 6,
    "started_at": null,
@@ -3549,9 +3603,9 @@
   },
   {
    "attempts": 0,
-   "drawing_id": "drw_01M6EKBN9DQSM11JBTXNT4E1B8",
+   "drawing_id": "drw_01M6RPAATZJRVWYCK7QEQKYKPQ",
    "error": null,
-   "finished_at": "2026-11-02 17:01:57.584893+00:00",
+   "finished_at": "2026-11-06 15:06:04.233964+00:00",
    "sent_at": null,
    "stage": 7,
    "started_at": null,
@@ -3559,12 +3613,12 @@
   },
   {
    "attempts": 1,
-   "drawing_id": "drw_01M6EKBN9DQSM11JBTXNT4E1B8",
+   "drawing_id": "drw_01M6RPAATZJRVWYCK7QEQKYKPQ",
    "error": null,
-   "finished_at": "2026-11-02 17:01:57.719522+00:00",
-   "sent_at": "2026-11-02 17:01:57.587160+00:00",
+   "finished_at": "2026-11-06 15:06:04.365714+00:00",
+   "sent_at": "2026-11-06 15:06:04.236039+00:00",
    "stage": 8,
-   "started_at": "2026-11-02 17:01:57.592081+00:00",
+   "started_at": "2026-11-06 15:06:04.240357+00:00",
    "status": "done"
   }
  ]

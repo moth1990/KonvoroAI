@@ -11,9 +11,10 @@ their reasons (06 §1 principle 2).
   main ("ראשי", "MAIN"); else the highest current among the feed classes (a switch-disconnector, a moulded-case
   breaker, a changeover); else the highest current among the breakers. A highest current that more than one device
   shares names no main.
-- Structural elements (`context_elements`), the panel's missing rows, its front view's designators (stage 1's
-  `panel_front_view` artifact, S21 decision 2), the breaking capacity its notes ask for (01 §5.5.1), the designer's BOM
-  rows that belong to it (01 §5.8), and its electrical text spans for the coverage check.
+- Structural elements (`context_elements`), the panel's missing rows, its front view's designators, the door's and
+  the interior layout's (stage 1's `panel_front_view` artifact, S21 decision 2, BUG-055), the breaking capacity its
+  notes ask for (01 §5.5.1), the designer's BOM rows that belong to it (01 §5.8), and its electrical text spans for
+  the coverage check.
 """
 
 import json
@@ -178,6 +179,10 @@ def compress(designators: list[str], limit: int = 6) -> str:
     return ", ".join(out)
 
 
+# the neutral, the earth and the busbars a layout labels (W0, read "WO" too): no device's tag (03 §3.7 item 2)
+_BUS = re.compile(r"^(?:N|PE|W[0-9O])$")
+
+
 def spread(written: str) -> list[str]:
     """ "F1-F17" → F1 … F17; "R1-R7" → R1 … R7; anything else as it is."""
     w = written.strip()
@@ -235,11 +240,24 @@ def _main(panel: PanelModel) -> None:
         return
 
 
+def _by_tags(tags: list[str], tags_by_panel: dict[str, set[str]]) -> list[str]:
+    """The one panel holding the most of `tags`, or none on a tie or when no panel holds any."""
+    counts = sorted(((len(set(tags) & held), pid) for pid, held in tags_by_panel.items()), reverse=True)
+    if not counts or counts[0][0] == 0 or (len(counts) > 1 and counts[1][0] == counts[0][0]):
+        return []
+    return [counts[0][1]]
+
+
 def _front_views(
-    artifacts: list[ContextArtifact], intake: IntakeResult, page_no: dict[str, int]
+    artifacts: list[ContextArtifact],
+    intake: IntakeResult,
+    page_no: dict[str, int],
+    tags_by_panel: dict[str, set[str]] | None = None,
 ) -> dict[str, FrontView]:
-    """Each front view goes to the panel whose pages hold it, else to the drawing's only panel; a front view of
-    several panels, or of none known, is left out (its designators could belong to either)."""
+    """Each front view goes to the panel whose pages hold it, else to the drawing's only panel, else to the panel
+    whose components carry most of its tags (BUG-046: 26-993's view is on a page no panel holds, beside the two feed
+    boards stage 1 reads as panels, BUG-035). A front view of several panels, or a tie, is left out (its designators
+    could belong to either)."""
     out: dict[str, FrontView] = {}
     for a in artifacts:
         if a.kind != "panel_front_view" or a.format != "json":
@@ -248,16 +266,21 @@ def _front_views(
             content = json.loads(a.content)
         except ValueError:
             continue
-        written = [str(d) for d in content.get("designators") or [] if str(d).strip()]
+        # the door's tags, then the interior layout's when the page draws one (BUG-055): both are what the panel holds
+        shown = [*(content.get("designators") or []), *(content.get("layout_designators") or [])]
+        written = [str(d) for d in shown if str(d).strip()]
         owners = [p.panel_id for p in intake.panels if a.page_id in p.page_ids]
         if len(owners) != 1:
             owners = [intake.panels[0].panel_id] if len(intake.panels) == 1 else []
-        if not owners or not written:
-            continue
         seen: dict[str, None] = {}
         for w in written:
             for d in spread(w):
-                seen.setdefault(d, None)
+                if not _BUS.match(d):
+                    seen.setdefault(d, None)
+        if not owners and not any(a.page_id in p.page_ids for p in intake.panels):
+            owners = _by_tags(list(seen), tags_by_panel or {})
+        if not owners or not written:
+            continue
         view = out.get(owners[0])
         if view is None:
             out[owners[0]] = FrontView(a.page_id, page_no.get(a.page_id or ""), written, list(seen))
@@ -396,7 +419,8 @@ def build(
                 d.parent_id = up if up in ids and up != d.id else None
         _main(p)
 
-    for pid, view in _front_views(intake.context_artifacts, intake, page_no).items():
+    tags_by_panel = {pid: {t for d in p.devices for t in d.component.designators} for pid, p in panels.items()}
+    for pid, view in _front_views(intake.context_artifacts, intake, page_no, tags_by_panel).items():
         if pid in panels:
             panels[pid].front = view
     requirements = _requirements(intake.context_artifacts)

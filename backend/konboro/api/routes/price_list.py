@@ -13,7 +13,7 @@ from pydantic import BaseModel
 from konboro.domain.permissions import Permission
 from konboro.services import price_list as pl
 
-from ..deps import Actor, require, require_flag
+from ..deps import Actor, require
 from ..errors import ERROR_RESPONSES, ApiError
 from ..schemas import (
     BrandDiscountIn,
@@ -33,11 +33,8 @@ from ..schemas import (
     SupplierPriceIn,
 )
 
-FLAG = "price_list"
-
-router = APIRouter(
-    prefix="/price-list", tags=["price-list"], responses=ERROR_RESPONSES, dependencies=[Depends(require_flag(FLAG))]
-)
+# No flag since S28 (S18 decision 5, S19 decision 5): the screen was accepted in S19, and every factory has it.
+router = APIRouter(prefix="/price-list", tags=["price-list"], responses=ERROR_RESPONSES)
 
 Reader = Annotated[Actor, Depends(require(Permission.PRICE_LIST_READ))]
 Writer = Annotated[Actor, Depends(require(Permission.PRICE_LIST_WRITE))]

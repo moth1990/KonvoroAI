@@ -27,6 +27,7 @@ TITLES = {
     "s6_labelled": "Stage 6: validation rules on the labelled quote, with injected errors (06 §10.1–10.2)",
     "audit": "Quote audit (11 §10)",
     "pricing": "Pricing backtest against the real quote (07 §10.2)",
+    "overall": "Overall: golden rows that need no edit, and wrong green rows (00 §10.2, S28)",
 }
 
 

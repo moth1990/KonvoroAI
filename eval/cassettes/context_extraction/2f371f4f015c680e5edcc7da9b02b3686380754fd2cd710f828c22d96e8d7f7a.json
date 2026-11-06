@@ -1,8 +1,8 @@
 {
   "answer": {
-    "input_tokens": 3065,
+    "input_tokens": 3195,
     "model": "claude-sonnet-5-5",
-    "output_tokens": 105,
+    "output_tokens": 193,
     "payload": {
       "designators": [
         "L1",
@@ -20,6 +20,32 @@
         "SW3",
         "SW4",
         "SW5"
+      ],
+      "layout_designators": [
+        "Q0",
+        "FNV",
+        "NVR",
+        "RNV",
+        "YP1",
+        "R1-R7",
+        "C1",
+        "C2",
+        "C3",
+        "C4",
+        "C5",
+        "F6",
+        "F7",
+        "F8",
+        "F9",
+        "F10",
+        "F11",
+        "F12",
+        "F1",
+        "F2",
+        "F3",
+        "F4",
+        "F5",
+        "N"
       ],
       "panels": [
         {

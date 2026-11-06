@@ -422,10 +422,11 @@ def test_contactor_without_control_plan() -> None:
     assert not fired(d.validate(), "CTRL_CONTACTOR_WITHOUT_COIL_CIRCUIT")
 
 
-def _front(d: Drawing, *tags: str) -> Drawing:
+def _front(d: Drawing, *tags: str, layout: tuple[str, ...] = ()) -> Drawing:
     d.pages.append(page(4, "pg_4", "panel_front_view", ()))
     d.panels[0] = Panel(panel_id=PNL, name="לוח ראשי", page_ids=[PG, "pg_4"])
-    return d.artifact("panel_front_view", {"designators": list(tags), "panels": []}, "pg_4")
+    content = {"designators": list(tags), "layout_designators": list(layout), "panels": []}
+    return d.artifact("panel_front_view", content, "pg_4")
 
 
 def test_front_view_designator_missing() -> None:
@@ -447,6 +448,41 @@ def test_front_view_near_match_replaces_missing_and_extra() -> None:
     assert_filled(i)
     assert not fired(r, "FRONT_VIEW_DESIGNATOR_MISSING") and not fired(r, "FRONT_VIEW_DESIGNATOR_EXTRA")
     assert not checks._near("F26", "F28")  # a digit apart is another device
+    assert not checks._near("L3", "C3") and not checks._near("HNV", "RNV")  # another kind of device
+
+
+def test_a_front_view_on_a_page_no_panel_holds_goes_to_the_panel_with_its_tags() -> None:
+    """BUG-046: 26-993's front view is on page 2, which no panel holds, and stage 1 reads three panels (BUG-035), so
+    the view went to none and SE against SG never fired. It goes to the panel that holds most of its tags; a tie
+    between two panels gives it to neither."""
+
+    def drawing(*tags: str) -> Drawing:
+        sg = comp("cmp_sg", "changeover_switch", "changeover_switch", tags=("SG",), current_a=125, poles=4)
+        ms = comp("cmp_ms", "current_transformer", "current_transformer", tags=("MS1", "MS2"), qty=2, panel="pnl_2")
+        d = main_and(sg, ms)
+        d.panels.append(Panel(panel_id="pnl_2", name="QEN1", page_ids=["pg_3"]))
+        d.pages += [page(2, "pg_2", "panel_front_view", ()), page(3, "pg_3", panels=("pnl_2",))]
+        return d.artifact("panel_front_view", {"designators": list(tags), "panels": []}, "pg_2")
+
+    r = drawing("Q0", "SE").validate()
+    [i] = fired(r, "FRONT_VIEW_DESIGNATOR_NEAR_MATCH")
+    assert (i.values["front"], i.values["plan"], i.component_ids) == ("SE", "SG", ["cmp_sg"])
+    assert drawing("Q0", "SE").model().panels["pnl_2"].front is None
+    tie = drawing("Q0", "MS1")
+    assert all(p.front is None for p in tie.model().panels.values())
+
+
+def test_a_near_match_may_be_a_device_read_as_terminals() -> None:
+    """BUG-046 with BUG-036: 26-993's SG is read as terminals × 4, so SE on the front paired with nothing and came out
+    "missing". A tagged terminal may be the near match (one letter apart, the same first letter), never an extra."""
+    sg = comp("cmp_sg", "terminal", "terminal", tags=("SG",), qty=4)
+    n4 = comp("cmp_n4", "terminal", "terminal", tags=("N4",))
+    r = _front(main_and(sg, n4), "Q0", "SE", "R4").validate()
+    [i] = fired(r, "FRONT_VIEW_DESIGNATOR_NEAR_MATCH")
+    assert (i.values["front"], i.values["plan"]) == ("SE", "SG")
+    [missing] = fired(r, "FRONT_VIEW_DESIGNATOR_MISSING")
+    assert missing.values["designators"] == ["R4"]  # N4 is a terminal named after its conductor: another letter
+    assert not fired(r, "FRONT_VIEW_DESIGNATOR_EXTRA")
 
 
 def test_front_view_designator_extra() -> None:
@@ -456,6 +492,29 @@ def test_front_view_designator_extra() -> None:
     assert_filled(i)
     other = _front(main_and(comp("cmp_k", "contactor", "contactor", tags=("K1",))), "Q0")
     assert not fired(other.validate(), "FRONT_VIEW_DESIGNATOR_EXTRA")  # the front shows no K tags
+
+
+def test_the_interior_layout_is_compared_with_the_plan_too() -> None:
+    """BUG-055: MINHAROT-1's page 4 draws the door (lamps, selectors) beside the interior layout, which shows
+    contactors C8–C10.1 no diagram draws and lacks F5, which the plan draws. The layout's neutral and busbar (N, W0)
+    are no tags, and the plan's terminals (N4) are on no layout."""
+
+    def plan() -> Drawing:
+        return main_and(
+            comp("cmp_f", tags=("F1", "F5"), qty=2, current_a=10, poles=1),
+            comp("cmp_c", "contactor", "contactor", tags=("C1",)),
+            comp("cmp_l", "indicator_lamp", "indicator_lamp", tags=("L1",)),
+            comp("cmp_x", "terminal", "terminal", tags=("N4",)),
+        )
+
+    r = _front(plan(), "L1", layout=("Q0", "F1", "C1", "C8", "C8.1", "N", "W0", "WO")).validate()
+    [missing] = fired(r, "FRONT_VIEW_DESIGNATOR_MISSING")
+    assert missing.values["designators"] == ["C8", "C8.1"]
+    [extra] = fired(r, "FRONT_VIEW_DESIGNATOR_EXTRA")
+    assert extra.values["shown"] == "F5"
+    assert not fired(r, "FRONT_VIEW_DESIGNATOR_NEAR_MATCH")
+    door_only = _front(plan(), "L1").validate()
+    assert not fired(door_only, "FRONT_VIEW_DESIGNATOR_MISSING") and not fired(door_only, "FRONT_VIEW_DESIGNATOR_EXTRA")
 
 
 def test_panel_missing_rows() -> None:

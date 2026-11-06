@@ -88,8 +88,27 @@ def prediction(
         merge=merge_counts(merge),
         matches=tuple(canon_match(x, families.get(x.component_id, "")) for x in matching.matches) if matching else None,
         matching=matching_counts(matching) if matching else {},
+        auxiliary=tuple(matching.auxiliary) if matching else (),
+        line_colours=line_colours(quote),
         labelled_matches=labelled,
     )
+
+
+RANK = {"green": 0, "yellow": 1, "red": 2}
+
+
+def line_colours(quote: QuoteVersionResult) -> dict[str, str]:
+    """Each component line's colour from every reason but the price (07 §7.5), by component (a merged line's too)."""
+    out: dict[str, str] = {}
+    for panel in quote.panels:
+        for ln in panel.lines:
+            if ln.line_type != "component":
+                continue
+            reasons = [r.status for r in ln.status_reasons if r.source != "price"]
+            colour = max(reasons, key=RANK.__getitem__, default="green")
+            for cid in ln.component_ids or ([ln.component_id] if ln.component_id else []):
+                out[cid] = colour
+    return out
 
 
 def canon_match(x: ComponentMatch, family: str, **extra: object) -> CanonMatch:

@@ -259,10 +259,3 @@ test("the bulk brand discount", async ({ page, request }) => {
   await page.getByTestId("brand-save").click();
   await expect(page.getByText("הוסרה ההנחה של ABB")).toBeVisible();
 });
-
-test("with price_list off, /prices is a placeholder", async ({ page, request }) => {
-  await signIn(page, request, TENANTS.pricesOff);
-  await page.goto("/prices");
-  await expect(page.getByText("המסך הזה עוד בבנייה.")).toBeVisible();
-  await expect(page.getByTestId("price-table")).toHaveCount(0);
-});

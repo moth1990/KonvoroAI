@@ -1,7 +1,7 @@
 from sqlalchemy import Engine, func, select, update
 
 from konboro.db import models as m
-from konboro.db.seed import DEMO_TENANT, FLAGS, PRODUCTS, seed
+from konboro.db.seed import DEMO_TENANT, FLAGS, GATE_3, PRODUCTS, seed
 from konboro.db.session import tenant_session
 from konboro.devtools.fixtures.nursery import EARLIER_NAME
 from konboro.services.storage import Storage
@@ -23,6 +23,17 @@ def test_seed_is_idempotent_and_visible_to_the_app(migrated_db: dict[str, Engine
     assert preferred == sum(1 for *_, sups in PRODUCTS if sups)
     assert tenants == ['לוחות דמו בע"מ']
     assert flags == len(FLAGS)
+
+
+def test_the_flags_and_their_removal_dates(migrated_db: dict[str, Engine], storage: Storage) -> None:
+    """S28 decision 4: no `price_list`; the build-time flags go at Gate 3, the spec-13 ones have no date (13 §3)."""
+    seed(migrated_db["owner"], storage)
+    with tenant_session(DEMO_TENANT, migrated_db["app"]) as s:
+        dates = {k: d for k, d in s.execute(select(m.FeatureFlag.key, m.FeatureFlag.remove_by))}
+    assert "price_list" not in dates
+    build_time = {"quote_audit", "bom_column_mapping", "onboarding", "settings_screen", "approval_queue", "chat_layer"}
+    assert {k for k, d in dates.items() if d is not None} == build_time
+    assert {d for d in dates.values() if d is not None} == {GATE_3}
 
 
 def test_seeded_prices_are_exact(migrated_db: dict[str, Engine], storage: Storage) -> None:
@@ -75,11 +86,11 @@ def test_seed_links_the_demo_price_list(migrated_db: dict[str, Engine], storage:
             p.manufacturer_sku: (p.family, p.catalog_item_id is not None)
             for p in s.scalars(select(m.Product).where(m.Product.manufacturer_sku.is_not(None)))
         }
-        flag = s.scalar(select(m.TenantFeatureOverride.enabled).where(m.TenantFeatureOverride.flag_key == "price_list"))
+        flag = s.get(m.FeatureFlag, "price_list")  # S28: the flag is gone
         usd = s.scalar(select(m.FxRate.rate).where(m.FxRate.currency == "USD").limit(1))
     assert rows["S203M-C16"] == ("circuit_breaker", True)
     assert rows["F204A-40/0.03"] == ("rcd", True)
     assert rows["AD22-22DS"] == ("indicator_lamp", False)  # not ABB: no catalog item, the family renamed
     assert rows["SIRCO M 4P 125A"] == ("switch_disconnector", False)
-    assert flag is True
+    assert flag is None
     assert str(usd) == "3.700000"

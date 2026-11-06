@@ -248,8 +248,9 @@ class FrontCompare:
 
 
 def _near(a: str, b: str) -> bool:
-    """One letter apart, the same length: "SE" and "SG" (06 §6.2, 26/993)."""
-    if len(a) != len(b) or a == b:
+    """One letter apart, the same length: "SE" and "SG" (06 §6.2, 26/993). Never the first letter, the kind of
+    device: with the layout's tags (BUG-055), NURSERY-1's lamp L3 paired with contactor C3, HNV with relay RNV."""
+    if len(a) != len(b) or a == b or a[:1] != b[:1]:
         return False
     diff = [(x, y) for x, y in zip(a, b, strict=True) if x != y]
     return len(diff) == 1 and diff[0][0].isalpha() and diff[0][1].isalpha()
@@ -264,11 +265,14 @@ def front_compare(panel: PanelModel, ctx: Ctx) -> FrontCompare:
     assert front is not None  # noqa: S101 (the engine runs these rules only with a front view)
     shown = set(front.designators)
     missing = [t for t in front.designators if t not in ctx.drawing.designators]
-    plan = [(t, d) for d in panel.devices if d.in_panel for t in d.component.designators if t not in shown]
+    tagged = [(t, d) for d in panel.devices if d.in_panel for t in d.component.designators if t not in shown]
+    # terminals are numbered on a strip, not tagged on a front or a layout (BUG-055: NEVIS-1's N4 against R4), so a
+    # terminal is never extra; a device read as terminals can still be a near match (BUG-046: 26-993's SG, BUG-036)
+    plan = [(t, d) for t, d in tagged if d.component.family != "terminal"]
     near: list[tuple[str, str, Device]] = []
     used: set[str] = set()
     for m in missing:
-        for t, d in plan:
+        for t, d in plan + [(t, d) for t, d in tagged if d.component.family == "terminal"]:
             if t not in used and _near(m, t):
                 near.append((m, t, d))
                 used.add(t)

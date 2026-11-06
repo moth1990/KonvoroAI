@@ -117,11 +117,13 @@ TENANTS = (
     E2eTenant(15, "audit-mobile@e2e.konboro.local", home_chat=False, used=12, sample_data=False, audit=True),
     E2eTenant(16, "audit-shots@e2e.konboro.local", home_chat=False, used=12, sample_data=False, audit=True),
     # The price list (S19): saves change it, so one tenant per project; the screenshots read a third. Each has the
-    # NURSERY draft, for the editor's "בשימוש בטיוטה הפתוחה". A fourth has the screen's flag off.
+    # NURSERY draft, for the editor's "בשימוש בטיוטה הפתוחה".
     E2eTenant(17, "prices-desktop@e2e.konboro.local", False, 12, False, nursery=True, prices=True),
     E2eTenant(18, "prices-mobile@e2e.konboro.local", False, 12, False, nursery=True, prices=True),
     E2eTenant(19, "prices-shots@e2e.konboro.local", False, 12, False, nursery=True, prices=True),
-    E2eTenant(20, "prices-off@e2e.konboro.local", False, 12, False, off=("price_list",)),
+    # S28. A new factory's first day (10 §2): no terms, no price list, nothing sent; its first quote is sent, so one
+    # tenant per project (20 was `prices-off`, gone with the `price_list` flag).
+    E2eTenant(20, "day-one-desktop@e2e.konboro.local", False, 0, False, terms=False),
     # The review screen's actions (S23): they change the NURSERY draft (and sending locks it), so one tenant per
     # project, with the demo price list for its prices, costs and suppliers.
     E2eTenant(21, "review-desktop@e2e.konboro.local", False, 12, False, nursery=True, prices=True),
@@ -180,6 +182,7 @@ TENANTS = (
     E2eTenant(44, "lines-desktop@e2e.konboro.local", False, 12, False, prices=True, lines=True),
     E2eTenant(45, "lines-mobile@e2e.konboro.local", False, 12, False, prices=True, lines=True),
     E2eTenant(46, "lines-shots@e2e.konboro.local", False, 12, False, prices=True, lines=True),
+    E2eTenant(47, "day-one-mobile@e2e.konboro.local", False, 0, False, terms=False),
 )
 TERMS = {"version": "2026-10", "at": "2026-10-01T09:00:00+00:00"}
 

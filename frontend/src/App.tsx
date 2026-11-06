@@ -30,13 +30,6 @@ function AuditRoute({ results = false }: { results?: boolean }) {
   return results ? <AuditScreen /> : <NewAuditScreen />;
 }
 
-/** The price list (S19) is behind `price_list`, like its API (S18 decision 5, S19 decision 5); off, a placeholder. */
-function PricesRoute() {
-  const me = useMe();
-  if (!me.data) return null;
-  return me.data.flags.price_list ? <PricesScreen /> : <Placeholder screen="prices" />;
-}
-
 /** The settings screen (S24) is behind `settings_screen`; off, a placeholder with the sign-out button. */
 function PrefsRoute() {
   const me = useMe();
@@ -81,7 +74,7 @@ export default function App() {
             <Route path="/review/:quoteId?" element={<ReviewScreen />} />
             <Route path="/audit" element={<AuditRoute />} />
             <Route path="/audit/:auditId" element={<AuditRoute results />} />
-            <Route path="/prices" element={<PricesRoute />} />
+            <Route path="/prices" element={<PricesScreen />} />
             <Route path="/queue" element={<QueueRoute />} />
             <Route path="/prefs" element={<PrefsRoute />} />
             <Route path="/build/:drawingId?" element={<BuildRoute />} />
