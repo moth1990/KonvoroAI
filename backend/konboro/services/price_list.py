@@ -114,6 +114,11 @@ class ProductIn:
     consumable: bool = False
     catalog_item_id: str | None = None
     suppliers: Sequence[SupplierPriceIn] = ()
+    # "מוצר חדש" (S27b, 09 §7.16): the family's attributes and the model, for stage 5 and the product's name
+    attributes: dict[str, Any] = field(default_factory=dict)
+    series: str | None = None
+    model_code: str | None = None
+    symbol_class: str | None = None
 
 
 # --- output ---------------------------------------------------------------------------------------------------------
@@ -639,7 +644,8 @@ def check_fixed(product: m.Product) -> None:
 def create_product(session: Session, actor: Actor, data: ProductIn, quote_id: str | None = None) -> ProductView:
     values = {f: getattr(data, f) for f in (*PRODUCT_FIELDS, "source")}
     check_product(session, actor.tenant_id, values, None)
-    product = m.Product(id=new_id("prd"), tenant_id=actor.tenant_id, **values)
+    made = {"attributes": dict(data.attributes), "series": data.series, "model_code": data.model_code}
+    product = m.Product(id=new_id("prd"), tenant_id=actor.tenant_id, symbol_class=data.symbol_class, **made, **values)
     if data.source == "manual_entry":
         product.entered_in_quote, product.entered_by, product.entered_at = quote_id, actor.user_id, datetime.now(UTC)
     check_fixed(product)

@@ -171,6 +171,8 @@ class AlternativeOut(BaseModel):
     description: str
     sku: str | None = None
     manufacturer: str | None = None
+    nearest: bool = Field(False, description="05 §5.9.2 (S27b): a product near a component nothing matched")
+    diff: str | None = Field(None, description='What differs from the drawing: "20A במקום 16A"')
 
 
 class SupplierChoiceOut(BaseModel):
@@ -265,6 +267,8 @@ class LineOut(BaseModel):
     list_price_brand: str | None = Field(
         description='09 §7.13: an unpriced line whose item has a list price: "כל המוצרים של X: מחירון יצרן פחות __%"'
     )
+    pending: bool = Field(False, description="S27b (07 §7.1): no product yet; the line waits for a decision")
+    component_ids: list[str] = Field(default_factory=list, description="S27b: a merged line's components")
 
 
 class LineCountsOut(BaseModel):
@@ -874,6 +878,7 @@ class CorrectedQuoteOut(BaseModel):
 PriceSource = Literal["supplier_price_list", "manual_entry", "quote_import", "brand_discount"]
 RowSource = Literal["supplier_price_list", "manual_entry", "quote_import"]
 Currency = Annotated[str, Field(pattern=r"^[A-Z]{3}$")]
+Designator = Annotated[str, Field(min_length=1, max_length=40)]  # a tag on the drawing: "F3", "QF50"
 ShortText = Annotated[str, Field(min_length=1, max_length=200)]
 
 
@@ -1111,6 +1116,9 @@ class QuantityIn(Strict):
 
 class AlternativeIn(Strict):
     index: int = Field(ge=0, le=9, description="Which of the line's alternatives (09 §7.3)")
+    designators: list[Designator] | None = Field(
+        None, max_length=200, description="S27b (09 §7.17): only these of a merged line's components"
+    )
 
 
 class LineSupplierIn(Strict):
@@ -1131,6 +1139,36 @@ class AttributeIn(Strict):
 
 class ProductRefIn(Strict):
     ref: str = Field(pattern=r"^(cat|prd):[A-Za-z0-9_\-]{1,64}$", description="A choice from the picker")
+    designators: list[Designator] | None = Field(
+        None, max_length=200, description="S27b (09 §7.17): only these of a merged line's components"
+    )
+
+
+class NewProductIn(Strict):
+    """09 §7.16 (S27b): a factory product made from a waiting line, named the app's way."""
+
+    attributes: dict[Annotated[str, Field(pattern=r"^[a-z_]{1,40}$")], Annotated[str, Field(max_length=40)]] = Field(
+        max_length=30, description="The family's attributes, as the user left them"
+    )
+    brand: str = Field(min_length=1, max_length=120)
+    model_code: str = Field(min_length=1, max_length=120)
+    series: str | None = Field(None, max_length=120)
+    sku: str | None = Field(None, max_length=120)
+
+
+class NewProductAttributeOut(BaseModel):
+    name: str
+    required: bool
+    value: str | None
+
+
+class NewProductFormOut(BaseModel):
+    """What "מוצר חדש" opens with (09 §7.16): the line's family, its schema's attributes with what was read."""
+
+    family: str
+    symbol_class: str | None
+    brand: str | None
+    attributes: list[NewProductAttributeOut]
 
 
 class MarkIn(Strict):

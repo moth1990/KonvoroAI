@@ -195,6 +195,8 @@ CORRECTION_TYPES = (
     "discount_set",
     # 08 §7.4: the match memory a chat proposal wrote for a customer or the factory (S25b)
     "memory_saved",
+    # 09 §7.16: "מוצר חדש" made a factory product from a waiting line (S27b)
+    "product_created",
 )
 
 

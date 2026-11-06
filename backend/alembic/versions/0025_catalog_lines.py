@@ -9,6 +9,7 @@
 - `quote_versions.component_edits`: what the estimator chose for a component (a product, an alternative, an attribute,
   a missing line resolved), by the component's line key (`c:…`, `m:…`). Kept on the version, not on a line: the choice
   moves the component to its product's line, whose key changes, and undo puts the map back whole (S27b).
+- correction type `product_created`: "מוצר חדש" made a factory product from a waiting line (09 §7.16).
 
 Revision ID: 0025
 Revises: 0024
@@ -29,6 +30,35 @@ branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None
 
 
+TYPES = (
+    "row_confirmed",
+    "sku_replaced",
+    "attribute_changed",
+    "quantity_changed",
+    "row_deleted",
+    "derived_removed",
+    "derived_restored",
+    "issue_dismissed",
+    "missing_resolved",
+    "component_marked",
+    "page_reclassified",
+    "page_reuploaded",
+    "price_entered",
+    "brand_discount_set",
+    "undo",
+    "quote_sent",
+    "price_changed",
+    "supplier_selected",
+    "bom_columns_mapped",
+    "discount_set",
+    "memory_saved",
+)
+
+
+def _in(column: str, values: Sequence[str]) -> str:
+    return f"{column} IN (" + ", ".join(f"'{v}'" for v in values) + ")"
+
+
 def upgrade() -> None:
     """Upgrade schema."""
     op.add_column(
@@ -47,10 +77,14 @@ def upgrade() -> None:
         "quote_versions",
         sa.Column("component_edits", postgresql.JSONB(astext_type=sa.Text()), server_default="{}", nullable=False),
     )
+    op.drop_constraint("type", "correction_events", type_="check")
+    op.create_check_constraint("type", "correction_events", _in("type", (*TYPES, "product_created")))
 
 
 def downgrade() -> None:
-    """Downgrade schema."""
+    """Downgrade schema. Fails while a `product_created` event exists (correction events are append-only)."""
+    op.drop_constraint("type", "correction_events", type_="check")
+    op.create_check_constraint("type", "correction_events", _in("type", TYPES))
     op.drop_column("quote_versions", "component_edits")
     op.drop_column("quote_lines", "pending")
     op.drop_column("quote_lines", "component_ids")

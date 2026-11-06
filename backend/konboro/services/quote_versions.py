@@ -24,10 +24,11 @@ from sqlalchemy.orm import Session
 
 from konboro.db import models as m
 from konboro.db.ids import new_id
+from konboro.domain.flags import CATALOG_LINES, is_enabled
 from konboro.pipeline.pricing import run as pricing
 from konboro.pipeline.pricing import stored
 from konboro.pipeline.pricing.diff import diff
-from konboro.services import onboarding
+from konboro.services import flags, onboarding
 from konboro.services import quotes as qs
 from konboro.services.storage import Storage
 
@@ -104,6 +105,11 @@ def send(session: Session, actor: Actor, quote_id: str) -> m.QuoteVersion:
     quote, version = current(session, actor.tenant_id, quote_id)
     if version.status == "sent":
         raise VersionError(409, "quote_sent")
+    # S27b (09 §7.12): a line waiting for a decision has no product yet; the quote waits for it
+    if is_enabled(flags.tenant_flags(session, actor.tenant_id), CATALOG_LINES) and any(
+        r.pending for r in qs.live_lines(session, version)
+    ):
+        raise VersionError(409, "pending_lines")
     version.status = "sent"
     version.sent_at = datetime.now(UTC)
     version.sent_by = actor.user_id

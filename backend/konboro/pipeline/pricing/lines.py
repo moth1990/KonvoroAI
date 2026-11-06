@@ -23,7 +23,7 @@ from datetime import datetime
 from decimal import Decimal
 from typing import Any
 
-from konboro.contracts.matching import Alternative, ComponentMatch
+from konboro.contracts.matching import Alternative, ComponentMatch, Nearest
 from konboro.contracts.merge import Component, MissingInstance
 from konboro.contracts.validation import Issue
 from konboro.pipeline.matching.match import ACCESSORY_FAMILIES
@@ -189,6 +189,12 @@ def alternative(a: Alternative) -> dict[str, Any]:
     return {"description": f"{head} · {a.diff}" if a.diff else head, **a.model_dump(mode="json")}
 
 
+def nearest_alternative(n: Nearest) -> dict[str, Any]:
+    """05 §5.9.2 (S27b): a product near a component nothing matched, offered as the line's alternative to choose."""
+    head = " ".join(x for x in (n.manufacturer, n.sku) if x)
+    return {"description": f"{head} · {n.diff}", "nearest": True, **n.model_dump(mode="json")}
+
+
 def component_line(
     c: Component, m: ComponentMatch | None, book: Book, group: str, issues: Sequence[Issue]
 ) -> tuple[Draft, Product | None]:
@@ -221,7 +227,9 @@ def component_line(
             manufacturer=item.manufacturer if item else None,
             unit=product.unit if product else "unit",
             explanation=m.reason or None if m else None,
-            alternatives=[alternative(a) for a in m.alternatives] if m else [],
+            alternatives=(
+                [alternative(a) for a in m.alternatives] or [nearest_alternative(n) for n in m.nearest] if m else []
+            ),
             reasons=reasons,
             issue_ids=[i.issue_id for i in issues],
             component_ids=[c.component_id],

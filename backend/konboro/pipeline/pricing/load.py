@@ -7,7 +7,7 @@ and read-only, and holds no factory price.
 
 import json
 from collections.abc import Iterable, Sequence
-from datetime import date
+from datetime import date, datetime
 from decimal import Decimal
 from typing import Any
 
@@ -397,5 +397,9 @@ def carry(session: Session, version: m.QuoteVersion | None, keep: frozenset[str]
         if keep is not None
         else {}
     )
-    components = {k: LineEdits.of(v) for k, v in (version.component_edits or {}).items() if v}  # S27b
+    components = {  # S27b: a choice approves the component it moves (`catalog_lines.choose`)
+        k: LineEdits.of(v, datetime.fromisoformat(v["approved_at"]) if v.get("approved_at") else None)
+        for k, v in (version.component_edits or {}).items()
+        if v
+    }
     return Carry(deleted, overrides, manual, edits, dismissed(session, version), kept, components)

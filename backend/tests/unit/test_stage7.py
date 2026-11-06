@@ -742,7 +742,7 @@ def test_a_choice_for_a_component_moves_it_to_its_products_line() -> None:
     ]
     split = LineEdits(replaced=Replaced("S203M-C25", "ABB", 'מא"ז S203M-C25', "ci_s203_25"))
     q = lines_on(
-        comps[:1] + [comp("cmp_3", qty=1)],
+        [*comps[:1], comp("cmp_3", qty=1)],
         [matches[0], match("cmp_3", "S203M-C16")],
         carry=Carry(components={"c:cmp_3": split}),
     )
