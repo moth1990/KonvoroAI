@@ -6,7 +6,7 @@
 | **Branch** | `s28b-factory-panel` |
 | **Depends on** | S28 |
 | **Status** | in review |
-| **PR** | (link) |
+| **PR** | [moth1990/KonvoroAI#40](https://github.com/moth1990/KonvoroAI/pull/40) |
 
 ## Goal
 
