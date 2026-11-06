@@ -38,34 +38,34 @@ Phase 3 (cloud and pilot readiness) starts from a tagged, stable `phase-2`.
 ## Tasks
 
 ### Verify
-- [ ] `make up && make seed && make check` in the working tree.
-- [ ] Full Playwright suite on `desktop` and `mobile`; screenshot baselines (`make check-screenshots`).
-- [ ] Fidelity report for every built screen (`make fidelity`), for the user's review.
-- [ ] `make eval` in replay, then `EVAL_CATALOG_LINES=1 make eval` (13 §3 rule 6), then a live run (`EVAL_MODE=live`, capped). All under Outcome.
-- [ ] Security spot checks (inside `make check`): the RLS suite, the route-actor audit, `make secrets`, the license gate, no price or cost to a model (chat, builder, home, `catalog_disambiguation`, `validator_review`).
-- [ ] The prototype-flow matrix: every `data-act` of the prototype and every screen in CLAUDE.md's map, against the E2E test that covers it, written under "Flow coverage" below; a test for each gap.
+- [x] `make check`'s steps in the working tree, one at a time (decision 7): lint and types, licenses, secrets (133 commits, no leaks), client freshness, unit (backend 1287 with pricing at 100% branch coverage; Vitest 279 on Node 22), integration (818), the replay eval, E2E, screenshots. Not yet as one `make check` run: `/session-close` runs it.
+- [x] Full Playwright suite on `desktop` and `mobile`: 251 passed, 101 skipped (the screenshot tests outside Docker and the layout-specific ones). Screenshot baselines: 86 of 86 (`make check-screenshots`).
+- [x] Fidelity report for every built screen (`make fidelity`, 152 captures), for the user's review.
+- [x] `make eval` in replay, then `EVAL_CATALOG_LINES=1 make eval` (13 §3 rule 6), then a live run (`EVAL_MODE=live`, capped). All under Outcome.
+- [x] Security spot checks, inside the suites above: the RLS suite and the route-actor audit (integration), `make secrets`, the license gate, and no amount to a model (the chat's `money_to_model` 0 of 361 live, the builder's 0 of 54, the home's 0 of 10).
+- [x] The prototype-flow matrix: every `data-act` of the prototype and every screen in CLAUDE.md's map, against the E2E test that covers it, written under "Flow coverage" below; a test for each gap (four).
 
 ### Fix
-- [ ] All open P0 and P1 bugs, each starting with a failing test:
-  - [ ] BUG-051, BUG-053 (P1), with BUG-054, BUG-055, BUG-057 (P2): bring PR #29's fix into `main` (question 1).
-- [ ] P2s that fit (question 5).
-- [ ] Bug log housekeeping: BUG-076 and BUG-065 are `fixed` but still in the Open table.
+- [x] All open P0 and P1 bugs (none P0):
+  - [x] BUG-051, BUG-053 (P1), with BUG-054, BUG-055, BUG-057 (P2): PR #29's fix merged into this branch (decision 1), with its own tests.
+- [x] P2s that fit (decision 5): BUG-074 and BUG-046, each starting with a failing test.
+- [x] Bug log housekeeping: BUG-076 and BUG-065 moved to Closed.
 
 ### Exit criteria work
-- [ ] **Rows that need no edit** (00 §10.2): a metric in the eval, its definition decided with the user (question 2), with **wrong green rows** (≤ 1%) beside it. Unit tests for the metric; in the baseline.
-- [ ] **A new factory's first day** (10 §2, §11): one E2E from a new tenant to a sent quote: the two questions and the terms, a drawing through the 7 stages (stand-in model), prices typed on the rows with "לעדכן גם במחירון?", send and lock. On both projects.
-- [ ] Remove `price_list`: the flag (a migration), the routes' `require_flag`, the seed, its 404 tests (`test_api_price_list*.py`), the `prices-off` E2E tenant, the client's guard. The other build-time flags get a `remove_by` for Gate 3 (decision 4).
+- [x] **Rows that need no edit** (00 §10.2): `eval/metrics/rows.py`, by decision 2, with **wrong green rows** (≤ 1%) beside it. Unit tests (`golden_eval/test_metrics.py`); in the baseline.
+- [x] **A new factory's first day** (10 §2, §11): `day-one.spec.ts`, from a new tenant to a sent quote: the two questions and the terms, a drawing through the 7 stages (stand-in model), a price typed on a line and saved to the price list, send and lock. On both projects.
+- [x] Remove `price_list`: the flag (a migration), the routes' `require_flag`, the seed, its 404 tests (`test_api_price_list*.py`), the `prices-off` E2E tenant, the client's guard. The other build-time flags get a `remove_by` for Gate 3 (decision 4).
 
 ### Eval
-- [ ] Replay, `catalog_lines` on, and live numbers under Outcome; the baseline updated (`make eval-baseline`) where a fix here moves it.
+- [x] Replay, `catalog_lines` on, and live numbers under Outcome; the baseline rewritten from the replay after PR #29's merge and again after BUG-074, BUG-046 and the rows metric.
 
 ### Docs
-- [ ] Backlog triage: each item scheduled into S29–S32, phase 4, or dropped; the table under Outcome, the roadmap updated.
-- [ ] S29 and S30 session files prepared from the template.
-- [ ] CLAUDE.md, dev-strategy, db-schema and the specs where this gate changes them (the flag removal; the new metric in eval/README).
-- [ ] README §6.1: the phase 2 line.
-- [ ] B1 and the other external blockers recorded.
-- [ ] The roadmap: S27b `done`, S28's status.
+- [x] Backlog triage: every item scheduled, in "Backlog triage" below; nothing dropped.
+- [x] S29 and S30 session files prepared from the template, linked from the roadmap.
+- [x] CLAUDE.md (the price list's flag, the eval row), db-schema (the seeded flags), 06 decision 2's note, 11 §5.4, eval/README (the overall section). dev-strategy needs no change.
+- [x] README §6.1: the phase 2 line.
+- [x] B1 and the other external blockers recorded (Outcome, known gaps).
+- [x] The roadmap: S27b `done`, S28's status, the price list's backlog item.
 
 ### Close
 - [ ] Merge, tag `phase-2`, set S28 to `done`. After the user merges the PR.
@@ -114,12 +114,12 @@ Every open item of the roadmap's backlog, scheduled (dev-strategy §7, the roadm
 
 ## Acceptance criteria (phase 2 exit)
 
-- [ ] A new factory produces a quote on day one: the day-one E2E green on both projects.
-- [ ] ≥ 85% of golden rows need no edit (00 §10.2, §14), in the live run, by the definition in decision 2; wrong green rows ≤ 1%. A shortfall is recorded as a known gap with its owner (dev-strategy §7).
-- [ ] Every prototype flow covered by E2E (the matrix above has no gap), the whole suite green on both projects.
-- [ ] `make check` green, and CI green on the PR.
-- [ ] No open P0 or P1 bugs.
-- [ ] External blockers recorded (B1–B8).
+- [x] A new factory produces a quote on day one: `day-one.spec.ts` green on both projects.
+- [ ] ≥ 85% of golden rows need no edit (00 §10.2, §14), by decision 2: **not met**, 54.2% live (117/216) and 51.4% in replay (111/216). Wrong green rows ≤ 1%: not measurable, no line is green apart from its price (BUG-103). A known gap (decision 2), for Reading II (question 7).
+- [x] Every prototype flow covered by E2E (the table above has no gap), the whole suite green on both projects (251).
+- [ ] `make check` green, and CI green on the PR: every step green, run one at a time (decision 7); the single run and CI at `/session-close`.
+- [x] No open P0 or P1 bugs.
+- [x] External blockers recorded (B1–B8, under Outcome).
 
 ## Out of scope
 
@@ -141,13 +141,42 @@ Every open item of the roadmap's backlog, scheduled (dev-strategy §7, the roadm
 
 Filled in at `/session-close`.
 
-- **Done:**
+- **Done:** phase 2 checked end to end; its open P1s fixed; two of its exit criteria met and one measured for the first time.
+  - PR #29 (MINHAROT-1's reading: BUG-051 and BUG-053, P1; BUG-054, 055, 057) had been merged into a branch that had already landed, so it never reached `main`. It is merged here, both sides of `association/merge.py` kept; the replay needs no new cassette, and its numbers are the PR's own.
+  - BUG-074: a quote line repeated word for word is a double count, shown (25.26.100's audit: precision 33% to 50%, recall 20% to 40%). BUG-046: a front view on a page no panel holds goes to the panel with its tags, and a device read as terminals may be its near match; 26-993's SE/SG now waits only for BUG-035.
+  - `price_list` removed (migration 0026); the six other build-time flags dated for Gate 3.
+  - The eval's `overall` section: rows that need no edit, and wrong green rows (00 §10.2).
+  - `day-one.spec.ts`: a new factory to a sent quote. The flow table, and tests for the four built flows that had none.
+  - Every step of `make check` green, one at a time; the full E2E suite (251), screenshots (86/86), the fidelity report (152 captures); replay, `catalog_lines` on, and a live eval.
+  - Docs: S29 and S30 session files, the backlog triage, CLAUDE.md, db-schema, 06, 11, eval/README, README §6.1, the roadmap and the bug log.
 - **Decisions made:**
   1. **PR #29: merge its tip** (user, at kickoff; question 1). `0a3bb3c` is merged into `s28-gate-2` and its conflicts resolved on today's code. The eval replays; only calls that miss a cassette are recorded live (`EVAL_RECORD=missing`), and the baseline is rewritten from the replay.
   2. **Rows that need no edit: strict, end to end** (user, at kickoff; question 2). A labelled row counts when the pipeline's quote has a line for it with the label's family, every labelled value right, the labelled quantity, and a SKU from stage 5: a line with no SKU has no price, so it needs an edit. Wrong green rows (00 §10.2, ≤ 1%) are measured beside it: green lines that fail the same test. A shortfall against 85% is a known gap, not a failed gate.
   3. **Live eval: measure only, $15 cap** (user, at kickoff; question 3). `EVAL_MODE=live`, no recording, `EVAL_MAX_USD=15`. Live and replay numbers side by side; the cassettes and the baseline stay. If the cap stops the run before the chat sets, the live numbers it did not reach are recorded as not measured.
   4. **Only `price_list` is removed** (user, at kickoff; question 4). `quote_audit`, `bom_column_mapping`, `onboarding`, `settings_screen`, `approval_queue` and `chat_layer` get a `remove_by` and go at Gate 3 (S32), before the pilot.
+  5. **P2s fixed here: BUG-074 and BUG-046** (Claude's proposal at kickoff, the user's go-ahead). BUG-035, BUG-036, BUG-082 and BUG-086 need many cassettes re-recorded live, beyond a measure-only run: they go to Reading II (question 7). BUG-008 stays with S29.
+  6. **Known gaps owned by the user** (Claude's proposal at kickoff, the user's go-ahead): B1, B7 and the chat set in an estimator's own words are recorded, not gating.
+  7. **`make check` one step at a time** (Claude, in session). The live eval cannot overlap any other eval run, `test_eval.py` included: the first live attempt was stopped after six minutes when the integration suite recreated `konboro_eval` (about $2 at the second run's rate). The second ran alone, capped at $13.50 so the two stay within decision 3's $15, and cost $11.89. The single `make check` run is `/session-close`'s.
+  8. **The 26-993 audit fixture is regenerated** (Claude, in session; S16 decision 2): the same nine differences and summary, one terminal (EM2) fewer in a "not a difference" note, from changes since S17. The audit screenshots did not move.
+  9. **Wrong green rows are coloured apart from the price** (Claude, in session; decision 2's measure). The eval's factory has no price list (S20), so every line's price reason is red there; the colour from the other reasons is what the pipeline vouched for. It found no green line at all: BUG-103.
+  10. **The rows metric compares the family's schema values** (Claude, in session). A label's other notes (`model_token`, `brand`, `dims_mm`) are no value of a line. Rows with no designators are a group by family, current and poles, compared by quantity and SKU. Terminals are auxiliary material, left out on both sides.
+  11. **Gate 3's date is 2026-12-31** (Claude, in session): `remove_by` needs a date, and S32 has none yet.
+  12. **Vitest runs on Node 22** (Claude, in session). The shell's default Node 20 cannot start Vitest's workers (undici); the project pins 22 (`.nvmrc`). An environment note, no code change.
 - **Eval / metrics:**
+  - **Replay** (the committed baseline). After PR #29: MINHAROT-1's stage 4 quantity accuracy 76% to 94%, units 81% to 98%; NEVIS-1's units 79% to 91%; injected errors caught 97% to 100%; NURSERY-1's component precision 80% to 75% and quantity 92% to 83% (its lamps now split by colour against one labelled row), and the front-view warnings BUG-055 adds. After BUG-074 and BUG-046: the audit's precision 83.3% to 84.6% and recall 64.3% to 71.4% over the four quotes; 26-993 one warning more. **Rows that need no edit 51.4% (111/216)**: 25.26.100 50%, 26-993 38%, 6199-2-50 38%, BOM-HW-1 95%, MINHAROT-1 78%, NEVIS-1 62%, NURSERY-1 69%. Wrong green rows n/a.
+  - **`catalog_lines` on** (replay, reported): rows unchanged (51.4%); stage 6 warnings 3.9 to 5.4 per drawing (`PRODUCT_NOT_IN_CATALOG`).
+  - **Live** (2026-11-06, measure only, report `eval/reports/20261106T155007Z`): 1,202 calls, 4.4M tokens in and 0.37M out, **$11.89** at list prices. **Rows that need no edit 54.2% (117/216)**. Audit precision 78.6% (11/14), recall 71.4% (10/14), type agreement 90%. Stage 1 page kind 97%, route 100%, `input_kind` 100%, panel count 86%. Stage 2 and 3 designator recall 99.4%, family accuracy 95.5%. Stage 4 component recall 75.6%, precision 68.3%, `current_a` 100%, poles 100%, quantity 82.4%, values without evidence 0. Stage 5 with SKU 76%, value accuracy 100%, consistency 100%, model share 4.6%. Stage 6 golden findings 82%, injected caught 100%. Backtest within 5%: 1 of 4. The chat: tools 98.4%, clarification 96.1%, no amount to the model (0 of 361), no injection followed. The builder: lines 98.7%, turns 98.0%, no value invented; the home: routing 100%.
 - **Bugs logged:**
+  - Fixed: BUG-051, BUG-053 (P1), BUG-054, BUG-055, BUG-057 (PR #29); BUG-074, BUG-046 (here). Moved to Closed: BUG-076, BUG-065.
+  - Opened: BUG-103 (P2, no golden line green apart from its price).
+  - Still open: P2 BUG-086, 082, 038, 036, 035 (Reading II), BUG-008 (S29); P3s.
 - **Known gaps:**
+  - **Rows that need no edit, 54% against 85%** (decision 2), and wrong green rows not measurable (BUG-103): the reading's recall, quantities and SKUs. Owner: Reading II, if the user schedules it (question 7).
+  - B1, the golden set: 7 drawings; MINHAROT-1 not checked with its factory, 25.26.100's sub-panel unlabelled (owner: the user and the estimator).
+  - B7, the review screen's usability test (owner: the user).
+  - The chat set: 77 requests written by Claude, not about 200 in an estimator's words (owner: the user, at the pilot).
+  - `make check` as one run and CI: at `/session-close`.
 - **Follow-ups:**
+  - Question 7: a Reading II session before Gate 3 (the triage's "Reading II" row).
+  - The user reviews the fidelity report.
+  - After merge: tag `phase-2` on the merge commit, set S28 to `done`.
