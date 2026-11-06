@@ -292,6 +292,47 @@ def link_demo_catalog(session: Session, tenant_id: str) -> None:
             product.catalog_item_id, product.family = found
 
 
+def demo_flags(session: Session) -> None:
+    """Every flag on for the demo factory, as `seed_demo_tenant` sets them for a new one, so a demo tenant from
+    before a flag existed gets it too (BUG-105: `catalog_lines` stayed off for the demo of every seed before S27b).
+    A flag already set, on or off, is left as it is."""
+    for key in (*S24_FLAGS, CHAT_FLAG, *(f["key"] for f in FLAGS)):
+        session.execute(
+            insert(TenantFeatureOverride)
+            .values(tenant_id=DEMO_TENANT, flag_key=key, enabled=True, reason="demo")
+            .on_conflict_do_nothing(index_elements=["tenant_id", "flag_key"])
+        )
+
+
+def demo_common_products(session: Session, tenant_id: str) -> None:
+    """`common.csv`'s products (S27b) in the demo factory's price list, pointing at their catalog item, with no
+    supplier and no cost, so they show under "בלי עלות" (S28b decision 4). The demo's only: a real factory's price
+    list is its own prices, never filled from the shared catalog (07 §7.2). A product already there is kept."""
+    from konboro.pipeline.pricing.load import describe
+
+    rows = catalog.parse(catalog.COMMON.read_text(encoding="utf-8"))
+    keys = {(r.brand, r.sku) for r in rows}
+    items = [i for i in session.scalars(select(CatalogItem)) if (i.brand, i.sku) in keys]
+    have = set(session.scalars(select(Product.manufacturer_sku).where(Product.tenant_id == tenant_id)))
+    for item in sorted(items, key=lambda i: (i.family, i.brand, i.sku)):
+        if item.sku in have:
+            continue
+        session.add(
+            Product(
+                id=new_id("prd"),
+                tenant_id=tenant_id,
+                catalog_item_id=item.id,
+                display_name=describe(item),
+                manufacturer_sku=item.sku,
+                brand=item.brand,
+                family=item.family,
+                sale_mode="rule",
+                source="manual_entry",
+            )
+        )
+    session.flush()
+
+
 def seed_symbol_library(session: Session) -> None:
     """03 §4.3–4.6, global layer, from `konboro.pipeline.detection.library` (S12). Rows already there are kept: a
     curated row may have been approved or edited since."""
@@ -454,16 +495,12 @@ def seed_demo_fixtures(session: Session, storage: "Storage") -> None:
     audit_993.enable_flag(session, DEMO_TENANT)
     audit_993.seed_audit_993(session, DEMO_TENANT, DEMO_USER)
     audit_993.seed_audit_993_pages(session, storage, DEMO_TENANT)
-    for key in (*S24_FLAGS, CHAT_FLAG):
-        session.execute(
-            insert(TenantFeatureOverride)
-            .values(tenant_id=DEMO_TENANT, flag_key=key, enabled=True, reason="demo")
-            .on_conflict_do_nothing(index_elements=["tenant_id", "flag_key"])
-        )
+    demo_flags(session)
     demo_onboarding(session)
     demo_document(session)
     seed_queue(session, DEMO_TENANT)
     link_demo_catalog(session, DEMO_TENANT)
+    demo_common_products(session, DEMO_TENANT)
     demo_matching(session, DEMO_TENANT)
     from konboro.pipeline.pricing.load import ensure_rules
 
@@ -487,4 +524,8 @@ def seed(engine: Engine | None = None, storage: "Storage | None" = None) -> bool
 
 if __name__ == "__main__":
     created = seed()
-    print("demo tenant created" if created else "demo tenant already exists, left unchanged")
+    print(
+        "demo tenant created"
+        if created
+        else "demo tenant already exists: its fixtures, flags and common products brought up to date"
+    )

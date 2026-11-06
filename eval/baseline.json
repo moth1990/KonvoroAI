@@ -185,8 +185,8 @@
           "input_kind_accuracy": {
             "den": 1,
             "kind": "ratio",
-            "num": 0.0,
-            "value": 0.0
+            "num": 1.0,
+            "value": 1.0
           },
           "missed_process_pages": {
             "den": 1,
@@ -542,11 +542,11 @@
     },
     "26-993": {
       "backtest": {
-        "loo_coverage": "0.4583",
+        "loo_coverage": "0.4737",
         "loo_total": "2941.00",
-        "own_coverage": "0.7083",
-        "own_derived": "12600.00",
-        "own_total": "20427.00",
+        "own_coverage": "0.7368",
+        "own_derived": "4200.00",
+        "own_total": "12287.00",
         "quote_derived": "4200.00"
       },
       "confirmed_value_at_risk": "1250",
@@ -573,18 +573,13 @@
         "warning CTRL_OVERLOAD_WITHOUT_CONTACTOR",
         "warning DATA_LOAD_CURRENT_GT_RATED FC1",
         "warning FRONT_VIEW_DESIGNATOR_MISSING",
-        "info DATA_INFERRED_ATTRIBUTE G1",
-        "info DATA_INFERRED_ATTRIBUTE L1 L2 L3",
-        "info DATA_MANY_DEFAULTS",
-        "info HIER_ORPHAN_DEVICE QLG1",
-        "info AGENT_missing_component",
-        "info DATA_INFERRED_ATTRIBUTE LG1 LG2 LG3",
-        "info DATA_MANY_DEFAULTS",
-        "info HIER_ORPHAN_DEVICE QLG2 QPM FPB",
+        "warning FRONT_VIEW_DESIGNATOR_NEAR_MATCH C COM EM1 L SG Z1",
+        "warning QTY_SINGLE_INSTANCE_FAMILY QG1 QG2",
+        "info DATA_INFERRED_ATTRIBUTE G1 TC-G1 TC-G2",
         "info DATA_INFERRED_ATTRIBUTE GIC-1",
-        "info DATA_INFERRED_ATTRIBUTE TC-G1 TC-G2",
+        "info DATA_INFERRED_ATTRIBUTE L1 L2 L3 LG1 LG2 LG3",
         "info DATA_MANY_DEFAULTS",
-        "info HIER_ORPHAN_DEVICE FC1 FB1 F13 F14 F17 F18",
+        "info HIER_ORPHAN_DEVICE QPM FPB FC1 Q1 FB1 F13",
         "info SCOPE_NOT_IN_PANEL EMS"
       ],
       "injected": [
@@ -613,25 +608,25 @@
         "info DATA_MANY_DEFAULTS"
       ],
       "matching": {
-        "auxiliary": 2,
-        "components": 27,
+        "auxiliary": 1,
+        "components": 21,
         "llm_signatures": 1,
-        "method_explicit_series": 11,
+        "method_explicit_series": 9,
         "method_llm": 1,
-        "method_none": 6,
-        "method_rules_ranked": 2,
+        "method_none": 4,
+        "method_rules_ranked": 1,
         "method_rules_unique": 5,
-        "signatures": 20,
-        "status_ambiguous": 2,
-        "status_matched": 19,
-        "status_unmatched": 4
+        "signatures": 19,
+        "status_ambiguous": 1,
+        "status_matched": 16,
+        "status_unmatched": 3
       },
       "merge": {
         "agent_instances": 18,
         "agent_tiles": 7,
         "citation_mismatches": 1,
         "cited_values": 15,
-        "components": 27,
+        "components": 21,
         "instances": 57,
         "missing": 0,
         "shared_labels": 0,
@@ -641,44 +636,44 @@
       "panels": {
         "MAIN ELECTRICAL BOARD": {
           "component_precision": {
-            "den": 13,
+            "den": 20,
             "kind": "ratio",
-            "num": 11.0,
-            "value": 0.846154
+            "num": 17.0,
+            "value": 0.85
           },
           "component_recall": {
             "den": 22,
             "kind": "ratio",
-            "num": 11.0,
-            "value": 0.5
+            "num": 17.0,
+            "value": 0.772727
           }
         }
       },
       "predicted": {
-        "products": 27,
+        "products": 21,
         "units": 56
       },
-      "predicted_total": "20427.00",
+      "predicted_total": "12287.00",
       "predicted_value_at_risk": "1250.00",
       "quote_total": "14022.0",
       "scores": {
         "audit": {
           "difference_precision": {
-            "den": 3,
+            "den": 2,
             "kind": "ratio",
-            "num": 3.0,
+            "num": 2.0,
             "value": 1.0
           },
           "difference_recall": {
             "den": 3,
             "kind": "ratio",
-            "num": 3.0,
-            "value": 1.0
+            "num": 2.0,
+            "value": 0.666667
           },
           "type_agreement": {
-            "den": 3,
+            "den": 2,
             "kind": "ratio",
-            "num": 3.0,
+            "num": 2.0,
             "value": 1.0
           }
         },
@@ -686,8 +681,8 @@
           "rows_without_edit": {
             "den": 21,
             "kind": "ratio",
-            "num": 8.0,
-            "value": 0.380952
+            "num": 11.0,
+            "value": 0.52381
           },
           "wrong_green_rows": {
             "den": 0,
@@ -700,20 +695,20 @@
           "backtest_derived_deviation": {
             "den": 1,
             "kind": "mean",
-            "num": 2.0,
-            "value": 2.0
+            "num": 0.0,
+            "value": 0.0
           },
           "backtest_derived_within_10pct": {
             "den": 1,
             "kind": "ratio",
-            "num": 0.0,
-            "value": 0.0
+            "num": 1.0,
+            "value": 1.0
           },
           "backtest_deviation": {
             "den": 1,
             "kind": "mean",
-            "num": 0.456782,
-            "value": 0.456782
+            "num": 0.123734,
+            "value": 0.123734
           },
           "backtest_within_5pct": {
             "den": 1,
@@ -750,8 +745,8 @@
           "panel_count_accuracy": {
             "den": 1,
             "kind": "ratio",
-            "num": 0.0,
-            "value": 0.0
+            "num": 1.0,
+            "value": 1.0
           },
           "route_accuracy": {
             "den": 5,
@@ -894,40 +889,40 @@
             "value": 0.066667
           },
           "component_precision": {
-            "den": 26,
+            "den": 20,
             "kind": "ratio",
-            "num": 11.0,
-            "value": 0.423077
+            "num": 17.0,
+            "value": 0.85
           },
           "component_recall": {
             "den": 22,
             "kind": "ratio",
-            "num": 11.0,
-            "value": 0.5
+            "num": 17.0,
+            "value": 0.772727
           },
           "current_a_accuracy": {
-            "den": 7,
+            "den": 8,
             "kind": "ratio",
-            "num": 7.0,
+            "num": 8.0,
             "value": 1.0
           },
           "poles_accuracy": {
-            "den": 7,
-            "kind": "ratio",
-            "num": 7.0,
-            "value": 1.0
-          },
-          "quantity_accuracy": {
-            "den": 11,
+            "den": 10,
             "kind": "ratio",
             "num": 8.0,
-            "value": 0.727273
+            "value": 0.8
+          },
+          "quantity_accuracy": {
+            "den": 17,
+            "kind": "ratio",
+            "num": 13.0,
+            "value": 0.764706
           },
           "unit_recall": {
             "den": 47,
             "kind": "ratio",
-            "num": 22.0,
-            "value": 0.468085
+            "num": 38.0,
+            "value": 0.808511
           },
           "values_without_evidence": {
             "den": 1,
@@ -944,22 +939,22 @@
             "value": 1.0
           },
           "llm_share": {
-            "den": 20,
+            "den": 19,
             "kind": "ratio",
             "num": 1.0,
-            "value": 0.05
+            "value": 0.052632
           },
           "sku_value_accuracy": {
-            "den": 7,
+            "den": 9,
             "kind": "ratio",
-            "num": 7.0,
-            "value": 1.0
+            "num": 8.0,
+            "value": 0.888889
           },
           "with_sku": {
-            "den": 25,
+            "den": 20,
             "kind": "ratio",
-            "num": 21.0,
-            "value": 0.84
+            "num": 17.0,
+            "value": 0.85
           }
         },
         "s5_labelled": {
@@ -998,14 +993,14 @@
           "golden_findings": {
             "den": 2,
             "kind": "ratio",
-            "num": 1.0,
-            "value": 0.5
+            "num": 2.0,
+            "value": 1.0
           },
           "warnings": {
             "den": 1,
             "kind": "average",
-            "num": 3.0,
-            "value": 3.0
+            "num": 5.0,
+            "value": 5.0
           }
         },
         "s6_labelled": {
@@ -1084,13 +1079,13 @@
         }
       },
       "validation": {
-        "agent_calls": 2,
-        "agent_findings": 1,
+        "agent_calls": 1,
+        "agent_findings": 0,
         "checks_run": 32,
-        "checks_skipped": 17,
+        "checks_skipped": 6,
         "severity_error": 0,
-        "severity_info": 13,
-        "severity_warning": 3
+        "severity_info": 6,
+        "severity_warning": 5
       }
     },
     "6199-2-50": {
@@ -3620,21 +3615,21 @@
     "all": {
       "audit": {
         "difference_precision": {
-          "den": 13,
+          "den": 12,
           "kind": "ratio",
-          "num": 11.0,
-          "value": 0.846154
+          "num": 10.0,
+          "value": 0.833333
         },
         "difference_recall": {
           "den": 14,
           "kind": "ratio",
-          "num": 10.0,
-          "value": 0.714286
+          "num": 9.0,
+          "value": 0.642857
         },
         "type_agreement": {
-          "den": 10,
+          "den": 9,
           "kind": "ratio",
-          "num": 10.0,
+          "num": 9.0,
           "value": 1.0
         }
       },
@@ -3736,8 +3731,8 @@
         "rows_without_edit": {
           "den": 216,
           "kind": "ratio",
-          "num": 111.0,
-          "value": 0.513889
+          "num": 114.0,
+          "value": 0.527778
         },
         "wrong_green_rows": {
           "den": 0,
@@ -3750,20 +3745,20 @@
         "backtest_derived_deviation": {
           "den": 4,
           "kind": "mean",
-          "num": 3.0,
-          "value": 0.75
+          "num": 1.0,
+          "value": 0.25
         },
         "backtest_derived_within_10pct": {
           "den": 4,
           "kind": "ratio",
-          "num": 2.0,
-          "value": 0.5
+          "num": 3.0,
+          "value": 0.75
         },
         "backtest_deviation": {
           "den": 4,
           "kind": "mean",
-          "num": 0.8915460000000001,
-          "value": 0.222887
+          "num": 0.558498,
+          "value": 0.139625
         },
         "backtest_within_5pct": {
           "den": 4,
@@ -3782,8 +3777,8 @@
         "input_kind_accuracy": {
           "den": 7,
           "kind": "ratio",
-          "num": 6.0,
-          "value": 0.857143
+          "num": 7.0,
+          "value": 1.0
         },
         "missed_process_pages": {
           "den": 19,
@@ -3800,8 +3795,8 @@
         "panel_count_accuracy": {
           "den": 7,
           "kind": "ratio",
-          "num": 6.0,
-          "value": 0.857143
+          "num": 7.0,
+          "value": 1.0
         },
         "route_accuracy": {
           "den": 33,
@@ -4016,40 +4011,40 @@
           "value": 0.042471
         },
         "component_precision": {
-          "den": 200,
+          "den": 194,
           "kind": "ratio",
-          "num": 136.0,
-          "value": 0.68
+          "num": 142.0,
+          "value": 0.731959
         },
         "component_recall": {
           "den": 180,
           "kind": "ratio",
-          "num": 136.0,
-          "value": 0.755556
+          "num": 142.0,
+          "value": 0.788889
         },
         "current_a_accuracy": {
-          "den": 35,
+          "den": 36,
           "kind": "ratio",
-          "num": 35.0,
+          "num": 36.0,
           "value": 1.0
         },
         "poles_accuracy": {
-          "den": 39,
+          "den": 42,
           "kind": "ratio",
-          "num": 36.0,
-          "value": 0.923077
+          "num": 37.0,
+          "value": 0.880952
         },
         "quantity_accuracy": {
-          "den": 136,
+          "den": 142,
           "kind": "ratio",
-          "num": 108.0,
-          "value": 0.794118
+          "num": 113.0,
+          "value": 0.795775
         },
         "unit_recall": {
           "den": 513,
           "kind": "ratio",
-          "num": 411.0,
-          "value": 0.80117
+          "num": 427.0,
+          "value": 0.832359
         },
         "values_without_evidence": {
           "den": 7,
@@ -4066,22 +4061,22 @@
           "value": 1.0
         },
         "llm_share": {
-          "den": 177,
+          "den": 176,
           "kind": "ratio",
           "num": 6.0,
-          "value": 0.033898
+          "value": 0.034091
         },
         "sku_value_accuracy": {
-          "den": 31,
+          "den": 33,
           "kind": "ratio",
-          "num": 31.0,
-          "value": 1.0
+          "num": 32.0,
+          "value": 0.969697
         },
         "with_sku": {
-          "den": 207,
+          "den": 202,
           "kind": "ratio",
-          "num": 155.0,
-          "value": 0.748792
+          "num": 151.0,
+          "value": 0.747525
         }
       },
       "s5_labelled": {
@@ -4120,14 +4115,14 @@
         "golden_findings": {
           "den": 11,
           "kind": "ratio",
-          "num": 10.0,
-          "value": 0.909091
+          "num": 11.0,
+          "value": 1.0
         },
         "warnings": {
           "den": 7,
           "kind": "average",
-          "num": 27.0,
-          "value": 3.857143
+          "num": 29.0,
+          "value": 4.142857
         }
       },
       "s6_labelled": {
@@ -4552,8 +4547,8 @@
           "input_kind_accuracy": {
             "den": 2,
             "kind": "ratio",
-            "num": 1.0,
-            "value": 0.5
+            "num": 2.0,
+            "value": 1.0
           },
           "missed_process_pages": {
             "den": 2,
@@ -4936,21 +4931,21 @@
       "factory_drawing": {
         "audit": {
           "difference_precision": {
-            "den": 9,
+            "den": 8,
             "kind": "ratio",
-            "num": 9.0,
+            "num": 8.0,
             "value": 1.0
           },
           "difference_recall": {
             "den": 9,
             "kind": "ratio",
-            "num": 8.0,
-            "value": 0.888889
+            "num": 7.0,
+            "value": 0.777778
           },
           "type_agreement": {
-            "den": 8,
+            "den": 7,
             "kind": "ratio",
-            "num": 8.0,
+            "num": 7.0,
             "value": 1.0
           }
         },
@@ -4958,8 +4953,8 @@
           "rows_without_edit": {
             "den": 73,
             "kind": "ratio",
-            "num": 44.0,
-            "value": 0.60274
+            "num": 47.0,
+            "value": 0.643836
           },
           "wrong_green_rows": {
             "den": 0,
@@ -4972,20 +4967,20 @@
           "backtest_derived_deviation": {
             "den": 3,
             "kind": "mean",
-            "num": 2.0,
-            "value": 0.666667
+            "num": 0.0,
+            "value": 0.0
           },
           "backtest_derived_within_10pct": {
             "den": 3,
             "kind": "ratio",
-            "num": 2.0,
-            "value": 0.666667
+            "num": 3.0,
+            "value": 1.0
           },
           "backtest_deviation": {
             "den": 3,
             "kind": "mean",
-            "num": 0.600771,
-            "value": 0.200257
+            "num": 0.267723,
+            "value": 0.089241
           },
           "backtest_within_5pct": {
             "den": 3,
@@ -5022,8 +5017,8 @@
           "panel_count_accuracy": {
             "den": 4,
             "kind": "ratio",
-            "num": 3.0,
-            "value": 0.75
+            "num": 4.0,
+            "value": 1.0
           },
           "route_accuracy": {
             "den": 31,
@@ -5208,40 +5203,40 @@
             "value": 0.035294
           },
           "component_precision": {
-            "den": 85,
+            "den": 79,
             "kind": "ratio",
-            "num": 61.0,
-            "value": 0.717647
+            "num": 67.0,
+            "value": 0.848101
           },
           "component_recall": {
             "den": 74,
             "kind": "ratio",
-            "num": 61.0,
-            "value": 0.824324
+            "num": 67.0,
+            "value": 0.905405
           },
           "current_a_accuracy": {
-            "den": 35,
+            "den": 36,
             "kind": "ratio",
-            "num": 35.0,
+            "num": 36.0,
             "value": 1.0
           },
           "poles_accuracy": {
-            "den": 39,
+            "den": 42,
             "kind": "ratio",
-            "num": 36.0,
-            "value": 0.923077
+            "num": 37.0,
+            "value": 0.880952
           },
           "quantity_accuracy": {
-            "den": 61,
+            "den": 67,
             "kind": "ratio",
-            "num": 51.0,
-            "value": 0.836066
+            "num": 56.0,
+            "value": 0.835821
           },
           "unit_recall": {
             "den": 179,
             "kind": "ratio",
-            "num": 145.0,
-            "value": 0.810056
+            "num": 161.0,
+            "value": 0.899441
           },
           "values_without_evidence": {
             "den": 4,
@@ -5258,22 +5253,22 @@
             "value": 1.0
           },
           "llm_share": {
-            "den": 77,
+            "den": 76,
             "kind": "ratio",
             "num": 2.0,
-            "value": 0.025974
+            "value": 0.026316
           },
           "sku_value_accuracy": {
-            "den": 31,
+            "den": 33,
             "kind": "ratio",
-            "num": 31.0,
-            "value": 1.0
+            "num": 32.0,
+            "value": 0.969697
           },
           "with_sku": {
-            "den": 82,
+            "den": 77,
             "kind": "ratio",
-            "num": 65.0,
-            "value": 0.792683
+            "num": 61.0,
+            "value": 0.792208
           }
         },
         "s5_labelled": {
@@ -5312,14 +5307,14 @@
           "golden_findings": {
             "den": 8,
             "kind": "ratio",
-            "num": 7.0,
-            "value": 0.875
+            "num": 8.0,
+            "value": 1.0
           },
           "warnings": {
             "den": 4,
             "kind": "average",
-            "num": 10.0,
-            "value": 2.5
+            "num": 12.0,
+            "value": 3.0
           }
         },
         "s6_labelled": {
