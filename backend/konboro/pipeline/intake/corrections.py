@@ -12,6 +12,7 @@ code's or the model's (`bom_columns_mapped` correction event), and confirming th
 were shown. A BOM-only drawing's panels come from its tables, so a changed panel column rebuilds them.
 """
 
+import json
 from dataclasses import dataclass
 from typing import Any
 
@@ -30,7 +31,7 @@ from .. import coordinator
 from ..bom import review as bom_review
 from ..bom import table as bom_table
 from . import classify, routing, templates
-from .drawing import MergedPanel, PagePanels, merge_panels, name_key
+from .drawing import MergedPanel, PagePanels, is_factory_set, merge_panels, name_key
 from .pages import read_pages, render
 
 USER_CONFIDENCE = 1.0
@@ -127,7 +128,12 @@ def _rebuild_panels(session: Session, tenant_id: str, drawing: m.Drawing) -> lis
         )
         for p in pages
     ]
-    merged = merge_panels(found, (drawing.title_block or {}).get("panel_name"))
+    if drawing.input_kind in ("factory_drawing", "designer_plan"):  # a page's kind decides it (01 §4.4, S28b)
+        factory = is_factory_set([p.page_kind or "" for p in pages])
+        drawing.input_kind = "factory_drawing" if factory else "designer_plan"
+    merged = merge_panels(
+        found, (drawing.title_block or {}).get("panel_name"), one_panel=drawing.input_kind == "factory_drawing"
+    )
     if not merged and drawing.input_kind == "bom_only":
         artifacts = session.scalars(
             select(m.ContextArtifact).where(
@@ -165,6 +171,12 @@ def _rewrite_intake(
     intake = IntakeResult.model_validate_json(storage.get(tenant_id, run.output_key))
     rows = {p.id: p for p in session.scalars(select(m.Page).where(m.Page.drawing_id == drawing.id))}
     ids = {name_key(mp.name): pid for pid, mp in panels}
+    # A factory drawing's one panel (S28b decision 1) takes the references of the parts it replaced.
+    only = next(iter(ids.values())) if drawing.input_kind == "factory_drawing" and len(ids) == 1 else None
+
+    def kept(ref: str | None) -> str | None:
+        return ref if ref in ids.values() else (only if ref else None)
+
     pages = []
     for page in intake.pages:
         row = rows[page.page_id]
@@ -186,10 +198,7 @@ def _rewrite_intake(
                     "model": row.model,
                     "panels": owned,
                     "regions": [Region(region_kind="panel", bbox=p.bbox, panel_ref=p.panel_id) for p in owned]
-                    + [
-                        r.model_copy(update={"panel_ref": r.panel_ref if r.panel_ref in ids.values() else None})
-                        for r in other
-                    ],
+                    + [r.model_copy(update={"panel_ref": kept(r.panel_ref)}) for r in other],
                 }
             )
         )
@@ -199,6 +208,11 @@ def _rewrite_intake(
     stored = {
         a.id: a for a in session.scalars(select(m.ContextArtifact).where(m.ContextArtifact.drawing_id == drawing.id))
     }
+    if only:  # a notes block of a part now belongs to the one panel
+        for art in stored.values():
+            content = json.loads(art.content) if art.kind == "notes_block" else None
+            if content and content.get("panel_id") and content["panel_id"] != only:
+                art.content = json.dumps({**content, "panel_id": only}, ensure_ascii=False, sort_keys=True)
     artifacts = [
         a.model_copy(update={"content": stored[a.artifact_id].content}) if a.artifact_id in stored else a
         for a in intake.context_artifacts
@@ -211,6 +225,7 @@ def _rewrite_intake(
             "panels": [Panel(panel_id=pid, name=mp.name, page_ids=mp.page_ids) for pid, mp in panels],
             "context_artifacts": artifacts,
             "needs_confirmation": bool(reasons),
+            "input_kind": drawing.input_kind,
         }
     )
     storage.put(tenant_id, run.output_key, updated.model_dump_json().encode(), "application/json")
