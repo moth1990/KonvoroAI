@@ -161,13 +161,18 @@ class Explicit:
 
 
 def _tokens(component: Component, brands: frozenset[str]) -> list[str]:
+    """Each model written, without its brand ("ABB-XT1C" → XT1C) and then with it, since the catalog keeps some tokens
+    with the brand in them ("SATEC-135" → 135, then SATEC135: PM135EH's token, BUG-110)."""
     out: list[str] = []
     for t in component.explicit_texts:
         for r in parse(t):
             if r.key == "model_token":
-                token = norm_token(str(r.value), brands)
-                if token not in out:
-                    out.append(token)
+                plain = norm_token(str(r.value))
+                bare = norm_token(str(r.value), brands)
+                branded = plain[: len(plain) - len(bare)].rstrip("-_.") + bare if bare != plain else plain
+                for token in (bare, branded):
+                    if token not in out:
+                        out.append(token)
     return out
 
 

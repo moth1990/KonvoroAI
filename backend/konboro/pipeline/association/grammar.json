@@ -418,7 +418,13 @@
     },
     {
       "id": "brand",
-      "re": "^(?P<brand>ABB|SCHNEIDER|Schneider|HAGER|Hager|EATON|Eaton|SIEMENS|Siemens|LEGRAND|Legrand|DELTA|Delta|SATEC|MOELLER|Moeller)$"
+      "re": "^(?P<brand>ABB|SCHNEIDER|Schneider|HAGER|Hager|EATON|Eaton|SIEMENS|Siemens|LEGRAND|Legrand|DELTA|Delta|SATEC|MOELLER|Moeller|AMDAR|Amdar)$"
+    },
+    {
+      "id": "brand_model",
+      "about": "BUG-110: a brand and its model as one word, \"SATEC-135\" and \"AMDAR-AM530D\" (25/886): the brand, and the model as written; stage 5 looks it up with the brand and without it (05 §5.2.1)",
+      "re": "^(?P<model_token>(?P<brand>ABB|SCHNEIDER|Schneider|HAGER|Hager|EATON|Eaton|SIEMENS|Siemens|LEGRAND|Legrand|DELTA|Delta|SATEC|MOELLER|Moeller|AMDAR|Amdar)-[A-Z0-9][A-Z0-9.]*)$",
+      "confidence": 0.9
     }
   ],
   "scope_phrases": {

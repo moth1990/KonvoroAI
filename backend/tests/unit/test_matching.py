@@ -227,6 +227,20 @@ def test_a_series_gives_the_poles_the_text_leaves_out() -> None:
     assert m.chosen_sku == "S203M-C16" and m.attributes_used["poles"].source == "series"
 
 
+def test_a_model_written_with_its_brand_finds_the_catalogs_token() -> None:
+    """BUG-110: 25/886's meter says "SATEC-135". The catalog keeps the brand in the token (PM135EH: SATEC135), so the
+    model is looked up with its brand too, not only without it ("135"). The factory has no SATEC price, as the demo
+    factory: without the text the preferred brand finds no meter; with it, the drawing names the brand and the model."""
+    no_satec = frozenset(i for i, item in CATALOG.items.items() if item.brand != "SATEC")
+    fac = factory(priced=no_satec)
+    bare = one(comp("energy_meter", "energy_meter", {}, (), designators=("PM",)), fac=fac)
+    assert (bare.status, bare.chosen_sku) == ("unmatched", None)
+    for written in ("SATEC-135", "SATEC 135"):
+        m = one(comp("energy_meter", "energy_meter", {}, (written,), designators=("PM",), brand="SATEC"), fac=fac)
+        assert (m.status, m.method, m.chosen_sku) == ("matched", "explicit_series", "PM135EH"), written
+        assert "catalog_gap" not in m.warnings
+
+
 def test_fnv_the_series_contradicts_the_text() -> None:
     """05 §5.2.1 item 4, NEVIS-1: "3X6A" beside S204M, a 4-pole model. Nothing is chosen; both readings offered."""
     m = one(comp("circuit_breaker", "mcb", {"current_a": 6, "poles": 3}, ("S204M", "3×6A"), designators=("FNV",)))

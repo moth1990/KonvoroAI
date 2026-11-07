@@ -1,0 +1,78 @@
+{
+  "answer": {
+    "input_tokens": 5267,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 645,
+    "payload": {
+      "issues": [
+        {
+          "bbox": [
+            1040,
+            135,
+            1230,
+            265
+          ],
+          "component_ids": [
+            "c02"
+          ],
+          "confidence": 0.4,
+          "message": "בציור Q0 מסומן ABB XT1C 4X80A עם INC=63A, והפריט בטבלה הוא XT1C160 80A. יש לבדוק את הזרם הנקוב ואת הדגם.",
+          "type": "inconsistent_attributes"
+        },
+        {
+          "bbox": [
+            655,
+            205,
+            750,
+            305
+          ],
+          "component_ids": [
+            "c06"
+          ],
+          "confidence": 0.45,
+          "message": "FNV בציור הוא S204M ‏3X6A, אבל בטבלה מופיע 3 קטבים, 6kA וללא פריט קטלוגי. יש לבדוק את מספר הקטבים ואת הדגם.",
+          "type": "inconsistent_attributes"
+        },
+        {
+          "bbox": [
+            1480,
+            430,
+            1568,
+            515
+          ],
+          "component_ids": [
+            "c08"
+          ],
+          "confidence": 0.25,
+          "message": "F3 ו-F5 הוגדרו יחד כ-16A, אבל בציור F3 הוא 16+N ו-INC=12.8A. יש לוודא ש-F5 תואם.",
+          "type": "inconsistent_attributes"
+        },
+        {
+          "bbox": [
+            690,
+            605,
+            860,
+            650
+          ],
+          "component_ids": [
+            "c11"
+          ],
+          "confidence": 0.4,
+          "message": "הפריט c11 מקבץ את C2, C3 ו-C5 עם זרם 16A. C3 בציור הוא מגען דו-קוטבי (2X208V) ואילו C2 תלת-פאזי, ולכן כנראה אינם זהים.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "component_ids": [
+            "c23",
+            "c22"
+          ],
+          "confidence": 0.3,
+          "message": "יש 12 מגעי עזר (8 ללא מפרט ו-4 NC) שאינם מסומנים בתרשים הנראה. יש לבדוק את הכמות מול המגענים.",
+          "type": "suspicious_quantity"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "validator_review"
+}

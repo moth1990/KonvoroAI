@@ -122,6 +122,10 @@ def test_an_unknown_builder_or_a_repeated_id_is_refused() -> None:
         ("4 יציאות", "circuit_breaker", {"multiplicity": [4]}),
         ("16+N", "circuit_breaker", {"current_a": [16], "poles": [1], "neutral": [True]}),
         ("S203M", "circuit_breaker", {"model_token": ["S203M"]}),
+        # BUG-110: a brand and its model as one word, as 25/886 writes its meter and its ATS controller
+        ("SATEC-135", "energy_meter", {"brand": ["SATEC"], "model_token": ["SATEC-135"]}),
+        ("AMDAR-AM530D", "ats", {"brand": ["AMDAR"], "model_token": ["AMDAR-AM530D"]}),
+        ("AMDAR", "ats", {"brand": ["AMDAR"]}),
         ("INC=12.8A", "circuit_breaker", {"load_current_a": [12.8]}),
         ("3(2.4-4)A", "circuit_breaker", {"poles": [3], "range_min_a": [2.4], "range_max_a": [4]}),  # BUG-080
         ("1×10AC", "circuit_breaker", {"poles": [1], "current_a": [10], "curve": ["C"]}),  # BUG-080
@@ -252,6 +256,19 @@ def test_a_contactors_category_written_under_its_rating_is_read() -> None:
     assert r.values["utilization"].source == "drawing" and r.values["utilization"].span_ids == ["ts_001_0002"]
     assert "utilization" not in keys("AC-1", "circuit_breaker") and "utilization" not in keys("TYPE AC", "rcd")
     assert keys("AC-15", "contactor") == {} and keys("30mA TYPE AC", "contactor").get("utilization") is None
+
+
+def test_a_brand_and_model_written_as_one_word_inside_a_meter_are_its() -> None:
+    """BUG-110: 25/886's meter PM is a box with "רב מודד" and "SATEC-135" in it; the model is its text, and SATEC its
+    brand, as "SATEC 135" already was. A tag with a dash (QG-1) is no brand's model."""
+    meter = det(1, (567, 351, 621, 373), family="energy_meter", cls="energy_meter", tag="PM")
+    texts = assign.texts([span(1, "SATEC-135", (575, 366, 613, 371)), span(2, "QG-1", (580, 356, 600, 361))])
+    a = assign.associate([meter], texts, SCH)
+    r = assign.read(meter, a.links[meter.det_id], {t.id: t for t in texts}, SCH, CLASS_FAMILY)
+    assert r.explicit_texts == ["SATEC-135"]
+    assert [v.value for v in r.context["brand"]] == ["SATEC"]
+    assert [v.value for v in r.context["model_token"]] == ["SATEC-135"]
+    assert keys("QG-1", "energy_meter") == {}
 
 
 def test_text_that_means_nothing_to_a_family_is_not_its() -> None:
