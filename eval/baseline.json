@@ -542,11 +542,11 @@
     },
     "26-993": {
       "backtest": {
-        "loo_coverage": "0.4286",
-        "loo_total": "2676.00",
-        "own_coverage": "0.7619",
+        "loo_coverage": "0.4762",
+        "loo_total": "3096.00",
+        "own_coverage": "0.8095",
         "own_derived": "4200.00",
-        "own_total": "14117.00",
+        "own_total": "14417.00",
         "quote_derived": "4200.00"
       },
       "confirmed_value_at_risk": "1250",
@@ -616,9 +616,9 @@
         "method_rules_ranked": 1,
         "method_rules_unique": 6,
         "signatures": 20,
-        "status_ambiguous": 1,
+        "status_ambiguous": 2,
         "status_matched": 18,
-        "status_unmatched": 3
+        "status_unmatched": 2
       },
       "merge": {
         "agent_instances": 18,
@@ -652,7 +652,7 @@
         "products": 23,
         "units": 54
       },
-      "predicted_total": "14117.00",
+      "predicted_total": "14417.00",
       "predicted_value_at_risk": "1250.00",
       "quote_total": "14022.0",
       "scores": {
@@ -706,8 +706,8 @@
           "backtest_deviation": {
             "den": 1,
             "kind": "mean",
-            "num": 0.006775,
-            "value": 0.006775
+            "num": 0.02817,
+            "value": 0.02817
           },
           "backtest_within_5pct": {
             "den": 1,
@@ -932,9 +932,9 @@
         },
         "s5": {
           "consistency": {
-            "den": 17,
+            "den": 18,
             "kind": "ratio",
-            "num": 17.0,
+            "num": 18.0,
             "value": 1.0
           },
           "llm_share": {
@@ -952,8 +952,8 @@
           "with_sku": {
             "den": 22,
             "kind": "ratio",
-            "num": 19.0,
-            "value": 0.863636
+            "num": 20.0,
+            "value": 0.909091
           }
         },
         "s5_labelled": {
@@ -3756,8 +3756,8 @@
         "backtest_deviation": {
           "den": 4,
           "kind": "mean",
-          "num": 0.44153899999999996,
-          "value": 0.110385
+          "num": 0.462934,
+          "value": 0.115734
         },
         "backtest_within_5pct": {
           "den": 4,
@@ -4054,9 +4054,9 @@
       },
       "s5": {
         "consistency": {
-          "den": 129,
+          "den": 130,
           "kind": "ratio",
-          "num": 129.0,
+          "num": 130.0,
           "value": 1.0
         },
         "llm_share": {
@@ -4074,8 +4074,8 @@
         "with_sku": {
           "den": 204,
           "kind": "ratio",
-          "num": 153.0,
-          "value": 0.75
+          "num": 154.0,
+          "value": 0.754902
         }
       },
       "s5_labelled": {
@@ -4978,8 +4978,8 @@
           "backtest_deviation": {
             "den": 3,
             "kind": "mean",
-            "num": 0.150764,
-            "value": 0.050255
+            "num": 0.172159,
+            "value": 0.057386
           },
           "backtest_within_5pct": {
             "den": 3,
@@ -5246,9 +5246,9 @@
         },
         "s5": {
           "consistency": {
-            "den": 61,
+            "den": 62,
             "kind": "ratio",
-            "num": 61.0,
+            "num": 62.0,
             "value": 1.0
           },
           "llm_share": {
@@ -5266,8 +5266,8 @@
           "with_sku": {
             "den": 79,
             "kind": "ratio",
-            "num": 63.0,
-            "value": 0.797468
+            "num": 64.0,
+            "value": 0.810127
           }
         },
         "s5_labelled": {

@@ -619,7 +619,7 @@ def _decide(pr: Prepared, inp: Inputs) -> Decided:
         named_brand = plan.source in ("drawing", "notes") and plan.brand
         if (
             mem is not None
-            and mem.family == family
+            and (mem.family == family or (mem.family == "rcd" and rcd_needs(family, needs, inp) is not None))
             and passes(mem, [n for n in need_list if n.strict])[0]
             and not (named_brand and mem.brand != plan.brand and restrict is None)
             and (restrict is None or mem.id in {i.id for i in restrict})
@@ -655,6 +655,8 @@ def _decide(pr: Prepared, inp: Inputs) -> Decided:
     if not found.items and restrict is not None and parents is None:  # nothing in the series: the brand's others
         found = query(catalog, factory, family, cls, need_list, replace(plan, series=None), None)
         found.relaxations.insert(0, "series_relaxed")
+    if not found.items and restrict is None and parents is None and (as_rcd := rcd_needs(family, needs, inp)):
+        return _maybe_rcd(pr, inp, as_rcd, brand, warnings, found.gaps)
     if not found.items:
         what = text.describe(family, cls, "", None, {n.name: n.value for n in need_list if n.mode != "contains"})
         w = ["no_catalog_match", *(["catalog_gap"] if found.gaps else []), *warnings]
@@ -770,6 +772,65 @@ def _decide(pr: Prepared, inp: Inputs) -> Decided:
     decided.match = decided.match.model_copy(update={"llm_decision": answer.answer})
     decided.llm = True
     return decided
+
+
+# --- an RCBO drawn like an RCD (05 §5.6, BUG-107) ---------------------------------------------------------------------
+
+
+def rcd_needs(family: str, needs: dict[str, Need], inp: Inputs) -> list[Need] | None:
+    """05 §5.6: an `rcbo` with no curve written may be a residual-current device with no overcurrent protection (one
+    symbol, read either way, BUG-107). Its values as an `rcd`'s: those an RCD has, each in the RCD's match mode, every
+    `exact` one kept. None when it is not an `rcbo`, or when the drawing writes something only a breaker has (a curve, a
+    breaking capacity): a value the drawing gives is never dropped."""
+    if family != "rcbo":
+        return None
+    rcd = {a.name: a for a in inp.schemas.attributes("rcd")}
+    out: list[Need] = []
+    for n in needs.values():
+        if n.name in rcd:
+            out.append(n if n.mode == "contains" else replace(n, mode=rcd[n.name].match_mode))
+        elif n.strict:
+            return None
+    return out
+
+
+def _maybe_rcd(
+    pr: Prepared, inp: Inputs, needs: list[Need], brand: BrandDecision, warnings: list[str], gaps: list[str]
+) -> Decided:
+    """No RCBO in the catalog fits: the RCDs with the same values are offered, `ambiguous`, yellow at most, never
+    chosen as a match. The component stays an `rcbo`; the reviewer confirms (05 §5.6, §7)."""
+    component, catalog, factory = pr.component, inp.catalog, inp.factory
+    plan = brand_plan(component.model_copy(update={"family": "rcd"}), inp, None)[0]
+    found = query(catalog, factory, "rcd", None, needs, plan, None)
+    if not found.items:
+        values = {n.name: n.value for n in pr.needs.values() if n.mode != "contains"}
+        what = text.describe("rcbo", pr.cls, "", None, values)
+        w = ["no_catalog_match", *(["catalog_gap"] if gaps else []), *warnings]
+        reason = f"לא מצאנו בקטלוג {' '.join(what.split())}"
+        return Decided(_empty(component, "unmatched", pr.needs, pr.sig, reason, w, brand=brand), 0.0, False, False)
+    ranked = rank(found.items, needs, plan, factory, "rcd")
+    pool = rank(alternatives_pool(catalog, "rcd", None, needs), needs, plan, factory, "rcd")
+    rcd_attrs = {a.name: a for a in inp.schemas.attributes("rcd")}
+    kept = {n.name: n for n in needs}
+    reason = (
+        'לא כתובה עקומה ליד הרכיב, ואין בקטלוג מא"ז משולב פחת עם הערכים האלה. ייתכן שזה מפסק פחת בלי הגנת זרם יתר: '
+        f"הוצע {ranked[0].item.sku}. אשרו או בחרו אחר"
+    )
+    return _ambiguous(
+        component,
+        inp,
+        rcd_attrs,
+        kept,
+        ranked,
+        BrandDecision(brand=plan.brand, source=plan.source),
+        None,
+        ["family_relaxed", *found.relaxations],
+        [*warnings, "family_relaxed"],
+        reason,
+        pr.sig,
+        ["curve"],
+        pool,
+    )
 
 
 def _conflict_text(ex: Explicit, what: str) -> str:

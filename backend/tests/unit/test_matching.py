@@ -382,6 +382,57 @@ def test_a_residual_read_from_the_drawing_is_left_alone() -> None:
     assert m.chosen_sku == "F204A-40/0.03" and m.attributes_used["residual_ma"].source == "drawing"
 
 
+# BUG-107, 25/886's FB devices: one symbol, "4×40A", '30mA-TYPE"A"', no curve and no SKU anywhere on the drawing
+FB_4X40 = {"current_a": 40, "poles": 4, "rcd_type": "A"}
+
+
+def test_an_rcbo_with_no_curve_and_no_rcbo_in_the_catalog_gets_the_rcds_ambiguous() -> None:
+    """05 §5.6: it may be a residual-current device with no overcurrent protection. The RCDs with its values are
+    offered, `ambiguous`, yellow at most; the component stays an `rcbo` and the reviewer confirms."""
+    m = one(comp("rcbo", "rcbo", FB_4X40, ("FB20", "4×40A", '30mA-TYPE"A"'), designators=("FB20",)))
+    assert m.status == "ambiguous" and m.chosen_sku == "F204A-40/0.03"
+    assert m.confidence <= DEFAULT.yellow_max
+    assert "family_relaxed" in m.warnings and "family_relaxed" in m.relaxations
+    assert m.missing_attributes == ["curve"]
+    assert "מפסק פחת" in m.reason and "עקומה" in m.reason
+    assert m.attributes_used["current_a"].value == 40 and m.attributes_used["poles"].value == 4
+    assert {a.sku for a in m.alternatives} <= {i.sku for i in CATALOG.items.values() if i.family == "rcd"}
+
+
+def test_an_rcbo_with_a_curve_written_never_gets_an_rcd() -> None:
+    m = one(comp("rcbo", "rcbo", FB_4X40 | {"curve": "C"}, ("4×C40A", '30mA-TYPE"A"')))
+    assert m.status == "unmatched" and m.chosen_sku is None and "family_relaxed" not in m.warnings
+
+
+def test_an_rcbo_with_a_breaking_capacity_written_never_gets_an_rcd() -> None:
+    m = one(comp("rcbo", "rcbo", FB_4X40 | {"breaking_capacity_ka": 6}, ("4×40A", "6kA")))
+    assert m.status == "unmatched" and m.chosen_sku is None
+
+
+def test_an_rcbo_the_catalog_has_is_matched_as_an_rcbo_with_no_curve_written() -> None:
+    m = one(comp("rcbo", "rcbo", {"current_a": 16, "poles": 1, "neutral": True, "rcd_type": "A"}))
+    assert m.status == "matched" and m.chosen_sku == "DS201-C16-A30" and "family_relaxed" not in m.warnings
+
+
+def test_the_rcds_keep_every_exact_value() -> None:
+    """No RCD of 4P 32A: nothing relaxes the current, and nothing is offered."""
+    m = one(comp("rcbo", "rcbo", {"current_a": 32, "poles": 4, "rcd_type": "A"}))
+    assert m.status == "unmatched" and m.chosen_sku is None
+
+
+def test_an_rcd_the_reviewer_chose_for_such_an_rcbo_comes_back_from_the_memory() -> None:
+    fb = comp("rcbo", "rcbo", FB_4X40)
+    sig = one(fb).signature
+    assert sig is not None
+    m = one(fb, fac=factory(memory=[Memory(None, sig, None, "F204A-40/0.03")]))
+    assert (m.status, m.method, m.chosen_sku) == ("matched", "memory", "F204A-40/0.03")
+    curved = comp("rcbo", "rcbo", FB_4X40 | {"curve": "C"})
+    sig_c = one(curved).signature
+    assert sig_c is not None
+    m = one(curved, fac=factory(memory=[Memory(None, sig_c, None, "F204A-40/0.03")]))
+    assert m.chosen_sku is None  # a curve is written: an RCD never stands for it, remembered or not
+
+
 def test_the_residual_slip_rule_can_be_turned_off() -> None:
     fac = factory(inference_off=frozenset({"residual_written_in_amps_as_ma"}))
     m = one(comp("rcd", "rcd", {"current_a": 40, "poles": 4, "rcd_type": "A"}, ("0.3mA",)), fac=fac)
