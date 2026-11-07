@@ -133,6 +133,11 @@ def test_an_unknown_builder_or_a_repeated_id_is_refused() -> None:
         ("LSI", "circuit_breaker", {"trip_unit": ["LSI"]}),
         ("LS/I", "circuit_breaker", {"trip_unit": ["LS/I"]}),  # S27b: as the catalog writes it
         ("שעון אסטרונומי", "time_switch", {"astronomical": [True]}),  # S27b
+        ("AC-1", "contactor", {"utilization": ["AC-1"]}),  # BUG-108: 25/886's C3
+        ("AC3", "contactor", {"utilization": ["AC-3"]}),
+        ("ac-3", "contactor", {"utilization": ["AC-3"]}),
+        ("AC 3", "contactor", {"utilization": ["AC-3"]}),
+        ("3×25A (AC-1)", "contactor", {"poles": [3], "current_a": [25], "utilization": ["AC-1"]}),
         ("MCCB", "circuit_breaker", {"symbol_class": ["mccb"]}),
         ("מפסק בתיבה יצוקה 25A", "circuit_breaker", {"symbol_class": ["mccb"], "current_a": [25]}),  # BUG-077
         ("4P 100kA B+C", "surge_protector", {"poles": [4], "imax_ka": [100], "spd_class": ["B+C"]}),
@@ -231,6 +236,22 @@ def test_each_span_goes_to_the_symbol_that_scores_it_highest() -> None:
     by_id = {t.id: t for t in texts}
     r = assign.read(left, a.links[left.det_id], by_id, SCH, CLASS_FAMILY)
     assert {k: v.value for k, v in r.values.items()} == {"poles": 3, "current_a": 16}
+
+
+def test_a_contactors_category_written_under_its_rating_is_read() -> None:
+    """BUG-108: 25/886 page 24 writes "AC-1" under C3's "3×25A", a span of its own. It is the contactor's, from the
+    drawing, so stage 5 looks for a 25A AC-1 product
+    (`test_matching.py::test_a_contactor_with_no_category_written_is_ac3`).
+    "AC" alone is an RCD's type and a category beside a breaker is read as nothing."""
+    contactor = det(1, (698.96, 287.17, 713.63, 295.75), family="contactor", cls="contactor", tag="C3")
+    rating = span(1, "3×25A", (715.29, 286.62, 732.18, 291.05))
+    texts = assign.texts([rating, span(2, "AC-1", (716.95, 291.6, 730.8, 296.03))])
+    a = assign.associate([contactor], texts, SCH)
+    r = assign.read(contactor, a.links[contactor.det_id], {t.id: t for t in texts}, SCH, CLASS_FAMILY)
+    assert {k: v.value for k, v in r.values.items()} == {"poles": 3, "current_a": 25, "utilization": "AC-1"}
+    assert r.values["utilization"].source == "drawing" and r.values["utilization"].span_ids == ["ts_001_0002"]
+    assert "utilization" not in keys("AC-1", "circuit_breaker") and "utilization" not in keys("TYPE AC", "rcd")
+    assert keys("AC-15", "contactor") == {} and keys("30mA TYPE AC", "contactor").get("utilization") is None
 
 
 def test_text_that_means_nothing_to_a_family_is_not_its() -> None:

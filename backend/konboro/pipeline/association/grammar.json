@@ -179,6 +179,16 @@
       "confidence": 0.9
     },
     {
+      "id": "utilization",
+      "about": "BUG-108: a contactor's utilization category written beside it, AC-1 under 3×25A on 25/886 (05 §4.4, S27b). Contactors only: \"AC\" alone is an RCD's type",
+      "re": "(?<![^\\s(])(?:AC|ac|Ac)[\\s\\-–]?(?P<utilization>[1-4])(?=[\\s)]|$)",
+      "scope": "text",
+      "families": [
+        "contactor"
+      ],
+      "confidence": 0.9
+    },
+    {
       "id": "trip_unit_he",
       "re": "^אלקטרוני$",
       "set": {

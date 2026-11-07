@@ -40,6 +40,32 @@ def test_the_common_shunt_trip_fits_the_xt5_and_xt6(migrated_db: dict[str, Engin
     assert sorted(fits) == [("ABB", "XT5"), ("ABB", "XT6")]
 
 
+def test_an_attribute_schema_changed_in_code_reaches_a_seeded_database(
+    migrated_db: dict[str, Engine], storage: Storage
+) -> None:
+    """BUG-108: a database seeded before S27b kept a contactor row with no `utilization`, so stage 4 never read the
+    "AC-1" written under 25/886's C3. Seeding again replaces a changed row, a version up, and keeps one that is the
+    same."""
+    from konboro.pipeline.association import schemas
+
+    seed(migrated_db["owner"], storage)
+    stale = [a.as_row() for a in schemas.SCHEMAS["contactor"] if a.name != "utilization"]
+    with migrated_db["owner"].begin() as conn:
+        conn.execute(
+            update(m.AttributeSchema).where(m.AttributeSchema.family == "contactor").values(attributes=stale, version=1)
+        )
+    seed(migrated_db["owner"], storage)
+    seed(migrated_db["owner"], storage)
+    with migrated_db["owner"].begin() as conn:
+        rows = dict(conn.execute(select(m.AttributeSchema.family, m.AttributeSchema.version)).all())
+        attrs = conn.execute(
+            select(m.AttributeSchema.attributes).where(m.AttributeSchema.family == "contactor")
+        ).scalar_one()
+    assert "utilization" in {a["name"] for a in attrs}
+    assert rows["contactor"] == 2
+    assert rows["circuit_breaker"] == 1  # the same as the code: kept
+
+
 def test_the_flags_and_their_removal_dates(migrated_db: dict[str, Engine], storage: Storage) -> None:
     """S28 decision 4: no `price_list`; the build-time flags go at Gate 3, the spec-13 ones have no date (13 §3)."""
     seed(migrated_db["owner"], storage)
