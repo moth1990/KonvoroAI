@@ -658,21 +658,21 @@
       "scores": {
         "audit": {
           "difference_precision": {
-            "den": 2,
+            "den": 3,
             "kind": "ratio",
-            "num": 2.0,
+            "num": 3.0,
             "value": 1.0
           },
           "difference_recall": {
             "den": 3,
             "kind": "ratio",
-            "num": 2.0,
-            "value": 0.666667
+            "num": 3.0,
+            "value": 1.0
           },
           "type_agreement": {
-            "den": 2,
+            "den": 3,
             "kind": "ratio",
-            "num": 2.0,
+            "num": 3.0,
             "value": 1.0
           }
         },
@@ -2670,21 +2670,21 @@
       "scores": {
         "audit": {
           "difference_precision": {
-            "den": 4,
+            "den": 5,
             "kind": "ratio",
-            "num": 4.0,
+            "num": 5.0,
             "value": 1.0
           },
           "difference_recall": {
             "den": 4,
             "kind": "ratio",
-            "num": 3.0,
-            "value": 0.75
+            "num": 4.0,
+            "value": 1.0
           },
           "type_agreement": {
-            "den": 3,
+            "den": 4,
             "kind": "ratio",
-            "num": 3.0,
+            "num": 4.0,
             "value": 1.0
           }
         },
@@ -3614,21 +3614,21 @@
     "all": {
       "audit": {
         "difference_precision": {
-          "den": 12,
+          "den": 14,
           "kind": "ratio",
-          "num": 10.0,
-          "value": 0.833333
+          "num": 12.0,
+          "value": 0.857143
         },
         "difference_recall": {
           "den": 14,
           "kind": "ratio",
-          "num": 9.0,
-          "value": 0.642857
+          "num": 11.0,
+          "value": 0.785714
         },
         "type_agreement": {
-          "den": 9,
+          "den": 11,
           "kind": "ratio",
-          "num": 9.0,
+          "num": 11.0,
           "value": 1.0
         }
       },
@@ -4930,21 +4930,21 @@
       "factory_drawing": {
         "audit": {
           "difference_precision": {
-            "den": 8,
+            "den": 10,
             "kind": "ratio",
-            "num": 8.0,
+            "num": 10.0,
             "value": 1.0
           },
           "difference_recall": {
             "den": 9,
             "kind": "ratio",
-            "num": 7.0,
-            "value": 0.777778
+            "num": 9.0,
+            "value": 1.0
           },
           "type_agreement": {
-            "den": 7,
+            "den": 9,
             "kind": "ratio",
-            "num": 7.0,
+            "num": 9.0,
             "value": 1.0
           }
         },

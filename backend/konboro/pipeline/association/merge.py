@@ -158,6 +158,39 @@ def _join_attributes(
     return out, conflicts, penalty
 
 
+def _device_confidence(
+    members: list[Built], family: str, conflicts: list[str], penalty: float, cfg: AssociationConfig
+) -> float:
+    """04 §6.4: a device's confidence is the lowest of its drawings, except that a sure drawing of the tag lifts an
+    unsure one of the same family (BUG-112: 26-993 draws TC-G1 surely as its coil on page 5, 0.9, and unsurely on its
+    breaker on page 3, 0.56). An unsure drawing is left out of the lowest only when no value of the device conflicts
+    and every value it carries is carried, the same, by a sure drawing: it adds nothing the sure one doesn't say.
+    A drawing of another family (a coil, a contact, a part of the drawing) always counts; each instance keeps its
+    own confidence, and an untagged symbol never reaches here."""
+    counted = members
+    sure = [b for b in members if b.instance.family == family and b.instance.confidence >= cfg.accepted_from]
+    if sure and not conflicts:
+        counted = [
+            b
+            for b in members
+            if b.instance.family != family or b.instance.confidence >= cfg.accepted_from or not _said_by(b, sure)
+        ]
+    return round(min(b.instance.confidence for b in counted) * penalty, 4)
+
+
+def _said_by(b: Built, sure: list[Built]) -> bool:
+    """Every value the drawing carries is carried, the same, by one of the sure drawings."""
+    for name, a in b.instance.attributes.items():
+        if a is None or a.value is None:
+            continue
+        if not any(
+            (s := o.instance.attributes.get(name)) is not None and s.value is not None and same(s.value, a.value)
+            for o in sure
+        ):
+            return False
+    return True
+
+
 SHARED_TOUCH_PT = 6.0  # a symbol this close to the tag's nearest symbol is part of its drawing (S24b decision 4)
 
 
@@ -254,7 +287,7 @@ def devices(built: list[Built], schemas: Schemas, cfg: AssociationConfig = DEFAU
         same_family = [b for b in members if b.instance.family == family]
         ordered = [lead] + [b for b in same_family if b is not lead]
         attrs, conflicts, penalty = _join_attributes(ordered, schemas.names(family), cfg)
-        conf = round(min(b.instance.confidence for b in members) * penalty, 4)
+        conf = _device_confidence(members, family, conflicts, penalty, cfg)
         out.append(
             Device(
                 family,

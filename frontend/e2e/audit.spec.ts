@@ -48,12 +48,12 @@ test("26-993: the headline, the numbers and the rows are the audit's own", async
   await expect(page.getByText("26/993 · 5 עמודים · שרטוט ייצור")).toBeVisible();
   await expect(page.getByText('17 שורות · ₪14,022 לפני מע"מ')).toBeVisible();
   // the pipeline finds the factory's three omissions: QG2 short, TC-G1/TC-G2 and MS1–MS3 missing (BUG-031, S17);
-  // the headline counts their units. SG, EMS's line and the terminals are below 0.6 (BUG-036)
+  // the headline counts their units. SG and EMS's line now match (BUG-036); the terminals and QLG1… are below 0.6
   await expect(page.getByTestId("audit-headline")).toHaveText(
-    "נמצאו 3 הבדלים: 6 רכיבים חסרים. כסף בסיכון: ₪1,250, ועוד 5 רכיבים בלי מחיר. 6 הבדלים לבדוק.",
+    "נמצאו 3 הבדלים: 6 רכיבים חסרים. כסף בסיכון: ₪1,250, ועוד 5 רכיבים בלי מחיר. 2 הבדלים לבדוק.",
   );
   const kpis = page.getByTestId("kpis");
-  await expect(kpis.locator(".kpi b")).toHaveText(["13 / 17", "3", "₪1,250+", "0"]);
+  await expect(kpis.locator(".kpi b")).toHaveText(["15 / 17", "3", "₪1,250+", "0"]);
   await expect(kpis).toContainText("6 יחידות");
 
   const diffs = page.getByTestId("diffs");
@@ -71,8 +71,8 @@ test("26-993: the headline, the numbers and the rows are the audit's own", async
   await expect(trips.locator(".des")).toHaveText(["TC-G1", "TC-G2"]);
 
   await expect(page.getByRole("heading", { name: "לבדוק" })).toBeVisible();
-  await expect(page.getByTestId("to-check").getByTestId("diff")).toHaveCount(6);
-  await expect(page.getByTestId("matched").locator("tbody tr")).toHaveCount(13);
+  await expect(page.getByTestId("to-check").getByTestId("diff")).toHaveCount(2);
+  await expect(page.getByTestId("matched").locator("tbody tr")).toHaveCount(15);
   await expect(page.getByTestId("matched").getByText("מכסה כמה מכשירים")).toHaveCount(2);
   // RTL, and no page-wide horizontal scroll on the phone: the tables scroll in their cards
   await expect(page.locator("html")).toHaveAttribute("dir", "rtl");

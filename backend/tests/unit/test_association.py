@@ -1203,6 +1203,57 @@ def test_a_shunt_trip_drawn_on_its_breaker_and_as_its_coil_is_one() -> None:
     assert len(owner) == 3
 
 
+def test_a_sure_drawing_of_a_tag_lifts_an_unsure_one_of_its_family() -> None:
+    """BUG-112, 04 §6.4: 26-993 draws TC-G1 and TC-G2 unsurely on their breakers on page 3 (0.56) and surely as their
+    coils on page 5 (0.9). The component is as sure as its sure drawings; each instance keeps its own confidence."""
+    built = [
+        _built(12, "shunt_trip", tag="TC-G1", page=3),
+        _built(13, "shunt_trip", tag="TC-G2", page=3),
+        _built(3, "shunt_trip", tag="TC-G1", page=5),
+        _built(4, "shunt_trip", tag="TC-G2", page=5),
+    ]
+    built[0].instance.confidence = built[1].instance.confidence = 0.56
+    comps, _, _ = components("drw_01X", built, SCH)
+    assert [(c.quantity, c.confidence, c.status) for c in comps] == [(2, 0.9, "accepted")]
+    assert [b.instance.confidence for b in built] == [0.56, 0.56, 0.9, 0.9]
+
+
+def test_an_unsure_drawing_is_not_lifted_when_it_says_more_or_differs() -> None:
+    """BUG-112: an unsure drawing that alone carries a value, a value that conflicts, or a tag with no sure drawing
+    of the family keeps the device at its lowest."""
+    alone = [
+        _built(1, tag="Q1", values={"current_a": 16}, page=3),
+        _built(2, tag="Q1", values={"current_a": 16, "poles": 3}, page=5),
+    ]
+    alone[1].instance.confidence = 0.6
+    comps, _, _ = components("drw_01X", alone, SCH)
+    assert comps[0].confidence == 0.6  # the unsure drawing alone reads the poles
+    differ = [
+        _built(1, tag="Q1", values={"current_a": 16}, page=3),
+        _built(2, tag="Q1", values={"current_a": 20}, page=5),
+    ]
+    differ[1].instance.confidence = 0.6
+    comps, _, _ = components("drw_01X", differ, SCH)
+    assert comps[0].confidence == round(0.6 * 0.8, 4)  # a conflict lifts nothing
+    unsure = [_built(1, "shunt_trip", tag="TC1", page=3), _built(2, "shunt_trip", tag="TC1", page=5)]
+    unsure[0].instance.confidence, unsure[1].instance.confidence = 0.8, 0.56
+    comps, _, _ = components("drw_01X", unsure, SCH)
+    assert comps[0].confidence == 0.56  # no sure drawing
+
+
+def test_a_drawing_of_another_family_is_never_lifted() -> None:
+    """BUG-112: a contactor's coil drawn unsure under the contactor's tag still counts; so does an untagged symbol of
+    the same family, which is its own device."""
+    built = [_built(1, "contactor", tag="C1", page=2), _built(2, "coil", tag="C1", role="coil", page=4)]
+    built[1].instance.confidence = 0.6
+    comps, _, _ = components("drw_01X", built, SCH)
+    assert [c.confidence for c in comps if c.designators == ["C1"]] == [0.6]
+    loose = [_built(1, "shunt_trip", tag="TC1", page=3), _built(2, "shunt_trip", page=5)]
+    loose[1].instance.confidence = 0.56
+    comps, _, _ = components("drw_01X", loose, SCH)
+    assert min(c.confidence for c in comps) == 0.56
+
+
 def test_a_shunt_trip_surer_than_its_breaker_still_sits_on_it() -> None:
     """BUG-109: 25/886 draws the XT5 breaker QE (0.73) on the single-line page and its shunt-trip coil under the same
     tag QE (0.9) in the control circuit. The breaker keeps its tag, and the shunt trip sits on it."""
