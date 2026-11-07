@@ -420,6 +420,8 @@ describe("the product picker's wording (S23b)", () => {
     expect(attributeValue("current_a", "20A")).toBe("20A");
     expect(attributeValue("poles", "3")).toBe("3");
     expect(attributeValue("current_a", null)).toBeNull();
+    expect(attributeValue("range_min_a", "2.5")).toBe("2.5A"); // the one table's units (BUG-101)
+    expect(attributeValue("coil_voltage_v", "230")).toBe("230V");
   });
 
   it("the dropdown shows the line's value when the catalog has it", () => {
