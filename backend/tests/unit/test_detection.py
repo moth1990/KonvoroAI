@@ -268,6 +268,33 @@ def test_the_nearest_tag_shaped_span_is_the_designator() -> None:
     assert (c.designator, c.designator_span_id) == ("F1", "ts_001_0001")
 
 
+@pytest.mark.parametrize("tag", [None, "G1"])
+def test_a_tag_written_after_a_dotted_abbreviation_is_one_tag(tag: str | None) -> None:
+    """BUG-111: 26-993 writes QG1's shunt trip "T.C" "G1" on page 3 (two texts) and "TC-G1" on page 5. Stage 3
+    links the tag's own span (the tile agent's request is unchanged); stage 4 merges by the whole tag."""
+    c = cand((215.5, 203.0, 229.9, 207.6), family="shunt_trip", cls="shunt_trip", tag=tag)
+    spans = [span("T.C", (216, 203, 222, 208), n=16), span("G1", (225, 203, 230, 208), n=17)]
+    designators.link(c, spans, DEFAULT)
+    assert (c.designator, c.designator_span_id) == ("G1", "ts_001_0017")
+    assert designators.joined(spans) == {"ts_001_0017": "TC-G1"}
+
+
+@pytest.mark.parametrize(
+    ("first", "second", "bbox"),
+    [
+        ("ABB", "G1", (225, 203, 230, 208)),  # a word, not an abbreviation
+        ("T.", "G1", (225, 203, 230, 208)),  # one letter
+        ("T.C", "G1", (240, 203, 245, 208)),  # too far after it
+        ("T.C", "G1", (225, 212, 230, 217)),  # on the next line
+        ("T.C", "X2", (225, 203, 230, 208)),  # a count
+        ("P.O.", "B36590200", (225, 203, 260, 208)),  # 26-993's order number: not a tag
+    ],
+)
+def test_only_a_dotted_abbreviation_right_before_a_tag_joins(first: str, second: str, bbox: Bbox) -> None:
+    spans = [span(first, (216, 203, 222, 208), n=1), span(second, bbox, n=2)]
+    assert designators.joined(spans) == {}
+
+
 def test_the_tag_the_model_read_wins_also_a_little_farther() -> None:
     c = cand((100, 100, 110, 110), family="contactor", cls="contactor", role="power_contact", tag="c2")
     spans = [span("C9", (112, 100, 118, 106), n=1), span("C2", (135, 100, 141, 106), n=2)]  # 25 pt off, radius 20
@@ -636,6 +663,52 @@ def test_a_breakers_end_circles_are_part_of_it() -> None:
     em1 = cand((1662.4, 453.9, 1671.5, 463.0), family="terminal", cls="terminal", tag="EM1")  # 26-993: its own tag
     x2 = cand((1662.4, 453.9, 1671.5, 463.0), family="terminal", cls="terminal", tag="X2")  # a count, not a tag
     assert evidence.absorb_end_circles([breaker, em1, x2]) == ([breaker, em1], 1)
+
+
+def test_a_changeover_switch_drawn_as_its_three_contacts_is_one_symbol() -> None:
+    """BUG-036 (26-993, page 3): SG, "4×125A SOCOMEC", is drawn as the common contact on the outgoing line and the
+    two fixed contacts above it. The model read three terminals, SG's at 0.49. Code makes SG a changeover switch,
+    yellow, its box over all three, and the two fixed contacts its parts. A terminal strip, a sure terminal, an
+    untagged circle or one with no rating beside it stays a terminal."""
+
+    def page() -> tuple[Candidate, Candidate, Candidate, list[TextSpan]]:
+        left = cand((311.52, 243.6, 318.96, 250.56), family="terminal", cls="terminal")
+        right = cand((351.6, 243.6, 359.28, 250.56), family="terminal", cls="terminal")
+        common = cand(
+            (332.16, 265.68, 339.84, 273.12),
+            family="terminal",
+            cls="terminal",
+            method="detector_llm",
+            detector_score=0.7,
+            class_score=0.7,
+            designator="SG",
+        )
+        spans = [
+            span("SG", (352.1, 265.4, 362.2, 272.4), n=58),
+            span("4×125A", (350.9, 276.5, 374.4, 283.0), {"poles": 4, "current_a": 125}, n=59),
+            span("SOCOMEC", (347.8, 286.6, 377.5, 293.0), n=60),
+        ]
+        return left, right, common, spans
+
+    left, right, common, spans = page()
+    found = [left, right, common]
+    assert evidence.drawn_changeover(found, spans, LIB, DEFAULT) == 2
+    assert found == [common] and (common.family, common.symbol_class) == ("changeover_switch", "changeover_switch")
+    assert evidence.TEXT_FLOOR <= common.confidence < DEFAULT.accepted_from
+    assert common.bbox == (311.52, 243.6, 359.28, 273.12)
+    for change in ("no rating", "sure", "untagged", "a strip"):
+        left, right, common, spans = page()
+        if change == "no rating":
+            spans = spans[:1]
+        elif change == "sure":
+            common.detector_score = common.class_score = 0.95
+        elif change == "untagged":
+            common.designator = None
+        else:  # three terminals in one row
+            common.bbox = (332.16, 243.6, 339.84, 250.56)
+        found = [left, right, common]
+        assert evidence.drawn_changeover(found, spans, LIB, DEFAULT) == 0, change
+        assert len(found) == 3 and common.family == "terminal", change
 
 
 def test_a_residual_rating_beside_a_breaker_makes_it_an_rcd() -> None:

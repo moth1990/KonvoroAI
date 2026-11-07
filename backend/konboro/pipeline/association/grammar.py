@@ -110,6 +110,8 @@ def _plain(groups: dict[str, str]) -> dict[str, Any]:
                 out["neutral"] = True
         elif key == "color":
             out[key] = COLOURS[raw.strip().casefold()]
+        elif key == "utilization":  # "AC1", "ac-3", "AC 3" → the catalog's spelling (BUG-108)
+            out[key] = f"AC-{raw.strip()}"
         elif key in ("contacts", "positions"):
             out[key] = raw.strip().replace("-", "/") if key == "contacts" else raw.strip()
         elif key in ("curve", "rcd_type", "spd_class", "trip_unit", "ip_rating", "model_token", "brand"):

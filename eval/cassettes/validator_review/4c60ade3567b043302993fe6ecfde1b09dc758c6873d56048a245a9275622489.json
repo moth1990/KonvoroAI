@@ -1,0 +1,57 @@
+{
+  "answer": {
+    "input_tokens": 3928,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 514,
+    "payload": {
+      "issues": [
+        {
+          "bbox": null,
+          "component_ids": [
+            "c18",
+            "c19"
+          ],
+          "confidence": 0.55,
+          "message": "לחצן חירום EMS מופיע פעמיים (שורות נפרדות, אחת בהיקף prepare_only). כנראה כפילות – לבדוק אם מדובר בלחצן אחד.",
+          "type": "other"
+        },
+        {
+          "bbox": null,
+          "component_ids": [
+            "c13",
+            "c14"
+          ],
+          "confidence": 0.6,
+          "message": "FB1 ו-FB2 הם אותו פריט קטלוגי (ABB F204 מפסק פחת) אך מסווגים אחד כ-rcbo והשני כ-rcd. לבדוק את הסיווג הנכון.",
+          "type": "wrong_family"
+        },
+        {
+          "bbox": null,
+          "component_ids": [
+            "c22",
+            "c03"
+          ],
+          "confidence": 0.4,
+          "message": "ממסר יתר תרמי (c22) ללא תג ופריט קטלוגי, אך בשרטוט מפסק מגן מנוע ABB MS116 כבר כולל הגנה תרמית. לבדוק אם הרכיב מיותר.",
+          "type": "inconsistent_attributes"
+        },
+        {
+          "bbox": [
+            8,
+            125,
+            180,
+            215
+          ],
+          "component_ids": [
+            "c01"
+          ],
+          "confidence": 0.35,
+          "message": "בשרטוט נראות 3 נורות (L1–L3) ו-LG1 עד LG3 נוספות. לבדוק אם כמות 6 נכונה ואם נורות LG אכן קיימות בלוח.",
+          "type": "suspicious_quantity"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "validator_review"
+}

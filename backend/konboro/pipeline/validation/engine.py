@@ -30,6 +30,7 @@ from konboro.contracts.validation import (
     ValidationResult,
 )
 from konboro.pipeline.association.schemas import Schemas
+from konboro_llm import LLMAccountError
 
 from . import agent as agent_mod
 from . import crosscheck
@@ -250,6 +251,8 @@ def _agent(
     titles = "\n".join(f"- {_issue(drawing, panel, r, h, 'rule').title}" for r, h in shown_hits)
     try:
         answer = call.look(panel.name, sh.components, sh.tree, sh.bom, titles)
+    except LLMAccountError:
+        raise  # the stage fails rather than reporting the agent away on every panel (BUG-061)
     except Exception:
         log.exception("validator_review failed on %s", panel.panel_id)
         out.stage_issues.append(_stage_issue("agent_unavailable", panel=panel.name))

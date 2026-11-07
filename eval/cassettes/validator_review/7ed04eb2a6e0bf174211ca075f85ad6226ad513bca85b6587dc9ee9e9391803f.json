@@ -1,0 +1,69 @@
+{
+  "answer": {
+    "input_tokens": 4527,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 520,
+    "payload": {
+      "issues": [
+        {
+          "bbox": [
+            20,
+            400,
+            1390,
+            500
+          ],
+          "component_ids": [
+            "c07"
+          ],
+          "confidence": 0.55,
+          "message": "בטבלה 17 מא\"זים SN201M, אך בשרטוט נראים רק F1–F7 (7 יציאות, BOM 1–7). יש לבדוק אם הכמות 17 נכונה.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": [
+            120,
+            428,
+            185,
+            480
+          ],
+          "component_ids": [
+            "c07"
+          ],
+          "confidence": 0.6,
+          "message": "בשרטוט כתוב SN201M עם INC=8A, ואילו בטבלה הזרם הוא 10A. יש לבדוק את הערך מול השרטוט.",
+          "type": "inconsistent_attributes"
+        },
+        {
+          "bbox": [
+            1025,
+            140,
+            1120,
+            210
+          ],
+          "component_ids": [
+            "c02"
+          ],
+          "confidence": 0.4,
+          "message": "בשרטוט כתוב ABB-XT1C 4X160A עם INC=125A, ובטבלה מופיע 160A. יש לבדוק אם הזרם המדורג או זרם ההגנה נקרא נכון.",
+          "type": "inconsistent_attributes"
+        },
+        {
+          "bbox": [
+            540,
+            200,
+            620,
+            285
+          ],
+          "component_ids": [
+            "c06"
+          ],
+          "confidence": 0.45,
+          "message": "בשרטוט FNV הוא S204M 3X6A עם INC=4A, ובטבלה יש מא\"ז 3P 6A ללא פריט קטלוגי וללא נטרל. יש לבדוק את הדגם והזרם.",
+          "type": "inconsistent_attributes"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "validator_review"
+}

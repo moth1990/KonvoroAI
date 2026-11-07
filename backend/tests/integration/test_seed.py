@@ -1,9 +1,11 @@
-from sqlalchemy import Engine, func, select, update
+from sqlalchemy import Engine, delete, func, select, update
 
+from konboro.db import catalog
 from konboro.db import models as m
 from konboro.db.seed import DEMO_TENANT, FLAGS, GATE_3, PRODUCTS, seed
 from konboro.db.session import tenant_session
 from konboro.devtools.fixtures.nursery import EARLIER_NAME
+from konboro.domain.flags import CATALOG_LINES
 from konboro.services.storage import Storage
 
 
@@ -19,10 +21,49 @@ def test_seed_is_idempotent_and_visible_to_the_app(migrated_db: dict[str, Engine
         tenants = s.execute(select(m.Tenant.name)).scalars().all()
         flags = s.execute(select(func.count()).select_from(m.TenantFeatureOverride)).scalar_one()
 
-    assert products == len(PRODUCTS) + 1  # plus the consumable
+    common = catalog.parse(catalog.COMMON.read_text(encoding="utf-8"))
+    assert products == len(PRODUCTS) + 1 + len(common)  # plus the consumable and common.csv's (S28b)
     assert preferred == sum(1 for *_, sups in PRODUCTS if sups)
     assert tenants == ['לוחות דמו בע"מ']
     assert flags == len(FLAGS)
+
+
+def test_the_common_shunt_trip_fits_the_xt5_and_xt6(migrated_db: dict[str, Engine], storage: Storage) -> None:
+    """BUG-109: `common_accessories.csv` loads with `common.csv`, so stage 5 can put YO-C XT5-XT6 on an XT5."""
+    seed(migrated_db["owner"], storage)
+    with tenant_session(DEMO_TENANT, migrated_db["app"]) as s:
+        fits = s.execute(
+            select(m.CatalogAccessory.fits_brand, m.CatalogAccessory.fits_series)
+            .join(m.CatalogItem, m.CatalogItem.id == m.CatalogAccessory.accessory_id)
+            .where(m.CatalogItem.sku == "YO-C XT5-XT6 F/P 110-240VAC")
+        ).all()
+    assert sorted(fits) == [("ABB", "XT5"), ("ABB", "XT6")]
+
+
+def test_an_attribute_schema_changed_in_code_reaches_a_seeded_database(
+    migrated_db: dict[str, Engine], storage: Storage
+) -> None:
+    """BUG-108: a database seeded before S27b kept a contactor row with no `utilization`, so stage 4 never read the
+    "AC-1" written under 25/886's C3. Seeding again replaces a changed row, a version up, and keeps one that is the
+    same."""
+    from konboro.pipeline.association import schemas
+
+    seed(migrated_db["owner"], storage)
+    stale = [a.as_row() for a in schemas.SCHEMAS["contactor"] if a.name != "utilization"]
+    with migrated_db["owner"].begin() as conn:
+        conn.execute(
+            update(m.AttributeSchema).where(m.AttributeSchema.family == "contactor").values(attributes=stale, version=1)
+        )
+    seed(migrated_db["owner"], storage)
+    seed(migrated_db["owner"], storage)
+    with migrated_db["owner"].begin() as conn:
+        rows = dict(conn.execute(select(m.AttributeSchema.family, m.AttributeSchema.version)).all())
+        attrs = conn.execute(
+            select(m.AttributeSchema.attributes).where(m.AttributeSchema.family == "contactor")
+        ).scalar_one()
+    assert "utilization" in {a["name"] for a in attrs}
+    assert rows["contactor"] == 2
+    assert rows["circuit_breaker"] == 1  # the same as the code: kept
 
 
 def test_the_flags_and_their_removal_dates(migrated_db: dict[str, Engine], storage: Storage) -> None:
@@ -94,3 +135,51 @@ def test_seed_links_the_demo_price_list(migrated_db: dict[str, Engine], storage:
     assert rows["SIRCO M 4P 125A"] == ("switch_disconnector", False)
     assert flag is None
     assert str(usd) == "3.700000"
+
+
+def test_a_demo_tenant_from_before_a_flag_gets_it_and_keeps_one_turned_off(
+    migrated_db: dict[str, Engine], storage: Storage
+) -> None:
+    """BUG-105: the demo tenant got every flag only when it was made, so `catalog_lines` (S27b) stayed off on a
+    database seeded before it. A flag the user turned off stays off."""
+    seed(migrated_db["owner"], storage)
+    with tenant_session(DEMO_TENANT, migrated_db["owner"]) as s:
+        s.execute(delete(m.TenantFeatureOverride).where(m.TenantFeatureOverride.flag_key == CATALOG_LINES))
+        s.execute(
+            update(m.TenantFeatureOverride).where(m.TenantFeatureOverride.flag_key == "home_chat").values(enabled=False)
+        )
+    assert seed(migrated_db["owner"], storage) is False
+    with tenant_session(DEMO_TENANT, migrated_db["app"]) as s:
+        on = dict(s.execute(select(m.TenantFeatureOverride.flag_key, m.TenantFeatureOverride.enabled)).all())
+    assert on[CATALOG_LINES] is True
+    assert on["home_chat"] is False
+    assert set(on) == {f["key"] for f in FLAGS}
+
+
+def test_the_common_products_are_in_the_demo_price_list_without_a_cost(
+    migrated_db: dict[str, Engine], storage: Storage
+) -> None:
+    """S28b decision 4: common.csv's 15 products show in the demo's price list, linked to the catalog, under
+    "בלי עלות"; a rerun adds none twice."""
+    seed(migrated_db["owner"], storage)
+    seed(migrated_db["owner"], storage)
+    common = {(r.brand, r.sku) for r in catalog.parse(catalog.COMMON.read_text(encoding="utf-8"))}
+    with tenant_session(DEMO_TENANT, migrated_db["app"]) as s:
+        rows = [
+            (p.manufacturer_sku, p.display_name, p.family, p.fixed_price, p.sale_mode, p.id, item.sku, item.family)
+            for p in s.scalars(select(m.Product))
+            if (p.brand, p.manufacturer_sku) in common
+            for item in [s.get_one(m.CatalogItem, p.catalog_item_id or "")]
+        ]
+        costs = s.scalar(
+            select(func.count())
+            .select_from(m.ProductSupplier)
+            .where(m.ProductSupplier.product_id.in_([r[5] for r in rows]))
+        )
+    assert len(rows) == len(common) == 15
+    assert all(sku == item_sku and family == item_family for sku, _, family, _, _, _, item_sku, item_family in rows)
+    assert {(price, mode) for _, _, _, price, mode, *_ in rows} == {(None, "rule")}
+    assert costs == 0
+    names = {r[0]: r[1] for r in rows}
+    assert names["DWA1"] == "שעון אסטרונומי ABB DWA1 סליל 230V"
+    assert names["AM530D"] == "מחליף אוטומטי AMDAR AM530D"

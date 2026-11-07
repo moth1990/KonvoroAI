@@ -20,9 +20,18 @@ from typing import Any
 import anthropic
 
 from ..base import RawAnswer, RawToolCall, RawTurn
-from ..types import ImageInput, LLMError, LLMRequest, ToolLoopRequest, Turn
+from ..types import ImageInput, LLMAccountError, LLMError, LLMRequest, ToolLoopRequest, Turn
 
 CACHE = {"type": "ephemeral"}
+
+
+def failure(exc: anthropic.APIError) -> LLMError:
+    """The provider's error as ours. A refused account (no credit, a bad key, no permission) won't clear on retry, so
+    it gets its own class (BUG-061); anything else may: an overload, a timeout, a bad answer."""
+    account = isinstance(exc, anthropic.AuthenticationError | anthropic.PermissionDeniedError) or (
+        isinstance(exc, anthropic.BadRequestError) and "credit balance" in str(exc).lower()
+    )
+    return (LLMAccountError if account else LLMError)(f"anthropic call failed: {exc}")
 
 
 class AnthropicProvider:
@@ -66,7 +75,7 @@ class AnthropicProvider:
                 output_config=self._output_config(request),
             )
         except anthropic.APIError as exc:
-            raise LLMError(f"anthropic call failed: {exc}") from exc
+            raise failure(exc) from exc
 
         if response.stop_reason in ("refusal", "max_tokens"):
             raise LLMError(f"model stopped before answering: {response.stop_reason}")
@@ -96,7 +105,7 @@ class AnthropicProvider:
         try:
             response = self._client.messages.create(**self.turn_params(request, turns, model, allow_tools, retry_hint))
         except anthropic.APIError as exc:
-            raise LLMError(f"anthropic call failed: {exc}") from exc
+            raise failure(exc) from exc
         if response.stop_reason in ("refusal", "max_tokens"):
             raise LLMError(f"model stopped before answering: {response.stop_reason}")
 

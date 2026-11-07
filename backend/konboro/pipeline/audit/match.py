@@ -11,7 +11,11 @@ A line and a component match when:
   ("0-1-2" = "1-0-2": the same three positions);
 - an enclosure: by its sides, when both write them.
 
-A motor protection's range bounds the current: a component with a current outside it disagrees.
+A motor protection's range bounds the current: a component with a current outside it disagrees. Two setting ranges
+are one product when each end is within `RANGE_END_TOLERANCE` (5%) of the other (BUG-075: the quote's 2.5–4A and the
+drawn "3(2.4–4)A", which makers sell as 2.5–4A); the pair is then a looser match, after an identical range. A maker's
+next range starts at least a quarter higher (1.6–2.5, 2.5–4, 4–6.3, 6.3–10…), so no two ranges sold apart come that
+close, and adjacent ranges such as 2.5–4 and 4–6.3 still disagree.
 
 A pair that agrees on the family but on one value only (3X16A against 3X20A) is `near`: an `attribute_mismatch`
 candidate. Two values apart (1X6A against 2X16A) is another product, not a near one.
@@ -47,6 +51,8 @@ DISTINCT_CLASSES = frozenset({"motor_protection"})
 BREAKER_CLASSES = frozenset({"mcb", "mccb", "motor_protection"})
 
 EXACT, LOOSE = 0, 1  # the pair's tier: lower is better
+RANGE_ENDS = ("range_min_a", "range_max_a")
+RANGE_END_TOLERANCE = 0.05  # a range's end written rounded: 2.4 for 2.5, 6 for 6.3 (BUG-075)
 
 
 @dataclass
@@ -110,6 +116,13 @@ def _equal(key: str, a: Any, b: Any) -> bool:
     return same(a, b)
 
 
+def _near_end(a: Any, b: Any) -> bool:
+    """Two ends of a setting range that are one product's (11 §5.3 gives no tolerance; see the module's docstring)."""
+    if isinstance(a, bool) or isinstance(b, bool) or not isinstance(a, int | float) or not isinstance(b, int | float):
+        return False
+    return abs(float(a) - float(b)) <= RANGE_END_TOLERANCE * max(abs(float(a)), abs(float(b))) + 1e-9
+
+
 def _within(ranged: dict[str, Any], current: float) -> bool:
     return float(ranged["range_min_a"]) - 1e-6 <= current <= float(ranged["range_max_a"]) + 1e-6
 
@@ -132,6 +145,9 @@ def compare(sig: Signature, c: DrawnComponent) -> Pair | None:
         if key in c.values:
             if _equal(key, v, c.values[key]):
                 agreed += 1
+            elif key in RANGE_ENDS and _near_end(v, c.values[key]):
+                agreed += 1
+                tier = LOOSE
             else:
                 conflicts.append(key)
     for ranged, other in ((values, c.values), (c.values, values)):
@@ -139,6 +155,14 @@ def compare(sig: Signature, c: DrawnComponent) -> Pair | None:
         has_range = "range_min_a" in ranged and "range_max_a" in ranged
         if has_range and amps is not None and not _within(ranged, float(amps)):
             conflicts.append("current_a")
+    load = c.values.get("load_current_a")  # the line's range must still hold the drawn load (BUG-075)
+    if (
+        "range_min_a" in values
+        and "range_max_a" in values
+        and isinstance(load, int | float)
+        and not isinstance(load, bool)
+    ) and not _within(values, float(load)):
+        conflicts.append("range_min_a" if float(load) < float(values["range_min_a"]) else "range_max_a")
     if "poles" in values and "poles" in c.values and bool(values.get("neutral")) != bool(c.values.get("neutral")):
         conflicts.append("neutral")
     if sig.current_max_a is not None:

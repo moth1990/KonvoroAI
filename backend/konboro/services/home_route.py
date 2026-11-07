@@ -115,6 +115,7 @@ class Named:
     words: frozenset[str]
     phrases: tuple[str, ...] = ()  # its names whole, for a name of common words ("לוח חשמל קומה 3")
     when: str | None = None  # its last change, "05.11 21:40" in the factory's time zone
+    names: tuple[str, ...] = ()  # the same names as written, one for each phrase
 
 
 def _quotes(session: Session, tenant_id: str) -> list[Named]:
@@ -133,9 +134,10 @@ def _quotes(session: Session, tenant_id: str) -> list[Named]:
     for q, project, customer, title in rows:
         number = (title or {}).get("drawing_number") if isinstance(title, Mapping) else None
         text = " ".join(x for x in (q.name, project, customer, number) if x)
-        names = tuple(p for x in (_spoken(q.name), project, customer, number) if x and len(p := _phrase(x)) >= 5)
+        names = tuple(x for x in (_spoken(q.name), project, customer, number) if x and len(_phrase(x)) >= 5)
         when = f"{q.updated_at.astimezone(zone):%d.%m %H:%M}" if q.updated_at else None
-        out.append(Named(q.id, q.name, frozenset(_distinct(_words(text))), names, when))
+        phrases = tuple(_phrase(x) for x in names)
+        out.append(Named(q.id, q.name, frozenset(_distinct(_words(text))), phrases, when, names))
     return out
 
 
@@ -143,8 +145,7 @@ def named_quotes(session: Session, tenant_id: str, text: str) -> list[Named]:
     """The quotes the text names: one whose name is written whole in it (its first word may take a prefix: "מה חסר
     בהצעה בצ'אט 06.11 09:37?"), else those sharing the most of its distinctive words with their names."""
     quotes = _quotes(session, tenant_id)
-    whole = f" {_phrase(text)} "
-    exact = [q for q in quotes if any(f" {x}{p} " in whole for p in q.phrases for x in ("", *_PREFIX))]
+    exact = [q for q in quotes if _written(q, text)]
     if exact:
         return exact
     said = _distinct(_words(text))
@@ -153,6 +154,18 @@ def named_quotes(session: Session, tenant_id: str, text: str) -> list[Named]:
     scored = [(len(said & q.words), q) for q in quotes]
     best = max((s for s, _ in scored), default=0)
     return [q for s, q in scored if s and s == best]
+
+
+def _written(q: Named, text: str) -> list[str]:
+    """The quote's names written whole in the text, as the quote has them; the first word may take a prefix."""
+    whole = f" {_phrase(text)} "
+    return [n for n, p in zip(q.names, q.phrases, strict=True) if any(f" {x}{p} " in whole for x in ("", *_PREFIX))]
+
+
+def written_names(session: Session, tenant_id: str, text: str) -> list[str]:
+    """The names of the factory's quotes written whole in the text as typed: the review chat's answer check reads no
+    amount in them ("הצעה בצ'אט 06.11 09:37", "25.26.100.01", BUG-099)."""
+    return [n for q in _quotes(session, tenant_id) for n in _written(q, text)]
 
 
 def _describes_a_panel(text: str) -> bool:

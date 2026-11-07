@@ -12,7 +12,7 @@ from pydantic import ValidationError
 
 from konboro.contracts.intake import PageKind
 from konboro.pipeline.intake import checks, classify, routing, templates
-from konboro.pipeline.intake.drawing import PagePanels, input_kind, is_revision, merge_panels
+from konboro.pipeline.intake.drawing import PagePanels, input_kind, is_revision, merge_panels, name_key, panel_resolver
 from konboro.pipeline.intake.pages import PageRead, read_pages, render
 from konboro_llm.stages.page_classification import ClassificationAnswer
 
@@ -265,19 +265,71 @@ def test_no_process_pages_means_no_panels() -> None:
     assert merge_panels([PagePanels("pg_1", "skip", [("x", BOX, 1.0)])], None) == []
 
 
+def test_a_factory_drawings_cells_are_one_panel_named_by_the_title_block() -> None:
+    """S28b decision 1: 25/886's kitchen panel came out five panels, its parts and the pages with no name."""
+    pages = [
+        PagePanels("pg_5", "context", [("לוח מטבח-חלק ג", BOX, 0.9), ("לוח מטבח-חלק א", BOX, 0.9)]),  # a front view
+        PagePanels("pg_7", "process", [("לוח מטבח", BOX, 0.9)]),
+        PagePanels("pg_8", "process", [("לוח מטבח-חלק א", BOX, 0.8)]),
+        PagePanels("pg_11", "process", [("לוח מטבח - חלק ב", BOX, 0.9), ("לוח מטבח-חלק ג", BOX, 0.95)]),
+        PagePanels("pg_20", "process", []),
+    ]
+    (panel,) = merge_panels(pages, "לוח מטבח", one_panel=True)
+    assert (panel.name, panel.page_ids, panel.confidence) == ("לוח מטבח", ["pg_7", "pg_8", "pg_11", "pg_20"], 0.8)
+    assert panel.bboxes == {"pg_7": [list(BOX)], "pg_8": [list(BOX)], "pg_11": [list(BOX), list(BOX)]}
+    assert panel.aliases == ["לוח מטבח-חלק א", "לוח מטבח - חלק ב", "לוח מטבח-חלק ג"]
+    # without the title block's name, the name the parts extend
+    assert [p.name for p in merge_panels(pages, None, one_panel=True)] == ["לוח מטבח"]
+    # as a designer's plan the names stand: the five panels the kitchen drawing came out as before S28b
+    assert [p.name for p in merge_panels(pages, None)] == [
+        "לוח מטבח",
+        "לוח מטבח-חלק א",
+        "לוח מטבח - חלק ב",
+        "לוח מטבח-חלק ג",
+        "לוח 1",
+    ]
+
+
 @pytest.mark.parametrize(
-    ("formats", "kinds", "labels", "kind"),
+    ("names", "name"),
     [
-        (["xlsx"], ["bom_table"], [], "bom_only"),
-        (["jpg"], ["bom_table"], [], "bom_only"),
-        (["pdf", "xlsx"], ["single_line_diagram", "bom_table"], ["tags_and_models"], "mixed"),
-        (["pdf"], ["single_line_diagram"] * 3, ["tags_and_models", "tags_and_models", "none"], "factory_drawing"),
-        (["pdf"], ["single_line_diagram"] * 2, ["tags_and_models", "none"], "designer_plan"),
-        (["pdf"], ["single_line_diagram"], [], "designer_plan"),
+        (["QEN1 BOARD", "MAIN BOARD", "MAIN BOARD", "QEN2 BOARD"], "MAIN BOARD"),  # no base: the most pages
+        (["לוח 1", "לוח 10"], "לוח 1"),  # the most pages, the first on a tie: "לוח 10" doesn't extend "לוח 1"
+        ([None, None], "לוח 1"),
     ],
 )
-def test_input_kind(formats: list[str], kinds: list[str], labels: list[str], kind: str) -> None:
-    assert input_kind(formats, kinds, labels) == kind
+def test_a_factory_drawings_one_panel_without_a_title_block_name(names: list[str | None], name: str) -> None:
+    pages = [PagePanels(f"pg_{i}", "process", [(n, BOX, 0.9)]) for i, n in enumerate(names)]
+    assert [p.name for p in merge_panels(pages, None, one_panel=True)] == [name]
+
+
+def test_every_name_resolves_to_a_factory_drawings_one_panel() -> None:
+    (panel,) = merged = merge_panels(
+        [PagePanels("pg_1", "process", [("לוח מטבח", BOX, 0.9), ("לוח מטבח-חלק א", BOX, 0.9)])], None, one_panel=True
+    )
+    resolve = panel_resolver(merged, {name_key(panel.name): "pnl_1"}, one=True)
+    assert [resolve(n) for n in ("לוח מטבח", "לוח  מטבח-חלק א", "תא 3", None, "")] == ["pnl_1"] * 3 + [None, None]
+    two = merge_panels([PagePanels("pg_1", "process", [("א", BOX, 0.9), ("ב", BOX, 0.9)])], None)
+    resolve = panel_resolver(two, {"א": "pnl_a", "ב": "pnl_b"}, one=False)
+    assert [resolve(n) for n in ("א", "ב", "ג")] == ["pnl_a", "pnl_b", None]  # a designer's plan: by name only
+
+
+@pytest.mark.parametrize(
+    ("formats", "kinds", "kind"),
+    [
+        (["xlsx"], ["bom_table"], "bom_only"),
+        (["jpg"], ["bom_table"], "bom_only"),
+        (["pdf", "xlsx"], ["single_line_diagram", "bom_table"], "mixed"),
+        (["pdf"], ["technical_data", "factory_template", "single_line_diagram"], "factory_drawing"),
+        (["pdf"], ["technical_data", "panel_front_view", "single_line_diagram"], "factory_drawing"),  # 26-993
+        (["pdf"], ["factory_template", "control_diagram"], "factory_drawing"),
+        (["pdf"], ["single_line_diagram"], "designer_plan"),  # 25.26.100: tags and models, still a designer's plan
+        (["pdf"], ["single_line_diagram", "general_notes", "legend"], "designer_plan"),
+    ],
+)
+def test_input_kind(formats: list[str], kinds: list[str], kind: str) -> None:
+    """01 §4.4, S28b decision 2: the factory's own pages decide."""
+    assert input_kind(formats, kinds) == kind
 
 
 @pytest.mark.parametrize(

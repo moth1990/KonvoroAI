@@ -1,0 +1,79 @@
+{
+  "answer": {
+    "input_tokens": 4092,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 664,
+    "payload": {
+      "issues": [
+        {
+          "bbox": null,
+          "component_ids": [
+            "c04"
+          ],
+          "confidence": 0.6,
+          "message": "ממסר תרמי בכמות 5 – בשרטוט אין ממסר תרמי כלל. לבדוק אם הרכיב קיים בלוח ומדוע הכמות 5.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": [
+            285,
+            903,
+            382,
+            934
+          ],
+          "component_ids": [
+            "c08"
+          ],
+          "confidence": 0.35,
+          "message": "נורות סימון אדומות בכמות 4, אך בשרטוט רואים 3 נורות בשורה ועוד נורה אחת ליד המגען. לבדוק את הכמות.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": [
+            695,
+            1000,
+            760,
+            1100
+          ],
+          "component_ids": [
+            "c11"
+          ],
+          "confidence": 0.3,
+          "message": "מא\"ז 16A בכמות 9: בשרטוט 16A אחד בקו 2, אחד בקו 4, אחד בקו 5 ו-x6 בקו 7-12, כלומר 9. לוודא שהספירה כוללת את ה-x6 ולא כפילות.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": [
+            470,
+            1105,
+            530,
+            1135
+          ],
+          "component_ids": [
+            "c13",
+            "c15"
+          ],
+          "confidence": 0.5,
+          "message": "מא\"ז 10A מופיע פעמיים (c13 תלת-קוטבי ו-c15 בלי פריט קטלוגי), ובשרטוט יש רק מא\"ז 10A אחד חד-קוטבי. לבדוק כפילות ומספר קטבים.",
+          "type": "inconsistent_attributes"
+        },
+        {
+          "bbox": [
+            415,
+            880,
+            490,
+            925
+          ],
+          "component_ids": [
+            "c07"
+          ],
+          "confidence": 0.5,
+          "message": "ה-6A בענף השעון מצויר כמא\"ז רגיל ולא כמפסק מגן מנוע תלת-קוטבי. לבדוק את סיווג הרכיב.",
+          "type": "wrong_family"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "validator_review"
+}

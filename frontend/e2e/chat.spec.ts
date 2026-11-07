@@ -118,6 +118,25 @@ test.describe("S25b: why, compare and remember", () => {
     await expect(answer.getByTestId("quote-ref")).toHaveText("NURSERY, הצעה קודמת");
     await expect(answer).toContainText("3 שורות שונות");
     await expect(answer.locator("b.num")).toContainText("₪");
+
+    // BUG-097: in dark mode the chip has its own edge on the bubble; light keeps the plain chip
+    const chip = answer.getByTestId("quote-ref");
+    const look = () =>
+      chip.evaluate((el) => {
+        const s = getComputedStyle(el);
+        const msg = el.closest(".msg");
+        const bubble = msg ? getComputedStyle(msg).backgroundColor : "";
+        return { bg: s.backgroundColor, border: s.borderTopColor, bubble };
+      });
+    await page.evaluate(() => document.documentElement.setAttribute("data-theme", "light"));
+    const light = await look();
+    expect(light.bg).toBe(light.bubble);
+    expect(light.border).toBe("rgba(0, 0, 0, 0)");
+    await page.evaluate(() => document.documentElement.setAttribute("data-theme", "dark"));
+    const dark = await look();
+    expect(dark.bg).toBe("rgba(0, 0, 0, 0)");
+    expect(dark.border).toBe("rgb(111, 122, 138)"); // --faint, 3.6:1 against the bubble's --surface-2
+    await expect(chip).toHaveCSS("color", "rgb(230, 235, 242)"); // --fg
   });
 
   test("a brand swap remembered for the factory, then undone", async ({ page }) => {

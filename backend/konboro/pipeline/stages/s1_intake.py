@@ -18,6 +18,7 @@ The thumbnail key is the one S05 introduced: `pages/{page_id}/thumb.png`.
 
 import json
 import logging
+from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
@@ -52,7 +53,7 @@ from ..bom import sheets as bom_sheets
 from ..bom import table as bom_table
 from ..context import StageContext
 from ..intake import checks, classify, routing, templates
-from ..intake.drawing import MergedPanel, PagePanels, input_kind, is_revision, merge_panels, name_key
+from ..intake.drawing import MergedPanel, PagePanels, input_kind, is_revision, merge_panels, name_key, panel_resolver
 from ..intake.pages import PageRead, png, read_pages, render
 
 log = logging.getLogger("konboro.pipeline.s1")
@@ -326,11 +327,11 @@ def _mask(w: Work) -> list[float] | None:
     return [region.bbox[0] / wp, region.bbox[1] / hp, region.bbox[2] / wp, region.bbox[3] / hp]
 
 
-def _context(ctx: StageContext, works: list[Work], panel_ids: dict[str, str]) -> None:
+def _context(ctx: StageContext, works: list[Work], resolve: Callable[[str | None], str | None]) -> None:
     """01 §5.5: structured content for the stages after this one. Legends (S12) and BOM tables (S14) wait."""
     for w in works:
         if w.classified_by == "reused":
-            w.artifacts = [_repointed(a, panel_ids) for a in w.artifacts]
+            w.artifacts = [_repointed(a, resolve) for a in w.artifacts]
         if w.read is None or w.classified_by == "reused":
             continue
         route = routing.route(w.kind, w.confidence, bool(w.panels))
@@ -350,18 +351,16 @@ def _context(ctx: StageContext, works: list[Work], panel_ids: dict[str, str]) ->
             )
             content = result.data.model_dump(mode="json")
             if r.region_kind == "notes_block":
-                ref = name_key(r.panel_ref) if r.panel_ref else None
-                content = {"panel": r.panel_ref, "panel_id": panel_ids.get(ref) if ref else None, **content}
+                content = {"panel": r.panel_ref, "panel_id": resolve(r.panel_ref), **content}
             w.artifacts.append(_artifact(w, r.region_kind, content))
 
 
-def _repointed(a: ContextArtifact, panel_ids: dict[str, str]) -> ContextArtifact:
+def _repointed(a: ContextArtifact, resolve: Callable[[str | None], str | None]) -> ContextArtifact:
     """A notes block copied from an earlier drawing points at this drawing's panel of the same name."""
     if a.kind != "notes_block":
         return a
     content = json.loads(a.content)
-    panel = content.get("panel")
-    content["panel_id"] = panel_ids.get(name_key(panel)) if panel else None
+    content["panel_id"] = resolve(content.get("panel"))
     return a.model_copy(update={"content": json.dumps(content, ensure_ascii=False, sort_keys=True)})
 
 
@@ -546,6 +545,7 @@ def _result(
     issues = failed or issues
     tables = tables or {}
     routes = {w.page_id: routing.route(w.kind, w.confidence, bool(w.panels)) for w in works}
+    kind = input_kind([f.detected_format for f in files], [w.kind for w in works])
     merged = (
         merge_panels(
             [
@@ -553,6 +553,7 @@ def _result(
                 for w in works
             ],
             block.panel_name if block else None,
+            one_panel=kind == "factory_drawing",  # S28b decision 1
         )
         if status != "failed"
         else []
@@ -561,8 +562,9 @@ def _result(
         found = bom_table.panels(list(tables.items()), block.panel_name if block else None)
         merged = [MergedPanel(name=name, page_ids=pages) for name, pages in found]
     panel_ids = {name_key(p.name): new_id("pnl") for p in merged}
+    resolve = panel_resolver(merged, panel_ids, one=kind == "factory_drawing")
     if status != "failed":
-        _context(ctx, works, panel_ids)
+        _context(ctx, works, resolve)
 
     page_rows: list[Page] = []
     for w in works:
@@ -583,7 +585,7 @@ def _result(
             Region(
                 region_kind=r.region_kind,  # type: ignore[arg-type]
                 bbox=r.bbox,
-                panel_ref=panel_ids.get(name_key(r.panel_ref)) if r.panel_ref else None,
+                panel_ref=resolve(r.panel_ref),
             )
             for r in w.regions
         ]
@@ -667,9 +669,7 @@ def _result(
             )
         )
 
-    kinds = [w.kind for w in works]
-    labels = [w.labels for w in works if routes[w.page_id] == "process" and w.labels != "not_applicable"]
-    d.input_kind = input_kind([f.detected_format for f in files], kinds, labels)
+    d.input_kind = kind
     if status == "failed":
         d.input_kind = None
     d.title_block = block.model_dump(mode="json") if block else None

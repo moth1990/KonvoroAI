@@ -4,6 +4,7 @@ without a model only for their producer (01 §5.7), a blurry photo stops the dra
 twice (BUG-009). The model is the stand-in (`devtools/fake_llm.py`): never a real one in tests."""
 
 import io
+import json
 import threading
 import time
 from pathlib import Path
@@ -21,12 +22,14 @@ from konboro.pipeline.coordinator import Pipeline
 from konboro.pipeline.intake.pages import read_pages
 from konboro.pipeline.worker import Worker
 from konboro.services.queue import STAGE_QUEUES
+from konboro.services.storage import Storage
 from konboro_llm import LLMRequest
 from konboro_llm.providers import FakeProvider
 from konboro_llm.stages.page_classification import STAGE as CLASSIFY
 from konboro_llm.stages.page_classification import TitleBlockAnswer
 
 from .api import Api, ApiTenant, add_tenant
+from .test_api_pages import intake
 from .test_api_upload import upload
 from .test_pipeline import pipeline, quota_state, start  # noqa: F401  (fixture and helpers)
 
@@ -329,6 +332,110 @@ def test_the_model_never_sees_the_customer_or_the_project(
         assert request.tenant_id == tenant.tenant_id  # for cost logging; never sent (konboro_llm.types)
         # images of the pages only, and stage 3's reference sheets: our own drawings, keyed by the library version
         assert all(i.key and (i.key.split(":")[0] in hashes or i.key.startswith("lib-")) for i in request.images)
+
+
+# --- a factory drawing is one panel (01 §4.4, S28b) ---------------------------------------------------------------
+
+PARTS = {5: "לוח מטבח", 6: "לוח מטבח-חלק א", 7: "לוח מטבח-חלק ב", 8: None, 9: "לוח מטבח-חלק ג"}
+NOTES = [600, 80, 800, 240]
+
+
+def parts(factory: bool) -> FakeProvider:
+    """25/886's kitchen panel as the classifier read it: its parts named on the diagram pages, a page with no
+    name, and a notes block that names a part. `factory`: the stand-in's technical-data and template pages."""
+
+    def answer(request: LLMRequest[Any]) -> dict[str, Any]:
+        out = fake_llm.answer(request)
+        if request.output_schema is TitleBlockAnswer:
+            return {**out, "panel_name": None}  # 25/886's title block read with no panel name
+        if request.stage != CLASSIFY:
+            return out
+        found = fake_llm._PAGE.search(request.user_text)
+        page = int(found[1]) if found else 1
+        if page not in PARTS:
+            return out if factory else {**out, "page_kind": "general_notes", "component_labels": "not_applicable"}
+        name = PARTS[page]
+        panels = [{"name": name, "bbox": [60, 60, 940, 760], "confidence": 0.9}] if name else []
+        regions = list(out["regions"])
+        if page == 7:
+            regions.append({"region_kind": "notes_block", "bbox": NOTES, "panel_ref": PARTS[7], "confidence": 0.9})
+        block = {**out["title_block"], "panel_name": None}  # 25/886's title block read with no panel name
+        return {**out, "panels": panels, "regions": regions, "title_block": block}
+
+    return FakeProvider(answer)
+
+
+def test_a_factory_drawings_parts_are_one_panel(
+    api: Api,
+    migrated_db: dict[str, Engine],
+    pipeline: Pipeline,  # noqa: F811
+    storage: Storage,
+) -> None:
+    """S28b decisions 1–3: 25/886 came out five panels, one per part and "לוח 1" for the page with no name. A
+    factory drawing is one panel, named by the name its parts extend; the notes block of a part belongs to it."""
+    engine = migrated_db["app"]
+    tenant = add_tenant(engine)
+    pipeline.llm_providers = {"anthropic": parts(factory=True)}
+    drawing_id = send(api, tenant, NURSERY, name="kitchen.pdf")
+    Worker(pipeline).run_until_idle()
+    with tenant_session(tenant.tenant_id, engine) as s:
+        drawing = s.get_one(m.Drawing, drawing_id)
+        panels = s.scalars(select(m.Panel).where(m.Panel.drawing_id == drawing_id)).all()
+        notes = s.scalars(
+            select(m.ContextArtifact).where(
+                m.ContextArtifact.drawing_id == drawing_id, m.ContextArtifact.kind == "notes_block"
+            )
+        ).all()
+        pages = {p.page_no: p.id for p in s.scalars(select(m.Page).where(m.Page.drawing_id == drawing_id))}
+        assert drawing.input_kind == "factory_drawing"
+        (panel,) = panels
+        assert (panel.name, panel.page_ids) == ("לוח מטבח", [pages[n] for n in sorted(PARTS)])
+        assert [json.loads(n.content)["panel_id"] for n in notes] == [panel.id]
+        panel_id = panel.id
+    out = intake(engine, storage, tenant, drawing_id)
+    assert [p.name for p in out.panels] == ["לוח מטבח"]
+    page7 = next(p for p in out.pages if p.page_no == 7)
+    assert {r.panel_ref for r in page7.regions if r.region_kind in ("panel", "notes_block")} == {panel_id}
+
+
+def test_a_designer_plan_keeps_its_panels_and_a_correction_can_make_it_a_factory_drawing(
+    api: Api,
+    migrated_db: dict[str, Engine],
+    pipeline: Pipeline,  # noqa: F811
+    storage: Storage,
+) -> None:
+    """With no technical-data or template page it is a designer's plan, and its panels are as named (01 §4.4). The
+    user marking a page as the factory's template on the confirm step makes it a factory drawing of one panel."""
+    engine = migrated_db["app"]
+    tenant = add_tenant(engine)
+    pipeline.llm_providers = {"anthropic": parts(factory=False)}
+    drawing_id = send(api, tenant, NURSERY, name="unsure-kitchen.pdf")
+    Worker(pipeline).run_until_idle()
+    with tenant_session(tenant.tenant_id, engine) as s:
+        assert s.get_one(m.Drawing, drawing_id).input_kind == "designer_plan"
+        names = s.scalars(select(m.Panel.name).where(m.Panel.drawing_id == drawing_id).order_by(m.Panel.name)).all()
+        first = s.scalar(select(m.Page.id).where(m.Page.drawing_id == drawing_id, m.Page.page_no == 2))
+    assert sorted(names) == sorted(["לוח מטבח", "לוח מטבח-חלק א", "לוח מטבח-חלק ב", "לוח מטבח-חלק ג", "לוח 1"])
+
+    response = api.client.patch(
+        f"/drawings/{drawing_id}/pages/{first}", headers=api.as_(tenant), json={"page_kind": "factory_template"}
+    )
+    assert response.status_code == 200, response.text
+    with tenant_session(tenant.tenant_id, engine) as s:
+        assert s.get_one(m.Drawing, drawing_id).input_kind == "factory_drawing"
+        (panel,) = s.scalars(select(m.Panel).where(m.Panel.drawing_id == drawing_id)).all()
+        notes = s.scalars(
+            select(m.ContextArtifact).where(
+                m.ContextArtifact.drawing_id == drawing_id, m.ContextArtifact.kind == "notes_block"
+            )
+        ).all()
+        assert panel.name == "לוח מטבח"
+        assert [json.loads(n.content)["panel_id"] for n in notes] == [panel.id]
+        panel_id = panel.id
+    out = intake(engine, storage, tenant, drawing_id)
+    assert (out.input_kind, [p.panel_id for p in out.panels]) == ("factory_drawing", [panel_id])
+    page7 = next(p for p in out.pages if p.page_no == 7)
+    assert {r.panel_ref for r in page7.regions if r.region_kind == "notes_block"} == {panel_id}
 
 
 # --- every golden file through the queue -------------------------------------------------------------------------

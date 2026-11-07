@@ -5,6 +5,7 @@
  * string and is only formatted here, as a string, never through a JS number.
  */
 import type { Finding, Quote, QuoteLine } from "../../api/client";
+import { attributeFieldLabel, attributeLabel, attributeUnit } from "../../attributes";
 
 export type Status = QuoteLine["status"];
 export type Filter = "all" | "review" | Status;
@@ -205,25 +206,10 @@ export function pendingText(n: number): string {
   return n === 1 ? "מוצר חדש אחד בשרטוט" : `${n} מוצרים חדשים בשרטוט`;
 }
 
-/** 09 §7.16: the form's attribute names, as the line detail names them. */
+/** 09 §7.16: the form's attribute names, with their units (one table with the line detail's, BUG-101). */
 export function newProductLabel(name: string): string {
-  return NEW_PRODUCT_LABELS[name] ?? attributeLabel(name);
+  return attributeFieldLabel(name);
 }
-
-const NEW_PRODUCT_LABELS: Record<string, string> = {
-  poles: "קטבים",
-  curve: "עקומה",
-  neutral: "אפס (N)",
-  residual_ma: "זרם פחת (mA)",
-  rcd_type: "סוג פחת",
-  coil_voltage_v: "מתח סליל (V)",
-  trip_unit: "יחידת הגנה",
-  range_min_a: "טווח מ- (A)",
-  range_max_a: "טווח עד (A)",
-  setting_a: "כיול (A)",
-  utilization: "קטגוריית עבודה",
-  astronomical: "שעון אסטרונומי",
-};
 
 /** A rate under a floor, both decimal strings from the server ("0.1200" < "0.1500"). */
 export function belowFloor(rate: string | null | undefined, floor: string | null | undefined): boolean {
@@ -354,37 +340,14 @@ export function reasonChips(line: QuoteLine, findings: Finding[]): { text: strin
 
 // --- line detail (09 §6.4) ------------------------------------------------------------------------
 
-const ATTRIBUTE_LABELS: Record<string, string> = {
-  current: "זרם",
-  poles: "קטבים",
-  series: "דגם",
-  load_current: "זרם עומס (INC)",
-  type: "סוג",
-  contacts: "מגעים",
-  ac3_current: "זרם AC-3",
-  coil_voltage: "מתח סליל",
-  colors: "צבע",
-  dimensions: "מידות",
-  ip: "IP",
-  ik: "IK",
-  curve: "עקומה",
-  breaking_capacity_ka: "כושר ניתוק",
-  residual_ma: "זרם פחת",
-  current_a: "זרם",
-};
-
-export function attributeLabel(key: string): string {
-  return ATTRIBUTE_LABELS[key] ?? key;
-}
+export { attributeLabel };
 
 // --- the product picker (09 §6.4, §6.6, §7.4, §7.13; S23b) --------------------------------------------------------
-
-const UNITS: Record<string, string> = { current_a: "A", breaking_capacity_ka: "kA" };
 
 /** An attribute's value with its unit when the value is a bare number ("16" → "16A"); the fixture's "20A" stays. */
 export function attributeValue(attribute: string, value: string | null): string | null {
   if (value == null) return null;
-  const unit = UNITS[attribute];
+  const unit = attributeUnit(attribute);
   return unit && /^\d+(\.\d+)?$/.test(value) ? `${value}${unit}` : value;
 }
 

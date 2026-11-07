@@ -64,6 +64,44 @@ def test_quantities_currents_and_refs_are_not_amounts(text: str):
     assert amounts_in(text) == [], text
 
 
+@pytest.mark.parametrize(
+    "text",
+    [
+        "הצעה בצ'אט 06.11 09:37",  # a chat build's name (BUG-099)
+        "מול ההצעה מ-06.11.2026",
+        "נשלחה ב-6.11.26",
+        "עד 31.12 23:59",
+    ],
+)
+def test_a_date_is_not_an_amount(text: str):
+    assert amounts_in(text) == [], text
+    assert strip_amounts(text) == text
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "מחיר ליחידה 06.11",  # a day and month alone could be a price: still one
+        "ירד מ-12.50 ל-11.90",
+        "12.40 100",
+        "32.13 10:00",  # no such date
+        "06.11.5",  # nor a year
+    ],
+)
+def test_a_price_beside_a_date_shape_is_still_an_amount(text: str):
+    assert amounts_in(text), text
+
+
+def test_a_quote_name_the_estimator_wrote_is_not_an_amount():
+    text = "מול 25.26.100.01 המחיר ליחידה 12.40"
+    assert amounts_in(text) == ["25.26", "100.01", "12.40"]
+    assert amounts_in(text, keep=["25.26.100.01"]) == ["12.40"]
+    assert strip_amounts(text, keep=["25.26.100.01"]) == "מול 25.26.100.01 המחיר ליחידה —"
+    assert amounts_in("ב-25.26.100.012", keep=["25.26.100.01"]) != []  # whole, not a prefix of another number
+    out = check("מול {{quote:QT1}} (25.26.100.01): 3 שורות", state(), set(), keep=["25.26.100.01"])
+    assert out.amounts == [] and "25.26.100.01" in out.text
+
+
 def test_ui_lines_that_do_not_exist_are_dropped():
     s = state()
     assert valid_lines(["L1", "L2", "L5", "x"], s, {"ln_A"}) == ["ln_A"]

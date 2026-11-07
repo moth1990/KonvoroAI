@@ -29,7 +29,7 @@ from PIL import Image, ImageDraw
 from konboro.contracts.common import Bbox
 from konboro.contracts.detection import Detection
 from konboro.contracts.extraction import Tile
-from konboro_llm import ImageInput, LLMClient, LLMError
+from konboro_llm import ImageInput, LLMAccountError, LLMClient, LLMError
 from konboro_llm.stages import text_association
 from konboro_llm.stages.text_association import TileAnswer
 
@@ -395,6 +395,8 @@ def run_tile(
         calls += 1
         try:
             answer = ask(job, drawn, parts, correction, fallback)
+        except LLMAccountError:
+            raise  # no tile gets an answer while the account is refused: the stage fails (BUG-061)
         except LLMError as exc:
             log.warning("tile %s: the agent failed: %s", job.tile.tile_id, exc)
             if fallback:

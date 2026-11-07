@@ -19,7 +19,7 @@ from konboro.pipeline.association.config import DEFAULT
 from konboro.pipeline.association.merge import Built, components, instance_confidence, one_name_per_tag, status
 from konboro.pipeline.detection import library
 from konboro.pipeline.stages import s4_association
-from konboro_llm import LLMError
+from konboro_llm import LLMAccountError, LLMError
 from konboro_llm.stages.text_association import TileAnswer
 
 SCH = schemas.default()
@@ -122,6 +122,10 @@ def test_an_unknown_builder_or_a_repeated_id_is_refused() -> None:
         ("4 יציאות", "circuit_breaker", {"multiplicity": [4]}),
         ("16+N", "circuit_breaker", {"current_a": [16], "poles": [1], "neutral": [True]}),
         ("S203M", "circuit_breaker", {"model_token": ["S203M"]}),
+        # BUG-110: a brand and its model as one word, as 25/886 writes its meter and its ATS controller
+        ("SATEC-135", "energy_meter", {"brand": ["SATEC"], "model_token": ["SATEC-135"]}),
+        ("AMDAR-AM530D", "ats", {"brand": ["AMDAR"], "model_token": ["AMDAR-AM530D"]}),
+        ("AMDAR", "ats", {"brand": ["AMDAR"]}),
         ("INC=12.8A", "circuit_breaker", {"load_current_a": [12.8]}),
         ("3(2.4-4)A", "circuit_breaker", {"poles": [3], "range_min_a": [2.4], "range_max_a": [4]}),  # BUG-080
         ("1×10AC", "circuit_breaker", {"poles": [1], "current_a": [10], "curve": ["C"]}),  # BUG-080
@@ -133,6 +137,11 @@ def test_an_unknown_builder_or_a_repeated_id_is_refused() -> None:
         ("LSI", "circuit_breaker", {"trip_unit": ["LSI"]}),
         ("LS/I", "circuit_breaker", {"trip_unit": ["LS/I"]}),  # S27b: as the catalog writes it
         ("שעון אסטרונומי", "time_switch", {"astronomical": [True]}),  # S27b
+        ("AC-1", "contactor", {"utilization": ["AC-1"]}),  # BUG-108: 25/886's C3
+        ("AC3", "contactor", {"utilization": ["AC-3"]}),
+        ("ac-3", "contactor", {"utilization": ["AC-3"]}),
+        ("AC 3", "contactor", {"utilization": ["AC-3"]}),
+        ("3×25A (AC-1)", "contactor", {"poles": [3], "current_a": [25], "utilization": ["AC-1"]}),
         ("MCCB", "circuit_breaker", {"symbol_class": ["mccb"]}),
         ("מפסק בתיבה יצוקה 25A", "circuit_breaker", {"symbol_class": ["mccb"], "current_a": [25]}),  # BUG-077
         ("4P 100kA B+C", "surge_protector", {"poles": [4], "imax_ka": [100], "spd_class": ["B+C"]}),
@@ -231,6 +240,35 @@ def test_each_span_goes_to_the_symbol_that_scores_it_highest() -> None:
     by_id = {t.id: t for t in texts}
     r = assign.read(left, a.links[left.det_id], by_id, SCH, CLASS_FAMILY)
     assert {k: v.value for k, v in r.values.items()} == {"poles": 3, "current_a": 16}
+
+
+def test_a_contactors_category_written_under_its_rating_is_read() -> None:
+    """BUG-108: 25/886 page 24 writes "AC-1" under C3's "3×25A", a span of its own. It is the contactor's, from the
+    drawing, so stage 5 looks for a 25A AC-1 product
+    (`test_matching.py::test_a_contactor_with_no_category_written_is_ac3`).
+    "AC" alone is an RCD's type and a category beside a breaker is read as nothing."""
+    contactor = det(1, (698.96, 287.17, 713.63, 295.75), family="contactor", cls="contactor", tag="C3")
+    rating = span(1, "3×25A", (715.29, 286.62, 732.18, 291.05))
+    texts = assign.texts([rating, span(2, "AC-1", (716.95, 291.6, 730.8, 296.03))])
+    a = assign.associate([contactor], texts, SCH)
+    r = assign.read(contactor, a.links[contactor.det_id], {t.id: t for t in texts}, SCH, CLASS_FAMILY)
+    assert {k: v.value for k, v in r.values.items()} == {"poles": 3, "current_a": 25, "utilization": "AC-1"}
+    assert r.values["utilization"].source == "drawing" and r.values["utilization"].span_ids == ["ts_001_0002"]
+    assert "utilization" not in keys("AC-1", "circuit_breaker") and "utilization" not in keys("TYPE AC", "rcd")
+    assert keys("AC-15", "contactor") == {} and keys("30mA TYPE AC", "contactor").get("utilization") is None
+
+
+def test_a_brand_and_model_written_as_one_word_inside_a_meter_are_its() -> None:
+    """BUG-110: 25/886's meter PM is a box with "רב מודד" and "SATEC-135" in it; the model is its text, and SATEC its
+    brand, as "SATEC 135" already was. A tag with a dash (QG-1) is no brand's model."""
+    meter = det(1, (567, 351, 621, 373), family="energy_meter", cls="energy_meter", tag="PM")
+    texts = assign.texts([span(1, "SATEC-135", (575, 366, 613, 371)), span(2, "QG-1", (580, 356, 600, 361))])
+    a = assign.associate([meter], texts, SCH)
+    r = assign.read(meter, a.links[meter.det_id], {t.id: t for t in texts}, SCH, CLASS_FAMILY)
+    assert r.explicit_texts == ["SATEC-135"]
+    assert [v.value for v in r.context["brand"]] == ["SATEC"]
+    assert [v.value for v in r.context["model_token"]] == ["SATEC-135"]
+    assert keys("QG-1", "energy_meter") == {}
 
 
 def test_text_that_means_nothing_to_a_family_is_not_its() -> None:
@@ -710,6 +748,12 @@ def test_refused_twice_then_the_fallback_model_then_code_alone() -> None:
 
     assert agent.run_tile(job, Image.new("RGB", (1000, 1000), "white"), broken, SCH, FAMILIES).checked is None
 
+    def refused(*_: Any) -> TileAnswer:
+        raise LLMAccountError("credit balance is too low")
+
+    with pytest.raises(LLMAccountError):  # BUG-061: the stage fails; no tile falls back to code alone
+        agent.run_tile(job, Image.new("RGB", (1000, 1000), "white"), refused, SCH, FAMILIES)
+
 
 def test_the_agents_values_win_and_text_poles_beat_drawn_ones() -> None:
     d = BREAKER
@@ -790,6 +834,29 @@ def test_nevis_1_by_tag() -> None:
     assert by_tags[("F1", "F2", "F12")].quantity == 3
     assert by_tags[("F1", "F2", "F12")].attributes["current_a"].value == 16
     assert len(owner) == 7 and all(c.component_id.startswith("cmp_01X_") for c in comps)
+
+
+def test_a_preparation_drawn_under_the_same_tag_on_the_same_page_is_its_own_device() -> None:
+    """BUG-036: 26/993's page 5 tags the remote emergency button (prepare only) and the door's button EMS. The door's
+    button stays in the panel and the remote one keeps its scope; on another page, a scope follows the device."""
+    built = [
+        _built(8, "push_button", tag="EMS", page=5, cls="emergency_button", scope="prepare_only"),
+        _built(9, "push_button", tag="EMS", page=5, cls="emergency_button"),
+    ]
+    comps, owner, _ = components("drw_01X", built, SCH)
+    by_scope = {c.supply_scope: c for c in comps}
+    assert set(by_scope) == {"in_panel", "prepare_only"}
+    assert by_scope["in_panel"].designators == ["EMS"] and by_scope["in_panel"].quantity == 1
+    assert by_scope["in_panel"].instance_ids == ["ins_005_0009"]
+    assert by_scope["prepare_only"].instance_ids == ["ins_005_0008"] and len(owner) == 2
+    elsewhere = [
+        _built(1, "changeover_switch", tag="Q0", page=3, scope="prepare_only"),
+        _built(2, "changeover_switch", tag="Q0", page=4),
+        _built(3, "contactor", tag="C1", role="coil", page=4, scope="prepare_only"),
+        _built(4, "contactor", tag="C1", page=4),
+    ]
+    comps, _, _ = components("drw_01X", elsewhere, SCH)
+    assert sorted((c.designators[0], len(c.instance_ids)) for c in comps) == [("C1", 2), ("Q0", 2)]
 
 
 def test_a_list_of_tags_is_one_device_per_tag() -> None:
@@ -1159,6 +1226,88 @@ def test_an_aux_contact_drawn_again_where_it_is_used_is_counted_once() -> None:
 
     comps, _, _ = components("drw_01X", breakers + home[:2] + used, SCH)
     assert sum(c.quantity for c in comps if c.family == "aux_contact") == 5  # 2 on page 5, 3 on page 8
+
+
+def test_a_shunt_trip_drawn_on_its_breaker_and_as_its_coil_is_one() -> None:
+    """BUG-111: 26-993 draws QG1's shunt trip on page 3 ("T.C" "G1", one tag since stage 3's item 7) and its coil
+    TC-G1 beside TC-G2 on page 5: two shunt trips, not three."""
+    built = [
+        _built(12, "shunt_trip", tag="TC-G1", page=3),
+        _built(3, "shunt_trip", tag="TC-G1", page=5),
+        _built(4, "shunt_trip", tag="TC-G2", page=5),
+    ]
+    comps, owner, _ = components("drw_01X", built, SCH)
+    assert [(c.quantity, c.designators) for c in comps] == [(2, ["TC-G1", "TC-G2"])]
+    assert len(owner) == 3
+
+
+def test_a_sure_drawing_of_a_tag_lifts_an_unsure_one_of_its_family() -> None:
+    """BUG-112, 04 §6.4: 26-993 draws TC-G1 and TC-G2 unsurely on their breakers on page 3 (0.56) and surely as their
+    coils on page 5 (0.9). The component is as sure as its sure drawings; each instance keeps its own confidence."""
+    built = [
+        _built(12, "shunt_trip", tag="TC-G1", page=3),
+        _built(13, "shunt_trip", tag="TC-G2", page=3),
+        _built(3, "shunt_trip", tag="TC-G1", page=5),
+        _built(4, "shunt_trip", tag="TC-G2", page=5),
+    ]
+    built[0].instance.confidence = built[1].instance.confidence = 0.56
+    comps, _, _ = components("drw_01X", built, SCH)
+    assert [(c.quantity, c.confidence, c.status) for c in comps] == [(2, 0.9, "accepted")]
+    assert [b.instance.confidence for b in built] == [0.56, 0.56, 0.9, 0.9]
+
+
+def test_an_unsure_drawing_is_not_lifted_when_it_says_more_or_differs() -> None:
+    """BUG-112: an unsure drawing that alone carries a value, a value that conflicts, or a tag with no sure drawing
+    of the family keeps the device at its lowest."""
+    alone = [
+        _built(1, tag="Q1", values={"current_a": 16}, page=3),
+        _built(2, tag="Q1", values={"current_a": 16, "poles": 3}, page=5),
+    ]
+    alone[1].instance.confidence = 0.6
+    comps, _, _ = components("drw_01X", alone, SCH)
+    assert comps[0].confidence == 0.6  # the unsure drawing alone reads the poles
+    differ = [
+        _built(1, tag="Q1", values={"current_a": 16}, page=3),
+        _built(2, tag="Q1", values={"current_a": 20}, page=5),
+    ]
+    differ[1].instance.confidence = 0.6
+    comps, _, _ = components("drw_01X", differ, SCH)
+    assert comps[0].confidence == round(0.6 * 0.8, 4)  # a conflict lifts nothing
+    unsure = [_built(1, "shunt_trip", tag="TC1", page=3), _built(2, "shunt_trip", tag="TC1", page=5)]
+    unsure[0].instance.confidence, unsure[1].instance.confidence = 0.8, 0.56
+    comps, _, _ = components("drw_01X", unsure, SCH)
+    assert comps[0].confidence == 0.56  # no sure drawing
+
+
+def test_a_drawing_of_another_family_is_never_lifted() -> None:
+    """BUG-112: a contactor's coil drawn unsure under the contactor's tag still counts; so does an untagged symbol of
+    the same family, which is its own device."""
+    built = [_built(1, "contactor", tag="C1", page=2), _built(2, "coil", tag="C1", role="coil", page=4)]
+    built[1].instance.confidence = 0.6
+    comps, _, _ = components("drw_01X", built, SCH)
+    assert [c.confidence for c in comps if c.designators == ["C1"]] == [0.6]
+    loose = [_built(1, "shunt_trip", tag="TC1", page=3), _built(2, "shunt_trip", page=5)]
+    loose[1].instance.confidence = 0.56
+    comps, _, _ = components("drw_01X", loose, SCH)
+    assert min(c.confidence for c in comps) == 0.56
+
+
+def test_a_shunt_trip_surer_than_its_breaker_still_sits_on_it() -> None:
+    """BUG-109: 25/886 draws the XT5 breaker QE (0.73) on the single-line page and its shunt-trip coil under the same
+    tag QE (0.9) in the control circuit. The breaker keeps its tag, and the shunt trip sits on it."""
+    built = [
+        _built(1, tag="QE", values={"current_a": 630, "poles": 3}, cls="mccb", page=2),
+        _built(2, "shunt_trip", tag="QE", page=4),
+        _built(3, "shunt_trip", tag="QE", role="coil", page=5),  # however it is drawn, never the breaker's own coil
+    ]
+    built[0].instance.confidence = 0.729
+    comps, owner, _ = components("drw_01X", built, SCH)
+    by_family = {c.family: c for c in comps}
+    breaker, trips = by_family["circuit_breaker"], [c for c in comps if c.family == "shunt_trip"]
+    assert breaker.designators == ["QE"] and breaker.quantity == 1
+    assert not any(i.code == "tag_conflict" for b in built for i in b.instance.issues)
+    assert trips and all(c.parent_designators == ["QE"] and c.designators == [] for c in trips)
+    assert len(owner) == 3
 
 
 def test_two_brands_for_one_component() -> None:

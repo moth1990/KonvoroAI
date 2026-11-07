@@ -32,6 +32,7 @@ from konboro.pipeline.association import schemas
 from konboro.pipeline.bom.table import BomColumn, BomRow, BomTable
 from konboro.pipeline.validation import agent, checks, crosscheck, engine, model, pack
 from konboro.pipeline.validation.checks import CHECKS
+from konboro_llm import LLMAccountError
 from konboro_llm.stages.validator_review import ReviewAnswer, ReviewIssue
 
 SCH = schemas.default()
@@ -938,6 +939,19 @@ def test_an_agent_failure_leaves_the_rules() -> None:
 
     r = _five().validate(agent_for=agent_for)
     assert any(x.code == "agent_unavailable" for x in r.stage_issues) and r.agent_calls == 1
+
+
+def test_a_refused_account_fails_the_stage_instead() -> None:
+    """BUG-061: no credit or no key is not one panel's agent away; the stage fails and the drawing with it."""
+
+    def agent_for(_: model.PanelModel) -> engine.AgentCall:
+        def look(*_: str) -> ReviewAnswer:
+            raise LLMAccountError("credit balance is too low")
+
+        return engine.AgentCall(look)
+
+    with pytest.raises(LLMAccountError):
+        _five().validate(agent_for=agent_for)
 
 
 def test_the_agent_is_shown_no_price_cost_or_customer() -> None:
