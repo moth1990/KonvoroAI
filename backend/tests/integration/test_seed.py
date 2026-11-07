@@ -28,6 +28,18 @@ def test_seed_is_idempotent_and_visible_to_the_app(migrated_db: dict[str, Engine
     assert flags == len(FLAGS)
 
 
+def test_the_common_shunt_trip_fits_the_xt5_and_xt6(migrated_db: dict[str, Engine], storage: Storage) -> None:
+    """BUG-109: `common_accessories.csv` loads with `common.csv`, so stage 5 can put YO-C XT5-XT6 on an XT5."""
+    seed(migrated_db["owner"], storage)
+    with tenant_session(DEMO_TENANT, migrated_db["app"]) as s:
+        fits = s.execute(
+            select(m.CatalogAccessory.fits_brand, m.CatalogAccessory.fits_series)
+            .join(m.CatalogItem, m.CatalogItem.id == m.CatalogAccessory.accessory_id)
+            .where(m.CatalogItem.sku == "YO-C XT5-XT6 F/P 110-240VAC")
+        ).all()
+    assert sorted(fits) == [("ABB", "XT5"), ("ABB", "XT6")]
+
+
 def test_the_flags_and_their_removal_dates(migrated_db: dict[str, Engine], storage: Storage) -> None:
     """S28 decision 4: no `price_list`; the build-time flags go at Gate 3, the spec-13 ones have no date (13 §3)."""
     seed(migrated_db["owner"], storage)

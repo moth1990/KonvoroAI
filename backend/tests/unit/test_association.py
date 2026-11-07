@@ -1203,6 +1203,24 @@ def test_a_shunt_trip_drawn_on_its_breaker_and_as_its_coil_is_one() -> None:
     assert len(owner) == 3
 
 
+def test_a_shunt_trip_surer_than_its_breaker_still_sits_on_it() -> None:
+    """BUG-109: 25/886 draws the XT5 breaker QE (0.73) on the single-line page and its shunt-trip coil under the same
+    tag QE (0.9) in the control circuit. The breaker keeps its tag, and the shunt trip sits on it."""
+    built = [
+        _built(1, tag="QE", values={"current_a": 630, "poles": 3}, cls="mccb", page=2),
+        _built(2, "shunt_trip", tag="QE", page=4),
+        _built(3, "shunt_trip", tag="QE", role="coil", page=5),  # however it is drawn, never the breaker's own coil
+    ]
+    built[0].instance.confidence = 0.729
+    comps, owner, _ = components("drw_01X", built, SCH)
+    by_family = {c.family: c for c in comps}
+    breaker, trips = by_family["circuit_breaker"], [c for c in comps if c.family == "shunt_trip"]
+    assert breaker.designators == ["QE"] and breaker.quantity == 1
+    assert not any(i.code == "tag_conflict" for b in built for i in b.instance.issues)
+    assert trips and all(c.parent_designators == ["QE"] and c.designators == [] for c in trips)
+    assert len(owner) == 3
+
+
 def test_two_brands_for_one_component() -> None:
     built = [
         _built(1, values={"current_a": 16, "poles": 1}, brand="ABB"),

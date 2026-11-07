@@ -381,6 +381,24 @@ def _empty(
     )
 
 
+def fitting(catalog: Catalog, family: str, parent_fit: tuple[tuple[str, str, tuple[str, ...]], ...]) -> list[Item]:
+    """05 §5.9.1: the accessories of a family that fit every device they sit on. The compatibility table names a
+    device's series ("S200M") or, for an accessory that fits only some models of a series, a model token: "Tmax XT"
+    runs from XT1 to XT6, and an XT5's shunt trip is YO-C XT5-XT6, not SOR-C XT1 (BUG-109). The most specific fit
+    wins: when some accessories fit a device by its model, one that fits only by the series is left out."""
+    level: dict[str, int] = {}
+    for i in catalog.by_family.get(family, []):
+        fits = catalog.fits.get(i.id, set())
+        levels = [
+            2 if any((brand, t) in fits for t in tokens) else 1 if (brand, series) in fits else 0
+            for brand, series, tokens in parent_fit
+        ]
+        if levels and min(levels) > 0:
+            level[i.id] = min(levels)
+    best = max(level.values(), default=0)
+    return [i for i in catalog.by_family.get(family, []) if level.get(i.id) == best]
+
+
 def _parents(component: Component, inp: Inputs) -> list[Component] | None:
     if component.family not in ACCESSORY_FAMILIES or not component.parent_designators:
         return None
@@ -409,7 +427,7 @@ class Prepared:
     cls: str | None
     sig: str
     parents: list[Component] | None
-    parent_fit: tuple[tuple[str, str], ...]
+    parent_fit: tuple[tuple[str, str, tuple[str, ...]], ...]  # each matched parent: brand, series, model tokens
     parent_statuses: frozenset[str]
 
     kit_phrases: tuple[str, ...] = ()
@@ -477,14 +495,14 @@ def prepare(component: Component, inp: Inputs, done: dict[str, ComponentMatch], 
     cls = inferred.symbol_class or (component.symbol_class if not untyped else None)
     sig = signature(component, cls, needs, attrs)
     parents = _parents(component, inp)
-    fit: set[tuple[str, str]] = set()
+    fit: set[tuple[str, str, tuple[str, ...]]] = set()
     statuses: set[str] = set()
     for p in parents or []:
         if p.component_id in done:
             statuses.add(done[p.component_id].status)
         item = catalog.items.get(items.get(p.component_id, ""))
         if item is not None:
-            fit.add((item.brand, item.series or ""))
+            fit.add((item.brand, item.series or "", item.model_tokens))
     written = " ".join(component.explicit_texts)
     kit_texts = {k.when_text for ks in catalog.kits.values() for k in ks if k.when_text}
     phrases = sorted(t for t in kit_texts if t in written)
@@ -628,11 +646,7 @@ def _decide(pr: Prepared, inp: Inputs) -> Decided:
             return Decided(
                 _empty(component, "ambiguous", needs, sig, reason, warnings, ["parent"], brand=brand), 0.0, True, False
             )
-        restrict = [
-            i
-            for i in catalog.by_family.get(family, [])
-            if all(fit in catalog.fits.get(i.id, set()) for fit in parent_fit)
-        ]
+        restrict = fitting(catalog, family, parent_fit)
         plan = BrandPlan(parent_fit[0][0], "parent", None)
         brand = BrandDecision(brand=plan.brand, source="parent")
 

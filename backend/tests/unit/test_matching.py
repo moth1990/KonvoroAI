@@ -13,14 +13,23 @@ from konboro.contracts.common import StageIssue
 from konboro.contracts.intake import ContextArtifact
 from konboro.contracts.matching import ComponentMatch
 from konboro.contracts.merge import AttributeValue, Cable, CircuitContext, Component, Instance
-from konboro.db.catalog import SAMPLE, SAMPLE_ACCESSORIES, SAMPLE_KITS, parse, parse_accessories, parse_kits
+from konboro.db.catalog import (
+    COMMON,
+    COMMON_ACCESSORIES,
+    SAMPLE,
+    SAMPLE_ACCESSORIES,
+    SAMPLE_KITS,
+    parse,
+    parse_accessories,
+    parse_kits,
+)
 from konboro.pipeline.association import schemas
 from konboro.pipeline.matching import notes as notes_mod
 from konboro.pipeline.matching import query as q
 from konboro.pipeline.matching.catalog import Catalog, Item, Kit, norm_sku, norm_token
 from konboro.pipeline.matching.config import DEFAULT
 from konboro.pipeline.matching.factory import Factory, Memory
-from konboro.pipeline.matching.match import Inputs, corrected_poles, match_all, signature
+from konboro.pipeline.matching.match import Inputs, corrected_poles, fitting, match_all, signature
 from konboro.pipeline.matching.notes import NoteRule, Notes
 from konboro_llm.stages.catalog_disambiguation import CatalogAnswer
 
@@ -698,6 +707,51 @@ def test_an_accessory_on_an_unmatched_device_stays_ambiguous() -> None:
     aux = comp("aux_contact", "aux_contact", {"contacts": "21/22"}, cid="cmp_0002", designators=(), parents=("F1",))
     m = run(f1, aux)[1]
     assert (m.status, m.chosen_sku) == ("ambiguous", None)
+
+
+def _with_common_accessories() -> Catalog:
+    """The sample with `common.csv`'s shunt trip and its fits (BUG-109): YO-C XT5-XT6 fits the XT5 and XT6 models."""
+    row = next(r for r in parse(COMMON.read_text(encoding="utf-8")) if r.sku.startswith("YO-C"))
+    yo = Item("cat_yoc", row.sku, row.brand, row.series, row.model_code, row.model_tokens, row.family,
+              row.symbol_class, dict(row.attributes), row.status, None)  # fmt: skip
+    fits = {k: set(v) for k, v in CATALOG.fits.items()}
+    for a in parse_accessories(COMMON_ACCESSORIES.read_text(encoding="utf-8")):
+        assert a.accessory_sku == yo.sku
+        fits.setdefault(yo.id, set()).add((a.fits_brand, a.fits_series))
+    return Catalog({**CATALOG.items, yo.id: yo}, CATALOG.kits, fits)
+
+
+def _trip_on(host: Component, catalog: Catalog) -> ComponentMatch:
+    trip = comp("shunt_trip", "shunt_trip", {}, cid="cmp_0002", designators=(), parents=(host.designators[0],))
+    inp = Inputs(catalog, factory(priced=frozenset(catalog.items)), schemas.default(), Notes(),
+                 {c.component_id: c for c in (host, trip)})  # fmt: skip
+    return match_all([trip, host], inp).matches[0]
+
+
+def test_a_shunt_trip_fits_its_breakers_model() -> None:
+    """BUG-109, 25/886: the XT5 breaker QE's shunt trip is YO-C XT5-XT6. "Tmax XT" runs from XT1 to XT6, so SOR-C XT1,
+    which fits the series, is left out when one fits the XT5 by its model; S2C-A1 (an S200's) never fits."""
+    cat = _with_common_accessories()
+    xt5 = comp("circuit_breaker", "mccb", {"current_a": 630, "poles": 3}, ("ABB-XT5", "3×630A", "LSI", "36kA"),
+               designators=("QE",))  # fmt: skip
+    m = _trip_on(xt5, cat)
+    assert (m.status, m.chosen_sku) == ("matched", "YO-C XT5-XT6 F/P 110-240VAC")
+    assert m.brand_decision is not None and m.brand_decision.source == "parent"
+    xt1 = comp("circuit_breaker", "mccb", {"current_a": 80, "poles": 3}, ("ABB-XT1C", "3×80A"), designators=("Q1",))
+    assert _trip_on(xt1, cat).chosen_sku == "SOR-C 220-240VAC XT1"  # nothing fits an XT1 by its model: the series
+
+
+def test_the_most_specific_fit_wins_on_every_parent() -> None:
+    cat = _with_common_accessories()
+    xt5 = ("ABB", "Tmax XT", ("XT5N630", "XT5N", "XT5"))
+    xt1 = ("ABB", "Tmax XT", ("XT1C160", "XT1C", "XT1"))
+    s200 = ("ABB", "S200M", ("S203M",))
+    assert [i.sku for i in fitting(cat, "shunt_trip", (xt5,))] == ["YO-C XT5-XT6 F/P 110-240VAC"]
+    assert [i.sku for i in fitting(cat, "shunt_trip", (xt1,))] == ["SOR-C 220-240VAC XT1"]
+    assert [i.sku for i in fitting(cat, "shunt_trip", (xt1, xt5))] == ["SOR-C 220-240VAC XT1"]  # fits both: series
+    assert [i.sku for i in fitting(cat, "shunt_trip", (s200,))] == ["S2C-A1"]
+    assert fitting(cat, "shunt_trip", (s200, xt5)) == []  # one accessory on two series fits neither
+    assert [i.sku for i in fitting(cat, "shunt_trip", (("Schneider", "Acti9 iC60N", ()),))] == ["A9A26946"]
 
 
 # --- statuses, issues, auxiliary families -----------------------------------------------------------------------------

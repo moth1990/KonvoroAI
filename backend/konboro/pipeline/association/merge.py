@@ -9,7 +9,8 @@ An instance is one symbol with what was read for it. The merge, once per drawing
    device of its own, untagged and yellow, flagged `tag_conflict` (25.26.100's "X2" took 16A breakers and two RCDs
    into one terminal × 76). Unless it is unsure and beside one of the device's drawings, within its length: then it
    is a misread part of that drawing (Q0's ring read as a current transformer, QLG1's thermal release as an overload
-   relay). An accessory (a shunt trip) under a device's tag sits on that device. One written tag names one device
+   relay). An accessory (a shunt trip) under a device's tag sits on that device, however sure its own reading
+   (BUG-109). One written tag names one device
    (BUG-081, `one_name_per_tag`): a span nearest a coil or a contact names that one's device, not another family's.
 2. An auxiliary contact (family `aux_contact`) is an accessory of its own: its tag is the device it sits on
    (`parent_designators`), not a device of its own tag. An untagged contact or coil of a family that has tagged
@@ -226,16 +227,23 @@ def devices(built: list[Built], schemas: Schemas, cfg: AssociationConfig = DEFAU
                     b.multiplicity_inherited,
                 )
             )
-        lead = min(group, key=lambda b: (ROLE_RANK.get(b.role, 9), -b.instance.confidence, b.order))
+        # an accessory never leads a tag that names a device of another family (BUG-109: 25/886 draws the XT5
+        # breakers' shunt-trip coils under QE and QG, surer than the breakers; the breaker lost its tag)
+        lead = min(
+            group,
+            key=lambda b: (b.instance.family in ACCESSORIES, ROLE_RANK.get(b.role, 9), -b.instance.confidence, b.order),
+        )
         if lead.role == "device":
             device_page[(panel_id, tag)] = lead.order[0]
         family, cls = lead.instance.family, lead.instance.symbol_class
         members = []
         for b in group:
-            if b.instance.family == family or b.role != "device":
-                members.append(b)  # the device's own drawings: its coil, its contacts, its front view (03 §4.5)
+            if b.instance.family == family:
+                members.append(b)
             elif b.instance.family in ACCESSORIES:
-                accessories.append((b, tag))  # sits on the tag's device, like an auxiliary contact
+                accessories.append((b, tag))  # sits on the tag's device, like an auxiliary contact, however drawn
+            elif b.role != "device":
+                members.append(b)  # the device's own drawings: its coil, its contacts, its front view (03 §4.5)
             elif b.instance.confidence < cfg.accepted_from and _part_of(
                 b, [x for x in group if x.instance.family == family]
             ):
