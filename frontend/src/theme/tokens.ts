@@ -1,5 +1,5 @@
 /**
- * Design tokens, ported verbatim from the prototype (prototype/konboro-app.html, :root at lines 9–32).
+ * Design tokens, ported verbatim from the prototype (prototype/konboro-app.html, :root at lines 9–35; the --ai-* colors are the live run's, 01 §4.6).
  * The prototype is the visual reference (CLAUDE.md), so values here change only when the prototype does.
  * tokens.test.ts parses the prototype and fails if the two drift apart.
  */
@@ -16,6 +16,9 @@ export const colorKeys = [
   "accent",
   "accent-ink",
   "accent-soft",
+  "ai-a",
+  "ai-b",
+  "ai-c",
   "copper",
   "ok",
   "ok-soft",
@@ -47,6 +50,9 @@ export const tokens: Record<ColorMode, ModeTokens> = {
       accent: "#2747C6",
       "accent-ink": "#FFFFFF",
       "accent-soft": "#E7ECFB",
+      "ai-a": "#2747C6",
+      "ai-b": "#7B5CF5",
+      "ai-c": "#C77A4A",
       copper: "#B5693A",
       ok: "#1D8456",
       "ok-soft": "#E1F3EA",
@@ -70,6 +76,9 @@ export const tokens: Record<ColorMode, ModeTokens> = {
       accent: "#8199FF",
       "accent-ink": "#0B1020",
       "accent-soft": "#1D294D",
+      "ai-a": "#8199FF",
+      "ai-b": "#A08BFF",
+      "ai-c": "#E0A07A",
       copper: "#D38C5B",
       ok: "#4DC48C",
       "ok-soft": "#11301F",

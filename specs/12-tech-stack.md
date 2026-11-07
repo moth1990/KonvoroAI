@@ -122,7 +122,7 @@ ALB ──→ ECS Fargate: API (FastAPI)
 | CI/CD | GitHub Actions: בדיקות, **הרצה על סט הבדיקה בכל שינוי בצינור**, בנייה, ופריסה ל-ECS |
 | שגיאות | Sentry |
 | לוגים ומעקב | CloudWatch, ו-OpenTelemetry לכל שרטוט לאורך כל השלבים (`trace_id` מ-[01](01-intake-page-classification.md)) |
-| עלות לכל מפעל ולכל שרטוט | טבלה מהרישום של `konboro_llm` (`llm_calls`, לפי `tenant_id` ו-`drawing_id`) ועלות ה-OCR לכל עמוד. אותו חישוב מוצג למשתמש במסך הפענוח ([01 §4.6](01-intake-page-classification.md)). העלות של עמוד גדול תלויה בשטח שלו ([01 §4.3](01-intake-page-classification.md)) |
+| עלות לכל מפעל ולכל שרטוט | בדולרים, בלי המרה. טבלה מהרישום של `konboro_llm` (`llm_calls`, לפי `tenant_id` ו-`drawing_id`, כל ניסיון של כל קריאה), ועלות ה-OCR לכל עמוד. אותו חישוב מוצג למשתמש במסך הפענוח ([01 §4.6](01-intake-page-classification.md)). S28c בונה את החישוב, ו-S30 משתמש בו לטבלה לכל מפעל. העלות של עמוד גדול תלויה בשטח שלו ([01 §4.3](01-intake-page-classification.md)) |
 | גיבויים | גיבוי אוטומטי של RDS, וגרסאות ב-S3 |
 | התקדמות בזמן אמת | טבלת `pipeline_events`, עם `stage_runs` ו-`llm_calls`. המסך שואל כל 2 שניות. SSE רק אם יידרש ([01 §4.6](01-intake-page-classification.md)) |
 | דגלי תכונות | טבלאות במסד, עם מטמון בשרת. AWS AppConfig אם יידרש rollout באחוזים ([13](13-feature-flags.md)) |
