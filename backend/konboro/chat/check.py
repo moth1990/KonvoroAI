@@ -8,11 +8,13 @@
 | no amount of money written in the text (₪, ש"ח, שקל, a decimal price) | sent back once; then the number is removed |
 | a UI action points at existing lines | dropped |
 
-Quantities, currents (16A), poles, line counts and percentages the estimator gave are not money.
+Quantities, currents (16A), poles, line counts and percentages the estimator gave are not money, and neither is a
+date (BUG-099): a full one ("06.11.2026"), a day and month with a time, as a chat build is named ("הצעה בצ'אט 06.11
+09:37"), or the name of one of the factory's quotes that the estimator wrote (`keep`, "25.26.100.01").
 """
 
 import re
-from collections.abc import Callable
+from collections.abc import Callable, Sequence
 from dataclasses import dataclass, field
 
 from .state import ChatState
@@ -35,6 +37,10 @@ AMOUNT = re.compile(
     re.IGNORECASE,
 )
 WORD_AMOUNT = re.compile(r"(?:אלף|אלפיים|מאה|מאתיים|מיליון)[\w\s]{0,20}(?:שקל|ש\"ח|₪)")
+# A date is no price: a price has one decimal point at most, and none is followed by a clock time (BUG-099).
+_DAY_MONTH = r"(?:0?[1-9]|[12]\d|3[01])\.(?:0?[1-9]|1[0-2])"
+DATE = re.compile(rf"(?<![\d.,]){_DAY_MONTH}(?:\.(?:\d{{4}}|\d{{2}})(?![\d.,])|\s+(?:[01]?\d|2[0-3]):[0-5]\d(?!\d))")
+_WORD = re.compile(r"[^\W_]+")
 
 
 @dataclass
@@ -48,14 +54,35 @@ class Checked:
     amounts: list[str] = field(default_factory=list)  # amounts written as numbers (the caller asks once again)
 
 
-def amounts_in(text: str) -> list[str]:
+def _kept(text: str, keep: Sequence[str]) -> list[tuple[int, int]]:
+    """The spans no amount is read in: dates, and each of `keep` written whole (its words in order, any punctuation
+    between them, any case)."""
+    spans = [m.span() for m in DATE.finditer(text)]
+    for name in keep:
+        words = _WORD.findall(name)
+        if words:
+            pattern = r"(?<![^\W_])" + r"[\W_]+".join(re.escape(w) for w in words) + r"(?![^\W_])"
+            spans += [m.span() for m in re.finditer(pattern, text, re.IGNORECASE)]
+    return spans
+
+
+def _kept_out(spans: list[tuple[int, int]]) -> Callable[[re.Match[str]], bool]:
+    return lambda m: any(m.start() < end and start < m.end() for start, end in spans)
+
+
+def amounts_in(text: str, keep: Sequence[str] = ()) -> list[str]:
+    """`keep`: names of the factory's quotes the estimator wrote, no amounts though they may look like one."""
     plain = MONEY_REF.sub("", text)
-    return [m.group(0) for m in AMOUNT.finditer(plain)] + [m.group(0) for m in WORD_AMOUNT.finditer(plain)]
+    kept = _kept_out(_kept(plain, keep))
+    return [m.group(0) for p in (AMOUNT, WORD_AMOUNT) for m in p.finditer(plain) if not kept(m)]
 
 
-def strip_amounts(text: str) -> str:
-    out = AMOUNT.sub("—", text)
-    return WORD_AMOUNT.sub("—", out)
+def strip_amounts(text: str, keep: Sequence[str] = ()) -> str:
+    out = text
+    for p in (AMOUNT, WORD_AMOUNT):
+        kept = _kept_out(_kept(out, keep))
+        out = p.sub(lambda m: m.group(0) if kept(m) else "—", out)  # noqa: B023  # used within this pass
+    return out
 
 
 def check(
@@ -64,10 +91,11 @@ def check(
     live_lines: set[str],
     allowed_refs: set[str] | None = None,
     live_instances: set[str] | None = None,
+    keep: Sequence[str] = (),
 ) -> Checked:
     """`live_lines`: the ids the quote has now. Line, quote and instance names become real ids (`{{line:ln_…}}`) for
     the screen; money references stay, and the screen gets their amounts. `live_instances`: the instances the turn
-    may point at (those a tool located); None accepts any this conversation named."""
+    may point at (those a tool located); None accepts any this conversation named. `keep`: as in `amounts_in`."""
     out = Checked(text="")
     refs_ok = set(state.money) if allowed_refs is None else allowed_refs
 
@@ -104,7 +132,7 @@ def check(
     text = MONEY_REF.sub(money, text)
     text = QUOTE_REF.sub(named("quote", out.quote_ids), text)
     text = INSTANCE_REF.sub(named("instance", out.instance_ids), text)
-    out.amounts = amounts_in(text)
+    out.amounts = amounts_in(text, keep)
     out.text = re.sub(r"[ \t]{2,}", " ", text).strip()
     return out
 

@@ -22,7 +22,7 @@ from sqlalchemy.orm import Session
 
 from konboro.db import models as m
 from konboro.db.ids import new_id
-from konboro.services import review
+from konboro.services import home_route, review
 from konboro.services.storage import Storage
 from konboro_llm import LLMClient, LLMError, ToolLoopRequest, Turn
 from konboro_llm.stages import chat_command as cc
@@ -263,14 +263,15 @@ def run(
     ql = load(session, actor.tenant_id, quote_id) or ql
     live = {ln.line_id for ln in ql.lines}
     located = set(tools.instances)
-    checked = check(answer.text, state, live, live_instances=located)
+    keep = home_route.written_names(session, actor.tenant_id, text)  # a quote's name as typed is no amount (BUG-099)
+    checked = check(answer.text, state, live, live_instances=located, keep=keep)
     if checked.amounts:
         again = _ask_without_amounts(llm, request, answer, checked.amounts, tools)
         if again is not None:
             answer = again
-            checked = check(answer.text, state, live, live_instances=located)
+            checked = check(answer.text, state, live, live_instances=located, keep=keep)
         if checked.amounts:
-            checked.text = strip_amounts(checked.text)
+            checked.text = strip_amounts(checked.text, keep)
             errors.append("amount_removed")
     if checked.invalid_refs:
         errors.append("invalid_ref")
@@ -279,7 +280,7 @@ def run(
     blocks: list[dict[str, Any]] = [{"type": "text", "content": checked.text}]
     options = []
     for o in [o.strip() for o in answer.clarification_options if o.strip()][:4]:
-        opt = check(strip_amounts(MONEY_REF.sub("", o)), state, live, live_instances=located)
+        opt = check(strip_amounts(MONEY_REF.sub("", o), keep), state, live, live_instances=located, keep=keep)
         checked.invalid_refs += opt.invalid_refs
         if opt.text:
             options.append(opt.text)
