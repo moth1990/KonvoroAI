@@ -543,7 +543,7 @@
     "26-993": {
       "backtest": {
         "loo_coverage": "0.4286",
-        "loo_total": "2941.00",
+        "loo_total": "2676.00",
         "own_coverage": "0.7619",
         "own_derived": "4200.00",
         "own_total": "14117.00",
@@ -574,9 +574,9 @@
         "warning DATA_LOAD_CURRENT_GT_RATED FC1",
         "warning FRONT_VIEW_DESIGNATOR_MISSING",
         "warning FRONT_VIEW_DESIGNATOR_NEAR_MATCH SG",
-        "info DATA_INFERRED_ATTRIBUTE G1 TC-G1 TC-G2",
         "info DATA_INFERRED_ATTRIBUTE GIC-1",
         "info DATA_INFERRED_ATTRIBUTE L1 L2 L3 LG1 LG2 LG3",
+        "info DATA_INFERRED_ATTRIBUTE TC-G1 TC-G2",
         "info DATA_MANY_DEFAULTS",
         "info HIER_ORPHAN_DEVICE QPM FPB FC1 FB1 F13 F14",
         "info SCOPE_NOT_IN_PANEL EMS"
@@ -650,7 +650,7 @@
       },
       "predicted": {
         "products": 23,
-        "units": 55
+        "units": 54
       },
       "predicted_total": "14117.00",
       "predicted_value_at_risk": "1250.00",
@@ -680,8 +680,8 @@
           "rows_without_edit": {
             "den": 21,
             "kind": "ratio",
-            "num": 13.0,
-            "value": 0.619048
+            "num": 14.0,
+            "value": 0.666667
           },
           "wrong_green_rows": {
             "den": 0,
@@ -914,8 +914,8 @@
           "quantity_accuracy": {
             "den": 19,
             "kind": "ratio",
-            "num": 15.0,
-            "value": 0.789474
+            "num": 16.0,
+            "value": 0.842105
           },
           "unit_recall": {
             "den": 47,
@@ -3730,8 +3730,8 @@
         "rows_without_edit": {
           "den": 216,
           "kind": "ratio",
-          "num": 116.0,
-          "value": 0.537037
+          "num": 117.0,
+          "value": 0.541667
         },
         "wrong_green_rows": {
           "den": 0,
@@ -4036,8 +4036,8 @@
         "quantity_accuracy": {
           "den": 144,
           "kind": "ratio",
-          "num": 115.0,
-          "value": 0.798611
+          "num": 116.0,
+          "value": 0.805556
         },
         "unit_recall": {
           "den": 513,
@@ -4952,8 +4952,8 @@
           "rows_without_edit": {
             "den": 73,
             "kind": "ratio",
-            "num": 49.0,
-            "value": 0.671233
+            "num": 50.0,
+            "value": 0.684932
           },
           "wrong_green_rows": {
             "den": 0,
@@ -5228,8 +5228,8 @@
           "quantity_accuracy": {
             "den": 69,
             "kind": "ratio",
-            "num": 58.0,
-            "value": 0.84058
+            "num": 59.0,
+            "value": 0.855072
           },
           "unit_recall": {
             "den": 179,

@@ -18,6 +18,11 @@ the tag is a hint, never the value.
    one device per tag (BUG-031, S17).
 6. On a drawing where most devices have a tag (`no_tag_share`), a billable device without one is flagged `no_tag`
    (03 §3.7 last line).
+7. A tag written as two texts, a dotted abbreviation and the tag right after it on one line, is one tag: the
+   abbreviation's letters, a hyphen, the tag (BUG-111: "T.C" "G1" beside 26-993's QG1 is its shunt trip TC-G1, as
+   page 5 writes it whole). Only a dotted abbreviation of two or three letters joins ("T.C", "K.A."), never a word,
+   a brand or a rating. Stage 3 links the tag's own span; stage 4 merges by the whole tag (`joined`), after the
+   tile agent, so the agent's request (and its recorded answers) don't change.
 
 Ranges on a front view ("R1-R7", item 5) and the dashed link from an auxiliary contact to its breaker (item 4) are
 not read in v1: front views are not `process` pages, and the dashed line needs the wire graph's line styles.
@@ -44,6 +49,9 @@ _DIGIT = re.compile(r"\d")
 COUNT = re.compile(r"^\(?[X×](?P<n>\d{1,2})\)?$")  # "x2", "X11": a count beside a device, or a terminal strip
 _RANGE = re.compile(r"^(?P<p>[A-Z]{1,4})(?P<a>\d{1,3})-(?P=p)(?P<b>\d{1,3})$")  # one prefix both ends
 _CIRCUITS = re.compile(r"^(?P<a>\d{1,3})[-–'’](?P<b>\d{1,3})$")  # "201-202", OCR'd "207'208"
+_ABBREVIATION = re.compile(r"^[A-Z]\.(?:[A-Z]\.?){1,2}$")  # item 7: "T.C" (trip coil), "K.A.", never "T." alone
+JOIN_GAP = 1.0  # item 7: the tag starts within this many text heights after the abbreviation ends
+JOIN_LEVEL = 0.5  # item 7: and the two share this much of the lower one's height (one line)
 
 
 def _canon(text: str) -> str:
@@ -138,6 +146,24 @@ def acceptable(text: str, c: Candidate, model_read: bool, inside: bool = False) 
     if c.family in BREAKERS and _RATING.match(t) and not model_read:
         return False
     return model_read or inside or not _LETTERS.match(t)
+
+
+def joined(spans: list[TextSpan]) -> dict[str, str]:
+    """Item 7: span id → the whole tag, for each tag written right after a dotted abbreviation on one line."""
+    out: dict[str, str] = {}
+    for a in spans:
+        if not _ABBREVIATION.match(_canon(a.text)):
+            continue
+        letters = _canon(a.text).replace(".", "")
+        for s in spans:
+            t = _canon(s.text)
+            if s is a or len(tags(t)) != 1 or not _one_tag(t) or not t[0].isalpha() or COUNT.match(t):
+                continue
+            h = max(min(a.bbox[3] - a.bbox[1], s.bbox[3] - s.bbox[1]), 1.0)
+            level = min(a.bbox[3], s.bbox[3]) - max(a.bbox[1], s.bbox[1])
+            if level >= JOIN_LEVEL * h and 0 <= s.bbox[0] - a.bbox[2] <= JOIN_GAP * h and _one_tag(f"{letters}-{t}"):
+                out[s.span_id] = f"{letters}-{t}"
+    return out
 
 
 def link(c: Candidate, spans: list[TextSpan], cfg: DetectionConfig, counts: set[str] = frozenset()) -> None:  # type: ignore[assignment]

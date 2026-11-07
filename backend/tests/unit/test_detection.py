@@ -268,6 +268,33 @@ def test_the_nearest_tag_shaped_span_is_the_designator() -> None:
     assert (c.designator, c.designator_span_id) == ("F1", "ts_001_0001")
 
 
+@pytest.mark.parametrize("tag", [None, "G1"])
+def test_a_tag_written_after_a_dotted_abbreviation_is_one_tag(tag: str | None) -> None:
+    """BUG-111: 26-993 writes QG1's shunt trip "T.C" "G1" on page 3 (two texts) and "TC-G1" on page 5. Stage 3
+    links the tag's own span (the tile agent's request is unchanged); stage 4 merges by the whole tag."""
+    c = cand((215.5, 203.0, 229.9, 207.6), family="shunt_trip", cls="shunt_trip", tag=tag)
+    spans = [span("T.C", (216, 203, 222, 208), n=16), span("G1", (225, 203, 230, 208), n=17)]
+    designators.link(c, spans, DEFAULT)
+    assert (c.designator, c.designator_span_id) == ("G1", "ts_001_0017")
+    assert designators.joined(spans) == {"ts_001_0017": "TC-G1"}
+
+
+@pytest.mark.parametrize(
+    ("first", "second", "bbox"),
+    [
+        ("ABB", "G1", (225, 203, 230, 208)),  # a word, not an abbreviation
+        ("T.", "G1", (225, 203, 230, 208)),  # one letter
+        ("T.C", "G1", (240, 203, 245, 208)),  # too far after it
+        ("T.C", "G1", (225, 212, 230, 217)),  # on the next line
+        ("T.C", "X2", (225, 203, 230, 208)),  # a count
+        ("P.O.", "B36590200", (225, 203, 260, 208)),  # 26-993's order number: not a tag
+    ],
+)
+def test_only_a_dotted_abbreviation_right_before_a_tag_joins(first: str, second: str, bbox: Bbox) -> None:
+    spans = [span(first, (216, 203, 222, 208), n=1), span(second, bbox, n=2)]
+    assert designators.joined(spans) == {}
+
+
 def test_the_tag_the_model_read_wins_also_a_little_farther() -> None:
     c = cand((100, 100, 110, 110), family="contactor", cls="contactor", role="power_contact", tag="c2")
     spans = [span("C9", (112, 100, 118, 106), n=1), span("C2", (135, 100, 141, 106), n=2)]  # 25 pt off, radius 20

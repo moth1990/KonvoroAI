@@ -1190,6 +1190,19 @@ def test_an_aux_contact_drawn_again_where_it_is_used_is_counted_once() -> None:
     assert sum(c.quantity for c in comps if c.family == "aux_contact") == 5  # 2 on page 5, 3 on page 8
 
 
+def test_a_shunt_trip_drawn_on_its_breaker_and_as_its_coil_is_one() -> None:
+    """BUG-111: 26-993 draws QG1's shunt trip on page 3 ("T.C" "G1", one tag since stage 3's item 7) and its coil
+    TC-G1 beside TC-G2 on page 5: two shunt trips, not three."""
+    built = [
+        _built(12, "shunt_trip", tag="TC-G1", page=3),
+        _built(3, "shunt_trip", tag="TC-G1", page=5),
+        _built(4, "shunt_trip", tag="TC-G2", page=5),
+    ]
+    comps, owner, _ = components("drw_01X", built, SCH)
+    assert [(c.quantity, c.designators) for c in comps] == [(2, ["TC-G1", "TC-G2"])]
+    assert len(owner) == 3
+
+
 def test_two_brands_for_one_component() -> None:
     built = [
         _built(1, values={"current_a": 16, "poles": 1}, brand="ABB"),
