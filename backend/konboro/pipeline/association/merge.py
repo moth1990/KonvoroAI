@@ -208,6 +208,24 @@ def devices(built: list[Built], schemas: Schemas, cfg: AssociationConfig = DEFAU
     out: list[Device] = []
     device_page: dict[tuple[str, str], int] = {}  # (panel, tag) → the page of the tag's device drawing
     for (panel_id, tag), group in by_tag.items():
+        group, apart = _apart_by_scope(group)
+        for b in apart:
+            i = b.instance
+            out.append(
+                Device(
+                    i.family,
+                    i.symbol_class,
+                    panel_id,
+                    {n: i.attributes.get(n) or attribute(None) for n in schemas.names(i.family)},
+                    [tag],
+                    [],
+                    1,
+                    [b],
+                    i.confidence,
+                    b.supply_scope,
+                    b.multiplicity_inherited,
+                )
+            )
         lead = min(group, key=lambda b: (ROLE_RANK.get(b.role, 9), -b.instance.confidence, b.order))
         if lead.role == "device":
             device_page[(panel_id, tag)] = lead.order[0]
@@ -310,6 +328,26 @@ def devices(built: list[Built], schemas: Schemas, cfg: AssociationConfig = DEFAU
 
 REPRESENTATIONS = frozenset({"coil", "power_contact", "relay_contact"})
 ACCESSORIES = frozenset({"aux_contact", "shunt_trip"})  # mounted on the device whose tag they carry (03 §4.5)
+
+
+def _apart_by_scope(group: list[Built]) -> tuple[list[Built], list[Built]]:
+    """BUG-036: two device drawings of one family under one tag on one page, one beside a supply-scope phrase
+    (04 §5.1.2) and one not, are two devices. 26/993's page 5 tags both emergency buttons EMS: the one between
+    terminals EM1/EM2 is "Preparation for a Remote Emergency Push Button" (`prepare_only`, not counted) and the
+    other is "Emergency Push Button on the Door", in the panel. Merged, the door's button took the remote one's
+    scope and left the quote. A scope on another page's drawing, or on a coil or a contact, still follows the
+    device (the phrase is the device's, 04 §5.1.2: the panel's own parts of a preparation stay `in_panel`)."""
+    drawn = [b for b in group if b.role == "device"]
+    apart = [
+        b
+        for b in drawn
+        if b.supply_scope != "in_panel"
+        and any(
+            o.supply_scope == "in_panel" and o.instance.family == b.instance.family and o.order[0] == b.order[0]
+            for o in drawn
+        )
+    ]
+    return [b for b in group if not any(b is a for a in apart)], apart
 
 
 def _conflict(b: Built, tag: str, family: str, cfg: AssociationConfig) -> None:

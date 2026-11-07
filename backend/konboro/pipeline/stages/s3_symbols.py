@@ -75,18 +75,21 @@ def _crop(render: Image.Image, c: Candidate, px_per_pt: float, cfg: DetectionCon
     return out.getvalue()
 
 
-def after_model(found: list[Candidate], spans: list[TextSpan], lib: library.Library, cfg: DetectionConfig) -> None:
+def after_model(found: list[Candidate], spans: list[TextSpan], lib: library.Library, cfg: DetectionConfig) -> int:
     """Step 5's code on the page's symbols once the model has answered: a residual rating and peers in a row weigh
-    an unsure class (`detection/evidence.py`), counts are told from tags, each symbol's designator is linked, and the
-    designator's letter weighs the class (BUG-067–070)."""
+    an unsure class (`detection/evidence.py`), counts are told from tags, each symbol's designator is linked, a
+    changeover switch drawn as its contacts is one symbol (BUG-036), and the designator's letter weighs the class
+    (BUG-067–070). Changes `found` in place; returns how many candidates were another's parts."""
     evidence.residual_is_rcd(found, spans, lib, cfg)
     evidence.curve_is_a_breaker(found, spans, cfg)
     evidence.peers(found, spans, lib, cfg)
     counts = designators.counts(found, spans, cfg)
     for c in found:
         designators.link(c, spans, cfg, counts)
+    parts = evidence.drawn_changeover(found, spans, lib, cfg)
     for c in found:
         evidence.weigh_by_prefix(c, lib, cfg, found)
+    return parts
 
 
 def detect_page(
@@ -150,7 +153,7 @@ def detect_page(
     # BUG-070), designators, owner tile, panel, crops
     found, end_circles = evidence.absorb_end_circles(found)
     removed += end_circles
-    after_model(found, extraction.text_spans, lib, cfg)
+    removed += after_model(found, extraction.text_spans, lib, cfg)
     tiles = [(t.tile_id, t.bbox_pt) for t in extraction.tiles]
     found.sort(key=lambda c: (round(c.bbox[1]), c.bbox[0]))
     uploads = Uploads()

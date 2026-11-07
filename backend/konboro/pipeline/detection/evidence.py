@@ -30,12 +30,19 @@ A class changed here keeps the line yellow at most: code's evidence is good, not
    MCCB, F an MCB. Among the classes the model saw for an unsure symbol, the one the prefix allows wins; else the one
    class of its family the prefix allows ("Q" on a breaker: an MCCB). A prefix never brings in a family the model
    did not see.
+5. **A changeover switch drawn as its contacts** (BUG-036). 26/993 draws SG, a SOCOMEC 4×125A changeover switch, as
+   three circles: the common contact on the outgoing line and the two fixed contacts above it, one each side (mains
+   and generator). The model read the circles as terminals. An unsure circle with a tag of its own, a rating of poles
+   and amps beside it (a terminal carries none), and two circles of its size side by side on one side of it, one
+   left and one right, is a changeover switch, yellow at most; the two circles are its contacts, not symbols of
+   their own. Shape and text together, so a terminal strip (side by side in one row, no rating) never takes it.
 """
 
 import re
 
 from konboro.contracts.extraction import TextSpan
 from konboro.pipeline.association.grammar import parse
+from konboro.pipeline.extraction.geometry import union
 
 from .candidates import Candidate, centre, gap
 from .config import DetectionConfig
@@ -333,3 +340,56 @@ def weigh_by_prefix(c: Candidate, lib: Library, cfg: DetectionConfig, page: list
     own = [cls for cls in allowed if cls in lib.classes and lib.classes[cls].family == c.family]
     if len(own) == 1:
         c.symbol_class = own[0]
+
+
+CONTACT_SIZE = 0.5  # rule 5: the fixed contacts are this share of the common one's size, or more (and at most 1/this)
+CONTACT_REACH = (1.0, 5.0)  # rule 5: and this many of its heights away from it, along the line and across it
+CONTACT_LEVEL = 0.5  # rule 5: the two fixed contacts level with each other, within this share of its height
+CHANGEOVER = "changeover_switch"
+
+
+def _poles_and_amps(c: Candidate, spans: list[TextSpan], cfg: DetectionConfig) -> bool:
+    return any("poles" in s.tags and "current_a" in s.tags and gap(c.bbox, s.bbox) <= _radius(c, cfg) for s in spans)
+
+
+def _fixed_contacts(c: Candidate, circles: list[Candidate]) -> tuple[Candidate, Candidate] | None:
+    """Two circles of its size side by side on one side of `c` along its line: one left of it, one right."""
+    h = max(c.height, 1e-6)
+    cx, cy = centre(c.bbox)
+    along, across = (1, 0) if c.orientation % 180 == 0 else (0, 1)  # a symbol on a vertical line: along is y
+    lo, hi = CONTACT_REACH
+    found: list[tuple[float, float, Candidate]] = []
+    for o in circles:
+        if o is c or not CONTACT_SIZE <= o.height / h <= 1 / CONTACT_SIZE:
+            continue
+        oc = centre(o.bbox)
+        d_along, d_across = oc[along] - (cx, cy)[along], oc[across] - (cx, cy)[across]
+        if lo * h <= abs(d_along) <= hi * h and lo * h <= abs(d_across) <= hi * h:
+            found.append((d_along, d_across, o))
+    for a_along, a_across, a in found:
+        for b_along, b_across, b in found:
+            if a_across < 0 < b_across and a_along * b_along > 0 and abs(a_along - b_along) <= CONTACT_LEVEL * h:
+                return a, b
+    return None
+
+
+def drawn_changeover(found: list[Candidate], spans: list[TextSpan], lib: Library, cfg: DetectionConfig) -> int:
+    """Rule 5, after the designators are linked: changes `found` in place, and returns how many circles were a
+    changeover switch's contacts."""
+    if CHANGEOVER not in lib.classes:
+        return 0
+    circles = [c for c in found if c.family == "terminal" and c.role == "device"]
+    contacts: list[Candidate] = []
+    for c in circles:
+        own_tag = bool(c.designator) and not COUNT.match((c.designator or "").strip().upper())
+        if not own_tag or _sure(c, cfg) or any(c is x for x in contacts) or not _poles_and_amps(c, spans, cfg):
+            continue
+        pair = _fixed_contacts(c, [o for o in circles if not o.designator and not any(o is x for x in contacts)])
+        if pair is None:
+            continue
+        _adopt(c, lib.classes[CHANGEOVER].family, CHANGEOVER, min(_cap(cfg), max(c.confidence, TEXT_FLOOR)))
+        c.bbox = union([c.bbox, *(o.bbox for o in pair)])
+        contacts += pair
+    if contacts:
+        found[:] = [c for c in found if not any(c is x for x in contacts)]
+    return len(contacts)

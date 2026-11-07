@@ -638,6 +638,52 @@ def test_a_breakers_end_circles_are_part_of_it() -> None:
     assert evidence.absorb_end_circles([breaker, em1, x2]) == ([breaker, em1], 1)
 
 
+def test_a_changeover_switch_drawn_as_its_three_contacts_is_one_symbol() -> None:
+    """BUG-036 (26-993, page 3): SG, "4×125A SOCOMEC", is drawn as the common contact on the outgoing line and the
+    two fixed contacts above it. The model read three terminals, SG's at 0.49. Code makes SG a changeover switch,
+    yellow, its box over all three, and the two fixed contacts its parts. A terminal strip, a sure terminal, an
+    untagged circle or one with no rating beside it stays a terminal."""
+
+    def page() -> tuple[Candidate, Candidate, Candidate, list[TextSpan]]:
+        left = cand((311.52, 243.6, 318.96, 250.56), family="terminal", cls="terminal")
+        right = cand((351.6, 243.6, 359.28, 250.56), family="terminal", cls="terminal")
+        common = cand(
+            (332.16, 265.68, 339.84, 273.12),
+            family="terminal",
+            cls="terminal",
+            method="detector_llm",
+            detector_score=0.7,
+            class_score=0.7,
+            designator="SG",
+        )
+        spans = [
+            span("SG", (352.1, 265.4, 362.2, 272.4), n=58),
+            span("4×125A", (350.9, 276.5, 374.4, 283.0), {"poles": 4, "current_a": 125}, n=59),
+            span("SOCOMEC", (347.8, 286.6, 377.5, 293.0), n=60),
+        ]
+        return left, right, common, spans
+
+    left, right, common, spans = page()
+    found = [left, right, common]
+    assert evidence.drawn_changeover(found, spans, LIB, DEFAULT) == 2
+    assert found == [common] and (common.family, common.symbol_class) == ("changeover_switch", "changeover_switch")
+    assert evidence.TEXT_FLOOR <= common.confidence < DEFAULT.accepted_from
+    assert common.bbox == (311.52, 243.6, 359.28, 273.12)
+    for change in ("no rating", "sure", "untagged", "a strip"):
+        left, right, common, spans = page()
+        if change == "no rating":
+            spans = spans[:1]
+        elif change == "sure":
+            common.detector_score = common.class_score = 0.95
+        elif change == "untagged":
+            common.designator = None
+        else:  # three terminals in one row
+            common.bbox = (332.16, 243.6, 339.84, 250.56)
+        found = [left, right, common]
+        assert evidence.drawn_changeover(found, spans, LIB, DEFAULT) == 0, change
+        assert len(found) == 3 and common.family == "terminal", change
+
+
 def test_a_residual_rating_beside_a_breaker_makes_it_an_rcd() -> None:
     """BUG-068: "4×40A 0.03A A" beside the socket fields' RCD, which the model left a switch or an unknown."""
     rcd = cand((2271.1, 389.6, 2322.2, 423.2), family="switch_disconnector", cls=library.UNKNOWN, detector_score=0.42)

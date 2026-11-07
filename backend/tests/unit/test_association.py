@@ -798,6 +798,29 @@ def test_nevis_1_by_tag() -> None:
     assert len(owner) == 7 and all(c.component_id.startswith("cmp_01X_") for c in comps)
 
 
+def test_a_preparation_drawn_under_the_same_tag_on_the_same_page_is_its_own_device() -> None:
+    """BUG-036: 26/993's page 5 tags the remote emergency button (prepare only) and the door's button EMS. The door's
+    button stays in the panel and the remote one keeps its scope; on another page, a scope follows the device."""
+    built = [
+        _built(8, "push_button", tag="EMS", page=5, cls="emergency_button", scope="prepare_only"),
+        _built(9, "push_button", tag="EMS", page=5, cls="emergency_button"),
+    ]
+    comps, owner, _ = components("drw_01X", built, SCH)
+    by_scope = {c.supply_scope: c for c in comps}
+    assert set(by_scope) == {"in_panel", "prepare_only"}
+    assert by_scope["in_panel"].designators == ["EMS"] and by_scope["in_panel"].quantity == 1
+    assert by_scope["in_panel"].instance_ids == ["ins_005_0009"]
+    assert by_scope["prepare_only"].instance_ids == ["ins_005_0008"] and len(owner) == 2
+    elsewhere = [
+        _built(1, "changeover_switch", tag="Q0", page=3, scope="prepare_only"),
+        _built(2, "changeover_switch", tag="Q0", page=4),
+        _built(3, "contactor", tag="C1", role="coil", page=4, scope="prepare_only"),
+        _built(4, "contactor", tag="C1", page=4),
+    ]
+    comps, _, _ = components("drw_01X", elsewhere, SCH)
+    assert sorted((c.designators[0], len(c.instance_ids)) for c in comps) == [("C1", 2), ("Q0", 2)]
+
+
 def test_a_list_of_tags_is_one_device_per_tag() -> None:
     """BUG-031: 26-993 draws its three current transformers once, tagged "MS1/MS2/MS3" (03 §3.7 item 5)."""
     built = [
