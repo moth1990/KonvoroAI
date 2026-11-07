@@ -2,6 +2,7 @@ from .client import LLMClient
 from .types import (
     Example,
     ImageInput,
+    LLMAccountError,
     LLMError,
     LLMRequest,
     LLMResult,
@@ -16,6 +17,7 @@ from .types import (
 __all__ = [
     "Example",
     "ImageInput",
+    "LLMAccountError",
     "LLMClient",
     "LLMError",
     "LLMRequest",

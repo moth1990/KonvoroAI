@@ -19,7 +19,7 @@ from konboro.pipeline.association.config import DEFAULT
 from konboro.pipeline.association.merge import Built, components, instance_confidence, one_name_per_tag, status
 from konboro.pipeline.detection import library
 from konboro.pipeline.stages import s4_association
-from konboro_llm import LLMError
+from konboro_llm import LLMAccountError, LLMError
 from konboro_llm.stages.text_association import TileAnswer
 
 SCH = schemas.default()
@@ -709,6 +709,12 @@ def test_refused_twice_then_the_fallback_model_then_code_alone() -> None:
         raise LLMError("down")
 
     assert agent.run_tile(job, Image.new("RGB", (1000, 1000), "white"), broken, SCH, FAMILIES).checked is None
+
+    def refused(*_: Any) -> TileAnswer:
+        raise LLMAccountError("credit balance is too low")
+
+    with pytest.raises(LLMAccountError):  # BUG-061: the stage fails; no tile falls back to code alone
+        agent.run_tile(job, Image.new("RGB", (1000, 1000), "white"), refused, SCH, FAMILIES)
 
 
 def test_the_agents_values_win_and_text_poles_beat_drawn_ones() -> None:

@@ -154,3 +154,53 @@ def test_a_refusal_a_cut_answer_or_non_json_is_an_error():
     ]:
         with pytest.raises(LLMError, match=message):
             _provider(answer)[0].complete_structured(request, "claude-sonnet-5-5")
+
+
+def _api_error(cls, status: int, message: str):  # type: ignore[no-untyped-def]
+    import httpx
+
+    response = httpx.Response(status, request=httpx.Request("POST", "https://api.anthropic.com/v1/messages"))
+    return cls(message, response=response, body={"error": {"message": message}})
+
+
+class _Refusing:
+    def __init__(self, error: Exception) -> None:
+        self.error, self.calls = error, 0
+
+    def create(self, **_):  # type: ignore[no-untyped-def]
+        self.calls += 1
+        raise self.error
+
+
+def test_a_refused_account_is_its_own_error_and_skips_the_fallback():
+    """BUG-061: no credit, a bad key or no permission won't clear on retry or on another model."""
+    from types import SimpleNamespace
+
+    import anthropic
+    import pytest
+
+    from konboro_llm import LLMAccountError, LLMError
+    from konboro_llm.providers.anthropic_provider import AnthropicProvider
+
+    route = StageRoute("anthropic", "small", fallback=StageRoute("anthropic", "big"))
+    refusals = [
+        _api_error(anthropic.BadRequestError, 400, "Your credit balance is too low to access the Anthropic API."),
+        _api_error(anthropic.AuthenticationError, 401, "invalid x-api-key"),
+        _api_error(anthropic.PermissionDeniedError, 403, "not allowed"),
+    ]
+    for error in refusals:
+        messages = _Refusing(error)
+        llm = LLMClient(
+            {"anthropic": AnthropicProvider(client=SimpleNamespace(messages=messages))}, {"text_association": route}
+        )
+        with pytest.raises(LLMAccountError):
+            associate_text(llm)
+        assert messages.calls == 1  # not the fallback model
+
+    other = _Refusing(_api_error(anthropic.BadRequestError, 400, "messages: text content blocks must be non-empty"))
+    llm = LLMClient(
+        {"anthropic": AnthropicProvider(client=SimpleNamespace(messages=other))}, {"text_association": route}
+    )
+    with pytest.raises(LLMError) as caught:
+        associate_text(llm)
+    assert not isinstance(caught.value, LLMAccountError) and other.calls == 2  # an ordinary error tries the fallback

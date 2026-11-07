@@ -8,7 +8,7 @@ from typing import Any
 import pytest
 from pydantic import BaseModel
 
-from konboro_llm import LLMClient, LLMError, ToolLoopRequest, ToolSpec, Turn
+from konboro_llm import LLMAccountError, LLMClient, LLMError, ToolLoopRequest, ToolSpec, Turn
 from konboro_llm.config import StageRoute
 from konboro_llm.providers import CassetteMissingError, CassetteProvider, FakeProvider
 
@@ -116,6 +116,18 @@ def test_a_failed_call_falls_back_without_running_the_tools_again():
     llm = LLMClient({"broken": Broken([]), "good": good}, routes)
     result = llm.run_tools(request(), lambda c, a: {})
     assert result.data.text == "from fallback" and result.provider == "fake"
+
+
+def test_a_refused_account_does_not_fall_back():
+    class Refused(FakeProvider):
+        def complete_turn(self, *a: Any, **k: Any) -> Any:
+            raise LLMAccountError("credit balance is too low")
+
+    good = FakeProvider([{"answer": {"text": "from fallback"}}])
+    routes = {"chat_command": StageRoute("refused", "m1", fallback=StageRoute("good", "m2"))}
+    with pytest.raises(LLMAccountError):
+        LLMClient({"refused": Refused([]), "good": good}, routes).run_tools(request(), lambda c, a: {})
+    assert good.calls == []
 
 
 def test_a_stage_without_a_route_is_an_error():
