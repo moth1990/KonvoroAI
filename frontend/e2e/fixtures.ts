@@ -90,11 +90,32 @@ export const PASSWORD = "konboro-e2e-password";
  * Signs in through the API and puts the token where the app keeps it, on every page load, so a test starts
  * signed in. Tests of login and logout go through the screen instead.
  */
-export async function signIn(page: Page, request: APIRequestContext, email: string): Promise<void> {
+export async function signIn(page: Page, request: APIRequestContext, email: string): Promise<string> {
   const response = await request.post(`${apiURL}/auth/login`, { data: { email, password: PASSWORD } });
   expect(response.ok()).toBe(true);
   const { access_token: token } = (await response.json()) as { access_token: string };
   await page.addInitScript((t) => sessionStorage.setItem("konboro:token", t), token);
+  return token;
+}
+
+/**
+ * Fix the page's clock at the tenant's latest quote (BUG-098). The home's recent list says "היום, 23:58",
+ * "אתמול" or "28.10" by the browser's clock, and the E2E seed stamps its quotes with the real time: a run that
+ * seeds before midnight and shoots after turned "היום, …" into "אתמול", and the mask over that text, which takes
+ * the text's width, no longer matched the baseline's. Seen from the seed's own day, every time reads as it did
+ * when the baseline was taken. Only `Date` is fixed; timers keep running.
+ */
+export async function clockAtLatestQuote(page: Page, request: APIRequestContext, token: string): Promise<number> {
+  const response = await request.get(`${apiURL}/quotes`, {
+    params: { limit: 50 },
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  expect(response.ok()).toBe(true);
+  const { items } = (await response.json()) as { items: { updated_at: string }[] };
+  const latest = Math.max(...items.map((q) => Date.parse(q.updated_at)));
+  expect(Number.isFinite(latest)).toBe(true);
+  await page.clock.setFixedTime(latest);
+  return latest;
 }
 
 /** Is this the phone layout (tab bar instead of the rail)? */

@@ -14,7 +14,7 @@ import { expect, test, type Page } from "@playwright/test";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
-import { AUDITS, isMobile, signIn, SLOW_PROJECT, TENANTS } from "./fixtures";
+import { AUDITS, clockAtLatestQuote, isMobile, signIn, SLOW_PROJECT, TENANTS } from "./fixtures";
 import { lineWith } from "./review-helpers";
 
 test.skip(!process.env.KONBORO_VISUAL, "runs in Playwright's Linux image: `make check-screenshots`");
@@ -308,7 +308,7 @@ for (const scheme of ["light", "dark"] as const) {
 
     for (const screen of SCREENS) {
       test(screen.name, async ({ page, request }) => {
-        if (screen.tenant) await signIn(page, request, screen.tenant);
+        if (screen.tenant) await clockAtLatestQuote(page, request, await signIn(page, request, screen.tenant));
         await page.goto(screen.path);
         if (screen.tenant) await meLoaded(page);
         for (const ready of [screen.ready(page)].flat()) await ready.waitFor({ timeout: 60_000 });
