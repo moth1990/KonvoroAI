@@ -716,11 +716,11 @@ def test_25_26_100_quote_read_from_its_text_layer() -> None:
 
 def test_25_26_100_quote_against_its_labels() -> None:
     """Quote 10298 (S24b), confirmed by the user: 13 and 2 breakers short, the 25A feeder priced as 1P, the selector
-    left out, and line 5 a copy of line 4. The astronomical clock is a time switch (its line matches)."""
+    left out, and line 5 a copy of line 4. The astronomical clock is a time switch (its line matches). BUG-075: line 2's
+    motor protection "2.5-4A" is the drawn "3(2.4–4)A", the same product: matched, not a mismatch."""
     o = audit(oracle_quote("25.26.100"), oracle_components("25.26.100"), AUX)
     shown = sorted((d.type, d.quote_line_index, d.family) for d in o.differences if d.confidence >= 0.6)
     assert shown == [
-        ("attribute_mismatch", 2, "circuit_breaker"),  # BUG-075: 2.5–4A against the drawn 2.4–4A, the same product
         ("attribute_mismatch", 8, "circuit_breaker"),  # the feeder: 1P in the quote, 3P in the drawing
         ("attribute_mismatch", 15, "rcd"),  # "40/0.3": a typo in the quote, flagged by its text
         ("missing_in_quote", None, "selector_switch"),
@@ -736,7 +736,47 @@ def test_25_26_100_quote_against_its_labels() -> None:
     assert (by_line[10], by_line[11]) == (Decimal(546), Decimal(84))  # the confirmed 630
     s = o.summary
     assert (str(s.value_at_risk), s.missing_items, s.missing_items_without_price) == ("763.00", 16, 1)
-    assert {ln.index for ln in o.lines if ln.status == "matched"} == {1, 3, 4, 6, 7, 9, 12, 13, 14, 16}
+    assert {ln.index for ln in o.lines if ln.status == "matched"} == {1, 2, 3, 4, 6, 7, 9, 12, 13, 14, 16}
+
+
+def test_a_motor_protection_range_written_rounded_is_the_same_product() -> None:
+    """BUG-075: each end within 5% is one product, matched after an identical range; a range sold apart differs."""
+    from konboro.pipeline.audit.match import EXACT, LOOSE, compare
+
+    sig = sign("הגנת מנוע 2.5-4A")
+    near = compare(sig, comp("fs", "circuit_breaker", cls="motor_protection", range_min_a=2.4, range_max_a=4))
+    same_range = compare(sig, comp("fs", "circuit_breaker", cls="motor_protection", range_min_a=2.5, range_max_a=4))
+    assert near is not None and same_range is not None
+    assert (near.conflicts, near.tier, same_range.conflicts, same_range.tier) == ([], LOOSE, [], EXACT)
+    o = audit(
+        read(line(1, "הגנת מנוע 2.5-4A", 1, "300")),
+        [comp("fs", "circuit_breaker", cls="motor_protection", range_min_a=2.4, range_max_a=4)],
+    )
+    assert types(o) == [] and o.lines[0].status == "matched"
+    for lo, hi in ((4, 6.3), (1.6, 2.5), (2.5, 3.2)):  # the next range, the one before, a narrower one
+        other = compare(sig, comp("fs", "circuit_breaker", cls="motor_protection", range_min_a=lo, range_max_a=hi))
+        assert other is not None and other.conflicts, (lo, hi)
+    for lo, hi, found in ((2.5, 6.3, ["attribute_mismatch"]), (4, 6.3, ["extra_in_quote", "missing_in_quote"])):
+        o = audit(
+            read(line(1, "הגנת מנוע 2.5-4A", 1, "300")),
+            [comp("fs", "circuit_breaker", cls="motor_protection", range_min_a=lo, range_max_a=hi)],
+        )
+        assert types(o) == found  # one end apart: a mismatch; both: another product
+
+
+def test_a_range_that_misses_the_drawn_load_disagrees() -> None:
+    """BUG-075: a near range still has to hold the drawn load; a value that is no number is never near."""
+    from konboro.pipeline.audit.match import _near_end, compare
+
+    sig = sign("הגנת מנוע 2.5-4A")
+    below = compare(
+        sig, comp("fs", "circuit_breaker", cls="motor_protection", range_min_a=2.4, range_max_a=4, load_current_a=2.45)
+    )
+    above = compare(sig, comp("fs", "circuit_breaker", cls="motor_protection", load_current_a=4.2))
+    inside = compare(sig, comp("fs", "circuit_breaker", cls="motor_protection", load_current_a=3.1))
+    assert below is not None and above is not None and inside is not None
+    assert (below.conflicts, above.conflicts, inside.conflicts) == (["range_min_a"], ["range_max_a"], [])
+    assert not _near_end("2.4", 2.5) and not _near_end(True, 1) and _near_end(6, 6.3)
 
 
 # --- the rest of the money branches (07 §10.1: money code is fully covered) ----------------------------------------

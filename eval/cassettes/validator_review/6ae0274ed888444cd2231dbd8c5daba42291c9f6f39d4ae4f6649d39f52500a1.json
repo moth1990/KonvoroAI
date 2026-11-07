@@ -1,0 +1,85 @@
+{
+  "answer": {
+    "input_tokens": 4991,
+    "model": "claude-sonnet-5-5",
+    "output_tokens": 748,
+    "payload": {
+      "issues": [
+        {
+          "bbox": [
+            130,
+            455,
+            700,
+            560
+          ],
+          "component_ids": [
+            "c09"
+          ],
+          "confidence": 0.4,
+          "message": "בתוכנית F2–F4 הם S201M 1X10A עם INC=8A, אך בטבלה הם מופיעים כ-10A יחד עם F1 ו-F8–F10 שאינם בתמונה. יש לבדוק את הכמות (7) ואת הערך.",
+          "type": "inconsistent_attributes"
+        },
+        {
+          "bbox": [
+            1480,
+            470,
+            1568,
+            600
+          ],
+          "component_ids": [
+            "c11"
+          ],
+          "confidence": 0.35,
+          "message": "F7 בתמונה הוא S201M 1X16A עם INC=12.8A, והכמות 2 (F7, F13) אינה נראית בתוכנית. יש לוודא את הכמות.",
+          "type": "inconsistent_attributes"
+        },
+        {
+          "bbox": [
+            686,
+            618,
+            724,
+            650
+          ],
+          "component_ids": [
+            "c12",
+            "c13"
+          ],
+          "confidence": 0.35,
+          "message": "C1, C2 ו-C3 הם אותו סוג מגען בתוכנית (מסומנים C1–C3), אך C1/C2 מוגדרים 10A וחד-קוטביים ו-C3 כ-AF26 3P 26A. יש לבדוק התאמה בין המגענים לעומסים (מאורר, מסחררים).",
+          "type": "wrong_family"
+        },
+        {
+          "bbox": [
+            645,
+            40,
+            750,
+            100
+          ],
+          "component_ids": [
+            "c02",
+            "c04"
+          ],
+          "confidence": 0.35,
+          "message": "בתמונה נראות 3 נורות ירוקות (L1–L3) ונורה אדומה אחת (HNV), אך בטבלה יש 5 ירוקות ו-3 אדומות (H1, H2, HT1, HT2 לא נראות). יש לבדוק את הכמויות.",
+          "type": "suspicious_quantity"
+        },
+        {
+          "bbox": [
+            10,
+            435,
+            90,
+            560
+          ],
+          "component_ids": [
+            "c19"
+          ],
+          "confidence": 0.3,
+          "message": "מגעי העזר 21/22 נראים ליד F2–F4, F5 ו-F6 (5 יחידות), אך אין להם תגית והם לא מחוברים לשום מגען. יש לוודא שהכמות והשיוך נכונים.",
+          "type": "suspicious_quantity"
+        }
+      ]
+    }
+  },
+  "model": "claude-sonnet-5-5",
+  "stage": "validator_review"
+}

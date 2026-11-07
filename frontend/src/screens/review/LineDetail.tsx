@@ -479,7 +479,7 @@ function NewProductModal(props: {
     enabled: !!form.data,
     staleTime: 60_000,
   });
-  const missing = attrs.filter((a) => a.required && !value(a.name)).map((a) => newProductLabel(a.name));
+  const missing = attrs.filter((a) => a.required && !value(a.name)).map((a) => attributeLabel(a.name));
   const ready = !!form.data && !missing.length && brandText.trim() !== "" && model.trim() !== "";
   const save = async () => {
     if (!ready) return;

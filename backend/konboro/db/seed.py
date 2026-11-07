@@ -12,7 +12,7 @@ from decimal import Decimal
 from typing import TYPE_CHECKING, Any
 from zoneinfo import ZoneInfo
 
-from sqlalchemy import Engine, create_engine, select, text, update
+from sqlalchemy import Engine, create_engine, func, select, text, update
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
@@ -379,14 +379,24 @@ def seed_symbol_library(session: Session) -> None:
 
 
 def seed_attribute_schemas(session: Session) -> None:
-    """05 §4.4, global layer, from `konboro.pipeline.association.schemas` (S13). A row already there is kept."""
+    """05 §4.4, global layer, from `konboro.pipeline.association.schemas` (S13), the rows' source. A row the module has
+    changed since is replaced, a version up (BUG-108: a database seeded before S27b had no contactor `utilization` and
+    no clock `astronomical`, so stage 4 never read them); a row that is the same is kept as it is."""
     from konboro.pipeline.association import schemas
 
     for family, attributes in schemas.SCHEMAS.items():
+        rows = [a.as_row() for a in attributes]
+        stmt = insert(AttributeSchema).values(family=family, version=1, attributes=rows)
         session.execute(
-            insert(AttributeSchema)
-            .values(family=family, version=1, attributes=[a.as_row() for a in attributes])
-            .on_conflict_do_nothing(index_elements=["family"])
+            stmt.on_conflict_do_update(
+                index_elements=["family"],
+                set_={
+                    "attributes": stmt.excluded.attributes,
+                    "version": AttributeSchema.version + 1,
+                    "updated_at": func.now(),
+                },
+                where=AttributeSchema.attributes != stmt.excluded.attributes,
+            )
         )
     session.flush()
 

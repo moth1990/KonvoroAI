@@ -27,6 +27,7 @@ from pydantic import BaseModel, ValidationError
 from .base import LLMProvider, RawTurn, ToolProvider
 from .config import ROUTES, StageRoute
 from .types import (
+    LLMAccountError,
     LLMError,
     LLMRequest,
     LLMResult,
@@ -74,6 +75,8 @@ class LLMClient:
         while route is not None:
             try:
                 return self._run_route(request, route)
+            except LLMAccountError:
+                raise  # the fallback is refused too (BUG-061)
             except LLMError as exc:
                 last_error = exc
                 log.warning("stage=%s model=%s failed: %s", request.stage, route.model, exc)
@@ -183,6 +186,8 @@ class LLMClient:
             try:
                 begun = time.monotonic()
                 raw = tool_provider.complete_turn(request, turns, current.model, allow_tools=allow, retry_hint=hint)
+            except LLMAccountError:
+                raise  # the fallback is refused too (BUG-061)
             except LLMError as exc:
                 last = exc
                 log.warning("stage=%s model=%s failed: %s", request.stage, current.model, exc)

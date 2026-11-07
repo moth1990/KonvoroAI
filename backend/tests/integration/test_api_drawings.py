@@ -7,10 +7,13 @@ import pytest
 from PIL import Image
 from sqlalchemy import Engine
 
+from konboro.db import models as m
+from konboro.db.session import tenant_session
 from konboro.pipeline.context import StageContext
-from konboro.pipeline.coordinator import FAILED_MESSAGE, Pipeline
+from konboro.pipeline.coordinator import ACCOUNT_MESSAGE, FAILED_MESSAGE, Pipeline
 from konboro.pipeline.stages.s1_intake import THUMB_PX
 from konboro.pipeline.worker import Worker
+from konboro_llm import LLMAccountError
 
 from .api import Api, add_tenant
 from .test_pipeline import pipeline, start  # noqa: F401  (fixture and helper)
@@ -95,6 +98,37 @@ def test_a_failed_run_says_so_in_hebrew(api: Api, migrated_db: dict[str, Engine]
     body = progress(api, tenant, drawing_id).json()
     assert (body["status"], body["error"], body["counted"]) == ("failed", FAILED_MESSAGE, False)
     assert [s["status"] for s in body["stages"]][:3] == ["done", "failed", "queued"]
+
+
+def test_a_refused_model_account_fails_at_once_without_try_again(
+    api: Api,
+    migrated_db: dict[str, Engine],
+    pipeline: Pipeline,  # noqa: F811
+) -> None:
+    """BUG-061: no credit left won't clear on retry, so the stage fails on its first receive and says so."""
+    engine = migrated_db["app"]
+    tenant = add_tenant(engine, used=2)
+
+    def refused(ctx: StageContext):  # type: ignore[no-untyped-def]
+        try:
+            raise LLMAccountError("anthropic call failed: Your credit balance is too low")
+        except LLMAccountError as e:
+            raise RuntimeError("stage 3 could not detect") from e  # a stage that wraps it still counts
+
+    pipeline.stages[3] = refused
+    drawing_id = start(api, tenant)
+    Worker(pipeline).run_until_idle()
+    body = progress(api, tenant, drawing_id).json()
+    assert (body["status"], body["error"], body["counted"]) == ("failed", ACCOUNT_MESSAGE, False)
+    assert "בעוד כמה דקות" not in body["error"]
+    assert [s["status"] for s in body["stages"]][:4] == ["done", "done", "failed", "queued"]
+    with tenant_session(tenant.tenant_id, engine) as s:
+        drawing = s.get_one(m.Drawing, drawing_id)
+        run = s.get_one(m.StageRun, (tenant.tenant_id, drawing_id, 3))
+        assert [i["code"] for i in drawing.issues if i.get("severity") == "error"] == ["llm_account"]
+        assert (run.status, run.attempts, run.error["attempt"]) == ("failed", 1, 1)
+    used = api.client.get("/quota", headers=api.as_(tenant)).json()["counters"][0]["used"]
+    assert used == 2  # given back, as for any technical failure (01 §4.5)
 
 
 def test_the_version_picker_lists_finished_drawings(

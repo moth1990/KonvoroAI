@@ -119,6 +119,40 @@ def test_list_quotes_matches_the_estimators_words_in_code(chat: Chat) -> None:
     assert result_of(fake, 2)["total_count"] == 0
 
 
+def _other_quote(chat: Chat, name: str) -> str:
+    with tenant_session(chat.tenant.tenant_id, chat.api.engine) as s:
+        q = m.Quote(id=new_id("quo"), tenant_id=chat.tenant.tenant_id, name=name)
+        s.add(q)
+        s.flush()
+        s.add(m.QuoteVersion(id=new_id("qv"), tenant_id=chat.tenant.tenant_id, quote_id=q.id, version=1))
+        return q.id
+
+
+@pytest.mark.parametrize("name", ["הצעה בצ'אט 06.11 09:37", "25.26.100.01"])
+def test_a_quote_named_with_a_date_or_a_dotted_number_is_compared_by_its_name(chat: Chat, name: str) -> None:
+    """BUG-099: the estimator's message reaches the model as typed, `list_quotes` matches the name in code, and the
+    answer check reads no amount in the name or a date; a price beside it is still asked again, then removed."""
+    qid = _other_quote(chat, name)
+    fake = chat.model(
+        [
+            calls(("list_quotes", {"text": name})),
+            calls(("compare", {"quote": "QT1"})),
+            {"answer": {"text": f"מול {{{{quote:QT1}}}} ({name}, מ-06.11.2026): 3 שורות שונות, המחיר ליחידה 12.40"}},
+            {"answer": {"text": f"מול {{{{quote:QT1}}}} ({name}): שוב 12.40"}},
+        ]
+    )
+    turn = chat.say(f"תשווה להצעה {name}")
+    assert name in (fake.turns[0].turns[-1].text or "")  # the message as typed
+    listed = result_of(fake, 1)
+    assert listed["total_count"] == 1 and listed["quotes"][0]["quote"] == "QT1"
+    assert result_of(fake, 2)["other_quote"] == "QT1"
+    assert len(fake.turns) == 4  # asked once again, for the price only
+    assert "12.40" in (fake.turns[3].turns[-1].text or "") and name not in (fake.turns[3].turns[-1].text or "")
+    text = turn["assistant"]["blocks"][0]["content"]
+    assert name in text and "12.40" not in text
+    assert "{{quote:" + qid + "}}" in text
+
+
 def test_compare_with_another_quote_pairs_lines_by_signature(chat: Chat) -> None:
     fake = chat.model(
         [calls(("list_quotes", {})), calls(("compare", {"quote": "QT1"})), {"answer": {"text": "הנה ההבדלים"}}]

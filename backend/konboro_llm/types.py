@@ -70,6 +70,13 @@ class LLMError(Exception):
     """Raised when a provider fails or returns output that does not match the schema."""
 
 
+class LLMAccountError(LLMError):
+    """The provider refuses the account, not the request: no credit left, a bad key, no permission (BUG-061).
+
+    A retry or a fallback model won't clear it until an operator acts, so the client raises it at once and the
+    pipeline fails the stage on its first receive. Bedrock's IAM and quota refusals join it in S29."""
+
+
 # ---------------------------------------------------------------------------- tool loop (the chat coordinator, 08)
 
 

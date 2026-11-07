@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-import { signIn, TENANTS } from "./fixtures";
+import { clockAtLatestQuote, signIn, TENANTS } from "./fixtures";
 
 test("home_chat off: the classic home with real data", async ({ page, request }) => {
   await signIn(page, request, TENANTS.classic);
@@ -27,6 +27,20 @@ test("home_chat off: the classic home with real data", async ({ page, request })
 
   await page.getByRole("link", { name: /פריטים בתור האישור/ }).click();
   await expect(page).toHaveURL(/\/queue$/);
+});
+
+test("a shot after midnight sees the seed's times as the baseline did (BUG-098)", async ({ page, request }) => {
+  const token = await signIn(page, request, TENANTS.classic);
+  const latest = page.getByTestId("recent").getByRole("link").first().locator(".muted").last();
+  // the seed ran just before midnight, the shot just after: the newest quote reads "yesterday"
+  const seeded = await clockAtLatestQuote(page, request, token);
+  await page.clock.setFixedTime(seeded + 24 * 3_600_000);
+  await page.goto("/home");
+  await expect(latest).toHaveText("אתמול");
+  // the visual shots fix the clock at the latest quote, so it reads "today" whenever they run
+  await clockAtLatestQuote(page, request, token);
+  await page.reload();
+  await expect(latest).toHaveText(/^היום, \d{2}:\d{2}$/);
 });
 
 test("home_chat on: the chat home", async ({ page, request }) => {

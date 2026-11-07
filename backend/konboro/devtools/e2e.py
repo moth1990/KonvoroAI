@@ -1,14 +1,17 @@
 """The API that Playwright runs against: `python -m konboro.devtools.e2e` (started by playwright.config.ts).
 
 It recreates the `konboro_e2e` database, migrates it, loads plans, flags and fixed E2E tenants, and serves
-the API on port 8001 (KONBORO_E2E_API_PORT) for the web app on port 5181 (KONBORO_E2E_WEB_PORT), with a pipeline
-worker in a thread on its own `e2e-` queues.
+the API on port 8001 (KONBORO_E2E_API_PORT) for the web app on port 5181 (KONBORO_E2E_WEB_PORT), with pipeline
+workers (KONBORO_E2E_WORKERS, 2) in processes of their own on its own `e2e-` queues.
 
 Flags are read-only through the API (S03 decision), so each state a test needs is its own tenant with its own
 dev login. frontend/e2e/fixtures.ts lists the same emails.
 """
 
+import multiprocessing
 import os
+import signal
+import threading
 import time
 from dataclasses import dataclass
 from datetime import UTC, datetime
@@ -367,13 +370,51 @@ def prepare(storage: Storage | None = None) -> Engine:
     return app_engine(database_dsn(DATABASE, role="app"))
 
 
+# Pipeline workers, each a process of its own (BUG-038, BUG-100, BUG-102). In one thread beside the API, the
+# worker's CPU-bound stages held the API's GIL and shared its connection pool: under the screenshot run's amd64
+# emulation the API answered `/me` and the drawing's tiles after a minute (BUG-034), and every test's stages waited
+# in one line behind whichever upload was running (a BOM's seven stages past its 30 s). Two, as in AWS more than one
+# worker takes each queue (12 §3).
+WORKERS = int(os.environ.get("KONBORO_E2E_WORKERS", "2"))
+
+
+def run_worker(web_port: int) -> None:
+    """One E2E pipeline worker, in a spawned process: the stand-in model, its own engine, until the API goes."""
+    from konboro.devtools.fake_llm import fake_providers
+    from konboro.pipeline.stages import STAGES
+    from konboro.pipeline.worker import build
+
+    stop = threading.Event()
+    signal.signal(signal.SIGTERM, lambda *_: stop.set())
+    signal.signal(signal.SIGINT, lambda *_: stop.set())
+    parent = os.getppid()
+
+    def orphaned() -> None:  # the API was killed without a chance to stop its workers
+        while not stop.wait(1):
+            if os.getppid() != parent:
+                stop.set()
+
+    threading.Thread(target=orphaned, daemon=True, name="parent-watch").start()
+    engine = app_engine(database_dsn(DATABASE, role="app"))
+    worker = build(e2e_settings(web_port), engine, stages=e2e_stages(STAGES), llm_providers=fake_providers())
+    worker.run_forever(stop)
+
+
+def start_workers(web_port: int, count: int = WORKERS) -> list[multiprocessing.process.BaseProcess]:
+    spawn = multiprocessing.get_context("spawn")  # never a fork of the API's threads and connections
+    workers: list[multiprocessing.process.BaseProcess] = [
+        spawn.Process(target=run_worker, args=(web_port,), daemon=True, name=f"e2e-worker-{i}") for i in range(count)
+    ]
+    for w in workers:
+        w.start()
+    return workers
+
+
 def main() -> None:
     import uvicorn
 
     from konboro.api.app import create_app
     from konboro.devtools.fake_llm import fake_providers
-    from konboro.pipeline.stages import STAGES
-    from konboro.pipeline.worker import start_in_thread
     from konboro.services.queue import DLQ, STAGE_QUEUES, Queue
 
     api_port = int(os.environ.get("KONBORO_E2E_API_PORT", "8001"))
@@ -386,10 +427,14 @@ def main() -> None:
     queue.ensure()
     for base in [*STAGE_QUEUES.values(), DLQ]:  # nothing left over from an earlier run
         queue.purge(base)
-    # The pipeline worker, beside the API, with the stand-in model: E2E never calls a real one (CLAUDE.md, testing)
-    start_in_thread(settings, engine, stages=e2e_stages(STAGES), llm_providers=fake_providers())
+    # The pipeline workers, beside the API, with the stand-in model: E2E never calls a real one (CLAUDE.md, testing)
+    workers = start_workers(web_port)
     app = create_app(settings, engine=engine, llm_providers=fake_providers())  # the chat's stand-in too (S25)
-    uvicorn.run(app, host="127.0.0.1", port=api_port, log_level="warning")
+    try:
+        uvicorn.run(app, host="127.0.0.1", port=api_port, log_level="warning")
+    finally:
+        for w in workers:
+            w.terminate()
 
 
 if __name__ == "__main__":

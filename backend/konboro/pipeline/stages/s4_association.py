@@ -46,7 +46,7 @@ from ..association.config import DEFAULT, AssociationConfig
 from ..association.merge import Built, attribute, components, instance_confidence, issue, missing_instance, status
 from ..bom.table import BomTable
 from ..context import StageContext
-from ..detection import library
+from ..detection import designators, library
 from ..extraction.geometry import contains
 from ..intake.drawing import name_key
 
@@ -130,6 +130,7 @@ def associate_page(
     dets = pd.detections
     absorbed = assign.absorb_neutral(dets, pe.text_spans, cfg)
     span_boxes = {s.span_id: s.bbox for s in pe.text_spans}
+    whole = designators.joined(pe.text_spans)  # 03 §3.7 item 7 (BUG-111): "T.C" "G1" is TC-G1, for the merge
     live = [d for d in dets if d.det_id not in absorbed]
     by_det = {d.det_id: d for d in dets}
     tags = {d.designator for d in dets if d.designator}
@@ -336,7 +337,7 @@ def associate_page(
         work.built.append(
             Built(
                 instance,
-                d.designator,
+                whole.get(d.designator_span_id or "", d.designator),
                 d.role,
                 scopes[d.det_id].scope if d.det_id in scopes else "in_panel",
                 circuit_context=circuit,

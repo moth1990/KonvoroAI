@@ -13,14 +13,23 @@ from konboro.contracts.common import StageIssue
 from konboro.contracts.intake import ContextArtifact
 from konboro.contracts.matching import ComponentMatch
 from konboro.contracts.merge import AttributeValue, Cable, CircuitContext, Component, Instance
-from konboro.db.catalog import SAMPLE, SAMPLE_ACCESSORIES, SAMPLE_KITS, parse, parse_accessories, parse_kits
+from konboro.db.catalog import (
+    COMMON,
+    COMMON_ACCESSORIES,
+    SAMPLE,
+    SAMPLE_ACCESSORIES,
+    SAMPLE_KITS,
+    parse,
+    parse_accessories,
+    parse_kits,
+)
 from konboro.pipeline.association import schemas
 from konboro.pipeline.matching import notes as notes_mod
 from konboro.pipeline.matching import query as q
 from konboro.pipeline.matching.catalog import Catalog, Item, Kit, norm_sku, norm_token
 from konboro.pipeline.matching.config import DEFAULT
 from konboro.pipeline.matching.factory import Factory, Memory
-from konboro.pipeline.matching.match import Inputs, corrected_poles, match_all, signature
+from konboro.pipeline.matching.match import Inputs, corrected_poles, fitting, match_all, signature
 from konboro.pipeline.matching.notes import NoteRule, Notes
 from konboro_llm.stages.catalog_disambiguation import CatalogAnswer
 
@@ -218,6 +227,20 @@ def test_a_series_gives_the_poles_the_text_leaves_out() -> None:
     assert m.chosen_sku == "S203M-C16" and m.attributes_used["poles"].source == "series"
 
 
+def test_a_model_written_with_its_brand_finds_the_catalogs_token() -> None:
+    """BUG-110: 25/886's meter says "SATEC-135". The catalog keeps the brand in the token (PM135EH: SATEC135), so the
+    model is looked up with its brand too, not only without it ("135"). The factory has no SATEC price, as the demo
+    factory: without the text the preferred brand finds no meter; with it, the drawing names the brand and the model."""
+    no_satec = frozenset(i for i, item in CATALOG.items.items() if item.brand != "SATEC")
+    fac = factory(priced=no_satec)
+    bare = one(comp("energy_meter", "energy_meter", {}, (), designators=("PM",)), fac=fac)
+    assert (bare.status, bare.chosen_sku) == ("unmatched", None)
+    for written in ("SATEC-135", "SATEC 135"):
+        m = one(comp("energy_meter", "energy_meter", {}, (written,), designators=("PM",), brand="SATEC"), fac=fac)
+        assert (m.status, m.method, m.chosen_sku) == ("matched", "explicit_series", "PM135EH"), written
+        assert "catalog_gap" not in m.warnings
+
+
 def test_fnv_the_series_contradicts_the_text() -> None:
     """05 §5.2.1 item 4, NEVIS-1: "3X6A" beside S204M, a 4-pole model. Nothing is chosen; both readings offered."""
     m = one(comp("circuit_breaker", "mcb", {"current_a": 6, "poles": 3}, ("S204M", "3×6A"), designators=("FNV",)))
@@ -371,6 +394,57 @@ def test_a_residual_read_from_the_drawing_is_left_alone() -> None:
     """The slip rule only stands in for a fill-in: a sensitivity the drawing gives is never replaced."""
     m = one(comp("rcd", "rcd", {"current_a": 40, "poles": 4, "rcd_type": "A", "residual_ma": 30}, ("0.3mA",)))
     assert m.chosen_sku == "F204A-40/0.03" and m.attributes_used["residual_ma"].source == "drawing"
+
+
+# BUG-107, 25/886's FB devices: one symbol, "4×40A", '30mA-TYPE"A"', no curve and no SKU anywhere on the drawing
+FB_4X40 = {"current_a": 40, "poles": 4, "rcd_type": "A"}
+
+
+def test_an_rcbo_with_no_curve_and_no_rcbo_in_the_catalog_gets_the_rcds_ambiguous() -> None:
+    """05 §5.6: it may be a residual-current device with no overcurrent protection. The RCDs with its values are
+    offered, `ambiguous`, yellow at most; the component stays an `rcbo` and the reviewer confirms."""
+    m = one(comp("rcbo", "rcbo", FB_4X40, ("FB20", "4×40A", '30mA-TYPE"A"'), designators=("FB20",)))
+    assert m.status == "ambiguous" and m.chosen_sku == "F204A-40/0.03"
+    assert m.confidence <= DEFAULT.yellow_max
+    assert "family_relaxed" in m.warnings and "family_relaxed" in m.relaxations
+    assert m.missing_attributes == ["curve"]
+    assert "מפסק פחת" in m.reason and "עקומה" in m.reason
+    assert m.attributes_used["current_a"].value == 40 and m.attributes_used["poles"].value == 4
+    assert {a.sku for a in m.alternatives} <= {i.sku for i in CATALOG.items.values() if i.family == "rcd"}
+
+
+def test_an_rcbo_with_a_curve_written_never_gets_an_rcd() -> None:
+    m = one(comp("rcbo", "rcbo", FB_4X40 | {"curve": "C"}, ("4×C40A", '30mA-TYPE"A"')))
+    assert m.status == "unmatched" and m.chosen_sku is None and "family_relaxed" not in m.warnings
+
+
+def test_an_rcbo_with_a_breaking_capacity_written_never_gets_an_rcd() -> None:
+    m = one(comp("rcbo", "rcbo", FB_4X40 | {"breaking_capacity_ka": 6}, ("4×40A", "6kA")))
+    assert m.status == "unmatched" and m.chosen_sku is None
+
+
+def test_an_rcbo_the_catalog_has_is_matched_as_an_rcbo_with_no_curve_written() -> None:
+    m = one(comp("rcbo", "rcbo", {"current_a": 16, "poles": 1, "neutral": True, "rcd_type": "A"}))
+    assert m.status == "matched" and m.chosen_sku == "DS201-C16-A30" and "family_relaxed" not in m.warnings
+
+
+def test_the_rcds_keep_every_exact_value() -> None:
+    """No RCD of 4P 32A: nothing relaxes the current, and nothing is offered."""
+    m = one(comp("rcbo", "rcbo", {"current_a": 32, "poles": 4, "rcd_type": "A"}))
+    assert m.status == "unmatched" and m.chosen_sku is None
+
+
+def test_an_rcd_the_reviewer_chose_for_such_an_rcbo_comes_back_from_the_memory() -> None:
+    fb = comp("rcbo", "rcbo", FB_4X40)
+    sig = one(fb).signature
+    assert sig is not None
+    m = one(fb, fac=factory(memory=[Memory(None, sig, None, "F204A-40/0.03")]))
+    assert (m.status, m.method, m.chosen_sku) == ("matched", "memory", "F204A-40/0.03")
+    curved = comp("rcbo", "rcbo", FB_4X40 | {"curve": "C"})
+    sig_c = one(curved).signature
+    assert sig_c is not None
+    m = one(curved, fac=factory(memory=[Memory(None, sig_c, None, "F204A-40/0.03")]))
+    assert m.chosen_sku is None  # a curve is written: an RCD never stands for it, remembered or not
 
 
 def test_the_residual_slip_rule_can_be_turned_off() -> None:
@@ -698,6 +772,51 @@ def test_an_accessory_on_an_unmatched_device_stays_ambiguous() -> None:
     aux = comp("aux_contact", "aux_contact", {"contacts": "21/22"}, cid="cmp_0002", designators=(), parents=("F1",))
     m = run(f1, aux)[1]
     assert (m.status, m.chosen_sku) == ("ambiguous", None)
+
+
+def _with_common_accessories() -> Catalog:
+    """The sample with `common.csv`'s shunt trip and its fits (BUG-109): YO-C XT5-XT6 fits the XT5 and XT6 models."""
+    row = next(r for r in parse(COMMON.read_text(encoding="utf-8")) if r.sku.startswith("YO-C"))
+    yo = Item("cat_yoc", row.sku, row.brand, row.series, row.model_code, row.model_tokens, row.family,
+              row.symbol_class, dict(row.attributes), row.status, None)  # fmt: skip
+    fits = {k: set(v) for k, v in CATALOG.fits.items()}
+    for a in parse_accessories(COMMON_ACCESSORIES.read_text(encoding="utf-8")):
+        assert a.accessory_sku == yo.sku
+        fits.setdefault(yo.id, set()).add((a.fits_brand, a.fits_series))
+    return Catalog({**CATALOG.items, yo.id: yo}, CATALOG.kits, fits)
+
+
+def _trip_on(host: Component, catalog: Catalog) -> ComponentMatch:
+    trip = comp("shunt_trip", "shunt_trip", {}, cid="cmp_0002", designators=(), parents=(host.designators[0],))
+    inp = Inputs(catalog, factory(priced=frozenset(catalog.items)), schemas.default(), Notes(),
+                 {c.component_id: c for c in (host, trip)})  # fmt: skip
+    return match_all([trip, host], inp).matches[0]
+
+
+def test_a_shunt_trip_fits_its_breakers_model() -> None:
+    """BUG-109, 25/886: the XT5 breaker QE's shunt trip is YO-C XT5-XT6. "Tmax XT" runs from XT1 to XT6, so SOR-C XT1,
+    which fits the series, is left out when one fits the XT5 by its model; S2C-A1 (an S200's) never fits."""
+    cat = _with_common_accessories()
+    xt5 = comp("circuit_breaker", "mccb", {"current_a": 630, "poles": 3}, ("ABB-XT5", "3×630A", "LSI", "36kA"),
+               designators=("QE",))  # fmt: skip
+    m = _trip_on(xt5, cat)
+    assert (m.status, m.chosen_sku) == ("matched", "YO-C XT5-XT6 F/P 110-240VAC")
+    assert m.brand_decision is not None and m.brand_decision.source == "parent"
+    xt1 = comp("circuit_breaker", "mccb", {"current_a": 80, "poles": 3}, ("ABB-XT1C", "3×80A"), designators=("Q1",))
+    assert _trip_on(xt1, cat).chosen_sku == "SOR-C 220-240VAC XT1"  # nothing fits an XT1 by its model: the series
+
+
+def test_the_most_specific_fit_wins_on_every_parent() -> None:
+    cat = _with_common_accessories()
+    xt5 = ("ABB", "Tmax XT", ("XT5N630", "XT5N", "XT5"))
+    xt1 = ("ABB", "Tmax XT", ("XT1C160", "XT1C", "XT1"))
+    s200 = ("ABB", "S200M", ("S203M",))
+    assert [i.sku for i in fitting(cat, "shunt_trip", (xt5,))] == ["YO-C XT5-XT6 F/P 110-240VAC"]
+    assert [i.sku for i in fitting(cat, "shunt_trip", (xt1,))] == ["SOR-C 220-240VAC XT1"]
+    assert [i.sku for i in fitting(cat, "shunt_trip", (xt1, xt5))] == ["SOR-C 220-240VAC XT1"]  # fits both: series
+    assert [i.sku for i in fitting(cat, "shunt_trip", (s200,))] == ["S2C-A1"]
+    assert fitting(cat, "shunt_trip", (s200, xt5)) == []  # one accessory on two series fits neither
+    assert [i.sku for i in fitting(cat, "shunt_trip", (("Schneider", "Acti9 iC60N", ()),))] == ["A9A26946"]
 
 
 # --- statuses, issues, auxiliary families -----------------------------------------------------------------------------

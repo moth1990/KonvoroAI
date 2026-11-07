@@ -59,6 +59,13 @@ test("one line per product, and a product not in the catalog waits for a decisio
   await expect(box.getByTestId("nearest").first()).toBeVisible();
   await expect(box).toContainText("במקום 13A");
   await expect(detail.getByTestId("approve")).toHaveCount(0); // a waiting line is decided, not approved
+  // BUG-101: "מאיפה כל ערך" names a BOM breaker's every schema attribute in Hebrew, never by its key
+  const sources = detail.locator(".kv").first();
+  await expect(sources).toContainText("אפס (N)");
+  await expect(sources).toContainText("יחידת הגנה");
+  await expect(sources).toContainText("טווח מ-");
+  for (const key of ["neutral", "setting_a", "trip_unit", "range_min_a", "range_max_a"])
+    await expect(sources).not.toContainText(key);
   await closeSheet(page);
 
   await page.getByTestId("send").click();
@@ -92,6 +99,8 @@ test('"מוצר חדש" makes the product in the app\'s wording (09 §7.16)', as
   await form.getByTestId("np-model").fill("S203M");
   await form.getByTestId("np-curve").fill("C");
   await expect(form).toContainText("חסר: כושר ניתוק"); // the family's required values, from its schema
+  await expect(form).toContainText("כושר ניתוק (kA)"); // the field, with its unit (BUG-101: one table of names)
+  await expect(form).toContainText("כיול (A)");
   await form.getByTestId("np-breaking_capacity_ka").fill("10");
   await form.getByTestId("np-sku").fill("S203M-C13");
   await expect(form.getByTestId("new-product-name")).toContainText(

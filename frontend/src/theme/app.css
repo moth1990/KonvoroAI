@@ -1740,6 +1740,21 @@ a.list-item:hover {
 .msg .chip.quote-ref {
   margin-inline: 2px;
 }
+/* BUG-097: in dark mode the plain chip's surface-2 is the assistant bubble's own colour, so the other quote's name
+   had no edge. The prototype has no dark chip inside a message; the outlined chip (`.chip.out`) with the faint token
+   for its edge (3.6:1 against the bubble) and the text colour (13.1:1) keeps to the dark tokens. Light is unchanged. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .msg.a .chip.quote-ref {
+    background: transparent;
+    border-color: var(--faint);
+    color: var(--fg);
+  }
+}
+:root[data-theme="dark"] .msg.a .chip.quote-ref {
+  background: transparent;
+  border-color: var(--faint);
+  color: var(--fg);
+}
 .chat-in {
   display: flex;
   gap: 8px;

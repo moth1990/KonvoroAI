@@ -16,7 +16,9 @@ While a stage runs, a heartbeat keeps its message invisible, so a long stage is 
 
 A stage that raises is retried after `stage_retry_seconds`. After the third receive the queue's redrive policy
 moves the message to the DLQ; `handle_dead` marks the drawing `failed` and gives the quota back, released or
-refunded (01 §4.5: a technical failure is not counted).
+refunded (01 §4.5: a technical failure is not counted). A model provider that refuses the account (`LLMAccountError`:
+no credit, a bad key, no permission) won't clear on retry, so that stage fails the drawing on its first receive, the
+same way, logged for the operator (BUG-061).
 
 Messages are sent after the commit, so one can be lost: a failed send, or a process that dies first. Each stage run
 records `sent_at`, and `requeue_unsent` sends again any stage that no worker claimed in time (BUG-006). A second
@@ -44,7 +46,7 @@ from konboro.services.llm import usage_recorder
 from konboro.services.queue import MAX_RECEIVES, Queue, Received, StageMessage
 from konboro.services.storage import Storage, drawing_key
 from konboro.settings import Settings
-from konboro_llm import LLMClient
+from konboro_llm import LLMAccountError, LLMClient
 from konboro_llm.base import LLMProvider
 
 from .context import StageContext
@@ -54,9 +56,13 @@ log = logging.getLogger("konboro.pipeline")
 
 FINISHED = ("ready", "failed", "cancelled")
 FAILED_MESSAGE = "הפענוח נכשל בגלל תקלה אצלנו. ההעלאה לא נספרה במכסה. נסו להעלות שוב בעוד כמה דקות"
+# BUG-061: a retry won't help until the operator acts, so the message doesn't suggest one in a few minutes.
+ACCOUNT_MESSAGE = (
+    "הפענוח נעצר בגלל תקלה אצלנו שדורשת טיפול של הצוות שלנו, ולכן העלאה חוזרת עכשיו לא תעזור. ההעלאה לא נספרה במכסה."
+)
 QUOTA_REACHED_MESSAGE = "השרטוט שונה מהגרסה הקודמת ולכן נספר כהצעה חדשה, אבל המכסה החודשית נוצלה. ההעלאה לא נספרה."
 
-Outcome = Literal["done", "retry", "skipped"]
+Outcome = Literal["done", "retry", "failed", "skipped"]
 
 
 class CancelledError(Exception):
@@ -73,6 +79,18 @@ class NotAwaitingError(Exception):
 
 class DrawingBusyError(Exception):
     """A change that needs the pipeline idle, while a stage after stage 1 runs."""
+
+
+def _account_error(error: BaseException) -> bool:
+    """The error, or one it was raised from, is a provider refusing the account (BUG-061)."""
+    seen: set[int] = set()
+    cur: BaseException | None = error
+    while cur is not None and id(cur) not in seen:
+        if isinstance(cur, LLMAccountError):
+            return True
+        seen.add(id(cur))
+        cur = cur.__cause__ or cur.__context__
+    return False
 
 
 def _now() -> datetime:
@@ -198,6 +216,17 @@ class Pipeline:
         except Exception as e:
             log.exception("stage %s of %s failed (attempt %s)", msg.stage, msg.drawing_id, received.receive_count)
             self._record_failure(msg, e, received.receive_count)
+            if _account_error(e):
+                log.error(
+                    "OPERATOR: the model provider refuses the account (credit, key or permission); drawing %s "
+                    "failed at stage %s without a retry: %s",
+                    msg.drawing_id,
+                    msg.stage,
+                    e,
+                )
+                self._fail(msg, "llm_account", ACCOUNT_MESSAGE)
+                self.queue.delete(received)
+                return "failed"
             last = received.receive_count >= MAX_RECEIVES
             self.queue.retry_later(received, 0 if last else self.settings.stage_retry_seconds)
             return "retry"
@@ -208,13 +237,17 @@ class Pipeline:
 
     def handle_dead(self, received: Received) -> None:
         """A message the stage queue gave up on: the drawing failed, and the upload doesn't count."""
-        msg = received.message
+        self._fail(received.message, "pipeline_failed", FAILED_MESSAGE)
+        self.queue.delete(received)
+
+    def _fail(self, msg: StageMessage, code: str, message: str) -> None:
+        """The drawing failed at this stage: the quota goes back (01 §4.5) and the user sees `message`."""
         with tenant_session(msg.tenant_id, self.engine) as s:
             drawing = _lock(s, msg.drawing_id)
             if drawing is not None and drawing.status not in FINISHED:
                 drawing.status = "failed"
                 outcome = _quota_back(s, drawing, "stage_failed")
-                issue = {"code": "pipeline_failed", "severity": "error", "stage": msg.stage, "message": FAILED_MESSAGE}
+                issue = {"code": code, "severity": "error", "stage": msg.stage, "message": message}
                 drawing.issues = [*drawing.issues, issue]
                 if drawing.purpose == "audit":
                     _audit_processing(s, drawing, "failed")
@@ -222,7 +255,6 @@ class Pipeline:
                 if run is not None:
                     run.status, run.finished_at = "failed", _now()
                 log.error("drawing %s failed at stage %s; quota %s", msg.drawing_id, msg.stage, outcome)
-        self.queue.delete(received)
 
     @contextmanager
     def _heartbeat(self, received: Received) -> Iterator[None]:

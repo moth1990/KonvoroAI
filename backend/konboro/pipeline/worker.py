@@ -105,20 +105,6 @@ def build(
     return Worker(pipeline)
 
 
-def start_in_thread(
-    settings: Settings,
-    engine: Engine | None = None,
-    stages: dict[int, Stage] | None = None,
-    llm_providers: dict[str, LLMProvider] | None = None,
-) -> tuple[threading.Thread, threading.Event]:
-    """For the E2E API, which runs a worker beside itself."""
-    stop = threading.Event()
-    worker = build(settings, engine, stages, llm_providers)
-    thread = threading.Thread(target=worker.run_forever, args=(stop,), daemon=True, name="worker")
-    thread.start()
-    return thread, stop
-
-
 def main() -> None:
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
     stop = threading.Event()
