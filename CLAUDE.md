@@ -117,7 +117,7 @@ Schema changes are Alembic migrations in `backend/alembic/versions/`. Update `do
 | `make dev` | API on port 8000 (uvicorn, reload), the pipeline worker (`python -m konboro.pipeline.worker`) and the Vite dev server on port 5180. Needs `make up`. Dev login: `demo@konboro.local` with `KONBORO_DEV_PASSWORD` from `.env`. The worker calls Claude with `ANTHROPIC_API_KEY` from the environment or `.env` (BUG-040), and logs which model it runs on; without a key it uses the stand-in model (`devtools/fake_llm.py`), whose answers are made up and marked `stand-in:` on the page, so a later run with a key classifies those pages again instead of reusing them (BUG-041) |
 | `make test-unit` | pytest unit tests + Vitest |
 | `make test-int` | pytest integration tests against the compose services |
-| `make e2e` | Playwright, desktop and mobile projects. Needs `make up`: it starts its own API and pipeline worker on 8001 over a fresh `konboro_e2e` database with fixed E2E tenants (`konboro/devtools/e2e.py`, `frontend/e2e/fixtures.ts`), on its own `e2e-` queues, and Vite on 5181 |
+| `make e2e` | Playwright, desktop and mobile projects. Needs `make up`: it starts its own API on 8001 and two pipeline workers, each a process of its own (BUG-100), over a fresh `konboro_e2e` database with fixed E2E tenants (`konboro/devtools/e2e.py`, `frontend/e2e/fixtures.ts`), on its own `e2e-` queues, and Vite on 5181 |
 | `make fidelity` | Prototype vs app screenshots into `frontend/e2e/fidelity/report.html`, for the user's review |
 | `make check-screenshots` | Compare the accepted screens with their baselines, in Playwright's Linux Docker image (the same check runs in CI) |
 | `make screenshots` | Rewrite those baselines, only after the user accepts a visual change |

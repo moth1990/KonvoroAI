@@ -19,6 +19,13 @@ import { lineWith } from "./review-helpers";
 
 test.skip(!process.env.KONBORO_VISUAL, "runs in Playwright's Linux image: `make check-screenshots`");
 
+// Under the amd64 emulation, with other apps busy, a review shot took 20–47 s and one `toHaveScreenshot` up to 7 s
+// (two stable captures, then the compare). Playwright's defaults, 30 s a test and 5 s a shot, were shorter than the
+// waits inside the tests themselves (60 s for `/me` and the totals), so a busy machine failed them as timeouts with
+// no pixel different (BUG-038, BUG-102). The new-quote shots, a whole pipeline run each, keep their 180 s.
+test.describe.configure({ timeout: 120_000 });
+const SHOT = { animations: "disabled", maxDiffPixelRatio: 0.002, timeout: 30_000 } as const;
+
 /** `ready` is what must be on screen before the shot: "network idle" alone can fire before the app's first
  * API call when the machine is busy (emulated amd64, parallel pipeline runs). */
 const SCREENS = [
@@ -274,11 +281,7 @@ for (const scheme of ["light", "dark"] as const) {
         await page.evaluate(() => document.fonts.ready);
         await screen.setup(page);
         await page.mouse.move(0, 0);
-        await expect(page).toHaveScreenshot(`${screen.name}-${scheme}.png`, {
-          animations: "disabled",
-          mask: volatile(page),
-          maxDiffPixelRatio: 0.002,
-        });
+        await expect(page).toHaveScreenshot(`${screen.name}-${scheme}.png`, { ...SHOT, mask: volatile(page) });
       });
     }
   });
@@ -294,11 +297,7 @@ for (const scheme of ["light", "dark"] as const) {
         await meLoaded(page);
         await page.evaluate(() => document.fonts.ready);
         await screen.setup(page);
-        await expect(page).toHaveScreenshot(`${screen.name}-${scheme}.png`, {
-          animations: "disabled",
-          mask: volatile(page),
-          maxDiffPixelRatio: 0.002,
-        });
+        await expect(page).toHaveScreenshot(`${screen.name}-${scheme}.png`, { ...SHOT, mask: volatile(page) });
       });
     }
   });
@@ -314,11 +313,7 @@ for (const scheme of ["light", "dark"] as const) {
         for (const ready of [screen.ready(page)].flat()) await ready.waitFor({ timeout: 60_000 });
         await page.waitForLoadState("networkidle");
         await page.evaluate(() => document.fonts.ready);
-        await expect(page).toHaveScreenshot(`${screen.name}-${scheme}.png`, {
-          animations: "disabled",
-          mask: volatile(page),
-          maxDiffPixelRatio: 0.002,
-        });
+        await expect(page).toHaveScreenshot(`${screen.name}-${scheme}.png`, { ...SHOT, mask: volatile(page) });
       });
     }
   });
@@ -339,11 +334,7 @@ for (const scheme of ["light", "dark"] as const) {
         await screen.setup(page);
         await page.waitForLoadState("networkidle");
         await page.mouse.move(0, 0);
-        await expect(page).toHaveScreenshot(`${screen.name}-${scheme}.png`, {
-          animations: "disabled",
-          mask: volatile(page),
-          maxDiffPixelRatio: 0.002,
-        });
+        await expect(page).toHaveScreenshot(`${screen.name}-${scheme}.png`, { ...SHOT, mask: volatile(page) });
       });
     }
   });
@@ -363,11 +354,7 @@ for (const scheme of ["light", "dark"] as const) {
         await screen.setup(page);
         await page.waitForLoadState("networkidle");
         await page.mouse.move(0, 0);
-        await expect(page).toHaveScreenshot(`${screen.name}-${scheme}.png`, {
-          animations: "disabled",
-          mask: volatile(page),
-          maxDiffPixelRatio: 0.002,
-        });
+        await expect(page).toHaveScreenshot(`${screen.name}-${scheme}.png`, { ...SHOT, mask: volatile(page) });
       });
     }
   });
@@ -391,11 +378,7 @@ for (const scheme of ["light", "dark"] as const) {
         await screen.setup(page);
         if (!isMobile(page)) await drawingReady(page);
         await page.mouse.move(0, 0);
-        await expect(page).toHaveScreenshot(`${screen.name}-${scheme}.png`, {
-          animations: "disabled",
-          mask: volatile(page),
-          maxDiffPixelRatio: 0.002,
-        });
+        await expect(page).toHaveScreenshot(`${screen.name}-${scheme}.png`, { ...SHOT, mask: volatile(page) });
       });
     }
   });
