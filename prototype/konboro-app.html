@@ -7,6 +7,7 @@
 /* Layout: app shell with a nav rail on the start (right) side; on phones a bottom tab bar.
    The review screen is a working surface: lines and drawing side by side, chat as a drawer. */
 :root{
+  --ai-a:#2747C6; --ai-b:#7B5CF5; --ai-c:#C77A4A;
   --bg:#F2F4F7; --surface:#FFFFFF; --surface-2:#EBEEF3; --line:#D9DEE6; --line-strong:#C3CAD5;
   --fg:#17202B; --muted:#5A6576; --faint:#8A94A3;
   --accent:#2747C6; --accent-ink:#FFFFFF; --accent-soft:#E7ECFB;
@@ -168,7 +169,50 @@ h3{font-size:14px;font-weight:600}
 .startbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:12px 14px;border-top:1px solid var(--line);background:var(--surface-2);border-radius:0 0 var(--r-lg) var(--r-lg)}
 .samples summary{cursor:pointer;list-style:none;display:flex;gap:8px;align-items:center;padding:14px 16px}
 .samples summary::-webkit-details-marker{display:none}
-.stage .st{font-size:12px;white-space:nowrap;color:var(--muted)}
+.stage .st{font-size:12px;white-space:nowrap;color:var(--muted);text-align:end;display:grid;gap:1px}
+/* ---- live run ---- */
+.run-grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:900px){.run-grid{grid-template-columns:1fr}}
+.orb{width:40px;height:40px;border-radius:50%;flex:none;display:grid;place-items:center;color:#fff;
+  background:conic-gradient(from 0deg,var(--ai-a),var(--ai-b),var(--ai-c),var(--ai-a));animation:orb 3.2s linear infinite;box-shadow:0 0 0 4px var(--accent-soft)}
+.orb>svg{animation:orb 3.2s linear infinite reverse}
+.orb.idle{animation:none;background:var(--ok);box-shadow:0 0 0 4px var(--ok-soft)}
+.orb.idle>svg{animation:none}
+@keyframes orb{to{transform:rotate(360deg)}}
+.run-head{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.run-kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.run-kpis>div{background:var(--surface-2);border-radius:var(--r-sm);padding:8px 10px;display:grid;gap:1px;min-width:0}
+.run-kpis b{font-size:18px;font-variant-numeric:tabular-nums}
+.meter.ai>i{background:linear-gradient(90deg,var(--ai-a),var(--ai-b),var(--ai-c));transition:width .25s linear}
+.stage .sico{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;background:var(--surface-2);color:var(--muted)}
+.stage .sico svg{width:18px;height:18px}
+.stage.done .sico{background:var(--ok-soft);color:var(--ok)}
+.stage.run .sico{color:#fff;background:linear-gradient(135deg,var(--ai-a),var(--ai-b));box-shadow:0 0 0 3px var(--accent-soft);animation:pulse 1.4s ease-in-out infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 6px var(--accent-soft)}}
+.stage{grid-template-columns:30px minmax(0,1fr) auto}
+.stage .live{font-size:12.5px;color:var(--accent)}
+.stage .live::after{content:"";display:inline-block;width:1.2em;text-align:start;animation:dots 1.2s steps(4) infinite}
+@keyframes dots{0%{content:""}25%{content:"."}50%{content:".."}75%{content:"..."}}
+.view{position:relative;border-radius:var(--r-md,10px);overflow:hidden;border:1px solid var(--line);background:#fff;aspect-ratio:1755/1240}
+.view img{width:100%;height:100%;object-fit:contain;display:block}
+.view .scanline{position:absolute;inset-inline:0;height:22%;top:-22%;background:linear-gradient(180deg,transparent,rgba(123,92,245,.22),transparent);animation:scan 2.2s linear infinite;pointer-events:none}
+@keyframes scan{to{top:100%}}
+.view .tiles{position:absolute;inset:0;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(3,1fr);pointer-events:none}
+.view .tiles i{border:1px dashed rgba(39,71,198,.45);background:rgba(39,71,198,.05)}
+.view .tiles i.on{background:rgba(123,92,245,.16)}
+.view .bx{position:absolute;border:2px solid var(--ai-b);border-radius:3px;background:rgba(123,92,245,.10);animation:pop .35s ease-out both}
+@keyframes pop{from{transform:scale(1.4);opacity:0}}
+.view .vlabel{position:absolute;top:8px;inset-inline-start:8px;background:rgba(15,20,40,.78);color:#fff;font-size:12px;padding:3px 8px;border-radius:999px}
+.feed{display:grid;gap:4px;max-height:168px;overflow:hidden}
+.feed div{display:grid;grid-template-columns:42px minmax(0,1fr);gap:8px;font-size:12.5px;animation:feedin .3s ease-out both}
+.feed div:first-child{color:var(--ink,inherit);font-weight:600}
+.feed div span:first-child{color:var(--muted);font-variant-numeric:tabular-nums}
+@keyframes feedin{from{opacity:0;transform:translateY(-4px)}}
+.counters{display:flex;flex-wrap:wrap;gap:6px}
+.counters span{background:var(--surface-2);border-radius:999px;padding:3px 10px;font-size:12.5px}
+.counters b{font-variant-numeric:tabular-nums}
+.breakdown td,.breakdown th{font-size:12.5px}
+@media (prefers-reduced-motion:reduce){.orb,.orb>svg,.view .scanline,.stage.run .sico,.stage .live::after{animation:none}}
 .stage.run .st{color:var(--accent);font-weight:600}
 .spin{display:inline-block;width:12px;height:12px;border:2px solid currentColor;border-inline-end-color:transparent;border-radius:50%;animation:spin .8s linear infinite;vertical-align:-2px;margin-inline-end:4px}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -372,6 +416,16 @@ const ICONS = {
   mic:'<rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 19v3"/>',
   down:'<path d="M12 4v12M7 11l5 5 5-5"/><path d="M4 20h16"/>',
   clip:'<path d="M21.4 11.1l-9.2 9.2a6 6 0 0 1-8.5-8.5l9.2-9.2a4 4 0 0 1 5.7 5.7l-9.2 9.2a2 2 0 0 1-2.8-2.8l8.5-8.5"/>',
+  ai:'<path d="M11 3l1.9 5.1L18 10l-5.1 1.9L11 17l-1.9-5.1L4 10l5.1-1.9z"/><path d="M18.5 15l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z"/>',
+  s_intake:'<path d="M13 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h5"/><path d="M13 3l6 6h-6z"/><path d="M8 13h4M8 17h2"/><path d="M17.5 13.5l.9 2.4 2.4.9-2.4.9-.9 2.4-.9-2.4-2.4-.9 2.4-.9z"/>',
+  s_ocr:'<path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M8 8h8M12 8v8"/>',
+  s_detect:'<path d="M4 8V5a1 1 0 0 1 1-1h3M12 4h2M4 12v2M4 18v1a1 1 0 0 0 1 1h3M12 20h2M18 4h1a1 1 0 0 1 1 1v3"/><circle cx="11" cy="12" r="3"/><path d="M18.5 13.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z"/>',
+  s_graph:'<circle cx="5" cy="6" r="2"/><circle cx="19" cy="6" r="2"/><circle cx="5" cy="18" r="2"/><circle cx="19" cy="18" r="2"/><circle cx="12" cy="12" r="2.4"/><path d="M6.6 7.3l3.5 3.2M17.4 7.3l-3.5 3.2M6.6 16.7l3.5-3.2M17.4 16.7l-3.5-3.2"/>',
+  s_match:'<ellipse cx="10" cy="5.5" rx="6" ry="2.5"/><path d="M4 5.5v12c0 1.4 2.7 2.5 6 2.5M16 5.5v5M4 11.5c0 1.4 2.7 2.5 6 2.5"/><path d="M18 12.5l.9 2.6 2.6.9-2.6.9-.9 2.6-.9-2.6-2.6-.9 2.6-.9z"/>',
+  s_check:'<path d="M12 3l7 3v5c0 4.5-3 8.3-7 10-4-1.7-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/>',
+  s_price:'<ellipse cx="9" cy="6.5" rx="6" ry="2.5"/><path d="M3 6.5v4c0 1.4 2.7 2.5 6 2.5s6-1.1 6-2.5v-4"/><path d="M3 10.5v4c0 1.4 2.7 2.5 6 2.5"/><path d="M13 15.5c0 1.4 1.8 2.5 4 2.5s4-1.1 4-2.5-1.8-2.5-4-2.5-4 1.1-4 2.5zM13 15.5v3c0 1.4 1.8 2.5 4 2.5s4-1.1 4-2.5v-3"/>',
+  bell:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/>',
+  clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
   scan:'<path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M7 12h10"/>',
 };
 const ic = (n, cls = "icon") => `<svg class="${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[n]}</svg>`;
@@ -562,10 +616,11 @@ const FLAGS = [
   {k:"chat_builder", name:"בניית הצעה בצ'אט", desc:"הצעה בלי שרטוט: מתארים את הלוח במילים, והמערכת בונה שורות ומתמחרת מהמחירון"},
   {k:"voice", name:"קלט קולי", desc:"הקלטה בעברית, תמלול ונרמול מונחים (\"שלוש על שש עשרה\" ← 3X16A). דורש את בניית ההצעה בצ'אט"},
   {k:"export_doc", name:"הורדת ההצעה", desc:"PDF ללקוח ו-Excel לעבודה פנימית, מכל גרסה"},
+  {k:"run_cost", name:"עלות וזמן הפענוח", desc:"מציג בזמן הפענוח ובסיומו כמה זמן לקח וכמה עלה בשקלים (מודלים ו-OCR), לכל שלב ובסך הכול"},
   {k:"unresolved", name:"סימון מה לא פוענח", desc:"ריבוע אדום על השרטוט סביב כל מה שהמערכת לא זיהתה, או זיהתה רק חלקית"},
 ];
 function loadFlags(){
-  const f = {home_chat:true, chat_builder:true, voice:true, export_doc:true, unresolved:true};
+  const f = {home_chat:true, chat_builder:true, voice:true, export_doc:true, unresolved:true, run_cost:true};
   try { Object.assign(f, JSON.parse(store.get("flags") || "{}")); } catch(e){}
   return f;
 }
@@ -757,15 +812,28 @@ const SAMPLES = [
   {name:"project_full.pdf", size:6.4, pages:64, err:"בקובץ יש 64 עמודים, והמקסימום בחבילה שלכם הוא 30. אפשר להעלות רק את עמודי הלוחות."},
   {name:"scan_site.pdf", size:34, pages:12, err:"הקובץ גדול מ-20MB. אפשר לייצא אותו מחדש בלי תמונות ברזולוציה גבוהה, או לפצל אותו."},
 ];
+// [title, done summary, icon, expected sim seconds, cost ILS (example), models, live messages]
 const STAGES = [
-  ["קליטה וסיווג עמודים","9 עמודים · 2 תבניות של המפעל · לוח אחד"],
-  ["חילוץ ואריחים","שכבת טקסט חסרה, OCR על 6 עמודים · 58 אריחים"],
-  ["זיהוי סימנים","61 סימנים · 54 מהספרייה, 7 בהכרעת מודל"],
-  ["שיוך טקסט ומיזוג","איחוד לפי תגים: 44 מכשירים ב-13 מוצרים"],
-  ["התאמה לקטלוג","12 מותאמים · 1 בלי דגם"],
-  ["בדיקה","4 ממצאים"],
-  ["תמחור","8 מחירים מהמחירון · 5 חסרים"],
+  ["קליטה וסיווג", "9 עמודים · 2 תבניות של המפעל · לוח אחד", "s_intake", 8, 0.04, "Haiku × 4",
+    ["קורא את מבנה הקובץ", "עמוד 1: נתונים טכניים", "עמודים 2–3: תבנית של המפעל, בלי מודל", "עמוד 4: חזית לוח", "עמודים 5–9: חד-קווי ופיקוד"]],
+  ["קריאת טקסט (OCR)", "אין שכבת טקסט · OCR על 6 עמודים · 58 אריחים", "s_ocr", 38, 0.42, "OCR × 58 · Sonnet × 2",
+    ["אין שכבת טקסט בקובץ, מריץ OCR", "עמוד 5: 12 אריחים", "נקראו: C16, 3X25A, INC=8A", "עמוד 7: טקסט אנכי בעברית", "1,240 מילים עם מיקום"]],
+  ["זיהוי סימנים", "61 סימנים · 54 מהספרייה, 7 בהכרעת מודל", "s_detect", 52, 0.78, "Sonnet × 7 · Opus × 1",
+    ["משווה סימנים לספרייה", "עמוד 5: 18 מא\"זים", "עמוד 6: 14 מא\"זים", "7 סימנים עמומים: שולח למודל", "מגען C1: הוכרע, ביטחון 0.93"]],
+  ["שיוך ומיזוג", "44 מכשירים ← 13 מוצרים", "s_graph", 24, 0.21, "Sonnet × 3",
+    ["מחבר תוויות לסימנים", "F1–F17: אותו דגם, מאחד", "Q01 מצויר בשני עמודים: מכשיר אחד", "44 מכשירים ← 13 מוצרים"]],
+  ["התאמה לקטלוג", "12 מותאמים · 1 בלי דגם", "s_match", 18, 0.12, "Haiku × 6",
+    ["מחפש בקטלוג", "S203M-C16: התאמה מדויקת", "FNV: לפי זיכרון ההתאמות", "מגענים: אין זרם כתוב, מציע 3P 16A"]],
+  ["בדיקה", "4 ממצאים", "s_check", 9, 0.09, "Sonnet × 1",
+    ["בודק חזית מול תוכנית", "F26–F29: בחזית בלבד", "RNV: אין דגם", "4 ממצאים"]],
+  ["תמחור", "8 מחירים מהמחירון · 5 חסרים", "s_price", 3, 0, "קוד בלבד",
+    ["מתמחר מהמחירון שלכם", "8 מחירים זהים להצעות קודמות", "5 שורות בלי מחיר"]],
 ];
+const SIM_SPEED = 10;                 // the demo runs 10x faster than a real run
+const STAGE_END = STAGES.reduce((a, s, i) => (a.push((a[i-1] || 0) + s[3]), a), []);
+const SIM_TOTAL = STAGE_END[STAGE_END.length - 1];
+const mmss = sec => `${Math.floor(sec / 60)}:${String(Math.floor(sec % 60)).padStart(2, "0")}`;
+const ilsc = v => "₪" + v.toFixed(2);
 function validateFile(f){
   const ext = f.name.split(".").pop().toLowerCase();
   if (["dwg","dxf"].includes(ext)) return "קבצי DWG ו-DXF עדיין לא נתמכים. ייצאו PDF מתוכנת השרטוט (Plot ל-PDF) והעלו אותו.";
@@ -829,13 +897,32 @@ function vNew(){
   } else if (U.phase === "run"){
     const name = (U.files.find(f => !f.err) || {}).name || "NURSERY-1.pdf";
     body = `<div class="card pad" style="display:grid;gap:14px">
-      <div class="row"><h2 class="wrap-any" style="flex:1;min-width:0">מפענח את <span class="mono">${esc(name)}</span></h2><span class="small muted num">שלב ${Math.min(U.stage+1,7)} מתוך 7</span></div>
-      <div class="meter"><i style="width:${Math.round(100*U.stage/7)}%"></i></div>
-      <div class="stages">${STAGES.map((s,i) => `<div class="stage ${i<U.stage?"done":i===U.stage?"run":""}">
-        <span class="dot">${i<U.stage?"✓":i+1}</span><span style="min-width:0"><b>${s[0]}</b>${i<U.stage?`<br><span class="small muted">${s[1]}</span>`:""}</span>
-        <span class="st">${i<U.stage?"הושלם":i===U.stage?'<span class="spin" aria-hidden="true"></span>עובד':""}</span></div>`).join("")}</div>
-      <div class="row"><span class="small muted" style="flex:1;min-width:200px">${U.mode === "rev" ? "גרסה חדשה: לא נספרת במכסה." : "שמרנו לכם מקום אחד במכסה. אם הפענוח ייכשל או יבוטל, הוא משתחרר."} אפשר לסגור את המסך, וההצעה תחכה ברשימה.</span>
-        <button class="btn ghost sm danger" data-act="cancelrun">בטל פענוח</button></div></div>`;
+      <div class="run-head"><span class="orb" aria-hidden="true">${ic("ai")}</span>
+        <div style="flex:1;min-width:180px"><h2 class="wrap-any" style="margin:0">המערכת מפענחת את <span class="mono">${esc(name)}</span></h2>
+          <span class="small muted" id="run-sub" aria-live="polite"></span></div>
+        <button class="btn ghost sm danger" data-act="cancelrun">בטל פענוח</button></div>
+      <div class="meter ai" role="progressbar" aria-label="התקדמות הפענוח" aria-valuemin="0" aria-valuemax="100" id="run-meter"><i style="width:0"></i></div>
+      <div class="run-kpis">
+        <div><span class="eyebrow">${ic("clock")} זמן</span><b id="run-clock">0:00</b><span class="small muted" id="run-eta"></span></div>
+        <div><span class="eyebrow">התקדמות</span><b id="run-pct">0%</b><span class="small muted" id="run-step"></span></div>
+        ${on("run_cost") ? `<div><span class="eyebrow">עלות עד עכשיו</span><b id="run-cost">₪0.00</b><span class="small muted" id="run-cost-est"></span></div>` : `<div><span class="eyebrow">עמודים</span><b id="run-pages">0/9</b><span class="small muted">נקראו</span></div>`}
+      </div>
+    </div>
+    <div class="run-grid">
+      <section class="card pad" style="display:grid;gap:10px" aria-label="מה המערכת רואה">
+        <div class="row"><h3 style="margin:0;flex:1">מה המערכת רואה עכשיו</h3><span class="small muted">דמו, מואץ פי ${SIM_SPEED}</span></div>
+        <div class="view" id="run-view"><img id="run-img" alt="העמוד שמפוענח עכשיו"><div id="run-ovl"></div><span class="scanline" aria-hidden="true"></span><span class="vlabel" id="run-vlabel"></span></div>
+        <div class="counters" id="run-counters"></div>
+        <div><span class="eyebrow">יומן</span><div class="feed" id="run-feed" aria-live="off"></div></div>
+      </section>
+      <section class="card pad" style="display:grid;gap:10px" aria-label="שלבי הפענוח">
+        <h3 style="margin:0">שבעה שלבים</h3>
+        <div class="stages" id="run-stages"></div>
+        <div class="row small" style="border-top:1px solid var(--line);padding-top:10px">
+          <span class="muted" style="flex:1;min-width:200px">${U.mode === "rev" ? "גרסה חדשה: לא נספרת במכסה." : "שמרנו מקום אחד במכסה. אם הפענוח ייכשל או יבוטל, הוא משתחרר."} אפשר לעבור למסך אחר, והפענוח ימשיך.</span>
+          <label class="row small"><button class="toggle" role="switch" aria-checked="${!!U.notify}" data-act="runnotify" aria-label="הודע לי כשהפענוח מסתיים"></button>${ic("bell")} הודע לי כשמסתיים</label></div>
+      </section>
+    </div>`;
   } else {
     const cnt = r => [1,2,3,4,5,6,7,8,9].filter(n => PAGE_META[n].route === r).length;
     body = `<div class="card pad" style="display:grid;gap:14px">
@@ -845,7 +932,15 @@ function vNew(){
         <div><span class="eyebrow">לוחות</span><b class="num">1</b><span class="small muted">NURSERY</span></div>
         <div><span class="eyebrow">עמודים</span><b class="num">9</b><span class="small muted">${cnt("פענוח")} פענוח · ${cnt("הקשר")} הקשר · ${cnt("דילוג")} דילוג</span></div>
         <div><span class="eyebrow">תוצאה</span><b class="num">13 מוצרים</b><span class="small muted">8 עם מחיר · 4 ממצאים</span></div>
+        <div><span class="eyebrow">זמן פענוח</span><b class="num">${mmss(SIM_TOTAL)}</b><span class="small muted">צפוי היה ${mmss(SIM_TOTAL * 1.1)}</span></div>
+        ${on("run_cost") ? `<div><span class="eyebrow">עלות הפענוח</span><b class="num">${ilsc(STAGES.reduce((a, x) => a + x[4], 0))}</b><span class="small muted">מודלים ו-OCR · ${ilsc(STAGES.reduce((a, x) => a + x[4], 0) / 9)} לעמוד</span></div>` : ""}
       </div>
+      <details><summary class="small" style="cursor:pointer">פירוט לפי שלב</summary>
+        <div class="tbl-wrap" style="margin-top:8px"><table class="tbl breakdown"><thead><tr><th>שלב</th><th>זמן</th>${on("run_cost") ? "<th>עלות</th>" : ""}<th>מה רץ</th></tr></thead><tbody>
+          ${STAGES.map(x => `<tr><td><span class="row" style="gap:6px;flex-wrap:nowrap">${ic(x[2])}${x[0]}</span></td><td class="n">${mmss(x[3])}</td>${on("run_cost") ? `<td class="n">${x[4] ? ilsc(x[4]) : "—"}</td>` : ""}<td class="small muted">${x[5]}</td></tr>`).join("")}
+        </tbody></table></div>
+        <span class="small muted">העלות היא מה שהפענוח עלה לנו בפועל: טוקנים לפי מחירון הספק ועמודי OCR, בשער היום. המספרים בדמו להמחשה.</span>
+      </details>
       <div style="display:grid;gap:4px"><h3 style="margin:0">סיווג העמודים</h3><span class="small muted">כל העמודים סווגו בביטחון גבוה. אפשר לשנות סוג עמוד כאן או ממסך הבדיקה.</span></div>
       <div class="thumbs">${[1,2,3,4,5,6,7,8,9].map(n => `<div class="thumb"><img src="${IMG(n)}" alt="עמוד ${n}">
         <div class="row small"><b>עמוד ${n}</b><span class="spacer"></span><span class="chip ${PAGE_META[n].route==="פענוח"?"acc":PAGE_META[n].route==="דילוג"?"":"out"}">${PAGE_META[n].route}</span></div>
@@ -856,16 +951,80 @@ function vNew(){
   return shell("new", body, {title: U.mode === "rev" ? "גרסה חדשה" : "הצעה חדשה"});
 }
 let pipeTimer = null;
+function runState(t){
+  let st = STAGE_END.findIndex(e => t < e); if (st < 0) st = STAGES.length;
+  const s0 = st ? STAGE_END[st-1] : 0;
+  const frac = st < STAGES.length ? (t - s0) / STAGES[st][3] : 1;
+  const cost = STAGES.reduce((a, x, i) => a + (i < st ? x[4] : i === st ? x[4] * frac : 0), 0);
+  return {st, frac, cost};
+}
+function runPage(st, frac){
+  if (st === 0) return 1 + Math.min(8, Math.floor(frac * 9));
+  if (st <= 2) return 5 + Math.min(4, Math.floor(frac * 5));
+  return 5;
+}
+function updateRun(){
+  const U = S.upload; if (U.phase !== "run" || !$("#run-stages")) return;
+  const t = U.t, {st, frac, cost} = runState(t);
+  const pct = Math.min(99, Math.round(100 * t / SIM_TOTAL));
+  // pace: compare actual to expected, project the rest
+  const remain = Math.max(0, SIM_TOTAL - t);
+  $("#run-meter i").style.width = pct + "%"; $("#run-meter").setAttribute("aria-valuenow", pct);
+  $("#run-clock").textContent = mmss(t);
+  $("#run-eta").textContent = t < 4 ? `צפוי כ-${mmss(Math.round(SIM_TOTAL * 1.1 / 10) * 10)}` : `נותרו כ-${remain < 20 ? "כמה שניות" : mmss(Math.ceil(remain / 10) * 10)}`;
+  $("#run-pct").textContent = pct + "%";
+  $("#run-step").textContent = st < STAGES.length ? `שלב ${st+1} מתוך 7` : "מסיים";
+  if ($("#run-cost")){ $("#run-cost").textContent = ilsc(cost); $("#run-cost-est").textContent = `צפוי כ-${ilsc(STAGES.reduce((a, x) => a + x[4], 0))}`; }
+  const msgs = st < STAGES.length ? STAGES[st][6] : [];
+  const mi = Math.min(msgs.length - 1, Math.floor(frac * msgs.length));
+  $("#run-sub").textContent = st < STAGES.length ? `${STAGES[st][0]}: ${msgs[mi]}` : "";
+  // stages
+  $("#run-stages").innerHTML = STAGES.map((x, i) => {
+    const cls = i < st ? "done" : i === st ? "run" : "";
+    const tm = i < st ? x[3] : i === st ? t - (i ? STAGE_END[i-1] : 0) : null;
+    return `<div class="stage ${cls}"><span class="sico" aria-hidden="true">${i < st ? "✓" : ic(x[2])}</span>
+      <span style="min-width:0"><b>${x[0]}</b><br>${i < st ? `<span class="small muted">${x[1]}</span>` : i === st ? `<span class="live">${esc(msgs[mi])}</span>` : `<span class="small muted">ממתין</span>`}</span>
+      <span class="st">${tm != null ? `<span class="num">${mmss(tm)}</span>` : ""}${tm != null && on("run_cost") && x[4] ? `<span class="num">${ilsc(i < st ? x[4] : x[4] * frac)}</span>` : ""}</span></div>`;
+  }).join("");
+  // feed: every message already reached
+  const feed = [];
+  STAGES.forEach((x, i) => { if (i > st) return; const n = i < st ? x[6].length : mi + 1; for (let k = 0; k < n; k++) feed.push([(i ? STAGE_END[i-1] : 0) + x[3] * k / x[6].length, x[6][k]]); });
+  const fhtml = feed.slice(-6).reverse().map(([tt, m]) => `<div><span>${mmss(tt)}</span><span>${esc(m)}</span></div>`).join("");
+  if ($("#run-feed").dataset.k !== String(feed.length)){ $("#run-feed").innerHTML = fhtml; $("#run-feed").dataset.k = feed.length; }
+  // counters
+  const c = (stage, total) => st > stage ? total : st === stage ? Math.round(total * frac) : 0;
+  $("#run-counters").innerHTML = `<span>עמודים <b>${c(0,9)}/9</b></span><span>אריחים <b>${c(1,58)}</b></span><span>סימנים <b>${c(2,61)}</b></span><span>מוצרים <b>${c(3,13)}</b></span><span>ממצאים <b>${c(5,4)}</b></span>`;
+  if ($("#run-pages")) $("#run-pages").textContent = `${c(0,9)}/9`;
+  // live view
+  const pg = runPage(st, frac);
+  if ($("#run-img").dataset.p !== String(pg)){ $("#run-img").src = IMG(pg); $("#run-img").dataset.p = pg; }
+  $("#run-vlabel").textContent = `עמוד ${pg} מתוך 9 · ${st < STAGES.length ? STAGES[st][0] : "סיום"}`;
+  let ovl = "";
+  if (st === 1){ const k = Math.floor(((frac * 5) % 1) * 12); ovl = `<div class="tiles">${Array.from({length:12}, (_, i) => `<i class="${i <= k ? "on" : ""}"></i>`).join("")}</div>`; }
+  if (st >= 2){
+    const all = S.lines.flatMap(l => (l.boxes || []).filter(b => b[0] === pg));
+    const shown = st > 2 ? all : all.slice(0, Math.ceil(all.length * Math.min(1, ((frac * 5) % 1) + 0.15)));
+    ovl = shown.map(b => `<i class="bx" style="inset-inline-start:${(100 - b[3] / 17.55).toFixed(2)}%;top:${(b[2] / 12.4).toFixed(2)}%;width:${((b[3] - b[1]) / 17.55).toFixed(2)}%;height:${((b[4] - b[2]) / 12.4).toFixed(2)}%"></i>`).join("");
+  }
+  const ok = $("#run-ovl"); if (ok.dataset.h !== String(ovl.length) + pg){ ok.innerHTML = ovl; ok.dataset.h = String(ovl.length) + pg; }
+}
 function runPipeline(){
-  const U = S.upload; U.phase = "run"; U.stage = 0; render();
+  const U = S.upload; U.phase = "run"; U.t = 0; U.stage = 0; render(); updateRun();
+  const t0 = performance.now();
   const step = () => {
     if (S.upload !== U || U.phase !== "run") return;
-    U.stage++;
-    if (U.stage >= 7){ U.phase = "done"; if (U.mode !== "rev") S.quotaUsed++; render(); return; }
-    if (route() === "new") render();
-    pipeTimer = setTimeout(step, 650);
+    U.t = Math.min(SIM_TOTAL, (performance.now() - t0) / 1000 * SIM_SPEED);
+    U.stage = runState(U.t).st;
+    if (U.t >= SIM_TOTAL){
+      U.phase = "done"; U.stage = 7; if (U.mode !== "rev") S.quotaUsed++;
+      if (route() === "new") render();
+      else toast("הפענוח של NURSERY הסתיים: 13 מוצרים. לבדיקה ← הצעה חדשה", true);
+      return;
+    }
+    if (route() === "new"){ if (!$("#run-stages")) render(); updateRun(); }
+    pipeTimer = setTimeout(step, 200);
   };
-  pipeTimer = setTimeout(step, 650);
+  pipeTimer = setTimeout(step, 200);
 }
 
 /* ---------- review ---------- */
@@ -1457,6 +1616,7 @@ document.addEventListener("click", e => {
     case "logout": S.authed = false; store.del("authed"); location.hash = "login"; render(); break;
     case "sample": { const s = SAMPLES[+t.dataset.i]; const o = {...s}; o.err = validateFile(o); S.upload.files.push(o); render(); break; }
     case "clearfiles": S.upload.files = []; render(); break;
+    case "runnotify": S.upload.notify = !S.upload.notify; t.setAttribute("aria-checked", S.upload.notify); toast(S.upload.notify ? "נודיע כשהפענוח יסתיים, גם אם תעברו למסך אחר" : "בוטלה ההתראה"); break;
     case "rmfile": S.upload.files.splice(+t.dataset.i, 1); render(); break;
     case "upmode": S.upload.mode = t.dataset.m; render(); break;
     case "start": runPipeline(); break;

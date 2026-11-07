@@ -98,6 +98,8 @@ These items are owned outside the code. They do not stop sessions from starting,
 
 Ideas and out-of-scope findings from sessions. Each one is scheduled into a session, or dropped, at the next gate.
 
+- **The live decoding screen** (from the user, 2026-11-07; 01 §4.6, 13 §4.11). The prototype's run step now shows what the system is doing: an icon per stage, the page being read with its tiles and detected boxes, a log, counters, elapsed time and the time left, a "notify me" switch, and the cost in shekels so far and per stage (behind a new flag `run_cost`). Needs a `pipeline_events` table (messages built in code from templates, never by a model), the progress endpoint returning it with `stage_runs` and the drawing's `llm_calls`, a per-model price table and a daily FX rate. Schedule it before the pilot (S32 at the latest): the user waits minutes on this screen.
+
 - **A manual line joins its product's line** (from S27b, 07 §7.1). With `catalog_lines` on, a line the user adds (the picker, draw mode, the chat's `add_line`) of a product the panel already has a line for should add to that line's quantity, its box with it; today it is a line of its own. Due with the flag's removal at the latest.
 - **Eval each stage on labelled input (00 §10.1)** (from S06). Today `make eval` runs the pipeline end to end, so a stage-1 miss also costs stage 4. Stage 4 can be fed the labelled detections once stage 3 has box labels; due with the stage 2–3 labeling work (S10/S12).
 - **PDFium in a process pool** (from S07, BUG-010). Every PDFium call in a process takes one lock, because PDFium is not thread-safe. Thumbnails are cheap; S10's tiling and deep-zoom renders are not. If rendering becomes the bottleneck, move it to a process pool.
