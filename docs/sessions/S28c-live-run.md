@@ -142,6 +142,7 @@ None open.
 - **Eval / metrics:** `make eval` (replay): no change against the baseline. Unit: 1371 backend, 330 frontend. Integration: 841 (840 in `make check`, and the seed test fixed and passing). E2E: 259 passed, desktop and mobile.
 - **Bugs logged:**
   - BUG-116 (P3, watch): at load average 80–108, stage 1's heartbeat missed its window. A second worker ran the stage, and `retry_later` raised on a stale receipt. The drawing still finished, and S28c did not cause it.
+  - BUG-115 (P2, open, from PR #41) failed again on this PR's CI: the review action `/qty` took 1.18 s against the 1 s guard, on a runner where every step ran about 1.75× slower than on main. Locally it takes 0.09 s. The bug's entry has the numbers.
   - Test harness fixes, not bugs:
     - The fidelity harness waited 15 s for the prototype's done step. Since PR #41, its demo run takes about 15 s, so the wait is now 30 s.
     - The E2E slow project's stages took 1.5 s each, shorter than the live step's 2 s poll, so `make screenshots` once missed stage 2 running. Each slow stage now takes 3 s (`devtools/e2e.SLOW_STAGE_S`).
