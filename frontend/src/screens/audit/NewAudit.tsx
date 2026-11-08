@@ -2,14 +2,17 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState, type DragEvent } from "react";
 import { Navigate, useSearchParams } from "react-router";
 
-import { ApiError, fetchProgress, uploadAudit, type Me, type UploadedFile } from "../../api/client";
+import { ApiError, fetchProgress, uploadAudit, type Me, type Progress, type UploadedFile } from "../../api/client";
 import { useMe } from "../../api/QueryProvider";
 import { quotaView } from "../../shell/quota";
+import { watchRun } from "../../shell/runWatch";
 import { Shell } from "../../shell/Shell";
 import { Icon } from "../../ui/Icon";
 import { useToast } from "../../ui/Toast";
 import { ConfirmStep, FailedStep, isActive, POLL_MS, RunStep } from "../newQuote/NewQuote";
+import { estimateText, LIVE_POLL_MS } from "../newQuote/live";
 import { applyServerCheck, clientCheck, sizeText, type PickedFile } from "../newQuote/model";
+import { useStartEstimate } from "../newQuote/useEstimate";
 import { auditStartState, quoteCheck } from "./model";
 
 const FALLBACK = "משהו השתבש אצלנו. נסו שוב בעוד רגע";
@@ -24,11 +27,13 @@ export function NewAuditScreen() {
   const queries = useQueryClient();
   const [params, setParams] = useSearchParams();
   const drawingId = params.get("drawing");
+  const live = !!me.data?.flags.live_run;
   const progress = useQuery({
     queryKey: ["progress", drawingId],
-    queryFn: () => fetchProgress(drawingId ?? ""),
+    queryFn: () =>
+      fetchProgress(drawingId ?? "", queries.getQueryData<Progress>(["progress", drawingId])?.live?.seconds_left),
     enabled: drawingId !== null,
-    refetchInterval: (q) => (isActive(q.state.data) ? POLL_MS : false),
+    refetchInterval: (q) => (isActive(q.state.data) ? (live ? LIVE_POLL_MS : POLL_MS) : false),
   });
   const p = progress.data;
   const ready = p?.status === "ready" && p.audit_id;
@@ -47,7 +52,8 @@ export function NewAuditScreen() {
     ) : null;
   else if (p && p.status === "awaiting_confirmation")
     body = <ConfirmStep progress={p} me={me.data} onCancelled={() => setParams({})} />;
-  else if (p && isActive(p)) body = <RunStep progress={p} onCancelled={() => setParams({})} />;
+  else if (p && isActive(p))
+    body = <RunStep progress={p} updatedAt={progress.dataUpdatedAt} onCancelled={() => setParams({})} />;
   else if (p && p.status === "failed") body = <FailedStep progress={p} onBack={() => setParams({})} />;
   else body = <PickStep me={me.data} onStarted={(id) => setParams({ drawing: id })} />;
   return <Shell title="בדיקת הצעה קיימת">{body}</Shell>;
@@ -68,6 +74,9 @@ function PickStep({ me, onStarted }: { me: Me; onStarted: (drawingId: string) =>
   const [quote, setQuote] = useState<PickedFile | null>(null);
   const [busy, setBusy] = useState(false);
   const start = auditStartState({ drawings, quote, remaining: quotaView(me.quota).remaining, busy });
+  const live = !!me.flags.live_run;
+  // the drawing's pages: the audit runs stages 1–4 and the audit step on them (11 §5.1, S28c)
+  const estimate = useStartEstimate(drawings, setDrawings, live, "audit");
 
   async function begin() {
     if (!quote) return;
@@ -75,6 +84,8 @@ function PickStep({ me, onStarted }: { me: Me; onStarted: (drawingId: string) =>
     try {
       const result = await uploadAudit({ files: drawings.map((f) => f.file), quote: quote.file, project });
       void queries.invalidateQueries({ queryKey: ["me"] });
+      if (live)
+        watchRun({ drawingId: result.drawing_id, name: project.trim() || drawings[0]?.file.name || "", kind: "audit" });
       onStarted(result.drawing_id);
     } catch (err) {
       if (err instanceof ApiError && err.code === "upload_rejected") {
@@ -140,6 +151,12 @@ function PickStep({ me, onStarted }: { me: Me; onStarted: (drawingId: string) =>
         >
           {start.text}
         </span>
+        {estimate && quote && !quote.error && (
+          <span className="small estimate" data-testid="estimate" title="צפי גס לפי מספר העמודים של השרטוט">
+            <Icon name="clock" />
+            <span>{estimateText(estimate)}</span>
+          </span>
+        )}
         <button
           type="button"
           className="btn primary"
@@ -212,7 +229,10 @@ function FilePick(props: {
               </span>
               <span style={{ minWidth: 0 }}>
                 <span className="mono wrap-any">{f.file.name}</span>{" "}
-                <span className="small muted">{sizeText(f.file.size)}</span>
+                <span className="small muted">
+                  {sizeText(f.file.size)}
+                  {f.pages ? ` · ${f.pages} עמודים` : ""}
+                </span>
                 {f.error && <div className="err-msg">{f.error.message}</div>}
               </span>
               <span className={`chip ${f.error ? "bad" : "ok"}`}>{f.error ? "נדחה" : "תקין"}</span>

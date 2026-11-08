@@ -1,7 +1,7 @@
 """What a stage gets to work with: the tenant's session, its files, the outputs of the stages before it, and the
 model gateway (every LLM call goes through `llm`, CLAUDE.md non-negotiable 2)."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import TypeVar
 
 from pydantic import BaseModel
@@ -11,6 +11,8 @@ from konboro.contracts import STAGE_OUTPUTS
 from konboro.db.models import Drawing, StageRun
 from konboro.services.storage import Storage
 from konboro_llm import LLMClient
+
+from .events import SILENT, Events
 
 M = TypeVar("M", bound=BaseModel)
 
@@ -22,6 +24,8 @@ class StageContext:
     drawing: Drawing
     stage: int
     llm: LLMClient  # every answered call is written to llm_calls for this tenant and drawing
+    # what the stage reports while it runs, for the live run step (01 §4.6); silent outside the worker
+    events: Events = field(default=SILENT)
 
     @property
     def tenant_id(self) -> str:

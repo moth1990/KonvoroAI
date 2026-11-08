@@ -72,6 +72,9 @@ export const TENANTS = {
   // S28. A new factory's first day: no terms, no price list; its first quote is sent, so one tenant per project.
   dayOneDesktop: "day-one-desktop@e2e.konboro.local",
   dayOneMobile: "day-one-mobile@e2e.konboro.local",
+  // S28c. `live_run` off: the classic run step. One tenant per project, since an upload counts.
+  liveOffDesktop: "live-off-desktop@e2e.konboro.local",
+  liveOffMobile: "live-off-mobile@e2e.konboro.local",
 } as const;
 
 /** The fixture audit's id in each audit tenant (`E2eTenant.audit_id` in devtools/e2e.py). */

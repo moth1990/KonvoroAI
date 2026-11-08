@@ -353,6 +353,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/drawings/check": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Check
+         * @description The upload's checks and the start bar's estimate before "התחל פענוח" (01 §4.6 item 4, S28c decision 1): the
+         *     page count, the rejections, the expected time and cost by page count and size. Nothing is stored or counted.
+         */
+        post: operations["check_drawings_check_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/drawings/revisable": {
         parameters: {
             query?: never;
@@ -464,7 +485,7 @@ export interface paths {
         };
         /**
          * Get Progress
-         * @description Polled every second by the new-quote screen (S05 decision).
+         * @description Polled every second by the new-quote screen (S05 decision), every two with `live_run` (01 §4.6).
          */
         get: operations["get_progress_drawings__drawing_id__progress_get"];
         put?: never;
@@ -1953,6 +1974,20 @@ export interface components {
             /** Status */
             status: string;
         };
+        /** Body_check_drawings_check_post */
+        Body_check_drawings_check_post: {
+            /**
+             * Files
+             * @description The files the user picked
+             */
+            files: string[];
+            /**
+             * Purpose
+             * @default quote
+             * @enum {string}
+             */
+            purpose: "quote" | "audit";
+        };
         /** Body_put_logo_settings_document_logo_put */
         Body_put_logo_settings_document_logo_put: {
             /**
@@ -2480,6 +2515,23 @@ export interface components {
              */
             selected_line_ids: string[];
         };
+        /**
+         * CheckOut
+         * @description `POST /drawings/check`: the upload's checks without the upload. Nothing is stored or counted.
+         */
+        CheckOut: {
+            /**
+             * Error
+             * @description An upload-wide problem, e.g. too many pages in all
+             */
+            error?: string | null;
+            /** @description Null when a file is rejected */
+            estimate: components["schemas"]["EstimateOut"] | null;
+            /** Files */
+            files: components["schemas"]["UploadedFileOut"][];
+            /** Message */
+            message?: string | null;
+        };
         /** CompanyDetails */
         CompanyDetails: {
             /** Address */
@@ -2760,6 +2812,22 @@ export interface components {
         /** ErrorResponse */
         ErrorResponse: {
             error: components["schemas"]["ErrorBody"];
+        };
+        /**
+         * EstimateOut
+         * @description The start bar's rough estimate (01 §4.6 item 4): page count and size only, the routes being unknown.
+         */
+        EstimateOut: {
+            /**
+             * Cost Usd
+             * @description US dollars, e.g. 0.44
+             * @example 0.15
+             */
+            cost_usd: string;
+            /** Pages */
+            pages: number;
+            /** Seconds */
+            seconds: number;
         };
         /** FindingOut */
         FindingOut: {
@@ -3072,6 +3140,126 @@ export interface components {
         LineSupplierIn: {
             /** Supplier Price Id */
             supplier_price_id: string;
+        };
+        /** LiveMessageOut */
+        LiveMessageOut: {
+            /**
+             * At S
+             * @description Seconds from the run's start
+             */
+            at_s: number;
+            /** Stage */
+            stage: number;
+            /**
+             * Text
+             * @description Hebrew, from a template in code (pipeline/events.py), never a model
+             */
+            text: string;
+        };
+        /** LiveModelOut */
+        LiveModelOut: {
+            /** Calls */
+            calls: number;
+            /**
+             * Label
+             * @description The model's family (Haiku, Sonnet, Opus), or what it does (קריאת טקסט)
+             */
+            label: string;
+        };
+        /**
+         * LiveOut
+         * @description The live run step and the done step's time and cost (01 §4.6, `live_run`).
+         */
+        LiveOut: {
+            /**
+             * Cost Estimate Usd
+             * @description Spent so far plus the expected cost of the stages left
+             * @example 0.15
+             */
+            cost_estimate_usd: string;
+            /** Cost Per Page Usd */
+            cost_per_page_usd: string | null;
+            /**
+             * Cost Usd
+             * @description US dollars, e.g. 0.44
+             * @example 0.15
+             */
+            cost_usd: string;
+            /**
+             * Counters
+             * @description pages, pages_read, tiles, components, products, findings
+             */
+            counters: {
+                [key: string]: number;
+            };
+            /** Elapsed S */
+            elapsed_s: number;
+            /**
+             * Fraction
+             * @description Elapsed of elapsed + left, for the meter
+             */
+            fraction: number;
+            /**
+             * Messages
+             * @description The last six, oldest first
+             */
+            messages: components["schemas"]["LiveMessageOut"][];
+            /**
+             * Seconds Expected
+             * @description The whole run, as now expected
+             */
+            seconds_expected: number;
+            /**
+             * Seconds Left
+             * @description Rounded to 10 s; null once the run ended
+             */
+            seconds_left: number | null;
+            /** Stages */
+            stages: components["schemas"]["LiveStageOut"][];
+            /** Started At */
+            started_at: string | null;
+            view: components["schemas"]["LiveViewOut"] | null;
+        };
+        /** LiveStageOut */
+        LiveStageOut: {
+            /** Calls */
+            calls: number;
+            /**
+             * Cost Usd
+             * @description What its model calls cost, every attempt; null before it starts
+             */
+            cost_usd: string | null;
+            /** Models */
+            models: components["schemas"]["LiveModelOut"][];
+            /**
+             * Seconds
+             * @description How long it ran (or runs so far); null before it starts
+             */
+            seconds: number | null;
+            /** Stage */
+            stage: number;
+        };
+        /**
+         * LiveViewOut
+         * @description The page the run is on, and stage 3's boxes on it in PDF points (origin top left).
+         */
+        LiveViewOut: {
+            /**
+             * Boxes
+             * @description [x0, y0, x1, y1] in points
+             */
+            boxes: number[][];
+            /** Image Url */
+            image_url: string | null;
+            /** Page Id */
+            page_id: string;
+            /** Page No */
+            page_no: number | null;
+            /**
+             * Size
+             * @description The page's width and height in points, for the boxes
+             */
+            size: number[] | null;
         };
         /** LoginIn */
         LoginIn: {
@@ -3803,6 +3991,8 @@ export interface components {
             error?: string | null;
             /** Files */
             files: components["schemas"]["ProgressFileOut"][];
+            /** @description With `live_run` on: times, cost and what each stage reports */
+            live?: components["schemas"]["LiveOut"] | null;
             /**
              * Name
              * @description The project's name, or else the first file's
@@ -5211,6 +5401,39 @@ export interface operations {
             };
         };
     };
+    check_drawings_check_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_check_drawings_check_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CheckOut"];
+                };
+            };
+            /** @description Error */
+            "4XX": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     list_revisable_drawings_revisable_get: {
         parameters: {
             query?: never;
@@ -5376,7 +5599,10 @@ export interface operations {
     };
     get_progress_drawings__drawing_id__progress_get: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description The time left the screen shows now (live_run) */
+                shown_left?: number | null;
+            };
             header?: never;
             path: {
                 drawing_id: string;

@@ -16,9 +16,11 @@ class RawAnswer(BaseModel):
     model: str
     input_tokens: int
     output_tokens: int
+    cache_read_tokens: int = 0
+    cache_write_tokens: int = 0
 
     def usage(self) -> Usage:
-        return Usage(self.input_tokens, self.output_tokens)
+        return Usage(self.input_tokens, self.output_tokens, self.cache_read_tokens, self.cache_write_tokens)
 
 
 class RawToolCall(BaseModel):
@@ -36,9 +38,11 @@ class RawTurn(BaseModel):
     model: str
     input_tokens: int
     output_tokens: int
+    cache_read_tokens: int = 0
+    cache_write_tokens: int = 0
 
     def usage(self) -> Usage:
-        return Usage(self.input_tokens, self.output_tokens)
+        return Usage(self.input_tokens, self.output_tokens, self.cache_read_tokens, self.cache_write_tokens)
 
 
 class LLMProvider(Protocol):

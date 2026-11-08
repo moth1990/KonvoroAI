@@ -120,7 +120,7 @@ def test_the_run_step_shows_the_stage_3_line(api: Api, seeded: dict[str, Engine]
     Worker(pipeline).run_until_idle()
     stage_3 = progress(api, tenant, drawing_id).json()["stages"][2]
     assert stage_3["status"] == "done"
-    assert stage_3["summary"].endswith(" סימנים")  # the stand-in is always sure: nothing for the disambiguation call
+    assert stage_3["summary"].endswith(" רכיבים")  # the stand-in is always sure: nothing for the disambiguation call
 
 
 def test_a_drawing_from_the_pipeline_opens_for_review(

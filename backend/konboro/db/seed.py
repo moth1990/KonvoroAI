@@ -16,7 +16,7 @@ from sqlalchemy import Engine, create_engine, func, select, text, update
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
-from konboro.domain.flags import CATALOG_LINES
+from konboro.domain.flags import CATALOG_LINES, LIVE_RUN
 from konboro.settings import get_settings
 
 from . import catalog
@@ -100,6 +100,14 @@ FLAGS: list[dict[str, Any]] = [
         "key": CATALOG_LINES,
         "description": "שורות מהקטלוג: מוצר אחד בשורה, ומוצר חדש ממתין להחלטה (13 §4.10)",
         "depends_on": [],
+    },
+    # S28c: the live run step, its time and its cost. The first flag on for every factory (13 §4.11, `scope=global`):
+    # a kill switch, not a rollout; with it off the run step is the classic one.
+    {
+        "key": LIVE_RUN,
+        "description": "מסך פענוח חי: מה המערכת רואה, זמן שנותר ועלות בדולרים (13 §4.11)",
+        "depends_on": [],
+        "default_on": True,
     },
 ]
 S24_FLAGS = ("onboarding", "settings_screen", "approval_queue")
@@ -193,7 +201,11 @@ def seed_global(session: Session) -> None:
         session.execute(insert(Plan).values(**plan).on_conflict_do_nothing(index_elements=["id"]))
     for flag in FLAGS:
         row = insert(FeatureFlag).values(**flag)
-        session.execute(row.on_conflict_do_update(index_elements=["key"], set_={"remove_by": row.excluded.remove_by}))
+        # A flag that says whether it is on for everyone keeps saying it; the others keep what an operator set.
+        kept = {"remove_by": row.excluded.remove_by}
+        if "default_on" in flag:
+            kept["default_on"] = row.excluded.default_on
+        session.execute(row.on_conflict_do_update(index_elements=["key"], set_=kept))
     session.execute(
         insert(VatRate)
         .values(id="vat_01JD0DEM000000000000000000", rate=Decimal("0.18"), valid_from=date(2025, 1, 1))

@@ -101,5 +101,5 @@ def test_the_run_step_shows_the_stage_2_line(api: Api, migrated_db: dict[str, En
     drawing_id = send(api, tenant, NURSERY)
     Worker(pipeline).run_until_idle()
     stages = progress(api, tenant, drawing_id).json()["stages"]
-    assert stages[1]["summary"].startswith("שכבת טקסט חסרה, OCR על 5 עמודים · ")
+    assert stages[1]["summary"].startswith("אין שכבת טקסט · נקראו 5 עמודים מהתמונה · ")
     assert stages[1]["summary"].endswith("אריחים")

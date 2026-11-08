@@ -237,6 +237,16 @@ def build_tenant_graph(s: Session, tenant_id: str) -> dict[str, str]:
         )
     )
     add(
+        m.PipelineEvent(
+            id=new_id("pev"),
+            tenant_id=tenant_id,
+            drawing_id=drw.id,
+            stage=3,
+            kind="message",
+            payload={"key": "components_on_page", "text": "עמוד 5: 18 רכיבים", "page_id": None},
+        )
+    )
+    add(
         m.BuildMessage(
             id=new_id("bmg"), tenant_id=tenant_id, drawing_id=drw.id, role="user", content={"text": '12 מא"ז 1X16'}
         )

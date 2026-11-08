@@ -1,6 +1,7 @@
 /**
  * Screenshot baselines for the screens the user accepted in the fidelity review (docs/dev-strategy.md §5):
- * login, home classic with the shell, home chat, the new-quote steps (S05) and the review screen's lines, line
+ * login, home classic with the shell, home chat, the new-quote steps (S05; the live run and done step since S28c)
+ * and the review screen's lines, line
  * detail and red filter (S09) and its drawing (S11), the audit's results, evidence and pick step on the
  * 26-993 fixture (S16), the price list and its editor (S19), and the review's product picker (S23b: an attribute
  * from a list, the bulk brand discount, a missing line, the picker, draw mode); light and dark; desktop and mobile.
@@ -57,7 +58,10 @@ const NURSERY = fileURLToPath(new URL("../../golden/NURSERY-1/NURSERY-1.pdf", im
 
 /**
  * Text that changes with the clock (the weekday, "today, 18:52", the renewal date) or with the order the tests
- * run in (the quota counts: uploads in parallel tests move them).
+ * run in (the quota counts: uploads in parallel tests move them). The live run (S28c) adds its own: the estimate
+ * (the medians move as runs are stored), the run's sentence, clock, progress and cost, the counters, the log, the
+ * page being read, each stage's time and cost, and the done step's time and cost. The labels around them stay in
+ * the shot.
  */
 function volatile(page: Page) {
   return [
@@ -67,6 +71,18 @@ function volatile(page: Page) {
     page.getByTestId("quota-meter"),
     page.getByTestId("start-note"),
     page.getByTestId("counted-note"),
+    page.getByTestId("estimate"),
+    page.getByTestId("run-sub"),
+    page.locator(".meter.ai"),
+    page.locator(".run-kpis .num"),
+    page.getByTestId("run-eta"),
+    page.locator("[data-testid=run-counters] .num"),
+    page.locator("[data-testid=run-log] .feed"),
+    page.getByTestId("run-view"),
+    page.locator(".live-stages .st"),
+    page.locator(".live-stages .live"),
+    page.locator("[data-testid=done-time] .num"),
+    page.locator("[data-testid=done-cost] .num"),
   ];
 }
 

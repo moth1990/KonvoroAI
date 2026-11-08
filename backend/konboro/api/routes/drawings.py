@@ -1,9 +1,10 @@
 """Uploads and their pipeline runs: the new-quote screen (01 §4.6, prototype `vNew`)."""
 
-from typing import Annotated, Any
+from typing import Annotated, Any, Literal
 
-from fastapi import APIRouter, BackgroundTasks, Depends, File, Form, Path, Request, UploadFile, status
+from fastapi import APIRouter, BackgroundTasks, Depends, File, Form, Path, Query, Request, UploadFile, status
 
+from konboro.domain.flags import LIVE_RUN, is_enabled
 from konboro.domain.permissions import Permission
 from konboro.pipeline import coordinator
 from konboro.pipeline.bom.table import BomTable, items
@@ -11,8 +12,8 @@ from konboro.pipeline.intake import corrections
 from konboro.pipeline.intake.routing import CONFIRM_THRESHOLD
 from konboro.pipeline.stages import NAMES
 from konboro.pipeline.stages.s1_intake import thumbnail_key
-from konboro.services import drawings, onboarding, quota
-from konboro.services.intake import MB, Limits
+from konboro.services import drawings, onboarding, quota, run_estimate, run_live
+from konboro.services.intake import MB, Limits, check_upload
 from konboro.services.queue import Queue, StageMessage
 from konboro.services.storage import Storage
 
@@ -22,6 +23,13 @@ from ..schemas import (
     BomColumnOut,
     BomColumnsIn,
     BomTableOut,
+    CheckOut,
+    EstimateOut,
+    LiveMessageOut,
+    LiveModelOut,
+    LiveOut,
+    LiveStageOut,
+    LiveViewOut,
     NoticeOut,
     PageKindIn,
     ProgressFileOut,
@@ -89,6 +97,30 @@ def upload(
     return UploadOut(drawing_id=d.id, status=d.status, files=[_file_out(f) for f in new.files], counted_as=new.reason)
 
 
+@router.post("/drawings/check", dependencies=[Depends(require_flag(LIVE_RUN))])
+def check(
+    request: Request,
+    actor: Writer,
+    files: Annotated[list[UploadFile], File(description="The files the user picked")],
+    purpose: Annotated[Literal["quote", "audit"], Form()] = "quote",
+) -> CheckOut:
+    """The upload's checks and the start bar's estimate before "התחל פענוח" (01 §4.6 item 4, S28c decision 1): the
+    page count, the rejections, the expected time and cost by page count and size. Nothing is stored or counted."""
+    received = [(f.filename or "file", f.file.read(_READ_LIMIT)) for f in files]
+    result = check_upload(received, drawings.limits_for(actor.session, actor.tenant_id))
+    estimate = None
+    if result.ok:
+        sizes = [size for f in result.files for size in f.page_sizes_pt]
+        units = run_estimate.units_before(sizes, result.total_pages)
+        stages = [1, 2, 3, 4, 8] if purpose == "audit" else [*range(1, 8)]
+        rates = run_estimate.rates(actor.session, actor.tenant_id)
+        found = run_estimate.estimate(stages, units, rates)
+        estimate = EstimateOut(pages=result.total_pages, seconds=round(found.seconds), cost_usd=found.usd)
+    return CheckOut(
+        files=[_file_out(f) for f in result.files], error=result.error, message=result.message, estimate=estimate
+    )
+
+
 def _file_out(f: drawings.CheckedFile) -> UploadedFileOut:
     return UploadedFileOut(
         name=f.name,
@@ -110,9 +142,14 @@ def list_revisable(actor: Reader) -> list[RevisableOut]:
 
 
 @router.get("/drawings/{drawing_id}/progress")
-def get_progress(request: Request, actor: Reader, drawing_id: DrawingId) -> ProgressOut:
-    """Polled every second by the new-quote screen (S05 decision)."""
-    return _progress_out(actor, request.app.state.storage, drawing_id)
+def get_progress(
+    request: Request,
+    actor: Reader,
+    drawing_id: DrawingId,
+    shown_left: Annotated[int | None, Query(ge=0, description="The time left the screen shows now (live_run)")] = None,
+) -> ProgressOut:
+    """Polled every second by the new-quote screen (S05 decision), every two with `live_run` (01 §4.6)."""
+    return _progress_out(actor, request.app.state.storage, drawing_id, shown_left)
 
 
 @router.post("/drawings/{drawing_id}/cancel")
@@ -227,7 +264,42 @@ def _bom_out(table: BomTable) -> BomTableOut:
     )
 
 
-def _progress_out(actor: Actor, storage: Storage, drawing_id: str) -> ProgressOut:
+def _live_out(actor: Actor, storage: Storage, p: drawings.Progress, shown_left: int | None) -> LiveOut:
+    x = run_live.live(actor.session, storage, p, shown_left=shown_left)
+    return LiveOut(
+        started_at=x.started_at,
+        elapsed_s=x.elapsed_s,
+        seconds_left=x.seconds_left,
+        seconds_expected=x.seconds_expected,
+        fraction=x.fraction,
+        cost_usd=x.cost_usd,
+        cost_estimate_usd=x.cost_estimate_usd,
+        cost_per_page_usd=x.cost_per_page_usd,
+        stages=[
+            LiveStageOut(
+                stage=st.stage,
+                seconds=st.seconds,
+                cost_usd=st.cost_usd,
+                calls=st.calls,
+                models=[LiveModelOut(label=k, calls=v) for k, v in st.models.items()],
+            )
+            for st in x.stages
+        ],
+        messages=[LiveMessageOut(stage=msg.stage, text=msg.text, at_s=msg.at_s) for msg in x.messages],
+        counters=x.counters,
+        view=LiveViewOut(
+            page_id=x.view.page_id,
+            page_no=x.view.page_no,
+            image_url=x.view.image_url,
+            size=x.view.size,
+            boxes=x.view.boxes,
+        )
+        if x.view
+        else None,
+    )
+
+
+def _progress_out(actor: Actor, storage: Storage, drawing_id: str, shown_left: int | None = None) -> ProgressOut:
     p = drawings.progress(actor.session, actor.tenant_id, drawing_id)
     if p is None:
         raise ApiError(404, "not_found")
@@ -302,4 +374,5 @@ def _progress_out(actor: Actor, storage: Storage, drawing_id: str) -> ProgressOu
         ]
         if classified
         else [],
+        live=_live_out(actor, storage, p, shown_left) if is_enabled(actor.flags, LIVE_RUN) else None,
     )

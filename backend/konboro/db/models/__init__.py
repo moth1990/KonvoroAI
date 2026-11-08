@@ -49,6 +49,7 @@ from .pipeline import (
     Page,
     PageTemplate,
     Panel,
+    PipelineEvent,
     Project,
     StageRun,
 )
@@ -95,6 +96,7 @@ __all__ = [
     "Page",
     "PageTemplate",
     "Panel",
+    "PipelineEvent",
     "Plan",
     "PlanFeatureFlag",
     "PriceHistory",

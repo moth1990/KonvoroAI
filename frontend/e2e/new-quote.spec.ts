@@ -34,11 +34,20 @@ test("a drawing goes through all 7 stages and opens for review", async ({ page }
   const row = page.getByRole("listitem").filter({ hasText: "NURSERY-1.pdf" });
   await expect(row.getByText("תקין")).toBeVisible();
   await expect(page.getByTestId("start-note")).toHaveText("קובץ אחד · ייספר 1 מהמכסה (נותרו 38) רק אם הקליטה מצליחה");
+  // the start bar's estimate, from the server's page count (01 §4.6 item 4, `live_run`): by the seed or, once the
+  // E2E runs number 20, by their medians
+  await expect(page.getByTestId("estimate")).toHaveText(/^9 עמודים · (פחות מדקה|כדקה|כ-\d+ דקות) · כ-\$\d+\.\d\d$/);
 
   await page.getByTestId("start").click();
   await expect(page).toHaveURL(/\/new\?drawing=drw_/);
   const done = page.getByTestId("done");
   await expect(done).toBeVisible({ timeout: 75_000 });
+  // the run's time and cost, and the breakdown by stage (01 §4.6 "סיום")
+  await expect(done.getByTestId("done-time")).toContainText(/זמן פענוח\s*\d+:\d\d/);
+  await expect(done.getByTestId("done-cost")).toContainText("$0.00");
+  await done.getByText("פירוט לפי שלב").click();
+  await expect(done.getByTestId("breakdown").locator("tbody tr")).toHaveCount(7);
+  await expect(done.getByTestId("breakdown").locator("tbody tr").last()).toContainText("קוד בלבד");
   await expect(done.getByRole("heading", { name: "גן ילדים, לוח ראשי" })).toBeVisible();
   await expect(done.getByTestId("thumb")).toHaveCount(9);
   await expect(done.getByRole("img", { name: "עמוד 1" })).toHaveJSProperty("complete", true);
@@ -70,13 +79,14 @@ test("the run step lists the 7 stages and can be cancelled", async ({ page }) =>
   await page.getByTestId("start").click();
   const run = page.getByTestId("run");
   await expect(run).toBeVisible();
-  await expect(run.getByRole("heading")).toContainText("NURSERY-1.pdf");
+  await expect(run.getByRole("heading", { level: 2 })).toContainText("NURSERY-1.pdf");
   await expect(run.locator("li")).toHaveCount(7);
   await expect(page.getByTestId("stage-1")).toHaveAttribute("data-state", /run|done/);
-  await expect(run).toContainText("שמרנו לכם מקום אחד במכסה");
+  await expect(run).toContainText("שמרנו מקום אחד במכסה");
 
   await page.getByTestId("cancelrun").click();
-  await expect(page.getByRole("status")).toHaveText("הפענוח בוטל. המקום במכסה שוחרר");
+  // 01 §4.6: the cancel says what the run cost so far; the stand-in model costs nothing
+  await expect(page.getByRole("status")).toHaveText("הפענוח בוטל. המקום במכסה שוחרר. עלות עד כה: \u2066$0.00\u2069");
   await expect(page).toHaveURL(/\/new$/);
   // Back to picking, with the files still there (01 §4.6).
   await expect(page.getByRole("listitem").filter({ hasText: "NURSERY-1.pdf" })).toBeVisible();
@@ -90,9 +100,9 @@ test("the run step says how stage 2 read the text", async ({ page }) => {
   const stage2 = page.getByTestId("stage-2");
   await expect(stage2).toHaveAttribute("data-state", "done", { timeout: 60_000 });
   // NURSERY-1 draws its letters as lines: every process page goes through OCR (02 §2.3, prototype line 762)
-  await expect(stage2).toContainText(/שכבת טקסט חסרה, OCR על 5 עמודים · \d+ אריחים/);
+  await expect(stage2).toContainText(/אין שכבת טקסט · נקראו 5 עמודים מהתמונה · \d+ אריחים/);
   await page.getByTestId("cancelrun").click();
-  await expect(page.getByRole("status")).toHaveText("הפענוח בוטל. המקום במכסה שוחרר");
+  await expect(page.getByRole("status")).toContainText("הפענוח בוטל. המקום במכסה שוחרר");
 });
 
 test("the run step counts the symbols stage 3 found", async ({ page }) => {
@@ -102,10 +112,10 @@ test("the run step counts the symbols stage 3 found", async ({ page }) => {
   const stage3 = page.getByTestId("stage-3");
   await expect(stage3).toHaveAttribute("data-state", "done", { timeout: 75_000 });
   // the stand-in model finds a breaker on every tile and is always sure: no disambiguation part (prototype line 763)
-  await expect(stage3).toContainText(/\d+ סימנים/);
+  await expect(stage3).toContainText(/\d+ רכיבים/);
   await expect(stage3).not.toContainText("בהכרעת מודל");
   await page.getByTestId("cancelrun").click();
-  await expect(page.getByRole("status")).toHaveText("הפענוח בוטל. המקום במכסה שוחרר");
+  await expect(page.getByRole("status")).toContainText("הפענוח בוטל. המקום במכסה שוחרר");
 });
 
 test("the run step counts the devices stage 4 merged", async ({ page }) => {
@@ -117,7 +127,7 @@ test("the run step counts the devices stage 4 merged", async ({ page }) => {
   // the stand-in tags every breaker "Q1": one device per panel, merged by its tag (04 §5.8, prototype line 764)
   await expect(stage4).toContainText(/איחוד לפי תגים: (מכשיר אחד|\d+ מכשירים) (במוצר אחד|ב-\d+ מוצרים)/);
   await page.getByTestId("cancelrun").click();
-  await expect(page.getByRole("status")).toHaveText("הפענוח בוטל. המקום במכסה שוחרר");
+  await expect(page.getByRole("status")).toContainText("הפענוח בוטל. המקום במכסה שוחרר");
 });
 
 test("the run step counts what stage 5 matched", async ({ page }) => {
@@ -129,7 +139,7 @@ test("the run step counts what stage 5 matched", async ({ page }) => {
   // the stand-in's breakers carry no current, so none is matched (05 §5.5; prototype line 765)
   await expect(stage5).toContainText(/0 מותאמים · (אחד בלי דגם|\d+ בלי דגם)/);
   await page.getByTestId("cancelrun").click();
-  await expect(page.getByRole("status")).toHaveText("הפענוח בוטל. המקום במכסה שוחרר");
+  await expect(page.getByRole("status")).toContainText("הפענוח בוטל. המקום במכסה שוחרר");
 });
 
 test("the run step counts what stage 6 found", async ({ page }) => {
@@ -139,6 +149,77 @@ test("the run step counts what stage 6 found", async ({ page }) => {
   const stage6 = page.getByTestId("stage-6");
   await expect(stage6).toHaveAttribute("data-state", "done", { timeout: 120_000 });
   await expect(stage6).toContainText(/בדיקה.*(ממצא אחד|\d+ ממצאים|אין ממצאים)/); // prototype line 766
+  await page.getByTestId("cancelrun").click();
+  await expect(page.getByRole("status")).toContainText("הפענוח בוטל. המקום במכסה שוחרר");
+});
+
+// --- the live run step (01 §4.6, `live_run`, S28c) ----------------------------------------------------------------
+
+test("the live run says what it does, how long is left and what it costs", async ({ page }) => {
+  await page.getByLabel("פרויקט / שם הלוח").fill(SLOW_PROJECT);
+  await page.locator("#file-in").setInputFiles(NURSERY);
+  await page.getByTestId("start").click();
+  const run = page.getByTestId("run");
+  await expect(run).toBeVisible();
+  // the header's live sentence names the stage; the three measures; the meter by expected time
+  await expect(page.getByTestId("run-sub")).toContainText(/^(קליטת השרטוט|קריאת הטקסט|זיהוי הרכיבים)/);
+  await expect(page.getByTestId("run-clock")).toHaveText(/^\d+:\d\d$/);
+  await expect(page.getByTestId("run-eta")).toHaveText(/^(צפוי כ-|נותרו כ-|נותרו כמה שניות)/);
+  await expect(page.getByTestId("run-cost")).toHaveText("$0.00");
+  await expect(run.getByRole("progressbar", { name: "התקדמות הפענוח" })).toBeVisible();
+  // every stage has its icon; the plain names (01 §4.6)
+  await expect(run.locator("li .sico")).toHaveCount(7);
+  await expect(page.getByTestId("stage-2")).toContainText("קריאת הטקסט");
+  await expect(page.getByTestId("stage-3")).toContainText("זיהוי הרכיבים");
+  await expect(page.getByTestId("run-counters")).toContainText("עמודים");
+
+  await expect(page.getByTestId("stage-3")).toHaveAttribute("data-state", "done", { timeout: 75_000 });
+  await expect(page.getByTestId("run-counters")).toContainText("עמודים 9/9");
+  if (isMobile(page)) {
+    // a phone has no page view and no log (01 §4.6)
+    await expect(page.getByTestId("run-view")).toBeHidden();
+    await expect(page.getByTestId("run-log")).toBeHidden();
+  } else {
+    await expect(page.getByTestId("run-view")).toBeVisible();
+    await expect(page.getByTestId("run-log")).toContainText("רכיבים");
+  }
+  await expect(page.getByTestId("stage-3").locator(".st")).toHaveText(/\d+:\d\d/); // its time
+
+  // "הודע לי": the browser's permission is asked, a refusal is said, and the in-app notice stays
+  await page.context().clearPermissions();
+  await page.getByTestId("runnotify").click();
+  await expect(page.getByTestId("runnotify")).toHaveAttribute("aria-checked", "true");
+  await page.getByTestId("cancelrun").click();
+  await expect(page.getByRole("status")).toContainText("עלות עד כה");
+});
+
+test("the end of a run is told on another screen", async ({ page }) => {
+  await page.getByLabel("פרויקט / שם הלוח").fill(SLOW_PROJECT);
+  await page.locator("#file-in").setInputFiles(NURSERY);
+  await page.getByTestId("start").click();
+  await expect(page.getByTestId("run")).toBeVisible();
+  await expect(page.getByTestId("stage-1")).toHaveAttribute("data-state", /run|done/);
+  // leave the run's screen, in the app (the rail on a desktop, the tab bar on a phone)
+  await page.getByRole("link", { name: "בית" }).filter({ visible: true }).first().click();
+  await expect(page).toHaveURL(/\/home$/);
+  await expect(page.getByRole("status")).toContainText(`הפענוח של ${SLOW_PROJECT} הסתיים`, { timeout: 75_000 });
+  await expect(page.getByRole("status")).toContainText("לבדיקה ← הצעה חדשה");
+});
+
+test("with live_run off the run step is the classic one", async ({ page, request }) => {
+  await signIn(page, request, isMobile(page) ? TENANTS.liveOffMobile : TENANTS.liveOffDesktop);
+  await page.goto("/new");
+  await page.getByLabel("פרויקט / שם הלוח").fill(SLOW_PROJECT);
+  await page.locator("#file-in").setInputFiles(NURSERY);
+  await expect(page.getByRole("listitem").filter({ hasText: "NURSERY-1.pdf" }).getByText("תקין")).toBeVisible();
+  await expect(page.getByTestId("estimate")).toHaveCount(0); // no estimate without the flag
+  await page.getByTestId("start").click();
+  const run = page.getByTestId("run");
+  await expect(run).toBeVisible();
+  await expect(run.locator("li .dot")).toHaveCount(7); // numbered dots, not icons
+  await expect(run.locator(".sico")).toHaveCount(0);
+  await expect(page.getByTestId("run-cost")).toHaveCount(0);
+  await expect(run).toContainText("שמרנו לכם מקום אחד במכסה");
   await page.getByTestId("cancelrun").click();
   await expect(page.getByRole("status")).toHaveText("הפענוח בוטל. המקום במכסה שוחרר");
 });
@@ -173,14 +254,16 @@ test("a CAD file and an oversized file are rejected before upload", async ({ pag
 });
 
 test("the server's own check is shown next to the file", async ({ page }) => {
-  // A PDF by name that is really a DWG: the browser can't tell, the server can (01 §4.2).
+  // A PDF by name that is really a DWG: the browser can't tell, the server can (01 §4.2). With `live_run` the server
+  // checks on pick, for the start bar's estimate (S28c), so the file is refused before "התחל פענוח".
   await page
     .locator("#file-in")
     .setInputFiles({ name: "plan.pdf", mimeType: "application/pdf", buffer: Buffer.from("AC1027") });
-  await page.getByTestId("start").click();
   const row = page.getByRole("listitem").filter({ hasText: "plan.pdf" });
   await expect(row.getByText("נדחה")).toBeVisible();
   await expect(row).toContainText("קבצי DWG ו-DXF עדיין לא נתמכים");
+  await expect(page.getByTestId("start")).toBeDisabled();
+  await expect(page.getByTestId("estimate")).toHaveCount(0);
   await expect(page).toHaveURL(/\/new$/);
 });
 

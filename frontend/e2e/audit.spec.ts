@@ -187,12 +187,18 @@ test("the run step counts the audit's 5 steps", async ({ page }) => {
   await page.getByLabel("פרויקט / שם הלוח").fill(SLOW_PROJECT);
   await page.locator("#audit-drawing").setInputFiles(csv("bom.csv", "פריט;כמות\r\nמגען 3X25;2\r\n"));
   await page.locator("#audit-quote").setInputFiles(csv("quote.csv", "תיאור;כמות\r\nמגען 3X25A;2\r\n"));
+  // the start bar's estimate for the drawing's pages (01 §4.6 item 4, `live_run`, S28c)
+  await expect(page.getByTestId("estimate")).toContainText(/^עמוד אחד · /);
   await page.getByTestId("start-audit").click();
   const run = page.getByTestId("run");
   await expect(run).toBeVisible({ timeout: 30_000 });
   await expect(run.locator("li.stage")).toHaveCount(5);
   await expect(run.getByTestId("stage-8")).toContainText("בדיקת ההצעה");
   await expect(run).toContainText(/שלב \d מתוך 5/);
+  // the live run step, with the audit's five stages and their icons (11 §5, S28c)
+  await expect(run.getByRole("heading", { name: "חמישה שלבים" })).toBeVisible();
+  await expect(run.locator("li .sico")).toHaveCount(5);
+  await expect(page.getByTestId("run-cost")).toHaveText("$0.00");
   await page.getByTestId("cancelrun").click();
   await expect(page.getByTestId("start-audit")).toBeVisible();
 });

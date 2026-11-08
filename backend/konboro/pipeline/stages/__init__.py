@@ -22,12 +22,13 @@ STAGES: dict[int, Stage] = {
     8: audit_step.run,  # an audit drawing goes here after stage 4 (11 §5, S15 decision 2)
 }
 
-# For the new-quote screen's stage list (prototype STAGES, line 761).
+# The names the user sees, everywhere in the app (01 §4.6: plain Hebrew, no abbreviations; prototype STAGES). The
+# specs keep their technical names ("חילוץ ואריחים", "שיוך ומיזוג").
 NAMES = {
-    1: "קליטה וסיווג עמודים",
-    2: "חילוץ ואריחים",
-    3: "זיהוי סימנים",
-    4: "שיוך טקסט ומיזוג",
+    1: "קליטת השרטוט",
+    2: "קריאת הטקסט",
+    3: "זיהוי הרכיבים",
+    4: "חיבור תוויות לרכיבים",
     5: "התאמה לקטלוג",
     6: "בדיקה",
     7: "תמחור",
