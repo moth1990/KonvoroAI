@@ -1,6 +1,10 @@
 import { expect, test } from "@playwright/test";
 
+import { fileURLToPath } from "node:url";
+
 import { clockAtLatestQuote, signIn, TENANTS } from "./fixtures";
+
+const NURSERY = fileURLToPath(new URL("../../golden/NURSERY-1/NURSERY-1.pdf", import.meta.url));
 
 test("home_chat off: the classic home with real data", async ({ page, request }) => {
   await signIn(page, request, TENANTS.classic);
@@ -127,9 +131,10 @@ test("quota at 100%: new quote is disabled and says why", async ({ page, request
   // Existing work stays available (01 §4.5).
   await expect(page.getByRole("link", { name: /בדיקת הצעה קיימת/ })).toBeEnabled();
   await page.goto("/new");
-  await page
-    .locator("#file-in")
-    .setInputFiles({ name: "a.pdf", mimeType: "application/pdf", buffer: Buffer.from("%PDF-1.7") });
+  // a real drawing: since S28c the server checks a file as soon as it is picked, and a broken one would be
+  // the start bar's first reason instead of the quota
+  await page.locator("#file-in").setInputFiles(NURSERY);
+  await expect(page.getByRole("listitem").filter({ hasText: "NURSERY-1.pdf" })).toContainText("9 עמודים");
   await expect(page.getByTestId("start")).toBeDisabled();
   await expect(page.getByTestId("start-note")).toHaveText("המכסה החודשית מלאה. אפשר להעלות גרסה חדשה של שרטוט קיים");
 });
