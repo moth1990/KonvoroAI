@@ -25,7 +25,13 @@ test.skip(!process.env.KONBORO_VISUAL, "runs in Playwright's Linux image: `make 
 // waits inside the tests themselves (60 s for `/me` and the totals), so a busy machine failed them as timeouts with
 // no pixel different (BUG-038, BUG-102). The new-quote shots, a whole pipeline run each, keep their 180 s.
 test.describe.configure({ timeout: 120_000 });
-const SHOT = { animations: "disabled", maxDiffPixelRatio: 0.002, timeout: 30_000 } as const;
+// `steady.css` keeps the live run's changing text at one size, so its masks never move the layout (S28c).
+const SHOT = {
+  animations: "disabled",
+  maxDiffPixelRatio: 0.002,
+  timeout: 30_000,
+  stylePath: fileURLToPath(new URL("./visual/steady.css", import.meta.url)),
+} as const;
 
 /** `ready` is what must be on screen before the shot: "network idle" alone can fire before the app's first
  * API call when the machine is busy (emulated amd64, parallel pipeline runs). */
@@ -115,14 +121,27 @@ const NEW_QUOTE = [
       ]);
       await page.getByLabel("פרויקט / שם הלוח").blur();
       await page.getByTestId("start-note").waitFor();
+      // the server's check (S28c) adds the page count to the row: the shot waits for its answer
+      await page
+        .getByRole("listitem")
+        .filter({ hasText: "NURSERY-1.pdf" })
+        .getByText(/9 עמודים/)
+        .waitFor({ timeout: 30_000 });
     },
   },
   {
     name: "new-run",
     setup: async (page: Page) => {
       await startUpload(page, SLOW_PROJECT);
-      await page.locator('[data-testid="stage-2"][data-state="run"]').waitFor({ timeout: 90_000 });
+      // The light shot is its tenant's first decode, so stage 1 reads every page itself; under amd64 emulation, beside
+      // the other new-quote runs, it took over 97 s in S28c's `make check-screenshots`. As long as the done step's wait.
+      await page.locator('[data-testid="stage-2"][data-state="run"]').waitFor({ timeout: 150_000 });
       await page.mouse.move(0, 0); // no hover on the cancel button
+    },
+    // Left running, the slow run would hold a pipeline worker for its seven stages while the done shots wait for theirs
+    after: async (page: Page) => {
+      await page.getByTestId("cancelrun").click();
+      await page.getByRole("status").waitFor();
     },
   },
   {
@@ -314,6 +333,7 @@ for (const scheme of ["light", "dark"] as const) {
         await page.evaluate(() => document.fonts.ready);
         await screen.setup(page);
         await expect(page).toHaveScreenshot(`${screen.name}-${scheme}.png`, { ...SHOT, mask: volatile(page) });
+        if ("after" in screen) await screen.after(page);
       });
     }
   });

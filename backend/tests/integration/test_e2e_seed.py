@@ -73,6 +73,8 @@ def test_e2e_tenants_have_their_states(migrated_db: dict[str, Engine]) -> None:
         "lines-mobile@e2e.konboro.local": (False, 12, "ok"),
         "lines-shots@e2e.konboro.local": (False, 12, "ok"),
         "day-one-mobile@e2e.konboro.local": (False, 0, "ok"),
+        "live-off-desktop@e2e.konboro.local": (False, 12, "ok"),
+        "live-off-mobile@e2e.konboro.local": (False, 12, "ok"),
     }
     # S27b: `catalog_lines` changes every priced quote's lines, so only its own tenants have it on
     lines_on = set()

@@ -93,7 +93,12 @@ While a drawing decodes, the app shows what the system does now, how long is lef
   - the end message on another screen;
   - the classic run with the flag off;
   - the audit's five stages live.
-- [x] Prototype-fidelity report reviewed and accepted by the user. The new-run and new-done baselines were then rewritten with `make screenshots`. The visual spec masks what moves from run to run: the estimate, the sentence, the clock, progress and cost, the counters, the log, the page being read, the stages' times and the done step's time and cost.
+- [x] Prototype-fidelity report reviewed and accepted by the user. Then `make screenshots` rewrote the baselines: new-run, new-done, and one new-pick.
+  - The visual spec masks what moves from run to run: the estimate, the sentence, the clock, progress and cost, the counters, the log, the page being read, the stages' times, and the done step's time and cost.
+  - A mask hides content but not its size. So `e2e/visual/steady.css` (`stylePath`) keeps that text at one size, and a phone never wraps it differently.
+  - The run shot cancels its slow run after the shot, so the done shots get the workers.
+  - It waits up to 150 s for stage 2. That shot is its tenant's first decode, and stage 1 took over 97 s at that load.
+  - The pick shot waits for the server's check to add the page count to the file row. The first light phone baseline was taken before that answer came back.
 
 ### Docs
 - [x] Spec 01 §4.6:
@@ -134,11 +139,12 @@ None open.
   5. Each `llm_calls` row is priced when it is written (`cost_usd`), so a price change never rewrites a run's cost, and the medians across factories can sum dollars in SQL.
   6. Pipeline events are written even with the flag off. The flag only decides what the screen shows (13 §4.11), so the eval needs no second mode.
   7. In the breakdown, a stage that could call a model and did not says "בלי מודל". "קוד בלבד" is pricing's (07).
-- **Eval / metrics:** `make eval` (replay): no change against the baseline. Unit: 1371 backend, 330 frontend; integration: 841; E2E: the whole suite, desktop and mobile.
+- **Eval / metrics:** `make eval` (replay): no change against the baseline. Unit: 1371 backend, 330 frontend. Integration: 841 (840 in `make check`, and the seed test fixed and passing). E2E: 259 passed, desktop and mobile.
 - **Bugs logged:**
   - BUG-116 (P3, watch): at load average 80–108, stage 1's heartbeat missed its window. A second worker ran the stage, and `retry_later` raised on a stale receipt. The drawing still finished, and S28c did not cause it.
   - Test harness fixes, not bugs:
     - The fidelity harness waited 15 s for the prototype's done step. Since PR #41, its demo run takes about 15 s, so the wait is now 30 s.
     - The E2E slow project's stages took 1.5 s each, shorter than the live step's 2 s poll, so `make screenshots` once missed stage 2 running. Each slow stage now takes 3 s (`devtools/e2e.SLOW_STAGE_S`).
   - `make screenshots`' first pass had seven timeouts at that load and no pixel difference (BUG-038's pattern). All seven passed when rerun alone.
+  - `make check` ran three times. The first run's Vitest workers did not start: the shell had Node 20, and the project needs Node 22 (`nvm use`). The second run's integration step had one failure: `test_e2e_seed.py` lacked the two new `live-off` E2E tenants, which are added now.
 - **Follow-ups:** the two backlog items above.
