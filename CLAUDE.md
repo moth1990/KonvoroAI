@@ -23,9 +23,9 @@ The specs are in Hebrew. Code, identifiers, comments, commit messages and these 
 ### Prototype map
 
 The prototype is a single file with no framework. The main pieces:
-- `render()` (line 1380) redraws `#app` from the global state `S` (533–557).
+- `render()` (line 1575) redraws `#app` from the global state `S` (591–614).
 - Routes are hashes (`#home`, `#review`…).
-- Every click goes through a `data-act` handler (1446–1559).
+- Every click goes through a `data-act` handler (1641–1768).
 
 To view it, serve the folder (`python -m http.server -d prototype`) and set `localStorage['konboro:authed']='1'`.
 
@@ -36,21 +36,21 @@ Built so far: login, shell, classic and chat home (S04); new quote: pick, run, d
 
 | Screen | Route | Function | Lines |
 | --- | --- | --- | --- |
-| Design tokens (light and dark) | — | `:root` | 9–32 |
-| Login | (not authed) | `vLogin` | 660–688 |
-| Shell: rail, mobile tab bar, quota meter | — | `shell`, `navItems` | 690–714 |
-| Home, classic and chat (`home_chat` flag; routed by `POST /home/route`, S27) | `#home` | `vHome`, `vHomeChat` | 716–751, 1253–1284 |
-| New quote: pick, run, done | `#new` | `vNew`, `validateFile`, `runPipeline` | 754–869 |
-| Review: lines, line detail, drawing (the "לא פוענח" layer, built: `UNRESOLVED`, `boxesFor`) | `#review` | `vReview` | 872–1004, 575–580 |
-| Chat drawer and proposal cards (built: `screens/review/Chat.tsx`) | `#review` | `vChat`, `applyProp` | 1007–1064 |
-| Audit of an existing quote | `#audit` | `vAudit` | 1066–1096 |
-| Price list and product editor (built: `screens/prices/`) | `#prices` | `vPrices`, `openEditor` | 1098–1208 |
-| Approval queue (built: `screens/queue/`) | `#queue` | `vQueue` | 1210–1226 |
-| Settings and flags (built: `screens/prefs/`) | `#prefs` | `vPrefs` | 1228–1251 |
-| Chat quote builder (`chat_quote_builder` flag; built: `screens/build/`) | `#build` | `parseBom`, `vBuild` | 1287–1357 |
-| Export modal (`export_doc` flag; built: `screens/review/ExportModal.tsx`) | — | `exportModal` | 1360–1378 |
+| Design tokens (light and dark) | — | `:root` | 9–35 |
+| Login | (not authed) | `vLogin` | 719–747 |
+| Shell: rail, mobile tab bar, quota meter | — | `shell`, `navItems` | 749–773 |
+| Home, classic and chat (`home_chat` flag; routed by `POST /home/route`, S27) | `#home` | `vHome`, `vHomeChat` | 775–810, 1448–1479 |
+| New quote: pick, run, done (the start bar's estimate, the live run step, `updateRun`, and the done step's time and cost, all behind `live_run`: not built yet, S28c, 01 §4.6) | `#new` | `vNew`, `validateFile`, `runPipeline`, `updateRun`, `runFinished` | 813–1064 |
+| Review: lines, line detail, drawing (the "לא פוענח" layer, built: `UNRESOLVED`, `boxesFor`) | `#review` | `vReview` | 1067–1199, 634–639 |
+| Chat drawer and proposal cards (built: `screens/review/Chat.tsx`) | `#review` | `vChat`, `applyProp` | 1202–1258 |
+| Audit of an existing quote | `#audit` | `vAudit` | 1261–1290 |
+| Price list and product editor (built: `screens/prices/`) | `#prices` | `vPrices`, `openEditor` | 1293–1402 |
+| Approval queue (built: `screens/queue/`) | `#queue` | `vQueue` | 1405–1420 |
+| Settings and flags (built: `screens/prefs/`) | `#prefs` | `vPrefs` | 1423–1445 |
+| Chat quote builder (`chat_quote_builder` flag; built: `screens/build/`) | `#build` | `parseBom`, `vBuild` | 1482–1552 |
+| Export modal (`export_doc` flag; built: `screens/review/ExportModal.tsx`) | — | `exportModal` | 1555–1570 |
 
-Mock data in the prototype (lines 393–580) suggests field names for the API: `makeLines`, `makeFindings`, `QUOTES`, `CATALOG`, `QUEUE`, `AUDIT`, `UNRESOLVED`. The specs still win on the data model.
+Mock data in the prototype (lines 447–635) suggests field names for the API: `makeLines`, `makeFindings`, `QUOTES`, `CATALOG`, `QUEUE`, `AUDIT`, `UNRESOLVED`. The specs still win on the data model.
 
 ## Non-negotiables
 
