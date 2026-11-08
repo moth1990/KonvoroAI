@@ -6,7 +6,7 @@
 | **Branch** | `s28c-live-run` |
 | **Depends on** | S28 |
 | **Status** | in review |
-| **PR** | (link) |
+| **PR** | [#43](https://github.com/moth1990/KonvoroAI/pull/43) |
 
 ## Goal
 
