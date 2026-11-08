@@ -101,6 +101,7 @@ Rules:
 - **No network in tests.** LLM calls use `FakeProvider` or replay cassettes. OCR uses a fake engine or recorded output.
 - **Integration tests own their data.** Each test creates its own tenants inside a transaction or truncated schema. Never depend on the demo seed.
 - **Every flag-gated feature is tested both on and off** (13 §3).
+- **Response times:** a test that times an action uses `backend/tests/perf.py` (`within`, with a target that names its spec) and is marked `perf`. A wall clock on a CI runner measures the runner's load too, so the integration suite allows each target × 3, which still catches a slowdown of another order. `make perf` checks the targets themselves on a quiet machine, outside CI (BUG-115).
 - **A bug fix starts with a failing test** that reproduces the bug.
 - **E2E selectors:** role and accessible name first, then `data-testid`. Testids reuse the prototype's `data-act` and `id` names (`approve`, `chat-input`, `drop`), so the prototype doubles as the selector map.
 

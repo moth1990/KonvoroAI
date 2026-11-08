@@ -4,7 +4,6 @@ an attribute set by hand and stage 5 again in code, a missing line resolved, a c
 detector example, and the brand discount from a row; each with its correction event and its undo. A missing line's
 candidates on a quote the pipeline priced: `test_missing_candidates_on_a_pipeline_quote`."""
 
-import time
 from decimal import Decimal
 from typing import Any
 
@@ -21,6 +20,7 @@ from konboro.pipeline.stages import s7_pricing
 from konboro.services import quotes as qs
 from konboro.services.storage import Storage
 
+from ..perf import RERUN, within
 from .api import Api, add_tenant
 from .test_pipeline import pipeline  # noqa: F401  (fixture)
 from .test_review_actions import Quote, by_tag, events, quote, seeded  # noqa: F401  (fixtures)
@@ -35,10 +35,9 @@ def get(q: Quote, path: str, status: int = 200) -> Any:
     return r.json()
 
 
-def timed(q: Quote, path: str, body: dict[str, Any], limit: float = 1.0) -> dict[str, Any]:
-    start = time.perf_counter()
-    done = q.post(path, body)
-    assert time.perf_counter() - start < limit, path  # 09 §14
+def timed(q: Quote, path: str, body: dict[str, Any]) -> dict[str, Any]:
+    with within(RERUN, path):  # 09 §14: stages 5–7 for the line ≤ 1 s
+        done = q.post(path, body)
     return done
 
 
@@ -76,6 +75,7 @@ def test_another_tenants_product_is_not_offered(quote: Quote, api: Api, seeded: 
 # --- an attribute (09 §7.4) -----------------------------------------------------------------------------------------
 
 
+@pytest.mark.perf
 def test_a_current_set_by_hand_matches_the_line_again_and_undo_puts_it_back(quote: Quote) -> None:
     f18 = by_tag(quote.get())["F18"]
     assert f18["attribute_options"]["current_a"][:3] == ["6", "10", "16"]
@@ -181,6 +181,7 @@ def test_resolve_refusals(quote: Quote) -> None:
     quote.post(f"/lines/{line_id}/resolve", {"ref": "nope"}, status=422)
 
 
+@pytest.mark.perf
 def test_missing_candidates_on_a_pipeline_quote(
     seeded: dict[str, Engine],
     api: Api,
@@ -221,9 +222,8 @@ def test_missing_candidates_on_a_pipeline_quote(
     body = q.get()
     line = next(ln for p in body["panels"] for ln in p["lines"] if ln["line_type"] == "missing")
     assert line["boxes"] == [{"page_id": page, "bbox": [100.0, 100.0, 130.0, 160.0]}]
-    start = time.perf_counter()
-    found = get(q, f"/lines/{line['line_id']}/candidates")
-    assert time.perf_counter() - start < 1.0  # 09 §14
+    with within(RERUN, "a missing line's candidates"):  # 09 §14: stage 5 for the line ≤ 1 s
+        found = get(q, f"/lines/{line['line_id']}/candidates")
     assert 1 <= len(found) <= 3 and found[0]["sku"] == "S203M-C20"
     done = q.post(f"/lines/{line['line_id']}/resolve", {"ref": found[0]["ref"]})
     resolved = next(ln for p in done["quote"]["panels"] for ln in p["lines"] if ln["line_id"] == line["line_id"])
@@ -247,13 +247,14 @@ def _page(q: Quote, storage: Storage, n: int = 7) -> m.Page:
     return page
 
 
+@pytest.mark.perf
 def test_a_marked_component_is_a_manual_line_with_its_box_and_a_detector_example(
     quote: Quote, storage: Storage
 ) -> None:
     page = _page(quote, storage)
     ref = next(c["ref"] for c in get(quote, "/products?q=S203M-C16") if c["sku"] == "S203M-C16")
     box = [200.0, 150.0, 240.0, 210.0]
-    done = timed(quote, "/marks", {"page_id": page.id, "bbox": box, "ref": ref}, limit=1.0)
+    done = timed(quote, "/marks", {"page_id": page.id, "bbox": box, "ref": ref})
     manual = [ln for p in done["quote"]["panels"] for ln in p["lines"] if ln["line_type"] == "manual"]
     assert len(manual) == 1
     line = manual[0]
@@ -304,11 +305,12 @@ def test_the_panel_is_the_one_whose_area_holds_the_centre() -> None:
 # --- a brand discount from a row (09 §7.13) -------------------------------------------------------------------------
 
 
+@pytest.mark.perf
 def test_a_brand_discount_from_a_row_prices_the_brands_unpriced_lines(quote: Quote) -> None:
     f18 = by_tag(quote.get())["F18"]
     assert f18["list_price_brand"] == "ABB" and f18["unit_price"] is None
     assert by_tag(quote.get())["F1"]["list_price_brand"] is None  # priced already
-    done = timed(quote, f"/lines/{f18['line_id']}/brand-discount", {"discount_pct": "0.30"}, limit=1.0)
+    done = timed(quote, f"/lines/{f18['line_id']}/brand-discount", {"discount_pct": "0.30"})
     line = by_tag(done)["F18"]
     # 215 × 0.70 = 150.50 cost, the 25% markup: 188.13 (07 §7.2 priority 2, §7.3)
     assert line["price_status"] == "discount_based" and line["status"] == "yellow"
