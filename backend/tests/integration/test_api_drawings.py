@@ -37,7 +37,7 @@ def test_progress_from_upload_to_ready(api: Api, migrated_db: dict[str, Engine],
         (1, "queued", None),
         (2, "queued", None),
     ]
-    assert body["stages"][0]["name"] == "קליטה וסיווג עמודים"
+    assert body["stages"][0]["name"] == "קליטת השרטוט"
     assert (body["name"], body["files"]) == ("גן ילדים", [{"name": "NURSERY-1.pdf", "page_count": 9}])
     assert (body["quote_id"], body["summary"], body["pages"]) == (None, None, [])
 

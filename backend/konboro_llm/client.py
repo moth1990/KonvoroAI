@@ -5,8 +5,9 @@
 
 It picks the provider and model for the stage, validates the answer against the schema,
 retries once with the validation error, falls back to another model if configured,
-and logs tokens and latency per stage and per factory. `on_call` gets every answered call too: the backend writes
-it to `llm_calls` (00 §7.2), which konboro_llm doesn't know about.
+and logs tokens and latency per stage and per factory. `on_call` gets every call too, one that never gave a valid
+answer with `ok` false and the tokens of all its attempts (S28c): the backend writes it to `llm_calls` (00 §7.2),
+which konboro_llm doesn't know about.
 
     result = llm.run_tools(ToolLoopRequest(stage="chat_command", ...), execute)
 
@@ -89,11 +90,22 @@ class LLMClient:
         if provider is None:
             raise LLMError(f"provider '{route.provider}' is not registered")
 
+        # Every attempt is billed, a schema mismatch or an unusable answer too: the row that is written carries
+        # them all, and a route that never answers writes one with `ok` false (01 §4.6, S28c).
+        spent = Usage(0, 0)
         hint: str | None = None
+        started = time.monotonic()
+        model = route.model
         for attempt in range(1, route.max_attempts + 1):
-            started = time.monotonic()
-            raw = provider.complete_structured(request, route.model, retry_hint=hint)
-            latency_ms = int((time.monotonic() - started) * 1000)
+            try:
+                raw = provider.complete_structured(request, route.model, retry_hint=hint)
+            except LLMError as exc:
+                if exc.usage is not None:
+                    spent += exc.usage
+                self._log_failure(request, provider.name, exc.model or model, spent, started, attempt)
+                raise
+            spent += raw.usage()
+            model = raw.model
 
             try:
                 data = request.output_schema.model_validate(raw.payload)
@@ -106,14 +118,29 @@ class LLMClient:
                 data=data,
                 provider=provider.name,
                 model=raw.model,
-                usage=raw.usage(),
-                latency_ms=latency_ms,
+                usage=spent,
+                latency_ms=int((time.monotonic() - started) * 1000),
                 attempts=attempt,
             )
             self._log_usage(request, result)
             return result
 
+        self._log_failure(request, provider.name, model, spent, started, route.max_attempts)
         raise LLMError(f"output did not match schema after {route.max_attempts} attempts: {hint}")
+
+    def _log_failure(
+        self, request: Any, provider: str, model: str, spent: Usage, started: float, attempts: int
+    ) -> None:
+        failed: LLMResult[Any] = LLMResult(
+            data=None,
+            provider=provider,
+            model=model,
+            usage=spent,
+            latency_ms=int((time.monotonic() - started) * 1000),
+            attempts=attempts,
+            ok=False,
+        )
+        self._log_usage(request, failed)
 
     # ------------------------------------------------------------------ tool loop
 
@@ -183,12 +210,14 @@ class LLMClient:
                 current = current.fallback
                 continue
             tool_provider: ToolProvider = provider  # type: ignore[assignment]
+            begun = time.monotonic()
             try:
-                begun = time.monotonic()
                 raw = tool_provider.complete_turn(request, turns, current.model, allow_tools=allow, retry_hint=hint)
-            except LLMAccountError:
-                raise  # the fallback is refused too (BUG-061)
             except LLMError as exc:
+                spent = exc.usage or Usage(0, 0)
+                self._log_failure(request, tool_provider.name, exc.model or current.model, spent, begun, 1)
+                if isinstance(exc, LLMAccountError):
+                    raise  # the fallback is refused too (BUG-061)
                 last = exc
                 log.warning("stage=%s model=%s failed: %s", request.stage, current.model, exc)
                 current = current.fallback
@@ -223,15 +252,19 @@ class LLMClient:
     def _log_usage(self, request: Any, result: LLMResult[Any]) -> None:
         # A log line for local runs; on_call is the record that cost per factory and per stage comes from.
         log.info(
-            "llm_call stage=%s tenant=%s provider=%s model=%s in=%d out=%d ms=%d attempts=%d",
+            "llm_call stage=%s tenant=%s provider=%s model=%s in=%d out=%d cache_r=%d cache_w=%d ms=%d attempts=%d"
+            " ok=%s",
             request.stage,
             request.tenant_id,
             result.provider,
             result.model,
             result.usage.input_tokens,
             result.usage.output_tokens,
+            result.usage.cache_read_tokens,
+            result.usage.cache_write_tokens,
             result.latency_ms,
             result.attempts,
+            result.ok,
         )
         if self.on_call is not None:
             self.on_call(request, result)

@@ -1025,6 +1025,33 @@
         "title": "AuditUploadOut",
         "type": "object"
       },
+      "Body_check_drawings_check_post": {
+        "properties": {
+          "files": {
+            "description": "The files the user picked",
+            "items": {
+              "contentMediaType": "application/octet-stream",
+              "type": "string"
+            },
+            "title": "Files",
+            "type": "array"
+          },
+          "purpose": {
+            "default": "quote",
+            "enum": [
+              "quote",
+              "audit"
+            ],
+            "title": "Purpose",
+            "type": "string"
+          }
+        },
+        "required": [
+          "files"
+        ],
+        "title": "Body_check_drawings_check_post",
+        "type": "object"
+      },
       "Body_put_logo_settings_document_logo_put": {
         "properties": {
           "file": {
@@ -2378,6 +2405,58 @@
         "title": "ChatUiContextIn",
         "type": "object"
       },
+      "CheckOut": {
+        "description": "`POST /drawings/check`: the upload's checks without the upload. Nothing is stored or counted.",
+        "properties": {
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "An upload-wide problem, e.g. too many pages in all",
+            "title": "Error"
+          },
+          "estimate": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EstimateOut"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Null when a file is rejected"
+          },
+          "files": {
+            "items": {
+              "$ref": "#/components/schemas/UploadedFileOut"
+            },
+            "title": "Files",
+            "type": "array"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Message"
+          }
+        },
+        "required": [
+          "files",
+          "estimate"
+        ],
+        "title": "CheckOut",
+        "type": "object"
+      },
       "CompanyDetails": {
         "properties": {
           "address": {
@@ -3131,6 +3210,35 @@
           "error"
         ],
         "title": "ErrorResponse",
+        "type": "object"
+      },
+      "EstimateOut": {
+        "description": "The start bar's rough estimate (01 §4.6 item 4): page count and size only, the routes being unknown.",
+        "properties": {
+          "cost_usd": {
+            "description": "US dollars, e.g. 0.44",
+            "examples": [
+              "0.15"
+            ],
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Cost Usd",
+            "type": "string"
+          },
+          "pages": {
+            "title": "Pages",
+            "type": "integer"
+          },
+          "seconds": {
+            "title": "Seconds",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "pages",
+          "seconds",
+          "cost_usd"
+        ],
+        "title": "EstimateOut",
         "type": "object"
       },
       "FindingOut": {
@@ -3992,6 +4100,299 @@
           "supplier_price_id"
         ],
         "title": "LineSupplierIn",
+        "type": "object"
+      },
+      "LiveMessageOut": {
+        "properties": {
+          "at_s": {
+            "description": "Seconds from the run's start",
+            "title": "At S",
+            "type": "integer"
+          },
+          "stage": {
+            "title": "Stage",
+            "type": "integer"
+          },
+          "text": {
+            "description": "Hebrew, from a template in code (pipeline/events.py), never a model",
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "stage",
+          "text",
+          "at_s"
+        ],
+        "title": "LiveMessageOut",
+        "type": "object"
+      },
+      "LiveModelOut": {
+        "properties": {
+          "calls": {
+            "title": "Calls",
+            "type": "integer"
+          },
+          "label": {
+            "description": "The model's family (Haiku, Sonnet, Opus), or what it does (קריאת טקסט)",
+            "title": "Label",
+            "type": "string"
+          }
+        },
+        "required": [
+          "label",
+          "calls"
+        ],
+        "title": "LiveModelOut",
+        "type": "object"
+      },
+      "LiveOut": {
+        "description": "The live run step and the done step's time and cost (01 §4.6, `live_run`).",
+        "properties": {
+          "cost_estimate_usd": {
+            "description": "Spent so far plus the expected cost of the stages left",
+            "examples": [
+              "0.15"
+            ],
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Cost Estimate Usd",
+            "type": "string"
+          },
+          "cost_per_page_usd": {
+            "anyOf": [
+              {
+                "examples": [
+                  "0.15"
+                ],
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cost Per Page Usd"
+          },
+          "cost_usd": {
+            "description": "US dollars, e.g. 0.44",
+            "examples": [
+              "0.15"
+            ],
+            "pattern": "^-?\\d+(\\.\\d+)?$",
+            "title": "Cost Usd",
+            "type": "string"
+          },
+          "counters": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "description": "pages, pages_read, tiles, components, products, findings",
+            "title": "Counters",
+            "type": "object"
+          },
+          "elapsed_s": {
+            "title": "Elapsed S",
+            "type": "integer"
+          },
+          "fraction": {
+            "description": "Elapsed of elapsed + left, for the meter",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Fraction",
+            "type": "number"
+          },
+          "messages": {
+            "description": "The last six, oldest first",
+            "items": {
+              "$ref": "#/components/schemas/LiveMessageOut"
+            },
+            "title": "Messages",
+            "type": "array"
+          },
+          "seconds_expected": {
+            "description": "The whole run, as now expected",
+            "title": "Seconds Expected",
+            "type": "integer"
+          },
+          "seconds_left": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Rounded to 10 s; null once the run ended",
+            "title": "Seconds Left"
+          },
+          "stages": {
+            "items": {
+              "$ref": "#/components/schemas/LiveStageOut"
+            },
+            "title": "Stages",
+            "type": "array"
+          },
+          "started_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Started At"
+          },
+          "view": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/LiveViewOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "started_at",
+          "elapsed_s",
+          "seconds_left",
+          "seconds_expected",
+          "fraction",
+          "cost_usd",
+          "cost_estimate_usd",
+          "cost_per_page_usd",
+          "stages",
+          "messages",
+          "counters",
+          "view"
+        ],
+        "title": "LiveOut",
+        "type": "object"
+      },
+      "LiveStageOut": {
+        "properties": {
+          "calls": {
+            "title": "Calls",
+            "type": "integer"
+          },
+          "cost_usd": {
+            "anyOf": [
+              {
+                "examples": [
+                  "0.15"
+                ],
+                "pattern": "^-?\\d+(\\.\\d+)?$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "What its model calls cost, every attempt; null before it starts",
+            "title": "Cost Usd"
+          },
+          "models": {
+            "items": {
+              "$ref": "#/components/schemas/LiveModelOut"
+            },
+            "title": "Models",
+            "type": "array"
+          },
+          "seconds": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "How long it ran (or runs so far); null before it starts",
+            "title": "Seconds"
+          },
+          "stage": {
+            "title": "Stage",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "stage",
+          "seconds",
+          "cost_usd",
+          "calls",
+          "models"
+        ],
+        "title": "LiveStageOut",
+        "type": "object"
+      },
+      "LiveViewOut": {
+        "description": "The page the run is on, and stage 3's boxes on it in PDF points (origin top left).",
+        "properties": {
+          "boxes": {
+            "description": "[x0, y0, x1, y1] in points",
+            "items": {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            "title": "Boxes",
+            "type": "array"
+          },
+          "image_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Image Url"
+          },
+          "page_id": {
+            "title": "Page Id",
+            "type": "string"
+          },
+          "page_no": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Page No"
+          },
+          "size": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The page's width and height in points, for the boxes",
+            "title": "Size"
+          }
+        },
+        "required": [
+          "page_id",
+          "page_no",
+          "image_url",
+          "size",
+          "boxes"
+        ],
+        "title": "LiveViewOut",
         "type": "object"
       },
       "LoginIn": {
@@ -6211,6 +6612,17 @@
             },
             "title": "Files",
             "type": "array"
+          },
+          "live": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/LiveOut"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "With `live_run` on: times, cost and what each stage reports"
           },
           "name": {
             "description": "The project's name, or else the first file's",
@@ -9333,6 +9745,53 @@
         ]
       }
     },
+    "/drawings/check": {
+      "post": {
+        "description": "The upload's checks and the start bar's estimate before \"התחל פענוח\" (01 §4.6 item 4, S28c decision 1): the\npage count, the rejections, the expected time and cost by page count and size. Nothing is stored or counted.",
+        "operationId": "check_drawings_check_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_check_drawings_check_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CheckOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "4XX": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Check",
+        "tags": [
+          "drawings"
+        ]
+      }
+    },
     "/drawings/revisable": {
       "get": {
         "description": "Finished drawings a new version can follow, newest first (the \"new version\" picker).",
@@ -9612,7 +10071,7 @@
     },
     "/drawings/{drawing_id}/progress": {
       "get": {
-        "description": "Polled every second by the new-quote screen (S05 decision).",
+        "description": "Polled every second by the new-quote screen (S05 decision), every two with `live_run` (01 §4.6).",
         "operationId": "get_progress_drawings__drawing_id__progress_get",
         "parameters": [
           {
@@ -9623,6 +10082,25 @@
               "pattern": "^drw_[0-9A-Z]{26}$",
               "title": "Drawing Id",
               "type": "string"
+            }
+          },
+          {
+            "description": "The time left the screen shows now (live_run)",
+            "in": "query",
+            "name": "shown_left",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "The time left the screen shows now (live_run)",
+              "title": "Shown Left"
             }
           }
         ],

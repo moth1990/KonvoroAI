@@ -80,8 +80,10 @@ test("a markup that is not a percent is not saved", async ({ page }) => {
 test("flags are shown and cannot be changed", async ({ page }) => {
   const flags = page.getByTestId("flags");
   const switches = flags.getByRole("switch");
-  await expect(switches).toHaveCount(5);
+  await expect(switches).toHaveCount(6);
   for (const s of await switches.all()) await expect(s).toBeDisabled();
   await expect(flags.getByRole("switch", { name: "הורדת ההצעה" })).toHaveAttribute("aria-checked", "true");
+  // S28c: the live run step, on for every factory
+  await expect(flags.getByRole("switch", { name: "מסך פענוח חי" })).toHaveAttribute("aria-checked", "true");
   await expect(page.getByRole("button", { name: "הזמן" })).toBeDisabled();
 });

@@ -186,12 +186,18 @@ TENANTS = (
     E2eTenant(45, "lines-mobile@e2e.konboro.local", False, 12, False, prices=True, lines=True),
     E2eTenant(46, "lines-shots@e2e.konboro.local", False, 12, False, prices=True, lines=True),
     E2eTenant(47, "day-one-mobile@e2e.konboro.local", False, 0, False, terms=False),
+    # S28c. `live_run` is on for every factory: these two have it off, for the classic run step; one per project,
+    # since an upload counts in the quota.
+    E2eTenant(48, "live-off-desktop@e2e.konboro.local", False, 12, False, off=("live_run",)),
+    E2eTenant(49, "live-off-mobile@e2e.konboro.local", False, 12, False, off=("live_run",)),
 )
 TERMS = {"version": "2026-10", "at": "2026-10-01T09:00:00+00:00"}
 
 # A project with this name runs slowly, so a test can cancel it mid-run; every other upload runs at full speed.
+# Each stage waits longer than one poll of the live run step (2 s, `LIVE_POLL_MS`, S28c), so a test that waits for a
+# stage to be running sees it even when the stage's own work is instant (a reused page).
 SLOW_PROJECT = "E2E איטי"
-SLOW_STAGE_S = 1.5
+SLOW_STAGE_S = 3.0
 
 
 def slowed(stages: dict[int, Stage]) -> dict[int, Stage]:

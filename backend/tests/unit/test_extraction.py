@@ -640,7 +640,7 @@ def test_the_run_step_says_how_the_text_was_read_and_counts_tiles() -> None:
     from konboro.services.drawings import stage_summary
 
     ocr_only = progress_with(("ocr", "process", 30), ("ocr", "process", 28), (None, "context", None))
-    assert stage_summary(ocr_only, 2) == "שכבת טקסט חסרה, OCR על 2 עמודים · 58 אריחים"
+    assert stage_summary(ocr_only, 2) == "אין שכבת טקסט · נקראו 2 עמודים מהתמונה · 58 אריחים"
     mixed = progress_with(("pdf_text", "process", 1), ("mixed", "process", 0))
-    assert stage_summary(mixed, 2) == "שכבת טקסט חלקית, OCR על עמוד אחד · אריח אחד"
+    assert stage_summary(mixed, 2) == "שכבת טקסט חלקית · נקרא עמוד אחד מהתמונה · אריח אחד"
     assert stage_summary(progress_with(("pdf_text", "process", 4)), 2) == "טקסט מהקובץ · 4 אריחים"

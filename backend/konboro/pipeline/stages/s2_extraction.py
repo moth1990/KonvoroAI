@@ -309,11 +309,19 @@ def run(ctx: StageContext, cfg: ExtractionConfig = DEFAULT) -> ExtractionResult:
     engine = ENGINE(ctx)
     files: dict[str, tuple[bytes, list[PageRead]]] = {}
     pages: list[PageExtraction] = []
+    tiles = 0
     for seq, page in enumerate(process, start=1):
         if page.file_id not in files:
             f = ctx.session.get_one(m.DrawingFile, page.file_id)
             data = ctx.storage.get(ctx.tenant_id, f.storage_key)
             files[page.file_id] = (data, read_pages(f.id, f.detected_format, data))
         data, reads = files[page.file_id]
-        pages.append(extract_page(ctx, page, seq, reads[page.page_no - 1], data, engine, cfg))
+        by_image = page.text_source in ("ocr", "mixed")
+        ctx.events.message("text_from_image" if by_image else "text_from_file", page=page.page_no, page_id=page.page_id)
+        extracted = extract_page(ctx, page, seq, reads[page.page_no - 1], data, engine, cfg)
+        pages.append(extracted)
+        page_tiles = extracted.stats.tile_count - extracted.stats.blank_tile_count
+        tiles += page_tiles
+        ctx.events.message("tiles", page=page.page_no, tiles=page_tiles, page_id=page.page_id)
+        ctx.events.counters(tiles=tiles)
     return ExtractionResult(drawing_id=ctx.drawing.id, pages=pages, trace_id=ctx.trace_id)

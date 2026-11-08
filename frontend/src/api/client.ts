@@ -153,8 +153,29 @@ export async function uploadDrawing(form: UploadForm, client = api) {
   );
 }
 
-export async function fetchProgress(drawingId: string, client = api): Promise<Progress> {
-  return unwrap(await client.GET("/drawings/{drawing_id}/progress", { params: { path: { drawing_id: drawingId } } }));
+/** `shownLeft`: the time left the live run step shows now, so the next one rises at most a fifth (01 §4.6). */
+export async function fetchProgress(drawingId: string, shownLeft?: number | null, client = api): Promise<Progress> {
+  const query = shownLeft != null ? { shown_left: shownLeft } : undefined;
+  return unwrap(
+    await client.GET("/drawings/{drawing_id}/progress", { params: { path: { drawing_id: drawingId }, query } }),
+  );
+}
+
+export type Live = Schemas["LiveOut"];
+export type Estimate = Schemas["EstimateOut"];
+export type FileCheck = Schemas["CheckOut"];
+
+/** The start bar's check (01 §4.6 item 4, behind `live_run`): pages, rejections and the rough estimate, nothing stored. */
+export async function checkFiles(files: File[], purpose: "quote" | "audit" = "quote", client = api) {
+  const data = new FormData();
+  for (const f of files) data.append("files", f, f.name);
+  data.append("purpose", purpose);
+  return unwrap(
+    await client.POST("/drawings/check", {
+      body: data as unknown as Schemas["Body_check_drawings_check_post"],
+      bodySerializer: (body) => body as unknown as FormData,
+    }),
+  );
 }
 
 export async function cancelDrawing(drawingId: string, client = api): Promise<Progress> {

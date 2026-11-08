@@ -20,6 +20,7 @@ import {
 import { useMe } from "../../api/QueryProvider";
 import { countText } from "../../format";
 import { quotaView } from "../../shell/quota";
+import { endWatch, watchRun } from "../../shell/runWatch";
 import { Shell } from "../../shell/Shell";
 import { Icon } from "../../ui/Icon";
 import { useToast } from "../../ui/Toast";
@@ -45,6 +46,9 @@ import {
   startState,
   type PickedFile,
 } from "./model";
+import { estimateText, isolate, LIVE_POLL_MS, usd } from "./live";
+import { LiveBreakdown, LiveDoneTiles, LiveRunStep } from "./LiveRun";
+import { useStartEstimate } from "./useEstimate";
 
 export const POLL_MS = 1000; // S05 decision: polling, not SSE
 const FALLBACK = "משהו השתבש אצלנו. נסו שוב בעוד רגע";
@@ -65,11 +69,15 @@ export function NewQuoteScreen() {
   const [revisionOf, setRevisionOf] = useState("");
   const [files, setFiles] = useState<PickedFile[]>([]);
 
+  const queries = useQueryClient();
+  const live = !!me.data?.flags.live_run;
   const progress = useQuery({
     queryKey: ["progress", drawingId],
-    queryFn: () => fetchProgress(drawingId ?? ""),
+    // the time left shown now goes back, so the next one rises at most a fifth (01 §4.6)
+    queryFn: () =>
+      fetchProgress(drawingId ?? "", queries.getQueryData<Progress>(["progress", drawingId])?.live?.seconds_left),
     enabled: drawingId !== null,
-    refetchInterval: (q) => (isActive(q.state.data) ? POLL_MS : false),
+    refetchInterval: (q) => (isActive(q.state.data) ? (live ? LIVE_POLL_MS : POLL_MS) : false),
   });
 
   const p = progress.data;
@@ -81,7 +89,8 @@ export function NewQuoteScreen() {
   else if (drawingId && !p) body = progress.isError ? <LoadError /> : null;
   else if (p && p.status === "awaiting_confirmation")
     body = <ConfirmStep progress={p} me={me.data} onCancelled={() => setParams({})} />;
-  else if (p && isActive(p)) body = <RunStep progress={p} onCancelled={() => setParams({})} />;
+  else if (p && isActive(p))
+    body = <RunStep progress={p} updatedAt={progress.dataUpdatedAt} onCancelled={() => setParams({})} />;
   else if (p && p.status === "ready") body = <DoneStep progress={p} me={me.data} />;
   else if (p && p.status === "failed") body = <FailedStep progress={p} onBack={() => setParams({})} />;
   else
@@ -139,6 +148,7 @@ function PickStep(props: {
   const [over, setOver] = useState(false);
   const [busy, setBusy] = useState(false);
   const rev = mode === "rev";
+  const live = !!me.flags.live_run;
   const quota = quotaView(me.quota);
   const revisable = useQuery({ queryKey: ["revisable"], queryFn: () => fetchRevisable(), enabled: rev });
   const maxPages = me.plan.max_pages_per_file;
@@ -149,6 +159,9 @@ function PickStep(props: {
     remaining: quota.remaining,
     busy,
   });
+
+  const estimate = useStartEstimate(files, setFiles, live);
+  const est = rev && !props.revisionOf ? null : estimate;
 
   function add(list: FileList | null) {
     if (!list) return;
@@ -173,6 +186,10 @@ function PickStep(props: {
       });
       setFiles(applyServerCheck(files, result.files));
       void queries.invalidateQueries({ queryKey: ["me"] });
+      if (live) {
+        const name = (!rev && props.project.trim()) || files[0]?.file.name || "";
+        watchRun({ drawingId: result.drawing_id, name, kind: "quote" });
+      }
       props.onStarted(result.drawing_id);
     } catch (err) {
       if (err instanceof ApiError && err.code === "upload_rejected") {
@@ -328,6 +345,16 @@ function PickStep(props: {
               >
                 {start.text}
               </span>
+              {est && (
+                <span
+                  className="small estimate"
+                  data-testid="estimate"
+                  title="צפי גס לפי מספר העמודים. המסלול של כל עמוד ידוע רק אחרי הקליטה"
+                >
+                  <Icon name="clock" />
+                  <span>{estimateText(est)}</span>
+                </span>
+              )}
               <button type="button" className="btn ghost sm" data-testid="clearfiles" onClick={() => setFiles([])}>
                 נקה הכול
               </button>
@@ -367,7 +394,17 @@ function dayMonth(iso: string): string {
   return `${d.getDate()}.${d.getMonth() + 1}`;
 }
 
-export function RunStep({ progress: p, onCancelled }: { progress: Progress; onCancelled: () => void }) {
+export function RunStep({
+  progress: p,
+  updatedAt,
+  onCancelled,
+}: {
+  progress: Progress;
+  /** When the progress came (react-query's `dataUpdatedAt`): the live clock ticks from it. */
+  updatedAt: number;
+  onCancelled: () => void;
+}) {
+  const me = useMe();
   const queries = useQueryClient();
   const toast = useToast();
   const [cancelling, setCancelling] = useState(false);
@@ -377,9 +414,12 @@ export function RunStep({ progress: p, onCancelled }: { progress: Progress; onCa
   async function cancel() {
     setCancelling(true);
     try {
-      await cancelDrawing(p.drawing_id);
+      const after = await cancelDrawing(p.drawing_id);
       void queries.invalidateQueries({ queryKey: ["me"] });
-      toast("הפענוח בוטל. המקום במכסה שוחרר");
+      endWatch(p.drawing_id);
+      // 01 §4.6: the cancel says what the run cost so far
+      const spent = after.live ? `. עלות עד כה: ${isolate(usd(after.live.cost_usd))}` : "";
+      toast(`הפענוח בוטל. המקום במכסה שוחרר${spent}`);
       onCancelled();
     } catch (err) {
       toast(err instanceof ApiError ? err.message : FALLBACK);
@@ -388,6 +428,17 @@ export function RunStep({ progress: p, onCancelled }: { progress: Progress; onCa
       setCancelling(false);
     }
   }
+
+  if (me.data?.flags.live_run && p.live)
+    return (
+      <LiveRunStep
+        progress={p}
+        live={p.live}
+        updatedAt={updatedAt}
+        cancelling={cancelling}
+        onCancel={() => void cancel()}
+      />
+    );
 
   return (
     <div className="card pad" style={{ display: "grid", gap: 14 }} data-testid="run">
@@ -506,8 +557,10 @@ function DoneStep({ progress: p, me }: { progress: Progress; me: Me }) {
             <b className="num">{productsText(summary.products)}</b>
             <span className="small muted">{resultNote(summary.priced, summary.findings)}</span>
           </div>
+          {me.flags.live_run && p.live && <LiveDoneTiles live={p.live} />}
         </div>
       )}
+      {me.flags.live_run && p.live && <LiveBreakdown progress={p} live={p.live} />}
       <Notices progress={p} />
       <div style={{ display: "grid", gap: 4 }}>
         <h3 style={{ margin: 0 }}>סיווג העמודים</h3>

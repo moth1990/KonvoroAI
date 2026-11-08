@@ -118,7 +118,7 @@ const SCREENS: Screen[] = [
       authed: true,
       setup: async (page) => {
         await prototypeStart(page);
-        await page.waitForTimeout(1500); // the prototype advances a stage every 650 ms
+        await page.waitForTimeout(1500); // the live run, 10 times faster than a real one: stage 2 at 1.5 s
       },
     },
     app: {
@@ -130,7 +130,9 @@ const SCREENS: Screen[] = [
       },
     },
     notes: [
-      "Stage summaries under finished stages: the app has one for stage 1 so far; the other stages are stubs (S08+).",
+      "S28c: the live run step (`live_run`). The app's numbers are a real run's on the E2E stand-in model: its cost " +
+        "is $0.00, its time left comes from the seed, its live sentences from the stages' templates.",
+      "The page view shows the page the run is on, with the boxes stage 3 reported; the prototype's are its demo boxes.",
     ],
   },
   {
@@ -141,7 +143,7 @@ const SCREENS: Screen[] = [
       authed: true,
       setup: async (page) => {
         await prototypeStart(page);
-        await page.locator('[data-act="toreview"]').waitFor({ timeout: 15_000 });
+        await page.locator('[data-act="toreview"]').waitFor({ timeout: 30_000 }); // the demo run: ~15 s (PR #41)
       },
     },
     app: {
@@ -154,6 +156,7 @@ const SCREENS: Screen[] = [
       },
     },
     notes: [
+      'S28c: the time and cost tiles and "פירוט לפי שלב" (`live_run`); the stand-in model costs $0.00.',
       "The result tile reads 0 products until stages 4–7 are real.",
       "Page kinds come from stage 1 (S08). In E2E the model is a stand-in that classifies like NURSERY-1's labels, so " +
         "the routes match the prototype's: 5 process, 2 context, 2 skip.",
@@ -170,7 +173,7 @@ const SCREENS: Screen[] = [
       authed: true,
       setup: async (page) => {
         await prototypeStart(page);
-        await page.locator('[data-act="toreview"]').waitFor({ timeout: 15_000 });
+        await page.locator('[data-act="toreview"]').waitFor({ timeout: 30_000 }); // the demo run: ~15 s (PR #41)
       },
     },
     app: {

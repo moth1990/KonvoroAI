@@ -105,6 +105,88 @@ const PATHS = {
       <path d="M7 12h10" />
     </>
   ),
+  // The live run (prototype lines 423–432, 01 §4.6): the sparkle ✦ marks where a model can work, stages 1–6 and
+  // the audit step; pricing is code only.
+  ai: (
+    <>
+      <path d="M11 3l1.9 5.1L18 10l-5.1 1.9L11 17l-1.9-5.1L4 10l5.1-1.9z" />
+      <path d="M18.5 15l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z" />
+    </>
+  ),
+  bell: (
+    <>
+      <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+      <path d="M10.3 21a1.9 1.9 0 0 0 3.4 0" />
+    </>
+  ),
+  clock: (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 7v5l3 2" />
+    </>
+  ),
+  s_intake: (
+    <>
+      <path d="M13 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h5" />
+      <path d="M13 3l6 6h-6z" />
+      <path d="M8 13h4M8 17h2" />
+      <path d="M17.5 13.5l.9 2.4 2.4.9-2.4.9-.9 2.4-.9-2.4-2.4-.9 2.4-.9z" />
+    </>
+  ),
+  s_ocr: (
+    <>
+      <path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2" />
+      <path d="M7 8h8M11 8v8" />
+      <path d="M17 10l.6 1.6 1.6.6-1.6.6-.6 1.6-.6-1.6-1.6-.6 1.6-.6z" />
+    </>
+  ),
+  s_detect: (
+    <>
+      <path d="M4 8V5a1 1 0 0 1 1-1h3M12 4h2M4 12v2M4 18v1a1 1 0 0 0 1 1h3M12 20h2M18 4h1a1 1 0 0 1 1 1v3" />
+      <circle cx="11" cy="12" r="3" />
+      <path d="M18.5 13.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z" />
+    </>
+  ),
+  s_graph: (
+    <>
+      <circle cx="5" cy="6" r="2" />
+      <path d="M19 3l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z" />
+      <circle cx="5" cy="18" r="2" />
+      <circle cx="19" cy="18" r="2" />
+      <circle cx="12" cy="12" r="2.4" />
+      <path d="M6.6 7.3l3.5 3.2M17.4 7.3l-3.5 3.2M6.6 16.7l3.5-3.2M17.4 16.7l-3.5-3.2" />
+    </>
+  ),
+  s_match: (
+    <>
+      <ellipse cx="10" cy="5.5" rx="6" ry="2.5" />
+      <path d="M4 5.5v12c0 1.4 2.7 2.5 6 2.5M16 5.5v5M4 11.5c0 1.4 2.7 2.5 6 2.5" />
+      <path d="M18 12.5l.9 2.6 2.6.9-2.6.9-.9 2.6-.9-2.6-2.6-.9 2.6-.9z" />
+    </>
+  ),
+  s_check: (
+    <>
+      <path d="M12 3l7 3v5c0 4.5-3 8.3-7 10-4-1.7-7-5.5-7-10V6z" />
+      <path d="M9 12l2 2 4-4" />
+      <path d="M20.5 1.3l.6 1.6 1.6.6-1.6.6-.6 1.6-.6-1.6-1.6-.6 1.6-.6z" />
+    </>
+  ),
+  s_price: (
+    <>
+      <ellipse cx="9" cy="6.5" rx="6" ry="2.5" />
+      <path d="M3 6.5v4c0 1.4 2.7 2.5 6 2.5s6-1.1 6-2.5v-4" />
+      <path d="M3 10.5v4c0 1.4 2.7 2.5 6 2.5" />
+      <path d="M13 15.5c0 1.4 1.8 2.5 4 2.5s4-1.1 4-2.5-1.8-2.5-4-2.5-4 1.1-4 2.5zM13 15.5v3c0 1.4 1.8 2.5 4 2.5s4-1.1 4-2.5v-3" />
+    </>
+  ),
+  // The audit step (11, S28c): the audit icon with the sparkle, since it reads the quote with a model.
+  s_audit: (
+    <>
+      <path d="M9 11l3 3 7-7" />
+      <path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9" />
+      <path d="M19 1.5l.6 1.6 1.6.6-1.6.6-.6 1.6-.6-1.6-1.6-.6 1.6-.6z" />
+    </>
+  ),
 } as const;
 
 export type IconName = keyof typeof PATHS;

@@ -1,6 +1,7 @@
 /**
  * Screenshot baselines for the screens the user accepted in the fidelity review (docs/dev-strategy.md §5):
- * login, home classic with the shell, home chat, the new-quote steps (S05) and the review screen's lines, line
+ * login, home classic with the shell, home chat, the new-quote steps (S05; the live run and done step since S28c)
+ * and the review screen's lines, line
  * detail and red filter (S09) and its drawing (S11), the audit's results, evidence and pick step on the
  * 26-993 fixture (S16), the price list and its editor (S19), and the review's product picker (S23b: an attribute
  * from a list, the bulk brand discount, a missing line, the picker, draw mode); light and dark; desktop and mobile.
@@ -24,7 +25,13 @@ test.skip(!process.env.KONBORO_VISUAL, "runs in Playwright's Linux image: `make 
 // waits inside the tests themselves (60 s for `/me` and the totals), so a busy machine failed them as timeouts with
 // no pixel different (BUG-038, BUG-102). The new-quote shots, a whole pipeline run each, keep their 180 s.
 test.describe.configure({ timeout: 120_000 });
-const SHOT = { animations: "disabled", maxDiffPixelRatio: 0.002, timeout: 30_000 } as const;
+// `steady.css` keeps the live run's changing text at one size, so its masks never move the layout (S28c).
+const SHOT = {
+  animations: "disabled",
+  maxDiffPixelRatio: 0.002,
+  timeout: 30_000,
+  stylePath: fileURLToPath(new URL("./visual/steady.css", import.meta.url)),
+} as const;
 
 /** `ready` is what must be on screen before the shot: "network idle" alone can fire before the app's first
  * API call when the machine is busy (emulated amd64, parallel pipeline runs). */
@@ -57,7 +64,10 @@ const NURSERY = fileURLToPath(new URL("../../golden/NURSERY-1/NURSERY-1.pdf", im
 
 /**
  * Text that changes with the clock (the weekday, "today, 18:52", the renewal date) or with the order the tests
- * run in (the quota counts: uploads in parallel tests move them).
+ * run in (the quota counts: uploads in parallel tests move them). The live run (S28c) adds its own: the estimate
+ * (the medians move as runs are stored), the run's sentence, clock, progress and cost, the counters, the log, the
+ * page being read, each stage's time and cost, and the done step's time and cost. The labels around them stay in
+ * the shot.
  */
 function volatile(page: Page) {
   return [
@@ -67,6 +77,18 @@ function volatile(page: Page) {
     page.getByTestId("quota-meter"),
     page.getByTestId("start-note"),
     page.getByTestId("counted-note"),
+    page.getByTestId("estimate"),
+    page.getByTestId("run-sub"),
+    page.locator(".meter.ai"),
+    page.locator(".run-kpis .num"),
+    page.getByTestId("run-eta"),
+    page.locator("[data-testid=run-counters] .num"),
+    page.locator("[data-testid=run-log] .feed"),
+    page.getByTestId("run-view"),
+    page.locator(".live-stages .st"),
+    page.locator(".live-stages .live"),
+    page.locator("[data-testid=done-time] .num"),
+    page.locator("[data-testid=done-cost] .num"),
   ];
 }
 
@@ -99,14 +121,27 @@ const NEW_QUOTE = [
       ]);
       await page.getByLabel("פרויקט / שם הלוח").blur();
       await page.getByTestId("start-note").waitFor();
+      // the server's check (S28c) adds the page count to the row: the shot waits for its answer
+      await page
+        .getByRole("listitem")
+        .filter({ hasText: "NURSERY-1.pdf" })
+        .getByText(/9 עמודים/)
+        .waitFor({ timeout: 30_000 });
     },
   },
   {
     name: "new-run",
     setup: async (page: Page) => {
       await startUpload(page, SLOW_PROJECT);
-      await page.locator('[data-testid="stage-2"][data-state="run"]').waitFor({ timeout: 90_000 });
+      // The light shot is its tenant's first decode, so stage 1 reads every page itself; under amd64 emulation, beside
+      // the other new-quote runs, it took over 97 s in S28c's `make check-screenshots`. As long as the done step's wait.
+      await page.locator('[data-testid="stage-2"][data-state="run"]').waitFor({ timeout: 150_000 });
       await page.mouse.move(0, 0); // no hover on the cancel button
+    },
+    // Left running, the slow run would hold a pipeline worker for its seven stages while the done shots wait for theirs
+    after: async (page: Page) => {
+      await page.getByTestId("cancelrun").click();
+      await page.getByRole("status").waitFor();
     },
   },
   {
@@ -298,6 +333,7 @@ for (const scheme of ["light", "dark"] as const) {
         await page.evaluate(() => document.fonts.ready);
         await screen.setup(page);
         await expect(page).toHaveScreenshot(`${screen.name}-${scheme}.png`, { ...SHOT, mask: volatile(page) });
+        if ("after" in screen) await screen.after(page);
       });
     }
   });

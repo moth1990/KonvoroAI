@@ -4,7 +4,7 @@ from datetime import date
 from decimal import Decimal
 from typing import Any
 
-from sqlalchemy import ARRAY, CheckConstraint, ForeignKey, Index, SmallInteger, Text, UniqueConstraint, text
+from sqlalchemy import ARRAY, CheckConstraint, ForeignKey, Index, Numeric, SmallInteger, Text, UniqueConstraint, text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from ..base import Base, Created, Rate, TenantScoped, Timestamps, one_of, pk, tenant_fk, tenant_unique
@@ -167,10 +167,19 @@ class QuotaEvent(Base, TenantScoped, Created):
 
 
 class LlmCall(Base, TenantScoped, Created):
-    """One row per konboro_llm call: cost per tenant and stage (00 §7.2, 12 §7). A log, so no foreign keys."""
+    """One row per konboro_llm call: cost per tenant and stage (00 §7.2, 12 §7). A log, so no foreign keys.
+
+    Every attempt counts (01 §4.6, S28c): a call that never gave a valid answer is a row with `ok` false. `cost_usd`
+    is priced in code when the row is written (`services/run_cost.py`); `pipeline_stage` is the stage (1–8) of a
+    pipeline call, null for chat and the chat builder."""
 
     __tablename__ = "llm_calls"
-    __table_args__ = (tenant_unique(), Index(None, "tenant_id", "created_at"))
+    __table_args__ = (
+        tenant_unique(),
+        Index(None, "tenant_id", "created_at"),
+        Index(None, "tenant_id", "drawing_id"),
+        CheckConstraint("pipeline_stage IS NULL OR pipeline_stage BETWEEN 1 AND 8", name="pipeline_stage"),
+    )
 
     id: Mapped[str] = pk()
     stage: Mapped[str]
@@ -182,6 +191,11 @@ class LlmCall(Base, TenantScoped, Created):
     attempts: Mapped[int] = mapped_column(SmallInteger)
     drawing_id: Mapped[str | None]
     quote_id: Mapped[str | None]
+    cache_read_tokens: Mapped[int] = mapped_column(server_default="0")
+    cache_write_tokens: Mapped[int] = mapped_column(server_default="0")
+    ok: Mapped[bool] = mapped_column(server_default="true")
+    cost_usd: Mapped[Decimal] = mapped_column(Numeric(12, 6), server_default="0")
+    pipeline_stage: Mapped[int | None] = mapped_column(SmallInteger)
 
 
 __all__ = [

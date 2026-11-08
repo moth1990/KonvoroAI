@@ -257,6 +257,7 @@ def run(ctx: StageContext, cfg: DetectionConfig = DEFAULT) -> DetectionResult:
     searcher = search.searcher(ask, lib, cfg)
 
     everything: list[tuple[PageDetections, list[Candidate]]] = []
+    components = 0
     for seq, pe in enumerate(extraction.pages, start=1):
         page = pages[pe.page_id]
         decide = disambiguate.model_decider(
@@ -267,7 +268,14 @@ def run(ctx: StageContext, cfg: DetectionConfig = DEFAULT) -> DetectionResult:
             f"{page.sha256 or page.page_id}:{page.rotation_applied}",
             ctx.tenant_id,
         )
-        everything.append(detect_page(ctx, page, seq, pe, lib, searcher, decide, cfg))
+        ctx.events.message("detecting", page=page.page_no, page_id=page.page_id)
+        found = detect_page(ctx, page, seq, pe, lib, searcher, decide, cfg)
+        everything.append(found)
+        result, _ = found
+        components += len(result.detections)
+        ctx.events.boxes(page.page_id, page.page_no, page.size_pt, [list(d.bbox) for d in result.detections])
+        ctx.events.message("components_on_page", page=page.page_no, count=len(result.detections), page_id=page.page_id)
+        ctx.events.counters(components=components)
 
     # 03 §3.7: on a drawing where most devices carry a tag, flag the ones that don't
     billable = {c.symbol_class: c.billable for c in lib.classes.values()}

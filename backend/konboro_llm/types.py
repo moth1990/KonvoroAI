@@ -54,6 +54,16 @@ class LLMRequest(Generic[T]):
 class Usage:
     input_tokens: int
     output_tokens: int
+    cache_read_tokens: int = 0
+    cache_write_tokens: int = 0
+
+    def __add__(self, other: Usage) -> Usage:
+        return Usage(
+            self.input_tokens + other.input_tokens,
+            self.output_tokens + other.output_tokens,
+            self.cache_read_tokens + other.cache_read_tokens,
+            self.cache_write_tokens + other.cache_write_tokens,
+        )
 
 
 @dataclass
@@ -61,13 +71,22 @@ class LLMResult(Generic[T]):
     data: T  # already validated against output_schema
     provider: str
     model: str
-    usage: Usage
+    usage: Usage  # every attempt's tokens, not only the last one's (01 §4.6: every attempt costs)
     latency_ms: int
     attempts: int
+    ok: bool = True  # false: the call never gave a valid answer, and `data` is None
 
 
 class LLMError(Exception):
-    """Raised when a provider fails or returns output that does not match the schema."""
+    """Raised when a provider fails or returns output that does not match the schema.
+
+    `usage` is set when the provider answered and the answer is still unusable (a refusal, cut at max_tokens, not
+    JSON): those tokens are billed, so the client records them (S28c)."""
+
+    def __init__(self, message: str = "", *, usage: Usage | None = None, model: str | None = None) -> None:
+        super().__init__(message)
+        self.usage = usage
+        self.model = model
 
 
 class LLMAccountError(LLMError):

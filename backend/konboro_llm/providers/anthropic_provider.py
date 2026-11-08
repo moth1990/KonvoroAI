@@ -20,9 +20,26 @@ from typing import Any
 import anthropic
 
 from ..base import RawAnswer, RawToolCall, RawTurn
-from ..types import ImageInput, LLMAccountError, LLMError, LLMRequest, ToolLoopRequest, Turn
+from ..types import ImageInput, LLMAccountError, LLMError, LLMRequest, ToolLoopRequest, Turn, Usage
 
 CACHE = {"type": "ephemeral"}
+
+
+def usage(response: Any) -> Usage:
+    """The response's billed tokens, the cache's too (S28c: the run's cost in dollars, 01 §4.6). The SDK leaves a
+    cache count None when the request had no cache breakpoint."""
+    u = response.usage
+    return Usage(
+        u.input_tokens,
+        u.output_tokens,
+        getattr(u, "cache_read_input_tokens", None) or 0,
+        getattr(u, "cache_creation_input_tokens", None) or 0,
+    )
+
+
+def unusable(message: str, response: Any) -> LLMError:
+    """An answer we can't use, whose tokens were still billed: the client records them."""
+    return LLMError(message, usage=usage(response), model=response.model)
 
 
 def failure(exc: anthropic.APIError) -> LLMError:
@@ -78,20 +95,22 @@ class AnthropicProvider:
             raise failure(exc) from exc
 
         if response.stop_reason in ("refusal", "max_tokens"):
-            raise LLMError(f"model stopped before answering: {response.stop_reason}")
+            raise unusable(f"model stopped before answering: {response.stop_reason}", response)
         text = next((b.text for b in response.content if b.type == "text"), None)
         if text is None:
-            raise LLMError("model returned no text block")
+            raise unusable("model returned no text block", response)
         try:
             payload = json.loads(text)
         except json.JSONDecodeError as exc:
-            raise LLMError(f"model answer is not JSON: {exc}") from exc
+            raise unusable(f"model answer is not JSON: {exc}", response) from exc
 
         return RawAnswer(
             payload=payload,
             model=response.model,
             input_tokens=response.usage.input_tokens,
             output_tokens=response.usage.output_tokens,
+            cache_read_tokens=usage(response).cache_read_tokens,
+            cache_write_tokens=usage(response).cache_write_tokens,
         )
 
     def complete_turn(
@@ -107,7 +126,7 @@ class AnthropicProvider:
         except anthropic.APIError as exc:
             raise failure(exc) from exc
         if response.stop_reason in ("refusal", "max_tokens"):
-            raise LLMError(f"model stopped before answering: {response.stop_reason}")
+            raise unusable(f"model stopped before answering: {response.stop_reason}", response)
 
         calls = [
             RawToolCall(id=b.id, name=b.name, args=dict(b.input)) for b in response.content if b.type == "tool_use"
@@ -127,6 +146,8 @@ class AnthropicProvider:
             model=response.model,
             input_tokens=response.usage.input_tokens,
             output_tokens=response.usage.output_tokens,
+            cache_read_tokens=usage(response).cache_read_tokens,
+            cache_write_tokens=usage(response).cache_write_tokens,
         )
 
     def turn_params(

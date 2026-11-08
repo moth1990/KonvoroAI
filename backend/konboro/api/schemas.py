@@ -581,6 +581,55 @@ class ProgressSummaryOut(BaseModel):
 
 ConfirmationReason = Literal["low_confidence", "no_diagram_pages", "panel_count_mismatch", "bom_mapping"]
 
+# Dollars to the cent for the screen, as a string (01 §4.6: the run's cost is in dollars, as the providers bill).
+Usd = Annotated[DecimalStr, Field(description="US dollars, e.g. 0.44")]
+
+
+class LiveModelOut(BaseModel):
+    label: str = Field(description="The model's family (Haiku, Sonnet, Opus), or what it does (קריאת טקסט)")
+    calls: int
+
+
+class LiveStageOut(BaseModel):
+    stage: int
+    seconds: int | None = Field(description="How long it ran (or runs so far); null before it starts")
+    cost_usd: Usd | None = Field(description="What its model calls cost, every attempt; null before it starts")
+    calls: int
+    models: list[LiveModelOut]
+
+
+class LiveMessageOut(BaseModel):
+    stage: int
+    text: str = Field(description="Hebrew, from a template in code (pipeline/events.py), never a model")
+    at_s: int = Field(description="Seconds from the run's start")
+
+
+class LiveViewOut(BaseModel):
+    """The page the run is on, and stage 3's boxes on it in PDF points (origin top left)."""
+
+    page_id: str
+    page_no: int | None
+    image_url: str | None
+    size: list[float] | None = Field(description="The page's width and height in points, for the boxes")
+    boxes: list[list[float]] = Field(description="[x0, y0, x1, y1] in points")
+
+
+class LiveOut(BaseModel):
+    """The live run step and the done step's time and cost (01 §4.6, `live_run`)."""
+
+    started_at: datetime | None
+    elapsed_s: int
+    seconds_left: int | None = Field(description="Rounded to 10 s; null once the run ended")
+    seconds_expected: int = Field(description="The whole run, as now expected")
+    fraction: float = Field(ge=0, le=1, description="Elapsed of elapsed + left, for the meter")
+    cost_usd: Usd
+    cost_estimate_usd: Usd = Field(description="Spent so far plus the expected cost of the stages left")
+    cost_per_page_usd: Usd | None
+    stages: list[LiveStageOut]
+    messages: list[LiveMessageOut] = Field(description="The last six, oldest first")
+    counters: dict[str, int] = Field(description="pages, pages_read, tiles, components, products, findings")
+    view: LiveViewOut | None
+
 
 class ProgressOut(BaseModel):
     drawing_id: str
@@ -601,6 +650,24 @@ class ProgressOut(BaseModel):
         [], description="Why the pages need the user's confirmation (01 §5.6); empty when they don't"
     )
     notices: list[NoticeOut] = []
+    live: LiveOut | None = Field(None, description="With `live_run` on: times, cost and what each stage reports")
+
+
+class EstimateOut(BaseModel):
+    """The start bar's rough estimate (01 §4.6 item 4): page count and size only, the routes being unknown."""
+
+    pages: int
+    seconds: int
+    cost_usd: Usd
+
+
+class CheckOut(BaseModel):
+    """`POST /drawings/check`: the upload's checks without the upload. Nothing is stored or counted."""
+
+    files: list[UploadedFileOut]
+    error: str | None = Field(None, description="An upload-wide problem, e.g. too many pages in all")
+    message: str | None = None
+    estimate: EstimateOut | None = Field(description="Null when a file is rejected")
 
 
 class RevisableOut(BaseModel):

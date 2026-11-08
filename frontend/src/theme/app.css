@@ -781,7 +781,7 @@ a.list-item:hover {
 }
 .seg button[aria-pressed="true"] {
   background: var(--surface);
-  color: var(--ink, inherit);
+  color: var(--fg);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
   font-weight: 600;
 }
@@ -2367,4 +2367,303 @@ table.tbl {
   padding-inline-start: 18px;
   display: grid;
   gap: 2px;
+}
+
+/* ---- The live run step (prototype lines 175–220, 01 §4.6, `live_run`; S28c). The prototype's 900px and 820px
+   rules are the app's 1000px and 860px (09 §5.2), its second `pulse` is `ai-pulse` (the mic's is red), and its
+   --r-md is --r. ---- */
+.run-live {
+  display: grid;
+  gap: 20px;
+}
+.run-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+@media (max-width: 1000px) {
+  .run-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.orb {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  flex: none;
+  display: grid;
+  place-items: center;
+  color: var(--accent-ink);
+  background: conic-gradient(from 0deg, var(--ai-a), var(--ai-b), var(--ai-c), var(--ai-a));
+  animation: orb 3.2s linear infinite;
+  box-shadow: 0 0 0 4px var(--accent-soft);
+}
+.orb > svg {
+  animation: orb 3.2s linear infinite reverse;
+}
+@keyframes orb {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.run-head {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.run-kpis {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+.run-kpis > div {
+  background: var(--surface-2);
+  border-radius: var(--r-sm);
+  padding: 8px 10px;
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+}
+.run-kpis b {
+  font-size: 18px;
+  font-variant-numeric: tabular-nums;
+}
+.run-kpis .eyebrow {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+}
+.run-kpis .eyebrow svg {
+  width: 13px;
+  height: 13px;
+}
+.meter.ai > i {
+  background: linear-gradient(90deg, var(--ai-a), var(--ai-b), var(--ai-c));
+  transition: width 0.25s linear;
+}
+.stages.live-stages .stage {
+  grid-template-columns: 30px minmax(0, 1fr) auto;
+}
+.stage .sico {
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  display: grid;
+  place-items: center;
+  background: var(--surface-2);
+  color: var(--muted);
+}
+.stage .sico svg {
+  width: 18px;
+  height: 18px;
+}
+.stage.done .sico {
+  background: var(--ok-soft);
+  color: var(--ok);
+}
+.stage.failed .sico {
+  background: var(--bad-soft);
+  color: var(--bad);
+}
+.stage.run .sico {
+  color: var(--accent-ink);
+  background: linear-gradient(135deg, var(--ai-a), var(--ai-b));
+  box-shadow: 0 0 0 3px var(--accent-soft);
+  animation: ai-pulse 1.4s ease-in-out infinite;
+}
+@keyframes ai-pulse {
+  50% {
+    box-shadow: 0 0 0 6px var(--accent-soft);
+  }
+}
+.stages.live-stages .stage .st {
+  text-align: end;
+  display: grid;
+  gap: 1px;
+}
+.stage .live {
+  font-size: 12.5px;
+  color: var(--accent);
+}
+.stage .live::after {
+  content: "";
+  display: inline-block;
+  width: 1.2em;
+  text-align: start;
+  animation: dots 1.2s steps(4) infinite;
+}
+@keyframes dots {
+  0% {
+    content: "";
+  }
+  25% {
+    content: ".";
+  }
+  50% {
+    content: "..";
+  }
+  75% {
+    content: "...";
+  }
+}
+.view {
+  position: relative;
+  border-radius: var(--r);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: #fff;
+  aspect-ratio: 1755 / 1240;
+}
+.view img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+.view .ovl {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.view .scanline {
+  position: absolute;
+  inset-inline: 0;
+  height: 22%;
+  top: -22%;
+  background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--ai-b) 22%, transparent), transparent);
+  animation: scan 2.2s linear infinite;
+  pointer-events: none;
+}
+@keyframes scan {
+  to {
+    top: 100%;
+  }
+}
+.view .tiles {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  pointer-events: none;
+}
+.view .tiles i {
+  border: 1px dashed color-mix(in srgb, var(--ai-a) 45%, transparent);
+  background: color-mix(in srgb, var(--ai-a) 5%, transparent);
+}
+.view .tiles i.on {
+  background: color-mix(in srgb, var(--ai-b) 16%, transparent);
+}
+.view .bx {
+  position: absolute;
+  border: 2px solid var(--ai-b);
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--ai-b) 10%, transparent);
+  animation: pop 0.35s ease-out both;
+}
+@keyframes pop {
+  from {
+    transform: scale(1.4);
+    opacity: 0;
+  }
+}
+.view .vlabel {
+  position: absolute;
+  top: 8px;
+  inset-inline-start: 8px;
+  background: rgba(15, 20, 40, 0.78);
+  color: #fff;
+  font-size: 12px;
+  padding: 3px 8px;
+  border-radius: 999px;
+}
+.feed {
+  display: grid;
+  gap: 4px;
+  max-height: 168px;
+  overflow: hidden;
+}
+.feed div {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  gap: 8px;
+  font-size: 12.5px;
+  animation: feedin 0.3s ease-out both;
+}
+.feed div:first-child {
+  color: var(--fg);
+  font-weight: 600;
+}
+.feed div span:first-child {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+@keyframes feedin {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+.counters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.counters span {
+  background: var(--surface-2);
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 12.5px;
+}
+.counters b {
+  font-variant-numeric: tabular-nums;
+}
+.breakdown td,
+.breakdown th {
+  font-size: 12.5px;
+}
+.breakdown td .row svg {
+  width: 16px;
+  height: 16px;
+}
+.estimate {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+}
+.estimate svg {
+  width: 14px;
+  height: 14px;
+}
+.notify-switch {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  cursor: pointer;
+}
+.notify-switch svg {
+  width: 15px;
+  height: 15px;
+}
+@media (max-width: 860px) {
+  .run-grid .view,
+  .run-grid .run-log {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .orb,
+  .orb > svg,
+  .view .scanline,
+  .view .bx,
+  .feed div,
+  .stage.run .sico,
+  .stage .live::after {
+    animation: none;
+  }
+  .meter.ai > i {
+    transition: none;
+  }
 }

@@ -14,6 +14,7 @@ import { PricesScreen } from "./screens/prices/Prices";
 import { QueueScreen } from "./screens/queue/Queue";
 import { ReviewScreen } from "./screens/review/Review";
 import { WelcomeScreen } from "./screens/welcome/Welcome";
+import { RunWatcher } from "./shell/RunWatcher";
 
 /** `/build` exists only when `chat_quote_builder` is on: off, it behaves like any unknown path (13 §3.2). */
 function BuildRoute() {
@@ -50,7 +51,12 @@ function OnboardingGate() {
   const me = useMe();
   const location = useLocation();
   if (me.data?.onboarding_required && location.pathname !== "/welcome") return <Navigate to="/welcome" replace />;
-  return <Outlet />;
+  return (
+    <>
+      <RunWatcher />
+      <Outlet />
+    </>
+  );
 }
 
 function WelcomeRoute() {

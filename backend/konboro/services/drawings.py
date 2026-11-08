@@ -81,6 +81,11 @@ def _project(session: Session, tenant_id: str, customer_name: str | None, projec
     return project_id
 
 
+def limits_for(session: Session, tenant_id: str) -> Limits:
+    """The upload's limits for this factory's plan (01 §4.3): the upload and the start bar's check use the same."""
+    return Limits(max_pages_per_file=plan.max_pages_per_file(session, tenant_id))
+
+
 def create_upload(
     session: Session,
     storage: Storage,
@@ -134,7 +139,7 @@ def create_upload(
     if previous is None:
         reservation_id = quota.reserve(session, tenant_id, purpose, created_by=user_id, drawing_id=drawing_id)
 
-    limits = Limits(max_pages_per_file=plan.max_pages_per_file(session, tenant_id))
+    limits = limits_for(session, tenant_id)
     check = check_upload(files, limits)
     quote_file = check_quote(*audited_quote, limits) if audited_quote is not None else None
     if quote_file is not None and quote_file.error is not None:
@@ -368,24 +373,26 @@ def _audit_summary(p: Progress) -> str | None:
 
 
 def _extraction_summary(p: Progress) -> str:
-    """ "שכבת טקסט חסרה, OCR על 6 עמודים · 58 אריחים": how the text was read, and the tiles that go on to detection
-    (02 §2.6, the ones that are not blank)."""
+    """ "אין שכבת טקסט · נקראו 6 עמודים · 58 אריחים" (prototype STAGES): how the text was read, in plain words (01 §4.6,
+    no "OCR"), and the tiles that go on to detection (02 §2.6, the ones that are not blank)."""
     process = [page for page, _ in p.pages if page.route == "process"]
     by_ocr = [page for page in process if page.text_source in ("ocr", "mixed")]
     tiles = _count_text(sum(page.tile_count or 0 for page in process), "אריח אחד", "אריחים")
     if not by_ocr:
         return f"טקסט מהקובץ · {tiles}"
-    layer = "חסרה" if all(page.text_source == "ocr" for page in process) else "חלקית"
-    return f"שכבת טקסט {layer}, OCR על {_count_text(len(by_ocr), 'עמוד אחד', 'עמודים')} · {tiles}"
+    layer = "אין שכבת טקסט" if all(page.text_source == "ocr" for page in process) else "שכבת טקסט חלקית"
+    read = "נקרא עמוד אחד" if len(by_ocr) == 1 else f"נקראו {len(by_ocr)} עמודים"
+    return f"{layer} · {read} מהתמונה · {tiles}"
 
 
 def _symbols_summary(p: Progress) -> str:
-    """ "61 סימנים · 54 בזיהוי ישיר, 7 בהכרעת מודל": the prototype's "מהספרייה" is the similarity index (03 §3.3),
-    which arrives in phase 4; until then the first look is the model's (S12)."""
+    """ "61 רכיבים · 54 בזיהוי ישיר, 7 בהכרעת מודל": the prototype's "מהספרייה" is the similarity index (03 §3.3),
+    which arrives in phase 4; until then the first look is the model's (S12). "רכיבים", as the stage is named
+    (01 §4.6)."""
     process = [page for page, _ in p.pages if page.route == "process"]
     total = sum(page.symbol_count or 0 for page in process)
     decided = sum(page.symbol_llm_count or 0 for page in process)
-    symbols = _count_text(total, "סימן אחד", "סימנים")
+    symbols = _count_text(total, "רכיב אחד", "רכיבים")
     if not decided:
         return symbols
     return f"{symbols} · {total - decided} בזיהוי ישיר, {decided} בהכרעת מודל"
