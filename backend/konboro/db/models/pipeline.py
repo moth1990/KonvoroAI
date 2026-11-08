@@ -238,6 +238,28 @@ class StageRun(Base, TenantScoped):
     sent_at: Mapped[datetime | None]
 
 
+class PipelineEvent(Base, TenantScoped, Created):
+    """What a stage reports while it runs, for the live run step (01 §4.6, S28c): `message` (the live sentence and
+    the log), `counters` (pages, tiles, components, products, findings) and `boxes` (one page's detections, in PDF
+    points). Written from templates in code (`pipeline/events.py`), never by a model, in a transaction of its own so
+    that a cancelled stage keeps them."""
+
+    __tablename__ = "pipeline_events"
+    __table_args__ = (
+        tenant_unique(),
+        tenant_fk("drawing_id", "drawings", ondelete="CASCADE"),
+        CheckConstraint("stage BETWEEN 1 AND 8", name="stage"),
+        one_of("kind", ("message", "counters", "boxes")),
+        Index(None, "tenant_id", "drawing_id", "created_at"),
+    )
+
+    id: Mapped[str] = pk()
+    drawing_id: Mapped[str]
+    stage: Mapped[int] = mapped_column(SmallInteger)
+    kind: Mapped[str]
+    payload: Mapped[dict[str, Any]]
+
+
 class Component(Base, TenantScoped, Created):
     """Stage 4 output (04 §6.3). Kept in the DB because quote lines and audits point at it."""
 
@@ -277,6 +299,7 @@ __all__ = [
     "Page",
     "PageTemplate",
     "Panel",
+    "PipelineEvent",
     "Project",
     "StageRun",
 ]

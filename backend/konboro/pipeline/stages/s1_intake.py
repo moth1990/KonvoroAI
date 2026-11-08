@@ -52,6 +52,7 @@ from ..bom import review as bom_review
 from ..bom import sheets as bom_sheets
 from ..bom import table as bom_table
 from ..context import StageContext
+from ..events import kind_text
 from ..intake import checks, classify, routing, templates
 from ..intake.drawing import MergedPanel, PagePanels, input_kind, is_revision, merge_panels, name_key, panel_resolver
 from ..intake.pages import PageRead, png, read_pages, render
@@ -232,9 +233,16 @@ def _classify(ctx: StageContext, works: list[Work], total: int) -> None:
         return w, result
 
     todo = [w for w in works if w.read is not None and w.classified_by == "model"]
+    for w in works:
+        if w.classified_by == "template":
+            ctx.events.message("page_template", page=w.page_no, page_id=w.page_id)
+    done = len(works) - len(todo)
     with ThreadPoolExecutor(max_workers=CLASSIFY_WORKERS) as pool:
         for w, result in pool.map(one, todo):
             checked = classify.check(result.data, w.size_pt)
+            done += 1
+            ctx.events.message("page_kind", page=w.page_no, kind=kind_text(checked.page_kind), page_id=w.page_id)
+            ctx.events.counters(pages=total, pages_read=done)
             if checked.orientation:
                 assert w.read is not None  # noqa: S101
                 w.read.extra_rotation = (w.read.extra_rotation + checked.orientation) % 360
@@ -489,8 +497,10 @@ def run(ctx: StageContext) -> IntakeResult:
             .order_by(m.DrawingFile.id)
         )
     )
+    ctx.events.message("reading_file")
     works = _read(ctx, files)
     total = len(works)
+    ctx.events.counters(pages=total, pages_read=0)
     issues: list[StageIssue] = []
 
     for w in works:
@@ -505,6 +515,7 @@ def run(ctx: StageContext) -> IntakeResult:
     _reuse(ctx, works)
     _match_templates(works, _saved_templates(ctx))
     _classify(ctx, works, total)
+    ctx.events.counters(pages=total, pages_read=total)  # reused and template pages are read too
     block = _title_block(ctx, works)
     producer = templates.producer_key(block.designer if block else None)
     _check_templates(ctx, works, producer, total)

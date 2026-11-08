@@ -1,6 +1,7 @@
 """CassetteProvider: record then replay gives the same result, a missing cassette is an error, and the key changes
 with anything that can change the answer."""
 
+from decimal import Decimal
 from pathlib import Path
 
 import pytest
@@ -144,6 +145,6 @@ def test_the_spending_cap_stops_a_live_run_after_the_line() -> None:
 
     capped = SpendingCap(Billed(), max_usd=0.05)  # type: ignore[arg-type]
     capped.complete_structured(request(), "claude-sonnet-5-5")  # $0.002 + $0.10: this call crosses the line
-    assert capped.spent_usd == pytest.approx(0.102)
+    assert capped.spent_usd == Decimal("0.102")  # priced like llm_calls (services/run_cost.py), in Decimal
     with pytest.raises(LLMError, match="spending cap"):
         capped.complete_structured(request(), "claude-sonnet-5-5")

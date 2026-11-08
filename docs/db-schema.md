@@ -63,6 +63,8 @@ The full data model for Konboro v1.0. This document was listed as missing in [00
 
    - `konboro_promoter` (migration 0020, S24 decision 4) has no login and owns one function, `konboro_promote(candidate_id, record_id)`. It is the only path from a tenant to the global layer: the pilot approval queue's approval (00 §14.2). It is `SECURITY DEFINER`, only `konboro_app` may execute it, and the role has no `BYPASSRLS`: it reads the candidate through the tenant's own `tenant_isolation` policy (the caller's `app.tenant_id`), promotes only an `approved` one, copies only the fields each kind's global record has (so a price, a cost, a supplier, a customer or a designer cannot travel, even in a payload that carried one), and stamps `source='pilot_engineer'`, `source_tenant_id`, `approved_by` and `approved_at`. Its grants: `SELECT, INSERT` on `catalog_items`, `abbreviations`, `symbol_classes` and `spelling_patterns`; `UPDATE (attributes, attribute_provenance, updated_at)` on `catalog_items`; `SELECT, UPDATE (promoted_id)` on `knowledge_candidates`. The app role keeps `SELECT` only on every global table.
 
+   - `konboro_stats` (migration 0027, S28c) has no login and owns one function, `konboro_stage_medians(interval)`: each stage's median seconds and dollars per page unit over every factory's finished runs in that window, with the number of runs, for the live run's time left until a factory has 20 runs of its own (01 §4.6). It returns aggregates only, no tenant, drawing or row. Like the sweeper it is `SECURITY DEFINER`, only `konboro_app` may execute it, it has no `BYPASSRLS`, and it reads through its own `stage_stats` policies (`FOR SELECT`) and column-level `SELECT` on `drawings (tenant_id, id, status)`, `stage_runs (…, started_at, finished_at)`, `pages (tenant_id, drawing_id, route)` and `llm_calls (tenant_id, drawing_id, pipeline_stage, cost_usd)`. `services/run_estimate.MEDIANS_SQL` is the same query for one factory, under its own RLS.
+
    Postgres superusers and table owners bypass RLS. That is why this split matters.
 
 **Tenant context:**
@@ -98,7 +100,7 @@ System limits (20 MB per file, 20 files, 200 pages per drawing, 2 m² per page) 
 
 **`feature_flags`** (13 §2):
 - `key text pk`, `description`.
-- `default_on bool not null default false`. A new flag is always off.
+- `default_on bool not null default false`. A new flag is off, except one a session turns on for every factory when it is ready (13 §2 `scope=global`): `live_run` (S28c) is the first. The seed sets `default_on` only for a flag that declares it, so an operator's change to the others stays.
 - `depends_on text[]`.
 - `owner`, `created_at`, `remove_by date`.
 - Seeded keys: spec 13's five and `catalog_lines` (S27b), with no `remove_by` (13 §3 rule 5: removed a month after they are on for every factory); the build-time flags of accepted screens, `quote_audit`, `bom_column_mapping`, `onboarding`, `settings_screen`, `approval_queue` and `chat_layer`, with `remove_by` 2026-12-31, Gate 3 (S28 decision 4, migration 0026). `review_screen` (S09) gated the review screen while it was built; migration 0019 removed it with S23b. `price_list` (S18) gated the price list; migration 0026 removed it with S28.
@@ -191,9 +193,12 @@ Flags resolve in the order tenant → plan → global → default (13 §2).
 This table answers the customer's question "why was this counted?".
 
 **`llm_calls`** (`llm_`) holds one row per `konboro_llm` call, for cost per tenant (00 §7.2, 12 §7):
-- `stage`, `provider`, `model`;
-- `input_tokens`, `output_tokens`, `latency_ms`, `attempts`;
-- `drawing_id null`, `quote_id null`.
+- `stage` (the route key, e.g. `page_classification`), `provider`, `model`;
+- `input_tokens`, `output_tokens`, `cache_read_tokens`, `cache_write_tokens`, `latency_ms`, `attempts`: every attempt's tokens, a schema mismatch's too (migration 0027, S28c);
+- `ok`: false for a call that never gave a valid answer, which is billed all the same;
+- `cost_usd numeric(12,6)`: priced in code when the row is written (`services/run_cost.py`, the list prices), so a later price change never rewrites a run's cost;
+- `pipeline_stage smallint null`: the pipeline stage (1–8) of a run's call; null for chat, the chat builder and the home router, which a run's cost leaves out (01 §4.6);
+- `drawing_id null`, `quote_id null`. Indexed by `(tenant_id, drawing_id)` for the run's cost.
 
 ## 5. Tenant layer: drawings and the pipeline
 
@@ -254,6 +259,8 @@ This table answers the customer's question "why was this counted?".
 - `error jsonb`: `{type, message, attempt}` of the last failure.
 - `sent_at`: when the stage's message was last sent. Stage 1's is set by the upload, every other stage's by the stage before it, and the worker's sweep updates it when it sends one again.
 - All seven rows are created with the upload, as `queued`. A cancel marks the unfinished ones `skipped`.
+
+**`pipeline_events`** (`pev_`, migration 0027, S28c) is what a stage reports while it runs, for the live run step (01 §4.6): `drawing_id` (cascade), `stage` (1–8), `kind` (`message`: the live sentence and the log, from a template in code, never a model; `counters`: pages, tiles, components, products, findings; `boxes`: one page's detections in PDF points) and `payload jsonb`. At most one write a second per stage run, each in its own transaction, so a failed or cancelled stage keeps its events. Indexed by `(tenant_id, drawing_id, created_at)`.
 
 **`components`** (`cmp_`, 04 §6.3) is the stage 4 output, kept in the DB because quote lines and audits point at it. Stage 4 writes them (S13), and replaces the drawing's rows when it runs again. The id is the contract's `component_id`, `cmp_<drawing ulid>_<n>`: stable across reruns of the same input.
 - `drawing_id`, `panel_id`, `family`.
@@ -432,7 +439,7 @@ Added here:
 | `prp_` | chat proposal | `aud_` | audit |
 | `dif_` | audit difference | `kc_` | knowledge candidate |
 | `aql_` | audited quote line | `bmg_` | chat build message |
-| `tpl_` | factory page template | | |
+| `tpl_` | factory page template | `pev_` | pipeline event |
 | `cat_` | catalog item | `ref_` | reference crop (global) |
 | `trf_` | reference crop (tenant) | `abr_` | abbreviation (global) |
 | `tab_` | abbreviation (tenant) | `vat_` | VAT rate |

@@ -13,6 +13,7 @@
 
 import os
 import threading
+from decimal import Decimal
 from pathlib import Path
 from typing import Any, Literal
 
@@ -21,10 +22,12 @@ from sqlalchemy import Engine
 from konboro.db.ids import new_id
 from konboro.db.models import LlmCall
 from konboro.db.session import tenant_session
+from konboro.services.run_cost import call_cost
 from konboro_llm import LLMClient, LLMError, LLMRequest, LLMResult
 from konboro_llm.base import LLMProvider, RawAnswer, RawTurn
 from konboro_llm.client import OnCall
 from konboro_llm.providers import CassetteProvider, FakeProvider
+from konboro_llm.types import Usage
 
 EvalMode = Literal["replay", "live"]
 
@@ -95,47 +98,45 @@ def eval_providers(
     return {"anthropic": provider}
 
 
-# List prices per million tokens (input, output), for the live eval's spending cap only; billing is the provider's.
-PRICES_USD = {"claude-haiku-5-5": (0.10, 0.50), "claude-sonnet-5-5": (2.0, 10.0), "claude-opus-5-5": (4.0, 20.0)}
-
-
 class SpendingCap:
     """A live provider that refuses calls once the ones before cost `max_usd` (S10: the OCR recording's ceiling).
-    The call that crosses the line still finishes; the next one raises."""
+    The call that crosses the line still finishes; the next one raises. Priced like `llm_calls` (run_cost)."""
 
     def __init__(self, wrapped: LLMProvider, max_usd: float) -> None:
         self.wrapped = wrapped
         self.name = wrapped.name
-        self.max_usd = max_usd
-        self.spent_usd = 0.0
+        self.max_usd = Decimal(str(max_usd))
+        self.spent_usd = Decimal(0)
         self._lock = threading.Lock()
 
-    def complete_structured(self, request: LLMRequest[Any], model: str, retry_hint: str | None = None) -> RawAnswer:
+    def _check(self) -> None:
         with self._lock:
             if self.spent_usd >= self.max_usd:
                 raise LLMError(f"spending cap reached: ${self.spent_usd:.2f} of ${self.max_usd:.2f}")
-        answer = self.wrapped.complete_structured(request, model, retry_hint)
-        price_in, price_out = PRICES_USD.get(model, max(PRICES_USD.values()))
-        cost = (answer.input_tokens * price_in + answer.output_tokens * price_out) / 1_000_000
+
+    def _add(self, model: str, usage: Usage) -> None:
         with self._lock:
-            self.spent_usd += cost
+            self.spent_usd += call_cost(model, usage)
+
+    def complete_structured(self, request: LLMRequest[Any], model: str, retry_hint: str | None = None) -> RawAnswer:
+        self._check()
+        answer = self.wrapped.complete_structured(request, model, retry_hint)
+        self._add(model, answer.usage())
         return answer
 
     def complete_turn(
         self, request: Any, turns: Any, model: str, allow_tools: bool = True, retry_hint: str | None = None
     ) -> RawTurn:
-        with self._lock:
-            if self.spent_usd >= self.max_usd:
-                raise LLMError(f"spending cap reached: ${self.spent_usd:.2f} of ${self.max_usd:.2f}")
+        self._check()
         answer: RawTurn = self.wrapped.complete_turn(request, turns, model, allow_tools, retry_hint)  # type: ignore[attr-defined]
-        price_in, price_out = PRICES_USD.get(model, max(PRICES_USD.values()))
-        cost = (answer.input_tokens * price_in + answer.output_tokens * price_out) / 1_000_000
-        with self._lock:
-            self.spent_usd += cost
+        self._add(model, answer.usage())
         return answer
 
 
-def usage_recorder(engine: Engine, tenant_id: str, drawing_id: str | None = None) -> OnCall:
+def usage_recorder(engine: Engine, tenant_id: str, drawing_id: str | None = None, stage: int | None = None) -> OnCall:
+    """Writes each call to `llm_calls` in its own transaction, so a stage that fails or is cancelled afterwards
+    keeps its cost (00 §7.2). `stage` is the pipeline's stage (1–8) for the run's cost (01 §4.6); chat has none."""
+
     def record(request: LLMRequest[Any], result: LLMResult[Any]) -> None:
         with tenant_session(tenant_id, engine) as s:
             s.add(
@@ -147,9 +148,14 @@ def usage_recorder(engine: Engine, tenant_id: str, drawing_id: str | None = None
                     model=result.model,
                     input_tokens=result.usage.input_tokens,
                     output_tokens=result.usage.output_tokens,
+                    cache_read_tokens=result.usage.cache_read_tokens,
+                    cache_write_tokens=result.usage.cache_write_tokens,
                     latency_ms=result.latency_ms,
                     attempts=result.attempts,
+                    ok=result.ok,
+                    cost_usd=call_cost(result.model, result.usage),
                     drawing_id=drawing_id,
+                    pipeline_stage=stage,
                 )
             )
 

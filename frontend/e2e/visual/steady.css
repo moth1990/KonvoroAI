@@ -1,0 +1,35 @@
+/*
+ * Applied only while a baseline shot is taken (`stylePath` in visual.spec.ts). The live run's text that changes from
+ * run to run is masked, but a mask hides content, not its size. The sentence, the time left, a counter or a stage's
+ * message of another length wraps to another line on a phone and moves everything below it. Here each keeps one
+ * size, so the masks cover the same place in every run (S28c).
+ */
+[data-testid="run-sub"],
+[data-testid="run-eta"],
+.stage .live {
+  display: block;
+  height: 1.5em;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.run-kpis b.num {
+  display: block;
+  height: 1.4em;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.run-kpis .small .num,
+[data-testid="run-counters"] .num {
+  display: inline-block;
+  width: 4ch;
+  overflow: hidden;
+  vertical-align: bottom;
+}
+.live-stages .st {
+  width: 4.5em;
+  height: 2.6em;
+  overflow: hidden;
+}
+[data-testid="run-log"] .feed {
+  height: 168px;
+}

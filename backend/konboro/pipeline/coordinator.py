@@ -49,6 +49,7 @@ from konboro.settings import Settings
 from konboro_llm import LLMAccountError, LLMClient
 from konboro_llm.base import LLMProvider
 
+from . import events as run_events
 from .context import StageContext
 from .stages import STAGES, Stage
 
@@ -340,8 +341,15 @@ class Pipeline:
     def _run(self, msg: StageMessage) -> StageMessage | None:
         with tenant_session(msg.tenant_id, self.engine) as s:
             drawing = s.get_one(Drawing, msg.drawing_id)
-            llm = LLMClient(self.llm_providers, on_call=usage_recorder(self.engine, msg.tenant_id, msg.drawing_id))
-            output = self.stages[msg.stage](StageContext(s, self.storage, drawing, msg.stage, llm))
+            recorder = usage_recorder(self.engine, msg.tenant_id, msg.drawing_id, msg.stage)
+            llm = LLMClient(self.llm_providers, on_call=recorder)
+            events = run_events.recorder(self.engine, msg.tenant_id, msg.drawing_id, msg.stage)
+            run_events.started(events, msg.stage)
+            try:
+                output = self.stages[msg.stage](StageContext(s, self.storage, drawing, msg.stage, llm, events))
+                run_events.finished(events, msg.stage, output)
+            finally:
+                events.flush()  # the last of each kind, a failed or cancelled stage's too (01 §4.6)
             key = drawing_key(msg.tenant_id, msg.drawing_id, "stages", f"s{msg.stage}.json")
             self.storage.put(msg.tenant_id, key, output.model_dump_json().encode(), "application/json")
 
