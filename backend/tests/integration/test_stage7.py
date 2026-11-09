@@ -6,7 +6,6 @@ the quote has real lines, colours, reasons, an enclosure and totals, and another
 recalculation after it makes version 2 with a diff, and "open version N+1" copies it (07 §7.7, S22 decisions 4–5).
 """
 
-import time
 from datetime import UTC, datetime
 from decimal import Decimal
 
@@ -34,6 +33,7 @@ from konboro.services.storage import Storage
 from konboro_llm import LLMClient
 from konboro_llm.providers import FakeProvider
 
+from ..perf import RECALCULATION, within
 from .api import Api, ApiTenant, add_tenant
 from .test_api_drawings import progress
 from .test_api_upload import upload
@@ -200,6 +200,7 @@ def test_stage_7_prices_the_quote(
     assert "מהמחירון" in run["stages"][6]["summary"]
 
 
+@pytest.mark.perf
 def test_versions_reruns_and_recalculation(
     seeded: dict[str, Engine],
     api: Api,
@@ -255,9 +256,8 @@ def test_versions_reruns_and_recalculation(
         s.execute(update(m.Product).values(sale_mode="rule"))
         preview = qv.preview_recalculation(s, storage, tenant.tenant_id, quote_id)
         assert preview["lines"] and s.get_one(m.Quote, quote_id).current_version == 1
-        start = time.perf_counter()
-        v2 = qv.recalculate(s, storage, tenant.tenant_id, quote_id)
-        assert time.perf_counter() - start < 2.0  # 07 §9: a full recalculation with the diff ≤ 2 s
+        with within(RECALCULATION, "the recalculation to version 2"):
+            v2 = qv.recalculate(s, storage, tenant.tenant_id, quote_id)
         assert (v2.version.version, v2.version.status) == (2, "draft")
         diff = v2.version.diff_from_previous or {}
         assert diff["from_version"] == 1 and any(x["change"] == "changed" for x in diff["lines"])

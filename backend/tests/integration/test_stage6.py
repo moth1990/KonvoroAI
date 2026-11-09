@@ -4,7 +4,6 @@ rules' overrides are the factory's own (RLS), the agent's calls are logged and i
 customer; the run step shows the stage-6 line; the rules-only re-run takes under a second. The model is the stand-in.
 """
 
-import time
 from datetime import date
 from decimal import Decimal
 
@@ -31,6 +30,7 @@ from konboro_llm import LLMClient
 from konboro_llm.providers import FakeProvider
 from konboro_llm.stages.validator_review import STAGE as REVIEW
 
+from ..perf import REVALIDATION, within
 from .api import Api, ApiTenant, add_tenant
 from .test_api_drawings import progress
 from .test_api_upload import upload
@@ -193,6 +193,7 @@ def test_stage_6_findings_reach_the_review_screen(
     assert shown[one.issue_id]["title"] == one.title and shown[one.issue_id]["message"] == one.message
 
 
+@pytest.mark.perf
 def test_the_agent_and_the_rules_on_a_drawing_with_values(
     api: Api,
     seeded: dict[str, Engine],
@@ -247,11 +248,11 @@ def test_the_agent_and_the_rules_on_a_drawing_with_values(
     fixed = [c.model_copy(update={"circuit_context": None}) if c.component_id == fc1 else c for c in comps]
     edited = MergeResult(drawing_id=drawing_id, components=fixed, trace_id="trc_example")
     with tenant_session(tenant.tenant_id, engine) as s:
-        start = time.perf_counter()
-        fresh = validation.revalidate_panel(s, storage, tenant.tenant_id, drawing_id, comps[0].panel_id, merge=edited)
-        took = time.perf_counter() - start
+        with within(REVALIDATION, "the rules again on FC1's panel"):
+            fresh = validation.revalidate_panel(
+                s, storage, tenant.tenant_id, drawing_id, comps[0].panel_id, merge=edited
+            )
         status = s.scalar(select(m.Finding.status).where(m.Finding.id == load.issue_id))
-    assert took < 1.0
     assert next(i for i in fresh.issues if i.issue_id == load.issue_id).status == "resolved"
     assert status == "resolved" and fresh.agent_calls == tuned.agent_calls  # the agent does not run again
 

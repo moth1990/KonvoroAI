@@ -2,7 +2,6 @@
 it writes for the learning loop (09 §10), its undo (09 §7.11), a sent version refusing them all (07 §7.7), and the
 costs a user without the permission never gets (09 §12). A drawing from the pipeline: `test_review_pipeline.py`."""
 
-import time
 from collections.abc import Iterator
 from dataclasses import dataclass
 from decimal import Decimal
@@ -23,6 +22,7 @@ from konboro.domain import permissions
 from konboro.services import price_list as pl
 from konboro.services import quotes as qs
 
+from ..perf import ACTION, RERUN, within
 from .api import Api, ApiTenant, add_tenant
 
 pytestmark = pytest.mark.integration
@@ -426,6 +426,7 @@ def test_another_tenants_quote_is_not_found(quote: Quote) -> None:
     assert r.status_code == 404
 
 
+@pytest.mark.perf
 def test_an_action_on_a_150_line_quote_answers_within_half_a_second(quote: Quote) -> None:
     """09 §14: an action, with the server's recalculation, ≤ 500 ms; an alternative ≤ 1 s."""
     with quote.session() as s:
@@ -456,16 +457,14 @@ def test_an_action_on_a_150_line_quote_answers_within_half_a_second(quote: Quote
     assert sum(1 for _ in lines) >= 150
     line = lines['מא"ז בדיקה 7']
     client, headers = quote.api.client, quote.api.as_(quote.tenant)
-    for path, body, limit in (
-        (f"/lines/{line['line_id']}/approve", None, 0.5),
-        (f"/lines/{line['line_id']}/qty", {"qty": "3"}, 0.5),
-        (f"/lines/{line['line_id']}/alternative", {"index": 0}, 1.0),
+    for path, body, target in (
+        (f"/lines/{line['line_id']}/approve", None, ACTION),
+        (f"/lines/{line['line_id']}/qty", {"qty": "3"}, ACTION),
+        (f"/lines/{line['line_id']}/alternative", {"index": 0}, RERUN),
     ):
-        start = time.perf_counter()
-        r = client.post(f"/quotes/{quote.quote_id}{path}", json=body, headers=headers)
-        elapsed = time.perf_counter() - start
-        assert r.status_code == 200, r.text
-        assert elapsed < limit, (path, elapsed)
+        with within(target, f"{path} on 150 lines"):
+            r = client.post(f"/quotes/{quote.quote_id}{path}", json=body, headers=headers)
+            assert r.status_code == 200, r.text
 
 
 def test_the_editor_counts_the_draft_lines_that_now_show_a_new_price(quote: Quote) -> None:

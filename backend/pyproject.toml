@@ -47,6 +47,7 @@ pythonpath = [".."]  # the repo root, for the eval harness (../eval)
 addopts = "-ra --strict-markers"
 markers = [
     "integration: needs the docker-compose services (make up)",
+    "perf: times an action against a spec's target (tests/perf.py); `make perf` runs these with no CI margin",
 ]
 
 # Measured only for the pricing code (`make test-unit`'s --cov), which needs 100% branch coverage (07 §10.1).

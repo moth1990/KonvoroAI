@@ -7,7 +7,7 @@ GITLEAKS_IMAGE := ghcr.io/gitleaks/gitleaks:v8.21.2@sha256:0e99e8821643ea5b23571
 BACKEND := cd backend &&
 FRONTEND := cd frontend &&
 
-.PHONY: help install up down migrate seed dev lint licenses secrets test-unit test-int e2e fidelity screenshots check-screenshots eval eval-baseline fixture-audit gen-client check-client check
+.PHONY: help install up down migrate seed dev lint licenses secrets test-unit test-int perf e2e fidelity screenshots check-screenshots eval eval-baseline fixture-audit gen-client check-client check
 
 help:
 	@grep -E '^[a-z-]+:.*?## ' $(MAKEFILE_LIST) | awk -F':.*?## ' '{printf "  %-12s %s\n", $$1, $$2}'
@@ -60,6 +60,12 @@ test-unit: ## Backend unit tests (pricing at 100% branch coverage) and frontend 
 
 test-int: ## Backend integration tests against the local services (needs `make up`)
 	$(BACKEND) uv run pytest -m integration
+
+# The suite allows each response-time target x3 for a loaded runner (BUG-115); this holds the target itself. Not in
+# CI or `make check`: run it on a quiet machine. A test that fails is run again, up to three runs in all.
+perf: ## The specs' response times with no margin, best of 3 (needs `make up`; not in CI)
+	$(BACKEND) KONBORO_PERF=1 uv run pytest -m perf || KONBORO_PERF=1 uv run pytest -m perf --lf \
+		|| KONBORO_PERF=1 uv run pytest -m perf --lf
 
 e2e: ## Playwright, desktop and mobile, against a fresh konboro_e2e DB and the API on 8001 (needs `make up`)
 	$(FRONTEND) pnpm e2e

@@ -2,7 +2,6 @@
 keeps its id, a line the action did not touch keeps its price (07 §7.2.3), and a rerun keeps the estimator's edits
 (S22 decision 5)."""
 
-import time
 from typing import Any
 
 import pytest
@@ -14,6 +13,7 @@ from konboro.pipeline.coordinator import Pipeline
 from konboro.services import quote_versions as qv
 from konboro.services.storage import Storage
 
+from ..perf import RERUN, within
 from .api import Api, ApiTenant, set_tenant_flag
 from .test_pipeline import pipeline  # noqa: F401  (fixture)
 from .test_stage7 import priced_tenant, seeded, stages_5_to_7_by_hand, through_the_queue  # noqa: F401  (fixture)
@@ -28,10 +28,9 @@ def get(api: Api, tenant: ApiTenant, quote_id: str) -> dict[str, Any]:
 
 
 def post(api: Api, tenant: ApiTenant, path: str, body: dict[str, Any] | None = None) -> dict[str, Any]:
-    start = time.perf_counter()
-    r = api.client.post(path, json=body, headers=api.as_(tenant))
-    assert r.status_code == 200, r.text
-    assert time.perf_counter() - start < 1.0, path  # 09 §14: ≤ 500 ms for most, ≤ 1 s with stages 5–7
+    with within(RERUN, path):  # 09 §14: ≤ 500 ms for most, ≤ 1 s with stages 5–7; every action here gets the 1 s
+        r = api.client.post(path, json=body, headers=api.as_(tenant))
+        assert r.status_code == 200, r.text
     return dict(r.json())
 
 
@@ -39,6 +38,7 @@ def lines(body: dict[str, Any]) -> list[dict[str, Any]]:
     return [ln for p in body.get("quote", body)["panels"] for ln in p["lines"]]
 
 
+@pytest.mark.perf
 def test_actions_on_a_drawing_the_pipeline_priced(
     seeded: dict[str, Engine],  # noqa: F811
     api: Api,
@@ -123,6 +123,7 @@ def test_actions_on_a_drawing_the_pipeline_priced(
         assert row.approved_at is not None
 
 
+@pytest.mark.perf
 def test_the_unresolved_layer_reads_the_pipelines_outputs(
     seeded: dict[str, Engine],  # noqa: F811
     api: Api,
